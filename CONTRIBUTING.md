@@ -1,21 +1,15 @@
-# Gym Contribution Guidelines
+# Gymnasium Contribution Guidelines
 
 At this time we are currently accepting the current forms of contributions:
 
 - Bug reports (keep in mind that changing environment behavior should be minimized as that requires releasing a new version of the environment and makes results hard to compare across versions)
 - Pull requests for bug fixes
 - Documentation improvements
+- Features
 
 Notably, we are not accepting these forms of contributions:
 
 - New environments
-- New features
-
-This may change in the future.
-If you wish to make a Gym environment, follow the instructions in [Creating Environments](https://github.com/openai/gym/blob/master/docs/creating_environments.md).  When your environment works, you can make a PR to add it to the bottom of the [List of Environments](https://github.com/openai/gym/blob/master/docs/third_party_environments.md).
-
-
-Edit July 27, 2021: Please see https://github.com/openai/gym/issues/2259 for new contributing standards
 
 # Development
 This section contains technical instructions & hints for the contributors.
@@ -33,7 +27,7 @@ the list of included, excluded and strict files can be found in pyproject.toml (
 To run `pyright` for the project, run the pre-commit process (`pre-commit run --all-files`) or `pyright`
 
 ## Git hooks
-The CI will run several checks on the new code pushed to the Gym repository. These checks can also be run locally without waiting for the CI by following the steps below:
+The CI will run several checks on the new code pushed to the Gymnasium repository. These checks can also be run locally without waiting for the CI by following the steps below:
 1. [install `pre-commit`](https://pre-commit.com/#install),
 2. Install the Git hooks by running `pre-commit install`.
 

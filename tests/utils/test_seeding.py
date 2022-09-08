@@ -1,7 +1,7 @@
 import pickle
 
-from gym import error
-from gym.utils import seeding
+from gymnasium import error
+from gymnasium.utils import seeding
 
 
 def test_invalid_seeds():

@@ -2,8 +2,8 @@ from functools import partial
 
 import pytest
 
-from gym import Space
-from gym.spaces import utils
+from gymnasium import Space
+from gymnasium.spaces import utils
 
 TESTING_SPACE = Space()
 

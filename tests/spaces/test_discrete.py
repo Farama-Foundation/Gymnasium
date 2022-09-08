@@ -1,6 +1,6 @@
 import numpy as np
 
-from gym.spaces import Discrete
+from gymnasium.spaces import Discrete
 
 
 def test_space_legacy_pickling():

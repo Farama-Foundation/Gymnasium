@@ -1,17 +1,17 @@
-import gym
+import gymnasium
 
 
-class RegisterDuringMakeEnv(gym.Env):
+class RegisterDuringMakeEnv(gymnasium.Env):
     """Used in `test_registration.py` to check if `env.make` can import and register an env"""
 
     def __init__(self):
-        self.action_space = gym.spaces.Discrete(1)
-        self.observation_space = gym.spaces.Discrete(1)
+        self.action_space = gymnasium.spaces.Discrete(1)
+        self.observation_space = gymnasium.spaces.Discrete(1)
 
 
-class ArgumentEnv(gym.Env):
-    observation_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
-    action_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
+class ArgumentEnv(gymnasium.Env):
+    observation_space = gymnasium.spaces.Box(low=-1, high=1, shape=(1,))
+    action_space = gymnasium.spaces.Box(low=-1, high=1, shape=(1,))
 
     def __init__(self, arg1, arg2, arg3):
         self.arg1 = arg1
@@ -20,7 +20,7 @@ class ArgumentEnv(gym.Env):
 
 
 # Environments to test render_mode
-class NoHuman(gym.Env):
+class NoHuman(gymnasium.Env):
     """Environment that does not have human-rendering."""
 
     metadata = {"render_modes": ["rgb_array_list"], "render_fps": 4}
@@ -30,7 +30,7 @@ class NoHuman(gym.Env):
         self.render_mode = render_mode
 
 
-class NoHumanOldAPI(gym.Env):
+class NoHumanOldAPI(gymnasium.Env):
     """Environment that does not have human-rendering."""
 
     metadata = {"render_modes": ["rgb_array_list"], "render_fps": 4}
@@ -39,7 +39,7 @@ class NoHumanOldAPI(gym.Env):
         pass
 
 
-class NoHumanNoRGB(gym.Env):
+class NoHumanNoRGB(gymnasium.Env):
     """Environment that has neither human- nor rgb-rendering"""
 
     metadata = {"render_modes": ["ascii"], "render_fps": 4}

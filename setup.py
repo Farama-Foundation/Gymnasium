@@ -4,7 +4,7 @@ import re
 
 from setuptools import find_packages, setup
 
-with open("gym/version.py") as file:
+with open("gymnasium/version.py") as file:
     full_version = file.read()
     assert (
         re.match(r'VERSION = "\d\.\d+\.\d+"\n', full_version).group(0) == full_version
@@ -51,7 +51,7 @@ setup(
     author="Gym Community",
     author_email="jkterry@umd.edu",
     classifiers=[
-        # Python 3.6 is minimally supported (only with basic gym environments and API)
+        # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -71,10 +71,12 @@ setup(
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    name="gym",
-    packages=[package for package in find_packages() if package.startswith("gym")],
+    name="gymnasium",
+    packages=[
+        package for package in find_packages() if package.startswith("gymnasium")
+    ],
     package_data={
-        "gym": [
+        "gymnasium": [
             "envs/mujoco/assets/*.xml",
             "envs/classic_control/assets/*.png",
             "envs/toy_text/font/*.ttf",

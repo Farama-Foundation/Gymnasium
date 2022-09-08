@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
 
-import gym
-from gym import spaces
-from gym.envs.registration import EnvSpec
+import gymnasium
+from gymnasium import spaces
+from gymnasium.envs.registration import EnvSpec
 from tests.envs.utils import all_testing_initialised_envs, mujoco_testing_env_specs
 
 
@@ -59,14 +59,14 @@ DISCRETE_ENVS = list(
 @pytest.mark.parametrize(
     "env", DISCRETE_ENVS, ids=[env.spec.id for env in DISCRETE_ENVS]
 )
-def test_discrete_actions_out_of_bound(env: gym.Env):
+def test_discrete_actions_out_of_bound(env: gymnasium.Env):
     """Test out of bound actions in Discrete action_space.
 
     In discrete action_space environments, `out-of-bound`
     actions are not allowed and should raise an exception.
 
     Args:
-        env (gym.Env): the gym environment
+        env (gym.Env): the gymnasium environment
     """
     assert isinstance(env.action_space, spaces.Discrete)
     upper_bound = env.action_space.start + env.action_space.n - 1
@@ -88,7 +88,7 @@ OOB_VALUE = 100
 
 
 @pytest.mark.parametrize("env", BOX_ENVS, ids=[env.spec.id for env in BOX_ENVS])
-def test_box_actions_out_of_bound(env: gym.Env):
+def test_box_actions_out_of_bound(env: gymnasium.Env):
     """Test out of bound actions in Box action_space.
 
     Environments with Box actions spaces perform clipping inside `step`.
@@ -96,11 +96,11 @@ def test_box_actions_out_of_bound(env: gym.Env):
     of an action with value exactly at the upper (or lower) bound.
 
     Args:
-        env (gym.Env): the gym environment
+        env (gym.Env): the gymnasium environment
     """
     env.reset(seed=42)
 
-    oob_env = gym.make(env.spec.id, disable_env_checker=True)
+    oob_env = gymnasium.make(env.spec.id, disable_env_checker=True)
     oob_env.reset(seed=42)
 
     assert isinstance(env.action_space, spaces.Box)
