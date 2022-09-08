@@ -110,7 +110,7 @@ class PendulumEnv(gymnasium.Env):
         high = np.array([1.0, 1.0, self.max_speed], dtype=np.float32)
         # This will throw a warning in tests/envs/test_envs in utils/env_checker.py as the space is not symmetric
         #   or normalised as max_torque == 2 by default. Ignoring the issue here as the default settings are too old
-        #   to update to follow the openai gymnasium api
+        #   to update to follow the gymnasium api
         self.action_space = spaces.Box(
             low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32
         )
