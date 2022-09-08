@@ -27,7 +27,7 @@ the list of included, excluded and strict files can be found in pyproject.toml (
 To run `pyright` for the project, run the pre-commit process (`pre-commit run --all-files`) or `pyright`
 
 ## Git hooks
-The CI will run several checks on the new code pushed to the Gym repository. These checks can also be run locally without waiting for the CI by following the steps below:
+The CI will run several checks on the new code pushed to the Gymnasium repository. These checks can also be run locally without waiting for the CI by following the steps below:
 1. [install `pre-commit`](https://pre-commit.com/#install),
 2. Install the Git hooks by running `pre-commit install`.
 
