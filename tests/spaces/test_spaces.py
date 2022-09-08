@@ -8,9 +8,9 @@ from typing import List, Union
 import numpy as np
 import pytest
 
-from gym.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space, Text
-from gym.utils import seeding
-from gym.utils.env_checker import data_equivalence
+from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space, Text
+from gymnasium.utils import seeding
+from gymnasium.utils.env_checker import data_equivalence
 from tests.spaces.utils import (
     TESTING_FUNDAMENTAL_SPACES,
     TESTING_FUNDAMENTAL_SPACES_IDS,

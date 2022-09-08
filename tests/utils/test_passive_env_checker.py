@@ -5,9 +5,9 @@ from typing import Dict, Union
 import numpy as np
 import pytest
 
-import gym
-from gym import spaces
-from gym.utils.passive_env_checker import (
+import gymnasium
+from gymnasium import spaces
+from gymnasium.utils.passive_env_checker import (
     check_action_space,
     check_obs,
     check_observation_space,
@@ -29,7 +29,7 @@ def _modify_space(space: spaces.Space, attribute: str, value):
         [
             AssertionError,
             "error",
-            "observation space does not inherit from `gym.spaces.Space`, actual type: <class 'str'>",
+            "observation space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ],
         # ===== Check box observation space ====
         [
@@ -125,7 +125,7 @@ def test_check_observation_space(test, space, message: str):
         [
             AssertionError,
             "error",
-            "action space does not inherit from `gym.spaces.Space`, actual type: <class 'str'>",
+            "action space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ],
         # ===== Check box observation space ====
         [
@@ -268,7 +268,7 @@ def _make_reset_results(results):
         [
             UserWarning,
             _reset_no_seed,
-            "Future gym versions will require that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator.",
+            "Future gymnasium versions will require that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator.",
             {},
         ],
         [
@@ -280,7 +280,7 @@ def _make_reset_results(results):
         [
             UserWarning,
             _reset_no_option,
-            "Future gym versions will require that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information.",
+            "Future gymnasium versions will require that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information.",
             {},
         ],
         [
@@ -349,7 +349,7 @@ def _modified_step(
             "Expects `truncated` signal to be a boolean, actual type: <class 'str'>",
         ],
         [
-            gym.error.Error,
+            gymnasium.error.Error,
             lambda self, _: (1, 2, 3),
             "Expected `Env.step` to return a four or five element tuple, actual number of elements returned: 3.",
         ],

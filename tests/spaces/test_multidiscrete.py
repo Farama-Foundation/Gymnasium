@@ -1,7 +1,7 @@
 import pytest
 
-from gym.spaces import Discrete, MultiDiscrete
-from gym.utils.env_checker import data_equivalence
+from gymnasium.spaces import Discrete, MultiDiscrete
+from gymnasium.utils.env_checker import data_equivalence
 
 
 def test_multidiscrete_as_tuple():

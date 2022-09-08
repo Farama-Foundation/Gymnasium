@@ -1,14 +1,14 @@
 import pytest
 
-import gym
-from gym import spaces
-from gym.wrappers import GrayScaleObservation
+import gymnasium
+from gymnasium import spaces
+from gymnasium.wrappers import GrayScaleObservation
 
 
 @pytest.mark.parametrize("env_id", ["CarRacing-v2"])
 @pytest.mark.parametrize("keep_dim", [True, False])
 def test_gray_scale_observation(env_id, keep_dim):
-    rgb_env = gym.make(env_id, disable_env_checker=True)
+    rgb_env = gymnasium.make(env_id, disable_env_checker=True)
 
     assert isinstance(rgb_env.observation_space, spaces.Box)
     assert len(rgb_env.observation_space.shape) == 3

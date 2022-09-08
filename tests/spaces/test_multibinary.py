@@ -1,6 +1,6 @@
 import numpy as np
 
-from gym.spaces import MultiBinary
+from gymnasium.spaces import MultiBinary
 
 
 def test_sample():
