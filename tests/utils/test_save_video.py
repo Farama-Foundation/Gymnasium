@@ -3,12 +3,12 @@ import shutil
 
 import numpy as np
 
-import gym
-from gym.utils.save_video import capped_cubic_video_schedule, save_video
+import gymnasium
+from gymnasium.utils.save_video import capped_cubic_video_schedule, save_video
 
 
 def test_record_video_using_default_trigger():
-    env = gym.make(
+    env = gymnasium.make(
         "CartPole-v1", render_mode="rgb_array_list", disable_env_checker=True
     )
 
@@ -47,7 +47,7 @@ def modulo_step_trigger(mod: int):
 
 
 def test_record_video_step_trigger():
-    env = gym.make("CartPole-v1", render_mode="rgb_array_list")
+    env = gymnasium.make("CartPole-v1", render_mode="rgb_array_list")
     env._max_episode_steps = 20
 
     env.reset()
@@ -81,7 +81,7 @@ def test_record_video_within_vector():
     n_steps = 199
     expected_video = 2
 
-    envs = gym.vector.make(
+    envs = gymnasium.vector.make(
         "CartPole-v1", num_envs=2, asynchronous=True, render_mode="rgb_array_list"
     )
     envs.reset()

@@ -3,7 +3,7 @@ from collections import OrderedDict
 import numpy as np
 import pytest
 
-from gym.spaces import Box, Dict, Discrete
+from gymnasium.spaces import Box, Dict, Discrete
 
 
 def test_dict_init():
@@ -125,7 +125,7 @@ def test_mapping():
 
     with pytest.raises(
         AssertionError,
-        match="Trying to set a to Dict space with value that is not a gym space, actual type: <class 'int'>",
+        match="Trying to set a to Dict space with value that is not a gymnasium space, actual type: <class 'int'>",
     ):
         DICT_SPACE["a"] = 5
 

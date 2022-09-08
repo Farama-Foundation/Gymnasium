@@ -3,9 +3,9 @@ from typing import Optional
 
 import numpy as np
 
-import gym
-from gym.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
-from gym.utils.seeding import RandomNumberGenerator
+import gymnasium
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
+from gymnasium.utils.seeding import RandomNumberGenerator
 
 spaces = [
     Box(low=np.array(-1.0), high=np.array(1.0), dtype=np.float64),
@@ -50,7 +50,7 @@ spaces = [
 HEIGHT, WIDTH = 64, 64
 
 
-class UnittestSlowEnv(gym.Env):
+class UnittestSlowEnv(gymnasium.Env):
     def __init__(self, slow_reset=0.3):
         super().__init__()
         self.slow_reset = slow_reset
@@ -72,7 +72,7 @@ class UnittestSlowEnv(gym.Env):
         return observation, reward, terminated, truncated, {}
 
 
-class CustomSpace(gym.Space):
+class CustomSpace(gymnasium.Space):
     """Minimal custom observation space."""
 
     def sample(self):
@@ -91,7 +91,7 @@ custom_spaces = [
 ]
 
 
-class CustomSpaceEnv(gym.Env):
+class CustomSpaceEnv(gymnasium.Env):
     def __init__(self):
         super().__init__()
         self.observation_space = CustomSpace()
@@ -109,7 +109,7 @@ class CustomSpaceEnv(gym.Env):
 
 def make_env(env_name, seed, **kwargs):
     def _make():
-        env = gym.make(env_name, disable_env_checker=True, **kwargs)
+        env = gymnasium.make(env_name, disable_env_checker=True, **kwargs)
         env.action_space.seed(seed)
         env.reset(seed=seed)
         return env

@@ -3,9 +3,9 @@ from collections import OrderedDict
 import numpy as np
 import pytest
 
-from gym.spaces import Dict, Tuple
-from gym.vector.utils.numpy_utils import concatenate, create_empty_array
-from gym.vector.utils.spaces import BaseGymSpaces
+from gymnasium.spaces import Dict, Tuple
+from gymnasium.vector.utils.numpy_utils import concatenate, create_empty_array
+from gymnasium.vector.utils.spaces import BaseGymSpaces
 from tests.vector.utils import spaces
 
 
