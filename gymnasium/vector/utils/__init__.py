@@ -6,8 +6,12 @@ from gymnasium.vector.utils.shared_memory import (
     read_from_shared_memory,
     write_to_shared_memory,
 )
-from gymnasium.vector.utils.spaces import _BaseGymSpaces  # pyright: reportPrivateUsage=false
-from gymnasium.vector.utils.spaces import BaseGymSpaces, batch_space, iterate
+from gymnasium.vector.utils.spaces import (  # pyright: reportPrivateUsage=false
+    BaseGymSpaces,
+    _BaseGymSpaces,
+    batch_space,
+    iterate,
+)
 
 __all__ = [
     "CloudpickleWrapper",

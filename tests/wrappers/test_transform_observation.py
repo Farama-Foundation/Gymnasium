@@ -12,7 +12,8 @@ def test_transform_observation(env_id):
 
     env = gymnasium.make(env_id, disable_env_checker=True)
     wrapped_env = TransformObservation(
-        gymnasium.make(env_id, disable_env_checker=True), lambda obs: affine_transform(obs)
+        gymnasium.make(env_id, disable_env_checker=True),
+        lambda obs: affine_transform(obs),
     )
 
     obs, info = env.reset(seed=0)

@@ -4,7 +4,11 @@ from multiprocessing import TimeoutError
 import numpy as np
 import pytest
 
-from gymnasium.error import AlreadyPendingCallError, ClosedEnvironmentError, NoAsyncCallError
+from gymnasium.error import (
+    AlreadyPendingCallError,
+    ClosedEnvironmentError,
+    NoAsyncCallError,
+)
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from tests.vector.utils import (

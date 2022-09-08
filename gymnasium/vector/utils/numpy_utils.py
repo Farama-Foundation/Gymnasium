@@ -5,7 +5,15 @@ from typing import Iterable, Union
 
 import numpy as np
 
-from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Space, Tuple
+from gymnasium.spaces import (
+    Box,
+    Dict,
+    Discrete,
+    MultiBinary,
+    MultiDiscrete,
+    Space,
+    Tuple,
+)
 
 __all__ = ["concatenate", "create_empty_array"]
 

@@ -19,7 +19,9 @@ class OrderEnforcing(gymnasium.Wrapper):
         >>> env.step(0)
     """
 
-    def __init__(self, env: gymnasium.Env, disable_render_order_enforcing: bool = False):
+    def __init__(
+        self, env: gymnasium.Env, disable_render_order_enforcing: bool = False
+    ):
         """A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.
 
         Args:

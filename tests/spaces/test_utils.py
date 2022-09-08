@@ -92,7 +92,8 @@ def test_flatten_space(space):
             assert edge_single_dim == edge_flatdim
     else:
         assert isinstance(
-            space, (gymnasium.spaces.Tuple, gymnasium.spaces.Dict, gymnasium.spaces.Sequence)
+            space,
+            (gymnasium.spaces.Tuple, gymnasium.spaces.Dict, gymnasium.spaces.Sequence),
         )
 
 

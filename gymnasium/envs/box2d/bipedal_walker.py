@@ -21,7 +21,9 @@ try:
         revoluteJointDef,
     )
 except ImportError:
-    raise DependencyNotInstalled("box2D is not installed, run `pip install gymnasium[box2d]`")
+    raise DependencyNotInstalled(
+        "box2D is not installed, run `pip install gymnasium[box2d]`"
+    )
 
 
 if TYPE_CHECKING:

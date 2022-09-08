@@ -72,7 +72,9 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     name="gymnasium",
-    packages=[package for package in find_packages() if package.startswith("gymnasium")],
+    packages=[
+        package for package in find_packages() if package.startswith("gymnasium")
+    ],
     package_data={
         "gymnasium": [
             "envs/mujoco/assets/*.xml",
