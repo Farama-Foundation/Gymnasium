@@ -12,6 +12,6 @@ jobs:
       - run: |
            docker build -f py.Dockerfile \
              --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
-             --tag gym-docker .
+             --tag gymnasium-docker .
       - name: Run tests
         run: docker run gymnasium-docker pytest
