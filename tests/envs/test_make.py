@@ -9,7 +9,12 @@ import pytest
 
 import gymnasium
 from gymnasium.envs.classic_control import cartpole
-from gymnasium.wrappers import AutoResetWrapper, HumanRendering, OrderEnforcing, TimeLimit
+from gymnasium.wrappers import (
+    AutoResetWrapper,
+    HumanRendering,
+    OrderEnforcing,
+    TimeLimit,
+)
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_env_specs
@@ -69,7 +74,8 @@ def test_make_max_episode_steps():
     env = gymnasium.make("CartPole-v1", disable_env_checker=True)
     assert has_wrapper(env, TimeLimit)
     assert (
-            env.spec.max_episode_steps == gymnasium.envs.registry["CartPole-v1"].max_episode_steps
+        env.spec.max_episode_steps
+        == gymnasium.envs.registry["CartPole-v1"].max_episode_steps
     )
     env.close()
 

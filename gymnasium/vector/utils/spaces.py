@@ -7,7 +7,15 @@ from typing import Iterator
 import numpy as np
 
 from gymnasium.error import CustomSpaceError
-from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Space, Tuple
+from gymnasium.spaces import (
+    Box,
+    Dict,
+    Discrete,
+    MultiBinary,
+    MultiDiscrete,
+    Space,
+    Tuple,
+)
 
 BaseGymSpaces = (Box, Discrete, MultiDiscrete, MultiBinary)
 _BaseGymSpaces = BaseGymSpaces

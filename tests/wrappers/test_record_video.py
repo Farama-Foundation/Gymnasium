@@ -26,8 +26,12 @@ def test_record_video_using_default_trigger():
 
 
 def test_record_video_reset():
-    env = gymnasium.make("CartPole-v1", render_mode="rgb_array", disable_env_checker=True)
-    env = gymnasium.wrappers.RecordVideo(env, "videos", step_trigger=lambda x: x % 100 == 0)
+    env = gymnasium.make(
+        "CartPole-v1", render_mode="rgb_array", disable_env_checker=True
+    )
+    env = gymnasium.wrappers.RecordVideo(
+        env, "videos", step_trigger=lambda x: x % 100 == 0
+    )
     ob_space = env.observation_space
     obs, info = env.reset()
     env.close()
@@ -38,9 +42,13 @@ def test_record_video_reset():
 
 
 def test_record_video_step_trigger():
-    env = gymnasium.make("CartPole-v1", render_mode="rgb_array", disable_env_checker=True)
+    env = gymnasium.make(
+        "CartPole-v1", render_mode="rgb_array", disable_env_checker=True
+    )
     env._max_episode_steps = 20
-    env = gymnasium.wrappers.RecordVideo(env, "videos", step_trigger=lambda x: x % 100 == 0)
+    env = gymnasium.wrappers.RecordVideo(
+        env, "videos", step_trigger=lambda x: x % 100 == 0
+    )
     env.reset()
     for _ in range(199):
         action = env.action_space.sample()

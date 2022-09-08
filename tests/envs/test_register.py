@@ -86,7 +86,9 @@ def test_register(
     ],
 )
 def test_register_error(env_id):
-    with pytest.raises(gymnasium.error.Error, match=f"^Malformed environment ID: {env_id}"):
+    with pytest.raises(
+        gymnasium.error.Error, match=f"^Malformed environment ID: {env_id}"
+    ):
         gymnasium.register(env_id, "no-entry-point")
 
 

@@ -5,7 +5,9 @@ import gymnasium
 class RenderCollection(gymnasium.Wrapper):
     """Save collection of render frames."""
 
-    def __init__(self, env: gymnasium.Env, pop_frames: bool = True, reset_clean: bool = True):
+    def __init__(
+        self, env: gymnasium.Env, pop_frames: bool = True, reset_clean: bool = True
+    ):
         """Initialize a :class:`RenderCollection` instance.
 
         Args:

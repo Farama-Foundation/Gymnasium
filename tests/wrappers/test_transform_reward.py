@@ -30,7 +30,8 @@ def test_transform_reward(env_id):
     max_r = 0.0002
     env = gymnasium.make(env_id, disable_env_checker=True)
     wrapped_env = TransformReward(
-        gymnasium.make(env_id, disable_env_checker=True), lambda r: np.clip(r, min_r, max_r)
+        gymnasium.make(env_id, disable_env_checker=True),
+        lambda r: np.clip(r, min_r, max_r),
     )
     action = env.action_space.sample()
 

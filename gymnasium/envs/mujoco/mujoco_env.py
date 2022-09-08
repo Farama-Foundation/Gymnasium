@@ -395,7 +395,9 @@ class MujocoEnv(BaseMujocoEnv):
 
     def _get_viewer(
         self, mode
-    ) -> Union["gymnasium.envs.mujoco.Viewer", "gymnasium.envs.mujoco.RenderContextOffscreen"]:
+    ) -> Union[
+        "gymnasium.envs.mujoco.Viewer", "gymnasium.envs.mujoco.RenderContextOffscreen"
+    ]:
         self.viewer = self._viewers.get(mode)
         if self.viewer is None:
             if mode == "human":

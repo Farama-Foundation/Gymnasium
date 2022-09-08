@@ -15,7 +15,9 @@ try:
     import Box2D
     from Box2D.b2 import contactListener, fixtureDef, polygonShape
 except ImportError:
-    raise DependencyNotInstalled("box2D is not installed, run `pip install gymnasium[box2d]`")
+    raise DependencyNotInstalled(
+        "box2D is not installed, run `pip install gymnasium[box2d]`"
+    )
 
 try:
     # As pygame is necessary for using the environment (reset and step) even without a render mode
