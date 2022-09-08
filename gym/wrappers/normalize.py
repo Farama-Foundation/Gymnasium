@@ -3,8 +3,6 @@ import numpy as np
 
 import gym
 
-
-# taken from https://github.com/openai/baselines/blob/master/baselines/common/vec_env/vec_normalize.py
 class RunningMeanStd:
     """Tracks the mean, variance and count of values."""
 
