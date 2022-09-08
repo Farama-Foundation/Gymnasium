@@ -15,7 +15,7 @@ with open("gymnasium/version.py") as file:
 extras = {
     "atari": ["ale-py~=0.8.0"],
     "accept-rom-license": ["autorom[accept-rom-license]~=0.4.2"],
-    "box2d": ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
+    "box2d":     ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
     "classic_control": ["pygame==2.1.0"],
     "mujoco_py": ["mujoco_py<2.2,>=2.1"],
     "mujoco": ["mujoco==2.2.0", "imageio>=2.14.1"],
@@ -48,8 +48,8 @@ with open("README.md") as fh:
             break
 
 setup(
-    author="Gym Community",
-    author_email="jkterry@umd.edu",
+    author="Farama Foundation",
+    author_email="jkterry@farama.org",
     classifiers=[
         # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
         "Programming Language :: Python :: 3",
@@ -59,7 +59,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
-    description="Gym: A universal API for reinforcement learning environments",
+    description="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
     extras_require=extras,
     install_requires=[
         "numpy >= 1.18.0",
