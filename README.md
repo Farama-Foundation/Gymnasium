@@ -4,9 +4,9 @@
 
 ### Due to issues with the domain registration, the documentation has been moved to [https://www.gymlibrary.dev/](https://www.gymlibrary.dev/) as opposed to the old .ml address.
 
-## Gym
+## Gymnasium
 
-Gym is an open source Python library for developing and comparing reinforcement learning algorithms by providing a standard API to communicate between learning algorithms and environments, as well as a standard set of environments compliant with that API. Since its release, Gym's API has become the field standard for doing this.
+Gymnasium is an open source Python library for developing and comparing reinforcement learning algorithms by providing a standard API to communicate between learning algorithms and environments, as well as a standard set of environments compliant with that API. Since its release, Gym's API has become the field standard for doing this.
 
 Gym documentation website is at [https://www.gymlibrary.dev/](https://www.gymlibrary.dev/), and you can propose fixes and changes to it [here](https://github.com/Farama-Foundation/gym-docs).
 
@@ -52,8 +52,8 @@ Gym keeps strict versioning for reproducibility reasons. All environments end in
 
 ## MuJoCo Environments
 
-The latest "\_v4" and future versions of the MuJoCo environments will no longer depend on `mujoco-py`. Instead `mujoco` will be the required dependency for future gym MuJoCo environment versions. Old gym MuJoCo environment versions that depend on `mujoco-py` will still be kept but unmaintained.
-To install the dependencies for the latest gym MuJoCo environments use `pip install gym[mujoco]`. Dependencies for old MuJoCo environments can still be installed by `pip install gym[mujoco_py]`. 
+The latest "\_v4" and future versions of the MuJoCo environments will no longer depend on `mujoco-py`. Instead `mujoco` will be the required dependency for future gymnasiumMuJoCo environment versions. Old gymnasiumMuJoCo environment versions that depend on `mujoco-py` will still be kept but unmaintained.
+To install the dependencies for the latest gymnasium MuJoCo environments use `pip install gym[mujoco]`. Dependencies for old MuJoCo environments can still be installed by `pip install gym[mujoco_py]`. 
 
 ## Citation
 

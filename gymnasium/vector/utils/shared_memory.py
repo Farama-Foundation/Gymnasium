@@ -43,9 +43,9 @@ def create_shared_memory(
     raise CustomSpaceError(
         "Cannot create a shared memory for space with "
         f"type `{type(space)}`. Shared memory only supports "
-        "default Gym spaces (e.g. `Box`, `Tuple`, "
+        "default Gymnasium spaces (e.g. `Box`, `Tuple`, "
         "`Dict`, etc...), and does not support custom "
-        "Gym spaces."
+        "Gymnasium spaces."
     )
 
 
@@ -103,9 +103,9 @@ def read_from_shared_memory(
     raise CustomSpaceError(
         "Cannot read from a shared memory for space with "
         f"type `{type(space)}`. Shared memory only supports "
-        "default Gym spaces (e.g. `Box`, `Tuple`, "
+        "default Gymnasium spaces (e.g. `Box`, `Tuple`, "
         "`Dict`, etc...), and does not support custom "
-        "Gym spaces."
+        "Gymnasium spaces."
     )
 
 
@@ -159,9 +159,9 @@ def write_to_shared_memory(
     raise CustomSpaceError(
         "Cannot write to a shared memory for space with "
         f"type `{type(space)}`. Shared memory only supports "
-        "default Gym spaces (e.g. `Box`, `Tuple`, "
+        "default Gymnasium spaces (e.g. `Box`, `Tuple`, "
         "`Dict`, etc...), and does not support custom "
-        "Gym spaces."
+        "Gymnasium spaces."
     )
 
 

@@ -284,7 +284,7 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
         finally:
             if attr is None:
                 raise error.Error(
-                    f"Gym environment plugin `{module}` must specify a function to execute, not a root module"
+                    f"Gymnasium environment plugin `{module}` must specify a function to execute, not a root module"
                 )
 
         context = namespace(plugin.name)

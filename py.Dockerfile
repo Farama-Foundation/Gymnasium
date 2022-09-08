@@ -1,4 +1,4 @@
-# A Dockerfile that sets up a full Gym install with test dependencies
+# A Dockerfile that sets up a full Gymnasium install with test dependencies
 ARG PYTHON_VERSION
 FROM python:$PYTHON_VERSION
 

@@ -35,7 +35,7 @@ class Sequence(Space[Tuple]):
         """
         assert isinstance(
             space, gymnasium.Space
-        ), f"Expects the feature space to be instance of a gym Space, actual type: {type(space)}"
+        ), f"Expects the feature space to be instance of a gymnasium Space, actual type: {type(space)}"
         self.feature_space = space
         super().__init__(
             None, None, seed  # type: ignore

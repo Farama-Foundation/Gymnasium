@@ -125,9 +125,9 @@ class AsyncVectorEnv(VectorEnv):
             except CustomSpaceError:
                 raise ValueError(
                     "Using `shared_memory=True` in `AsyncVectorEnv` "
-                    "is incompatible with non-standard Gym observation spaces "
+                    "is incompatible with non-standard Gymnasium observation spaces "
                     "(i.e. custom spaces inheriting from `gymnasium.Space`), and is "
-                    "only compatible with default Gym spaces (e.g. `Box`, "
+                    "only compatible with default Gymnasium spaces (e.g. `Box`, "
                     "`Tuple`, `Dict`) for batching. Set `shared_memory=False` "
                     "if you use custom observation spaces."
                 )

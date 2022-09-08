@@ -39,7 +39,7 @@ class StepAPICompatibility(gymnasium.Wrapper):
         self.output_truncation_bool = output_truncation_bool
         if not self.output_truncation_bool:
             deprecation(
-                "Initializing environment in old step API which returns one bool instead of two."
+                "Initializing environment in (old) done step API which returns one bool instead of two."
             )
 
     def step(self, action):

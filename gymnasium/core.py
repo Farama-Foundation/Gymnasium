@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 if sys.version_info[0:2] == (3, 6):
     warn(
-        "Gym minimally supports python 3.6 as the python foundation not longer supports the version, please update your version to 3.7+"
+        "Gymnasium minimally supports python 3.6 as the python foundation not longer supports the version, please update your version to 3.7+"
     )
 
 ObsType = TypeVar("ObsType")
@@ -33,7 +33,7 @@ RenderFrame = TypeVar("RenderFrame")
 
 
 class Env(Generic[ObsType, ActType]):
-    r"""The main OpenAI Gym class.
+    r"""The main Gymnasium class.
 
     It encapsulates an environment with arbitrary behind-the-scenes dynamics.
     An environment can be partially or fully observed.
@@ -370,7 +370,7 @@ class ObservationWrapper(Wrapper):
             def observation(self, obs):
                 return obs["target"] - obs["agent"]
 
-    Among others, Gym provides the observation wrapper :class:`TimeAwareObservation`, which adds information about the
+    Among others, Gymnasium provides the observation wrapper :class:`TimeAwareObservation`, which adds information about the
     index of the timestep to the observation.
     """
 
@@ -452,7 +452,7 @@ class ActionWrapper(Wrapper):
             print(wrapped_env.action_space)         #Discrete(4)
 
 
-    Among others, Gym provides the action wrappers :class:`ClipAction` and :class:`RescaleAction`.
+    Among others, Gymasnium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction`.
     """
 
     def step(self, action):
