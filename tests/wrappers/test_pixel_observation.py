@@ -4,12 +4,12 @@ from typing import Optional
 import numpy as np
 import pytest
 
-import gym
-from gym import spaces
-from gym.wrappers.pixel_observation import STATE_KEY, PixelObservationWrapper
+import gymnasium
+from gymnasium import spaces
+from gymnasium.wrappers.pixel_observation import STATE_KEY, PixelObservationWrapper
 
 
-class FakeEnvironment(gym.Env):
+class FakeEnvironment(gymnasium.Env):
     def __init__(self, render_mode="single_rgb_array"):
         self.action_space = spaces.Box(shape=(1,), low=-1, high=1, dtype=np.float32)
         self.render_mode = render_mode

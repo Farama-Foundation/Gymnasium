@@ -3,7 +3,7 @@ import re
 import numpy as np
 import pytest
 
-from gym.spaces import Text
+from gymnasium.spaces import Text
 
 
 def test_sample_mask():

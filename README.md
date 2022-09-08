@@ -25,13 +25,13 @@ We support Python 3.7, 3.8, 3.9 and 3.10 on Linux and macOS. We will accept PRs 
 The Gym API's API models environments as simple Python `env` classes. Creating environment instances and interacting with them is very simple- here's an example using the "CartPole-v1" environment:
 
 ```python
-import gym
+import gymnasium as gym
 env = gym.make("CartPole-v1")
 observation, info = env.reset(seed=42)
 
 for _ in range(1000):
     action = env.action_space.sample()
-    observation, reward, terminated, truncarted, info = env.step(action)
+    observation, reward, terminated, truncated, info = env.step(action)
 
     if terminated or truncated:
         observation, info = env.reset()
@@ -43,7 +43,7 @@ env.close()
 * [Stable Baselines 3](https://github.com/DLR-RM/stable-baselines3) is a learning library based on the Gym API. It is designed to cater to complete beginners in the field who want to start learning things quickly.
 * [RL Baselines3 Zoo](https://github.com/DLR-RM/rl-baselines3-zoo) builds upon SB3, containing optimal hyperparameters for Gym environments as well as code to easily find new ones.
 * [Tianshou](https://github.com/thu-ml/tianshou) is a learning library that's geared towards very experienced users and is design to allow for ease in complex algorithm modifications.
-* [RLlib](https://docs.ray.io/en/latest/rllib/index.html) is a learning library that allows for distributed training and inferencing and supports an extraordinarily large number of features throughout the reinforcement learning space.
+* [RLlib](https://docs.ray.io/en/latest/rllib/index.html) is a learning library that allows for distributed training and inference and supports an extraordinarily large number of features throughout the reinforcement learning space.
 * [PettingZoo](https://github.com/Farama-Foundation/PettingZoo) is like Gym, but for environments with multiple agents.
 
 ## Environment Versioning
@@ -70,4 +70,4 @@ A whitepaper from when Gym just came out is available https://arxiv.org/pdf/1606
 
 ## Release Notes
 
-There used to be release notes for all the new Gym versions here. New release notes are being moved to [releases page](https://github.com/openai/gym/releases) on GitHub, like most other libraries do. Old notes can be viewed [here](https://github.com/openai/gym/blob/31be35ecd460f670f0c4b653a14c9996b7facc6c/README.rst).
+There used to be release notes for all the new Gym versions here. New release notes are being moved to [releases page](https://github.com/Farama-Foundation/Gymnasium/releases) on GitHub, like most other libraries do.

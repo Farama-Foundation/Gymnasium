@@ -6,14 +6,14 @@ from multiprocessing.sharedctypes import SynchronizedArray
 import numpy as np
 import pytest
 
-from gym.error import CustomSpaceError
-from gym.spaces import Dict, Tuple
-from gym.vector.utils.shared_memory import (
+from gymnasium.error import CustomSpaceError
+from gymnasium.spaces import Dict, Tuple
+from gymnasium.vector.utils.shared_memory import (
     create_shared_memory,
     read_from_shared_memory,
     write_to_shared_memory,
 )
-from gym.vector.utils.spaces import BaseGymSpaces
+from gymnasium.vector.utils.spaces import BaseGymSpaces
 from tests.vector.utils import custom_spaces, spaces
 
 expected_types = [

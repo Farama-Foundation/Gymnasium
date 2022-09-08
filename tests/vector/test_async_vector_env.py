@@ -4,9 +4,9 @@ from multiprocessing import TimeoutError
 import numpy as np
 import pytest
 
-from gym.error import AlreadyPendingCallError, ClosedEnvironmentError, NoAsyncCallError
-from gym.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gym.vector.async_vector_env import AsyncVectorEnv
+from gymnasium.error import AlreadyPendingCallError, ClosedEnvironmentError, NoAsyncCallError
+from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
+from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from tests.vector.utils import (
     CustomSpace,
     make_custom_space_env,

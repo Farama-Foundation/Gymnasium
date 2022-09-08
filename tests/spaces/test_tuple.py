@@ -1,13 +1,13 @@
 import numpy as np
 import pytest
 
-import gym.spaces
-from gym.spaces import Box, Dict, Discrete, MultiBinary, Tuple
-from gym.utils.env_checker import data_equivalence
+import gymnasium.spaces
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, Tuple
+from gymnasium.utils.env_checker import data_equivalence
 
 
 def test_sequence_inheritance():
-    """The gym Tuple space inherits from abc.Sequences, this test checks all functions work"""
+    """The gymnasium Tuple space inherits from abc.Sequences, this test checks all functions work"""
     spaces = [Discrete(5), Discrete(10), Discrete(5)]
     tuple_space = Tuple(spaces)
 
@@ -79,7 +79,7 @@ def test_seeds(space, seed, expected_len):
     "space_fn",
     [
         lambda: Tuple(["abc"]),
-        lambda: Tuple([gym.spaces.Box(0, 1), "abc"]),
+        lambda: Tuple([gymnasium.spaces.Box(0, 1), "abc"]),
         lambda: Tuple("abc"),
     ],
 )
@@ -89,19 +89,19 @@ def test_bad_space_calls(space_fn):
 
 
 def test_contains_promotion():
-    space = gym.spaces.Tuple((gym.spaces.Box(0, 1), gym.spaces.Box(-1, 0, (2,))))
+    space = gymnasium.spaces.Tuple((gymnasium.spaces.Box(0, 1), gymnasium.spaces.Box(-1, 0, (2,))))
 
     assert (
         np.array([0.0], dtype=np.float32),
         np.array([0.0, 0.0], dtype=np.float32),
     ) in space
 
-    space = gym.spaces.Tuple((gym.spaces.Box(0, 1), gym.spaces.Box(-1, 0, (1,))))
+    space = gymnasium.spaces.Tuple((gymnasium.spaces.Box(0, 1), gymnasium.spaces.Box(-1, 0, (1,))))
     assert np.array([[0.0], [0.0]], dtype=np.float32) in space
 
 
 def test_bad_seed():
-    space = gym.spaces.Tuple((gym.spaces.Box(0, 1), gym.spaces.Box(0, 1)))
+    space = gymnasium.spaces.Tuple((gymnasium.spaces.Box(0, 1), gymnasium.spaces.Box(0, 1)))
     with pytest.raises(
         TypeError,
         match="Expected seed type: list, tuple, int or None, actual type: <class 'float'>",

@@ -8,8 +8,8 @@ import pytest
 from pygame import KEYDOWN, KEYUP, QUIT, event
 from pygame.event import Event
 
-import gym
-from gym.utils.play import MissingKeysToAction, PlayableGame, play
+import gymnasium
+from gymnasium.utils.play import MissingKeysToAction, PlayableGame, play
 from tests.testing_env import GenericTestEnv
 
 RELEVANT_KEY_1 = ord("a")  # 97
@@ -24,7 +24,7 @@ PlayableEnv = partial(
 )
 
 
-class KeysToActionWrapper(gym.Wrapper):
+class KeysToActionWrapper(gymnasium.Wrapper):
     def __init__(self, env, keys_to_action):
         super().__init__(env)
         self.keys_to_action = keys_to_action
@@ -175,7 +175,7 @@ def test_play_loop_real_env():
 
             return obs_t, obs_tp1, action, rew, terminated, truncated, info
 
-        env = gym.make(ENV, render_mode="rgb_array", disable_env_checker=True)
+        env = gymnasium.make(ENV, render_mode="rgb_array", disable_env_checker=True)
         env.reset(seed=SEED)
         keys_to_action = (
             dummy_keys_to_action_str() if str_keys else dummy_keys_to_action()
@@ -188,7 +188,7 @@ def test_play_loop_real_env():
             action = keys_to_action[chr(e.key) if str_keys else (e.key,)]
             obs, _, _, _, _ = env.step(action)
 
-        env_play = gym.make(ENV, render_mode="rgb_array", disable_env_checker=True)
+        env_play = gymnasium.make(ENV, render_mode="rgb_array", disable_env_checker=True)
         if apply_wrapper:
             env_play = KeysToActionWrapper(env, keys_to_action=keys_to_action)
             assert hasattr(env_play, "get_keys_to_action")
@@ -206,4 +206,4 @@ def test_play_loop_real_env():
 
 def test_play_no_keys():
     with pytest.raises(MissingKeysToAction):
-        play(gym.make("CartPole-v1"))
+        play(gymnasium.make("CartPole-v1"))
