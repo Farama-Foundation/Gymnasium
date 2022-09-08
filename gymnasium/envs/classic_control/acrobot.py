@@ -110,8 +110,7 @@ class AcrobotEnv(core.Env):
     env.env.book_or_nips = 'nips'
     ```
 
-    See the following note and
-    the [implementation](https://github.com/openai/gym/blob/master/gym/envs/classic_control/acrobot.py) for details:
+    See the following note for details:
 
     > The dynamics equations were missing some terms in the NIPS paper which
             are present in the book. R. Sutton confirmed in personal correspondence
