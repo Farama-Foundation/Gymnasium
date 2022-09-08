@@ -33,7 +33,7 @@ RenderFrame = TypeVar("RenderFrame")
 
 
 class Env(Generic[ObsType, ActType]):
-    r"""The main OpenAI Gym class.
+    r"""The main Gym class.
 
     It encapsulates an environment with arbitrary behind-the-scenes dynamics.
     An environment can be partially or fully observed.
