@@ -4,8 +4,8 @@ import warnings
 import numpy as np
 import pytest
 
-import gym
-from gym.wrappers.env_checker import PassiveEnvChecker
+import gymnasium
+from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_initialised_envs
 from tests.testing_env import GenericTestEnv
@@ -27,7 +27,7 @@ def test_passive_checker_wrapper_warnings(env):
 
     for warning in caught_warnings:
         if warning.message.args[0] not in PASSIVE_CHECK_IGNORE_WARNING:
-            raise gym.error.Error(f"Unexpected warning: {warning.message}")
+            raise gymnasium.error.Error(f"Unexpected warning: {warning.message}")
 
 
 @pytest.mark.parametrize(
@@ -39,7 +39,7 @@ def test_passive_checker_wrapper_warnings(env):
         ),
         (
             GenericTestEnv(action_space="error"),
-            "action space does not inherit from `gym.spaces.Space`, actual type: <class 'str'>",
+            "action space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ),
         (
             GenericTestEnv(observation_space=None),
@@ -47,7 +47,7 @@ def test_passive_checker_wrapper_warnings(env):
         ),
         (
             GenericTestEnv(observation_space="error"),
-            "observation space does not inherit from `gym.spaces.Space`, actual type: <class 'str'>",
+            "observation space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ),
     ],
 )

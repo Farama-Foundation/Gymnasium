@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from gym.spaces import Box, Discrete
-from gym.wrappers import AtariPreprocessing, StepAPICompatibility
+from gymnasium.spaces import Box, Discrete
+from gymnasium.wrappers import AtariPreprocessing, StepAPICompatibility
 from tests.testing_env import GenericTestEnv, old_step_fn
 
 

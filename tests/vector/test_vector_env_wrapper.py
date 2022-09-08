@@ -1,6 +1,6 @@
 import numpy as np
 
-from gym.vector import VectorEnvWrapper, make
+from gymnasium.vector import VectorEnvWrapper, make
 
 
 class DummyWrapper(VectorEnvWrapper):

@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 
-from gym.spaces import (
+from gymnasium.spaces import (
     Box,
     Dict,
     Discrete,
