@@ -3,7 +3,7 @@ import re
 import numpy as np
 import pytest
 
-from gym.spaces import Discrete, Graph, GraphInstance
+from gymnasium.spaces import Discrete, Graph, GraphInstance
 
 
 def test_node_space_sample():

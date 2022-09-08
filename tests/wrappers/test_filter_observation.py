@@ -3,12 +3,12 @@ from typing import Optional, Tuple
 import numpy as np
 import pytest
 
-import gym
-from gym import spaces
-from gym.wrappers.filter_observation import FilterObservation
+import gymnasium
+from gymnasium import spaces
+from gymnasium.wrappers.filter_observation import FilterObservation
 
 
-class FakeEnvironment(gym.Env):
+class FakeEnvironment(gymnasium.Env):
     def __init__(
         self, render_mode=None, observation_keys: Tuple[str, ...] = ("state",)
     ):

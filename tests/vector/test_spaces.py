@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from gym.spaces import Box, Dict, MultiDiscrete, Space, Tuple
-from gym.vector.utils.spaces import batch_space, iterate
+from gymnasium.spaces import Box, Dict, MultiDiscrete, Space, Tuple
+from gymnasium.vector.utils.spaces import batch_space, iterate
 from tests.vector.utils import CustomSpace, assert_rng_equal, custom_spaces, spaces
 
 expected_batch_spaces_4 = [

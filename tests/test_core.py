@@ -3,8 +3,8 @@ from typing import Optional
 import numpy as np
 import pytest
 
-from gym import core, spaces
-from gym.wrappers import OrderEnforcing, TimeLimit
+from gymnasium import core, spaces
+from gymnasium.wrappers import OrderEnforcing, TimeLimit
 
 
 class ArgumentEnv(core.Env):

@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
 
-from gym.envs.registration import EnvSpec
-from gym.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gym.vector.sync_vector_env import SyncVectorEnv
+from gymnasium.envs.registration import EnvSpec
+from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
+from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from tests.envs.utils import all_testing_env_specs
 from tests.vector.utils import (
     CustomSpace,

@@ -1,12 +1,12 @@
 import pytest
 
-import gym
-from gym.envs.classic_control.pendulum import PendulumEnv
-from gym.wrappers import TimeLimit
+import gymnasium
+from gymnasium.envs.classic_control.pendulum import PendulumEnv
+from gymnasium.wrappers import TimeLimit
 
 
 def test_time_limit_reset_info():
-    env = gym.make("CartPole-v1", disable_env_checker=True)
+    env = gymnasium.make("CartPole-v1", disable_env_checker=True)
     env = TimeLimit(env)
     ob_space = env.observation_space
     obs, info = env.reset()

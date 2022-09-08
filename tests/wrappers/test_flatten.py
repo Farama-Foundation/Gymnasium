@@ -6,12 +6,12 @@ from typing import Optional
 import numpy as np
 import pytest
 
-import gym
-from gym.spaces import Box, Dict, flatten, unflatten
-from gym.wrappers import FlattenObservation
+import gymnasium
+from gymnasium.spaces import Box, Dict, flatten, unflatten
+from gymnasium.wrappers import FlattenObservation
 
 
-class FakeEnvironment(gym.Env):
+class FakeEnvironment(gymnasium.Env):
     def __init__(self, observation_space):
         self.observation_space = observation_space
 
