@@ -4,8 +4,6 @@ __email__ = "sanderschulhoff@gmail.com"
 import os
 import re
 from functools import reduce
-from os import mkdir, path
-from pydoc import doc
 
 import gymnasium
 import numpy as np
@@ -78,7 +76,10 @@ for i, (env_spec, env_type) in tqdm(enumerate(filtered_envs)):
         related_pages_meta = ""
         if i == 0 or not env_type == filtered_envs[i - 1][1]:
             related_pages_meta = "firstpage:\n"
-        elif i == len(filtered_envs) - 1 or not env_type == filtered_envs[i + 1][1]:
+        elif (
+            i == len(filtered_envs) - 1
+            or not env_type == filtered_envs[i + 1][1]
+        ):
             related_pages_meta = "lastpage:\n"
 
         # path for saving video
@@ -101,12 +102,18 @@ title: {title_env_name}
             + f" ../../_static/videos/{env_type}/{snake_env_name}.gif"
             + f" \n:width: 200px\n:name: {snake_env_name}\n```"
         )
-        info = f"This environment is part of the <a href='..'>{env_type_title} environments</a>. Please read that page first for general information."
-        env_table = f"|   |   |\n|---|---|\n"
+        info = (
+            "This environment is part of the"
+            + f"<a href='..'>{env_type_title} environments</a>."
+            + "Please read that page first for general information."
+        )
+        env_table = "|   |   |\n|---|---|\n"
         env_table += f"| Action Space | {env.action_space} |\n"
 
         if env.observation_space.shape:
-            env_table += f"| Observation Shape | {env.observation_space.shape} |\n"
+            env_table += (
+                f"| Observation Shape | {env.observation_space.shape} |\n"
+            )
 
             if hasattr(env.observation_space, "high"):
                 high = env.observation_space.high

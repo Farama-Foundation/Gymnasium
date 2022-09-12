@@ -3,7 +3,6 @@ __email__ = "sanderschulhoff@gmail.com"
 
 import os
 import re
-from os import mkdir, path
 
 import gymnasium
 from PIL import Image
@@ -11,7 +10,7 @@ from tqdm import tqdm
 
 from utils import kill_strs
 
-# snake to camel case: https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
+# snake to camel case: https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case # noqa: E501
 pattern = re.compile(r"(?<!^)(?=[A-Z])")
 # how many steps to record an env for
 LENGTH = 300
@@ -46,7 +45,7 @@ for env_spec in tqdm(gymnasium.envs.registry.values()):
         #     env_name = pattern.sub('_', env_name).lower()
 
         # path for saving video
-        # v_path = os.path.join("..", "pages", "environments", env_type, "videos")
+        # v_path = os.path.join("..", "pages", "environments", env_type, "videos") # noqa: E501
         # # create dir if it doesnt exist
         # if not path.isdir(v_path):
         #     mkdir(v_path)
@@ -77,7 +76,9 @@ for env_spec in tqdm(gymnasium.envs.registry.values()):
         # make sure video doesnt already exist
         # if not os.path.exists(os.path.join(v_path, env_name + ".gif")):
         frames[0].save(
-            os.path.join("..", "_static", "videos", env_type, env_name + ".gif"),
+            os.path.join(
+                "..", "_static", "videos", env_type, env_name + ".gif"
+            ),
             save_all=True,
             append_images=frames[1:],
             duration=50,
