@@ -46,7 +46,7 @@ for env_spec in tqdm(gymnasium.envs.registry.values()):
 
         # path for saving video
         # v_path = os.path.join("..", "pages", "environments", env_type, "videos") # noqa: E501
-        # # create dir if it doesnt exist
+        # # create dir if it doesn't exist
         # if not path.isdir(v_path):
         #     mkdir(v_path)
 
@@ -73,7 +73,7 @@ for env_spec in tqdm(gymnasium.envs.registry.values()):
 
         env.close()
 
-        # make sure video doesnt already exist
+        # make sure video doesn't already exist
         # if not os.path.exists(os.path.join(v_path, env_name + ".gif")):
         frames[0].save(
             os.path.join(

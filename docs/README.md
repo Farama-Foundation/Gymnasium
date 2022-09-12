@@ -43,7 +43,7 @@ cd docs
 make dirhtml _build
 ```
 
-To rebuild the documentation automatically everytime a change is made:
+To rebuild the documentation automatically every time a change is made:
 
 ```
 cd docs

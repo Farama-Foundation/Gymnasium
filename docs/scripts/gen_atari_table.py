@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 
 def shortened_repr(lst):
-    assert all((isinstance(item, int) for item in lst))
+    assert all(isinstance(item, int) for item in lst)
     assert len(set(lst)) == len(lst)
     lst = sorted(lst)
 

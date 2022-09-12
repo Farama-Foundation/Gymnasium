@@ -21,7 +21,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 ### Description
 
 You control the orange player playing against a computer-controlled blue player. The game follows the rules of tennis. 
-The first player to win atleast 6 games with a margin of atleast two games wins the match. If the score is tied at 6-6, the first player to go 2 games up wins the match. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555)
+The first player to win at least 6 games with a margin of at least two games wins the match. If the score is tied at 6-6, the first player to go 2 games up wins the match. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555)
 
 ### Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.

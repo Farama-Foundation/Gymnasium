@@ -19,8 +19,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Import | `gymnasium.make("ALE/Berzerk-v5")` | 
 
 ### Description
-You are stuck in a maze with evil robots. You must destroy them and avoid touching the walls of the maze, as this will
-kill you. You may be awarded extra lifes after scoring a sufficient number of points, depending on the game mode.
+You are stuck in a maze with evil robots. You must destroy them and avoid touching the walls of the maze, as this will kill you. You may be awarded extra lives after scoring a sufficient number of points, depending on the game mode.
 You may also be chased by an undefeatable enemy, Evil Otto, that you must avoid. Evil Otto does not appear in the default mode.
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=866&itemTypeID=HTMLMANUAL)
 

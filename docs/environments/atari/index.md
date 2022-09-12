@@ -177,7 +177,7 @@ The differences are listed in the following table:
 > Version v5 follows the best practices outlined in [[2]](#2). Thus, it is recommended to transition to v5 and
 > customize the environment using the arguments above, if necessary.
 
-For each Atari game, several different configurations are registered in Gymnasium. The naming schemes are analgous for
+For each Atari game, several different configurations are registered in Gymnasium. The naming schemes are analogous for
 v0 and v4. Let us take a look at all variations of Amidar-v0 that are registered with gymnasium:
 
 |Name                          |`obs_type=`|`frameskip=`|`repeat_action_probability=`|`full_action_space=`|

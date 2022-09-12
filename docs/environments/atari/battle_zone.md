@@ -21,7 +21,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 
 ### Description
 You control a tank and must destroy enemy vehicles. This game is played in a first-person perspective and creates 
-a 3D illusion. A radar screen shows enemies around you. You start with 5 lifes and gain up to 2 extra lifes if you reach
+a 3D illusion. A radar screen shows enemies around you. You start with 5 lives and gain up to 2 extra lives if you reach
 a sufficient score.
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=859&itemTypeID=HTMLMANUAL)
 
