@@ -7,9 +7,7 @@ if __name__ == "__main__":
 
     with open(filePath, "r+") as fp:
         content = fp.read()
-        content = content.replace('href="../', 'href="/').replace(
-            'src="../', 'src="/'
-        )
+        content = content.replace('href="../', 'href="/').replace('src="../', 'src="/')
         fp.seek(0)
         fp.truncate()
 

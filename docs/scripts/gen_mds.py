@@ -76,10 +76,7 @@ for i, (env_spec, env_type) in tqdm(enumerate(filtered_envs)):
         related_pages_meta = ""
         if i == 0 or not env_type == filtered_envs[i - 1][1]:
             related_pages_meta = "firstpage:\n"
-        elif (
-            i == len(filtered_envs) - 1
-            or not env_type == filtered_envs[i + 1][1]
-        ):
+        elif i == len(filtered_envs) - 1 or not env_type == filtered_envs[i + 1][1]:
             related_pages_meta = "lastpage:\n"
 
         # path for saving video
@@ -111,9 +108,7 @@ title: {title_env_name}
         env_table += f"| Action Space | {env.action_space} |\n"
 
         if env.observation_space.shape:
-            env_table += (
-                f"| Observation Shape | {env.observation_space.shape} |\n"
-            )
+            env_table += f"| Observation Shape | {env.observation_space.shape} |\n"
 
             if hasattr(env.observation_space, "high"):
                 high = env.observation_space.high

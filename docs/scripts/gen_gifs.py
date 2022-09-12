@@ -76,9 +76,7 @@ for env_spec in tqdm(gymnasium.envs.registry.values()):
         # make sure video doesn't already exist
         # if not os.path.exists(os.path.join(v_path, env_name + ".gif")):
         frames[0].save(
-            os.path.join(
-                "..", "_static", "videos", env_type, env_name + ".gif"
-            ),
+            os.path.join("..", "_static", "videos", env_type, env_name + ".gif"),
             save_all=True,
             append_images=frames[1:],
             duration=50,

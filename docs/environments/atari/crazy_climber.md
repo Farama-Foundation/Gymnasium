@@ -23,7 +23,7 @@ You are a climber trying to reach the top of four builidings, while avoiding obs
 windows and falling objects. When you receive damage (windows closing or objects) you will fall and
 lose one life; you have a total of 5 lives before the end games. At the top of each building, there's
 a helicopter which you need to catch to get to the next building. The goal is to climb as fast as
-possible while receiving the least amout of damage. 
+possible while receiving the least amount of damage. 
 
 
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=113).

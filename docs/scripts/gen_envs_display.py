@@ -116,9 +116,7 @@ def create_grid_cell(type_id, env_id, base_path):
 def generate_page(env, limit=-1, base_path=""):
     env_type_id = env["id"]
     env_list = env["list"]
-    cells = [
-        create_grid_cell(env_type_id, env_id, base_path) for env_id in env_list
-    ]
+    cells = [create_grid_cell(env_type_id, env_id, base_path) for env_id in env_list]
     non_limited_page = limit == -1 or limit >= len(cells)
     if non_limited_page:
         cells = "\n".join(cells)
@@ -167,9 +165,7 @@ if __name__ == "__main__":
             fp.close()
 
             page = generate_page(type_dict, base_path="../")
-            fp = open(
-                f"{envs_path}/complete_list.html", "w+", encoding="utf-8"
-            )
+            fp = open(f"{envs_path}/complete_list.html", "w+", encoding="utf-8")
             fp.write(page)
             fp.close()
 
