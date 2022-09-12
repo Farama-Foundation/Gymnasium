@@ -1,7 +1,7 @@
 # stolen from python docs
 def trim(docstring):
     if not docstring:
-        return ''
+        return ""
     # Convert tabs to spaces (following the normal Python rules)
     # and split into a list of lines:
     lines = docstring.expandtabs().splitlines()
@@ -22,9 +22,23 @@ def trim(docstring):
     while trimmed and not trimmed[0]:
         trimmed.pop(0)
     # Return a single string:
-    return '\n'.join(trimmed)
+    return "\n".join(trimmed)
+
 
 # dont want envs which contain these
-kill_strs = ["eterministic", "ALE", "-ram", 
-"Frameskip", "Hard", "LanderContinu", "8x8", "uessing", "otter", "oinflip", "hain",
-"oulette", "DomainRandom", "RacingDiscrete"]
+kill_strs = [
+    "eterministic",
+    "ALE",
+    "-ram",
+    "Frameskip",
+    "Hard",
+    "LanderContinu",
+    "8x8",
+    "uessing",
+    "otter",
+    "oinflip",
+    "hain",
+    "oulette",
+    "DomainRandom",
+    "RacingDiscrete",
+]

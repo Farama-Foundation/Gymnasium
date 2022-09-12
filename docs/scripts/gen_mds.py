@@ -1,17 +1,17 @@
 __author__ = "Sander Schulhoff"
 __email__ = "sanderschulhoff@gmail.com"
 
-from functools import reduce
-from pydoc import doc
-import gymnasium
 import os
-from os import mkdir, path
-
 import re
+from functools import reduce
+from os import mkdir, path
+from pydoc import doc
+
+import gymnasium
 import numpy as np
-from utils import trim
-from utils import kill_strs
 from tqdm import tqdm
+
+from utils import kill_strs, trim
 
 LAYOUT = "env"
 
@@ -149,4 +149,3 @@ title: {title_env_name}
         file.close()
     except Exception as e:
         print(e)
-
