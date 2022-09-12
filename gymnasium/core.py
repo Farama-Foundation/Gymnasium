@@ -452,7 +452,7 @@ class ActionWrapper(Wrapper):
             print(wrapped_env.action_space)         #Discrete(4)
 
 
-    Among others, Gymasnium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction`.
+    Among others, Gymnasium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction`.
     """
 
     def step(self, action):
