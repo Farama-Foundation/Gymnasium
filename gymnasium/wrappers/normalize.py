@@ -3,6 +3,7 @@ import numpy as np
 
 import gymnasium
 
+
 class RunningMeanStd:
     """Tracks the mean, variance and count of values."""
 
