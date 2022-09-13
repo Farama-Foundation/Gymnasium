@@ -106,9 +106,8 @@ class Env(Generic[ObsType, ActType]):
                 hidden from observations, or individual reward terms that are combined to produce the total reward.
                 It also can contain information that distinguishes truncation and termination, however this is deprecated in favour
                 of returning two booleans, and will be removed in a future version.
-
-            
-            done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will return undefined results.
+            done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will
+                return undefined results.
                 A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,
                 a certain timelimit was exceeded, or the physics simulation has entered an invalid state.
         """
