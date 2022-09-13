@@ -1,0 +1,42 @@
+{% extends "furo/base.html" %}
+
+{%- block regular_scripts -%}
+{{ super() }}
+
+<script>
+    (() => {
+        if (!localStorage.getItem("shownCookieAlert")) {
+            const boxElem = document.createElement("div");
+            boxElem.classList.add("cookie_alert");
+            const containerElem = document.createElement("div");
+            containerElem.classList.add("cookie_container");
+            const textElem = document.createElement("p");
+            textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                Google Analytics</a> to collect statistics. You can disable it by blocking
+                                the JavaScript coming from www.google-analytics.com.`;
+                                containerElem.appendChild(textElem);
+            const closeBtn = document.createElement("button");
+            closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
+            closeBtn.onclick = () => {
+                localStorage.setItem("shownCookieAlert", "true");
+                boxElem.style.display = "none";
+            }
+            containerElem.appendChild(closeBtn);
+            boxElem.appendChild(containerElem);
+            document.body.appendChild(boxElem);
+        }
+    })()
+
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JGXSLW7N06"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JGXSLW7N06');
+</script>
+
+{%- endblock regular_scripts -%}

@@ -1,0 +1,35 @@
+.env-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+.env-grid__cell {
+    display: flex;
+    flex-direction: column;
+    width: 180px;
+    height: 180px;
+    padding: 10px;
+}
+.cell__image-container {
+    display: flex;
+    height: 148px;
+    justify-content: center;
+}
+.cell__image-container img {
+    max-height: 100%;
+}
+.cell__title {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: flex-end;
+    height: 32px;
+    line-height: 16px;
+}
+.more-btn {
+    width: 240px;
+    margin: 12px auto;
+    display: block;
+}

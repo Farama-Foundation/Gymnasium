@@ -9,7 +9,7 @@ repos:
     hooks:
       - id: codespell
         args:
-          - --ignore-words-list=nd,reacher,thist,ths, ure, referenc
+          - --ignore-words-list=nd,reacher,thist,ths, ure, referenc,wile
   - repo: https://gitlab.com/PyCQA/flake8
     rev: 4.0.1
     hooks:
@@ -30,7 +30,7 @@ repos:
     rev: 6.1.1  # pick a git hash / tag to point to
     hooks:
       - id: pydocstyle
-        exclude: ^(gymnasium/version.py)|(gymnasium/envs/)|(tests/)
+        exclude: ^(gymnasium/version.py)|(gymnasium/envs/)|(tests/)|(docs/)
         args:
           - --source
           - --explain
