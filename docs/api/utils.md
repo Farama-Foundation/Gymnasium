@@ -48,6 +48,7 @@ title: Utils
 ### Invasive
 
 ```{eval-rst}
+.. autofunction:: gymnasium.utils.env_checker.check_env
 .. autofunction:: gymnasium.utils.env_checker.data_equivalence
 .. autofunction:: gymnasium.utils.env_checker.check_reset_seed
 .. autofunction:: gymnasium.utils.env_checker.check_reset_options
@@ -55,6 +56,5 @@ title: Utils
 .. autofunction:: gymnasium.utils.env_checker.check_seed_deprecation
 .. autofunction:: gymnasium.utils.env_checker.check_reset_return_type
 .. autofunction:: gymnasium.utils.env_checker.check_space_limit
-.. autofunction:: gymnasium.utils.env_checker.check_env
 ``` 
 
