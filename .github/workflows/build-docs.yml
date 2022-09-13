@@ -26,10 +26,10 @@ jobs:
         run: sphinx-build -b dirhtml -v docs _build
 
       - name: Move 404
-        run: mv ./build/404/index.html ./build/404.html
+        run: mv _build/404/index.html _build/404.html
 
       - name: Update 404 links
-        run: python ./docs/scripts/move_404.py ./build/404.html
+        run: python ./docs/scripts/move_404.py _build/404.html
 
       - name: Remove .doctrees
         run: rm -r _build/.doctrees
