@@ -30,7 +30,7 @@ Each space implements the following functions:
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Box
-    
+
     .. automethod:: __init__
     .. automethod:: is_bounded
     .. automethod:: sample
@@ -106,16 +106,4 @@ Each space implements the following functions:
 
     .. automethod:: __init__
     .. automethod:: sample
-``` 
-
-## Utility Functions
-
-```{eval-rst}
-.. autofunction:: gymnasium.spaces.utils.flatdim
-
-.. autofunction:: gymnasium.spaces.utils.flatten_space
-
-.. autofunction:: gymnasium.spaces.utils.flatten
-
-.. autofunction:: gymnasium.spaces.utils.unflatten
 ``` 
