@@ -26,7 +26,9 @@ Each space implements the following functions:
 .. autofunction:: gymnasium.spaces.Space.from_jsonable
 ``` 
 
-## Box
+## Fundamental Spaces
+
+### Box
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Box
@@ -36,16 +38,7 @@ Each space implements the following functions:
     .. automethod:: sample
 ``` 
 
-## Dict
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.Dict
-
-    .. automethod:: __init__
-    .. automethod:: sample
-``` 
-
-## Discrete
+### Discrete
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Discrete
@@ -54,16 +47,7 @@ Each space implements the following functions:
     .. automethod:: sample
 ``` 
 
-## Graph
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.Graph
-
-    .. automethod:: __init__
-    .. automethod:: sample
-```
-
-## MultiBinary
+### MultiBinary
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.MultiBinary
@@ -72,7 +56,7 @@ Each space implements the following functions:
     .. automethod:: sample
 ``` 
 
-## MultiDiscrete
+### MultiDiscrete
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.MultiDiscrete
@@ -81,16 +65,7 @@ Each space implements the following functions:
     .. automethod:: sample
 ``` 
 
-## Sequence
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.Sequence
-
-    .. automethod:: __init__
-    .. automethod:: sample
-``` 
-
-## Text
+### Text
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Text
@@ -99,7 +74,36 @@ Each space implements the following functions:
     .. automethod:: sample
 ``` 
 
-## Tuple
+## Composite Spaces
+
+### Dict
+
+```{eval-rst}
+.. autoclass:: gymnasium.spaces.Dict
+
+    .. automethod:: __init__
+    .. automethod:: sample
+``` 
+
+### Graph
+
+```{eval-rst}
+.. autoclass:: gymnasium.spaces.Graph
+
+    .. automethod:: __init__
+    .. automethod:: sample
+```
+
+### Sequence
+
+```{eval-rst}
+.. autoclass:: gymnasium.spaces.Sequence
+
+    .. automethod:: __init__
+    .. automethod:: sample
+``` 
+
+### Tuple
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Tuple
