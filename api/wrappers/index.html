@@ -1,0 +1,742 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Vector" href="../vector/" /><link rel="prev" title="Spaces Utils" href="../spaces_utils/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/api/wrappers.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
+        <title>Wrappers - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Gymnasium Documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../core/">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spaces/">Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spaces_utils/">Spaces Utils</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/adventure/">Adventure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/alien/">Alien</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/amidar/">Amidar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/assault/">Assault</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asterix/">Asterix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asteroids/">Asteroids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/atlantis/">Atlantis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bank_heist/">Bank Heist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/battle_zone/">Battle Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bowling/">Bowling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/boxing/">Boxing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/breakout/">Breakout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/centipede/">Centipede</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/chopper_command/">Chopper Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/defender/">Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/demon_attack/">Demon Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/double_dunk/">Double Dunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gopher/">Gopher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ice_hockey/">IceHockey</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/jamesbond/">Jamesbond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/krull/">Krull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kung_fu_master/">Kung Fu Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/montezuma_revenge/">Montezuma Revenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ms_pacman/">Ms Pacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/phoenix/">Phoenix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pong/">Pong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pooyan/">Pooyan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/private_eye/">PrivateEye</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/qbert/">Qbert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/riverraid/">Riverraid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/road_runner/">Road Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/seaquest/">Seaquest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/solaris/">Solaris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tutankham/">Tutankham</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/venture/">Venture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_pinball/">Video Pinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/zaxxon/">Zaxxon</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third Party Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../content/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/vectorising/">Vectorising your environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://farama.org/donations">Donate</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="wrappers">
+<h1>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this heading">#</a></h1>
+<p>Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.
+Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can
+also be chained to combine their effects. Most environments that are generated via <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> will already be wrapped by default.</p>
+<p>In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along
+with (possibly optional) parameters to the wrapper’s constructor:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RescaleAction</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;BipedalWalker-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Box([-1. -1. -1. -1.], [1. 1. 1. 1.], (4,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RescaleAction</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">min_action</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_action</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Box([0. 0. 0. 0.], [1. 1. 1. 1.], (4,), float32)</span>
+</pre></div>
+</div>
+<p>You can access the environment underneath the <strong>first</strong> wrapper by using
+the <code class="docutils literal notranslate"><span class="pre">.env</span></code> attribute:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
+<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>If you want to get to the environment underneath <strong>all</strong> of the layers of wrappers,
+you can use the <code class="docutils literal notranslate"><span class="pre">.unwrapped</span></code> attribute.
+If the environment is already a bare environment, the <code class="docutils literal notranslate"><span class="pre">.unwrapped</span></code> attribute will just return itself.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
+<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">unwrapped</span>
+<span class="go">&lt;gymnasium.envs.box2d.bipedal_walker.BipedalWalker object at 0x7f87d70712d0&gt;</span>
+</pre></div>
+</div>
+<p>There are three common things you might want a wrapper to do:</p>
+<ul class="simple">
+<li><p>Transform actions before applying them to the base environment</p></li>
+<li><p>Transform observations that are returned by the base environment</p></li>
+<li><p>Transform rewards that are returned by the base environment</p></li>
+</ul>
+<p>Such wrappers can be easily implemented by inheriting from <code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code>, <code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code>, or <code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code> and implementing the
+respective transformation. If you need a wrapper to do more complicated tasks, you can inherit from the <code class="docutils literal notranslate"><span class="pre">Wrapper</span></code> class directly.
+The code that is presented in the following sections can also be found in
+the <a class="reference external" href="https://github.com/Farama-Foundation/gymnasium-examples">gymnasium-examples</a> repository</p>
+<section id="actionwrapper">
+<h2>ActionWrapper<a class="headerlink" href="#actionwrapper" title="Permalink to this heading">#</a></h2>
+<p>If you would like to apply a function to the action before passing it to the base environment,
+you can simply inherit from <code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code> and overwrite the method <code class="docutils literal notranslate"><span class="pre">action</span></code> to implement that transformation.
+The transformation defined in that method must take values in the base environment’s action space.
+However, its domain might differ from the original action space. In that case, you need to specify the new
+action space of the wrapper by setting <code class="docutils literal notranslate"><span class="pre">self.action_space</span></code> in the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method of your wrapper.</p>
+<p>Let’s say you have an environment with action space of type <code class="docutils literal notranslate"><span class="pre">Box</span></code>, but you would
+only like to use a finite subset of actions. Then, you might want to implement the following wrapper</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DiscreteActions</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">disc_to_cont</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disc_to_cont</span> <span class="o">=</span> <span class="n">disc_to_cont</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">disc_to_cont</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disc_to_cont</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLanderContinuous-v2&quot;</span><span class="p">)</span>
+    <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">DiscreteActions</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+                                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>         <span class="c1">#Discrete(4)</span>
+</pre></div>
+</div>
+<p>Among others, Gymnasium provides the action wrappers <code class="docutils literal notranslate"><span class="pre">ClipAction</span></code> and <code class="docutils literal notranslate"><span class="pre">RescaleAction</span></code>.</p>
+</section>
+<section id="observationwrapper">
+<h2>ObservationWrapper<a class="headerlink" href="#observationwrapper" title="Permalink to this heading">#</a></h2>
+<p>If you would like to apply a function to the observation that is returned by the base environment before passing
+it to learning code, you can simply inherit from <code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code> and overwrite the method <code class="docutils literal notranslate"><span class="pre">observation</span></code> to
+implement that transformation. The transformation defined in that method must be defined on the base environment’s
+observation space. However, it may take values in a different space. In that case, you need to specify the new
+observation space of the wrapper by setting <code class="docutils literal notranslate"><span class="pre">self.observation_space</span></code> in the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method of your wrapper.</p>
+<p>For example, you might have a 2D navigation task where the environment returns dictionaries as observations with keys <code class="docutils literal notranslate"><span class="pre">&quot;agent_position&quot;</span></code>
+and <code class="docutils literal notranslate"><span class="pre">&quot;target_position&quot;</span></code>. A common thing to do might be to throw away some degrees of freedom and only consider
+the position of the target relative to the agent, i.e. <code class="docutils literal notranslate"><span class="pre">observation[&quot;target_position&quot;]</span> <span class="pre">-</span> <span class="pre">observation[&quot;agent_position&quot;]</span></code>.
+For this, you could implement an observation wrapper like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RelativePosition</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;agent&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Among others, Gymnasium provides the observation wrapper <code class="docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code>, which adds information about the index of the timestep
+to the observation.</p>
+</section>
+<section id="rewardwrapper">
+<h2>RewardWrapper<a class="headerlink" href="#rewardwrapper" title="Permalink to this heading">#</a></h2>
+<p>If you would like to apply a function to the reward that is returned by the base environment before passing
+it to learning code, you can simply inherit from <code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code> and overwrite the method <code class="docutils literal notranslate"><span class="pre">reward</span></code> to
+implement that transformation. This transformation might change the reward range; to specify the reward range of
+your wrapper, you can simply define <code class="docutils literal notranslate"><span class="pre">self.reward_range</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>.</p>
+<p>Let us look at an example: Sometimes (especially when we do not have control over the reward because it is intrinsic), we want to clip the reward
+to a range to gain some numerical stability. To do that, we could, for instance, implement the following wrapper:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span> <span class="o">=</span> <span class="n">min_reward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_reward</span> <span class="o">=</span> <span class="n">max_reward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_reward</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="autoresetwrapper">
+<h2>AutoResetWrapper<a class="headerlink" href="#autoresetwrapper" title="Permalink to this heading">#</a></h2>
+<p>Some users may want a wrapper which will automatically reset its wrapped environment when its wrapped environment reaches the done state. An advantage of this environment is that it will never produce undefined behavior as standard gymnasium environments do when stepping beyond the done state.</p>
+<p>When calling step causes <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> to return <code class="docutils literal notranslate"><span class="pre">done=True</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code> is called,
+and the return format of <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> is as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_obs</span><span class="p">,</span> <span class="n">terminal_reward</span><span class="p">,</span> <span class="n">terminal_done</span><span class="p">,</span> <span class="n">info</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">new_obs</span></code> is the first observation after calling <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code>,</p>
+<p><code class="docutils literal notranslate"><span class="pre">terminal_reward</span></code> is the reward after calling <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>,
+prior to calling <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">terminal_done</span></code> is always <code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">info</span></code> is a dict containing all the keys from the info dict returned by
+the call to <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code>, with additional keys <code class="docutils literal notranslate"><span class="pre">terminal_observation</span></code>
+containing the observation returned by the last call to <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>
+and <code class="docutils literal notranslate"><span class="pre">terminal_info</span></code> containing the info dict returned by the last call
+to <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">done</span></code> is not true when <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> is called, <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> returns</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span>
+</pre></div>
+</div>
+<p>as normal.</p>
+<p>The AutoResetWrapper is not applied by default when calling <code class="docutils literal notranslate"><span class="pre">gymnasium.make()</span></code>, but can be applied by setting the optional <code class="docutils literal notranslate"><span class="pre">autoreset</span></code> argument to <code class="docutils literal notranslate"><span class="pre">True</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">autoreset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The AutoResetWrapper can also be applied using its constructor:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">AutoResetWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using the  AutoResetWrapper to collect rollouts, note
+that the when <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> returns <code class="docutils literal notranslate"><span class="pre">done</span></code>, a
+new observation from after calling <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code> is returned
+by <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> alongside the terminal reward and done state from the
+previous episode . If you need the terminal state from the previous
+episode, you need to retrieve it via the the <code class="docutils literal notranslate"><span class="pre">terminal_observation</span></code> key
+in the info dict. Make sure you know what you’re doing if you
+use this wrapper!</p>
+</div>
+</section>
+<section id="general-wrappers">
+<h2>General Wrappers<a class="headerlink" href="#general-wrappers" title="Permalink to this heading">#</a></h2>
+<p>Sometimes you might need to implement a wrapper that does some more complicated modifications (e.g. modify the
+reward based on data in <code class="docutils literal notranslate"><span class="pre">info</span></code> or change the rendering behavior).
+Such wrappers can be implemented by inheriting from <code class="docutils literal notranslate"><span class="pre">Wrapper</span></code>.</p>
+<ul class="simple">
+<li><p>You can set a new action or observation space by defining <code class="docutils literal notranslate"><span class="pre">self.action_space</span></code> or <code class="docutils literal notranslate"><span class="pre">self.observation_space</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>, respectively</p></li>
+<li><p>You can set new metadata and reward range by defining <code class="docutils literal notranslate"><span class="pre">self.metadata</span></code> and <code class="docutils literal notranslate"><span class="pre">self.reward_range</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>, respectively</p></li>
+<li><p>You can override <code class="docutils literal notranslate"><span class="pre">step</span></code>, <code class="docutils literal notranslate"><span class="pre">render</span></code>, <code class="docutils literal notranslate"><span class="pre">close</span></code> etc. If you do this, you can access the environment that was passed
+to your wrapper (which <em>still</em> might be wrapped in some other wrapper) by accessing the attribute <code class="docutils literal notranslate"><span class="pre">self.env</span></code>.</p></li>
+</ul>
+<p>Let’s also take a look at an example for this case. Most MuJoCo environments return a reward that consists
+of different terms: For instance, there might be a term that rewards the agent for completing the task and one term that
+penalizes large actions (i.e. energy usage). Usually, you can pass weight parameters for those terms during
+initialization of the environment. However, <em>Reacher</em> does not allow you to do this! Nevertheless, all individual terms
+of the reward are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code>, so let us build a wrapper for Reacher that allows us to weight those terms:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReacherRewardWrapper</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">reward_dist_weight</span><span class="p">,</span> <span class="n">reward_ctrl_weight</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">=</span> <span class="n">reward_dist_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_ctrl_weight</span> <span class="o">=</span> <span class="n">reward_ctrl_weight</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">*</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;reward_dist&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_ctrl_weight</span> <span class="o">*</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;reward_ctrl&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is <em>not</em> sufficient to use a <code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code> in this case!</p>
+</div>
+</section>
+<section id="available-wrappers">
+<h2>Available Wrappers<a class="headerlink" href="#available-wrappers" title="Permalink to this heading">#</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Arguments</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env:</span> <span class="pre">gymnasium.Env</span></code>, <code class="docutils literal notranslate"><span class="pre">noop_max:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">30</span></code>, <code class="docutils literal notranslate"><span class="pre">frame_skip:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></code>, <code class="docutils literal notranslate"><span class="pre">screen_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">84</span></code>, <code class="docutils literal notranslate"><span class="pre">terminal_on_life_loss:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></code>, <code class="docutils literal notranslate"><span class="pre">grayscale_obs:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></code>, <code class="docutils literal notranslate"><span class="pre">grayscale_newaxis:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></code>, <code class="docutils literal notranslate"><span class="pre">scale_obs:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></code></p></td>
+<td><p>Implements the best practices from Machado et al. (2018), “Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents” but will be deprecated soon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AutoResetWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code></p></td>
+<td><p>The wrapped environment will automatically reset when the done state is reached. Make sure you read the documentation before using this wrapper!</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ClipAction</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code></p></td>
+<td><p>Clip the continuous action to the valid bound specified by the environment’s <code class="docutils literal notranslate"><span class="pre">action_space</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FilterObservation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">filter_keys=None</span></code></p></td>
+<td><p>If you have an environment that returns dictionaries as observations, but you would like to only keep a subset of the entries, you can use this wrapper. <code class="docutils literal notranslate"><span class="pre">filter_keys</span></code> should be an iterable that contains the keys that are kept in the new observation. If it is <code class="docutils literal notranslate"><span class="pre">None</span></code>, all keys will be kept and the wrapper has no effect.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FlattenObservation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code></p></td>
+<td><p>Observation wrapper that flattens the observation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FrameStack</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">num_stack</span></code>, <code class="docutils literal notranslate"><span class="pre">lz4_compress=False</span></code></p></td>
+<td><p>Observation wrapper that stacks the observations in a rolling manner. For example, if the number of stacks is 4, then the returned observation contains the most recent 4 observations. Observations will be objects of type <code class="docutils literal notranslate"><span class="pre">LazyFrames</span></code>. This object can be cast to a numpy array via <code class="docutils literal notranslate"><span class="pre">np.asarray(obs)</span></code>. You can also access single frames or slices via the usual <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> syntax. If <code class="docutils literal notranslate"><span class="pre">lz4_compress</span></code> is set to true, the <code class="docutils literal notranslate"><span class="pre">LazyFrames</span></code> object will compress the frames internally (losslessly). The first observation (i.e. the one returned by <code class="docutils literal notranslate"><span class="pre">reset</span></code>) will consist of <code class="docutils literal notranslate"><span class="pre">num_stack</span></code> repitions of the first frame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GrayScaleObservation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">keep_dim=False</span></code></p></td>
+<td><p>Convert the image observation from RGB to gray scale. By default, the resulting observation will be 2-dimensional. If <code class="docutils literal notranslate"><span class="pre">keep_dim</span></code> is set to true, a singleton dimension will be added (i.e. the observations are of shape AxBx1).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">NormalizeReward</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma=0.99</span></code>, <code class="docutils literal notranslate"><span class="pre">epsilon=1e-8</span></code></p></td>
+<td><p>This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance. <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is a stability parameter and <code class="docutils literal notranslate"><span class="pre">gamma</span></code> is the discount factor that is used in the exponential moving average. The exponential moving average will have variance <code class="docutils literal notranslate"><span class="pre">(1</span> <span class="pre">-</span> <span class="pre">gamma)**2</span></code>. The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly instantiated or the policy was changed recently.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">epsilon=1e-8</span></code></p></td>
+<td><p>This wrapper will normalize observations s.t. each coordinate is centered with unit variance. The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was newly instantiated or the policy was changed recently. <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is a stability parameter that is used when scaling the observations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code></p></td>
+<td><p>This will produce an error if <code class="docutils literal notranslate"><span class="pre">step</span></code> is called before an initial <code class="docutils literal notranslate"><span class="pre">reset</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PixelObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">pixels_only=True</span></code>, <code class="docutils literal notranslate"><span class="pre">render_kwargs=None</span></code>, <code class="docutils literal notranslate"><span class="pre">pixel_keys=(&quot;pixels&quot;,)</span></code></p></td>
+<td><p>Augment observations by pixel values obtained via <code class="docutils literal notranslate"><span class="pre">render</span></code>. You can specify whether the original observations should be discarded entirely or be augmented by setting <code class="docutils literal notranslate"><span class="pre">pixels_only</span></code>. Also, you can provide keyword arguments for <code class="docutils literal notranslate"><span class="pre">render</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">deque_size=100</span></code></p></td>
+<td><p>This will keep track of cumulative rewards and episode lengths. At the end of an episode, the statistics of the episode will be added to <code class="docutils literal notranslate"><span class="pre">info</span></code>. Moreover, the rewards and episode lengths are stored in buffers that can be accessed via <code class="docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively. The size of these buffers can be set via <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RecordVideo</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">video_folder:</span> <span class="pre">str</span></code>, <code class="docutils literal notranslate"><span class="pre">episode_trigger:</span> <span class="pre">Callable[[int],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">step_trigger:</span> <span class="pre">Callable[[int],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">video_length:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">name_prefix:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&quot;rl-video&quot;</span></code></p></td>
+<td><p>This wrapper will record videos of rollouts. The results will be saved in the folder specified via <code class="docutils literal notranslate"><span class="pre">video_folder</span></code>. You can specify a prefix for the filenames via <code class="docutils literal notranslate"><span class="pre">name_prefix</span></code>. Usually, you only want to record the environment intermittently, say every hundreth episode. To allow this, you can pass <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code> or <code class="docutils literal notranslate"><span class="pre">step_trigger</span></code>. At most one of these should be passed. These functions will accept an episode index or step index, respectively. They should return a boolean that indicates whether a recording should be started at this point. If neither <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code>, nor <code class="docutils literal notranslate"><span class="pre">step_trigger</span></code> is passed, a default <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code> will be used. By default, the recording will be stopped once a done signal has been emitted by the environment. However, you can also create recordings of fixed length (possibly spanning several episodes) by passing a strictly positive value for <code class="docutils literal notranslate"><span class="pre">video_length</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RescaleAction</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">min_action</span></code>, <code class="docutils literal notranslate"><span class="pre">max_action</span></code></p></td>
+<td><p>Rescales the continuous action space of the environment to a range [<code class="docutils literal notranslate"><span class="pre">min_action</span></code>, <code class="docutils literal notranslate"><span class="pre">max_action</span></code>], where <code class="docutils literal notranslate"><span class="pre">min_action</span></code> and <code class="docutils literal notranslate"><span class="pre">max_action</span></code> are numpy arrays or floats.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ResizeObservation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+<td><p>This wrapper works on environments with image observations (or more generally observations of shape AxBxC) and resizes the observation to the shape given by the tuple <code class="docutils literal notranslate"><span class="pre">shape</span></code>. The argument <code class="docutils literal notranslate"><span class="pre">shape</span></code> may also be an integer. In that case, the observation is scaled to a square of sidelength <code class="docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code></p></td>
+<td><p>Augment the observation with current time step in the trajectory (by appending it to the observation). This can be useful to ensure that things stay Markov. Currently it only works with one-dimensional observation spaces.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TimeLimit</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">max_episode_steps=None</span></code></p></td>
+<td><p>Probably the most useful wrapper in Gymnasium. This wrapper will emit a done signal if the specified number of steps is exceeded in an episode. In order to be able to distinguish termination and truncation, you need to check <code class="docutils literal notranslate"><span class="pre">info</span></code>. If it does not contain the key <code class="docutils literal notranslate"><span class="pre">&quot;TimeLimit.truncated&quot;</span></code>, the environment did not reach the timelimit. Otherwise, <code class="docutils literal notranslate"><span class="pre">info[&quot;TimeLimit.truncated&quot;]</span></code> will be true if the episode was terminated because of the time limit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TransformObservation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">f</span></code></p></td>
+<td><p>This wrapper will apply <code class="docutils literal notranslate"><span class="pre">f</span></code> to observations</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TransformReward</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code>, <code class="docutils literal notranslate"><span class="pre">f</span></code></p></td>
+<td><p>This wrapper will apply <code class="docutils literal notranslate"><span class="pre">f</span></code> to rewards</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">VectorListInfo</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">env</span></code></p></td>
+<td><p>This wrapper will convert the info of a vectorized environment from the <code class="docutils literal notranslate"><span class="pre">dict</span></code> format to a <code class="docutils literal notranslate"><span class="pre">list</span></code> of dictionaries where the <em>i-th</em> dictionary contains info of the <em>i-th</em> environment. If using other wrappers that perform operation on info like <code class="docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code>, this need to be the outermost wrapper.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          <a class="prev-page" href="../spaces_utils/">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Spaces Utils</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Farama Foundation
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Wrappers</a><ul>
+<li><a class="reference internal" href="#actionwrapper">ActionWrapper</a></li>
+<li><a class="reference internal" href="#observationwrapper">ObservationWrapper</a></li>
+<li><a class="reference internal" href="#rewardwrapper">RewardWrapper</a></li>
+<li><a class="reference internal" href="#autoresetwrapper">AutoResetWrapper</a></li>
+<li><a class="reference internal" href="#general-wrappers">General Wrappers</a></li>
+<li><a class="reference internal" href="#available-wrappers">Available Wrappers</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    
+
+<script>
+    (() => {
+        if (!localStorage.getItem("shownCookieAlert")) {
+            const boxElem = document.createElement("div");
+            boxElem.classList.add("cookie_alert");
+            const containerElem = document.createElement("div");
+            containerElem.classList.add("cookie_container");
+            const textElem = document.createElement("p");
+            textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                Google Analytics</a> to collect statistics. You can disable it by blocking
+                                the JavaScript coming from www.google-analytics.com.`;
+                                containerElem.appendChild(textElem);
+            const closeBtn = document.createElement("button");
+            closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
+            closeBtn.onclick = () => {
+                localStorage.setItem("shownCookieAlert", "true");
+                boxElem.style.display = "none";
+            }
+            containerElem.appendChild(closeBtn);
+            boxElem.appendChild(containerElem);
+            document.body.appendChild(boxElem);
+        }
+    })()
+
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JGXSLW7N06"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JGXSLW7N06');
+</script></body>
+</html>
