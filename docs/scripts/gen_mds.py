@@ -5,11 +5,11 @@ import os
 import re
 from functools import reduce
 
-import gymnasium
 import numpy as np
 from tqdm import tqdm
-
 from utils import kill_strs, trim
+
+import gymnasium
 
 LAYOUT = "env"
 

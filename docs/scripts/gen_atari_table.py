@@ -1,6 +1,7 @@
-import gymnasium
 import tabulate
 from tqdm import tqdm
+
+import gymnasium
 
 
 def shortened_repr(lst):

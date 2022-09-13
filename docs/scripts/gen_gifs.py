@@ -4,11 +4,11 @@ __email__ = "sanderschulhoff@gmail.com"
 import os
 import re
 
-import gymnasium
 from PIL import Image
 from tqdm import tqdm
-
 from utils import kill_strs
+
+import gymnasium
 
 # snake to camel case: https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case # noqa: E501
 pattern = re.compile(r"(?<!^)(?=[A-Z])")
