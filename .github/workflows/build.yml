@@ -4,6 +4,8 @@ on: [pull_request, push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SDL_VIDEODRIVER: "x11"
     strategy:
       matrix:
         python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
