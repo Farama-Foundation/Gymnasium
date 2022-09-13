@@ -58,12 +58,3 @@ title: Utils
 .. autofunction:: gymnasium.utils.env_checker.check_env
 ``` 
 
-### Passive
-
-```{eval-rst}
-.. autofunction:: gymnasium.utils.passive_env_checker.check_space
-.. autofunction:: gymnasium.utils.passive_env_checker.check_obs
-.. autofunction:: gymnasium.utils.passive_env_checker.env_reset_passive_checker
-.. autofunction:: gymnasium.utils.passive_env_checker.env_step_passive_checker
-.. autofunction:: gymnasium.utils.passive_env_checker.env_render_passive_checker
-``` 
