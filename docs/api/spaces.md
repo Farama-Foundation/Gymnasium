@@ -33,7 +33,6 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Box
 
-    .. automethod:: __init__
     .. automethod:: is_bounded
     .. automethod:: sample
 ``` 
@@ -43,7 +42,6 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Discrete
  
-    .. autoclass:: __init__
     .. automethod:: sample
 ``` 
 
@@ -52,7 +50,6 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.MultiBinary
 
-    .. automethod:: __init__
     .. automethod:: sample
 ``` 
 
@@ -61,7 +58,6 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.MultiDiscrete
 
-    .. automethod:: __init__
     .. automethod:: sample
 ``` 
 
@@ -70,7 +66,6 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Text
 
-    .. automethod:: __init__
     .. automethod:: sample
 ``` 
 
@@ -81,7 +76,6 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Dict
 
-    .. automethod:: __init__
     .. automethod:: sample
 ``` 
 
@@ -90,7 +84,6 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Graph
 
-    .. automethod:: __init__
     .. automethod:: sample
 ```
 
@@ -99,7 +92,6 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Sequence
 
-    .. automethod:: __init__
     .. automethod:: sample
 ``` 
 
@@ -108,6 +100,5 @@ Each space implements the following functions:
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Tuple
 
-    .. automethod:: __init__
     .. automethod:: sample
 ``` 

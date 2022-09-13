@@ -9,12 +9,10 @@ title: Utils
 ```{eval-rst}
 .. autoclass:: gymnasium.utils.play.PlayableGame
     
-    .. automethod:: __init__
     .. automethod:: process_event
 
 .. autoclass:: gymnasium.utils.play.PlayPlot
     
-    .. automethod:: __init__
     .. automethod:: callback
 
 .. autofunction:: gymnasium.utils.play.display_arr
