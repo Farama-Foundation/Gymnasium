@@ -2,6 +2,7 @@ __author__ = "Sander Schulhoff"
 __email__ = "sanderschulhoff@gmail.com"
 
 import os
+import pdb
 import re
 from functools import reduce
 
@@ -9,45 +10,60 @@ import numpy as np
 from tqdm import tqdm
 from utils import kill_strs, trim
 
-import gymnasium
+import gymnasium as gym
 
 LAYOUT = "env"
 
 pattern = re.compile(r"(?<!^)(?=[A-Z])")
 
-gymnasium.logger.set_level(gymnasium.logger.DISABLED)
+gym.logger.set_level(gym.logger.DISABLED)
 
-all_envs = list(gymnasium.envs.registry.values())
+all_envs = list(gym.envs.registry.values())
 filtered_envs_by_type = {}
 
 # Obtain filtered list
 for env_spec in tqdm(all_envs):
-
     if any(x in str(env_spec.id) for x in kill_strs):
         continue
 
-    try:
-        env = gymnasium.make(env_spec.id)
-        split = str(type(env.unwrapped)).split(".")
-        env_type = split[2]
+    # gymnasium.envs.env_type.env.EnvClass
+    # ale_py.env.gym:AtariEnv
+    split = env_spec.entry_point.split(".")
+    # ignore gymnasium.envs.env_type:Env
+    env_module = split[0]
+    if len(split) < 4 and env_module != "ale_py":
+        continue
+    env_type = split[2] if env_module != "ale_py" else "atari"
+    env_version = env_spec.version
 
-        if env_type == "atari" or env_type == "unittest":
-            continue
+    # ignore unit test envs and old versions of atari envs
+    if env_module == "ale_py" or env_type == "unittest":
+        continue
+
+    try:
+        env = gym.make(env_spec.id)
+        split = str(type(env.unwrapped)).split(".")
+        env_name = split[3]
 
         if env_type not in filtered_envs_by_type.keys():
-            filtered_envs_by_type[env_type] = []
-        filtered_envs_by_type[env_type].append((env_spec, env_type))
+            filtered_envs_by_type[env_type] = {}
+        # only store new entries and higher versions
+        if env_name not in filtered_envs_by_type[env_type] or (
+            env_name in filtered_envs_by_type[env_type]
+            and env_version > filtered_envs_by_type[env_type][env_name].version
+        ):
+            filtered_envs_by_type[env_type][env_name] = env_spec
+
     except Exception as e:
         print(e)
-
 
 # Sort
 filtered_envs = list(
     reduce(
         lambda s, x: s + x,
         map(
-            lambda arr: sorted(arr, key=lambda x: x[0].name),
-            list(filtered_envs_by_type.values()),
+            lambda arr: sorted(arr, key=lambda x: x.name),
+            map(lambda dic: list(dic.values()), list(filtered_envs_by_type.values())),
         ),
         [],
     )
@@ -55,10 +71,11 @@ filtered_envs = list(
 
 
 # Update Docs
-for i, (env_spec, env_type) in tqdm(enumerate(filtered_envs)):
+for i, env_spec in tqdm(enumerate(filtered_envs)):
     print("ID:", env_spec.id)
+    env_type = env_spec.entry_point.split(".")[2]
     try:
-        env = gymnasium.make(env_spec.id)
+        env = gym.make(env_spec.id)
 
         # variants dont get their own pages
         e_n = str(env_spec).lower()
@@ -74,9 +91,12 @@ for i, (env_spec, env_type) in tqdm(enumerate(filtered_envs)):
         title_env_name = snake_env_name.replace("_", " ").title()
         env_type_title = env_type.replace("_", " ").title()
         related_pages_meta = ""
-        if i == 0 or not env_type == filtered_envs[i - 1][1]:
+        if i == 0 or not env_type == filtered_envs[i - 1].entry_point.split(".")[2]:
             related_pages_meta = "firstpage:\n"
-        elif i == len(filtered_envs) - 1 or not env_type == filtered_envs[i + 1][1]:
+        elif (
+            i == len(filtered_envs) - 1
+            or not env_type == filtered_envs[i + 1].entry_point.split(".")[2]
+        ):
             related_pages_meta = "lastpage:\n"
 
         # path for saving video
