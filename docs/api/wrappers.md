@@ -51,7 +51,7 @@ There are three common things you might want a wrapper to do:
 Such wrappers can be easily implemented by inheriting from `ActionWrapper`, `ObservationWrapper`, or `RewardWrapper` and implementing the
 respective transformation. If you need a wrapper to do more complicated tasks, you can inherit from the `Wrapper` class directly.
 The code that is presented in the following sections can also be found in 
-the [gymnasium-examples](https://github.com/Farama-Foundation/gymnasium-examples) repository
+the [gym-examples](https://github.com/Farama-Foundation/gym-examples) repository
 
 ## ActionWrapper
 If you would like to apply a function to the action before passing it to the base environment,

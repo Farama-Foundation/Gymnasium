@@ -17,7 +17,7 @@ pip install -e .
 
 ## Subclassing gymnasium.Env
 
-Before learning how to create your own environment you should check out [the documentation of Gymnasium's API](https://gymnasium.farama.org/content/api/).
+Before learning how to create your own environment you should check out [the documentation of Gymnasium's API](/content/api/).
 
 We will be concerned with a subset of gym-examples that looks like this:
 
@@ -56,7 +56,7 @@ where the blue dot is the agent and the red square represents the target.
 Let us look at the source code of `GridWorldEnv` piece by piece: 
 
 ### Declaration and Initialization
-Our custom environment will inherit from the abstract class `gymnasium.Env`. You shouldn't forget to add the `metadata` attribute to you class. 
+Our custom environment will inherit from the abstract class `gymnasium.Env`. You shouldn't forget to add the `metadata` attribute to your class. 
 There, you should specify the render-modes that are supported by your environment (e.g. `"human"`, `"rgb_array"`, `"ansi"`)
 and the framerate at which your environment should be rendered. Every environment should support`None` as render-mode; you don't need to add it in the metadata.
 In `GridWorldEnv`, we will support the modes "rgb_array" and "human" and render at 4 FPS.
@@ -307,7 +307,7 @@ register(
 The environment ID consists of three components, two of which are optional: an optional namespace (here: `gym_examples`), a mandatory name (here: `GridWorld`) and an optional but recommended version (here: v0). It might have also been registered as `GridWorld-v0` (the recommended approach), `GridWorld` or `gym_examples/GridWorld`, and the appropriate ID should then be used during environment creation.
 
 The keyword argument `max_episode_steps=300` will ensure that GridWorld environments that are instantiated via `gymnasium.make`
-will be wrapped in a `TimeLimit` wrapper (see [the wrapper documentation](https://www.gymlibrary.dev/pages/wrappers/index) 
+will be wrapped in a `TimeLimit` wrapper (see [the wrapper documentation](/api/wrappers) 
 for more information). A done signal will then be produced if the agent has reached the target *or* 300 steps have been
 executed in the current episode. To distinguish truncation and termination, you can check `info["TimeLimit.truncated"]`.
 
@@ -372,7 +372,7 @@ also perfectly fine (but remember to add  wrappers as well!).
 Oftentimes, we want to use different variants of a custom environment, or we want to
 modify the behavior of an environment that is provided by Gymnasium or some other party. 
 Wrappers allow us to do this without changing the environment implementation or adding any boilerplate code.
-Check out the [wrapper documentation](https://www.gymlibrary.dev/content/wrappers/) for details on how to 
+Check out the [wrapper documentation](/content/wrappers/) for details on how to 
 use wrappers and instructions for implementing your own.
 In our example, observations cannot be used directly in learning code because they are dictionaries.
 However, we don't actually need to touch our environment implementation to fix this! We can simply add 
@@ -389,7 +389,7 @@ print(wrapped_env.reset())     # E.g.  [3 0 3 3], {}
 
 Wrappers have the big advantage that they make environments highly modular. For instance, instead of flattening the 
 observations from GridWorld, you might only want to look at the relative position of the target and the agent. 
-In the section on [ObservationWrappers](https://www.gymlibrary.dev/content/wrappers/#observationwrapper) we have implemented
+In the section on [ObservationWrappers](/content/wrappers/#observationwrapper) we have implemented
 a wrapper that does this job. This wrapper is also available in gym-examples:
 
 ```python
