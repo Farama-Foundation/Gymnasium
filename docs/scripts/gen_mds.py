@@ -2,7 +2,6 @@ __author__ = "Sander Schulhoff"
 __email__ = "sanderschulhoff@gmail.com"
 
 import os
-import pdb
 import re
 from functools import reduce
 
