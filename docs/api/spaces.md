@@ -1,5 +1,13 @@
 # Spaces
 
+```{toctree}
+:hidden:
+spaces/fundamental
+spaces/composite
+spaces/utils
+```
+
+
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Space
 ```
@@ -28,77 +36,30 @@ Each space implements the following functions:
 
 ## Fundamental Spaces
 
-### Box
-
 ```{eval-rst}
-.. autoclass:: gymnasium.spaces.Box
+.. currentmodule:: gymnasium.spaces
 
-    .. automethod:: is_bounded
-    .. automethod:: sample
-``` 
-
-### Discrete
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.Discrete
- 
-    .. automethod:: sample
-``` 
-
-### MultiBinary
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.MultiBinary
-
-    .. automethod:: sample
-``` 
-
-### MultiDiscrete
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.MultiDiscrete
-
-    .. automethod:: sample
-``` 
-
-### Text
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.Text
-
-    .. automethod:: sample
-``` 
-
-## Composite Spaces
-
-### Dict
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.Dict
-
-    .. automethod:: sample
-``` 
-
-### Graph
-
-```{eval-rst}
-.. autoclass:: gymnasium.spaces.Graph
-
-    .. automethod:: sample
+* :py:class:`Box`
+* :py:class:`Discrete`
+* :py:class:`MultiBinary`
+* :py:class:`MultiDiscrete`
+* :py:class:`Text`
 ```
 
-### Sequence
+## Composite
 
 ```{eval-rst}
-.. autoclass:: gymnasium.spaces.Sequence
+* :py:class:`Dict`
+* :py:class:`Tuple`
+* :py:class:`Sequence`
+* :py:class:`Graph`
+```
 
-    .. automethod:: sample
-``` 
-
-### Tuple
+## Utils
 
 ```{eval-rst}
-.. autoclass:: gymnasium.spaces.Tuple
-
-    .. automethod:: sample
-``` 
+* :py:class:`utils.flatdim`
+* :py:class:`utils.flatten_space`
+* :py:class:`utils.flatten`
+* :py:class:`utils.unflatten`
+```

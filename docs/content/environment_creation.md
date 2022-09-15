@@ -17,7 +17,7 @@ pip install -e .
 
 ## Subclassing gymnasium.Env
 
-Before learning how to create your own environment you should check out [the documentation of Gymnasium's API](/content/api/).
+Before learning how to create your own environment you should check out [the documentation of Gymnasium's API](/api/core).
 
 We will be concerned with a subset of gym-examples that looks like this:
 

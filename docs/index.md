@@ -41,7 +41,6 @@ content/basic_usage
 
 api/core
 api/spaces
-api/spaces_utils
 api/wrappers
 api/vector
 api/utils
