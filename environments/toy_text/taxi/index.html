@@ -322,7 +322,7 @@
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/taxi.gif"><img alt="../../../_images/taxi.gif" src="../../../_images/taxi.gif" style="width: 200px;" /></a>
 </figure>
-<p>This environment is part of the <a href='..'>Toy Text environments</a>. Please read that page first for general information.</p>
+<p>This environment is part of the<a href='..'>Toy Text environments</a>.Please read that page first for general information.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -410,7 +410,7 @@ The state tuple can then be decoded with the “decode” method.</p>
 </section>
 <section id="info">
 <h2>Info<a class="headerlink" href="#info" title="Permalink to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset(return_info=True)</span></code> will return an info dictionary that contains “p” and “action_mask” containing
+<p><code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> will return an info dictionary that contains “p” and “action_mask” containing
 the probability that the state is taken and a mask of what actions will result in a change of state to speed up training.</p>
 <p>As Taxi’s initial state is a stochastic, the “p” key represents the probability of the
 transition however this value is currently bugged being 1.0, this will be fixed soon.
