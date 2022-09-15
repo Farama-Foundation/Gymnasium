@@ -4,7 +4,7 @@ import warnings
 import numpy as np
 import pytest
 
-import gymnasium.error
+import gymnasium as gym
 from gymnasium.spaces import Box
 from gymnasium.spaces.box import get_inf
 
@@ -310,7 +310,7 @@ def test_sample_mask():
     """Box cannot have a mask applied."""
     space = Box(0, 1)
     with pytest.raises(
-        gymnasium.error.Error,
+        gym.error.Error,
         match=re.escape("Box.sample cannot be provided a mask, actual value: "),
     ):
         space.sample(mask=np.array([0, 1, 0], dtype=np.int8))

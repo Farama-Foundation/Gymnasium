@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import envs
 from gymnasium.envs.registration import EnvSpec
 from tests.envs.utils import mujoco_testing_env_specs
@@ -105,7 +105,7 @@ def test_obs_space_mujoco_environments(env_spec: EnvSpec):
 MUJOCO_V2_V3_ENVS = [
     spec.name
     for spec in mujoco_testing_env_specs
-    if spec.version == 2 and f"{spec.name}-v3" in gymnasium.envs.registry
+    if spec.version == 2 and f"{spec.name}-v3" in gym.envs.registry
 ]
 
 

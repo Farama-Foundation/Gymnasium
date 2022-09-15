@@ -112,13 +112,18 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     but modifications can be made to the XML file in the assets folder
     (or by changing the path to a modified XML file in another folder)..
 
-    ```
-    env = gymnasium.make('Pusher-v4')
+    ```python
+    import gymnasium as gym
+    env = gym.make('Pusher-v4')
     ```
 
     There is no v3 for Pusher, unlike the robot environments where a v3 and
-    beyond take gymnasium.make kwargs such as xml_file, ctrl_cost_weight, reset_noise_scale etc.
+    beyond take `gymnasmium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc.
 
+    ```python
+    import gymnasium as gym
+    env = gym.make('Pusher-v2')
+    ```
 
     ### Version History
 

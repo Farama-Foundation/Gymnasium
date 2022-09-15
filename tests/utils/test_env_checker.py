@@ -6,7 +6,7 @@ from typing import Tuple, Union
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.core import ObsType
 from gymnasium.utils.env_checker import (
@@ -23,8 +23,8 @@ from tests.testing_env import GenericTestEnv
 @pytest.mark.parametrize(
     "env",
     [
-        gymnasium.make("CartPole-v1", disable_env_checker=True).unwrapped,
-        gymnasium.make("MountainCar-v0", disable_env_checker=True).unwrapped,
+        gym.make("CartPole-v1", disable_env_checker=True).unwrapped,
+        gym.make("MountainCar-v0", disable_env_checker=True).unwrapped,
         GenericTestEnv(
             observation_space=spaces.Dict(
                 a=spaces.Discrete(10), b=spaces.Box(np.zeros(2), np.ones(2))
@@ -80,7 +80,7 @@ def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
     "test,func,message",
     [
         [
-            gymnasium.error.Error,
+            gym.error.Error,
             lambda self: (self.observation_space.sample(), {}),
             "The `reset` method does not provide a `seed` or `**kwargs` keyword argument.",
         ],
@@ -231,7 +231,7 @@ def test_check_seed_deprecation():
 def test_check_reset_options():
     """Tests the check_reset_options function."""
     with pytest.raises(
-        gymnasium.error.Error,
+        gym.error.Error,
         match=re.escape(
             "The `reset` method does not provide an `options` or `**kwargs` keyword argument"
         ),
@@ -244,7 +244,7 @@ def test_check_reset_options():
     [
         [
             "Error",
-            "The environment must inherit from the gymnasium.Env class. See https://www.gymlibrary.dev/content/environment_creation/ for more info.",
+            "The environment must inherit from the gym.Env class. See https://www.gymlibrary.dev/content/environment_creation/ for more info.",
         ],
         [
             GenericTestEnv(action_space=None),
@@ -256,7 +256,7 @@ def test_check_reset_options():
         ],
     ],
 )
-def test_check_env(env: gymnasium.Env, message: str):
+def test_check_env(env: gym.Env, message: str):
     """Tests the check_env function works as expected."""
     with pytest.raises(AssertionError, match=f"^{re.escape(message)}$"):
         check_env(env)

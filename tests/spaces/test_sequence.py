@@ -3,12 +3,12 @@ import re
 import numpy as np
 import pytest
 
-import gymnasium.spaces
+import gymnasium as gym
 
 
 def test_sample():
     """Tests the sequence sampling works as expects and the errors are correctly raised."""
-    space = gymnasium.spaces.Sequence(gymnasium.spaces.Box(0, 1))
+    space = gym.spaces.Sequence(gym.spaces.Box(0, 1))
 
     # Test integer mask length
     for length in range(4):

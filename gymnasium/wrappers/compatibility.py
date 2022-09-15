@@ -2,7 +2,7 @@
 import sys
 from typing import Any, Dict, Optional, Tuple
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.core import ObsType
 from gymnasium.utils.step_api_compatibility import (
     convert_to_terminated_truncated_step_api,
@@ -21,8 +21,8 @@ else:
 class LegacyEnv(Protocol):
     """A protocol for environments using the old step API."""
 
-    observation_space: gymnasium.Space
-    action_space: gymnasium.Space
+    observation_space: gym.Space
+    action_space: gym.Space
 
     def reset(self) -> Any:
         """Reset the environment and return the initial observation."""
@@ -45,7 +45,7 @@ class LegacyEnv(Protocol):
         ...
 
 
-class EnvCompatibility(gymnasium.Env):
+class EnvCompatibility(gym.Env):
     r"""A wrapper which can transform an environment from the old API to the new API.
 
     Old step API refers to step() method returning (observation, reward, done, info), and reset() only retuning the observation.

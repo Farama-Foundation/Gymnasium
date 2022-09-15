@@ -104,8 +104,9 @@ class FrozenLakeEnv(Env):
 
     ### Arguments
 
-    ```
-    gymnasium.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
+    ```python
+    import gymnasium as gym
+    gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
     ```
 
     `desc`: Used to specify custom map for frozen lake. For example,
@@ -117,7 +118,7 @@ class FrozenLakeEnv(Env):
         ```
         from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
-        gymnasium.make('FrozenLake-v1', desc=generate_random_map(size=8))
+        gym.make('FrozenLake-v1', desc=generate_random_map(size=8))
         ```
 
     `map_name`: ID to use any of the preloaded maps.

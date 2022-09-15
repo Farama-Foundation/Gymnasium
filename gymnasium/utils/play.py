@@ -4,7 +4,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-import gymnasium.error
+import gymnasium as gym
 from gymnasium import Env, logger
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
@@ -16,7 +16,7 @@ try:
     from pygame.event import Event
     from pygame.locals import VIDEORESIZE
 except ImportError:
-    raise gymnasium.error.DependencyNotInstalled(
+    raise gym.error.DependencyNotInstalled(
         "Pygame is not installed, run `pip install gymnasium[classic_control]`"
     )
 
@@ -148,9 +148,9 @@ def play(
 
     Example::
 
-        >>> import gymnasium
+        >>> import gymnasium as gym
         >>> from gymnasium.utils.play import play
-        >>> play(gymnasium.make("CarRacing-v1", render_mode="rgb_array"), keys_to_action={
+        >>> play(gym.make("CarRacing-v1", render_mode="rgb_array"), keys_to_action={
         ...                                                "w": np.array([0, 0.7, 0]),
         ...                                                "a": np.array([-1, 0, 0]),
         ...                                                "s": np.array([0, 0, 1]),
@@ -170,10 +170,11 @@ def play(
     :class:`gym.utils.play.PlayPlot`. Here's a sample code for plotting the reward
     for last 150 steps.
 
+        >>> import gymnasium as gym
         >>> def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
         ...        return [rew,]
         >>> plotter = PlayPlot(callback, 150, ["reward"])
-        >>> play(gymnasium.make("ALE/AirRaid-v5"), callback=plotter.callback)
+        >>> play(gym.make("CartPole-v1"), callback=plotter.callback)
 
 
     Args:

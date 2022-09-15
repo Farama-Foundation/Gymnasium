@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import error, logger, spaces
 from gymnasium.spaces import Space
 
@@ -26,7 +26,7 @@ except ImportError as e:
 DEFAULT_SIZE = 480
 
 
-class BaseMujocoEnv(gymnasium.Env):
+class BaseMujocoEnv(gym.Env):
     """Superclass for all MuJoCo environments."""
 
     def __init__(
@@ -395,9 +395,7 @@ class MujocoEnv(BaseMujocoEnv):
 
     def _get_viewer(
         self, mode
-    ) -> Union[
-        "gymnasium.envs.mujoco.Viewer", "gymnasium.envs.mujoco.RenderContextOffscreen"
-    ]:
+    ) -> Union["gym.envs.mujoco.Viewer", "gym.envs.mujoco.RenderContextOffscreen"]:
         self.viewer = self._viewers.get(mode)
         if self.viewer is None:
             if mode == "human":

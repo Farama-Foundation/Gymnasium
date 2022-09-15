@@ -2,10 +2,10 @@
 
 from typing import List
 
-import gymnasium
+import gymnasium as gym
 
 
-class VectorListInfo(gymnasium.Wrapper):
+class VectorListInfo(gym.Wrapper):
     """Converts infos of vectorized environments from dict to List[dict].
 
     This wrapper converts the info format of a

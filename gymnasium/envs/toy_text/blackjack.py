@@ -3,7 +3,7 @@ from typing import Optional
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
 
@@ -46,7 +46,7 @@ def is_natural(hand):  # Is this hand a natural blackjack?
     return sorted(hand) == [1, 10]
 
 
-class BlackjackEnv(gymnasium.Env):
+class BlackjackEnv(gym.Env):
     """
     Blackjack is a card game where the goal is to beat the dealer by obtaining cards
     that sum to closer to 21 (without going over 21) than the dealers cards.
@@ -93,8 +93,9 @@ class BlackjackEnv(gymnasium.Env):
 
     ### Arguments
 
-    ```
-    gymnasium.make('Blackjack-v1', natural=False, sab=False)
+    ```python
+    import gymnasium as gym
+    gym.make('Blackjack-v1', natural=False, sab=False)
     ```
 
     <a id="nat">`natural=False`</a>: Whether to give an additional reward for

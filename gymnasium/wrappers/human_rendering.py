@@ -1,11 +1,11 @@
 """A wrapper that adds human-renering functionality to an environment."""
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
 
 
-class HumanRendering(gymnasium.Wrapper):
+class HumanRendering(gym.Wrapper):
     """Performs human rendering for an environment that only supports "rgb_array"rendering.
 
     This wrapper is particularly useful when you have implemented an environment that can produce
@@ -16,7 +16,7 @@ class HumanRendering(gymnasium.Wrapper):
     The ``render_mode`` of the wrapped environment must be either ``'rgb_array'`` or ``'rgb_array_list'``.
 
     Example:
-        >>> env = gymnasium.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> wrapped = HumanRendering(env)
         >>> wrapped.reset()     # This will start rendering to the screen
 
@@ -25,13 +25,13 @@ class HumanRendering(gymnasium.Wrapper):
     implement human-rendering natively (i.e. ``render_mode`` does not contain ``"human"``).
 
     Example:
-        >>> env = gymnasium.make("NoNativeRendering-v2", render_mode="human")      # NoNativeRendering-v0 doesn't implement human-rendering natively
+        >>> env = gym.make("NoNativeRendering-v2", render_mode="human")      # NoNativeRendering-v0 doesn't implement human-rendering natively
         >>> env.reset()     # This will start rendering to the screen
 
     Warning: If the base environment uses ``render_mode="rgb_array_list"``, its (i.e. the *base environment's*) render method
         will always return an empty list:
 
-            >>> env = gymnasium.make("LunarLander-v2", render_mode="rgb_array_list")
+            >>> env = gym.make("LunarLander-v2", render_mode="rgb_array_list")
             >>> wrapped = HumanRendering(env)
             >>> wrapped.reset()
             >>> env.render()

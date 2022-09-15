@@ -4,7 +4,7 @@ import warnings
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_initialised_envs
@@ -27,7 +27,7 @@ def test_passive_checker_wrapper_warnings(env):
 
     for warning in caught_warnings:
         if warning.message.args[0] not in PASSIVE_CHECK_IGNORE_WARNING:
-            raise gymnasium.error.Error(f"Unexpected warning: {warning.message}")
+            raise gym.error.Error(f"Unexpected warning: {warning.message}")
 
 
 @pytest.mark.parametrize(

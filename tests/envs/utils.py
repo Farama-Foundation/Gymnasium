@@ -3,12 +3,12 @@ from typing import List, Optional
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import logger
 from gymnasium.envs.registration import EnvSpec
 
 
-def try_make_env(env_spec: EnvSpec) -> Optional[gymnasium.Env]:
+def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
     """Tries to make the environment showing if it is possible.
 
     Warning the environments have no wrappers, including time limit and order enforcing.
@@ -23,10 +23,10 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gymnasium.Env]:
 
 
 # Tries to make all environment to test with
-all_testing_initialised_envs: List[Optional[gymnasium.Env]] = [
-    try_make_env(env_spec) for env_spec in gymnasium.envs.registry.values()
+all_testing_initialised_envs: List[Optional[gym.Env]] = [
+    try_make_env(env_spec) for env_spec in gym.envs.registry.values()
 ]
-all_testing_initialised_envs: List[gymnasium.Env] = [
+all_testing_initialised_envs: List[gym.Env] = [
     env for env in all_testing_initialised_envs if env is not None
 ]
 

@@ -109,8 +109,9 @@ class TaxiEnv(Env):
 
     ### Arguments
 
-    ```
-    gymnasium.make('Taxi-v3')
+    ```python
+    import gymnasium as gym
+    gym.make('Taxi-v3')
     ```
 
     ### Version History
