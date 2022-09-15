@@ -20,8 +20,11 @@ jobs:
         run: pip install -r docs/requirements.txt
         
       - name: Install Gymnasium
-        run: pip install .
+        run: pip install mujoco && pip install .[atari,accept-rom-license,box2d]
       
+      - name: Build Envs Docs
+        run: python docs/scripts/gen_mds.py
+
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
 
@@ -29,7 +32,7 @@ jobs:
         run: mv _build/404/index.html _build/404.html
 
       - name: Update 404 links
-        run: python ./docs/scripts/move_404.py _build/404.html
+        run: python docs/scripts/move_404.py _build/404.html
 
       - name: Remove .doctrees
         run: rm -r _build/.doctrees
