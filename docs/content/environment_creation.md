@@ -372,7 +372,7 @@ also perfectly fine (but remember to add  wrappers as well!).
 Oftentimes, we want to use different variants of a custom environment, or we want to
 modify the behavior of an environment that is provided by Gymnasium or some other party. 
 Wrappers allow us to do this without changing the environment implementation or adding any boilerplate code.
-Check out the [wrapper documentation](/content/wrappers/) for details on how to 
+Check out the [wrapper documentation](/api/wrappers/) for details on how to 
 use wrappers and instructions for implementing your own.
 In our example, observations cannot be used directly in learning code because they are dictionaries.
 However, we don't actually need to touch our environment implementation to fix this! We can simply add 
@@ -389,7 +389,7 @@ print(wrapped_env.reset())     # E.g.  [3 0 3 3], {}
 
 Wrappers have the big advantage that they make environments highly modular. For instance, instead of flattening the 
 observations from GridWorld, you might only want to look at the relative position of the target and the agent. 
-In the section on [ObservationWrappers](/content/wrappers/#observationwrapper) we have implemented
+In the section on [ObservationWrappers](/api/wrappers/#observationwrapper) we have implemented
 a wrapper that does this job. This wrapper is also available in gym-examples:
 
 ```python

@@ -86,7 +86,7 @@ setup(
     },
     python_requires=">=3.6",
     tests_require=extras["testing"],
-    url="https://www.gymlibrary.dev/",
+    url="https://gymnasium.farama.org/",
     version=VERSION,
     zip_safe=False,
 )
