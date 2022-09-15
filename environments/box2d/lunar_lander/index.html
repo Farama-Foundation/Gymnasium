@@ -322,7 +322,7 @@
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/lunar_lander.gif"><img alt="../../../_images/lunar_lander.gif" src="../../../_images/lunar_lander.gif" style="width: 200px;" /></a>
 </figure>
-<p>This environment is part of the <a href='..'>Box2D environments</a>. Please read that page first for general information.</p>
+<p>This environment is part of the<a href='..'>Box2D environments</a>.Please read that page first for general information.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -380,14 +380,19 @@ that represent whether each leg is in contact with the ground or not.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
-<p>Reward for moving from the top of the screen to the landing pad and coming
-to rest is about 100-140 points.
-If the lander moves away from the landing pad, it loses reward.
-If the lander crashes, it receives an additional -100 points. If it comes
-to rest, it receives an additional +100 points. Each leg with ground
-contact is +10 points.
-Firing the main engine is -0.3 points each frame. Firing the side engine
-is -0.03 points each frame. Solved is 200 points.</p>
+<p>After every step a reward is granted. The total reward of an episode is the
+sum of the rewards for all the steps within that episode.</p>
+<p>For each step, the reward:</p>
+<ul class="simple">
+<li><p>is increased/decreased the closer/further the lander is to the landing pad.</p></li>
+<li><p>is increased/decreased the slower/faster the lander is moving.</p></li>
+<li><p>is decreased the more the lander is tilted (angle not horizontal).</p></li>
+<li><p>is increased by 10 points for each leg that is in contact with the ground.</p></li>
+<li><p>is decreased by 0.03 points each frame a side engine is firing.</p></li>
+<li><p>is decreased by 0.3 points each frame the main engine is firing.</p></li>
+</ul>
+<p>The episode receive an additional reward of -100 or +100 points for crashing or landing safely respectively.</p>
+<p>An episode is considered a solution if it scores at least 200 points.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
