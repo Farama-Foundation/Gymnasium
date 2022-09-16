@@ -17,10 +17,10 @@ class SyncVectorEnv(VectorEnv):
 
     Example::
 
-        >>> import gymnasium
-        >>> env = gymnasium.vector.SyncVectorEnv([
-        ...     lambda: gymnasium.make("Pendulum-v0", g=9.81),
-        ...     lambda: gymnasium.make("Pendulum-v0", g=1.62)
+        >>> import gymnasium as gym
+        >>> env = gym.vector.SyncVectorEnv([
+        ...     lambda: gym.make("Pendulum-v0", g=9.81),
+        ...     lambda: gym.make("Pendulum-v0", g=1.62)
         ... ])
         >>> env.reset()
         array([[-0.8286432 ,  0.5597771 ,  0.90249056],

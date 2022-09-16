@@ -1,7 +1,7 @@
 """Wrapper for clipping actions within a valid bound."""
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import ActionWrapper
 from gymnasium.spaces import Box
 
@@ -10,8 +10,8 @@ class ClipAction(ActionWrapper):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
-        >>> import gymnasium
-        >>> env = gymnasium.make('Bipedal-Walker-v3')
+        >>> import gymnasium as gym
+        >>> env = gym.make('Bipedal-Walker-v3')
         >>> env = ClipAction(env)
         >>> env.action_space
         Box(-1.0, 1.0, (4,), float32)
@@ -19,7 +19,7 @@ class ClipAction(ActionWrapper):
         # Executes the action np.array([1.0, 1.0, -1.0, 0]) in the base environment
     """
 
-    def __init__(self, env: gymnasium.Env):
+    def __init__(self, env: gym.Env):
         """A wrapper for clipping continuous actions within the valid bound.
 
         Args:

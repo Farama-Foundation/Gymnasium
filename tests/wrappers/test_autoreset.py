@@ -5,12 +5,12 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers import AutoResetWrapper
 from tests.envs.utils import all_testing_env_specs
 
 
-class DummyResetEnv(gymnasium.Env):
+class DummyResetEnv(gym.Env):
     """A dummy environment which returns ascending numbers starting at `0` when :meth:`self.step()` is called.
 
     After the second call to :meth:`self.step()` terminated is true.
@@ -22,10 +22,10 @@ class DummyResetEnv(gymnasium.Env):
 
     def __init__(self):
         """Initialise the DummyResetEnv."""
-        self.action_space = gymnasium.spaces.Box(
+        self.action_space = gym.spaces.Box(
             low=np.array([0]), high=np.array([2]), dtype=np.int64
         )
-        self.observation_space = gymnasium.spaces.Discrete(2)
+        self.observation_space = gym.spaces.Discrete(2)
         self.count = 0
 
     def step(self, action: int):
@@ -45,9 +45,9 @@ class DummyResetEnv(gymnasium.Env):
         return np.array([self.count]), {"count": self.count}
 
 
-def unwrap_env(env) -> Generator[gymnasium.Wrapper, None, None]:
+def unwrap_env(env) -> Generator[gym.Wrapper, None, None]:
     """Unwraps an environment yielding all wrappers around environment."""
-    while isinstance(env, gymnasium.Wrapper):
+    while isinstance(env, gym.Wrapper):
         yield type(env)
         env = env.env
 
@@ -56,14 +56,14 @@ def unwrap_env(env) -> Generator[gymnasium.Wrapper, None, None]:
     "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
 )
 def test_make_autoreset_true(spec):
-    """Tests gymnasium.make with `autoreset=True`, and check that the reset actually happens.
+    """Tests gym.make with `autoreset=True`, and check that the reset actually happens.
 
     Note: This test assumes that the outermost wrapper is AutoResetWrapper so if that
      is being changed in the future, this test will break and need to be updated.
     Note: This test assumes that all first-party environments will terminate in a finite
      amount of time with random actions, which is true as of the time of adding this test.
     """
-    env = gymnasium.make(spec.id, autoreset=True, disable_env_checker=True)
+    env = gym.make(spec.id, autoreset=True, disable_env_checker=True)
     assert AutoResetWrapper in unwrap_env(env)
 
     env.reset(seed=0)
@@ -81,16 +81,16 @@ def test_make_autoreset_true(spec):
     "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
 )
 def test_gym_make_autoreset(spec):
-    """Tests that `gymnasium.make` autoreset wrapper is applied only when `gymnasium.make(..., autoreset=True)`."""
-    env = gymnasium.make(spec.id, disable_env_checker=True)
+    """Tests that `gym.make` autoreset wrapper is applied only when `gym.make(..., autoreset=True)`."""
+    env = gym.make(spec.id, disable_env_checker=True)
     assert AutoResetWrapper not in unwrap_env(env)
     env.close()
 
-    env = gymnasium.make(spec.id, autoreset=False, disable_env_checker=True)
+    env = gym.make(spec.id, autoreset=False, disable_env_checker=True)
     assert AutoResetWrapper not in unwrap_env(env)
     env.close()
 
-    env = gymnasium.make(spec.id, autoreset=True, disable_env_checker=True)
+    env = gym.make(spec.id, autoreset=True, disable_env_checker=True)
     assert AutoResetWrapper in unwrap_env(env)
     env.close()
 

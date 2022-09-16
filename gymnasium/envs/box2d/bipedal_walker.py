@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, List, Optional
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import error, spaces
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle
@@ -100,7 +100,7 @@ class ContactDetector(contactListener):
                 leg.ground_contact = False
 
 
-class BipedalWalker(gymnasium.Env, EzPickle):
+class BipedalWalker(gym.Env, EzPickle):
     """
     ### Description
     This is a simple 4-joint walker robot environment.
@@ -144,12 +144,12 @@ class BipedalWalker(gymnasium.Env, EzPickle):
     To use to the _hardcore_ environment, you need to specify the
     `hardcore=True` argument like below:
     ```python
-    import gymnasium
-    env = gymnasium.make("BipedalWalker-v3", hardcore=True)
+    import gymnasium as gym
+    env = gym.make("BipedalWalker-v3", hardcore=True)
     ```
 
     ### Version History
-    - v3: returns closest lidar trace instead of furthest;
+    - v3: Returns the closest lidar trace instead of furthest;
         faster video recording
     - v2: Count energy spent
     - v1: Legs now report contact with ground; motors have higher torque and
@@ -762,8 +762,8 @@ class BipedalWalkerHardcore:
         raise error.Error(
             "Error initializing BipedalWalkerHardcore Environment.\n"
             "Currently, we do not support initializing this mode of environment by calling the class directly.\n"
-            "To use this environment, instead create it by specifying the hardcore keyword in gymnasium.make, i.e.\n"
-            'gymnasium.make("BipedalWalker-v3", hardcore=True)'
+            "To use this environment, instead create it by specifying the hardcore keyword in gym.make, i.e.\n"
+            'gym.make("BipedalWalker-v3", hardcore=True)'
         )
 
 

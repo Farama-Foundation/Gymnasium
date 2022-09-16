@@ -28,7 +28,8 @@ class Graph(Space):
 
     Example usage::
 
-        self.observation_space = spaces.Graph(node_space=space.Box(low=-100, high=100, shape=(3,)), edge_space=spaces.Discrete(3))
+        >>> from gymnasium.spaces import Box, Discrete
+        >>> Graph(node_space=Box(low=-100, high=100, shape=(3,)), edge_space=Discrete(3))
     """
 
     def __init__(

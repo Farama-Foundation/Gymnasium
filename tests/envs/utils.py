@@ -3,12 +3,12 @@ from typing import List, Optional
 
 import numpy as np
 
-import gymnasium
-from gymnasium import error, logger
+import gymnasium as gym
+from gymnasium import logger
 from gymnasium.envs.registration import EnvSpec
 
 
-def try_make_env(env_spec: EnvSpec) -> Optional[gymnasium.Env]:
+def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
     """Tries to make the environment showing if it is possible.
 
     Warning the environments have no wrappers, including time limit and order enforcing.
@@ -17,16 +17,16 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gymnasium.Env]:
     if "gymnasium.envs." in env_spec.entry_point:
         try:
             return env_spec.make(disable_env_checker=True).unwrapped
-        except (ImportError, error.DependencyNotInstalled) as e:
+        except (ImportError, gym.error.DependencyNotInstalled) as e:
             logger.warn(f"Not testing {env_spec.id} due to error: {e}")
     return None
 
 
 # Tries to make all environment to test with
-all_testing_initialised_envs: List[Optional[gymnasium.Env]] = [
-    try_make_env(env_spec) for env_spec in gymnasium.envs.registry.values()
+all_testing_initialised_envs: List[Optional[gym.Env]] = [
+    try_make_env(env_spec) for env_spec in gym.envs.registry.values()
 ]
-all_testing_initialised_envs: List[gymnasium.Env] = [
+all_testing_initialised_envs: List[gym.Env] = [
     env for env in all_testing_initialised_envs if env is not None
 ]
 

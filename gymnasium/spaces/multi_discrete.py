@@ -29,8 +29,8 @@ class MultiDiscrete(Space[np.ndarray]):
 
     Example::
 
-        >> d = MultiDiscrete(np.array([[1, 2], [3, 4]]))
-        >> d.sample()
+        >>> d = MultiDiscrete(np.array([[1, 2], [3, 4]]))
+        >>> d.sample()
         array([[0, 0],
                [2, 3]])
     """

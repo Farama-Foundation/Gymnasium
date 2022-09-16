@@ -4,7 +4,7 @@ import warnings
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.logger import warn
 from gymnasium.utils.env_checker import check_env, data_equivalence
@@ -48,7 +48,7 @@ def test_envs_pass_env_checker(spec):
 
     for warning in caught_warnings:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
-            raise gymnasium.error.Error(f"Unexpected warning: {warning.message}")
+            raise gym.error.Error(f"Unexpected warning: {warning.message}")
 
 
 # Note that this precludes running this test in multiple threads.
@@ -189,7 +189,7 @@ def test_render_modes(spec):
     all_testing_initialised_envs,
     ids=[env.spec.id for env in all_testing_initialised_envs],
 )
-def test_pickle_env(env: gymnasium.Env):
+def test_pickle_env(env: gym.Env):
     pickled_env = pickle.loads(pickle.dumps(env))
 
     data_equivalence(env.reset(), pickled_env.reset())

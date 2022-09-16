@@ -1,7 +1,7 @@
 """Wrapper for transforming the reward."""
 from typing import Callable
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import RewardWrapper
 
 
@@ -12,8 +12,8 @@ class TransformReward(RewardWrapper):
         If the base environment specifies a reward range which is not invariant under :attr:`f`, the :attr:`reward_range` of the wrapped environment will be incorrect.
 
     Example:
-        >>> import gymnasium
-        >>> env = gymnasium.make('CartPole-v1')
+        >>> import gymnasium as gym
+        >>> env = gym.make('CartPole-v1')
         >>> env = TransformReward(env, lambda r: 0.01*r)
         >>> env.reset()
         >>> observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
@@ -21,7 +21,7 @@ class TransformReward(RewardWrapper):
         0.01
     """
 
-    def __init__(self, env: gymnasium.Env, f: Callable[[float], float]):
+    def __init__(self, env: gym.Env, f: Callable[[float], float]):
         """Initialize the :class:`TransformReward` wrapper with an environment and reward transform function :param:`f`.
 
         Args:
