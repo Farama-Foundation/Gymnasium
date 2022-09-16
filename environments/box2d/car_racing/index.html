@@ -376,7 +376,7 @@ There are 5 actions: do nothing, steer left, steer right, gas, brake.</p>
 </section>
 <section id="observation-space">
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
-<p>State consists of 96x96 pixels.</p>
+<p>A top-down 96x96 RGB image of the car and race track.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
@@ -391,8 +391,8 @@ if you have finished in 732 frames, your reward is
 </section>
 <section id="episode-termination">
 <h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Permalink to this heading">#</a></h2>
-<p>The episode finishes when all of the tiles are visited. The car can also go
-outside of the playfield - that is, far off the track, in which case it will
+<p>The episode finishes when all the tiles are visited. The car can also go
+outside the playfield - that is, far off the track, in which case it will
 receive -100 reward and die.</p>
 </section>
 <section id="arguments">
@@ -410,16 +410,17 @@ The discrete action space has 5 actions: [do nothing, left, right, gas, brake].<
 Correspondingly, passing the option <code class="docutils literal notranslate"><span class="pre">options[&quot;randomize&quot;]</span> <span class="pre">=</span> <span class="pre">False</span></code> will not change the current colour of the environment.
 <code class="docutils literal notranslate"><span class="pre">domain_randomize</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code> on init for this argument to work.
 Example usage:</p>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span>    <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v1&quot;</span><span class="p">,</span> <span class="n">domain_randomize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v1&quot;</span><span class="p">,</span> <span class="n">domain_randomize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="c1"># normal reset, this changes the colour scheme by default</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="c1"># normal reset, this changes the colour scheme by default</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-    <span class="c1"># reset with colour scheme change</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;randomize&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="c1"># reset with colour scheme change</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;randomize&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 
-    <span class="c1"># reset with no colour scheme change</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;randomize&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+<span class="c1"># reset with no colour scheme change</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;randomize&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
 </pre></div>
 </div>
 </section>

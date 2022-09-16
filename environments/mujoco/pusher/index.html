@@ -695,11 +695,16 @@ than 0.17. The goal always have the same position of (0.45, -0.05, -0.323).</p>
 <p>No additional arguments are currently supported (in v2 and lower),
 but modifications can be made to the XML file in the assets folder
 (or by changing the path to a modified XML file in another folder)..</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Pusher-v4&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Pusher-v4&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>There is no v3 for Pusher, unlike the robot environments where a v3 and
-beyond take gymnasium.make kwargs such as xml_file, ctrl_cost_weight, reset_noise_scale etc.</p>
+beyond take <code class="docutils literal notranslate"><span class="pre">gymnasmium.make</span></code> kwargs such as <code class="docutils literal notranslate"><span class="pre">xml_file</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code>, etc.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Pusher-v2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
