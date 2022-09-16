@@ -2,7 +2,7 @@
 import os
 from typing import Callable, Optional
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import logger
 from gymnasium.wrappers.monitoring import video_recorder
 
@@ -24,7 +24,7 @@ def capped_cubic_video_schedule(episode_id: int) -> bool:
         return episode_id % 1000 == 0
 
 
-class RecordVideo(gymnasium.Wrapper):
+class RecordVideo(gym.Wrapper):
     """This wrapper records videos of rollouts.
 
     Usually, you only want to record episodes intermittently, say every hundredth episode.
@@ -39,7 +39,7 @@ class RecordVideo(gymnasium.Wrapper):
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         video_folder: str,
         episode_trigger: Callable[[int], bool] = None,
         step_trigger: Callable[[int], bool] = None,

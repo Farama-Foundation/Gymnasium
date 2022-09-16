@@ -3,7 +3,7 @@ from typing import Optional
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.envs.box2d import BipedalWalker
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
 from gymnasium.envs.toy_text import TaxiEnv
@@ -12,7 +12,7 @@ from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 def test_lunar_lander_heuristics():
     """Tests the LunarLander environment by checking if the heuristic lander works."""
-    lunar_lander = gymnasium.make("LunarLander-v2", disable_env_checker=True)
+    lunar_lander = gym.make("LunarLander-v2", disable_env_checker=True)
     total_reward = demo_heuristic_lander(lunar_lander, seed=1)
     assert total_reward > 100
 
@@ -23,7 +23,7 @@ def test_carracing_domain_randomize():
     CarRacing DomainRandomize should have different colours at every reset.
     However, it should have same colours when `options={"randomize": False}` is given to reset.
     """
-    env = gymnasium.make("CarRacing-v2", domain_randomize=True)
+    env = gym.make("CarRacing-v2", domain_randomize=True)
 
     road_color = env.road_color
     bg_color = env.bg_color
@@ -71,10 +71,8 @@ def test_bipedal_walker_hardcore_creation(seed: int):
     HC_TERRAINS_COLOR1 = (255, 255, 255)
     HC_TERRAINS_COLOR2 = (153, 153, 153)
 
-    env = gymnasium.make("BipedalWalker-v3", disable_env_checker=True).unwrapped
-    hc_env = gymnasium.make(
-        "BipedalWalkerHardcore-v3", disable_env_checker=True
-    ).unwrapped
+    env = gym.make("BipedalWalker-v3", disable_env_checker=True).unwrapped
+    hc_env = gym.make("BipedalWalkerHardcore-v3", disable_env_checker=True).unwrapped
     assert isinstance(env, BipedalWalker) and isinstance(hc_env, BipedalWalker)
     assert env.hardcore is False and hc_env.hardcore is True
 
@@ -157,7 +155,7 @@ def test_taxi_encode_decode():
     "low_high", [None, (-0.4, 0.4), (np.array(-0.4), np.array(0.4))]
 )
 def test_customizable_resets(env_name: str, low_high: Optional[list]):
-    env = gymnasium.make(env_name)
+    env = gym.make(env_name)
     env.action_space.seed(0)
     # First ensure we can do a reset.
     if low_high is None:
@@ -180,7 +178,7 @@ def test_customizable_resets(env_name: str, low_high: Optional[list]):
     ],
 )
 def test_customizable_pendulum_resets(low_high: Optional[list]):
-    env = gymnasium.make("Pendulum-v1")
+    env = gym.make("Pendulum-v1")
     env.action_space.seed(0)
     # First ensure we can do a reset and the values are within expected ranges.
     if low_high is None:
@@ -209,7 +207,7 @@ def test_customizable_pendulum_resets(low_high: Optional[list]):
     ],
 )
 def test_invalid_customizable_resets(env_name: str, low_high: list):
-    env = gymnasium.make(env_name)
+    env = gym.make(env_name)
     low, high = low_high
     with pytest.raises(ValueError):
         # match=re.escape(f"Lower bound ({low}) must be lower than higher bound ({high}).")

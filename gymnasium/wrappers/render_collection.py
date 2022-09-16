@@ -1,13 +1,11 @@
 """A wrapper that adds render collection mode to an environment."""
-import gymnasium
+import gymnasium as gym
 
 
-class RenderCollection(gymnasium.Wrapper):
+class RenderCollection(gym.Wrapper):
     """Save collection of render frames."""
 
-    def __init__(
-        self, env: gymnasium.Env, pop_frames: bool = True, reset_clean: bool = True
-    ):
+    def __init__(self, env: gym.Env, pop_frames: bool = True, reset_clean: bool = True):
         """Initialize a :class:`RenderCollection` instance.
 
         Args:

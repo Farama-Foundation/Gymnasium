@@ -54,8 +54,9 @@ class CliffWalkingEnv(Env):
 
     ### Arguments
 
-    ```
-    gymnasium.make('CliffWalking-v0')
+    ```python
+    import gymnasium as gym
+    gym.make('CliffWalking-v0')
     ```
 
     ### Version History

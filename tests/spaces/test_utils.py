@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.spaces import Box, Graph, utils
 from gymnasium.utils.env_checker import data_equivalence
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
@@ -56,7 +56,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     zip_longest(TESTING_SPACES, TESTING_SPACES_EXPECTED_FLATDIMS),
     ids=TESTING_SPACES_IDS,
 )
-def test_flatdim(space: gymnasium.spaces.Space, flatdim: Optional[int]):
+def test_flatdim(space: gym.spaces.Space, flatdim: Optional[int]):
     """Checks that the flattened dims of the space is equal to an expected value."""
     if space.is_np_flattenable:
         dim = utils.flatdim(space)
@@ -93,7 +93,7 @@ def test_flatten_space(space):
     else:
         assert isinstance(
             space,
-            (gymnasium.spaces.Tuple, gymnasium.spaces.Dict, gymnasium.spaces.Sequence),
+            (gym.spaces.Tuple, gym.spaces.Dict, gym.spaces.Sequence),
         )
 
 

@@ -14,6 +14,7 @@ class Text(Space[str]):
     r"""A space representing a string comprised of characters from a given charset.
 
     Example::
+
         >>> # {"", "B5", "hello", ...}
         >>> Text(5)
         >>> # {"0", "42", "0123456789", ...}

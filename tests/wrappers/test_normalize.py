@@ -3,16 +3,16 @@ from typing import Optional
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers.normalize import NormalizeObservation, NormalizeReward
 
 
-class DummyRewardEnv(gymnasium.Env):
+class DummyRewardEnv(gym.Env):
     metadata = {}
 
     def __init__(self, return_reward_idx=0):
-        self.action_space = gymnasium.spaces.Discrete(2)
-        self.observation_space = gymnasium.spaces.Box(
+        self.action_space = gym.spaces.Discrete(2)
+        self.observation_space = gym.spaces.Box(
             low=np.array([-1.0]), high=np.array([1.0]), dtype=np.float64
         )
         self.returned_rewards = [0, 1, 2, 3, 4]
@@ -81,14 +81,14 @@ def test_normalize_return():
 
 def test_normalize_observation_vector_env():
     env_fns = [make_env(0), make_env(1)]
-    envs = gymnasium.vector.SyncVectorEnv(env_fns)
+    envs = gym.vector.SyncVectorEnv(env_fns)
     envs.reset()
     obs, reward, _, _, _ = envs.step(envs.action_space.sample())
     np.testing.assert_almost_equal(obs, np.array([[1], [2]]), decimal=4)
     np.testing.assert_almost_equal(reward, np.array([1, 2]), decimal=4)
 
     env_fns = [make_env(0), make_env(1)]
-    envs = gymnasium.vector.SyncVectorEnv(env_fns)
+    envs = gym.vector.SyncVectorEnv(env_fns)
     envs = NormalizeObservation(envs)
     envs.reset()
     assert_almost_equal(
@@ -106,7 +106,7 @@ def test_normalize_observation_vector_env():
 
 def test_normalize_return_vector_env():
     env_fns = [make_env(0), make_env(1)]
-    envs = gymnasium.vector.SyncVectorEnv(env_fns)
+    envs = gym.vector.SyncVectorEnv(env_fns)
     envs = NormalizeReward(envs)
     obs = envs.reset()
     obs, reward, _, _, _ = envs.step(envs.action_space.sample())

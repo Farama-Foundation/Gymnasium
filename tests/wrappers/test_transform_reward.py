@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers import TransformReward
 
 
@@ -10,9 +10,9 @@ def test_transform_reward(env_id):
     # use case #1: scale
     scales = [0.1, 200]
     for scale in scales:
-        env = gymnasium.make(env_id, disable_env_checker=True)
+        env = gym.make(env_id, disable_env_checker=True)
         wrapped_env = TransformReward(
-            gymnasium.make(env_id, disable_env_checker=True), lambda r: scale * r
+            gym.make(env_id, disable_env_checker=True), lambda r: scale * r
         )
         action = env.action_space.sample()
 
@@ -28,9 +28,9 @@ def test_transform_reward(env_id):
     # use case #2: clip
     min_r = -0.0005
     max_r = 0.0002
-    env = gymnasium.make(env_id, disable_env_checker=True)
+    env = gym.make(env_id, disable_env_checker=True)
     wrapped_env = TransformReward(
-        gymnasium.make(env_id, disable_env_checker=True),
+        gym.make(env_id, disable_env_checker=True),
         lambda r: np.clip(r, min_r, max_r),
     )
     action = env.action_space.sample()
@@ -46,9 +46,9 @@ def test_transform_reward(env_id):
     del env, wrapped_env
 
     # use case #3: sign
-    env = gymnasium.make(env_id, disable_env_checker=True)
+    env = gym.make(env_id, disable_env_checker=True)
     wrapped_env = TransformReward(
-        gymnasium.make(env_id, disable_env_checker=True), lambda r: np.sign(r)
+        gym.make(env_id, disable_env_checker=True), lambda r: np.sign(r)
     )
 
     env.reset(seed=0)

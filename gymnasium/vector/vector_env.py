@@ -3,13 +3,13 @@ from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.vector.utils.spaces import batch_space
 
 __all__ = ["VectorEnv"]
 
 
-class VectorEnv(gymnasium.Env):
+class VectorEnv(gym.Env):
     """Base class for vectorized environments. Runs multiple independent copies of the same environment in parallel.
 
     This is not the same as 1 environment that has multiple subcomponents, but it is many copies of the same base env.
@@ -25,8 +25,8 @@ class VectorEnv(gymnasium.Env):
     def __init__(
         self,
         num_envs: int,
-        observation_space: gymnasium.Space,
-        action_space: gymnasium.Space,
+        observation_space: gym.Space,
+        action_space: gym.Space,
     ):
         """Base class for vectorized environments.
 

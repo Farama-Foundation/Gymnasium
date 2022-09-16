@@ -2,7 +2,7 @@
 import types
 from typing import Any, Dict, Optional, Tuple, Union
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
@@ -36,7 +36,7 @@ def basic_render_fn(self):
 
 
 # todo: change all testing environment to this generic class
-class GenericTestEnv(gymnasium.Env):
+class GenericTestEnv(gym.Env):
     """A generic testing environment for use in testing with modified environments are required."""
 
     def __init__(

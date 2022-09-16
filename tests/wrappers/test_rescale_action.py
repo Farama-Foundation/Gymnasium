@@ -1,19 +1,19 @@
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers import RescaleAction
 
 
 def test_rescale_action():
-    env = gymnasium.make("CartPole-v1", disable_env_checker=True)
+    env = gym.make("CartPole-v1", disable_env_checker=True)
     with pytest.raises(AssertionError):
         env = RescaleAction(env, -1, 1)
     del env
 
-    env = gymnasium.make("Pendulum-v1", disable_env_checker=True)
+    env = gym.make("Pendulum-v1", disable_env_checker=True)
     wrapped_env = RescaleAction(
-        gymnasium.make("Pendulum-v1", disable_env_checker=True), -1, 1
+        gym.make("Pendulum-v1", disable_env_checker=True), -1, 1
     )
 
     seed = 0

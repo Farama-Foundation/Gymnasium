@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers import TransformObservation
 
 
@@ -10,9 +10,9 @@ def test_transform_observation(env_id):
     def affine_transform(x):
         return 3 * x + 2
 
-    env = gymnasium.make(env_id, disable_env_checker=True)
+    env = gym.make(env_id, disable_env_checker=True)
     wrapped_env = TransformObservation(
-        gymnasium.make(env_id, disable_env_checker=True),
+        gym.make(env_id, disable_env_checker=True),
         lambda obs: affine_transform(obs),
     )
 

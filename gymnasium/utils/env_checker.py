@@ -19,7 +19,7 @@ from copy import deepcopy
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import logger, spaces
 from gymnasium.utils.passive_env_checker import (
     check_action_space,
@@ -59,7 +59,7 @@ def data_equivalence(data_1, data_2) -> bool:
         return False
 
 
-def check_reset_seed(env: gymnasium.Env):
+def check_reset_seed(env: gym.Env):
     """Check that the environment can be reset with a seed.
 
     Args:
@@ -123,12 +123,12 @@ def check_reset_seed(env: gymnasium.Env):
                 f"Actual default: {seed_param.default}"
             )
     else:
-        raise gymnasium.error.Error(
+        raise gym.error.Error(
             "The `reset` method does not provide a `seed` or `**kwargs` keyword argument."
         )
 
 
-def check_reset_options(env: gymnasium.Env):
+def check_reset_options(env: gym.Env):
     """Check that the environment can be reset with options.
 
     Args:
@@ -151,12 +151,12 @@ def check_reset_options(env: gymnasium.Env):
                 f"This should never happen, please report this issue. The error was: {e}"
             )
     else:
-        raise gymnasium.error.Error(
+        raise gym.error.Error(
             "The `reset` method does not provide an `options` or `**kwargs` keyword argument."
         )
 
 
-def check_reset_return_info_deprecation(env: gymnasium.Env):
+def check_reset_return_info_deprecation(env: gym.Env):
     """Makes sure support for deprecated `return_info` argument is dropped.
 
     Args:
@@ -173,7 +173,7 @@ def check_reset_return_info_deprecation(env: gymnasium.Env):
         )
 
 
-def check_seed_deprecation(env: gymnasium.Env):
+def check_seed_deprecation(env: gym.Env):
     """Makes sure support for deprecated function `seed` is dropped.
 
     Args:
@@ -189,7 +189,7 @@ def check_seed_deprecation(env: gymnasium.Env):
         )
 
 
-def check_reset_return_type(env: gymnasium.Env):
+def check_reset_return_type(env: gym.Env):
     """Checks that :meth:`reset` correctly returns a tuple of the form `(obs , info)`.
 
     Args:
@@ -252,7 +252,7 @@ def check_space_limit(space, space_type: str):
             check_space_limit(subspace, space_type)
 
 
-def check_env(env: gymnasium.Env, warn: bool = None, skip_render_check: bool = False):
+def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
     """Check that an environment follows Gym API.
 
     This is an invasive function that calls the environment's reset and step.
@@ -270,7 +270,7 @@ def check_env(env: gymnasium.Env, warn: bool = None, skip_render_check: bool = F
         logger.warn("`check_env(warn=...)` parameter is now ignored.")
 
     assert isinstance(
-        env, gymnasium.Env
+        env, gym.Env
     ), "The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/content/environment_creation/ for more info."
 
     if env.unwrapped is not env:

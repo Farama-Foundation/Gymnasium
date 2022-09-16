@@ -2,19 +2,19 @@
 import copy
 from typing import Sequence
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 
 
-class FilterObservation(gymnasium.ObservationWrapper):
+class FilterObservation(gym.ObservationWrapper):
     """Filter Dict observation space by the keys.
 
     Example:
-        >>> import gymnasium
-        >>> env = gymnasium.wrappers.TransformObservation(
-        ...     gymnasium.make('CartPole-v1'), lambda obs: {'obs': obs, 'time': 0}
+        >>> import gymnasium as gym
+        >>> env = gym.wrappers.TransformObservation(
+        ...     gym.make('CartPole-v1'), lambda obs: {'obs': obs, 'time': 0}
         ... )
-        >>> env.observation_space = gymnasium.spaces.Dict(obs=env.observation_space, time=gymnasium.spaces.Discrete(1))
+        >>> env.observation_space = gym.spaces.Dict(obs=env.observation_space, time=gym.spaces.Discrete(1))
         >>> env.reset()
         {'obs': array([-0.00067088, -0.01860439,  0.04772898, -0.01911527], dtype=float32), 'time': 0}
         >>> env = FilterObservation(env, filter_keys=['time'])
@@ -24,7 +24,7 @@ class FilterObservation(gymnasium.ObservationWrapper):
         ({'obs': array([ 0.04649447, -0.14996664, -0.03329664,  0.25847703], dtype=float32)}, 1.0, False, {})
     """
 
-    def __init__(self, env: gymnasium.Env, filter_keys: Sequence[str] = None):
+    def __init__(self, env: gym.Env, filter_keys: Sequence[str] = None):
         """A wrapper that filters dictionary observations by their keys.
 
         Args:

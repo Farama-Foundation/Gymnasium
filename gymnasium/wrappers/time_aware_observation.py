@@ -1,19 +1,19 @@
 """Wrapper for adding time aware observations to environment observation."""
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-class TimeAwareObservation(gymnasium.ObservationWrapper):
+class TimeAwareObservation(gym.ObservationWrapper):
     """Augment the observation with the current time step in the episode.
 
     The observation space of the wrapped environment is assumed to be a flat :class:`Box`.
     In particular, pixel observations are not supported. This wrapper will append the current timestep within the current episode to the observation.
 
     Example:
-        >>> import gymnasium
-        >>> env = gymnasium.make('CartPole-v1')
+        >>> import gymnasium as gym
+        >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservation(env)
         >>> env.reset()
         array([ 0.03810719,  0.03522411,  0.02231044, -0.01088205,  0.        ])
@@ -21,7 +21,7 @@ class TimeAwareObservation(gymnasium.ObservationWrapper):
         array([ 0.03881167, -0.16021058,  0.0220928 ,  0.28875574,  1.        ])
     """
 
-    def __init__(self, env: gymnasium.Env):
+    def __init__(self, env: gym.Env):
         """Initialize :class:`TimeAwareObservation` that requires an environment with a flat :class:`Box` observation space.
 
         Args:

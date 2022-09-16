@@ -53,7 +53,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     There is physical contact between the robots and their environment - and Mujoco
-    attempts at getting realisitic physics simulations for the possible physical contact
+    attempts at getting realistic physics simulations for the possible physical contact
     dynamics by aiming for physical accuracy and computational efficiency.
 
     There is one constraint force for contacts for each degree of freedom (3).
@@ -96,17 +96,22 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
     No additional arguments are currently supported.
 
-    ```
-    env = gymnasium.make('InvertedDoublePendulum-v4')
+    ```python
+    import gymnasium as gym
+    env = gym.make('InvertedDoublePendulum-v4')
     ```
     There is no v3 for InvertedPendulum, unlike the robot environments where a v3 and
-    beyond take gymnasium.make kwargs such as xml_file, ctrl_cost_weight, reset_noise_scale etc.
+    beyond take `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc.
 
+    ```python
+    import gymnasium as gym
+    env = gym.make('InvertedDoublePendulum-v2')
+    ```
 
     ### Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
-    * v3: support for gymnasium.make kwargs such as xml_file, ctrl_cost_weight, reset_noise_scale etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
+    * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco_py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum)
     * v0: Initial versions release (1.0.0)

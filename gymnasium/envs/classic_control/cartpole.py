@@ -8,13 +8,13 @@ from typing import Optional, Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import logger, spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
 
-class CartPoleEnv(gymnasium.Env[np.ndarray, Union[int, np.ndarray]]):
+class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     """
     ### Description
 
@@ -74,11 +74,13 @@ class CartPoleEnv(gymnasium.Env[np.ndarray, Union[int, np.ndarray]]):
 
     ### Arguments
 
-    ```
-    gymnasium.make('CartPole-v1')
+    ```python
+    import gymnasium as gym
+    gym.make('CartPole-v1')
     ```
 
-    No additional arguments are currently supported.
+    On reset, the `options` parameter allows the user to change the bounds used to determine
+    the new random state.
     """
 
     metadata = {

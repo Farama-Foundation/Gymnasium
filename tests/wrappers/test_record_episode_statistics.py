@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers import RecordEpisodeStatistics, VectorListInfo
 from gymnasium.wrappers.record_episode_statistics import add_vector_episode_statistics
 
@@ -9,7 +9,7 @@ from gymnasium.wrappers.record_episode_statistics import add_vector_episode_stat
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1"])
 @pytest.mark.parametrize("deque_size", [2, 5])
 def test_record_episode_statistics(env_id, deque_size):
-    env = gymnasium.make(env_id, disable_env_checker=True)
+    env = gym.make(env_id, disable_env_checker=True)
     env = RecordEpisodeStatistics(env, deque_size)
 
     for n in range(5):
@@ -28,7 +28,7 @@ def test_record_episode_statistics(env_id, deque_size):
 
 
 def test_record_episode_statistics_reset_info():
-    env = gymnasium.make("CartPole-v1", disable_env_checker=True)
+    env = gym.make("CartPole-v1", disable_env_checker=True)
     env = RecordEpisodeStatistics(env)
     ob_space = env.observation_space
     obs, info = env.reset()
@@ -40,7 +40,7 @@ def test_record_episode_statistics_reset_info():
     ("num_envs", "asynchronous"), [(1, False), (1, True), (4, False), (4, True)]
 )
 def test_record_episode_statistics_with_vectorenv(num_envs, asynchronous):
-    envs = gymnasium.vector.make(
+    envs = gym.vector.make(
         "CartPole-v1",
         render_mode=None,
         num_envs=num_envs,
@@ -68,7 +68,7 @@ def test_record_episode_statistics_with_vectorenv(num_envs, asynchronous):
 
 
 def test_wrong_wrapping_order():
-    envs = gymnasium.vector.make("CartPole-v1", num_envs=3, disable_env_checker=True)
+    envs = gym.vector.make("CartPole-v1", num_envs=3, disable_env_checker=True)
     wrapped_env = RecordEpisodeStatistics(VectorListInfo(envs))
     wrapped_env.reset()
 

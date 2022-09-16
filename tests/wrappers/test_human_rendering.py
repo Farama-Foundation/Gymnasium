@@ -2,14 +2,14 @@ import re
 
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers import HumanRendering
 
 
 def test_human_rendering():
     for mode in ["rgb_array", "rgb_array_list"]:
         env = HumanRendering(
-            gymnasium.make("CartPole-v1", render_mode=mode, disable_env_checker=True)
+            gym.make("CartPole-v1", render_mode=mode, disable_env_checker=True)
         )
         assert env.render_mode == "human"
         env.reset()
@@ -21,7 +21,7 @@ def test_human_rendering():
 
         env.close()
 
-    env = gymnasium.make("CartPole-v1", render_mode="human")
+    env = gym.make("CartPole-v1", render_mode="human")
     with pytest.raises(
         AssertionError,
         match=re.escape(

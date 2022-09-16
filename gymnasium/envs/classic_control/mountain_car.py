@@ -7,13 +7,13 @@ from typing import Optional
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
 
-class MountainCarEnv(gymnasium.Env):
+class MountainCarEnv(gym.Env):
     """
     ### Description
 
@@ -66,7 +66,6 @@ class MountainCarEnv(gymnasium.Env):
     upon collision with the wall. The position is clipped to the range `[-1.2, 0.6]` and
     velocity is clipped to the range `[-0.07, 0.07]`.
 
-
     ### Reward:
 
     The goal is to reach the flag placed on top of the right hill as quickly as possible, as such the agent is
@@ -86,9 +85,13 @@ class MountainCarEnv(gymnasium.Env):
 
     ### Arguments
 
+    ```python
+    import gymnasium as gym
+    gym.make('MountainCar-v0')
     ```
-    gymnasium.make('MountainCar-v0')
-    ```
+
+    On reset, the `options` parameter allows the user to change the bounds used to determine
+    the new random state.
 
     ### Version History
 

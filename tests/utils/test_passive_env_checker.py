@@ -5,7 +5,7 @@ from typing import Dict, Union
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.utils.passive_env_checker import (
     check_action_space,
@@ -349,7 +349,7 @@ def _modified_step(
             "Expects `truncated` signal to be a boolean, actual type: <class 'str'>",
         ],
         [
-            gymnasium.error.Error,
+            gym.error.Error,
             lambda self, _: (1, 2, 3),
             "Expected `Env.step` to return a four or five element tuple, actual number of elements returned: 3.",
         ],

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import error, spaces
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle, colorize
@@ -74,7 +74,7 @@ class ContactDetector(contactListener):
                 self.env.legs[i].ground_contact = False
 
 
-class LunarLander(gymnasium.Env, EzPickle):
+class LunarLander(gym.Env, EzPickle):
     """
     ### Description
     This environment is a classic rocket trajectory optimization problem.
@@ -141,8 +141,8 @@ class LunarLander(gymnasium.Env, EzPickle):
     To use to the _continuous_ environment, you need to specify the
     `continuous=True` argument like below:
     ```python
-    import gymnasium
-    env = gymnasium.make(
+    import gymnasium as gym
+    env = gym.make(
         "LunarLander-v2",
         continuous: bool = False,
         gravity: float = -10.0,
@@ -173,7 +173,7 @@ class LunarLander(gymnasium.Env, EzPickle):
     `turbulence_power` dictates the maximum magnitude of rotational wind applied to the craft. The recommended value for `turbulence_power` is between 0.0 and 2.0.
 
     ### Version History
-    - v2: Count energy spent and in v0.24, added turbulance with wind power and turbulence_power parameters
+    - v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters
     - v1: Legs contact with ground added in state vector; contact with ground
         give +10 reward points, and -10 if then lose contact; reward
         renormalized to 200; harder initial random push.
@@ -802,8 +802,8 @@ class LunarLanderContinuous:
         raise error.Error(
             "Error initializing LunarLanderContinuous Environment.\n"
             "Currently, we do not support initializing this mode of environment by calling the class directly.\n"
-            "To use this environment, instead create it by specifying the continuous keyword in gymnasium.make, i.e.\n"
-            'gymnasium.make("LunarLander-v2", continuous=True)'
+            "To use this environment, instead create it by specifying the continuous keyword in gym.make, i.e.\n"
+            'gym.make("LunarLander-v2", continuous=True)'
         )
 
 

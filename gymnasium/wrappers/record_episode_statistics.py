@@ -5,7 +5,7 @@ from typing import Optional
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 
 
 def add_vector_episode_statistics(
@@ -37,7 +37,7 @@ def add_vector_episode_statistics(
     return info
 
 
-class RecordEpisodeStatistics(gymnasium.Wrapper):
+class RecordEpisodeStatistics(gym.Wrapper):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of an episode, the statistics of the episode will be added to ``info``
@@ -76,7 +76,7 @@ class RecordEpisodeStatistics(gymnasium.Wrapper):
         length_queue: The lengths of the last ``deque_size``-many episodes
     """
 
-    def __init__(self, env: gymnasium.Env, deque_size: int = 100):
+    def __init__(self, env: gym.Env, deque_size: int = 100):
         """This wrapper will keep track of cumulative rewards and episode lengths.
 
         Args:

@@ -5,7 +5,7 @@ from typing import Optional
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
@@ -14,7 +14,7 @@ DEFAULT_X = np.pi
 DEFAULT_Y = 1.0
 
 
-class PendulumEnv(gymnasium.Env):
+class PendulumEnv(gym.Env):
     """
        ### Description
 
@@ -76,9 +76,13 @@ class PendulumEnv(gymnasium.Env):
     - `g`: acceleration of gravity measured in *(m s<sup>-2</sup>)* used to calculate the pendulum dynamics.
       The default value is g = 10.0 .
 
+    ```python
+    import gymnasium as gym
+    gym.make('Pendulum-v1', g=9.81)
     ```
-    gymnasium.make('Pendulum-v1', g=9.81)
-    ```
+
+    On reset, the `options` parameter allows the user to change the bounds used to determine
+    the new random state.
 
     ### Version History
 

@@ -18,13 +18,13 @@ from typing import Optional
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
 
-class Continuous_MountainCarEnv(gymnasium.Env):
+class Continuous_MountainCarEnv(gym.Env):
     """
     ### Description
 
@@ -91,9 +91,13 @@ class Continuous_MountainCarEnv(gymnasium.Env):
 
     ### Arguments
 
+    ```python
+    import gymnasium as gym
+    gym.make('MountainCarContinuous-v0')
     ```
-    gymnasium.make('MountainCarContinuous-v0')
-    ```
+
+    On reset, the `options` parameter allows the user to change the bounds used to determine
+    the new random state.
 
     ### Version History
 

@@ -1,11 +1,11 @@
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.spaces import Discrete
 from gymnasium.wrappers import StepAPICompatibility
 
 
-class OldStepEnv(gymnasium.Env):
+class OldStepEnv(gym.Env):
     def __init__(self):
         self.action_space = Discrete(2)
         self.observation_space = Discrete(2)
@@ -18,7 +18,7 @@ class OldStepEnv(gymnasium.Env):
         return obs, rew, done, info
 
 
-class NewStepEnv(gymnasium.Env):
+class NewStepEnv(gym.Env):
     def __init__(self):
         self.action_space = Discrete(2)
         self.observation_space = Discrete(2)
@@ -56,16 +56,16 @@ def test_step_compatibility_to_old_api(env):
 
 @pytest.mark.parametrize("apply_api_compatibility", [None, True, False])
 def test_step_compatibility_in_make(apply_api_compatibility):
-    gymnasium.register("OldStepEnv-v0", entry_point=OldStepEnv)
+    gym.register("OldStepEnv-v0", entry_point=OldStepEnv)
 
     if apply_api_compatibility is not None:
-        env = gymnasium.make(
+        env = gym.make(
             "OldStepEnv-v0",
             apply_api_compatibility=apply_api_compatibility,
             disable_env_checker=True,
         )
     else:
-        env = gymnasium.make("OldStepEnv-v0", disable_env_checker=True)
+        env = gym.make("OldStepEnv-v0", disable_env_checker=True)
 
     env.reset()
     step_returns = env.step(0)
@@ -79,4 +79,4 @@ def test_step_compatibility_in_make(apply_api_compatibility):
         _, _, done, _ = step_returns
         assert isinstance(done, bool)
 
-    gymnasium.envs.registry.pop("OldStepEnv-v0")
+    gym.envs.registry.pop("OldStepEnv-v0")

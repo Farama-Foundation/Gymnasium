@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Sequence, SupportsFloat, Tuple, Type, U
 
 import numpy as np
 
-import gymnasium.error
+import gymnasium as gym
 from gymnasium import logger
 from gymnasium.spaces.space import Space
 
@@ -186,7 +186,7 @@ class Box(Space[np.ndarray]):
             A sampled value from the Box
         """
         if mask is not None:
-            raise gymnasium.error.Error(
+            raise gym.error.Error(
                 f"Box.sample cannot be provided a mask, actual value: {mask}"
             )
 

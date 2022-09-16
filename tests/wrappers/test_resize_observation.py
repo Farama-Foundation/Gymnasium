@@ -1,6 +1,6 @@
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.wrappers import ResizeObservation
 
@@ -8,7 +8,7 @@ from gymnasium.wrappers import ResizeObservation
 @pytest.mark.parametrize("env_id", ["CarRacing-v2"])
 @pytest.mark.parametrize("shape", [16, 32, (8, 5), [10, 7]])
 def test_resize_observation(env_id, shape):
-    env = gymnasium.make(env_id, disable_env_checker=True)
+    env = gym.make(env_id, disable_env_checker=True)
     env = ResizeObservation(env, shape)
 
     assert isinstance(env.observation_space, spaces.Box)
