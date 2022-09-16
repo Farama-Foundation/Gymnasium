@@ -15,7 +15,7 @@ with open("gymnasium/version.py") as file:
 extras = {
     "atari": ["ale-py~=0.8.0"],
     "accept-rom-license": ["autorom[accept-rom-license]~=0.4.2"],
-    "box2d":     ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
+    "box2d": ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
     "classic_control": ["pygame==2.1.0"],
     "mujoco_py": ["mujoco_py<2.2,>=2.1"],
     "mujoco": ["mujoco==2.2.0", "imageio>=2.14.1"],
@@ -51,9 +51,7 @@ setup(
     author="Farama Foundation",
     author_email="jkterry@farama.org",
     classifiers=[
-        # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -66,7 +64,7 @@ setup(
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
         "gym_notices >= 0.0.4",
-        "dataclasses == 0.8; python_version == '3.6'",
+        "brax-jumpy>=0.1.0",
     ],
     license="MIT",
     long_description=long_description,
@@ -84,7 +82,7 @@ setup(
             "py.typed",
         ]
     },
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     tests_require=extras["testing"],
     url="https://www.gymlibrary.dev/",
     version=VERSION,
