@@ -8,13 +8,13 @@
 
 Gymnasium is an open source Python library for developing and comparing reinforcement learning algorithms by providing a standard API to communicate between learning algorithms and environments, as well as a standard set of environments compliant with that API. This is a fork of OpenAI's Gym library by the maintainers, and is where future maintenance will occur going forward
 
-Gym documentation website is at [gymnasium.farama.org](https://gymnasium.farama.org), and a discord server you can join (which we use to coordinate development work) here: https://discord.gg/nHg2JRN489
+The documentation website is at [gymnasium.farama.org](https://gymnasium.farama.org), and we have a public discord server (which we also use to coordinate development work) that you can join here: https://discord.gg/nHg2JRN489
 
 ## Installation
 
 To install the base Gymnasium library, use `pip install gymnasium`.
 
-This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install gymnasium[atari]` or use `pip install gym[all]` to install all dependencies.
+This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install gymnasium[atari]` or use `pip install gymnasium[all]` to install all dependencies.
 
 We support and test for Python 3.7, 3.8, 3.9 and 3.10 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
 
@@ -25,8 +25,8 @@ The Gymnasium API models environments as simple Python `env` classes. Creating e
 ```python
 import gymnasium as gym
 env = gym.make("CartPole-v1")
-observation, info = env.reset(seed=42)
 
+observation, info = env.reset(seed=42)
 for _ in range(1000):
     action = env.action_space.sample()
     observation, reward, terminated, truncated, info = env.step(action)
