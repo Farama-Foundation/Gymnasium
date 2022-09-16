@@ -1,6 +1,6 @@
 # Gymnasium-docs
 
-This folder contains the documentation for [Gymnasium](https://github.com/Farama-Foundation/gymnasium).
+This folder contains the documentation for [Gymnasium](https://github.com/Farama-Foundation/Gymnasium).
 
 If you are modifying a non-environment page or an atari environment page, please PR this repo. Otherwise, follow the steps below:
 
