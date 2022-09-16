@@ -12,7 +12,7 @@ lastpage:
    :width: 500
 ```
 
-**The Gymnasium interface is simple, pythonic, and capable of representing general RL problems:**
+**Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems:**
 
 ```{code-block} python
 
@@ -41,7 +41,6 @@ content/basic_usage
 
 api/core
 api/spaces
-api/spaces_utils
 api/wrappers
 api/vector
 api/utils
@@ -71,7 +70,7 @@ content/vectorising
 :hidden:
 :caption: Development
 
-Github <https://github.com/Farama-Foundation/gymnasium>
+Github <https://github.com/Farama-Foundation/Gymnasium>
 Donate <https://farama.org/donations>
 
 ```
