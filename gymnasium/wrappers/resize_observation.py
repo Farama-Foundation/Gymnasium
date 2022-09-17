@@ -3,12 +3,12 @@ from typing import Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.spaces import Box
 
 
-class ResizeObservation(gymnasium.ObservationWrapper):
+class ResizeObservation(gym.ObservationWrapper):
     """Resize the image observation.
 
     This wrapper works on environments with image observations (or more generally observations of shape AxBxC) and resizes
@@ -16,8 +16,8 @@ class ResizeObservation(gymnasium.ObservationWrapper):
     In that case, the observation is scaled to a square of side-length :attr:`shape`.
 
     Example:
-        >>> import gymnasium
-        >>> env = gymnasium.make('CarRacing-v1')
+        >>> import gymnasium as gym
+        >>> env = gym.make('CarRacing-v1')
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> env = ResizeObservation(env, 64)
@@ -25,7 +25,7 @@ class ResizeObservation(gymnasium.ObservationWrapper):
         (64, 64, 3)
     """
 
-    def __init__(self, env: gymnasium.Env, shape: Union[tuple, int]):
+    def __init__(self, env: gym.Env, shape: Union[tuple, int]):
         """Resizes image observations to shape given by :attr:`shape`.
 
         Args:

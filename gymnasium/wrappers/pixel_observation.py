@@ -6,13 +6,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-import gymnasium
-from gymnasium import logger, spaces
+import gymnasium as gym
+from gymnasium import spaces
 
 STATE_KEY = "state"
 
 
-class PixelObservationWrapper(gymnasium.ObservationWrapper):
+class PixelObservationWrapper(gym.ObservationWrapper):
     """Augment observations by pixel values.
 
     Observations of this wrapper will be dictionaries of images.
@@ -23,14 +23,14 @@ class PixelObservationWrapper(gymnasium.ObservationWrapper):
     space) will be added to the dictionary under the key "state".
 
     Example:
-        >>> import gymnasium
-        >>> env = PixelObservationWrapper(gymnasium.make('CarRacing-v1', render_mode="rgb_array"))
+        >>> import gymnasium as gym
+        >>> env = PixelObservationWrapper(gym.make('CarRacing-v1', render_mode="rgb_array"))
         >>> obs = env.reset()
         >>> obs.keys()
         odict_keys(['pixels'])
         >>> obs['pixels'].shape
         (400, 600, 3)
-        >>> env = PixelObservationWrapper(gymnasium.make('CarRacing-v1', render_mode="rgb_array"), pixels_only=False)
+        >>> env = PixelObservationWrapper(gym.make('CarRacing-v1', render_mode="rgb_array"), pixels_only=False)
         >>> obs = env.reset()
         >>> obs.keys()
         odict_keys(['state', 'pixels'])
@@ -38,7 +38,7 @@ class PixelObservationWrapper(gymnasium.ObservationWrapper):
         (96, 96, 3)
         >>> obs['pixels'].shape
         (400, 600, 3)
-        >>> env = PixelObservationWrapper(gymnasium.make('CarRacing-v1', render_mode="rgb_array"), pixel_keys=('obs',))
+        >>> env = PixelObservationWrapper(gym.make('CarRacing-v1', render_mode="rgb_array"), pixel_keys=('obs',))
         >>> obs = env.reset()
         >>> obs.keys()
         odict_keys(['obs'])
@@ -48,7 +48,7 @@ class PixelObservationWrapper(gymnasium.ObservationWrapper):
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         pixels_only: bool = True,
         render_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
         pixel_keys: Tuple[str, ...] = ("pixels",),
@@ -95,8 +95,7 @@ class PixelObservationWrapper(gymnasium.ObservationWrapper):
 
         default_render_kwargs = {}
         if not env.render_mode:
-            default_render_kwargs = {"mode": "rgb_array_list"}
-            logger.warn(
+            raise AttributeError(
                 "env.render_mode must be specified to use PixelObservationWrapper:"
                 "`gymnasium.make(env_name, render_mode='rgb_array')`."
             )

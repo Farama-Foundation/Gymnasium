@@ -8,7 +8,7 @@ from typing import List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import logger
 from gymnasium.core import ObsType
 from gymnasium.error import (
@@ -46,10 +46,10 @@ class AsyncVectorEnv(VectorEnv):
 
     Example::
 
-        >>> import gymnasium
-        >>> env = gymnasium.vector.AsyncVectorEnv([
-        ...     lambda: gymnasium.make("Pendulum-v0", g=9.81),
-        ...     lambda: gymnasium.make("Pendulum-v0", g=1.62)
+        >>> import gymnasium as gym
+        >>> env = gym.vector.AsyncVectorEnv([
+        ...     lambda: gym.make("Pendulum-v0", g=9.81),
+        ...     lambda: gym.make("Pendulum-v0", g=1.62)
         ... ])
         >>> env.reset()
         array([[-0.8286432 ,  0.5597771 ,  0.90249056],
@@ -59,8 +59,8 @@ class AsyncVectorEnv(VectorEnv):
     def __init__(
         self,
         env_fns: Sequence[callable],
-        observation_space: Optional[gymnasium.Space] = None,
-        action_space: Optional[gymnasium.Space] = None,
+        observation_space: Optional[gym.Space] = None,
+        action_space: Optional[gym.Space] = None,
         shared_memory: bool = True,
         copy: bool = True,
         context: Optional[str] = None,

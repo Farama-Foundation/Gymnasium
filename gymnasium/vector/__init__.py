@@ -1,7 +1,7 @@
 """Module for vector environments."""
 from typing import Iterable, List, Optional, Union
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from gymnasium.vector.vector_env import VectorEnv, VectorEnvWrapper
@@ -21,8 +21,8 @@ def make(
 
     Example::
 
-        >>> import gymnasium
-        >>> env = gymnasium.vector.make('CartPole-v1', num_envs=3)
+        >>> import gymnasium as gym
+        >>> env = gym.vector.make('CartPole-v1', num_envs=3)
         >>> env.reset()
         array([[-0.04456399,  0.04653909,  0.01326909, -0.02099827],
                [ 0.03073904,  0.00145001, -0.03088818, -0.03131252],
@@ -48,7 +48,7 @@ def make(
         _disable_env_checker = True if env_num > 0 else disable_env_checker
 
         def _make_env():
-            env = gymnasium.envs.registration.make(
+            env = gym.envs.registration.make(
                 id,
                 disable_env_checker=_disable_env_checker,
                 **kwargs,

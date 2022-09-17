@@ -1,5 +1,5 @@
 """A passive environment checker wrapper for an environment's observation and action space along with the reset, step and render functions."""
-import gymnasium
+import gymnasium as gym
 from gymnasium.core import ActType
 from gymnasium.utils.passive_env_checker import (
     check_action_space,
@@ -10,7 +10,7 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-class PassiveEnvChecker(gymnasium.Wrapper):
+class PassiveEnvChecker(gym.Wrapper):
     """A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API."""
 
     def __init__(self, env):
@@ -19,11 +19,11 @@ class PassiveEnvChecker(gymnasium.Wrapper):
 
         assert hasattr(
             env, "action_space"
-        ), "The environment must specify an action space. https://www.gymlibrary.dev/content/environment_creation/"
+        ), "The environment must specify an action space. https://gymnasium.farama.org/content/environment_creation/"
         check_action_space(env.action_space)
         assert hasattr(
             env, "observation_space"
-        ), "The environment must specify an observation space. https://www.gymlibrary.dev/content/environment_creation/"
+        ), "The environment must specify an observation space. https://gymnasium.farama.org/content/environment_creation/"
         check_observation_space(env.observation_space)
 
         self.checked_reset = False

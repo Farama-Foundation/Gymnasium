@@ -4,7 +4,7 @@ from typing import Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.spaces import Box
 
@@ -97,7 +97,7 @@ class LazyFrames:
         return frame
 
 
-class FrameStack(gymnasium.ObservationWrapper):
+class FrameStack(gym.ObservationWrapper):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
@@ -112,8 +112,8 @@ class FrameStack(gymnasium.ObservationWrapper):
           - After :meth:`reset` is called, the frame buffer will be filled with the initial observation. I.e. the observation returned by :meth:`reset` will consist of ``num_stack`-many identical frames,
 
     Example:
-        >>> import gymnasium
-        >>> env = gymnasium.make('CarRacing-v1')
+        >>> import gymnasium as gym
+        >>> env = gym.make('CarRacing-v1')
         >>> env = FrameStack(env, 4)
         >>> env.observation_space
         Box(4, 96, 96, 3)
@@ -124,7 +124,7 @@ class FrameStack(gymnasium.ObservationWrapper):
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         num_stack: int,
         lz4_compress: bool = False,
     ):

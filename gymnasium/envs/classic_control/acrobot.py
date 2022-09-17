@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 from numpy import cos, pi, sin
 
-from gymnasium import core, spaces
+from gymnasium import Env, spaces
 from gymnasium.error import DependencyNotInstalled
 
 __copyright__ = "Copyright 2013, RLPy http://acl.mit.edu/RLPy"
@@ -23,7 +23,7 @@ __author__ = "Christoph Dann <cdann@cdann.de>"
 from gymnasium.envs.classic_control import utils
 
 
-class AcrobotEnv(core.Env):
+class AcrobotEnv(Env):
     """
     ### Description
 
@@ -94,20 +94,24 @@ class AcrobotEnv(core.Env):
 
     ### Arguments
 
-    No additional arguments are currently supported.
+    No additional arguments are currently supported during construction.
 
+    ```python
+    import gymnasium as gym
+    env = gym.make('Acrobot-v1')
     ```
-    env = gymnasium.make('Acrobot-v1')
-    ```
+
+    On reset, the `options` parameter allows the user to change the bounds used to determine
+    the new random state.
 
     By default, the dynamics of the acrobot follow those described in Sutton and Barto's book
     [Reinforcement Learning: An Introduction](http://incompleteideas.net/book/11/node4.html).
     However, a `book_or_nips` parameter can be modified to change the pendulum dynamics to those described
     in the original [NeurIPS paper](https://papers.nips.cc/paper/1995/hash/8f1d43620bc6bb580df6e80b0dc05c48-Abstract.html).
 
-    ```
+    ```python
     # To change the dynamics as described above
-    env.env.book_or_nips = 'nips'
+    env.unwrapped.book_or_nips = 'nips'
     ```
 
     See the following note for details:

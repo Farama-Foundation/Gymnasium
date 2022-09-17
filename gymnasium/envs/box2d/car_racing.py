@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.box2d.car_dynamics import Car
 from gymnasium.error import DependencyNotInstalled, InvalidAction
@@ -83,7 +83,7 @@ class FrictionDetector(contactListener):
             return
 
         # inherit tile color from env
-        tile.color = self.env.road_color / 255
+        tile.color[:] = self.env.road_color
         if not obj or "tiles" not in obj.__dict__:
             return
         if begin:
@@ -104,7 +104,7 @@ class FrictionDetector(contactListener):
             obj.tiles.remove(tile)
 
 
-class CarRacing(gymnasium.Env, EzPickle):
+class CarRacing(gym.Env, EzPickle):
     """
     ### Description
     The easiest control task to learn from pixels - a top-down
@@ -127,7 +127,8 @@ class CarRacing(gymnasium.Env, EzPickle):
         There are 5 actions: do nothing, steer left, steer right, gas, brake.
 
     ### Observation Space
-    State consists of 96x96 pixels.
+
+    A top-down 96x96 RGB image of the car and race track.
 
     ### Rewards
     The reward is -0.1 every frame and +1000/N for every track tile visited,
@@ -139,8 +140,8 @@ class CarRacing(gymnasium.Env, EzPickle):
     The car starts at rest in the center of the road.
 
     ### Episode Termination
-    The episode finishes when all of the tiles are visited. The car can also go
-    outside of the playfield - that is, far off the track, in which case it will
+    The episode finishes when all the tiles are visited. The car can also go
+    outside the playfield - that is, far off the track, in which case it will
     receive -100 reward and die.
 
     ### Arguments
@@ -158,17 +159,18 @@ class CarRacing(gymnasium.Env, EzPickle):
     Correspondingly, passing the option `options["randomize"] = False` will not change the current colour of the environment.
     `domain_randomize` must be `True` on init for this argument to work.
     Example usage:
-    ```py
-        env = gymnasium.make("CarRacing-v1", domain_randomize=True)
+    ```python
+    import gymnasium as gym
+    env = gym.make("CarRacing-v1", domain_randomize=True)
 
-        # normal reset, this changes the colour scheme by default
-        env.reset()
+    # normal reset, this changes the colour scheme by default
+    env.reset()
 
-        # reset with colour scheme change
-        env.reset(options={"randomize": True})
+    # reset with colour scheme change
+    env.reset(options={"randomize": True})
 
-        # reset with no colour scheme change
-        env.reset(options={"randomize": False})
+    # reset with no colour scheme change
+    env.reset(options={"randomize": False})
     ```
 
     ### Version History
@@ -773,6 +775,7 @@ if __name__ == "__main__":
     a = np.array([0.0, 0.0, 0.0])
 
     def register_input():
+        global quit, restart
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -784,8 +787,9 @@ if __name__ == "__main__":
                 if event.key == pygame.K_DOWN:
                     a[2] = +0.8  # set 1.0 for wheels to block to zero rotation
                 if event.key == pygame.K_RETURN:
-                    global restart
                     restart = True
+                if event.key == pygame.K_ESCAPE:
+                    quit = True
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -797,11 +801,13 @@ if __name__ == "__main__":
                 if event.key == pygame.K_DOWN:
                     a[2] = 0
 
-    env = CarRacing()
-    env.render()
+            if event.type == pygame.QUIT:
+                quit = True
 
-    isopen = True
-    while isopen:
+    env = CarRacing(render_mode="human")
+
+    quit = False
+    while not quit:
         env.reset()
         total_reward = 0.0
         steps = 0
@@ -814,7 +820,6 @@ if __name__ == "__main__":
                 print("\naction " + str([f"{x:+0.2f}" for x in a]))
                 print(f"step {steps} total_reward {total_reward:+0.2f}")
             steps += 1
-            isopen = env.render()
-            if terminated or truncated or restart or isopen is False:
+            if terminated or truncated or restart or quit:
                 break
     env.close()

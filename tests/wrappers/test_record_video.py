@@ -1,15 +1,15 @@
 import os
 import shutil
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers import capped_cubic_video_schedule
 
 
 def test_record_video_using_default_trigger():
-    env = gymnasium.make(
+    env = gym.make(
         "CartPole-v1", render_mode="rgb_array_list", disable_env_checker=True
     )
-    env = gymnasium.wrappers.RecordVideo(env, "videos")
+    env = gym.wrappers.RecordVideo(env, "videos")
     env.reset()
     for _ in range(199):
         action = env.action_space.sample()
@@ -26,12 +26,8 @@ def test_record_video_using_default_trigger():
 
 
 def test_record_video_reset():
-    env = gymnasium.make(
-        "CartPole-v1", render_mode="rgb_array", disable_env_checker=True
-    )
-    env = gymnasium.wrappers.RecordVideo(
-        env, "videos", step_trigger=lambda x: x % 100 == 0
-    )
+    env = gym.make("CartPole-v1", render_mode="rgb_array", disable_env_checker=True)
+    env = gym.wrappers.RecordVideo(env, "videos", step_trigger=lambda x: x % 100 == 0)
     ob_space = env.observation_space
     obs, info = env.reset()
     env.close()
@@ -42,13 +38,9 @@ def test_record_video_reset():
 
 
 def test_record_video_step_trigger():
-    env = gymnasium.make(
-        "CartPole-v1", render_mode="rgb_array", disable_env_checker=True
-    )
+    env = gym.make("CartPole-v1", render_mode="rgb_array", disable_env_checker=True)
     env._max_episode_steps = 20
-    env = gymnasium.wrappers.RecordVideo(
-        env, "videos", step_trigger=lambda x: x % 100 == 0
-    )
+    env = gym.wrappers.RecordVideo(env, "videos", step_trigger=lambda x: x % 100 == 0)
     env.reset()
     for _ in range(199):
         action = env.action_space.sample()
@@ -64,10 +56,10 @@ def test_record_video_step_trigger():
 
 def make_env(gym_id, seed, **kwargs):
     def thunk():
-        env = gymnasium.make(gym_id, disable_env_checker=True, **kwargs)
+        env = gym.make(gym_id, disable_env_checker=True, **kwargs)
         env._max_episode_steps = 20
         if seed == 1:
-            env = gymnasium.wrappers.RecordVideo(
+            env = gym.wrappers.RecordVideo(
                 env, "videos", step_trigger=lambda x: x % 100 == 0
             )
         return env
@@ -76,10 +68,10 @@ def make_env(gym_id, seed, **kwargs):
 
 
 def test_record_video_within_vector():
-    envs = gymnasium.vector.SyncVectorEnv(
+    envs = gym.vector.SyncVectorEnv(
         [make_env("CartPole-v1", 1 + i, render_mode="rgb_array") for i in range(2)]
     )
-    envs = gymnasium.wrappers.RecordEpisodeStatistics(envs)
+    envs = gym.wrappers.RecordEpisodeStatistics(envs)
     envs.reset()
     for i in range(199):
         _, _, _, _, infos = envs.step(envs.action_space.sample())

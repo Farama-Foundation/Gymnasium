@@ -3,19 +3,19 @@ from typing import Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 
 
-class RescaleAction(gymnasium.ActionWrapper):
+class RescaleAction(gym.ActionWrapper):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
     or :attr:`max_action` are numpy arrays, the shape must match the shape of the environment's action space.
 
     Example:
-        >>> import gymnasium
-        >>> env = gymnasium.make('BipedalWalker-v3')
+        >>> import gymnasium as gym
+        >>> env = gym.make('BipedalWalker-v3')
         >>> env.action_space
         Box(-1.0, 1.0, (4,), float32)
         >>> min_action = -0.5
@@ -23,13 +23,13 @@ class RescaleAction(gymnasium.ActionWrapper):
         >>> env = RescaleAction(env, min_action=min_action, max_action=max_action)
         >>> env.action_space
         Box(-0.5, [0.   0.5  1.   0.75], (4,), float32)
-        >>> RescaleAction(env, min_action, max_action).action_space == gymnasium.spaces.Box(min_action, max_action)
+        >>> RescaleAction(env, min_action, max_action).action_space == gym.spaces.Box(min_action, max_action)
         True
     """
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         min_action: Union[float, int, np.ndarray],
         max_action: Union[float, int, np.ndarray],
     ):
