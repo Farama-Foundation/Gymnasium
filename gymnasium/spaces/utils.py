@@ -503,21 +503,23 @@ def _apply_function_multidiscrete(
 
 
 @apply_function.register(Dict)
-def _apply_function_dict(space: Dict, x: Any, func: Callable, args: Optional[Any]):
+def _apply_function_dict(
+    space: Dict, x: typing.Dict[Any, Any], func: Callable, args: Optional[Any]
+):
     if not args:
         return OrderedDict(
             [
-                (space_key, apply_function(subspace, val, func, None))
-                for (space_key, subspace), val in zip(space.spaces.items(), x.values())
+                (k, apply_function(subspace, x.get(k), func, None))
+                for k, subspace in space.spaces.items()
             ]
         )
     elif isinstance(args, dict):
         return OrderedDict(
             [
-                (k, apply_function(subspace, val, func, args.get(k)))
+                (k, apply_function(subspace, x.get(k), func, args.get(k)))
                 if args.get(k) is not None
-                else (k, val)
-                for (k, subspace), val in zip(space.spaces.items(), x.values())
+                else (k, x.get(k))
+                for k, subspace in space.spaces.items()
             ]
         )
     else:

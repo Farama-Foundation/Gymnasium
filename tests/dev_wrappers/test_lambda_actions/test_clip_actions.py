@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 import gymnasium
+from gymnasium.wrappers import ClipActionsV0
 from tests.dev_wrappers.mock_data import (
     DICT_SPACE,
     DICT_WITHIN_TUPLE_SPACE,
@@ -20,11 +21,6 @@ from tests.dev_wrappers.mock_data import (
     TUPLE_WITHIN_DICT_SPACE,
 )
 from tests.dev_wrappers.utils import TestingEnv
-
-try:
-    from gymnasium.wrappers import ClipActionsV0
-except ImportError:
-    pytest.skip(allow_module_level=True)
 
 
 @pytest.mark.parametrize(
@@ -115,7 +111,7 @@ def test_clip_actions_v0_vector_env(
         (
             TestingEnv(action_space=DICT_SPACE),
             {"box": (NEW_BOX_LOW, NEW_BOX_HIGH)},
-            {"box": NEW_BOX_HIGH + 1, "discrete": 0},
+            {"box": NEW_BOX_HIGH + 1, "box2": 0, "discrete": 0},
         )
     ],
 )

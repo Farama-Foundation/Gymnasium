@@ -15,6 +15,7 @@ from gymnasium.dev_wrappers.lambda_observations import (
     ResizeObservationsV0,
 )
 from gymnasium.dev_wrappers.lambda_reward import ClipRewardsV0, LambdaRewardV0
+from gymnasium.dev_wrappers.time_aware_observation import TimeAwareObservationV0
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
 from gymnasium.wrappers.clip_action import ClipAction

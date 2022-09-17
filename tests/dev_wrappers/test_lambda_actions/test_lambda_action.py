@@ -4,13 +4,9 @@ import pytest
 
 import gymnasium
 from gymnasium.error import InvalidAction
+from gymnasium.wrappers import LambdaActionV0
 from tests.dev_wrappers.mock_data import BOX_SPACE, NUM_ENVS
 from tests.dev_wrappers.utils import TestingEnv
-
-try:
-    from gymnasium.wrappers import LambdaActionV0
-except ImportError:
-    pytest.skip(allow_module_level=True)
 
 
 @pytest.mark.parametrize(

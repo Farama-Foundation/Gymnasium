@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 import gymnasium
+from gymnasium.wrappers import ScaleActionsV0
 from tests.dev_wrappers.mock_data import (
     BOX_HIGH,
     BOX_LOW,
@@ -21,11 +22,6 @@ from tests.dev_wrappers.mock_data import (
     TUPLE_SPACE,
 )
 from tests.dev_wrappers.utils import TestingEnv
-
-try:
-    from gymnasium.wrappers import ScaleActionsV0
-except ImportError:
-    pytest.skip(allow_module_level=True)
 
 
 @pytest.mark.parametrize(
