@@ -2,13 +2,13 @@
 import os
 from typing import Callable, Optional
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import logger
 
 try:
     from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 except ImportError:
-    raise gymnasium.error.DependencyNotInstalled(
+    raise gym.error.DependencyNotInstalled(
         "MoviePy is not installed, run `pip install moviepy`"
     )
 
@@ -59,16 +59,17 @@ def save_video(
             You need to specify either fps or duration.
 
     Example:
-        >>> import gymnasium
+        >>> import gymnasium as gym
         >>> from gymnasium.utils.save_video import save_video
-        >>> env = gymnasium.make("FrozenLake-v1", render_mode="rgb_array_list")
+        >>> env = gym.make("FrozenLake-v1", render_mode="rgb_array_list")
         >>> env.reset()
         >>> step_starting_index = 0
         >>> episode_index = 0
         >>> for step_index in range(199):
         ...    action = env.action_space.sample()
-        ...    _, _, done, _ = env.step(action)
-        ...    if done:
+        ...    _, _, terminated, truncated, _ = env.step(action)
+        ...
+        ...    if terminated or truncated:
         ...       save_video(
         ...          env.render(),
         ...          "videos",

@@ -1,7 +1,7 @@
 """Implementation of Atari 2600 Preprocessing following the guidelines of Machado et al., 2018."""
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.spaces import Box
 
 try:
@@ -10,7 +10,7 @@ except ImportError:
     cv2 = None
 
 
-class AtariPreprocessing(gymnasium.Wrapper):
+class AtariPreprocessing(gym.Wrapper):
     """Atari 2600 preprocessing wrapper.
 
     This class follows the guidelines in Machado et al. (2018),
@@ -29,7 +29,7 @@ class AtariPreprocessing(gymnasium.Wrapper):
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         noop_max: int = 30,
         frame_skip: int = 4,
         screen_size: int = 84,
@@ -60,7 +60,7 @@ class AtariPreprocessing(gymnasium.Wrapper):
         """
         super().__init__(env)
         if cv2 is None:
-            raise gymnasium.error.DependencyNotInstalled(
+            raise gym.error.DependencyNotInstalled(
                 "opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari"
             )
         assert frame_skip > 0

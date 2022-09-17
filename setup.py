@@ -63,7 +63,7 @@ setup(
         "numpy >= 1.18.0",
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
-        "gym_notices >= 0.0.4",
+        "gymnasium_notices >= 0.0.1",
         "brax-jumpy>=0.1.0",
         "tinyscaler >= 1.2.4",
     ],
@@ -85,7 +85,7 @@ setup(
     },
     python_requires=">=3.7",
     tests_require=extras["testing"],
-    url="https://www.gymlibrary.dev/",
+    url="https://gymnasium.farama.org/",
     version=VERSION,
     zip_safe=False,
 )

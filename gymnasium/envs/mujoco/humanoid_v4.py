@@ -181,14 +181,16 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
     No additional arguments are currently supported in v2 and lower.
 
-    ```
-    env = gymnasium.make('Humanoid-v4')
+    ```python
+    import gymnasium as gym
+    env = gym.make('Humanoid-v4')
     ```
 
-    v3 and v4 take gymnasium.make kwargs such as xml_file, ctrl_cost_weight, reset_noise_scale etc.
+    v3 and v4 take `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc.
 
-    ```
-    env = gymnasium.make('Humanoid-v4', ctrl_cost_weight=0.1, ....)
+    ```python
+    import gymnasium as gym
+    env = gym.make('Humanoid-v4', ctrl_cost_weight=0.1, ....)
     ```
 
     | Parameter                                    | Type      | Default          | Description                                                                                                                                                               |
@@ -206,7 +208,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     ### Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
-    * v3: support for gymnasium.make kwargs such as xml_file, ctrl_cost_weight, reset_noise_scale etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
+    * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco_py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release (1.0.0)

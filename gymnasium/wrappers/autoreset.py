@@ -1,8 +1,8 @@
 """Wrapper that autoreset environments when `terminated=True` or `truncated=True`."""
-import gymnasium
+import gymnasium as gym
 
 
-class AutoResetWrapper(gymnasium.Wrapper):
+class AutoResetWrapper(gym.Wrapper):
     """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.
 
     When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,
@@ -24,7 +24,7 @@ class AutoResetWrapper(gymnasium.Wrapper):
         Make sure you know what you're doing if you use this wrapper!
     """
 
-    def __init__(self, env: gymnasium.Env):
+    def __init__(self, env: gym.Env):
         """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.
 
         Args:

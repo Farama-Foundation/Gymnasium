@@ -1,7 +1,8 @@
 """Set of wrappers for normalizing actions and observations."""
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
+
 
 class RunningMeanStd:
     """Tracks the mean, variance and count of values."""
@@ -44,7 +45,7 @@ def update_mean_var_count_from_moments(
     return new_mean, new_var, new_count
 
 
-class NormalizeObservation(gymnasium.core.Wrapper):
+class NormalizeObservation(gym.Wrapper):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
     Note:
@@ -52,7 +53,7 @@ class NormalizeObservation(gymnasium.core.Wrapper):
         newly instantiated or the policy was changed recently.
     """
 
-    def __init__(self, env: gymnasium.Env, epsilon: float = 1e-8):
+    def __init__(self, env: gym.Env, epsilon: float = 1e-8):
         """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
         Args:
@@ -92,7 +93,7 @@ class NormalizeObservation(gymnasium.core.Wrapper):
         return (obs - self.obs_rms.mean) / np.sqrt(self.obs_rms.var + self.epsilon)
 
 
-class NormalizeReward(gymnasium.core.Wrapper):
+class NormalizeReward(gym.Wrapper):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
@@ -104,7 +105,7 @@ class NormalizeReward(gymnasium.core.Wrapper):
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         gamma: float = 0.99,
         epsilon: float = 1e-8,
     ):

@@ -51,7 +51,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`action_space` - The Space object corresponding to valid actions
     - :attr:`observation_space` - The Space object corresponding to valid observations
     - :attr:`reward_range` - A tuple corresponding to the minimum and maximum possible rewards
-    - :attr:`spec` - An environment spec that contains the information used to initialise the environment from `gymnasium.make`
+    - :attr:`spec` - An environment spec that contains the information used to initialise the environment from `gym.make`
     - :attr:`metadata` - The metadata of the environment, i.e. render modes
     - :attr:`np_random` - The random number generator for the environment
 
@@ -106,9 +106,8 @@ class Env(Generic[ObsType, ActType]):
                 hidden from observations, or individual reward terms that are combined to produce the total reward.
                 It also can contain information that distinguishes truncation and termination, however this is deprecated in favour
                 of returning two booleans, and will be removed in a future version.
-
-            (deprecated)
-            done (bool): A boolean value for if the episode has ended, in which case further :meth:`step` calls will return undefined results.
+            done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will
+                return undefined results.
                 A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,
                 a certain timelimit was exceeded, or the physics simulation has entered an invalid state.
         """
@@ -188,7 +187,7 @@ class Env(Generic[ObsType, ActType]):
         """Returns the base non-wrapped environment.
 
         Returns:
-            Env: The base non-wrapped gymnasium.Env instance
+            Env: The base non-wrapped gym.Env instance
         """
         return self
 
@@ -362,7 +361,7 @@ class ObservationWrapper(Wrapper):
     ``observation["target_position"] - observation["agent_position"]``. For this, you could implement an
     observation wrapper like this::
 
-        class RelativePosition(gymnasium.ObservationWrapper):
+        class RelativePosition(gym.ObservationWrapper):
             def __init__(self, env):
                 super().__init__(env)
                 self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
@@ -436,7 +435,7 @@ class ActionWrapper(Wrapper):
     Let’s say you have an environment with action space of type :class:`gymnasium.spaces.Box`, but you would only like
     to use a finite subset of actions. Then, you might want to implement the following wrapper::
 
-        class DiscreteActions(gymnasium.ActionWrapper):
+        class DiscreteActions(gym.ActionWrapper):
             def __init__(self, env, disc_to_cont):
                 super().__init__(env)
                 self.disc_to_cont = disc_to_cont
@@ -446,13 +445,13 @@ class ActionWrapper(Wrapper):
                 return self.disc_to_cont[act]
 
         if __name__ == "__main__":
-            env = gymnasium.make("LunarLanderContinuous-v2")
+            env = gym.make("LunarLanderContinuous-v2")
             wrapped_env = DiscreteActions(env, [np.array([1,0]), np.array([-1,0]),
                                                 np.array([0,1]), np.array([0,-1])])
             print(wrapped_env.action_space)         #Discrete(4)
 
 
-    Among others, Gymasnium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction`.
+    Among others, Gymnasium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction`.
     """
 
     def step(self, action):

@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.registration import EnvSpec
 from tests.envs.utils import all_testing_initialised_envs, mujoco_testing_env_specs
@@ -59,7 +59,7 @@ DISCRETE_ENVS = list(
 @pytest.mark.parametrize(
     "env", DISCRETE_ENVS, ids=[env.spec.id for env in DISCRETE_ENVS]
 )
-def test_discrete_actions_out_of_bound(env: gymnasium.Env):
+def test_discrete_actions_out_of_bound(env: gym.Env):
     """Test out of bound actions in Discrete action_space.
 
     In discrete action_space environments, `out-of-bound`
@@ -88,7 +88,7 @@ OOB_VALUE = 100
 
 
 @pytest.mark.parametrize("env", BOX_ENVS, ids=[env.spec.id for env in BOX_ENVS])
-def test_box_actions_out_of_bound(env: gymnasium.Env):
+def test_box_actions_out_of_bound(env: gym.Env):
     """Test out of bound actions in Box action_space.
 
     Environments with Box actions spaces perform clipping inside `step`.
@@ -100,7 +100,7 @@ def test_box_actions_out_of_bound(env: gymnasium.Env):
     """
     env.reset(seed=42)
 
-    oob_env = gymnasium.make(env.spec.id, disable_env_checker=True)
+    oob_env = gym.make(env.spec.id, disable_env_checker=True)
     oob_env.reset(seed=42)
 
     assert isinstance(env.action_space, spaces.Box)

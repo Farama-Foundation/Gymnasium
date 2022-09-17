@@ -3,12 +3,12 @@ from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.spaces import Discrete
 from gymnasium.wrappers.compatibility import EnvCompatibility, LegacyEnv
 
 
-class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
+class LegacyEnvExplicit(LegacyEnv, gym.Env):
     """Legacy env that explicitly implements the old API."""
 
     observation_space = Discrete(1)
@@ -37,7 +37,7 @@ class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
         pass
 
 
-class LegacyEnvImplicit(gymnasium.Env):
+class LegacyEnvImplicit(gym.Env):
     """Legacy env that implicitly implements the old API as a protocol."""
 
     observation_space = Discrete(1)
@@ -95,12 +95,12 @@ def test_implicit():
 
 
 def test_make_compatibility_in_spec():
-    gymnasium.register(
+    gym.register(
         id="LegacyTestEnv-v0",
         entry_point=LegacyEnvExplicit,
         apply_api_compatibility=True,
     )
-    env = gymnasium.make("LegacyTestEnv-v0", render_mode="rgb_array")
+    env = gym.make("LegacyTestEnv-v0", render_mode="rgb_array")
     assert env.observation_space == Discrete(1)
     assert env.action_space == Discrete(1)
     assert env.reset() == (0, {})
@@ -110,12 +110,12 @@ def test_make_compatibility_in_spec():
     assert isinstance(img, np.ndarray)
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
-    del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
+    del gym.envs.registration.registry["LegacyTestEnv-v0"]
 
 
 def test_make_compatibility_in_make():
-    gymnasium.register(id="LegacyTestEnv-v0", entry_point=LegacyEnvExplicit)
-    env = gymnasium.make(
+    gym.register(id="LegacyTestEnv-v0", entry_point=LegacyEnvExplicit)
+    env = gym.make(
         "LegacyTestEnv-v0", apply_api_compatibility=True, render_mode="rgb_array"
     )
     assert env.observation_space == Discrete(1)
@@ -127,4 +127,4 @@ def test_make_compatibility_in_make():
     assert isinstance(img, np.ndarray)
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
-    del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
+    del gym.envs.registration.registry["LegacyTestEnv-v0"]

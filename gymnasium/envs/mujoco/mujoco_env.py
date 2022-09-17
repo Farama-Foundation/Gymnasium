@@ -3,30 +3,29 @@ from typing import Optional, Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium import error, logger, spaces
 from gymnasium.spaces import Space
-
-MUJOCO_PY_NOT_INSTALLED = False
-MUJOCO_NOT_INSTALLED = False
 
 try:
     import mujoco_py
 except ImportError as e:
     MUJOCO_PY_IMPORT_ERROR = e
-    MUJOCO_PY_NOT_INSTALLED = True
+else:
+    MUJOCO_PY_IMPORT_ERROR = None
 
 try:
     import mujoco
 except ImportError as e:
     MUJOCO_IMPORT_ERROR = e
-    MUJOCO_NOT_INSTALLED = True
+else:
+    MUJOCO_IMPORT_ERROR = None
 
 
 DEFAULT_SIZE = 480
 
 
-class BaseMujocoEnv(gymnasium.Env):
+class BaseMujocoEnv(gym.Env):
     """Superclass for all MuJoCo environments."""
 
     def __init__(
@@ -183,7 +182,7 @@ class MuJocoPyEnv(BaseMujocoEnv):
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
     ):
-        if MUJOCO_PY_NOT_INSTALLED:
+        if MUJOCO_PY_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
                 f"{MUJOCO_PY_IMPORT_ERROR}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)"
             )
@@ -305,7 +304,7 @@ class MujocoEnv(BaseMujocoEnv):
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
     ):
-        if MUJOCO_NOT_INSTALLED:
+        if MUJOCO_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
                 f"{MUJOCO_IMPORT_ERROR}. (HINT: you need to install mujoco)"
             )
@@ -396,16 +395,19 @@ class MujocoEnv(BaseMujocoEnv):
     def _get_viewer(
         self, mode
     ) -> Union[
-        "gymnasium.envs.mujoco.Viewer", "gymnasium.envs.mujoco.RenderContextOffscreen"
+        "gym.envs.mujoco.mujoco_rendering.Viewer",
+        "gym.envs.mujoco.mujoco_rendering.RenderContextOffscreen",
     ]:
         self.viewer = self._viewers.get(mode)
         if self.viewer is None:
             if mode == "human":
-                from gymnasium.envs.mujoco import Viewer
+                from gymnasium.envs.mujoco.mujoco_rendering import Viewer
 
                 self.viewer = Viewer(self.model, self.data)
             elif mode in {"rgb_array", "depth_array"}:
-                from gymnasium.envs.mujoco import RenderContextOffscreen
+                from gymnasium.envs.mujoco.mujoco_rendering import (
+                    RenderContextOffscreen,
+                )
 
                 self.viewer = RenderContextOffscreen(self.model, self.data)
             else:
