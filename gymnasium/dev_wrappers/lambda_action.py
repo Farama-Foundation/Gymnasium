@@ -17,14 +17,15 @@ class LambdaActionV0(gymnasium.ActionWrapper):
 
     Example to convert continuous actions to discrete:
         >>> import gymnasium
-        >>> from gymnasium.spaces import Dict
         >>> import numpy as np
+        >>> from gymnasium.spaces import Dict
+        >>> from gymnasium.wrappers import LambdaActionV0
         >>> env = gymnasium.make("CarRacing-v2", continuous=False)
         >>> env = LambdaActionV0(env, lambda action, _: action.astype(np.int32), None)
         >>> env.action_space
         Discrete(5)
         >>> _ = env.reset()
-        >>> obs, rew, done, info = env.step(np.float64(1.2))
+        >>> obs, rew, term, trunc, info = env.step(np.float64(1.2))
 
     Composite action shape:
         >>> env = ExampleEnv(action_space=Dict(left_arm=Discrete(4), right_arm=Box(0.0, 5.0, (1,)))
@@ -37,7 +38,7 @@ class LambdaActionV0(gymnasium.ActionWrapper):
         >>> env.action_space
         Dict(left_arm: Discrete(4), right_arm: Box(0.0, 5.0, (1,), float32))
         >>> _ = env.reset()
-        >>> obs, rew, done, info = env.step({"left_arm": 1, "right_arm": 1})
+        >>> obs, rew, term, trunc, info = env.step({"left_arm": 1, "right_arm": 1})
         >>> info["action"] # the executed action within the environment
         {'action': OrderedDict([('left_arm', 1), ('right_arm', 11)])})
 
@@ -46,7 +47,7 @@ class LambdaActionV0(gymnasium.ActionWrapper):
         >>> env = LambdaActionV0(
         ...     env, lambda action, _: action.astype(np.int32), [None for _ in range(2)]
         ... )
-        >>> obs, rew, done, info = env.step([np.float64(1.2), np.float64(1.2)])
+        >>> obs, rew, term, trunc, info = env.step([np.float64(1.2), np.float64(1.2)])
     """
 
     def __init__(
@@ -87,6 +88,7 @@ class ClipActionsV0(LambdaActionV0):
 
     Basic Example:
         >>> import gymnasium
+        >>> from gymnasium.wrappers import ClipActionsV0
         >>> env = gymnasium.make("BipedalWalker-v3")
         >>> env.action_space
         Box(-1.0, 1.0, (4,), float32)
@@ -133,6 +135,7 @@ class ScaleActionsV0(LambdaActionV0):
 
     Basic Example:
         >>> import gymnasium
+        >>> from gymnasium.wrappers import ScaleActionsV0
         >>> env = gymnasium.make('BipedalWalker-v3')
         >>> env.action_space
         Box(-1.0, 1.0, (4,), float32)

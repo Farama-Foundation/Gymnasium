@@ -23,9 +23,10 @@ class LambdaObservationsV0(gymnasium.ObservationWrapper):
     Example:
         >>> import gymnasium
         >>> from gymnasium.spaces import Dict, Discrete
+        >>> from gymnasium.wrappers import LambdaObservationsV0
         >>> env = gymnasium.make("CartPole-v1")
         >>> env = LambdaObservationsV0(env, lambda obs, arg: obs * arg, 10)
-        >>> obs, rew, done, info = env.step(1)
+        >>> obs, rew, term, trunc, info = env.step(1)
         >>> obs
         array([ 0.09995892, 4.3283587, 0.23945259, -6.1516], dtype=float32)
 
@@ -41,7 +42,7 @@ class LambdaObservationsV0(gymnasium.ObservationWrapper):
         ...     lambda obs, arg: obs * arg,
         ...     {"left_arm": 0, "right_arm": float('inf')},
         ... )
-        >>> obs, _, _, _ = env.step({"left_arm": 1, "right_arm": 1}))
+        >>> obs, _, _, _, _ = env.step({"left_arm": 1, "right_arm": 1}))
         >>> obs
         OrderedDict([('left_arm', array([0.], dtype=float32)), ('right_arm', array([-inf], dtype=float32))])
     """
@@ -81,6 +82,7 @@ class FilterObservationsV0(LambdaObservationsV0):
     Example with Dict observation:
         >>> import gymnasium
         >>> from gymnasium.spaces import Tuple, Dict, Discrete, Box
+        >>> from gymnasium.wrappers import FilterObservationsV0
         >>> env = ExampleEnv(observation_space=Dict(obs=Box(-1, 1, (1,)), time=Discrete(3)))
         >>> env = FilterObservationsV0(env, {'obs': True, 'time': False})
         >>> env.observation_space
@@ -155,13 +157,14 @@ class FlattenObservationsV0(LambdaObservationsV0):
     Basic Example, fully flattens the environment observation:
         >>> import gymnasium
         >>> from gymnasium.spaces import Dict, Box
+        >>> from gymnasium.wrappers import FlattenObservationV0
         >>> env = gymnasium.make("CarRacing-v2", continuous=False)
         >>> env.observation_space
         Box(0, 255, (96, 96, 3), uint8)
         >>> env = FlattenObservationsV0(env)
         >>> env.observation_space
         Box(0, 255, (27648,), uint8)
-        >>> obs, _, _, _  = env.step(1)
+        >>> obs, _, _, _, _  = env.step(1)
         >>> obs.shape
         (27648,)
 
@@ -214,6 +217,7 @@ class GrayscaleObservationsV0(LambdaObservationsV0):
     Basic Example with Box observation space:
         >>> import gymnasium
         >>> from gymnasium.spaces import Dict, Box, Discrete
+        >>> from gymnasium.wrappers import GrayScaleObservationV0
         >>> env = gymnasium.make("CarRacing-v1")
         >>> env.observation_space
         Box(0, 255, (96, 96, 3), uint8)
@@ -267,6 +271,7 @@ class ResizeObservationsV0(LambdaObservationsV0):
     Basic Example with Box observation space:
         >>> import gymnasium
         >>> from gymnasium.spaces import Dict, Box, Discrete
+        >>> from gymnasium.wrappers import ResizeObservationsV0
         >>> env = gymnasium.make("CarRacing-v1")
         >>> env.observation_space
         Box(0, 255, (96, 96, 3), uint8)
@@ -334,6 +339,7 @@ class ReshapeObservationsV0(LambdaObservationsV0):
     Basic Example with Box observation space:
         >>> import gymnasium
         >>> from gymnasium.spaces import Dict, Box, Discrete
+        >>> from gymnasium.wrappers import ReshapeObservationsV0
         >>> env = gymnasium.make("CarRacing-v1")
         >>> env.observation_space
         Box(0, 255, (96, 96, 3), uint8)
@@ -387,6 +393,7 @@ class ObservationsDtypeV0(LambdaObservationsV0):
     Basic Example:
         >>> import gymnasium
         >>> from gymnasium.spaces import Dict, Box, Discrete
+        >>> from gymnasium.wrappers import ObservationsDtypeV0
         >>> env = gymnasium.make("CartPole-v1")
         >>> env.observation_space
         Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32)

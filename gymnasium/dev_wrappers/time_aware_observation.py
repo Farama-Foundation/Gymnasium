@@ -17,6 +17,7 @@ class TimeAwareObservationV0(gymnasium.ObservationWrapper):
 
     Example:
         >>> import gymnasium
+        >>> from gymnasium.wrappers import TimeAwareObservationV0
         >>> env = gymnasium.make('CartPole-v1')
         >>> env = TimeAwareObservationV0(env)
         >>> env.observation_space

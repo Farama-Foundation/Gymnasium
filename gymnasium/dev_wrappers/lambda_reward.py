@@ -15,10 +15,11 @@ class LambdaRewardV0(gymnasium.RewardWrapper):
 
     Example:
         >>> import gymnasium
+        >>> from gymnasium.wrappers import LambdaRewardV0
         >>> env = gymnasium.make("CartPole-v1")
         >>> env = LambdaRewardV0(env, lambda r: 2 * r + 1)
         >>> env.reset()
-        >>> _, rew, _, _ = env.step(0)
+        >>> _, rew, _, _, _ = env.step(0)
         >>> rew
         3.0
     """
@@ -52,10 +53,11 @@ class ClipRewardsV0(LambdaRewardV0):
 
     Example with an upper and lower bound:
         >>> import gymnasium
+        >>> from gymnasium.wrappers import ClipRewardsV0
         >>> env = gymnasium.make("CartPole-v1")
         >>> env = ClipRewardsV0(env, 0, 0.5)
         >>> env.reset()
-        >>> _, rew, _, _ = env.step(1)
+        >>> _, rew, _, _, _ = env.step(1)
         >>> rew
         0.5
     """
