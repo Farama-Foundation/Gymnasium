@@ -377,13 +377,13 @@ We will choose to represent observations in the form of a dictionaries with keys
 may look like <code class="docutils literal notranslate"> <span class="pre">{&quot;agent&quot;:</span> <span class="pre">array([1,</span> <span class="pre">0]),</span> <span class="pre">&quot;target&quot;:</span> <span class="pre">array([0,</span> <span class="pre">3])}</span></code>.
 Since we have 4 actions in our environment (“right”, “up”, “left”, “down”), we will use <code class="docutils literal notranslate"><span class="pre">Discrete(4)</span></code> as an action space.
 Here is the declaration of <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code> and the implementation of <code class="docutils literal notranslate"><span class="pre">__init__</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">spaces</span>
 <span class="kn">import</span> <span class="nn">pygame</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<span class="k">class</span> <span class="nc">GridWorldEnv</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">GridWorldEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
     <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_modes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;human&quot;</span><span class="p">,</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">],</span> <span class="s2">&quot;render_fps&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
@@ -687,12 +687,12 @@ After registration, our custom <code class="docutils literal notranslate"><span 
 <h2>Creating Environment Instances<a class="headerlink" href="#creating-environment-instances" title="Permalink to this heading">#</a></h2>
 <p>After you have installed your package locally with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">gym-examples</span></code>, you can create an instance of the environment via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym_examples</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can also pass keyword arguments of your environment’s constructor to <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> to customize the environment.
 In our case, we could do:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Sometimes, you may find it more convenient to skip registration and call the environment’s
@@ -712,7 +712,7 @@ a wrapper on top of environment instances to flatten observations into a single 
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym_examples</span>
 <span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">FlattenObservation</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">())</span>     <span class="c1"># E.g.  [3 0 3 3], {}</span>
 </pre></div>
@@ -724,7 +724,7 @@ a wrapper that does this job. This wrapper is also available in gym-examples:</p
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym_examples</span>
 <span class="kn">from</span> <span class="nn">gym_examples.wrappers</span> <span class="kn">import</span> <span class="n">RelativePosition</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RelativePosition</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">())</span>     <span class="c1"># E.g.  [-3  3], {}</span>
 </pre></div>
