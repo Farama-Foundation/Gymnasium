@@ -22,7 +22,7 @@ The following example runs 3 copies of the ``CartPole-v1`` environment in parall
 >>> envs = gymnasium.vector.make("CartPole-v1", num_envs=3)
 >>> envs.reset()
 >>> actions = np.array([1, 0, 1])
->>> observations, rewards, dones, infos = envs.step(actions)
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(actions)
 
 >>> observations
 array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
@@ -31,7 +31,9 @@ array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
         dtype=float32)
 >>> rewards
 array([1., 1., 1.])
->>> dones
+>>> terminateds
+array([False, False, False])
+>>> truncateds
 array([False, False, False])
 >>> infos
 {}
@@ -91,7 +93,7 @@ While standard Gymnasium environments take a single action and return a single o
       dtype=float32), {})
 
 >>> actions = np.array([1, 0, 1])
->>> observations, rewards, dones, infos = envs.step(actions)
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(actions)
 
 >>> observations
 array([[ 0.00187507,  0.18986781, -0.03168437, -0.301252  ],
@@ -100,7 +102,9 @@ array([[ 0.00187507,  0.18986781, -0.03168437, -0.301252  ],
       dtype=float32)
 >>> rewards
 array([1., 1., 1.])
->>> dones
+>>> terminateds
+array([False, False, False])
+>>> truncateds
 array([False, False, False])
 >>> infos
 {}
@@ -125,7 +129,7 @@ Vectorized environments are compatible with any environment, regardless of the a
 ...
 ...     def step(self, action):
 ...         observation = self.observation_space.sample()
-...         return (observation, 0., False, {})
+...         return (observation, 0., False, False, {})
 
 >>> envs = gymnasium.vector.AsyncVectorEnv([lambda: DictEnv()] * 3)
 >>> envs.observation_space
@@ -139,7 +143,7 @@ Dict(fire:MultiDiscrete([2 2 2]), jump:MultiDiscrete([2 2 2]), acceleration:Box(
 ...     "jump": np.array([0, 1, 0]),
 ...     "acceleration": np.random.uniform(-1., 1., size=(3, 2))
 ... }
->>> observations, rewards, dones, infos = envs.step(actions)
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(actions)
 >>> observations
 {"position": array([[-0.5337036 ,  0.7439302 ,  0.41748118],
                     [ 0.9373266 , -0.5780453 ,  0.8987405 ],
@@ -149,16 +153,16 @@ Dict(fire:MultiDiscrete([2 2 2]), jump:MultiDiscrete([2 2 2]), acceleration:Box(
                    [ 0.26341468,  0.72282314]], dtype=float32)}
 ```
 
-The environment copies inside a vectorized environment automatically call `gymnasium.Env.reset` at the end of an episode. In the following example, the episode of the 3rd copy ends after 2 steps (the agent fell in a hole), and the paralle environment gets reset (observation ``0``).
+The environment copies inside a vectorized environment automatically call `gymnasium.Env.reset` at the end of an episode. In the following example, the episode of the 3rd copy ends after 2 steps (the agent fell in a hole), and the parallel environment gets reset (observation ``0``).
 
 ```python
 >>> envs = gymnasium.vector.make("FrozenLake-v1", num_envs=3, is_slippery=False)
 >>> envs.reset()
 (array([0, 0, 0]), {'prob': array([1, 1, 1]), '_prob': array([ True,  True,  True])})
->>> observations, rewards, dones, infos = envs.step(np.array([1, 2, 2]))
->>> observations, rewards, dones, infos = envs.step(np.array([1, 2, 1]))
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(np.array([1, 2, 2]))
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(np.array([1, 2, 1]))
 
->>> dones
+>>> terminateds
 array([False, False,  True])
 >>> observations
 array([8, 2, 0])
@@ -174,12 +178,12 @@ If the _dtype_ of the returned info is whether `int`, `float`, `bool` or any _dt
 >>> observations, infos = envs.reset()
 
 >>> actions = np.array([1, 0, 1])
->>> observations, rewards, dones, infos = envs.step(actions)
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(actions)
 
->>> while not any(dones):
-...    observations, rewards, dones, infos = envs.step(actions)
+>>> while not any(np.logical_or(terminateds, truncateds)):
+...    observations, rewards, terminateds, truncateds, infos = envs.step(actions)
 
->>> print(dones)
+>>> print(terminateds)
 [False, True, False]
     
 >>> print(infos)
@@ -236,7 +240,7 @@ This is convenient, for example, if you instantiate a policy. In the following e
 ... )
 >>> observations, infos = envs.reset()
 >>> actions = policy(weights, observations).argmax(axis=1)
->>> observations, rewards, dones, infos = envs.step(actions)
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(actions)
 ```
 
 ## Intermediate Usage
@@ -273,11 +277,11 @@ Because sometimes things may not go as planned, the exceptions raised in any giv
 ...         if action == 1:
 ...             raise ValueError("An error occurred.")
 ...         observation = self.observation_space.sample()
-...         return (observation, 0., False, {})
+...         return (observation, 0., False, False, {})
 
 >>> envs = gymnasium.vector.AsyncVectorEnv([lambda: ErrorEnv()] * 3)
 >>> observations, infos = envs.reset()
->>> observations, rewards, dones, infos = envs.step(np.array([0, 0, 1]))
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(np.array([0, 0, 1]))
 ERROR: Received the following error from Worker-2: ValueError: An error occurred.
 ERROR: Shutting down Worker-2.
 ERROR: Raising the last exception back to the main process.
@@ -310,15 +314,15 @@ In the following example, we create a new environment `SMILESEnv`, whose observa
 ...
 ...     def step(self, action):
 ...         self._state += self.observation_space.symbols[action]
-...         reward = done = (action == 0)
-...         return (self._state, float(reward), done, {})
+...         reward = terminated = (action == 0)
+...         return (self._state, float(reward), terminated, False, {})
 
 >>> envs = gymnasium.vector.AsyncVectorEnv(
 ...     [lambda: SMILESEnv()] * 3,
 ...     shared_memory=False
 ... )
 >>> envs.reset()
->>> observations, rewards, dones, infos = envs.step(np.array([2, 5, 4]))
+>>> observations, rewards, terminateds, truncateds, infos = envs.step(np.array([2, 5, 4]))
 >>> observations
 ('[(', '[O', '[C')
 ```
