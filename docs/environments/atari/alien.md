@@ -11,13 +11,13 @@ title: Alien
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/Alien-v5")` | 
+|                   |                                  |
+|-------------------|----------------------------------|
+| Action Space      | Discrete(18)                     |
+| Observation Space | (210, 160, 3)                    |
+| Observation High  | 255                              |
+| Observation Low   | 0                                |
+| Import            | `gymnasium.make("ALE/Alien-v5")` | 
 
 ### Description
 You are stuck in a maze-like space ship with three aliens. You goal is to destroy their eggs that are scattered
@@ -65,9 +65,9 @@ The various ways to configure the environment are described in detail in the art
 It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`. 
 A flavor is a combination of a game mode and a difficulty setting.
 
-|      Environment | Valid Modes                                                                                                                                                                         | Valid Difficulties | Default Mode |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------|
-|            Alien | `[0, ..., 3]`                                                                                                                                                                       |      `[0, ..., 3]` | `0`          |
+| Environment | Valid Modes   | Valid Difficulties | Default Mode |
+|-------------|---------------|--------------------|--------------|
+| Alien       | `[0, ..., 3]` | `[0, ..., 3]`      | `0`          |
 
 
 You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "NoFrameskip" 

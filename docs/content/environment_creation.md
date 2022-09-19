@@ -69,13 +69,13 @@ may look like ` {"agent": array([1, 0]), "target": array([0, 3])}`.
 Since we have 4 actions in our environment ("right", "up", "left", "down"), we will use `Discrete(4)` as an action space.
 Here is the declaration of `GridWorldEnv` and the implementation of `__init__`:
 ```python
-import gymnasium
+import gymnasium as gym
 from gymnasium import spaces
 import pygame
 import numpy as np
 
 
-class GridWorldEnv(gymnasium.Env):
+class GridWorldEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, render_mode=None, size=5):
@@ -354,14 +354,14 @@ After you have installed your package locally with `pip install -e gym-examples`
 
 ```python
 import gym_examples
-env = gymnasium.make('gym_examples/GridWorld-v0')
+env = gym.make('gym_examples/GridWorld-v0')
 ```
 
 You can also pass keyword arguments of your environment's constructor to `gymnasium.make` to customize the environment.
 In our case, we could do:
 
 ```python
-env = gymnasium.make('gym_examples/GridWorld-v0', size=10)
+env = gym.make('gym_examples/GridWorld-v0', size=10)
 ```
 
 Sometimes, you may find it more convenient to skip registration and call the environment's
@@ -382,7 +382,7 @@ a wrapper on top of environment instances to flatten observations into a single 
 import gym_examples
 from gymnasium.wrappers import FlattenObservation
 
-env = gymnasium.make('gym_examples/GridWorld-v0')
+env = gym.make('gym_examples/GridWorld-v0')
 wrapped_env = FlattenObservation(env)
 print(wrapped_env.reset())     # E.g.  [3 0 3 3], {}
 ```
@@ -396,7 +396,7 @@ a wrapper that does this job. This wrapper is also available in gym-examples:
 import gym_examples
 from gym_examples.wrappers import RelativePosition
 
-env = gymnasium.make('gym_examples/GridWorld-v0')
+env = gym.make('gym_examples/GridWorld-v0')
 wrapped_env = RelativePosition(env)
 print(wrapped_env.reset())     # E.g.  [-3  3], {}
 ```

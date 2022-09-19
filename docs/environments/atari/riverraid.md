@@ -10,13 +10,13 @@ title: Riverraid
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/Riverraid-v5")` |
+|                   |                                      |
+|-------------------|--------------------------------------|
+| Action Space      | Discrete(18)                         |
+| Observation Space | (210, 160, 3)                        |
+| Observation High  | 255                                  |
+| Observation Low   | 0                                    |
+| Import            | `gymnasium.make("ALE/Riverraid-v5")` |
 
 ### Description
 You control a jet that flies over a river: you can move it sideways and fire missiles to destroy enemy objects. Each time an enemy object is destroyed you score points (i.e. rewards). 
@@ -55,11 +55,11 @@ Score points are your only reward. You get score points each time you destroy an
 
 | Enemy Object | Score Points |
 |--------------|--------------|
-| Tanker       |  30|
-| Helicopter   |  60|
-| Fuel Depot   |  80|
-| Jet          | 100|
-| Bridge       | 500| 
+| Tanker       | 30           |
+| Helicopter   | 60           |
+| Fuel Depot   | 80           |
+| Jet          | 100          |
+| Bridge       | 500          | 
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=409).
 
@@ -73,9 +73,9 @@ The various ways to configure the environment are described in detail in the art
 It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`. 
 A flavor is a combination of a game mode and a difficulty setting.
 
-|      Environment | Valid Modes  | Valid Difficulties | Default Mode |
-|------------------|-----------|--------------------|--------------|
-|             Riverraid | `[0]`     |      `[0,1]` | `0`          |
+| Environment | Valid Modes | Valid Difficulties | Default Mode |
+|-------------|-------------|--------------------|--------------|
+| Riverraid   | `[0]`       | `[0,1]`            | `0`          |
 
 You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "NoFrameskip" 
 are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in 
