@@ -328,9 +328,9 @@ Using wrappers will allow you to avoid a lot of boilerplate code and make your e
 also be chained to combine their effects. Most environments that are generated via <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> will already be wrapped by default.</p>
 <p>In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along
 with (possibly optional) parameters to the wrapper’s constructor:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RescaleAction</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;BipedalWalker-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;BipedalWalker-v3&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span><span class="o">.</span><span class="n">action_space</span>
 <span class="go">Box([-1. -1. -1. -1.], [1. 1. 1. 1.], (4,), float32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RescaleAction</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">min_action</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_action</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -374,7 +374,7 @@ However, its domain might differ from the original action space. In that case, y
 action space of the wrapper by setting <code class="docutils literal notranslate"><span class="pre">self.action_space</span></code> in the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method of your wrapper.</p>
 <p>Let’s say you have an environment with action space of type <code class="docutils literal notranslate"><span class="pre">Box</span></code>, but you would
 only like to use a finite subset of actions. Then, you might want to implement the following wrapper</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DiscreteActions</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DiscreteActions</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">disc_to_cont</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">disc_to_cont</span> <span class="o">=</span> <span class="n">disc_to_cont</span>
@@ -384,7 +384,7 @@ only like to use a finite subset of actions. Then, you might want to implement t
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disc_to_cont</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLanderContinuous-v2&quot;</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLanderContinuous-v2&quot;</span><span class="p">)</span>
     <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">DiscreteActions</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
                                         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])])</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>         <span class="c1">#Discrete(4)</span>
@@ -403,7 +403,7 @@ observation space of the wrapper by setting <code class="docutils literal notran
 and <code class="docutils literal notranslate"><span class="pre">&quot;target_position&quot;</span></code>. A common thing to do might be to throw away some degrees of freedom and only consider
 the position of the target relative to the agent, i.e. <code class="docutils literal notranslate"><span class="pre">observation[&quot;target_position&quot;]</span> <span class="pre">-</span> <span class="pre">observation[&quot;agent_position&quot;]</span></code>.
 For this, you could implement an observation wrapper like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RelativePosition</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RelativePosition</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
@@ -423,7 +423,7 @@ implement that transformation. This transformation might change the reward range
 your wrapper, you can simply define <code class="docutils literal notranslate"><span class="pre">self.reward_range</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>.</p>
 <p>Let us look at an example: Sometimes (especially when we do not have control over the reward because it is intrinsic), we want to clip the reward
 to a range to gain some numerical stability. To do that, we could, for instance, implement the following wrapper:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span> <span class="o">=</span> <span class="n">min_reward</span>
@@ -441,29 +441,29 @@ to a range to gain some numerical stability. To do that, we could, for instance,
 <p>When calling step causes <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> to return <code class="docutils literal notranslate"><span class="pre">done=True</span></code>,
 <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code> is called,
 and the return format of <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> is as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_obs</span><span class="p">,</span> <span class="n">terminal_reward</span><span class="p">,</span> <span class="n">terminal_done</span><span class="p">,</span> <span class="n">info</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_obs</span><span class="p">,</span> <span class="n">terminal_reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">new_obs</span></code> is the first observation after calling <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code>,</p>
 <p><code class="docutils literal notranslate"><span class="pre">terminal_reward</span></code> is the reward after calling <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>,
 prior to calling <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">terminal_done</span></code> is always <code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">terminated</span> <span class="pre">or</span> <span class="pre">truncated</span></code> is always <code class="docutils literal notranslate"><span class="pre">True</span></code></p>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> is a dict containing all the keys from the info dict returned by
 the call to <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code>, with additional keys <code class="docutils literal notranslate"><span class="pre">terminal_observation</span></code>
 containing the observation returned by the last call to <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>
 and <code class="docutils literal notranslate"><span class="pre">terminal_info</span></code> containing the info dict returned by the last call
 to <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">done</span></code> is not true when <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> is called, <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> returns</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 </pre></div>
 </div>
 <p>as normal.</p>
 <p>The AutoResetWrapper is not applied by default when calling <code class="docutils literal notranslate"><span class="pre">gymnasium.make()</span></code>, but can be applied by setting the optional <code class="docutils literal notranslate"><span class="pre">autoreset</span></code> argument to <code class="docutils literal notranslate"><span class="pre">True</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">autoreset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">autoreset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The AutoResetWrapper can also be applied using its constructor:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">AutoResetWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -495,7 +495,7 @@ of different terms: For instance, there might be a term that rewards the agent f
 penalizes large actions (i.e. energy usage). Usually, you can pass weight parameters for those terms during
 initialization of the environment. However, <em>Reacher</em> does not allow you to do this! Nevertheless, all individual terms
 of the reward are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code>, so let us build a wrapper for Reacher that allows us to weight those terms:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReacherRewardWrapper</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReacherRewardWrapper</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">reward_dist_weight</span><span class="p">,</span> <span class="n">reward_ctrl_weight</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">=</span> <span class="n">reward_dist_weight</span>
