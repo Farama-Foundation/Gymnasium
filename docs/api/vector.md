@@ -54,7 +54,8 @@ title: Vector
 ``` 
 
 ```python
->>> envs = gymnasium.vector.make("CartPole-v1", num_envs=3)
+>>> import gymnasium as gym
+>>> envs = gym.vector.make("CartPole-v1", num_envs=3)
 >>> envs.reset()
 (array([[-0.02240574, -0.03439831, -0.03904812,  0.02810693],
        [ 0.01586068,  0.01929009,  0.02394426,  0.04016077],
@@ -68,10 +69,10 @@ title: Vector
 ``` 
 
 ```python
->>> envs = gymnasium.vector.make("CartPole-v1", num_envs=3)
+>>> envs = gym.vector.make("CartPole-v1", num_envs=3)
 >>> envs.reset()
 >>> actions = np.array([1, 0, 1])
->>> observations, rewards, dones, infos = envs.step(actions)
+>>> observations, rewards, terminated, truncated, infos = envs.step(actions)
 
 >>> observations
 array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
@@ -80,7 +81,7 @@ array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
         dtype=float32)
 >>> rewards
 array([1., 1., 1.])
->>> dones
+>>> terminated
 array([False, False, False])
 >>> infos
 {}

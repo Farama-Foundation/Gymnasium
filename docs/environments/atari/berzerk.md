@@ -10,13 +10,13 @@ title: Berzerk
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/Berzerk-v5")` | 
+|                   |                                    |
+|-------------------|------------------------------------|
+| Action Space      | Discrete(18)                       |
+| Observation Space | (210, 160, 3)                      |
+| Observation High  | 255                                |
+| Observation Low   | 0                                  |
+| Import            | `gymnasium.make("ALE/Berzerk-v5")` | 
 
 ### Description
 You are stuck in a maze with evil robots. You must destroy them and avoid touching the walls of the maze, as this will kill you. You may be awarded extra lives after scoring a sufficient number of points, depending on the game mode.
@@ -62,9 +62,9 @@ The various ways to configure the environment are described in detail in the art
 It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`. 
 A flavor is a combination of a game mode and a difficulty setting.
 
-|      Environment | Valid Modes                                                                                                                                                                         | Valid Difficulties | Default Mode |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------|
-|          Berzerk | `[1, ..., 9, 16, 17, 18]`                                                                                                                                           |              `[0]` | `1`          |
+| Environment | Valid Modes               | Valid Difficulties | Default Mode |
+|-------------|---------------------------|--------------------|--------------|
+| Berzerk     | `[1, ..., 9, 16, 17, 18]` | `[0]`              | `1`          |
 
 You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "NoFrameskip" 
 are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in 

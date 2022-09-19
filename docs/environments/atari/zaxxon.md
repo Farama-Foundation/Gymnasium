@@ -11,13 +11,13 @@ lastpage:
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/Zaxxon-v5")` |
+|                   |                                   |
+|-------------------|-----------------------------------|
+| Action Space      | Discrete(18)                      |
+| Observation Space | (210, 160, 3)                     |
+| Observation High  | 255                               |
+| Observation Low   | 0                                 |
+| Import            | `gymnasium.make("ALE/Zaxxon-v5")` |
 
 ### Description
 Your goal is to stop the evil robot Zaxxon and its armies from enslaving the galaxy by piloting your fighter and shooting enemies. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=606).
@@ -51,9 +51,9 @@ env = gymnasium.make("ALE/Zaxxon-v5")
 
 The various ways to configure the environment are described in detail in the article on Atari environments.
 
-|      Environment | Valid Modes                                                                                                                                                                         | Valid Difficulties | Default Mode |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------|
-|     Zaxxon | `[0]`                                                                                                                                                                               |              `[0]` | `0`          |
+| Environment | Valid Modes | Valid Difficulties | Default Mode |
+|-------------|-------------|--------------------|--------------|
+| Zaxxon      | `[0]`       | `[0]`              | `0`          |
 
 You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "Noframeskip" 
 are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in 

@@ -10,13 +10,13 @@ title: Freeway
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/Freeway-v5")` | 
+|                   |                                    |
+|-------------------|------------------------------------|
+| Action Space      | Discrete(18)                       |
+| Observation Space | (210, 160, 3)                      |
+| Observation High  | 255                                |
+| Observation Low   | 0                                  |
+| Import            | `gymnasium.make("ALE/Freeway-v5")` | 
 
 ### Description
 your objective is to guide your chicken across lane after lane of busy rush hour traffic. You receive a point for every chicken that makes it to the top of the screen after crossing all the lanes of traffic. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=192).
@@ -30,26 +30,26 @@ Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]]
 ### Action Space
 The action space a subset of the following discrete set of legal actions:
 
-| Num | Action                 |
-|-----|------------------------|
-| 0   | NOOP |
-| 1   | FIRE |
-| 2   | UP |
-| 3   | RIGHT |
-| 4   | LEFT |
-| 5   | DOWN |
-| 6   | UPRIGHT |
-| 7   | UPLEFT |
-| 8   | DOWNRIGHT |
-| 9   | DOWNLEFT |
-| 10   | UPFIRE |
-| 11   | RIGHTFIRE |
-| 12   | LEFTFIRE |
-| 13   | DOWNFIRE |
-| 14   | UPRIGHTFIRE |
-| 15   | UPLEFTFIRE |
-| 16   | DOWNRIGHTFIRE |
-| 17   | DOWNLEFTFIRE |
+| Num | Action        |
+|-----|---------------|
+| 0   | NOOP          |
+| 1   | FIRE          |
+| 2   | UP            |
+| 3   | RIGHT         |
+| 4   | LEFT          |
+| 5   | DOWN          |
+| 6   | UPRIGHT       |
+| 7   | UPLEFT        |
+| 8   | DOWNRIGHT     |
+| 9   | DOWNLEFT      |
+| 10  | UPFIRE        |
+| 11  | RIGHTFIRE     |
+| 12  | LEFTFIRE      |
+| 13  | DOWNFIRE      |
+| 14  | UPRIGHTFIRE   |
+| 15  | UPLEFTFIRE    |
+| 16  | DOWNRIGHTFIRE |
+| 17  | DOWNLEFTFIRE  |
 
 If you use v0 or v4 and the environment is initialized via `make`, the action space will usually be much smaller since most legal actions don't have
 any effect. Thus, the enumeration of the actions will differ. The action space can be expanded to the full 
@@ -84,9 +84,10 @@ env = gymnasium.make("ALE/Freeway-v5")
 ```
 
 The various ways to configure the environment are described in detail in the article on Atari environments.
-|      Environment | Valid Modes                                                                                                                                                                         | Valid Difficulties | Default Mode |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------|
-|          Freeway | `[0, ..., 7]`                                                                                                                                                                       |           `[0, 1]` | `0`          |      
+
+| Environment | Valid Modes   | Valid Difficulties | Default Mode |
+|-------------|---------------|--------------------|--------------|
+| Freeway     | `[0, ..., 7]` | `[0, 1]`           | `0`          |      
 
 
 

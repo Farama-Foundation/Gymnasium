@@ -10,13 +10,13 @@ title: Name This Game
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/NameThisGame-v5")` |
+|                   |                                         |
+|-------------------|-----------------------------------------|
+| Action Space      | Discrete(18)                            |
+| Observation Space | (210, 160, 3)                           |
+| Observation High  | 255                                     |
+| Observation Low   | 0                                       |
+| Import            | `gymnasium.make("ALE/NameThisGame-v5")` |
 
 ### Description
 Your goal is to defend the treasure that you have discovered. You must fight off a shark and an octopus while keeping an eye on your oxygen supply. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=323).
@@ -24,14 +24,14 @@ Your goal is to defend the treasure that you have discovered. You must fight off
 ### Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment. However, if you use v0 or v4 or specify full_action_space=False during initialization, only a reduced number of actions (those that are meaningful in this game) are available. The reduced action space may depend on the flavor of the environment (the combination of mode and difficulty). The reduced action space for the default flavor looks like this:
 
-| Num | Action                 |
-|-----|------------------------|
-| 0   | NOOP |
-| 1   | FIRE |
-| 2   | RIGHT |
-| 3   | LEFT |
+| Num | Action    |
+|-----|-----------|
+| 0   | NOOP      |
+| 1   | FIRE      |
+| 2   | RIGHT     |
+| 3   | LEFT      |
 | 4   | RIGHTFIRE |
-| 5   | LEFTFIRE |
+| 5   | LEFTFIRE  |
 
 
 ### Observations
@@ -60,9 +60,9 @@ env = gymnasium.make("ALE/NameThisGame-v5")
 
 The various ways to configure the environment are described in detail in the article on Atari environments.
 
-|      Environment | Valid Modes                                                                                                                                                                         | Valid Difficulties | Default Mode |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------|
-|     NameThisGame | `[8, 24, 40]`                                                                                                                                                                       |           `[0, 1]` | `8`          |
+| Environment  | Valid Modes   | Valid Difficulties | Default Mode |
+|--------------|---------------|--------------------|--------------|
+| NameThisGame | `[8, 24, 40]` | `[0, 1]`           | `8`          |
 
 You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "Noframeskip" 
 are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in 

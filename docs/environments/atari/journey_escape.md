@@ -10,13 +10,13 @@ title: JourneyEscape
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/JourneyEscape-v5")` | 
+|                   |                                          |
+|-------------------|------------------------------------------|
+| Action Space      | Discrete(18)                             |
+| Observation Space | (210, 160, 3)                            |
+| Observation High  | 255                                      |
+| Observation Low   | 0                                        |
+| Import            | `gymnasium.make("ALE/JourneyEscape-v5")` | 
 
 ### Description
 You must lead all 5 members of JOURNEY through waves of pesky characters and backstage obstacles to the Scarab Escape Vehicle before time runs out.
@@ -30,27 +30,24 @@ number of actions (those that are meaningful in this game) are available. The re
 on the flavor of the environment (the combination of `mode` and `difficulty`). The reduced action space for the default 
 flavor looks like this:
 
-| Num | Action                 |
-|-----|------------------------|
-| 0   | NOOP |
-| 2   | UP |
-| 3   | RIGHT |
-| 4   | LEFT |
-| 5   | DOWN |
-| 6   | UPRIGHT |
-| 7   | UPLEFT |
-| 8   | DOWNRIGHT |
-| 9   | DOWNLEFT |
-| 11   | RIGHTFIRE |
-| 12   | LEFTFIRE |
-| 13   | DOWNFIRE |
-| 14   | UPRIGHTFIRE |
-| 15   | UPLEFTFIRE |
-| 16   | DOWNRIGHTFIRE |
-| 17   | DOWNLEFTFIRE |
-
-
-
+| Num | Action        |
+|-----|---------------|
+| 0   | NOOP          |
+| 2   | UP            |
+| 3   | RIGHT         |
+| 4   | LEFT          |
+| 5   | DOWN          |
+| 6   | UPRIGHT       |
+| 7   | UPLEFT        |
+| 8   | DOWNRIGHT     |
+| 9   | DOWNLEFT      |
+| 11  | RIGHTFIRE     |
+| 12  | LEFTFIRE      |
+| 13  | DOWNFIRE      |
+| 14  | UPRIGHTFIRE   |
+| 15  | UPLEFTFIRE    |
+| 16  | DOWNRIGHTFIRE |
+| 17  | DOWNLEFTFIRE  |
 
 ### Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is

@@ -10,13 +10,13 @@ title: Video Pinball
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/VideoPinball-v5")` |
+|                   |                                         |
+|-------------------|-----------------------------------------|
+| Action Space      | Discrete(18)                            |
+| Observation Space | (210, 160, 3)                           |
+| Observation High  | 255                                     |
+| Observation Low   | 0                                       |
+| Import            | `gymnasium.make("ALE/VideoPinball-v5")` |
 
 ### Description
 Your goal is to keep the ball in play as long as possible and to score as many points as possible. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=588).
@@ -24,17 +24,17 @@ Your goal is to keep the ball in play as long as possible and to score as many p
 ### Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment. However, if you use v0 or v4 or specify full_action_space=False during initialization, only a reduced number of actions (those that are meaningful in this game) are available. The reduced action space may depend on the flavor of the environment (the combination of mode and difficulty). The reduced action space for the default flavor looks like this:
 
-| Num | Action                 |
-|-----|------------------------|
-| 0   | NOOP |
-| 1   | FIRE |
-| 2   | UP |
-| 3   | RIGHT |
-| 4   | LEFT |
-| 5   | DOWN |
-| 6   | UPFIRE |
+| Num | Action    |
+|-----|-----------|
+| 0   | NOOP      |
+| 1   | FIRE      |
+| 2   | UP        |
+| 3   | RIGHT     |
+| 4   | LEFT      |
+| 5   | DOWN      |
+| 6   | UPFIRE    |
 | 7   | RIGHTFIRE |
-| 8   | LEFTFIRE |
+| 8   | LEFTFIRE  |
 
 ### Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
@@ -64,9 +64,9 @@ The various ways to configure the environment are described in detail in the art
 It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`. 
 A flavor is a combination of a game mode and a difficulty setting.
 
-|      Environment | Valid Modes                                                                                                                                                                         | Valid Difficulties | Default Mode |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------|
-|          VideoPinball | `[0, ..., 2]`                                                                                                                                                                       |              `[0, 1]` | `0`          |
+| Environment  | Valid Modes   | Valid Difficulties | Default Mode |
+|--------------|---------------|--------------------|--------------|
+| VideoPinball | `[0, ..., 2]` | `[0, 1]`           | `0`          |
 
 You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "Noframeskip" 
 are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in 
