@@ -79,9 +79,17 @@ zaxxon
 
 Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1). 
 
+### AutoROM (installing the ROMs)
+
+ALE-py doesn't include the atari roms (`pip install gymnasium[atari]`) which are necessary to make any of the atari environments.
+To install the atari rom, use `pip install gymnasium[accept-rom-license]` which will install AutoROM and download the roms, install them in the default location.
+In doing so, you agree to TODO
+
+It is possible to install the ROMs in an alternative location, [repo](https://github.com/Farama-Foundation/AutoROM) has more information.
+
 ### Action Space
 
-The action space a subset of the following discrete set of legal actions:
+The action space is a subset of the following discrete set of legal actions:
 
 | Num | Action        |
 |-----|---------------|
