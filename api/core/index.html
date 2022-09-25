@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Spaces" href="../spaces/" /><link rel="prev" title="Basic Usage" href="../../content/basic_usage/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/core.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.0.post0, furo 2022.09.15"/>
         <title>Core - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
@@ -659,14 +659,37 @@ to use a finite subset of actions. Then, you might want to implement the followi
             <ul>
 <li><a class="reference internal" href="#">Core</a><ul>
 <li><a class="reference internal" href="#gymnasium-env">gymnasium.Env</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
-<li><a class="reference internal" href="#additional-methods">Additional Methods</a></li>
+<li><a class="reference internal" href="#gymnasium.Env.step"><code class="docutils literal notranslate"><span class="pre">step()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Env.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Env.render"><code class="docutils literal notranslate"><span class="pre">render()</span></code></a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#gymnasium.Env.action_space"><code class="docutils literal notranslate"><span class="pre">Env.action_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Env.observation_space"><code class="docutils literal notranslate"><span class="pre">Env.observation_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Env.reward_range"><code class="docutils literal notranslate"><span class="pre">Env.reward_range</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#gymnasium-wrapper">gymnasium.Wrapper</a></li>
-<li><a class="reference internal" href="#gymnasium-observationwrapper">gymnasium.ObservationWrapper</a></li>
-<li><a class="reference internal" href="#gymnasium-rewardwrapper">gymnasium.RewardWrapper</a></li>
-<li><a class="reference internal" href="#gymnasium-actionwrapper">gymnasium.ActionWrapper</a></li>
+<li><a class="reference internal" href="#additional-methods">Additional Methods</a><ul>
+<li><a class="reference internal" href="#gymnasium.Env.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium-wrapper">gymnasium.Wrapper</a><ul>
+<li><a class="reference internal" href="#gymnasium.Wrapper"><code class="docutils literal notranslate"><span class="pre">Wrapper</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium-observationwrapper">gymnasium.ObservationWrapper</a><ul>
+<li><a class="reference internal" href="#gymnasium.ObservationWrapper"><code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium-rewardwrapper">gymnasium.RewardWrapper</a><ul>
+<li><a class="reference internal" href="#gymnasium.RewardWrapper"><code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium-actionwrapper">gymnasium.ActionWrapper</a><ul>
+<li><a class="reference internal" href="#gymnasium.ActionWrapper"><code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -683,6 +706,7 @@ to use a finite subset of actions. Then, you might want to implement the followi
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     
 

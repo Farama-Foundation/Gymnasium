@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Adventure" href="adventure/" /><link rel="prev" title="Utils" href="../../api/utils/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/atari/index.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.0.post0, furo 2022.09.15"/>
         <title>Atari - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
@@ -439,9 +439,16 @@
 </div>
 <a href="./complete_list"><button class="more-btn">See More Environments</button></a>
     <p>Atari environments are simulated via the Arcade Learning Environment (ALE) <a class="reference internal" href="#id1"><span class="std std-ref">[1]</span></a>.</p>
+<section id="autorom-installing-the-roms">
+<h2>AutoROM (installing the ROMs)<a class="headerlink" href="#autorom-installing-the-roms" title="Permalink to this heading">#</a></h2>
+<p>ALE-py doesn’t include the atari roms (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[atari]</span></code>) which are necessary to make any of the atari environments.
+To install the atari rom, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[accept-rom-license]</span></code> which will install AutoROM and download the roms, install them in the default location.
+In doing so, you agree to TODO</p>
+<p>It is possible to install the ROMs in an alternative location, <a class="reference external" href="https://github.com/Farama-Foundation/AutoROM">repo</a> has more information.</p>
+</section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
-<p>The action space a subset of the following discrete set of legal actions:</p>
+<p>The action space is a subset of the following discrete set of legal actions:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -1014,6 +1021,7 @@ URL: https://jair.org/index.php/jair/article/view/11182</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Atari</a><ul>
+<li><a class="reference internal" href="#autorom-installing-the-roms">AutoROM (installing the ROMs)</a></li>
 <li><a class="reference internal" href="#action-space">Action Space</a></li>
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
@@ -1038,6 +1046,7 @@ URL: https://jair.org/index.php/jair/article/view/11182</p>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     
 

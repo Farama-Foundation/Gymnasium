@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Spaces Utils" href="../utils/" /><link rel="prev" title="Fundamental Spaces" href="../fundamental/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/spaces/composite.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.0.post0, furo 2022.09.15"/>
         <title>Composite Spaces - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
@@ -603,10 +603,34 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Composite Spaces</a><ul>
-<li><a class="reference internal" href="#dict">Dict</a></li>
-<li><a class="reference internal" href="#tuple">Tuple</a></li>
-<li><a class="reference internal" href="#sequence">Sequence</a></li>
-<li><a class="reference internal" href="#graph">Graph</a></li>
+<li><a class="reference internal" href="#dict">Dict</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Dict"><code class="docutils literal notranslate"><span class="pre">Dict</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Dict.sample"><code class="docutils literal notranslate"><span class="pre">Dict.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tuple">Tuple</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Tuple"><code class="docutils literal notranslate"><span class="pre">Tuple</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Tuple.sample"><code class="docutils literal notranslate"><span class="pre">Tuple.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sequence">Sequence</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Sequence"><code class="docutils literal notranslate"><span class="pre">Sequence</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Sequence.sample"><code class="docutils literal notranslate"><span class="pre">Sequence.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graph">Graph</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Graph"><code class="docutils literal notranslate"><span class="pre">Graph</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Graph.sample"><code class="docutils literal notranslate"><span class="pre">Graph.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -623,6 +647,7 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
