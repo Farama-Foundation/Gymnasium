@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Atari" href="../../environments/atari/" /><link rel="prev" title="Vector" href="../vector/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/utils.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.0.post0, furo 2022.09.15"/>
         <title>Utils - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
@@ -859,12 +859,46 @@ for more information about the API.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Utils</a><ul>
-<li><a class="reference internal" href="#visualization">Visualization</a></li>
-<li><a class="reference internal" href="#save-rendering-videos">Save Rendering Videos</a></li>
-<li><a class="reference internal" href="#old-to-new-step-api-compatibility">Old to New Step API Compatibility</a></li>
-<li><a class="reference internal" href="#seeding">Seeding</a></li>
+<li><a class="reference internal" href="#visualization">Visualization</a><ul>
+<li><a class="reference internal" href="#gymnasium.utils.play.PlayableGame"><code class="docutils literal notranslate"><span class="pre">PlayableGame</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.utils.play.PlayableGame.process_event"><code class="docutils literal notranslate"><span class="pre">PlayableGame.process_event()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium.utils.play.PlayPlot"><code class="docutils literal notranslate"><span class="pre">PlayPlot</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.utils.play.PlayPlot.callback"><code class="docutils literal notranslate"><span class="pre">PlayPlot.callback()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium.utils.play.display_arr"><code class="docutils literal notranslate"><span class="pre">display_arr()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.play.play"><code class="docutils literal notranslate"><span class="pre">play()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#save-rendering-videos">Save Rendering Videos</a><ul>
+<li><a class="reference internal" href="#gymnasium.utils.save_video.capped_cubic_video_schedule"><code class="docutils literal notranslate"><span class="pre">capped_cubic_video_schedule()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.save_video.save_video"><code class="docutils literal notranslate"><span class="pre">save_video()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#old-to-new-step-api-compatibility">Old to New Step API Compatibility</a><ul>
+<li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api"><code class="docutils literal notranslate"><span class="pre">convert_to_terminated_truncated_step_api()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.convert_to_done_step_api"><code class="docutils literal notranslate"><span class="pre">convert_to_done_step_api()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.step_api_compatibility"><code class="docutils literal notranslate"><span class="pre">step_api_compatibility()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#seeding">Seeding</a><ul>
+<li><a class="reference internal" href="#gymnasium.utils.seeding.np_random"><code class="docutils literal notranslate"><span class="pre">np_random()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#environment-checking">Environment Checking</a><ul>
-<li><a class="reference internal" href="#invasive">Invasive</a></li>
+<li><a class="reference internal" href="#invasive">Invasive</a><ul>
+<li><a class="reference internal" href="#gymnasium.utils.env_checker.check_env"><code class="docutils literal notranslate"><span class="pre">check_env()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.env_checker.data_equivalence"><code class="docutils literal notranslate"><span class="pre">data_equivalence()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.env_checker.check_reset_seed"><code class="docutils literal notranslate"><span class="pre">check_reset_seed()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.env_checker.check_reset_options"><code class="docutils literal notranslate"><span class="pre">check_reset_options()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.env_checker.check_reset_return_info_deprecation"><code class="docutils literal notranslate"><span class="pre">check_reset_return_info_deprecation()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.env_checker.check_seed_deprecation"><code class="docutils literal notranslate"><span class="pre">check_seed_deprecation()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.env_checker.check_reset_return_type"><code class="docutils literal notranslate"><span class="pre">check_reset_return_type()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.env_checker.check_space_limit"><code class="docutils literal notranslate"><span class="pre">check_space_limit()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -883,6 +917,7 @@ for more information about the API.</p>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     

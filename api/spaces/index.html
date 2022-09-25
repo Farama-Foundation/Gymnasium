@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Fundamental Spaces" href="fundamental/" /><link rel="prev" title="Core" href="../core/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/spaces.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.0.post0, furo 2022.09.15"/>
         <title>Spaces - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
@@ -506,7 +506,17 @@ not handle custom spaces properly. Use custom spaces with care.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Spaces</a><ul>
-<li><a class="reference internal" href="#general-functions">General Functions</a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.Space"><code class="docutils literal notranslate"><span class="pre">Space</span></code></a></li>
+<li><a class="reference internal" href="#general-functions">General Functions</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Space.sample"><code class="docutils literal notranslate"><span class="pre">sample()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.Space.contains"><code class="docutils literal notranslate"><span class="pre">contains()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.Space.shape"><code class="docutils literal notranslate"><span class="pre">Space.shape</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.Space.dtype"><code class="docutils literal notranslate"><span class="pre">gymnasium.spaces.Space.dtype</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.Space.seed"><code class="docutils literal notranslate"><span class="pre">seed()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.Space.to_jsonable"><code class="docutils literal notranslate"><span class="pre">to_jsonable()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.Space.from_jsonable"><code class="docutils literal notranslate"><span class="pre">from_jsonable()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#fundamental-spaces">Fundamental Spaces</a></li>
 <li><a class="reference internal" href="#composite-spaces">Composite Spaces</a></li>
 <li><a class="reference internal" href="#utils">Utils</a></li>
@@ -526,6 +536,7 @@ not handle custom spaces properly. Use custom spaces with care.</p>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     
 

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Composite Spaces" href="../composite/" /><link rel="prev" title="Spaces" href="../" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/spaces/fundamental.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.0.post0, furo 2022.09.15"/>
         <title>Fundamental Spaces - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
@@ -667,11 +667,42 @@ If the charlist mask is all zero then an empty string is returned no matter the 
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Fundamental Spaces</a><ul>
-<li><a class="reference internal" href="#box">Box</a></li>
-<li><a class="reference internal" href="#discrete">Discrete</a></li>
-<li><a class="reference internal" href="#multibinary">MultiBinary</a></li>
-<li><a class="reference internal" href="#multidiscrete">MultiDiscrete</a></li>
-<li><a class="reference internal" href="#text">Text</a></li>
+<li><a class="reference internal" href="#box">Box</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Box"><code class="docutils literal notranslate"><span class="pre">Box</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Box.is_bounded"><code class="docutils literal notranslate"><span class="pre">Box.is_bounded()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.Box.sample"><code class="docutils literal notranslate"><span class="pre">Box.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discrete">Discrete</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Discrete"><code class="docutils literal notranslate"><span class="pre">Discrete</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Discrete.sample"><code class="docutils literal notranslate"><span class="pre">Discrete.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multibinary">MultiBinary</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.MultiBinary"><code class="docutils literal notranslate"><span class="pre">MultiBinary</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.MultiBinary.sample"><code class="docutils literal notranslate"><span class="pre">MultiBinary.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multidiscrete">MultiDiscrete</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.MultiDiscrete"><code class="docutils literal notranslate"><span class="pre">MultiDiscrete</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.MultiDiscrete.sample"><code class="docutils literal notranslate"><span class="pre">MultiDiscrete.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#text">Text</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Text"><code class="docutils literal notranslate"><span class="pre">Text</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Text.sample"><code class="docutils literal notranslate"><span class="pre">Text.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -688,6 +719,7 @@ If the charlist mask is all zero then an empty string is returned no matter the 
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
