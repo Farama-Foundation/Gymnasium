@@ -286,3 +286,6 @@ class CliffWalkingEnv(Env):
 
         with closing(outfile):
             return outfile.getvalue()
+
+# Elf and stool from https://franuka.itch.io/rpg-snow-tileset
+# All other assets by ____
