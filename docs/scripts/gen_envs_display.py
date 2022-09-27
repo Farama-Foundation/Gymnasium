@@ -16,7 +16,7 @@ all_envs = [
             "walker2d",
         ],
     },
-    {"id": "toy_text", "list": ["blackjack", "frozen_lake"]},
+    {"id": "toy_text", "list": ["blackjack", "cliff_walking", "frozen_lake", "taxi"]},
     {"id": "box2d", "list": ["bipedal_walker", "car_racing", "lunar_lander"]},
     {
         "id": "classic_control",
@@ -124,11 +124,13 @@ def generate_page(env, limit=-1, base_path=""):
         cells = "\n".join(cells[:limit])
 
     more_btn = (
-        """<a href="./complete_list">
-            <button class="more-btn">
-                See More Environments
-            </button>
-        </a>"""
+        """
+<a href="./complete_list">
+    <button class="more-btn">
+        See More Environments
+    </button>
+</a>
+"""
         if not non_limited_page
         else ""
     )
