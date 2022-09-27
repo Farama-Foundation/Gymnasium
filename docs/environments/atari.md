@@ -74,10 +74,10 @@ zaxxon
 ```
 
 ```{raw} html
-   :file: index.html
+   :file: atari/list.html
 ```
 
-Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1). 
+Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1).
 
 ### Action Space
 
@@ -105,12 +105,12 @@ The action space a subset of the following discrete set of legal actions:
 | 17   | DOWNLEFTFIRE |
 
 If you use v0 or v4 and the environment is initialized via `make`, the action space will usually be much smaller since most legal actions don't have
-any effect. Thus, the enumeration of the actions will differ. The action space can be expanded to the full 
+any effect. Thus, the enumeration of the actions will differ. The action space can be expanded to the full
 legal space by passing the keyword argument `full_action_space=True` to `make`.
 
-The reduced action space of an Atari environment may depend on the "flavor" of the game. You can specify the flavor by providing 
+The reduced action space of an Atari environment may depend on the "flavor" of the game. You can specify the flavor by providing
 the arguments `difficulty` and `mode` when constructing the environment. This documentation only provides details on the
-action spaces of default flavor choices. 
+action spaces of default flavor choices.
 
 ### Observation Space
 The observation issued by an Atari environment may be:
@@ -123,26 +123,26 @@ The exact reward dynamics depend on the environment and are usually documented i
 find these manuals on [AtariAge](https://atariage.com/).
 
 ### Stochasticity
-It was pointed out in [[1]](#1) that Atari games are entirely deterministic. Thus, agents could achieve 
+It was pointed out in [[1]](#1) that Atari games are entirely deterministic. Thus, agents could achieve
 state of the art performance by simply memorizing an optimal sequence of actions while completely ignoring observations from the environment.
 To avoid this, ALE implements sticky actions: Instead of always simulating the action passed to the environment, there is a small
 probability that the previously executed action is used instead.
 
 On top of this, Gymnasium implements stochastic frame skipping: In each environment step, the action is repeated for a random
-number of frames. This behavior may be altered by setting the keyword argument `frameskip` to either a positive integer or 
-a tuple of two positive integers. If `frameskip` is an integer, frame skipping is deterministic, and in each step the action is 
-repeated `frameskip` many times. Otherwise, if `frameskip` is a tuple, the number of skipped frames is chosen uniformly at 
+number of frames. This behavior may be altered by setting the keyword argument `frameskip` to either a positive integer or
+a tuple of two positive integers. If `frameskip` is an integer, frame skipping is deterministic, and in each step the action is
+repeated `frameskip` many times. Otherwise, if `frameskip` is a tuple, the number of skipped frames is chosen uniformly at
 random between `frameskip[0]` (inclusive) and `frameskip[1]` (exclusive) in each environment step.
 
 
 ### Common Arguments
-When initializing Atari environments via `gymnasium.make`, you may pass some additional arguments. These work for any 
+When initializing Atari environments via `gymnasium.make`, you may pass some additional arguments. These work for any
 Atari environment. However, legal values for `mode` and `difficulty` depend on the environment.
 
 
 - **mode**: `int`. Game mode, see [[2]](#2). Legal values depend on the environment and are listed in the table above.
 
-- **difficulty**: `int`. Difficulty of the game, see [[2]](#2). Legal values depend on the environment and are listed in 
+- **difficulty**: `int`. Difficulty of the game, see [[2]](#2). Legal values depend on the environment and are listed in
 the table above. Together with `mode`, this determines the "flavor" of the game.
 
 - **obs_type**: `str`. This argument determines what observations are returned by the environment. Its values are:
@@ -160,7 +160,7 @@ action space will be reduced to a subset.
 - **render_mode**: `str`. Specifies the rendering mode. Its values are:
 	- human: We'll interactively display the screen and enable game sounds. This will lock emulation to the ROMs specified FPS
 	- rgb_array: we'll return the `rgb` key in step metadata with the current environment RGB frame.
-> It is highly recommended to specify `render_mode` during construction instead of calling `env.render()`. 
+> It is highly recommended to specify `render_mode` during construction instead of calling `env.render()`.
 > This will guarantee proper scaling, audio support, and proper framerates
 
 
@@ -274,15 +274,15 @@ the available modes and difficulty levels for different Atari games:
 ### References
 
 (#1)=
-<a id="1">[1]</a> 
-MG Bellemare, Y Naddaf, J Veness, and M Bowling.   
-"The arcade learning environment: An evaluation platform for general agents."   
-Journal of Artificial Intelligence Research (2012).   
+<a id="1">[1]</a>
+MG Bellemare, Y Naddaf, J Veness, and M Bowling.
+"The arcade learning environment: An evaluation platform for general agents."
+Journal of Artificial Intelligence Research (2012).
 
 (#2)=
-<a id="2">[2]</a> 
-Machado et al.  
+<a id="2">[2]</a>
+Machado et al.
 "Revisiting the Arcade Learning Environment: Evaluation Protocols
-and Open Problems for General Agents"  
-Journal of Artificial Intelligence Research (2018)  
-URL: https://jair.org/index.php/jair/article/view/11182  
+and Open Problems for General Agents"
+Journal of Artificial Intelligence Research (2018)
+URL: https://jair.org/index.php/jair/article/view/11182

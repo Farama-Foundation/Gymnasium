@@ -13,10 +13,10 @@ cart_pole
 mountain_car_continuous
 mountain_car
 pendulum
-``` 
+```
 
 ```{raw} html
-   :file: index.html
+   :file: classic_control/list.html
 ```
 
 The unique dependencies for this set of environments can be installed via:

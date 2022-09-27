@@ -162,7 +162,7 @@ if __name__ == "__main__":
         envs_path = f"../environments/{type_id}"
         if len(type_dict["list"]) > 20:
             page = generate_page(type_dict, limit=9)
-            fp = open(f"{envs_path}/index.html", "w+", encoding="utf-8")
+            fp = open(f"{envs_path}/list.html", "w+", encoding="utf-8")
             fp.write(page)
             fp.close()
 
@@ -180,6 +180,6 @@ if __name__ == "__main__":
             fp.close()
         else:
             page = generate_page(type_dict)
-            fp = open(f"{envs_path}/index.html", "w+", encoding="utf-8")
+            fp = open(f"{envs_path}/list.html", "w+", encoding="utf-8")
             fp.write(page)
             fp.close()
