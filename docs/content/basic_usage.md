@@ -10,8 +10,8 @@ firstpage:
 Initializing environments is very easy in Gymnasium and can be done via: 
 
 ```python
-import gymnasium
-env = gymnasium.make('CartPole-v0')
+import gymnasium as gym
+env = gym.make('CartPole-v0')
 ```
 
 ## Interacting with the Environment
@@ -44,14 +44,15 @@ Let's see what the agent-environment loop looks like in Gymnasium.
 This example will run an instance of `LunarLander-v2` environment for 1000 timesteps. Since we pass `render_mode="human"`, you should see a window pop up rendering the environment.
 
 ```python
-import gymnasium
-env = gymnasium.make("LunarLander-v2", render_mode="human")
+import gymnasium as gym
+env = gym.make("LunarLander-v2", render_mode="human")
 env.action_space.seed(42)
 
 observation, info = env.reset(seed=42)
 
 for _ in range(1000):
-    observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
+    action = env.action_space.sample()
+    observation, reward, terminated, truncated, info = env.step(action)
 
     if terminated or truncated:
         observation, info = env.reset()
@@ -226,7 +227,7 @@ For example, if pressing the keys `w` and `space` at the same time is supposed t
 ```
 As a more complete example, let's say we wish to play with `CartPole-v0` using our left and right arrow keys. The code would be as follows:
 ```python
-import gymnasium
+import gymnasium as gym
 import pygame
 from gymnasium.utils.play import play
 mapping = {(pygame.K_LEFT,): 0, (pygame.K_RIGHT,): 1}
