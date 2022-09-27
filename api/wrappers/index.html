@@ -2,11 +2,11 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Vector" href="../vector/" /><link rel="prev" title="Spaces Utils" href="../spaces/utils/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/wrappers.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.1, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
         <title>Wrappers - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
@@ -283,6 +283,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../content/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../content/vectorising/">Vectorising your environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/handling_timelimits/">Handling Time Limits</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -438,22 +439,22 @@ to a range to gain some numerical stability. To do that, we could, for instance,
 <section id="autoresetwrapper">
 <h2>AutoResetWrapper<a class="headerlink" href="#autoresetwrapper" title="Permalink to this heading">#</a></h2>
 <p>Some users may want a wrapper which will automatically reset its wrapped environment when its wrapped environment reaches the done state. An advantage of this environment is that it will never produce undefined behavior as standard gymnasium environments do when stepping beyond the done state.</p>
-<p>When calling step causes <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> to return <code class="docutils literal notranslate"><span class="pre">done=True</span></code>,
+<p>When calling step causes <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> to return <code class="docutils literal notranslate"><span class="pre">(terminated</span> <span class="pre">or</span> <span class="pre">truncated)=True</span></code>,
 <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code> is called,
 and the return format of <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> is as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_obs</span><span class="p">,</span> <span class="n">terminal_reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_obs</span><span class="p">,</span> <span class="n">final_reward</span><span class="p">,</span> <span class="n">final_terminated</span><span class="p">,</span> <span class="n">final_truncated</span><span class="p">,</span> <span class="n">info</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">new_obs</span></code> is the first observation after calling <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code>,</p>
-<p><code class="docutils literal notranslate"><span class="pre">terminal_reward</span></code> is the reward after calling <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>,
+<p><code class="docutils literal notranslate"><span class="pre">final_reward</span></code> is the reward after calling <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>,
 prior to calling <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">terminated</span> <span class="pre">or</span> <span class="pre">truncated</span></code> is always <code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+<p>The expression <code class="docutils literal notranslate"><span class="pre">(final_terminated</span> <span class="pre">or</span> <span class="pre">final_truncated)</span></code> is always <code class="docutils literal notranslate"><span class="pre">True</span></code></p>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> is a dict containing all the keys from the info dict returned by
-the call to <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code>, with additional keys <code class="docutils literal notranslate"><span class="pre">terminal_observation</span></code>
+the call to <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code>, with additional keys <code class="docutils literal notranslate"><span class="pre">final_observation</span></code>
 containing the observation returned by the last call to <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>
-and <code class="docutils literal notranslate"><span class="pre">terminal_info</span></code> containing the info dict returned by the last call
+and <code class="docutils literal notranslate"><span class="pre">final_info</span></code> containing the info dict returned by the last call
 to <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code>.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">done</span></code> is not true when <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> is called, <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> returns</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">(terminated</span> <span class="pre">or</span> <span class="pre">truncated)</span></code> is not true when <code class="docutils literal notranslate"><span class="pre">self.env.step()</span></code> is called, <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> returns</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 </pre></div>
 </div>
@@ -474,7 +475,7 @@ that the when <code class="docutils literal notranslate"><span class="pre">self.
 new observation from after calling <code class="docutils literal notranslate"><span class="pre">self.env.reset()</span></code> is returned
 by <code class="docutils literal notranslate"><span class="pre">self.step()</span></code> alongside the terminal reward and done state from the
 previous episode . If you need the terminal state from the previous
-episode, you need to retrieve it via the the <code class="docutils literal notranslate"><span class="pre">terminal_observation</span></code> key
+episode, you need to retrieve it via the the <code class="docutils literal notranslate"><span class="pre">final_observation</span></code> key
 in the info dict. Make sure you know what you’re doing if you
 use this wrapper!</p>
 </div>
