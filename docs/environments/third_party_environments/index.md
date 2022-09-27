@@ -129,7 +129,7 @@ An environment for the stochastic longitudinal control of an electric vehicle. I
 
 Gym wrapper for various environments in the Sumo traffic simulator
 
-### [ CommonRoad-RL](https://commonroad.in.tum.de/commonroad-rl)
+### [ CommonRoad-RL](https://commonroad.in.tum.de/tools/commonroad-rl)
 
 A Gym for solving motion planning problems for various traffic scenarios compatible with [CommonRoad benchmarks](https://commonroad.in.tum.de/scenarios), which provides configurable rewards, action spaces, and observation spaces.
 
