@@ -16,7 +16,7 @@ class StepAPICompatibility(gym.Wrapper):
 
     Args:
         env (gym.Env): the env to wrap. Can be in old or new API
-        apply_step_compatibility (bool): Apply to convert environment to use new step API that returns two bools. (False by default)
+        output_truncation_bool (bool): Apply to convert environment to use new step API that returns two bool. (True by default)
 
     Examples:
         >>> env = gym.make("CartPole-v1")
@@ -24,7 +24,7 @@ class StepAPICompatibility(gym.Wrapper):
         <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
         >>> env = gym.make("CartPole-v1", apply_api_compatibility=True) # set to old API
         <StepAPICompatibility<TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>>
-        >>> env = StepAPICompatibility(CustomEnv(), apply_step_compatibility=False) # manually using wrapper on unregistered envs
+        >>> env = StepAPICompatibility(CustomEnv(), output_truncation_bool=False) # manually using wrapper on unregistered envs
 
     """
 
@@ -43,7 +43,7 @@ class StepAPICompatibility(gym.Wrapper):
             )
 
     def step(self, action):
-        """Steps through the environment, returning 5 or 4 items depending on `apply_step_compatibility`.
+        """Steps through the environment, returning 5 or 4 items depending on `output_truncation_bool`.
 
         Args:
             action: action to step through the environment with

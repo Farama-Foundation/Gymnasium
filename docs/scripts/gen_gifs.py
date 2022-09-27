@@ -54,8 +54,8 @@ for env_spec in tqdm(gymnasium.envs.registry.values()):
         frames = []
         while True:
             state, info = env.reset()
-            done = False
-            while not done and len(frames) <= LENGTH:
+            terminated, truncated = False, False
+            while not (terminated or truncated) and len(frames) <= LENGTH:
 
                 frame = env.render(mode="rgb_array")
                 repeat = (
@@ -66,7 +66,7 @@ for env_spec in tqdm(gymnasium.envs.registry.values()):
                 for i in range(repeat):
                     frames.append(Image.fromarray(frame))
                 action = env.action_space.sample()
-                state_next, reward, done, info = env.step(action)
+                state_next, reward, terminated, truncated, info = env.step(action)
 
             if len(frames) > LENGTH:
                 break

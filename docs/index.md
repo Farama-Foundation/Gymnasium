@@ -64,6 +64,7 @@ environments/third_party_environments/index
 
 content/environment_creation
 content/vectorising
+content/handling_timelimits
 ```
 
 ```{toctree}
