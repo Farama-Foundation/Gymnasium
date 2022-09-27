@@ -8,10 +8,10 @@ lastpage:
 ```{toctree}
 :hidden:
 
-blackjack.md
-taxi.md
-cliff_walking.md
-frozen_lake.md
+toy_text/blackjack.md
+toy_text/taxi.md
+toy_text/cliff_walking.md
+toy_text/frozen_lake.md
 ```
 
 ```{raw} html

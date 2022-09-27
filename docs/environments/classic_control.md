@@ -8,11 +8,11 @@ lastpage:
 ```{toctree}
 :hidden:
 
-acrobot
-cart_pole
-mountain_car_continuous
-mountain_car
-pendulum
+classic_control/acrobot
+classic_control/cart_pole
+classic_control/mountain_car_continuous
+classic_control/mountain_car
+classic_control/pendulum
 ```
 
 ```{raw} html

@@ -25,7 +25,7 @@ class CliffWalkingEnv(Env):
 
     With inspiration from:
     [https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py]
-    (https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py)
+(https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py)
 
     ### Description
     The board is a 4x12 matrix, with (using NumPy matrix indexing):

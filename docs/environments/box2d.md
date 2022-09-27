@@ -8,9 +8,9 @@ lastpage:
 ```{toctree}
 :hidden:
 
-bipedal_walker
-car_racing
-lunar_lander
+box2d/bipedal_walker
+box2d/car_racing
+box2d/lunar_lander
 ```
 
 ```{raw} html
