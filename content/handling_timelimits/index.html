@@ -3,11 +3,11 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Utils" href="../utils/" /><link rel="prev" title="Wrappers" href="../wrappers/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/api/vector.html" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="prev" title="Vectorising your environments" href="../vectorising/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/content/handling_timelimits.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>Vector - Gymnasium Documentation</title>
+        <title>Handling Time Limits - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -162,20 +162,20 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/">Basic Usage</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../core/">Core</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/fundamental/">Fundamental Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/composite/">Composite Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/utils/">Spaces Utils</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/utils/">Spaces Utils</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../wrappers/">Wrappers</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/wrappers/">Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utils</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -280,10 +280,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third Party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../content/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/vectorising/">Vectorising your environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/handling_timelimits/">Handling Time Limits</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vectorising/">Vectorising your environments</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Handling Time Limits</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -322,152 +322,47 @@
           </label>
         </div>
         <article role="main">
-          <section id="vector">
-<h1>Vector<a class="headerlink" href="#vector" title="Permalink to this heading">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.vector.make">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">make</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_envs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrappers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">callable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_env_checker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VectorEnv</span></span></span><a class="headerlink" href="#gymnasium.vector.make" title="Permalink to this definition">#</a></dt>
-<dd><p>Create a vectorized environment from multiple copies of an environment, from its id.</p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-<span class="go">array([[-0.04456399,  0.04653909,  0.01326909, -0.02099827],</span>
-<span class="go">       [ 0.03073904,  0.00145001, -0.03088818, -0.03131252],</span>
-<span class="go">       [ 0.03468829,  0.01500225,  0.01230312,  0.01825218]],</span>
-<span class="go">      dtype=float32)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> – The environment ID. This must be a valid ID from the registry.</p></li>
-<li><p><strong>num_envs</strong> – Number of copies of the environment.</p></li>
-<li><p><strong>asynchronous</strong> – If <cite>True</cite>, wraps the environments in an <code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code> (which uses <a href="#id1"><span class="problematic" id="id2">`multiprocessing`_</span></a> to run the environments in parallel). If <code class="docutils literal notranslate"><span class="pre">False</span></code>, wraps the environments in a <code class="xref py py-class docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code>.</p></li>
-<li><p><strong>wrappers</strong> – If not <code class="docutils literal notranslate"><span class="pre">None</span></code>, then apply the wrappers to each internal environment during creation.</p></li>
-<li><p><strong>disable_env_checker</strong> – If to run the env checker for the first environment only. None will default to the environment spec <cite>disable_env_checker</cite> parameter
-(that is by default False), otherwise will run according to this argument (True = not run, False = run)</p></li>
-<li><p><strong>**kwargs</strong> – Keywords arguments applied during <cite>gym.make</cite></p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>The vectorized environment.</strong></p>
-</dd>
-</dl>
-</dd></dl>
-
-<section id="vectorenv">
-<h2>VectorEnv<a class="headerlink" href="#vectorenv" title="Permalink to this heading">#</a></h2>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.action_space">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.vector.VectorEnv.</span></span><span class="sig-name descname"><span class="pre">action_space</span></span><a class="headerlink" href="#gymnasium.vector.VectorEnv.action_space" title="Permalink to this definition">#</a></dt>
-<dd><p>The (batched) action space. The input actions of <cite>step</cite> must be valid elements of <cite>action_space</cite>.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span>
-<span class="go">MultiDiscrete([2 2 2])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.observation_space">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.vector.VectorEnv.</span></span><span class="sig-name descname"><span class="pre">observation_space</span></span><a class="headerlink" href="#gymnasium.vector.VectorEnv.observation_space" title="Permalink to this definition">#</a></dt>
-<dd><p>The (batched) observation space. The observations returned by <cite>reset</cite> and <cite>step</cite> are valid elements of <cite>observation_space</cite>.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">observation_space</span>
-<span class="go">Box([[-4.8 ...]], [[4.8 ...]], (3, 4), float32)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.single_action_space">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.vector.VectorEnv.</span></span><span class="sig-name descname"><span class="pre">single_action_space</span></span><a class="headerlink" href="#gymnasium.vector.VectorEnv.single_action_space" title="Permalink to this definition">#</a></dt>
-<dd><p>The action space of an environment copy.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">single_action_space</span>
-<span class="go">Discrete(2)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.single_observation_space">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.vector.VectorEnv.</span></span><span class="sig-name descname"><span class="pre">single_observation_space</span></span><a class="headerlink" href="#gymnasium.vector.VectorEnv.single_observation_space" title="Permalink to this definition">#</a></dt>
-<dd><p>The observation space of an environment copy.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">single_action_space</span>
-<span class="go">Box([-4.8 ...], [4.8 ...], (4,), float32)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<section id="reset">
-<h3>Reset<a class="headerlink" href="#reset" title="Permalink to this heading">#</a></h3>
-<dl class="py method">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.reset">
-<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.vector.VectorEnv.reset" title="Permalink to this definition">#</a></dt>
-<dd><p>Reset all parallel environments and return a batch of initial observations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> – The environment reset seeds</p></li>
-<li><p><strong>options</strong> – If to return the options</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>A batch of observations from the vectorized environment.</strong></p>
-</dd>
-</dl>
-</dd></dl>
-
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-<span class="go">(array([[-0.02240574, -0.03439831, -0.03904812,  0.02810693],</span>
-<span class="go">       [ 0.01586068,  0.01929009,  0.02394426,  0.04016077],</span>
-<span class="go">       [-0.01314174,  0.03893502, -0.02400815,  0.0038326 ]],</span>
-<span class="go">      dtype=float32), {})</span>
-</pre></div>
-</div>
+          <section id="handling-time-limits">
+<h1>Handling Time Limits<a class="headerlink" href="#handling-time-limits" title="Permalink to this heading">#</a></h1>
+<p>In using Gym environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The <code class="docutils literal notranslate"><span class="pre">done</span></code> signal received (in previous versions of gym &lt; 0.26) from <code class="docutils literal notranslate"><span class="pre">env.step</span></code> indicated whether an episode has ended. However, this signal did not distinguish between whether the episode ended due to <code class="docutils literal notranslate"><span class="pre">termination</span></code> or <code class="docutils literal notranslate"><span class="pre">truncation</span></code>.</p>
+<section id="termination">
+<h2>Termination<a class="headerlink" href="#termination" title="Permalink to this heading">#</a></h2>
+<p>Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment definition. Examples are - task success, task failure, robot falling down etc. Notably this also includes episode ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov property, a representation of the remaining time must be present in the agent’s observation in finite-horizon environments. <a class="reference external" href="https://arxiv.org/abs/1712.00378">(Reference)</a></p>
 </section>
-<section id="step">
-<h3>Step<a class="headerlink" href="#step" title="Permalink to this heading">#</a></h3>
-<dl class="py method">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.step">
-<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.vector.VectorEnv.step" title="Permalink to this definition">#</a></dt>
-<dd><p>Take an action for each parallel environment.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>actions</strong> – element of <a class="reference internal" href="#gymnasium.vector.VectorEnv.action_space" title="gymnasium.vector.VectorEnv.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> Batch of actions.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Batch of</strong> (<em>observations, rewards, terminated, truncated, infos) or (observations, rewards, dones, infos</em>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
-<span class="go">array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],</span>
-<span class="go">        [ 0.00788269, -0.17490888,  0.03393489,  0.31735462],</span>
-<span class="go">        [ 0.04918966,  0.19421194,  0.02938497, -0.29495203]],</span>
-<span class="go">        dtype=float32)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rewards</span>
-<span class="go">array([1., 1., 1.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">termination</span>
-<span class="go">array([False, False, False])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">termination</span>
-<span class="go">array([False, False, False])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
-<span class="go">{}</span>
+<section id="truncation">
+<h2>Truncation<a class="headerlink" href="#truncation" title="Permalink to this heading">#</a></h2>
+<p>Truncation refers to the episode ending after an externally defined condition (that is outside the scope of the Markov Decision Process). This could be a time-limit, robot going out of bounds etc.</p>
+<p>An infinite-horizon environment is an obvious example where this is needed. We cannot wait forever for the episode to complete, so we set a practical time-limit after which we forcibly halt the episode. The last state in this case is not a terminal state since it has a non-zero transition probability of moving to another state as per the Markov Decision Process that defines the RL problem. This is also different from time-limits in finite horizon environments as the agent in this case has no idea about this time-limit.</p>
+</section>
+<section id="importance-in-learning-code">
+<h2>Importance in learning code<a class="headerlink" href="#importance-in-learning-code" title="Permalink to this heading">#</a></h2>
+<p>Bootstrapping (using one or more estimated values of a variable to update estimates of the same variable) is a key aspect of Reinforcement Learning. A value function will tell you how much discounted reward you will get from a particular state if you follow a given policy. When an episode stops at any given point, by looking at the value of the final state, the agent is able to estimate how much discounted reward could have been obtained if the episode has continued. This is an example of handling truncation.</p>
+<p>More formally, a common example of bootstrapping in RL is updating the estimate of the Q-value function,</p>
+<div class="highlight-math notranslate"><div class="highlight"><pre><span></span>Q_{target}(o_t, a_t) = r_t + \gamma . \max_a(Q(o_{t+1}, a_{t+1}))
 </pre></div>
 </div>
+<p>In classical RL, the new <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is a weighted average of previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate and <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> while in Deep Q-Learning, the error between <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> and previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is minimized.</p>
+<p>However, at the terminal state, bootstrapping is not done,</p>
+<div class="highlight-math notranslate"><div class="highlight"><pre><span></span>Q_{target}(o_t, a_t) = r_t
+</pre></div>
+</div>
+<p>This is where the distinction between termination and truncation becomes important. When an episode ends due to termination we don’t bootstrap, when it ends due to truncation, we bootstrap.</p>
+<p>While using gym environments, the <code class="docutils literal notranslate"><span class="pre">done</span></code> signal (default for &lt; v0.26) is frequently used to determine whether to bootstrap or not. However this is incorrect since it does not differentiate between termination and truncation.</p>
+<p>A simple example for value functions is shown below. This is an illustrative example and not part of any specific algorithm.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># INCORRECT</span>
+<span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">done</span><span class="p">)</span><span class="o">*</span> <span class="n">vf_next_state</span>
+</pre></div>
+</div>
+<p>This is incorrect in the case of episode ending due to a truncation, where bootstrapping needs to happen but it doesn’t.</p>
 </section>
+<section id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this heading">#</a></h2>
+<p>From v0.26 onwards, gym’s <code class="docutils literal notranslate"><span class="pre">env.step</span></code> API returns both termination and truncation information explicitly. In previous version truncation information was supplied through the info key <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code>. The correct way to handle terminations and truncations now is,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># terminated = done and &#39;TimeLimit.truncated&#39; not in info   # This was needed in previous versions. </span>
+
+<span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">terminated</span><span class="p">)</span><span class="o">*</span><span class="n">vf_next_state</span>
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -476,26 +371,8 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../utils/">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Utils</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="../wrappers/">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Wrappers</div>
-                
-              </div>
-            </a>
+          
+          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -528,23 +405,11 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Vector</a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.make"><code class="docutils literal notranslate"><span class="pre">make()</span></code></a></li>
-<li><a class="reference internal" href="#vectorenv">VectorEnv</a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.action_space"><code class="docutils literal notranslate"><span class="pre">gymnasium.vector.VectorEnv.action_space</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.observation_space"><code class="docutils literal notranslate"><span class="pre">gymnasium.vector.VectorEnv.observation_space</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_action_space"><code class="docutils literal notranslate"><span class="pre">gymnasium.vector.VectorEnv.single_action_space</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_observation_space"><code class="docutils literal notranslate"><span class="pre">gymnasium.vector.VectorEnv.single_observation_space</span></code></a></li>
-<li><a class="reference internal" href="#reset">Reset</a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.reset"><code class="docutils literal notranslate"><span class="pre">VectorEnv.reset()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#step">Step</a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.step"><code class="docutils literal notranslate"><span class="pre">VectorEnv.step()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">Handling Time Limits</a><ul>
+<li><a class="reference internal" href="#termination">Termination</a></li>
+<li><a class="reference internal" href="#truncation">Truncation</a></li>
+<li><a class="reference internal" href="#importance-in-learning-code">Importance in learning code</a></li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
 </ul>
 </li>
 </ul>
