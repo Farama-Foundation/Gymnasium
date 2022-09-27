@@ -23,7 +23,7 @@ The following example runs 3 copies of the ``CartPole-v1`` environment in parall
 >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
 >>> envs.reset()
 >>> actions = np.array([1, 0, 1])
->>> observations, rewards, terminated, truncated, infos = envs.step(actions)
+>>> observations, rewards, termination, truncation, infos = envs.step(actions)
 
 >>> observations
 array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
@@ -32,7 +32,9 @@ array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
         dtype=float32)
 >>> rewards
 array([1., 1., 1.])
->>> terminated
+>>> termination
+array([False, False, False])
+>>> truncation
 array([False, False, False])
 >>> infos
 {}
@@ -92,7 +94,7 @@ While standard Gymnasium environments take a single action and return a single o
       dtype=float32), {})
 
 >>> actions = np.array([1, 0, 1])
->>> observations, rewards, terminated, truncated, infos = envs.step(actions)
+>>> observations, rewards, termination, truncation, infos = envs.step(actions)
 
 >>> observations
 array([[ 0.00187507,  0.18986781, -0.03168437, -0.301252  ],
@@ -101,7 +103,9 @@ array([[ 0.00187507,  0.18986781, -0.03168437, -0.301252  ],
       dtype=float32)
 >>> rewards
 array([1., 1., 1.])
->>> terminated
+>>> termination
+array([False, False, False])
+>>> truncation
 array([False, False, False])
 >>> infos
 {}
@@ -140,7 +144,7 @@ Dict(fire:MultiDiscrete([2 2 2]), jump:MultiDiscrete([2 2 2]), acceleration:Box(
 ...     "jump": np.array([0, 1, 0]),
 ...     "acceleration": np.random.uniform(-1., 1., size=(3, 2))
 ... }
->>> observations, rewards, terminated, truncated, infos = envs.step(actions)
+>>> observations, rewards, termination, truncation, infos = envs.step(actions)
 >>> observations
 {"position": array([[-0.5337036 ,  0.7439302 ,  0.41748118],
                     [ 0.9373266 , -0.5780453 ,  0.8987405 ],
@@ -150,19 +154,18 @@ Dict(fire:MultiDiscrete([2 2 2]), jump:MultiDiscrete([2 2 2]), acceleration:Box(
                    [ 0.26341468,  0.72282314]], dtype=float32)}
 ```
 
-The environment copies inside a vectorized environment automatically call `gymnasium.Env.reset` at the end of an episode. In the following example, the episode of the 3rd copy ends after 2 steps (the agent fell in a hole), and the paralle environment gets reset (observation ``0``).
+The environment copies inside a vectorized environment automatically call `gymnasium.Env.reset` at the end of an episode. In the following example, the episode of the 3rd copy ends after 2 steps (the agent fell in a hole), and the parallel environment gets reset (observation ``0``).
 
 ```python
 >>> envs = gym.vector.make("FrozenLake-v1", num_envs=3, is_slippery=False)
 >>> envs.reset()
 (array([0, 0, 0]), {'prob': array([1, 1, 1]), '_prob': array([ True,  True,  True])})
->>> observations, rewards, terminated, truncated, infos = envs.step(np.array([1, 2, 2]))
->>> observations, rewards, terminated, truncated, infos = envs.step(np.array([1, 2, 1]))
-
->>> terminated
-array([False, False,  True])
+>>> observations, rewards, termination, truncation, infos = envs.step(np.array([1, 2, 2]))
+>>> observations, rewards, termination, truncation, infos = envs.step(np.array([1, 2, 1]))
 >>> observations
 array([8, 2, 0])
+>>> termination
+array([False, False,  True])
 ```
 
 Vectorized environments will return `infos` in the form of a dictionary where each value is an array of length `num_envs` and the _i-th_ value of the array represents the info of the _i-th_ environment.  
@@ -175,16 +178,15 @@ If the _dtype_ of the returned info is whether `int`, `float`, `bool` or any _dt
 >>> observations, infos = envs.reset()
 
 >>> actions = np.array([1, 0, 1])
->>> observations, rewards, terminated, truncated, infos = envs.step(actions)
->>> dones = np.logical_or(terminated, truncated)
+>>> observations, rewards, termination, truncation, infos = envs.step(actions)
 
->>> while not any(dones):
-...    observations, rewards, terminated, truncated, infos = envs.step(actions)
+>>> while not any(np.logical_or(termination, truncation)):
+...    observations, rewards, termination, truncation, infos = envs.step(actions)
 
->>> print(dones)
+>>> termination
 [False, True, False]
     
->>> print(infos)
+>>> infos
 {'final_observation': array([None,
        array([-0.11350546, -1.8090094 ,  0.23710881,  2.8017728 ], dtype=float32),
        None], dtype=object), '_final_observation': array([False,  True, False])}
@@ -238,7 +240,7 @@ This is convenient, for example, if you instantiate a policy. In the following e
 ... )
 >>> observations, infos = envs.reset()
 >>> actions = policy(weights, observations).argmax(axis=1)
->>> observations, rewards, terminated, truncated, infos = envs.step(actions)
+>>> observations, rewards, termination, truncation, infos = envs.step(actions)
 ```
 
 ## Intermediate Usage
@@ -279,7 +281,7 @@ Because sometimes things may not go as planned, the exceptions raised in any giv
 
 >>> envs = gymnasium.vector.AsyncVectorEnv([lambda: ErrorEnv()] * 3)
 >>> observations, infos = envs.reset()
->>> observations, rewards, terminated, truncated, infos = envs.step(np.array([0, 0, 1]))
+>>> observations, rewards, termination, termination, infos = envs.step(np.array([0, 0, 1]))
 ERROR: Received the following error from Worker-2: ValueError: An error occurred.
 ERROR: Shutting down Worker-2.
 ERROR: Raising the last exception back to the main process.
@@ -320,7 +322,7 @@ In the following example, we create a new environment `SMILESEnv`, whose observa
 ...     shared_memory=False
 ... )
 >>> envs.reset()
->>> observations, rewards, terminated, truncated, infos = envs.step(np.array([2, 5, 4]))
+>>> observations, rewards, termination, truncation, infos = envs.step(np.array([2, 5, 4]))
 >>> observations
 ('[(', '[O', '[C')
 ```
