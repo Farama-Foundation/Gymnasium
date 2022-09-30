@@ -17,6 +17,7 @@ LEFT = 3
 
 class CliffWalkingEnv(Env):
     """
+
     This is a simple implementation of the Gridworld Cliff
     reinforcement learning task.
 
