@@ -170,6 +170,7 @@ class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
 class PendulumJaxEnv(JaxEnv):
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         env = PendulumF(**kwargs)
+        env.transform(jax.jit)
         high = np.array([1.0, 1.0, env.max_speed], dtype=np.float32)
         action_space = gym.spaces.Box(
             low=-env.max_torque, high=env.max_torque, shape=(1,), dtype=np.float32

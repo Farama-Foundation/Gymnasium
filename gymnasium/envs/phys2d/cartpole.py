@@ -222,6 +222,7 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
 class CartPoleJaxEnv(JaxEnv):
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         env = CartPoleF(**kwargs)
+        env.transform(jax.jit)
         high = env.x_threshold
         action_space = gym.spaces.Discrete(2)
         observation_space = gym.spaces.Box(-high, high, dtype=np.float32)
