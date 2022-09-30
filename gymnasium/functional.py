@@ -51,6 +51,16 @@ class FuncEnv(Generic[StateType, ObsType, ActType, RewardType, TerminalType]):
         """Reward."""
         raise NotImplementedError
 
+    def state_info(self, state: StateType) -> dict:
+        """Info dict about a single state."""
+        return {}
+
+    def step_info(
+        self, state: StateType, action: ActType, next_state: StateType
+    ) -> dict:
+        """Info dict about a full transition."""
+        return {}
+
     def terminal(self, state: StateType) -> TerminalType:
         """Terminal state."""
         raise NotImplementedError
@@ -62,9 +72,15 @@ class FuncEnv(Generic[StateType, ObsType, ActType, RewardType, TerminalType]):
         self.observation = func(self.observation)
         self.reward = func(self.reward)
         self.terminal = func(self.terminal)
+        self.state_info = func(self.state_info)
+        self.step_info = func(self.step_info)
 
     def render_image(
         self, state: StateType, render_state: RenderStateType
     ) -> Tuple[RenderStateType, np.ndarray]:
         """Show the state."""
+        raise NotImplementedError
+
+    def render_init(self, **kwargs) -> RenderStateType:
+        """Initialize the render state."""
         raise NotImplementedError

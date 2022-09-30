@@ -2,16 +2,16 @@
 Implementation of a Jax-accelerated cartpole environment.
 """
 
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import jax
 import jax.numpy as jnp
 import numpy as np
-import pygame
 from jax.random import PRNGKey
-from pygame import gfxdraw
 
 import gymnasium as gym
+from gymnasium.envs.phys2d.conversion import JaxEnv
+from gymnasium.error import DependencyNotInstalled
 from gymnasium.functional import ActType, FuncEnv, RenderStateType, StateType
 
 
@@ -128,9 +128,18 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
         return reward
 
     def render_image(
-        self, state: StateType, render_state: Tuple[pygame.Surface, pygame.time.Clock]
+        self,
+        state: StateType,
+        render_state: Tuple["pygame.Surface", "pygame.time.Clock"],  # type: ignore  # noqa: F821
     ) -> Tuple[RenderStateType, np.ndarray]:
 
+        try:
+            import pygame
+            from pygame import gfxdraw
+        except ImportError:
+            raise DependencyNotInstalled(
+                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+            )
         screen, clock = render_state
 
         world_width = self.x_threshold * 2
@@ -191,4 +200,36 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
 
         return (screen, clock), np.transpose(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
+        )
+
+    def render_init(
+        self, screen_width: int = 600, screen_height: int = 400
+    ) -> RenderStateType:
+        try:
+            import pygame
+        except ImportError:
+            raise DependencyNotInstalled(
+                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+            )
+
+        pygame.init()
+        screen = pygame.Surface((screen_width, screen_height))
+        clock = pygame.time.Clock()
+
+        return screen, clock
+
+
+class CartPoleJaxEnv(JaxEnv):
+    def __init__(self, render_mode: Optional[str] = None, **kwargs):
+        env = CartPoleF(**kwargs)
+        high = env.x_threshold
+        action_space = gym.spaces.Discrete(2)
+        observation_space = gym.spaces.Box(-high, high, dtype=np.float32)
+        metadata = {"render.modes": ["rgb_array"], "render_fps": 50}
+        super().__init__(
+            env,
+            observation_space=observation_space,
+            action_space=action_space,
+            metadata=metadata,
+            render_mode=render_mode,
         )

@@ -7,11 +7,11 @@ from typing import Optional, Tuple, Union
 import jax
 import jax.numpy as jnp
 import numpy as np
-import pygame
 from jax.random import PRNGKey
-from pygame import gfxdraw
 
 import gymnasium as gym
+from gymnasium.envs.phys2d.conversion import JaxEnv
+from gymnasium.error import DependencyNotInstalled
 from gymnasium.functional import ActType, FuncEnv, RenderStateType, StateType
 
 
@@ -79,8 +79,15 @@ class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
     def render_image(
         self,
         state: StateType,
-        render_state: Tuple[pygame.Surface, pygame.time.Clock, Optional[float]],
+        render_state: Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]],  # type: ignore  # noqa: F821
     ) -> Tuple[RenderStateType, np.ndarray]:
+        try:
+            import pygame
+            from pygame import gfxdraw
+        except ImportError:
+            raise DependencyNotInstalled(
+                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+            )
         screen, clock, last_u = render_state
 
         surf = pygame.Surface((self.screen_dim, self.screen_dim))
@@ -141,4 +148,39 @@ class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
 
         return (screen, clock, last_u), np.transpose(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
+        )
+
+    def render_init(
+        self, screen_width: int = 600, screen_height: int = 400
+    ) -> RenderStateType:
+        try:
+            import pygame
+        except ImportError:
+            raise DependencyNotInstalled(
+                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+            )
+
+        pygame.init()
+        screen = pygame.Surface((screen_width, screen_height))
+        clock = pygame.time.Clock()
+
+        return screen, clock, None
+
+
+class PendulumJaxEnv(JaxEnv):
+    def __init__(self, render_mode: Optional[str] = None, **kwargs):
+        env = PendulumF(**kwargs)
+        high = np.array([1.0, 1.0, env.max_speed], dtype=np.float32)
+        action_space = gym.spaces.Box(
+            low=-env.max_torque, high=env.max_torque, shape=(1,), dtype=np.float32
+        )
+        observation_space = gym.spaces.Box(low=-high, high=high, dtype=np.float32)
+        metadata = {"render.modes": ["rgb_array"], "render_fps": 30}
+
+        super().__init__(
+            env,
+            observation_space=observation_space,
+            action_space=action_space,
+            metadata=metadata,
+            render_mode=render_mode,
         )
