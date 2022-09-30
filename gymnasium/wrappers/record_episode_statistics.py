@@ -67,8 +67,8 @@ class RecordEpisodeStatistics(gym.Wrapper):
     def reset(self, **kwargs):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
         observations = super().reset(**kwargs)
-        self.episode_returns = np.zeros(self.num_envs, dtype=np.float32)
-        self.episode_lengths = np.zeros(self.num_envs, dtype=np.float32)
+        self.episode_returns = np.zeros(self.num_envs)
+        self.episode_lengths = np.zeros(self.num_envs)
         return observations
 
     def step(self, action):
@@ -92,7 +92,7 @@ class RecordEpisodeStatistics(gym.Wrapper):
                 "episode": {
                     "r": np.where(dones, self.episode_returns, 0),
                     "l": np.where(dones, self.episode_lengths, 0),
-                    "t": np.full((self.num_envs,), round(time.perf_counter() - self.t0, 6), dtype=np.float32),
+                    "t": np.full((self.num_envs,), round(time.perf_counter() - self.t0, 6)),
                 },
             }
             if self.is_vector_env:
