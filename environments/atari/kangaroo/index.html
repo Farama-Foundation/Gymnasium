@@ -6,12 +6,11 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Krull" href="../krull/" /><link rel="prev" title="JourneyEscape" href="../journey_escape/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/atari/kangaroo.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.3, furo 2022.09.15.dev1"/>
         <title>Kangaroo - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=dfbec4c0ec30de48fc84c6eaaf9ab0b056bb0414" />
     
     
 
@@ -38,6 +37,79 @@
   }
 </style></head>
   <body>
+
+    <header class="farama-header">
+      <div class="farama-header__container">
+        <div class="farama-header__left">
+          <a href="https://farama.org/">
+              <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <div class="farama-header-menu__btn">
+              <span class="farama-header-menu__btn-name">
+                The Farama Foundation
+              </span>
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                  <defs></defs>
+                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
+                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
+                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+              </svg>
+            </div>
+            <div class="farama-header-menu__list">
+              <div class="farama-header-menu-list__header">
+                <img class="farama-header-menu__logo" src="../../../_static/img/farama_solid_white.svg">
+                <span>The Farama Foundation</span>
+                <button id="farama-close-menu">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                    <line x1="3" y1="21" x2="21" y2="3"></line>
+                    <line x1="3" y1="3" x2="21" y2="21"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="farama-header-menu-list__body">
+                <span class="farama-header-menu__section-title">Projects</span>
+                <ul>
+                  <li>
+                    <a href="https://gymnasium.farama.org">Gymnasium</a>
+                  </li>
+                  <li>
+                    <a href="https://pettingzoo.farama.org">PettingZoo</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/Farama-Foundation/SuperSuit">SuperSuit</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/Farama-Foundation/tinyscaler">Tinyscaler</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/Farama-Foundation/gym-robotics">Gymnasium-Robotics
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/Farama-Foundation/AutoROM">AutoROM</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/Farama-Foundation/MiniGrid">MiniGrid</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/Farama-Foundation/Jumpy">JumPy</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="farama-header-menu__overlay"></div>
+
     
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
@@ -145,16 +217,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../">
-  
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
-    <img class="sidebar-logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
-  </div>
-  
-  <span class="sidebar-brand-text">Gymnasium Documentation</span>
-  
-</a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
@@ -308,7 +371,18 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          
+  
+  <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/master/docs/environments/atari/kangaroo.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -322,6 +396,7 @@
           </label>
         </div>
         <article role="main">
+          
           <section id="kangaroo">
 <h1>Kangaroo<a class="headerlink" href="#kangaroo" title="Permalink to this heading">#</a></h1>
 <figure class="align-default" id="id1">
@@ -445,7 +520,7 @@ general article on Atari environments.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../journey_escape/">
+            <a class="prev-page" href="../journey_escape/">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
@@ -469,7 +544,11 @@ general article on Atari environments.</p>
           </div>
           <div class="right-details">
             <div class="icons">
-              
+              <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium" aria-label="On GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
@@ -506,48 +585,37 @@ general article on Atari environments.</p>
       
     </aside>
   </div>
-</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+</div>
+    <script>
+      let toggleMenu = () => {
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
+
+      window.onclick = function(event) {
+        if (!event.target.matches('.farama-header-menu__btn')) {
+          const dropdown = document.querySelector(".farama-header-menu__list");
+          if (dropdown.classList.contains('active')) {
+            dropdown.classList.remove('active');
+            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
+          }
+        }
+      }
+    </script>
+
+    
+    
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
-    
-
-<script>
-    (() => {
-        if (!localStorage.getItem("shownCookieAlert")) {
-            const boxElem = document.createElement("div");
-            boxElem.classList.add("cookie_alert");
-            const containerElem = document.createElement("div");
-            containerElem.classList.add("cookie_container");
-            const textElem = document.createElement("p");
-            textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
-                                Google Analytics</a> to collect statistics. You can disable it by blocking
-                                the JavaScript coming from www.google-analytics.com.`;
-                                containerElem.appendChild(textElem);
-            const closeBtn = document.createElement("button");
-            closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
-            closeBtn.onclick = () => {
-                localStorage.setItem("shownCookieAlert", "true");
-                boxElem.style.display = "none";
-            }
-            containerElem.appendChild(closeBtn);
-            boxElem.appendChild(containerElem);
-            document.body.appendChild(boxElem);
-        }
-    })()
-
-</script>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JGXSLW7N06"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-JGXSLW7N06');
-</script></body>
+    </body>
 </html>
