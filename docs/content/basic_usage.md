@@ -10,8 +10,8 @@ firstpage:
 Initializing environments is very easy in Gymnasium and can be done via: 
 
 ```python
-import gymnasium
-env = gymnasium.make('CartPole-v0')
+import gymnasium as gym
+env = gym.make('CartPole-v0')
 ```
 
 ## Interacting with the Environment
@@ -37,23 +37,22 @@ to a specific point in space. If it succeeds in doing this (or makes some progre
 alongside the observation for this timestep. The reward may also be negative or 0, if the agent did not yet succeed (or did not make any progress). 
 The agent will then be trained to maximize the reward it accumulates over many timesteps.
 
-After some timesteps, the environment may enter a terminal state. For instance, the robot may have crashed! In that case,
-we want to reset the environment to a new initial state. The environment issues a done signal to the agent if it enters such a terminal state.
-Not all done signals must be triggered by a "catastrophic failure": Sometimes we also want to issue a done signal after
-a fixed number of timesteps, or if the agent has succeeded in completing some task in the environment.
+After some timesteps, the environment may enter a terminal state. For instance, the robot may have crashed, or the agent may have succeeded in completing a task. In that case, we want to reset the environment to a new initial state. The environment issues a terminated signal to the agent if it enters such a terminal state. Sometimes we also want to end the episode after a fixed number of timesteps, in this case, the environment issues a truncated signal.
+This is a new change in API (v0.26 onwards). Earlier a common done signal was issued for an episode ending via any means. This is now changed in favour of issuing two signals - terminated and truncated.
 
 Let's see what the agent-environment loop looks like in Gymnasium.
 This example will run an instance of `LunarLander-v2` environment for 1000 timesteps. Since we pass `render_mode="human"`, you should see a window pop up rendering the environment.
 
 ```python
-import gymnasium
-env = gymnasium.make("LunarLander-v2", render_mode="human")
+import gymnasium as gym
+env = gym.make("LunarLander-v2", render_mode="human")
 env.action_space.seed(42)
 
 observation, info = env.reset(seed=42)
 
 for _ in range(1000):
-    observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
+    action = env.action_space.sample()
+    observation, reward, terminated, truncated, info = env.step(action)
 
     if terminated or truncated:
         observation, info = env.reset()
@@ -72,6 +71,33 @@ Every environment specifies the format of valid actions by providing an `env.act
 the format of valid observations is specified by `env.observation_space`.
 In the example above we sampled random actions via `env.action_space.sample()`. Note that we need to seed the action space separately from the 
 environment to ensure reproducible samples.
+
+
+### Change in env.step API
+
+Previously, the step method returned only one boolean - `done`. This is being deprecated in favour of returning two booleans `terminated` and `truncated` (v0.26 onwards). 
+
+`terminated` signal is set to `True` when the core environment terminates inherently because of task completion, failure etc. a condition defined in the MDP.   
+`truncated` signal is set to `True` when the episode ends specifically because of a time-limit or a condition not inherent to the environment (not defined in the MDP). 
+It is possible for `terminated=True` and `truncated=True` to occur at the same time when termination and truncation occur at the same step. 
+
+This is explained in detail in the `Handling Time Limits` section. 
+
+#### Backward compatibility
+Gym will retain support for the old API through compatibility wrappers. 
+
+Users can toggle the old API through `make` by setting `apply_api_compatibility=True`. 
+
+```python
+env = gym.make("CartPole-v1", apply_api_compatibility=True)
+```
+This can also be done explicitly through a wrapper: 
+```python
+from gymasium.wrappers import StepCompatibility
+env = StepCompatibility(CustomEnv(), output_truncation_bool=False)
+```
+For more details see the wrappers section. 
+
 
 ## Checking API-Conformity
 If you have implemented a custom environment and would like to perform a sanity check to make sure that it conforms to 
@@ -168,7 +194,7 @@ reward based on data in `info`). Such wrappers
 can be implemented by inheriting from `Wrapper`.
 Gymnasium already provides many commonly used wrappers for you. Some examples:
 
-- `TimeLimit`: Issue a done signal if a maximum number of timesteps has been exceeded (or the base environment has issued a done signal).
+- `TimeLimit`: Issue a truncated signal if a maximum number of timesteps has been exceeded (or the base environment has issued a truncated signal).
 - `ClipAction`: Clip the action such that it lies in the action space (of type `Box`).
 - `RescaleAction`: Rescale actions to lie in a specified interval
 - `TimeAwareObservation`: Add information about the index of timestep to observation. In some cases helpful to ensure that transitions are Markov.
@@ -201,7 +227,7 @@ For example, if pressing the keys `w` and `space` at the same time is supposed t
 ```
 As a more complete example, let's say we wish to play with `CartPole-v0` using our left and right arrow keys. The code would be as follows:
 ```python
-import gymnasium
+import gymnasium as gym
 import pygame
 from gymnasium.utils.play import play
 mapping = {(pygame.K_LEFT,): 0, (pygame.K_RIGHT,): 1}
@@ -211,7 +237,7 @@ where we obtain the corresponding key ID constants from pygame. If the `key_to_a
 
 Furthermore, if you wish to plot real time statistics as you play, you can use `gymnasium.utils.play.PlayPlot`. Here's some sample code for plotting the reward for last 5 second of gameplay:
 ```python
-def callback(obs_t, obs_tp1, action, rew, done, info):
+def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
     return [rew,]
 plotter = PlayPlot(callback, 30 * 5, ["reward"])
 env = gymnasium.make("Pong-v0")

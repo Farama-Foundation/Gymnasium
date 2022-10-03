@@ -10,13 +10,13 @@ title: Gopher
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/Gopher-v5")` | 
+|                   |                                   |
+|-------------------|-----------------------------------|
+| Action Space      | Discrete(18)                      |
+| Observation Space | (210, 160, 3)                     |
+| Observation High  | 255                               |
+| Observation Low   | 0                                 |
+| Import            | `gymnasium.make("ALE/Gopher-v5")` | 
 
 ### Description
 The player controls a shovel-wielding farmer who protects a crop of three carrots from a gopher. [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=218).
@@ -30,26 +30,26 @@ Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]]
 ### Action Space
 The action space a subset of the following discrete set of legal actions:
 
-| Num | Action                 |
-|-----|------------------------|
-| 0   | NOOP |
-| 1   | FIRE |
-| 2   | UP |
-| 3   | RIGHT |
-| 4   | LEFT |
-| 5   | DOWN |
-| 6   | UPRIGHT |
-| 7   | UPLEFT |
-| 8   | DOWNRIGHT |
-| 9   | DOWNLEFT |
-| 10   | UPFIRE |
-| 11   | RIGHTFIRE |
-| 12   | LEFTFIRE |
-| 13   | DOWNFIRE |
-| 14   | UPRIGHTFIRE |
-| 15   | UPLEFTFIRE |
-| 16   | DOWNRIGHTFIRE |
-| 17   | DOWNLEFTFIRE |
+| Num | Action        |
+|-----|---------------|
+| 0   | NOOP          |
+| 1   | FIRE          |
+| 2   | UP            |
+| 3   | RIGHT         |
+| 4   | LEFT          |
+| 5   | DOWN          |
+| 6   | UPRIGHT       |
+| 7   | UPLEFT        |
+| 8   | DOWNRIGHT     |
+| 9   | DOWNLEFT      |
+| 10  | UPFIRE        |
+| 11  | RIGHTFIRE     |
+| 12  | LEFTFIRE      |
+| 13  | DOWNFIRE      |
+| 14  | UPRIGHTFIRE   |
+| 15  | UPLEFTFIRE    |
+| 16  | DOWNRIGHTFIRE |
+| 17  | DOWNLEFTFIRE  |
 
 If you use v0 or v4 and the environment is initialized via `make`, the action space will usually be much smaller since most legal actions don't have
 any effect. Thus, the enumeration of the actions will differ. The action space can be expanded to the full 
@@ -84,9 +84,10 @@ env = gymnasium.make("ALE/Gopher-v5")
 ```
 
 The various ways to configure the environment are described in detail in the article on Atari environments.
-|      Environment | Valid Modes                                                                                                                                                                         | Valid Difficulties | Default Mode |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------|
-|           Gopher | `[0, 2]`                                                                                                                                                                            |           `[0, 1]` | `0`          |    
+
+| Environment | Valid Modes | Valid Difficulties | Default Mode |
+|-------------|-------------|--------------------|--------------|
+| Gopher      | `[0, 2]`    | `[0, 1]`           | `0`          |    
 
 
 
@@ -99,11 +100,11 @@ The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are i
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 
-|Version|`frameskip=`|`repeat_action_probability=`|`full_action_space=`|
-| ----- | --------- | ------------------------- | ---------|
-|v0     |`(2, 5,)`  |`0.25`                     |`False`     |
-|v4     |`(2, 5,)`  |`0.0`                      |`False`     |
-|v5     |`5`        |`0.25`                     |`True`      |
+| Version | `frameskip=` | `repeat_action_probability=` | `full_action_space=` |
+|---------|--------------|------------------------------|----------------------|
+| v0      | `(2, 5,)`    | `0.25`                       | `False`              |
+| v4      | `(2, 5,)`    | `0.0`                        | `False`              |
+| v5      | `5`          | `0.25`                       | `True`               |
 
 > Version v5 follows the best practices outlined in [[2]](#2). Thus, it is recommended to transition to v5 and
 > customize the environment using the arguments above, if necessary.

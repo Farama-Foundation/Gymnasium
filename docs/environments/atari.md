@@ -79,30 +79,38 @@ atari/zaxxon
 
 Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1).
 
+### AutoROM (installing the ROMs)
+
+ALE-py doesn't include the atari roms (`pip install gymnasium[atari]`) which are necessary to make any of the atari environments.
+To install the atari rom, use `pip install gymnasium[accept-rom-license]` which will install AutoROM and download the roms, install them in the default location.
+In doing so, you agree to TODO
+
+It is possible to install the ROMs in an alternative location, [repo](https://github.com/Farama-Foundation/AutoROM) has more information.
+
 ### Action Space
 
-The action space a subset of the following discrete set of legal actions:
+The action space is a subset of the following discrete set of legal actions:
 
-| Num | Action                 |
-|-----|------------------------|
-| 0   | NOOP |
-| 1   | FIRE |
-| 2   | UP |
-| 3   | RIGHT |
-| 4   | LEFT |
-| 5   | DOWN |
-| 6   | UPRIGHT |
-| 7   | UPLEFT |
-| 8   | DOWNRIGHT |
-| 9   | DOWNLEFT |
-| 10   | UPFIRE |
-| 11   | RIGHTFIRE |
-| 12   | LEFTFIRE |
-| 13   | DOWNFIRE |
-| 14   | UPRIGHTFIRE |
-| 15   | UPLEFTFIRE |
-| 16   | DOWNRIGHTFIRE |
-| 17   | DOWNLEFTFIRE |
+| Num | Action        |
+|-----|---------------|
+| 0   | NOOP          |
+| 1   | FIRE          |
+| 2   | UP            |
+| 3   | RIGHT         |
+| 4   | LEFT          |
+| 5   | DOWN          |
+| 6   | UPRIGHT       |
+| 7   | UPLEFT        |
+| 8   | DOWNRIGHT     |
+| 9   | DOWNLEFT      |
+| 10  | UPFIRE        |
+| 11  | RIGHTFIRE     |
+| 12  | LEFTFIRE      |
+| 13  | DOWNFIRE      |
+| 14  | UPRIGHTFIRE   |
+| 15  | UPLEFTFIRE    |
+| 16  | DOWNRIGHTFIRE |
+| 17  | DOWNLEFTFIRE  |
 
 If you use v0 or v4 and the environment is initialized via `make`, the action space will usually be much smaller since most legal actions don't have
 any effect. Thus, the enumeration of the actions will differ. The action space can be expanded to the full
@@ -168,11 +176,11 @@ action space will be reduced to a subset.
 All Atari games are available in three versions. They differ in the default settings of the arguments above.
 The differences are listed in the following table:
 
-|Version|`frameskip=`|`repeat_action_probability=`|`full_action_space=`|
-| ----- | --------- | ------------------------- | ---------|
-|v0     |`(2, 5,)`  |`0.25`                     |`False`     |
-|v4     |`(2, 5,)`  |`0.0`                      |`False`     |
-|v5     |`5`        |`0.25`                     |`True`      |
+| Version | `frameskip=` | `repeat_action_probability=` | `full_action_space=` |
+|---------|--------------|------------------------------|----------------------|
+| v0      | `(2, 5,)`    | `0.25`                       | `False`              |
+| v4      | `(2, 5,)`    | `0.0`                        | `False`              |
+| v5      | `5`          | `0.25`                       | `True`               |
 
 > Version v5 follows the best practices outlined in [[2]](#2). Thus, it is recommended to transition to v5 and
 > customize the environment using the arguments above, if necessary.
@@ -180,23 +188,23 @@ The differences are listed in the following table:
 For each Atari game, several different configurations are registered in Gymnasium. The naming schemes are analogous for
 v0 and v4. Let us take a look at all variations of Amidar-v0 that are registered with gymnasium:
 
-|Name                          |`obs_type=`|`frameskip=`|`repeat_action_probability=`|`full_action_space=`|
-| ---------------------------- | -------- | --------- | ------------------------- | ----------------- |
-|Amidar-v0                     |`"rgb"`   |`(2, 5,)`  |`0.25`                     |`False`            |
-|AmidarDeterministic-v0        |`"rgb"`   |`4`        |`0.0`                      |`False`            |
-|AmidarNoframeskip-v0          |`"rgb"`   |`1`        |`0.25`                     |`False`            |
-|Amidar-ram-v0                 |`"ram"`   |`(2, 5,)`  |`0.25`                     |`False`            |
-|Amidar-ramDeterministic-v0    |`"ram"`   |`4`        |`0.0`                      |`False`            |
-|Amidar-ramNoframeskip-v0      |`"ram"`   |`1`        |`0.25`                     |`False`            |
+| Name                       | `obs_type=` | `frameskip=` | `repeat_action_probability=` | `full_action_space=` |
+|----------------------------|-------------|--------------|------------------------------|----------------------|
+| Amidar-v0                  | `"rgb"`     | `(2, 5,)`    | `0.25`                       | `False`              |
+| AmidarDeterministic-v0     | `"rgb"`     | `4`          | `0.0`                        | `False`              |
+| AmidarNoframeskip-v0       | `"rgb"`     | `1`          | `0.25`                       | `False`              |
+| Amidar-ram-v0              | `"ram"`     | `(2, 5,)`    | `0.25`                       | `False`              |
+| Amidar-ramDeterministic-v0 | `"ram"`     | `4`          | `0.0`                        | `False`              |
+| Amidar-ramNoframeskip-v0   | `"ram"`     | `1`          | `0.25`                       | `False`              |
 
 Things change in v5: The suffixes "Deterministic" and "NoFrameskip" are no longer available. Instead, you must specify the
 environment configuration via arguments passed to `gymnasium.make`. Moreover, the v5 environments
 are in the "ALE" namespace. The suffix "-ram" is still available. Thus, we get the following table:
 
-|Name                          |`obs_type=`|`frameskip=`|`repeat_action_probability=`|`full_action_space=`|
-| ---------------------------- | -------- | --------- | ------------------------- | ----------------- |
-|ALE/Amidar-v5                 |`"rgb"`   |`5`        |`0.25`                     |`True`             |
-|ALE/Amidar-ram-v5             |`"ram"`   |`5`        |`0.25`                     |`True`             |
+| Name              | `obs_type=` | `frameskip=` | `repeat_action_probability=` | `full_action_space=` |
+|-------------------|-------------|--------------|------------------------------|----------------------|
+| ALE/Amidar-v5     | `"rgb"`     | `5`          | `0.25`                       | `True`               |
+| ALE/Amidar-ram-v5 | `"ram"`     | `5`          | `0.25`                       | `True`               |
 
 ### Flavors
 Some games allow the user to set a difficulty level and a game mode. Different modes/difficulties may have different

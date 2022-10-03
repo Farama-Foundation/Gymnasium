@@ -10,13 +10,13 @@ title: Solaris
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|   |   |
-|---|---|
-| Action Space | Discrete(18) |
-| Observation Space | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0 |
-| Import | `gymnasium.make("ALE/Solaris-v5")` |
+|                   |                                    |
+|-------------------|------------------------------------|
+| Action Space      | Discrete(18)                       |
+| Observation Space | (210, 160, 3)                      |
+| Observation High  | 255                                |
+| Observation Low   | 0                                  |
+| Import            | `gymnasium.make("ALE/Solaris-v5")` |
 
 ### Description
 You control a spaceship. Blast enemies before they can blast you. You can warp to different sectors. You have to defend Federation planets, and destroy Zylon forces. Keep track of your fuel, if you run out you lose a life. Warp to a Federation planet to refuel. The game ends if all your ships are destroyed or if you reach the Solaris planet. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=450)
@@ -56,9 +56,9 @@ The various ways to configure the environment are described in detail in the art
 It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`. 
 A flavor is a combination of a game mode and a difficulty setting.
 
-|      Environment | Valid Modes                                                                                                                                                                         | Valid Difficulties | Default Mode |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------|
-|           Solaris | `[0]`                                                                                                                                                                  |              `[0]` | `0`         |
+| Environment | Valid Modes | Valid Difficulties | Default Mode |
+|-------------|-------------|--------------------|--------------|
+| Solaris     | `[0]`       | `[0]`              | `0`          |
 
 You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "NoFrameskip" 
 are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in 

@@ -16,8 +16,8 @@ lastpage:
 
 ```{code-block} python
 
-import gymnasium
-env = gymnasium.make("LunarLander-v2", render_mode="human")
+import gymnasium as gym
+env = gym.make("LunarLander-v2", render_mode="human")
 observation, info = env.reset(seed=42)
 for _ in range(1000):
    action = policy(observation)  # User-defined policy function
@@ -64,6 +64,7 @@ environments/third_party_environments
 
 content/environment_creation
 content/vectorising
+content/handling_timelimits
 ```
 
 ```{toctree}
