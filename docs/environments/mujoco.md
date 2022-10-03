@@ -21,7 +21,7 @@ walker2d
 ```
 
 ```{raw} html
-   :file: index.html
+   :file: mujoco/list.html
 ```
 
 MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for faciliatating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.

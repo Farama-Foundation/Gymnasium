@@ -26,7 +26,7 @@ for _ in range(1000):
    if terminated or truncated:
       observation, info = env.reset()
 env.close()
-``` 
+```
 
 ```{toctree}
 :hidden:
@@ -50,12 +50,12 @@ api/utils
 :hidden:
 :caption: Environments
 
-environments/atari/index
-environments/mujoco/index
-environments/toy_text/index
-environments/classic_control/index
-environments/box2d/index
-environments/third_party_environments/index
+environments/atari
+environments/mujoco
+environments/toy_text
+environments/classic_control
+environments/box2d
+environments/third_party_environments
 ```
 
 ```{toctree}
