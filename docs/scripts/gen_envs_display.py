@@ -1,3 +1,4 @@
+import os
 import sys
 
 all_envs = [
@@ -162,16 +163,32 @@ if __name__ == "__main__":
         envs_path = f"../environments/{type_id}"
         if len(type_dict["list"]) > 20:
             page = generate_page(type_dict, limit=9)
-            fp = open(f"{envs_path}/list.html", "w+", encoding="utf-8")
+            fp = open(
+                os.path.join(os.path.dirname(__file__), envs_path, "list.html"),
+                "w",
+                encoding="utf-8",
+            )
             fp.write(page)
             fp.close()
 
             page = generate_page(type_dict, base_path="../")
-            fp = open(f"{envs_path}/complete_list.html", "w+", encoding="utf-8")
+            fp = open(
+                os.path.join(
+                    os.path.dirname(__file__), envs_path, "complete_list.html"
+                ),
+                "w",
+                encoding="utf-8",
+            )
             fp.write(page)
             fp.close()
 
-            fp = open(f"{envs_path}/complete_list.md", "w+", encoding="utf-8")
+            fp = open(
+                os.path.join(
+                    os.path.dirname(__file__), envs_path, "complete_list.html"
+                ),
+                "w",
+                encoding="utf-8",
+            )
             env_name = " ".join(type_id.split("_")).title()
             fp.write(
                 f"# Complete List - {env_name}\n"
@@ -180,6 +197,10 @@ if __name__ == "__main__":
             fp.close()
         else:
             page = generate_page(type_dict)
-            fp = open(f"{envs_path}/list.html", "w+", encoding="utf-8")
+            fp = open(
+                os.path.join(os.path.dirname(__file__), envs_path, "list.html"),
+                "w",
+                encoding="utf-8",
+            )
             fp.write(page)
             fp.close()
