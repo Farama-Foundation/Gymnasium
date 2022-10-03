@@ -23,7 +23,7 @@ class RecordEpisodeStatistics(gym.Wrapper):
         ...     "episode": {
         ...         "r": "<cumulative reward>",
         ...         "l": "<episode length>",
-        ...         "t": "<elapsed time since instantiation of wrapper>"
+        ...         "t": "<elapsed time since beginning of episode>"
         ...     },
         ... }
 
@@ -34,7 +34,7 @@ class RecordEpisodeStatistics(gym.Wrapper):
         ...     "episode": {
         ...         "r": "<array of cumulative reward>",
         ...         "l": "<array of episode length>",
-        ...         "t": "<array of elapsed time since instantiation of wrapper>"
+        ...         "t": "<array of elapsed time since beginning of episode>"
         ...     },
         ...     "_episode": "<boolean array of length num-envs>"
         ... }
@@ -56,8 +56,8 @@ class RecordEpisodeStatistics(gym.Wrapper):
         """
         super().__init__(env)
         self.num_envs = getattr(env, "num_envs", 1)
-        self.t0 = time.perf_counter()
         self.episode_count = 0
+        self.episode_start_times: np.ndarray = None
         self.episode_returns: Optional[np.ndarray] = None
         self.episode_lengths: Optional[np.ndarray] = None
         self.return_queue = deque(maxlen=deque_size)
@@ -66,18 +66,21 @@ class RecordEpisodeStatistics(gym.Wrapper):
 
     def reset(self, **kwargs):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
-        observations = super().reset(**kwargs)
-        self.episode_returns = np.zeros(self.num_envs)
-        self.episode_lengths = np.zeros(self.num_envs)
-        return observations
+        obs, info = super().reset(**kwargs)
+        self.episode_start_times = np.full(
+            self.num_envs, time.perf_counter(), dtype=np.float32
+        )
+        self.episode_returns = np.zeros(self.num_envs, dtype=np.float32)
+        self.episode_lengths = np.zeros(self.num_envs, dtype=np.int32)
+        return obs, info
 
     def step(self, action):
         """Steps through the environment, recording the episode statistics."""
         (
             observations,
             rewards,
-            terminateds,
-            truncateds,
+            terminations,
+            truncations,
             infos,
         ) = self.env.step(action)
         assert isinstance(
@@ -85,30 +88,35 @@ class RecordEpisodeStatistics(gym.Wrapper):
         ), f"`info` dtype is {type(infos)} while supported dtype is `dict`. This may be due to usage of other wrappers in the wrong order."
         self.episode_returns += rewards
         self.episode_lengths += 1
-        dones = truncateds | terminateds
+        dones = np.logical_or(terminations, truncations)
         num_dones = np.sum(dones)
         if num_dones:
-            episode_info = {
-                "episode": {
-                    "r": np.where(dones, self.episode_returns, 0),
+            if "episode" in infos or "_episode" in infos:
+                raise ValueError(
+                    "Attempted to add episode stats when they already exist"
+                )
+            else:
+                infos["episode"] = {
+                    "r": np.where(dones, self.episode_returns, 0.0),
                     "l": np.where(dones, self.episode_lengths, 0),
-                    "t": np.full(
-                        (self.num_envs,), round(time.perf_counter() - self.t0, 6)
+                    "t": np.where(
+                        dones,
+                        np.round(time.perf_counter() - self.episode_start_times, 6),
+                        0.0,
                     ),
-                },
-            }
-            if self.is_vector_env:
-                episode_info["_episode"] = np.where(dones, True, False)
-            infos = {**infos, **episode_info}
+                }
+                if self.is_vector_env:
+                    infos["_episode"] = np.where(dones, True, False)
             self.return_queue.extend(self.episode_returns[dones])
             self.length_queue.extend(self.episode_lengths[dones])
             self.episode_count += num_dones
             self.episode_lengths[dones] = 0
             self.episode_returns[dones] = 0
+            self.episode_start_times[dones] = time.perf_counter()
         return (
             observations,
             rewards,
-            terminateds,
-            truncateds,
+            terminations,
+            truncations,
             infos,
         )
