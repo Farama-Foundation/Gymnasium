@@ -15,6 +15,8 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
+from typing import Any, Dict
+
 import gymnasium
 
 project = "Gymnasium"
@@ -68,8 +70,15 @@ html_favicon = "_static/img/favicon.png"
 html_theme_options = {
     "light_logo": "img/gymnasium_black.svg",
     "dark_logo": "img/gymnasium_white.svg",
+    "gtag": "",
 }
+html_context: Dict[str, Any] = {}
+html_context["conf_py_path"] = "/docs/"
+html_context["display_github"] = True
+html_context["github_user"] = "Farama-Foundation"
+html_context["github_repo"] = "Gymnasium"
+html_context["github_version"] = "master"
+html_context["slug"] = "gymnasium"
+
 html_static_path = ["_static"]
-html_css_files = [
-    "css/custom.css",
-]
+html_css_files = []
