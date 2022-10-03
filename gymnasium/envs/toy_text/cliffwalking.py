@@ -24,8 +24,7 @@ class CliffWalkingEnv(Env):
     by Sutton and Barto](http://incompleteideas.net/book/bookdraft2018jan1.pdf).
 
     With inspiration from:
-    [https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py]
-    (https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py)
+    [https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py](https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py)
 
     ### Description
     The board is a 4x12 matrix, with (using NumPy matrix indexing):
@@ -286,3 +285,7 @@ class CliffWalkingEnv(Env):
 
         with closing(outfile):
             return outfile.getvalue()
+
+
+# Elf and stool from https://franuka.itch.io/rpg-snow-tileset
+# All other assets by ____

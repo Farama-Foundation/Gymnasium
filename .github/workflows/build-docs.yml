@@ -8,22 +8,22 @@ jobs:
   docs:
     name: Generate Website
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-python@v4
         with:
-            python-version: '3.9' 
+            python-version: '3.9'
 
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
-        
+
       - name: Install Gymnasium
         run: pip install mujoco && pip install .[atari,accept-rom-license,box2d]
-      
+
       - name: Build Envs Docs
-        run: python docs/scripts/gen_mds.py
+        run: python docs/scripts/gen_mds.py && python docs/scripts/gen_envs_display.py
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
