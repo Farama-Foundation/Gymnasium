@@ -5,6 +5,7 @@ from typing import Optional
 
 import numpy as np
 
+import gymnasium as gym
 from gymnasium import Env, spaces, utils
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
@@ -279,7 +280,14 @@ class TaxiEnv(Env):
         return int(self.s), {"prob": 1.0, "action_mask": self.action_mask(self.s)}
 
     def render(self):
-        if self.render_mode == "ansi":
+        if self.render_mode is None:
+            gym.logger.warn(
+                "You are calling render method without specifying any render mode. "
+                "You can specify the render_mode at initialization, "
+                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+            )
+            return
+        elif self.render_mode == "ansi":
             return self._render_text()
         else:  # self.render_mode in {"human", "rgb_array"}:
             return self._render_gui(self.render_mode)
