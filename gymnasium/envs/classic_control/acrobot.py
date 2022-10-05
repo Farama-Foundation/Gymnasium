@@ -4,7 +4,9 @@ from typing import Optional
 import numpy as np
 from numpy import cos, pi, sin
 
+import gymnasium as gym
 from gymnasium import Env, spaces
+from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
 __copyright__ = "Copyright 2013, RLPy http://acl.mit.edu/RLPy"
@@ -20,7 +22,6 @@ __author__ = "Christoph Dann <cdann@cdann.de>"
 
 # SOURCE:
 # https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
-from gymnasium.envs.classic_control import utils
 
 
 class AcrobotEnv(Env):
@@ -280,6 +281,14 @@ class AcrobotEnv(Env):
         return dtheta1, dtheta2, ddtheta1, ddtheta2, 0.0
 
     def render(self):
+        if self.render_mode is None:
+            gym.logger.warn(
+                "You are calling render method without specifying any render mode. "
+                "You can specify the render_mode at initialization, "
+                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+            )
+            return
+
         try:
             import pygame
             from pygame import gfxdraw
