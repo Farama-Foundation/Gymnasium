@@ -17,7 +17,7 @@ from gymnasium.utils.env_checker import (
     check_reset_seed,
     check_seed_deprecation,
 )
-from tests.testing_env import GenericTestEnv
+from tests.generic_test_env import GenericTestEnv
 
 
 @pytest.mark.parametrize(

@@ -3,7 +3,7 @@ import pytest
 
 from gymnasium.spaces import Box, Discrete
 from gymnasium.wrappers import AtariPreprocessing, StepAPICompatibility
-from tests.testing_env import GenericTestEnv, old_step_fn
+from tests.generic_test_env import GenericTestEnv, old_step_fn
 
 
 class AleTesting:

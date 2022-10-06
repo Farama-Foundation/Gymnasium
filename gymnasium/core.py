@@ -357,13 +357,15 @@ class ObservationWrapper(Wrapper[ObsType, ActType], ABC):
     ``observation["target_position"] - observation["agent_position"]``. For this, you could implement an
     observation wrapper like this::
 
-        class RelativePosition(gym.ObservationWrapper):
-            def __init__(self, env):
-                super().__init__(env)
-                self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
-
-            def observation(self, obs):
-                return obs["target"] - obs["agent"]
+        >>> import gymnasium as gym
+        >>> from gymnasium.spaces import Box
+        >>> class RelativePosition(gym.ObservationWrapper):
+        ...    def __init__(self, env):
+        ...        super().__init__(env)
+        ...        self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
+        ...
+        ...    def observation(self, obs):
+        ...        return obs["target"] - obs["agent"]
 
     Among others, Gymnasium provides the observation wrapper :class:`TimeAwareObservation`, which adds information about the
     index of the timestep to the observation.
@@ -381,7 +383,7 @@ class ObservationWrapper(Wrapper[ObsType, ActType], ABC):
 
     def step(
         self, action: ActType
-    ) -> Tuple[ObsType, SupportsFloat, bool, Dict[str, Any]]:
+    ) -> Tuple[ObsType, SupportsFloat, bool, bool, Dict[str, Any]]:
         """Returns a modified observation using :meth:`self.observation` after calling :meth:`env.step`."""
         observation, reward, terminated, truncated, info = self.env.step(action)
         return self.observation(observation), reward, terminated, truncated, info
@@ -405,15 +407,16 @@ class RewardWrapper(Wrapper[ObsType, ActType], ABC):
     because it is intrinsic), we want to clip the reward to a range to gain some numerical stability.
     To do that, we could, for instance, implement the following wrapper::
 
-        class ClipReward(gym.RewardWrapper):
-            def __init__(self, env, min_reward, max_reward):
-                super().__init__(env)
-                self.min_reward = min_reward
-                self.max_reward = max_reward
-                self.reward_range = (min_reward, max_reward)
-
-            def reward(self, reward):
-                return np.clip(reward, self.min_reward, self.max_reward)
+        >>> import gymnasium as gym
+        >>> class ClipReward(gym.RewardWrapper):
+        ...    def __init__(self, env, min_reward, max_reward):
+        ...        super().__init__(env)
+        ...        self.min_reward = min_reward
+        ...        self.max_reward = max_reward
+        ...        self.reward_range = (min_reward, max_reward)
+        ...
+        ...    def reward(self, r):
+        ...        return np.clip(r, self.min_reward, self.max_reward)
     """
 
     def step(
@@ -442,20 +445,22 @@ class ActionWrapper(Wrapper[ObsType, ActType], ABC):
     Let's say you have an environment with action space of type :class:`gymnasium.spaces.Box`, but you would only like
     to use a finite subset of actions. Then, you might want to implement the following wrapper::
 
-        class DiscreteActions(gym.ActionWrapper):
-            def __init__(self, env, disc_to_cont):
-                super().__init__(env)
-                self.disc_to_cont = disc_to_cont
-                self.action_space = Discrete(len(disc_to_cont))
+        >>> import gymnasium as gym
+        >>> from gymnasium.spaces import Discrete
+        >>> class DiscreteActions(gym.ActionWrapper):
+        ...    def __init__(self, env, disc_to_cont):
+        ...        super().__init__(env)
+        ...        self.disc_to_cont = disc_to_cont
+        ...        self.action_space = Discrete(len(disc_to_cont))
+        ...
+        ...    def action(self, act):
+        ...        return self.disc_to_cont[act]
 
-            def action(self, act):
-                return self.disc_to_cont[act]
-
-        if __name__ == "__main__":
-            env = gym.make("LunarLanderContinuous-v2")
-            wrapped_env = DiscreteActions(env, [np.array([1,0]), np.array([-1,0]),
-                                                np.array([0,1]), np.array([0,-1])])
-            print(wrapped_env.action_space)         #Discrete(4)
+        >>> if __name__ == "__main__":
+        >>>     env = gym.make("LunarLanderContinuous-v2")
+        >>>     wrapped_env = DiscreteActions(env, [np.array([1,0]), np.array([-1,0]),
+        ...                                         np.array([0,1]), np.array([0,-1])])
+        >>>     print(wrapped_env.action_space)         #Discrete(4)
 
 
     Among others, Gymnasium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction`.
