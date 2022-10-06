@@ -1,20 +1,22 @@
 """Implementation of a space that represents finite-length sequences."""
 from collections.abc import Sequence as CollectionSequence
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional
+from typing import Sequence as TypingSequence
+from typing import Tuple, Union
 
 import numpy as np
 
-import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
-class Sequence(Space[Tuple]):
+class Sequence(Space[Tuple[Any, ...]]):
     r"""This space represent sets of finite-length sequences.
 
     This space represents the set of tuples of the form :math:`(a_0, \dots, a_n)` where the :math:`a_i` belong
     to some space that is specified during initialization and the integer :math:`n` is not fixed
 
     Example::
+        >>> from gymnasium.spaces import Box
         >>> space = Sequence(Box(0, 1))
         >>> space.sample()
         (array([0.0259352], dtype=float32),)
@@ -24,7 +26,7 @@ class Sequence(Space[Tuple]):
 
     def __init__(
         self,
-        space: Space,
+        space: Space[Any],
         seed: Optional[Union[int, np.random.Generator]] = None,
     ):
         """Constructor of the :class:`Sequence` space.
@@ -34,14 +36,14 @@ class Sequence(Space[Tuple]):
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
         """
         assert isinstance(
-            space, gym.Space
-        ), f"Expects the feature space to be instance of a gymnasium Space, actual type: {type(space)}"
+            space, Space
+        ), f"Expects the feature space to be instance of a gym Space, actual type: {type(space)}"
         self.feature_space = space
-        super().__init__(
-            None, None, seed  # type: ignore
-        )  # None for shape and dtype, since it'll require special handling
 
-    def seed(self, seed: Optional[int] = None) -> list:
+        # None for shape and dtype, since it'll require special handling
+        super().__init__(None, None, seed)
+
+    def seed(self, seed: Optional[int] = None) -> List[int]:
         """Seed the PRNG of this space and the feature space."""
         seeds = super().seed(seed)
         seeds += self.feature_space.seed(seed)
@@ -54,7 +56,17 @@ class Sequence(Space[Tuple]):
 
     def sample(
         self,
-        mask: Optional[Tuple[Optional[Union[np.ndarray, int]], Optional[Any]]] = None,
+        mask: Optional[
+            Tuple[
+                Optional[
+                    Union[
+                        np.integer[Any],
+                        np.ndarray[Any, np.dtype[np.integer[Any]]],
+                    ]
+                ],
+                Optional[Any],
+            ]
+        ] = None,
     ) -> Tuple[Any]:
         """Generates a single random sample from this space.
 
@@ -89,6 +101,9 @@ class Sequence(Space[Tuple]):
                 assert np.all(
                     0 <= length_mask
                 ), f"Expects all values in the length_mask to be greater than or equal to zero, actual values: {length_mask}"
+                assert np.issubdtype(
+                    length_mask.dtype, np.integer
+                ), f"Expects the length mask array to have dtype to be an numpy integer, actual type: {length_mask.dtype}"
                 length = self.np_random.choice(length_mask)
             else:
                 raise TypeError(
@@ -102,7 +117,7 @@ class Sequence(Space[Tuple]):
             self.feature_space.sample(mask=feature_mask) for _ in range(length)
         )
 
-    def contains(self, x) -> bool:
+    def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         return isinstance(x, CollectionSequence) and all(
             self.feature_space.contains(item) for item in x
@@ -112,15 +127,15 @@ class Sequence(Space[Tuple]):
         """Gives a string representation of this space."""
         return f"Sequence({self.feature_space})"
 
-    def to_jsonable(self, sample_n: list) -> list:
+    def to_jsonable(self, sample_n: TypingSequence[Tuple[Any, ...]]) -> List[List[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as dict-repr of vectors
         return [self.feature_space.to_jsonable(list(sample)) for sample in sample_n]
 
-    def from_jsonable(self, sample_n: List[List[Any]]) -> list:
+    def from_jsonable(self, sample_n: List[List[Any]]) -> List[Tuple[Any, ...]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n]
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return isinstance(other, Sequence) and self.feature_space == other.feature_space

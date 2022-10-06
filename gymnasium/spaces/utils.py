@@ -6,10 +6,14 @@ These functions mostly take care of flattening and unflattening elements of spac
 import operator as op
 from collections import OrderedDict
 from functools import reduce, singledispatch
+from typing import Any
 from typing import Dict as TypingDict
+from typing import Optional
+from typing import Tuple as TypingTuple
 from typing import TypeVar, Union, cast
 
 import numpy as np
+from numpy.typing import NDArray
 
 from gymnasium.spaces import (
     Box,
@@ -27,12 +31,12 @@ from gymnasium.spaces import (
 
 
 @singledispatch
-def flatdim(space: Space) -> int:
+def flatdim(space: Space[Any]) -> int:
     """Return the number of dimensions a flattened equivalent of this space would have.
 
     Example usage::
 
-        >>> from gymnasium.spaces import Discrete
+        >>> from gymnasium.spaces import Discrete, Dict
         >>> space = Dict({"position": Discrete(2), "velocity": Discrete(3)})
         >>> flatdim(space)
         5
@@ -47,7 +51,7 @@ def flatdim(space: Space) -> int:
          NotImplementedError: if the space is not defined in ``gym.spaces``.
          ValueError: if the space cannot be flattened into a :class:`Box`
     """
-    if not space.is_np_flattenable:
+    if space.is_np_flattenable is False:
         raise ValueError(
             f"{space} cannot be flattened to a numpy array, probably because it contains a `Graph` or `Sequence` subspace"
         )
@@ -102,7 +106,9 @@ def _flatdim_text(space: Text) -> int:
 
 
 T = TypeVar("T")
-FlatType = Union[np.ndarray, TypingDict, tuple, GraphInstance]
+FlatType = Union[
+    NDArray[Any], TypingDict[str, Any], TypingTuple[Any, ...], GraphInstance
+]
 
 
 @singledispatch
@@ -111,6 +117,19 @@ def flatten(space: Space[T], x: T) -> FlatType:
 
     This is useful when e.g. points from spaces must be passed to a neural
     network, which only understands flat arrays of floats.
+
+    Example usage::
+        >>> from gymnasium.spaces import Box, Discrete, Tuple
+        >>> space = Box(0, 1, shape=(3, 5))
+        >>> flatten(space, space.sample()).shape
+        (15,)
+        >>> space = Discrete(4)
+        >>> flatten(space, 2)
+        array([0, 0, 1, 0])
+        >>> space = Tuple((Box(0, 1, shape=(2,)), Box(0, 1, shape=(3,)), Discrete(3)))
+        >>> example = ((.5, .25), (1., 0., .2), 1)
+        >>> flatten(space, example)
+        array([0.5 , 0.25, 1.  , 0.  , 0.2 , 0.  , 1.  , 0.  ])
 
     Args:
         space: The space that ``x`` is flattened by
@@ -137,19 +156,23 @@ def flatten(space: Space[T], x: T) -> FlatType:
 
 @flatten.register(Box)
 @flatten.register(MultiBinary)
-def _flatten_box_multibinary(space, x) -> np.ndarray:
+def _flatten_box_multibinary(
+    space: Union[Box, MultiBinary], x: NDArray[Any]
+) -> NDArray[Any]:
     return np.asarray(x, dtype=space.dtype).flatten()
 
 
 @flatten.register(Discrete)
-def _flatten_discrete(space, x) -> np.ndarray:
+def _flatten_discrete(space: Discrete, x: int) -> NDArray[np.int64]:
     onehot = np.zeros(space.n, dtype=space.dtype)
     onehot[x - space.start] = 1
     return onehot
 
 
 @flatten.register(MultiDiscrete)
-def _flatten_multidiscrete(space, x) -> np.ndarray:
+def _flatten_multidiscrete(
+    space: MultiDiscrete, x: NDArray[np.int64]
+) -> NDArray[np.int64]:
     offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
     offsets[1:] = np.cumsum(space.nvec.flatten())
 
@@ -159,7 +182,9 @@ def _flatten_multidiscrete(space, x) -> np.ndarray:
 
 
 @flatten.register(Tuple)
-def _flatten_tuple(space, x) -> Union[tuple, np.ndarray]:
+def _flatten_tuple(
+    space: Tuple, x: TypingTuple[Any, ...]
+) -> Union[TypingTuple[Any, ...], NDArray[Any]]:
     if space.is_np_flattenable:
         return np.concatenate(
             [flatten(s, x_part) for x_part, s in zip(x, space.spaces)]
@@ -168,22 +193,28 @@ def _flatten_tuple(space, x) -> Union[tuple, np.ndarray]:
 
 
 @flatten.register(Dict)
-def _flatten_dict(space, x) -> Union[dict, np.ndarray]:
+def _flatten_dict(
+    space: Dict, x: TypingDict[str, Any]
+) -> Union[TypingDict[str, Any], NDArray[Any]]:
     if space.is_np_flattenable:
         return np.concatenate([flatten(s, x[key]) for key, s in space.spaces.items()])
     return OrderedDict((key, flatten(s, x[key])) for key, s in space.spaces.items())
 
 
 @flatten.register(Graph)
-def _flatten_graph(space, x) -> GraphInstance:
+def _flatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
     """We're not using `.unflatten() for :class:`Box` and :class:`Discrete` because a graph is not a homogeneous space, see `.flatten` docstring."""
 
-    def _graph_unflatten(unflatten_space, unflatten_x):
+    def _graph_unflatten(
+        unflatten_space: Optional[Union[Discrete, Box]],
+        unflatten_x: Optional[NDArray[Any]],
+    ) -> Optional[NDArray[Any]]:
         ret = None
         if unflatten_space is not None and unflatten_x is not None:
             if isinstance(unflatten_space, Box):
                 ret = unflatten_x.reshape(unflatten_x.shape[0], -1)
-            elif isinstance(unflatten_space, Discrete):
+            else:
+                assert isinstance(unflatten_space, Discrete)
                 ret = np.zeros(
                     (unflatten_x.shape[0], unflatten_space.n - unflatten_space.start),
                     dtype=unflatten_space.dtype,
@@ -194,13 +225,14 @@ def _flatten_graph(space, x) -> GraphInstance:
         return ret
 
     nodes = _graph_unflatten(space.node_space, x.nodes)
+    assert nodes is not None
     edges = _graph_unflatten(space.edge_space, x.edges)
 
     return GraphInstance(nodes, edges, x.edge_links)
 
 
 @flatten.register(Text)
-def _flatten_text(space: Text, x: str) -> np.ndarray:
+def _flatten_text(space: Text, x: str) -> NDArray[np.int32]:
     arr = np.full(
         shape=(space.max_length,), fill_value=len(space.character_set), dtype=np.int32
     )
@@ -210,7 +242,9 @@ def _flatten_text(space: Text, x: str) -> np.ndarray:
 
 
 @flatten.register(Sequence)
-def _flatten_sequence(space, x) -> tuple:
+def _flatten_sequence(
+    space: Sequence, x: TypingTuple[Any, ...]
+) -> TypingTuple[Any, ...]:
     return tuple(flatten(space.feature_space, item) for item in x)
 
 
@@ -237,18 +271,20 @@ def unflatten(space: Space[T], x: FlatType) -> T:
 @unflatten.register(Box)
 @unflatten.register(MultiBinary)
 def _unflatten_box_multibinary(
-    space: Union[Box, MultiBinary], x: np.ndarray
-) -> np.ndarray:
+    space: Union[Box, MultiBinary], x: NDArray[Any]
+) -> NDArray[Any]:
     return np.asarray(x, dtype=space.dtype).reshape(space.shape)
 
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: np.ndarray) -> int:
+def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> int:
     return int(space.start + np.nonzero(x)[0][0])
 
 
 @unflatten.register(MultiDiscrete)
-def _unflatten_multidiscrete(space: MultiDiscrete, x: np.ndarray) -> np.ndarray:
+def _unflatten_multidiscrete(
+    space: MultiDiscrete, x: NDArray[np.int32]
+) -> NDArray[np.int32]:
     offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
     offsets[1:] = np.cumsum(space.nvec.flatten())
 
@@ -257,7 +293,9 @@ def _unflatten_multidiscrete(space: MultiDiscrete, x: np.ndarray) -> np.ndarray:
 
 
 @unflatten.register(Tuple)
-def _unflatten_tuple(space: Tuple, x: Union[np.ndarray, tuple]) -> tuple:
+def _unflatten_tuple(
+    space: Tuple, x: Union[NDArray[Any], TypingTuple[Any, ...]]
+) -> TypingTuple[Any, ...]:
     if space.is_np_flattenable:
         assert isinstance(
             x, np.ndarray
@@ -275,7 +313,9 @@ def _unflatten_tuple(space: Tuple, x: Union[np.ndarray, tuple]) -> tuple:
 
 
 @unflatten.register(Dict)
-def _unflatten_dict(space: Dict, x: Union[np.ndarray, TypingDict]) -> dict:
+def _unflatten_dict(
+    space: Dict, x: Union[NDArray[Any], TypingDict[str, Any]]
+) -> TypingDict[str, Any]:
     if space.is_np_flattenable:
         dims = np.asarray([flatdim(s) for s in space.spaces.values()], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
@@ -299,14 +339,14 @@ def _unflatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
     nodes and edges in the graph.
     """
 
-    def _graph_unflatten(space, x):
-        ret = None
-        if space is not None and x is not None:
-            if isinstance(space, Box):
-                ret = x.reshape(-1, *space.shape)
-            elif isinstance(space, Discrete):
-                ret = np.asarray(np.nonzero(x))[-1, :]
-        return ret
+    def _graph_unflatten(unflatten_space, unflatten_x):
+        result = None
+        if unflatten_space is not None and unflatten_x is not None:
+            if isinstance(unflatten_space, Box):
+                result = unflatten_x.reshape(-1, *unflatten_space.shape)
+            elif isinstance(unflatten_space, Discrete):
+                result = np.asarray(np.nonzero(unflatten_x))[-1, :]
+        return result
 
     nodes = _graph_unflatten(space.node_space, x.nodes)
     edges = _graph_unflatten(space.edge_space, x.edges)
@@ -315,19 +355,21 @@ def _unflatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
 
 
 @unflatten.register(Text)
-def _unflatten_text(space: Text, x: np.ndarray) -> str:
+def _unflatten_text(space: Text, x: NDArray[np.int32]) -> str:
     return "".join(
         [space.character_list[val] for val in x if val < len(space.character_set)]
     )
 
 
 @unflatten.register(Sequence)
-def _unflatten_sequence(space: Sequence, x: tuple) -> tuple:
+def _unflatten_sequence(
+    space: Sequence, x: TypingTuple[Any, ...]
+) -> TypingTuple[Any, ...]:
     return tuple(unflatten(space.feature_space, item) for item in x)
 
 
 @singledispatch
-def flatten_space(space: Space) -> Union[Dict, Sequence, Tuple, Graph]:
+def flatten_space(space: Space[Any]) -> Union[Box, Dict, Sequence, Tuple, Graph]:
     """Flatten a space into a space that is as flat as possible.
 
     This function will attempt to flatten `space` into a single :class:`Box` space.
@@ -342,7 +384,7 @@ def flatten_space(space: Space) -> Union[Dict, Sequence, Tuple, Graph]:
     space.
 
     Example::
-
+        >>> from gymnasium.spaces import Box
         >>> box = Box(0.0, 1.0, shape=(3, 4, 5))
         >>> box
         Box(3, 4, 5)
@@ -352,7 +394,7 @@ def flatten_space(space: Space) -> Union[Dict, Sequence, Tuple, Graph]:
         True
 
     Example that flattens a discrete space::
-
+        >>> from gymnasium.spaces import Discrete
         >>> discrete = Discrete(5)
         >>> flatten_space(discrete)
         Box(5,)
@@ -360,7 +402,7 @@ def flatten_space(space: Space) -> Union[Dict, Sequence, Tuple, Graph]:
         True
 
     Example that recursively flattens a dict::
-
+        >>> from gymnasium.spaces import Dict, Discrete, Box
         >>> space = Dict({"position": Discrete(2), "velocity": Box(0, 1, shape=(2, 2))})
         >>> flatten_space(space)
         Box(6,)
@@ -383,7 +425,7 @@ def flatten_space(space: Space) -> Union[Dict, Sequence, Tuple, Graph]:
         A flattened Box
 
     Raises:
-        NotImplementedError: if the space is not defined in ``gymnasium.spaces``.
+        NotImplementedError: if the space is not defined in ``gym.spaces``.
     """
     raise NotImplementedError(f"Unknown space: `{space}`")
 

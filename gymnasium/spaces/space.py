@@ -21,6 +21,9 @@ from gymnasium.utils import seeding
 T_cov = TypeVar("T_cov", covariant=True)
 
 
+MASK_NDARRAY = np.ndarray[Any, np.dtype[np.int8]]
+
+
 class Space(Generic[T_cov]):
     """Superclass that is used to define observation and action spaces.
 
@@ -41,8 +44,8 @@ class Space(Generic[T_cov]):
         class. However, most use-cases should be covered by the existing space
         classes (e.g. :class:`Box`, :class:`Discrete`, etc...), and container classes (:class`Tuple` &
         :class:`Dict`). Note that parametrized probability distributions (through the
-        :meth:`Space.sample()` method), and batching functions (in :class:`gymnasium.vector.VectorEnv`), are
-        only well-defined for instances of spaces provided in gymnasium by default.
+        :meth:`Space.sample()` method), and batching functions (in :class:`gym.vector.VectorEnv`), are
+        only well-defined for instances of spaces provided in gym by default.
         Moreover, some implementations of Reinforcement Learning algorithms might
         not handle custom spaces properly. Use custom spaces with care.
     """
@@ -50,7 +53,7 @@ class Space(Generic[T_cov]):
     def __init__(
         self,
         shape: Optional[Sequence[int]] = None,
-        dtype: Optional[Union[Type, str, np.dtype]] = None,
+        dtype: Optional[Union[str, Type[Any], np.dtype[Any]]] = None,
         seed: Optional[Union[int, np.random.Generator]] = None,
     ):
         """Constructor of :class:`Space`.
@@ -75,7 +78,8 @@ class Space(Generic[T_cov]):
         if self._np_random is None:
             self.seed()
 
-        return self._np_random  # type: ignore  ## self.seed() call guarantees right type.
+        assert isinstance(self._np_random, np.random.Generator)
+        return self._np_random
 
     @property
     def shape(self) -> Optional[Tuple[int, ...]]:
@@ -83,7 +87,7 @@ class Space(Generic[T_cov]):
         return self._shape
 
     @property
-    def is_np_flattenable(self):
+    def is_np_flattenable(self) -> bool:
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         raise NotImplementedError
 
@@ -100,20 +104,20 @@ class Space(Generic[T_cov]):
         """
         raise NotImplementedError
 
-    def seed(self, seed: Optional[int] = None) -> list:
+    def seed(self, seed: Optional[int] = None) -> List[int]:
         """Seed the PRNG of this space and possibly the PRNGs of subspaces."""
         self._np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def contains(self, x) -> bool:
+    def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         raise NotImplementedError
 
-    def __contains__(self, x) -> bool:
+    def __contains__(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         return self.contains(x)
 
-    def __setstate__(self, state: Union[Iterable, Mapping]):
+    def __setstate__(self, state: Union[Iterable[Tuple[str, Any]], Mapping[str, Any]]):
         """Used when loading a pickled space.
 
         This method was implemented explicitly to allow for loading of legacy states.
@@ -139,12 +143,12 @@ class Space(Generic[T_cov]):
         # Update our state
         self.__dict__.update(state)
 
-    def to_jsonable(self, sample_n: Sequence[T_cov]) -> list:
+    def to_jsonable(self, sample_n: Sequence[T_cov]) -> List[Any]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # By default, assume identity is JSONable
         return list(sample_n)
 
-    def from_jsonable(self, sample_n: list) -> List[T_cov]:
+    def from_jsonable(self, sample_n: List[Any]) -> List[T_cov]:
         """Convert a JSONable data type to a batch of samples from this space."""
         # By default, assume identity is JSONable
         return sample_n

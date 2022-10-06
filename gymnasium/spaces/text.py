@@ -14,7 +14,6 @@ class Text(Space[str]):
     r"""A space representing a string comprised of characters from a given charset.
 
     Example::
-
         >>> # {"", "B5", "hello", ...}
         >>> Text(5)
         >>> # {"0", "42", "0123456789", ...}
@@ -69,7 +68,10 @@ class Text(Space[str]):
         super().__init__(dtype=str, seed=seed)
 
     def sample(
-        self, mask: Optional[Tuple[Optional[int], Optional[np.ndarray]]] = None
+        self,
+        mask: Optional[
+            Tuple[Optional[int], Optional[np.ndarray[Any, np.dtype[np.int8]]]]
+        ] = None,
     ) -> str:
         """Generates a single random sample from this space with by default a random length between `min_length` and `max_length` and sampled from the `charset`.
 
@@ -152,7 +154,7 @@ class Text(Space[str]):
             f"Text({self.min_length}, {self.max_length}, characters={self.characters})"
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return (
             isinstance(other, Text)

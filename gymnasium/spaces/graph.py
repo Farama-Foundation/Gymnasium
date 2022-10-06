@@ -1,9 +1,10 @@
 """Implementation of a space that represents graph information where nodes and edges can be represented with euclidean space."""
-from typing import NamedTuple, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
-from gymnasium.logger import warn
+import gymnasium as gym
 from gymnasium.spaces.box import Box
 from gymnasium.spaces.discrete import Discrete
 from gymnasium.spaces.multi_discrete import MultiDiscrete
@@ -18,18 +19,17 @@ class GraphInstance(NamedTuple):
     * edge_links (Optional[np.ndarray]): an (m x 2) sized array of ints representing the two nodes that each edge connects.
     """
 
-    nodes: np.ndarray
-    edges: Optional[np.ndarray]
-    edge_links: Optional[np.ndarray]
+    nodes: NDArray[Any]
+    edges: Optional[NDArray[Any]]
+    edge_links: Optional[NDArray[Any]]
 
 
-class Graph(Space):
+class Graph(Space[GraphInstance]):
     r"""A space representing graph information as a series of `nodes` connected with `edges` according to an adjacency matrix represented as a series of `edge_links`.
 
     Example usage::
 
-        >>> from gymnasium.spaces import Box, Discrete
-        >>> Graph(node_space=Box(low=-100, high=100, shape=(3,)), edge_space=Discrete(3))
+        self.observation_space = spaces.Graph(node_space=space.Box(low=-100, high=100, shape=(3,)), edge_space=spaces.Discrete(3))
     """
 
     def __init__(
@@ -94,8 +94,8 @@ class Graph(Space):
         self,
         mask: Optional[
             Tuple[
-                Optional[Union[np.ndarray, tuple]],
-                Optional[Union[np.ndarray, tuple]],
+                Optional[Union[NDArray[Any], Tuple[Any, ...]]],
+                Optional[Union[NDArray[Any], Tuple[Any, ...]]],
             ]
         ] = None,
         num_nodes: int = 10,
@@ -134,7 +134,7 @@ class Graph(Space):
                 edge_space_mask = tuple(edge_space_mask for _ in range(num_edges))
         else:
             if self.edge_space is None:
-                warn(
+                gym.logger.warn(
                     f"The number of edges is set ({num_edges}) but the edge space is None."
                 )
             assert (
@@ -198,7 +198,7 @@ class Graph(Space):
         """
         return f"Graph({self.node_space}, {self.edge_space})"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Check whether `other` is equivalent to this instance."""
         return (
             isinstance(other, Graph)
@@ -206,22 +206,24 @@ class Graph(Space):
             and (self.edge_space == other.edge_space)
         )
 
-    def to_jsonable(self, sample_n: NamedTuple) -> list:
+    def to_jsonable(
+        self, sample_n: Sequence[GraphInstance]
+    ) -> List[Dict[str, Union[List[int], List[float]]]]:
         """Convert a batch of samples from this space to a JSONable data type."""
-        # serialize as list of dicts
-        ret_n = []
+        ret_n: List[Dict[str, List[Union[int, float]]]] = []
         for sample in sample_n:
-            ret = {}
-            ret["nodes"] = sample.nodes.tolist()
-            if sample.edges is not None:
+            ret = {"nodes": sample.nodes.tolist()}
+            if sample.edges is not None and sample.edge_links is not None:
                 ret["edges"] = sample.edges.tolist()
                 ret["edge_links"] = sample.edge_links.tolist()
             ret_n.append(ret)
         return ret_n
 
-    def from_jsonable(self, sample_n: Sequence[dict]) -> list:
+    def from_jsonable(
+        self, sample_n: Sequence[Dict[str, List[Union[List[int], List[float]]]]]
+    ) -> List[GraphInstance]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        ret = []
+        ret: List[GraphInstance] = []
         for sample in sample_n:
             if "edges" in sample:
                 ret_n = GraphInstance(
