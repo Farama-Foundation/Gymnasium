@@ -27,7 +27,7 @@ repos:
       - id: isort
         args: ["--profile", "black"]
   - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.1.1  # pick a git hash / tag to point to
+    rev: 6.1.1
     hooks:
       - id: pydocstyle
         exclude: ^(gymnasium/version.py)|(gymnasium/envs/)|(tests/)|(docs/)
@@ -40,8 +40,7 @@ repos:
     rev: v2.32.0
     hooks:
       - id: pyupgrade
-        # TODO: remove `--keep-runtime-typing` option
-        args: ["--py36-plus", "--keep-runtime-typing"]
+        args: ["--py37-plus", "--keep-runtime-typing"]
   - repo: local
     hooks:
       - id: pyright

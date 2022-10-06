@@ -1,5 +1,4 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
-import sys
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -16,16 +15,10 @@ from typing import (
 import numpy as np
 
 from gymnasium import spaces
-from gymnasium.logger import warn
 from gymnasium.utils import seeding
 
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
-
-if sys.version_info[0:2] == (3, 6):
-    warn(
-        "Gymnasium minimally supports python 3.6 as the python foundation not longer supports the version, please update your version to 3.7+"
-    )
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")

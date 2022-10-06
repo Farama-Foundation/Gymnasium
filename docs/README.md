@@ -20,7 +20,7 @@ For Atari envs, add a Markdown file into `pages/environments/atari` then complet
 
 #### Non-Atari env
 
-Ensure the environment is in Gymnasium (or your fork). Ensure that the environment's Python file has a properly formatted markdown docstring. Pip install Gymnasium (or your fork) then run `docs/scripts/gen_mds.py`. This will automatically generate an md page for the environment. Then complete the [other steps](#other-steps).
+Ensure the environment is in Gymnasium (or your fork). Ensure that the environment's Python file has a properly formatted markdown docstring. Pip install Gymnasium (or your fork) then run `docs/scripts/gen_mds.py`. This will automatically generate a md page for the environment. Then complete the [other steps](#other-steps).
 
 #### Other steps
 
