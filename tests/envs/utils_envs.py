@@ -1,4 +1,6 @@
-from typing import Any
+from typing import Any, Tuple, Dict, Optional
+
+from gymnasium.core import ActType, ObsType
 
 import gymnasium as gym
 from tests.generic_test_env import GenericTestEnv
@@ -26,10 +28,26 @@ class NoHuman(GenericTestEnv):
         super().__init__(render_mode=render_mode)
 
 
-class NoHumanOldAPI(GenericTestEnv):
+class NoHumanOldAPI(gym.Env):
     """Environment that does not have human-rendering."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 4}
+
+    def __init__(self):
+        pass
+
+    def step(
+        self, action: ActType
+    ) -> Tuple[ObsType, float, bool, bool, Dict[str, Any]]:
+        return self.observation_space.sample(), 0, False, False, {}
+
+    def reset(
+        self,
+        *,
+        seed: Optional[int] = None,
+        options: Optional[dict] = None,
+    ) -> Tuple[ObsType, dict]:
+        return self.observation_space.sample(), {}
 
 
 class NoHumanNoRGB(gym.Env):

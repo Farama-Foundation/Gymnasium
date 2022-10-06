@@ -52,8 +52,8 @@ class GenericTestEnv(gym.Env):
             "TestingEnv-v0", "testing-env-no-entry-point"
         ),
     ):
-        if not hasattr(self, "metadata"):
-            self.metadata = {} if metadata is None else metadata
+        if metadata is not None:
+            self.metadata = metadata
         self.render_mode = render_mode
         self.spec = spec
 
