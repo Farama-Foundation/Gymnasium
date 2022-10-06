@@ -11,6 +11,7 @@ from gymnasium.wrappers.record_episode_statistics import add_vector_episode_stat
 def test_record_episode_statistics(env_id, deque_size):
     env = gym.make(env_id, disable_env_checker=True)
     env = RecordEpisodeStatistics(env, deque_size)
+    assert env.spec is not None
 
     for n in range(5):
         env.reset()
