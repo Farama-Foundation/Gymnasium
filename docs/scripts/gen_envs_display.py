@@ -183,9 +183,7 @@ if __name__ == "__main__":
             fp.close()
 
             fp = open(
-                os.path.join(
-                    os.path.dirname(__file__), envs_path, "complete_list.md"
-                ),
+                os.path.join(os.path.dirname(__file__), envs_path, "complete_list.md"),
                 "w",
                 encoding="utf-8",
             )
