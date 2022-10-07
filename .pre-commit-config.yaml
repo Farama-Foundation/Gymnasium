@@ -40,7 +40,7 @@ repos:
     rev: v2.32.0
     hooks:
       - id: pyupgrade
-        args: ["--py37-plus", "--keep-runtime-typing"]
+        args: ["--py37-plus"]
   - repo: local
     hooks:
       - id: pyright
