@@ -65,6 +65,7 @@ environments/third_party_environments
 content/environment_creation
 content/vectorising
 content/handling_timelimits
+tutorials/example
 ```
 
 ```{toctree}
