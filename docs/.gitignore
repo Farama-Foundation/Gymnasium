@@ -12,3 +12,4 @@ environments/classic_control/*.md
 environments/mujoco/*.md
 environments/third_party_environments/*.md
 environments/toy_text/*.md
+environments/**/complete_list.md

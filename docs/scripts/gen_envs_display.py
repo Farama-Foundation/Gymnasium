@@ -183,15 +183,13 @@ if __name__ == "__main__":
             fp.close()
 
             fp = open(
-                os.path.join(
-                    os.path.dirname(__file__), envs_path, "complete_list.html"
-                ),
+                os.path.join(os.path.dirname(__file__), envs_path, "complete_list.md"),
                 "w",
                 encoding="utf-8",
             )
             env_name = " ".join(type_id.split("_")).title()
             fp.write(
-                f"# Complete List - {env_name}\n"
+                f"# Complete List - {env_name}\n\n"
                 + "```{raw} html\n:file: complete_list.html\n```"
             )
             fp.close()
