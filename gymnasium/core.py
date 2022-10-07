@@ -61,8 +61,8 @@ class Env(Generic[ObsType, ActType], ABC):
     spec: "EnvSpec" = None
 
     # Set these in ALL subclasses
-    action_space: spaces.Space
-    observation_space: spaces.Space
+    action_space: spaces.Space[ActType]
+    observation_space: spaces.Space[ObsType]
 
     # Created
     _np_random: Optional[np.random.Generator] = None
@@ -315,9 +315,11 @@ class Wrapper(Env[ObsType, ActType], ABC):
         """Steps through the environment with action."""
         return self.env.step(action)
 
-    def reset(self, **kwargs) -> Tuple[ObsType, dict]:
+    def reset(
+        self, *, seed: Optional[int] = None, options: Optional[dict] = None
+    ) -> Tuple[ObsType, dict]:
         """Resets the environment with kwargs."""
-        return self.env.reset(**kwargs)
+        return self.env.reset(seed=seed, options=options)
 
     def render(self) -> Optional[Union[RenderFrame, List[RenderFrame]]]:
         """Renders the environment."""
