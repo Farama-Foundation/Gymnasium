@@ -155,7 +155,7 @@ class VideoRecorder:
 
             logger.debug(f"Closing video encoder: path={self.path}")
             clip = ImageSequenceClip(self.recorded_frames, fps=self.frames_per_sec)
-            clip.write_videofile(self.path)
+            clip.write_videofile(self.path, logger=None)
         else:
             # No frames captured. Set metadata.
             if self.metadata is None:
