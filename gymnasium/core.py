@@ -51,7 +51,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`action_space` - The Space object corresponding to valid actions
     - :attr:`observation_space` - The Space object corresponding to valid observations
     - :attr:`reward_range` - A tuple corresponding to the minimum and maximum possible rewards
-    - :attr:`spec` - An environment spec that contains the information used to initialise the environment from `gym.make`
+    - :attr:`spec` - An environment spec that contains the information used to initialize the environment from `gymnasium.make`
     - :attr:`metadata` - The metadata of the environment, i.e. render modes
     - :attr:`np_random` - The random number generator for the environment
 
@@ -74,7 +74,7 @@ class Env(Generic[ObsType, ActType]):
 
     @property
     def np_random(self) -> np.random.Generator:
-        """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed."""
+        """Returns the environment's internal :attr:`_np_random` that if not set will initialize with a random seed."""
         if self._np_random is None:
             self._np_random, seed = seeding.np_random()
         return self._np_random
@@ -99,17 +99,13 @@ class Env(Generic[ObsType, ActType]):
             terminated (bool): whether a `terminal state` (as defined under the MDP of the task) is reached.
                 In this case further step() calls could return undefined results.
             truncated (bool): whether a truncation condition outside the scope of the MDP is satisfied.
-                Typically a timelimit, but could also be used to indicate agent physically going out of bounds.
+                Typically a timelimit, but could also be used to indicate an agent physically going out of bounds.
                 Can be used to end the episode prematurely before a `terminal state` is reached.
             info (dictionary): `info` contains auxiliary diagnostic information (helpful for debugging, learning, and logging).
                 This might, for instance, contain: metrics that describe the agent's performance state, variables that are
                 hidden from observations, or individual reward terms that are combined to produce the total reward.
-                It also can contain information that distinguishes truncation and termination, however this is deprecated in favour
+                It also can contain information that distinguishes truncation and termination, however, this is deprecated in favor
                 of returning two booleans, and will be removed in a future version.
-            done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will
-                return undefined results.
-                A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,
-                a certain timelimit was exceeded, or the physics simulation has entered an invalid state.
         """
         raise NotImplementedError
 
@@ -187,7 +183,7 @@ class Env(Generic[ObsType, ActType]):
         """Returns the base non-wrapped environment.
 
         Returns:
-            Env: The base non-wrapped gym.Env instance
+            Env: The base non-wrapped gymnasium.Env instance
         """
         return self
 
@@ -349,7 +345,7 @@ class ObservationWrapper(Wrapper):
     """Superclass of wrappers that can modify observations using :meth:`observation` for :meth:`reset` and :meth:`step`.
 
     If you would like to apply a function to the observation that is returned by the base environment before
-    passing it to learning code, you can simply inherit from :class:`ObservationWrapper` and overwrite the method
+    passing it to the learning code, you can simply inherit from :class:`ObservationWrapper` and overwrite the method
     :meth:`observation` to implement that transformation. The transformation defined in that method must be
     defined on the base environment’s observation space. However, it may take values in a different space.
     In that case, you need to specify the new observation space of the wrapper by setting :attr:`self.observation_space`
@@ -361,7 +357,7 @@ class ObservationWrapper(Wrapper):
     ``observation["target_position"] - observation["agent_position"]``. For this, you could implement an
     observation wrapper like this::
 
-        class RelativePosition(gym.ObservationWrapper):
+        class RelativePosition(gymnasium.ObservationWrapper):
             def __init__(self, env):
                 super().__init__(env)
                 self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
@@ -435,7 +431,7 @@ class ActionWrapper(Wrapper):
     Let’s say you have an environment with action space of type :class:`gymnasium.spaces.Box`, but you would only like
     to use a finite subset of actions. Then, you might want to implement the following wrapper::
 
-        class DiscreteActions(gym.ActionWrapper):
+        class DiscreteActions(gymnasium.ActionWrapper):
             def __init__(self, env, disc_to_cont):
                 super().__init__(env)
                 self.disc_to_cont = disc_to_cont
@@ -445,7 +441,7 @@ class ActionWrapper(Wrapper):
                 return self.disc_to_cont[act]
 
         if __name__ == "__main__":
-            env = gym.make("LunarLanderContinuous-v2")
+            env = gymnasium.make("LunarLanderContinuous-v2")
             wrapped_env = DiscreteActions(env, [np.array([1,0]), np.array([-1,0]),
                                                 np.array([0,1]), np.array([0,-1])])
             print(wrapped_env.action_space)         #Discrete(4)
