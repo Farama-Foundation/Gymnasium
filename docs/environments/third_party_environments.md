@@ -1,4 +1,4 @@
-# Third Party Environments
+# Third-Party Environments
 
 ## Video Game Environments
 
@@ -16,7 +16,7 @@ This is a 3v3 MOBA environment where you train creatures to fight each other. It
 
 ### [ MineRL](https://github.com/minerllabs/minerl)
 
-Gym interface with Minecraft game, focused on a specific sparse reward challenge
+Gym interface with Minecraft game focused on a specific sparse reward challenge
 
 ### [ Procgen](https://github.com/openai/procgen)
 
@@ -24,11 +24,11 @@ Gym interface with Minecraft game, focused on a specific sparse reward challenge
 
 ### [ SlimeVolleyGym: A simple environment for single and multi-agent reinforcement learning](https://github.com/hardmaru/slimevolleygym)
 
-A simple environment for benchmarking single and multi-agent reinforcement learning algorithms on a clone of Slime Volleyball game. Only dependencies are gym and numpy. Both state and pixel observation environments are available. The motivation of this environment is to easily enable trained agents to play against each other, and also facilitate the training of agents directly in a multi-agent setting, thus adding an extra dimension for evaluating an agent's performance.
+A simple environment for benchmarking single and multi-agent reinforcement learning algorithms on a clone of Slime Volleyball game. The only dependencies are Gymnasium and NumPy. Both state and pixel observation environments are available. The motivation of this environment is to easily enable trained agents to play against each other, and also facilitate the training of agents directly in a multi-agent setting, thus adding an extra dimension for evaluating an agent's performance.
 
 ### [ stable-retro](https://github.com/MatPoliquin/stable-retro)
 
-Supported fork of gym-retro with additional games, states, scenarios, etc. Open to PRs of additional games, features and plateforms since gym-retro is no longer maintained
+Supported fork of gym-retro with additional games, states, scenarios, etc. Open to PRs of additional games, features, and platforms since gym-retro is no longer maintained
 
 ### [ Unity ML Agents](https://github.com/Unity-Technologies/ml-agents)
 
@@ -42,7 +42,7 @@ An implementation of the board game Abalone.
 
 ### [ gym-spoof](https://github.com/MouseAndKeyboard/gym-spoof)
 
-Spoof, otherwise known as "The 3-coin game", is a multi-agent (2 player), imperfect-information, zero-sum game.
+Spoof, otherwise known as "The 3-coin game", is a multi-agent (2-player), imperfect-information, zero-sum game.
 
 ### [ gym-xiangqi: Xiangqi - The Chinese Chess Game](https://github.com/tanliyon/gym-xiangqi)
 
@@ -50,7 +50,7 @@ A reinforcement learning environment of Xiangqi, the Chinese Chess game.
 
 ### [ RubiksCubeGym](https://github.com/DoubleGremlin181/RubiksCubeGym)
 
-The RubiksCubeGym package provides environments for twisty puzzles with  multiple reward functions to help simluate the methods used by humans.
+The RubiksCubeGym package provides environments for twisty puzzles with multiple reward functions to help simulate the methods used by humans.
 
 ### [ GymGo](https://github.com/aigagror/GymGo)
 
@@ -60,20 +60,20 @@ The board game Go, also known as Weiqi. The game that was famously conquered by 
 
 ### [ GymFC: A flight control tuning and training framework](https://github.com/wil3/gymfc/)
 
-GymFC is a modular framework for synthesizing neuro-flight controllers. The architecture integrates digital twinning concepts to provide seamless transfer of trained policies to hardware. The OpenAI environment has been used to generate policies for the worlds first open source neural network flight control firmware [Neuroflight](https://github.com/wil3/neuroflight).
+GymFC is a modular framework for synthesizing neuro-flight controllers. The architecture integrates digital twinning concepts to provide a seamless transfer of trained policies to hardware. The OpenAI environment has been used to generate policies for the world's first open-source neural network flight control firmware [Neuroflight](https://github.com/wil3/neuroflight).
 
 ### [ gym-gazebo](https://github.com/erlerobot/gym-gazebo/)
 
 gym-gazebo presents an extension of the initial OpenAI gym for robotics using ROS and Gazebo, an advanced 3D modeling and
-rendering  tool.
+rendering tool.
 
 ### [ gym-goddard: Goddard's Rocket Problem](https://github.com/osannolik/gym-goddard)
 
-An environment for simulating the classical optimal control problem where the thrust of a vertically ascending rocket shall be determined such that it reaches the maximum possible altitude, while being subject to varying aerodynamic drag, gravity and mass.
+An environment for simulating the classical optimal control problem where the thrust of a vertically ascending rocket shall be determined such that it reaches the maximum possible altitude while being subject to varying aerodynamic drag, gravity, and mass.
 
 ### [ gym-jiminy: training Robots in Jiminy](https://github.com/Wandercraft/jiminy)
 
-gym-jiminy presents an extension of the initial OpenAI gym for robotics using Jiminy, an extremely fast and light weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.
+gym-jiminy presents an extension of the initial OpenAI gym for robotics using Jiminy, an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.
 
 ### [ gym-miniworld](https://github.com/maximecb/gym-miniworld)
 
@@ -93,11 +93,11 @@ PyBullet based simulations of a robotic arm moving objects.
 
 ### [ PyBullet Robotics Environments](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#heading=h.wz5to0x8kqmr)
 
-3D physics environments like the Mujoco environments but uses the Bullet physics engine and does not require a commercial license.  Works on Mac/Linux/Windows.
+3D physics environments like the Mujoco environments but uses the Bullet physics engine and do not require a commercial license.  Works on Mac/Linux/Windows.
 
 ### [ robo-gym](https://github.com/jr-robotics/robo-gym)
 
-robo-gym provides a collection of reinforcement learning environments involving robotic tasks applicable in both simulation and real world robotics.
+robo-gym provides a collection of reinforcement learning environments involving robotic tasks applicable in both simulation and real-world robotics.
 
 ### [ Offworld-gym](https://github.com/offworld-projects/offworld-gym)
 
@@ -107,7 +107,7 @@ Gym environments that let you control physics robotics in a laboratory via the i
 
 ### [ gym-carla](https://github.com/cjy1992/gym-carla)
 
-gym-carla provides a gym wrapper for the [CARLA simulator](http://carla.org/), which is a realistic 3D simulator for autonomous driving research. The environment includes a virtual city with several surrounding vehicles running around. Multiple source of observations are provided for the ego vehicle, such as front-view camera image, lidar point cloud image, and birdeye view semantic mask. Several applications have been developed based on this wrapper, such as deep reinforcement learning for end-to-end autonomous driving.
+gym-carla provides a gym wrapper for the [CARLA simulator](http://carla.org/), which is a realistic 3D simulator for autonomous driving research. The environment includes a virtual city with several surrounding vehicles running around. Multiple sources of observations are provided for the ego vehicle, such as front-view camera image, lidar point cloud image, and bird-eye view semantic mask. Several applications have been developed based on this wrapper, such as deep reinforcement learning for end-to-end autonomous driving.
 
 ### [ gym-duckietown](https://github.com/duckietown/gym-duckietown)
 
@@ -119,11 +119,11 @@ An environment for simulating a wide variety of electric drives taking into acco
 
 ### [ highway-env](https://github.com/eleurent/highway-env)
 
-An environment for behavioural planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control. The difficulty of the task lies in understanding the social interactions with other drivers, whose behaviours are uncertain. Several scenes are proposed, such as highway, merge, intersection and roundabout.
+An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control. The difficulty of the task lies in understanding the social interactions with other drivers, whose behaviors are uncertain. Several scenes are proposed, such as highway, merge, intersection and roundabout.
 
 ### [ LongiControl](https://github.com/dynamik1703/gym_longicontrol)
 
-An environment for the stochastic longitudinal control of an electric vehicle. It is intended to be a descriptive and comprehensible example for a continuous real-world problem within the field of autonomous driving.
+An environment for the stochastic longitudinal control of an electric vehicle. It is intended to be a descriptive and comprehensible example of a continuous real-world problem within the field of autonomous driving.
 
 ### [ sumo-rl](https://github.com/LucasAlegre/sumo-rl)
 
@@ -134,7 +134,7 @@ Gym wrapper for various environments in the Sumo traffic simulator
 A Gym for solving motion planning problems for various traffic scenarios compatible with [CommonRoad benchmarks](https://commonroad.in.tum.de/scenarios), which provides configurable rewards, action spaces, and observation spaces.
 
 
-## Multi Agents
+## Multi-Agents
 
 ### [PettingZoo](https://github.com/Farama-Foundation/PettingZoo)
 PettingZoo is a Python library for conducting research in multi-agent reinforcement learning, akin to a multi-agent version of Gym.
@@ -160,11 +160,11 @@ Environments for hyperparameter configuration using RL. Includes cheap surrogate
 
 ### [ Gridworld](https://github.com/addy1997/Gridworld)
 
-The Gridworld package provides grid-based environments to help simulate the results for model-based reinforcement learning algorithms. Initial release supports single agent system only. Some features in this version of software have become obsolete. New features are being added in the software like windygrid environment.
+The Gridworld package provides grid-based environments to help simulate the results for model-based reinforcement learning algorithms. The initial release supports single agent system only. Some features in this version of the software have become obsolete. New features are being added to the software like windygrid environment.
 
 ### [ gym-adserve](https://github.com/falox/gym-adserver)
 
-An environment that implements a typical [multi-armed bandit scenario](https://en.wikipedia.org/wiki/Multi-armed_bandit) where an [ad server](https://en.wikipedia.org/wiki/Ad_serving) must select the best advertisement to be displayed in a web page. Some example agents are included: Random, epsilon-Greedy, Softmax, and UCB1.
+An environment that implements a typical [multi-armed bandit scenario](https://en.wikipedia.org/wiki/Multi-armed_bandit) where an [ad server](https://en.wikipedia.org/wiki/Ad_serving) must select the best advertisement to be displayed in a web page. Some example agents included: Random, epsilon-Greedy, Softmax, and UCB1.
 
 ### [ gym-algorithmic](https://github.com/Rohan138/gym-algorithmic)
 
@@ -184,7 +184,7 @@ Environments that extend gym's classic control and add many new features includi
 
 ### [ gym-cellular-automata](https://github.com/elbecerrasoto/gym-cellular-automata)
 
-Environments where the agent interacts with _Cellular Automata_ by changing its cells states.
+Environments where the agent interacts with _Cellular Automata_ by changing its cell states.
 
 ### [ gym-games](https://github.com/qlan3/gym-games)
 
@@ -192,7 +192,7 @@ Gym implementations of the MinAtar games, various PyGame Learning Environment ga
 
 ### [ gym-inventory](https://github.com/paulhendricks/gym-inventory)
 
-gym-inventory is a single agent domain featuring discrete state and action spaces that an AI agent might encounter in inventory control problems.
+gym-inventory is a single-agent domain featuring discrete state and action spaces that an AI agent might encounter in inventory control problems.
 
 ### [ gym-maze](https://github.com/tuzzer/gym-maze/)
 
@@ -216,19 +216,19 @@ This package describes an OpenAI Gym interface for creating a simulation environ
 
 ### [ gym-sokoban](https://github.com/mpSchrader/gym-sokoban)
 
-2D Transportation Puzzles. The environment consists of transportation puzzles in which the player's goal is to push all boxes on the warehouse's storage locations. The advantage of the environment is that it generates a new random level every time it is initialized or reset, which prevents over fitting to predefined levels.
+2D Transportation Puzzles. The environment consists of transportation puzzles in which the player's goal is to push all boxes to the warehouse's storage locations. The advantage of the environment is that it generates a new random level every time it is initialized or reset, which prevents overfitting to predefined levels.
 
 ### [ math-prog-synth-env](https://github.com/JohnnyYeeee/math_prog_synth_env)
 
-In our paper "A Reinforcement Learning Environment for Mathematical Reasoning via Program Synthesis" we convert the DeepMind Mathematics Dataset into an RL environment based around program synthesis.https://arxiv.org/abs/2107.07373
+In our paper "A Reinforcement Learning Environment for Mathematical Reasoning via Program Synthesis" we convert the DeepMind Mathematics Dataset into an RL environment based on program synthesis.https://arxiv.org/abs/2107.07373
 
 ### [ NASGym](https://github.com/gomerudo/nas-env)
 
-The environment is fully-compatible with the OpenAI baselines and exposes a NAS environment following the Neural Structure Code of [BlockQNN: Efficient Block-wise Neural Network Architecture Generation](https://arxiv.org/abs/1808.05584). Under this setting, a Neural Network (i.e. the state for the reinforcement learning agent) is modeled as a list of NSCs, an action is the addition of a layer to the network, and the reward is the accuracy after the early-stop training. The datasets considered so far are the CIFAR-10 dataset (available by default) and the meta-dataset (has to be manually downloaded as specified in [this repository](https://github.com/gomerudo/meta-dataset)).
+The environment is fully compatible with the OpenAI baselines and exposes a NAS environment following the Neural Structure Code of [BlockQNN: Efficient Block-wise Neural Network Architecture Generation](https://arxiv.org/abs/1808.05584). Under this setting, a Neural Network (i.e. the state for the reinforcement learning agent) is modeled as a list of NSCs, an action is the addition of a layer to the network, and the reward is the accuracy after the early-stop training. The datasets considered so far are the CIFAR-10 dataset (available by default) and the meta-dataset (has to be manually downloaded as specified in [this repository](https://github.com/gomerudo/meta-dataset)).
 
 ### [ NLPGym: A toolkit to develop RL agents to solve NLP tasks](https://github.com/rajcscw/nlp-gym)
 
-[NLPGym](https://arxiv.org/pdf/2011.08272v1.pdf) provides interactive environments for standard NLP tasks such as sequence tagging, question answering, and sequence classification. Users can easily customize the tasks with their own datasets, observations, featurizers and reward functions.
+[NLPGym](https://arxiv.org/pdf/2011.08272v1.pdf) provides interactive environments for standard NLP tasks such as sequence tagging, question answering, and sequence classification. Users can easily customize the tasks with their datasets, observations, features and reward functions.
 
 ### [ Obstacle Tower](https://github.com/Unity-Technologies/obstacle-tower-env)
 
@@ -244,11 +244,11 @@ Musculoskeletal Models in OpenSim. A human musculoskeletal model and a physics-b
 
 ### [ PGE: Parallel Game Engine](https://github.com/222464/PGE)
 
-PGE is a FOSS 3D engine for AI simulations, and can interoperate with the Gym. Contains environments with modern 3D graphics, and uses Bullet for physics.
+PGE is a FOSS 3D engine for AI simulations and can interoperate with the Gym. Contains environments with modern 3D graphics, and uses Bullet for physics.
 
 ### [ QASGym](https://github.com/qdevpsi3/quantum-arch-search)
 
-This a list of environments for quantum architecture search following the description in [Quantum Architecture Search via Deep Reinforcement Learning](https://arxiv.org/abs/2104.07715). The agent design the quantum circuit by taking actions in the environment. Each action corresponds to a gate applied on some wires. The goal is to build a circuit U such that generates the target n-qubit quantum state that belongs to the environment and hidden from the agent. The circuits are built using [Google QuantumAI Cirq](https://quantumai.google/cirq).
+This is a list of environments for quantum architecture search following the description in [Quantum Architecture Search via Deep Reinforcement Learning](https://arxiv.org/abs/2104.07715). The agent designs the quantum circuit by taking actions in the environment. Each action corresponds to a gate applied on some wires. The goal is to build a circuit U that generates the target n-qubit quantum state that belongs to the environment and is hidden from the agent. The circuits are built using [Google QuantumAI Cirq](https://quantumai.google/cirq).
 
 ### [ safe-control-gym](https://github.com/utiasDSL/safe-control-gym)
 
@@ -256,19 +256,19 @@ PyBullet based CartPole and Quadrotor environments—with [CasADi](https://web.c
 
 ### [ VirtualTaobao](https://github.com/eyounx/VirtualTaobao/)
 
-An environment for online recommendation, where customers are learned from Taobao.com, one of the world's largest e-commerce platform.
+An environment for online recommendations, where customers are learned from Taobao.com, one of the world's largest e-commerce platforms.
 
 ### [ mo-gym](https://github.com/LucasAlegre/mo-gym)
 
-Multi-objective RL (MORL) gym environments, where the reward is a numpy array of different (possibly conflicting) objectives.
+Multi-objective RL (MORL) gym environments, where the reward is a NumPy array of different (possibly conflicting) objectives.
 
 ### [ABIDES-Gym](https://github.com/jpmorganchase/abides-jpmc-public)
 
-ABIDES (Agent Based Interactive Discrete Event Simulator) is a message based multi agent discrete event based simulator. It enables simulating complex multi-agent systems for different domains. ABIDES has already supported work in [equity markets simulation](https://arxiv.org/abs/1904.12066) and [federated learning](https://dl.acm.org/doi/abs/10.1145/3383455.3422562).  
+ABIDES (Agent-Based Interactive Discrete Event Simulator) is a message-based multi-agent discrete event-based simulator. It enables simulation of complex multi-agent systems for different domains. ABIDES has already supported work in [equity markets simulation](https://arxiv.org/abs/1904.12066) and [federated learning](https://dl.acm.org/doi/abs/10.1145/3383455.3422562).  
 
 [ABIDES-Gym](https://arxiv.org/abs/2110.14771) (ACM-ICAIF21 publication) is a new wrapper built around ABIDES that enables using ABIDES simulator as an Open AI Gym environment for the training of Reinforcement Learning algorithms.
 
-We apply this work by specifically using the markets extension of ABIDES/ABIDES-Markets and developing two benchmark financial market Gym environments for training daily investor and execution agents. As a result, these two environments describe classic financial problems with a complex interactive market behavior response to the experimental agent's action.
+We apply for this work by specifically using the market's extension of ABIDES/ABIDES-Markets and developing two benchmark financial market Gym environments for training daily investor and execution agents. As a result, these two environments describe classic financial problems with a complex interactive market behavior response to the experimental agent's action.
 
 ### [gym-saturation](https://github.com/inpefess/gym-saturation)
 
@@ -308,11 +308,11 @@ Design tool for creating Evolution Gym environments.
 
 ### [l2r](https://github.com/learn-to-race/l2r/)
 
-Open-source reinforcement learning environment for autonomous racing.
+An open-source reinforcement learning environment for autonomous racing.
 
 ### [gym_torcs](https://github.com/ugo-nama-kun/gym_torcs/)
 
-Gym-TORCS is the reinforcement learning (RL) environment in TORCS domain with OpenAI-gym-like interface. TORCS is the open-rource realistic car racing simulator recently used as RL benchmark task in several AI studies.
+Gym-TORCS is the reinforcement learning (RL) environment in TORCS domain with OpenAI-gym-like interface. TORCS is the open-source realistic car racing simulator recently used as an RL benchmark task in several AI studies.
 
 ### [mobile-env](https://github.com/stefanbschneider/mobile-env/)
 
@@ -324,7 +324,7 @@ Softrobotics environment package for OpenAI Gym
 
 ### [PyElastica](https://github.com/GazzolaLab/PyElastica/)
 
-Python implementation of Elastica, an open-source software for the simulation of assemblies of slender, one-dimensional structures using Cosserat Rod theory.
+Python implementation of Elastica, open-source software for the simulation of assemblies of slender, one-dimensional structures using Cosserat Rod theory.
 
 ### [tuxkart-ai](https://github.com/notjedi/tuxkart-ai/)
 
