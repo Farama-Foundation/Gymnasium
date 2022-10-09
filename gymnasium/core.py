@@ -171,11 +171,7 @@ class Env(Generic[ObsType, ActType]):
         raise NotImplementedError
 
     def close(self):
-        """Override close in your subclass to perform any necessary cleanup.
-
-        Environments will automatically :meth:`close()` themselves when
-        garbage collected or when the program exits.
-        """
+        """Override close in your subclass to perform any necessary cleanup."""
         pass
 
     @property
