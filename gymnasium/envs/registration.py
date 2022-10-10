@@ -41,7 +41,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-from gymnasium import Env, error, logger
+from gymnasium import Env, error, logger, Wrapper
 
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
@@ -568,22 +568,24 @@ def make(
         if spec_ is None:
             try:
                 _check_version_exists(ns, name, version)
-            except error.NameNotFound as e:
+            except error.UnregisteredEnv as e:
                 # env not found in Gymnasium, try to search in gym
                 try:
                     import gym  # noqa
 
                     if gym.__version__ >= "0.26":  # type: ignore
                         logger.warn(
-                            f"{str(e)}Found gym installed, searching for gym environment..."
+                            f"{str(e)}\nFound gym installed, searching for environment in gym..."
                         )
-                        return gym.make(
-                            id=id,
-                            max_episode_steps=max_episode_steps,
-                            autoreset=autoreset,
-                            apply_api_compatibility=apply_api_compatibility,
-                            disable_env_checker=disable_env_checker,
-                            **kwargs,
+                        return Wrapper(
+                            gym.make(
+                                id=id,
+                                max_episode_steps=max_episode_steps,
+                                autoreset=autoreset,
+                                apply_api_compatibility=apply_api_compatibility,
+                                disable_env_checker=disable_env_checker,
+                                **kwargs,
+                            )
                         )
                     else:
                         raise e
