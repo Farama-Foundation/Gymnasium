@@ -8,35 +8,6 @@ import numpy as np
 import gymnasium as gym
 
 
-def add_vector_episode_statistics(
-    info: dict, episode_info: dict, num_envs: int, env_num: int
-):
-    """Add episode statistics.
-
-    Add statistics coming from the vectorized environment.
-
-    Args:
-        info (dict): info dict of the environment.
-        episode_info (dict): episode statistics data.
-        num_envs (int): number of environments.
-        env_num (int): env number of the vectorized environments.
-
-    Returns:
-        info (dict): the input info dict with the episode statistics.
-    """
-    info["episode"] = info.get("episode", {})
-
-    info["_episode"] = info.get("_episode", np.zeros(num_envs, dtype=bool))
-    info["_episode"][env_num] = True
-
-    for k in episode_info.keys():
-        info_array = info["episode"].get(k, np.zeros(num_envs))
-        info_array[env_num] = episode_info[k]
-        info["episode"][k] = info_array
-
-    return info
-
-
 class RecordEpisodeStatistics(gym.Wrapper):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
@@ -52,7 +23,7 @@ class RecordEpisodeStatistics(gym.Wrapper):
         ...     "episode": {
         ...         "r": "<cumulative reward>",
         ...         "l": "<episode length>",
-        ...         "t": "<elapsed time since instantiation of wrapper>"
+        ...         "t": "<elapsed time since beginning of episode>"
         ...     },
         ... }
 
@@ -63,7 +34,7 @@ class RecordEpisodeStatistics(gym.Wrapper):
         ...     "episode": {
         ...         "r": "<array of cumulative reward>",
         ...         "l": "<array of episode length>",
-        ...         "t": "<array of elapsed time since instantiation of wrapper>"
+        ...         "t": "<array of elapsed time since beginning of episode>"
         ...     },
         ...     "_episode": "<boolean array of length num-envs>"
         ... }
@@ -85,8 +56,8 @@ class RecordEpisodeStatistics(gym.Wrapper):
         """
         super().__init__(env)
         self.num_envs = getattr(env, "num_envs", 1)
-        self.t0 = time.perf_counter()
         self.episode_count = 0
+        self.episode_start_times: np.ndarray = None
         self.episode_returns: Optional[np.ndarray] = None
         self.episode_lengths: Optional[np.ndarray] = None
         self.return_queue = deque(maxlen=deque_size)
@@ -95,18 +66,21 @@ class RecordEpisodeStatistics(gym.Wrapper):
 
     def reset(self, **kwargs):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
-        observations = super().reset(**kwargs)
+        obs, info = super().reset(**kwargs)
+        self.episode_start_times = np.full(
+            self.num_envs, time.perf_counter(), dtype=np.float32
+        )
         self.episode_returns = np.zeros(self.num_envs, dtype=np.float32)
         self.episode_lengths = np.zeros(self.num_envs, dtype=np.int32)
-        return observations
+        return obs, info
 
     def step(self, action):
         """Steps through the environment, recording the episode statistics."""
         (
             observations,
             rewards,
-            terminateds,
-            truncateds,
+            terminations,
+            truncations,
             infos,
         ) = self.env.step(action)
         assert isinstance(
@@ -114,38 +88,35 @@ class RecordEpisodeStatistics(gym.Wrapper):
         ), f"`info` dtype is {type(infos)} while supported dtype is `dict`. This may be due to usage of other wrappers in the wrong order."
         self.episode_returns += rewards
         self.episode_lengths += 1
-        if not self.is_vector_env:
-            terminateds = [terminateds]
-            truncateds = [truncateds]
-        terminateds = list(terminateds)
-        truncateds = list(truncateds)
-
-        for i in range(len(terminateds)):
-            if terminateds[i] or truncateds[i]:
-                episode_return = self.episode_returns[i]
-                episode_length = self.episode_lengths[i]
-                episode_info = {
-                    "episode": {
-                        "r": episode_return,
-                        "l": episode_length,
-                        "t": round(time.perf_counter() - self.t0, 6),
-                    }
+        dones = np.logical_or(terminations, truncations)
+        num_dones = np.sum(dones)
+        if num_dones:
+            if "episode" in infos or "_episode" in infos:
+                raise ValueError(
+                    "Attempted to add episode stats when they already exist"
+                )
+            else:
+                infos["episode"] = {
+                    "r": np.where(dones, self.episode_returns, 0.0),
+                    "l": np.where(dones, self.episode_lengths, 0),
+                    "t": np.where(
+                        dones,
+                        np.round(time.perf_counter() - self.episode_start_times, 6),
+                        0.0,
+                    ),
                 }
                 if self.is_vector_env:
-                    infos = add_vector_episode_statistics(
-                        infos, episode_info["episode"], self.num_envs, i
-                    )
-                else:
-                    infos = {**infos, **episode_info}
-                self.return_queue.append(episode_return)
-                self.length_queue.append(episode_length)
-                self.episode_count += 1
-                self.episode_returns[i] = 0
-                self.episode_lengths[i] = 0
+                    infos["_episode"] = np.where(dones, True, False)
+            self.return_queue.extend(self.episode_returns[dones])
+            self.length_queue.extend(self.episode_lengths[dones])
+            self.episode_count += num_dones
+            self.episode_lengths[dones] = 0
+            self.episode_returns[dones] = 0
+            self.episode_start_times[dones] = time.perf_counter()
         return (
             observations,
             rewards,
-            terminateds if self.is_vector_env else terminateds[0],
-            truncateds if self.is_vector_env else truncateds[0],
+            terminations,
+            truncations,
             infos,
         )
