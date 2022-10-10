@@ -1,4 +1,6 @@
 """A wrapper that adds human-renering functionality to an environment."""
+import copy
+
 import numpy as np
 
 import gymnasium as gym
@@ -57,6 +59,10 @@ class HumanRendering(gym.Wrapper):
         self.screen_size = None
         self.window = None
         self.clock = None
+
+        self.metadata = copy.deepcopy(self.env.metadata)
+        if "human" not in self.metadata["render_modes"]:
+            self.metadata["render_modes"].append("human")
 
     @property
     def render_mode(self):

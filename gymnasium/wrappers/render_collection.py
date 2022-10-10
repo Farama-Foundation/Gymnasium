@@ -1,4 +1,6 @@
 """A wrapper that adds render collection mode to an environment."""
+import copy
+
 import gymnasium as gym
 
 
@@ -21,6 +23,10 @@ class RenderCollection(gym.Wrapper):
         self.frame_list = []
         self.reset_clean = reset_clean
         self.pop_frames = pop_frames
+
+        self.metadata = copy.deepcopy(self.env.metadata)
+        if f"{self.env.render_mode}_list" not in self.metadata["render_modes"]:
+            self.metadata["render_modes"].append(f"{self.env.render_mode}_list")
 
     @property
     def render_mode(self):
