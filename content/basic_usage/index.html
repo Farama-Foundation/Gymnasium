@@ -395,7 +395,7 @@
 <h2>Initializing Environments<a class="headerlink" href="#initializing-environments" title="Permalink to this heading">#</a></h2>
 <p>Initializing environments is very easy in Gymnasium and can be done via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v0&#39;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -411,7 +411,7 @@ to a specific point in space. If it succeeds in doing this (or makes some progre
 alongside the observation for this timestep. The reward may also be negative or 0, if the agent did not yet succeed (or did not make any progress).
 The agent will then be trained to maximize the reward it accumulates over many timesteps.</p>
 <p>After some timesteps, the environment may enter a terminal state. For instance, the robot may have crashed, or the agent may have succeeded in completing a task. In that case, we want to reset the environment to a new initial state. The environment issues a terminated signal to the agent if it enters such a terminal state. Sometimes we also want to end the episode after a fixed number of timesteps, in this case, the environment issues a truncated signal.
-This is a new change in API (v0.26 onwards). Earlier a common done signal was issued for an episode ending via any means. This is now changed in favour of issuing two signals - terminated and truncated.</p>
+This is a new change in API (v0.26 onwards). Earlier a commonly done signal was issued for an episode ending via any means. This is now changed in favour of issuing two signals - terminated and truncated.</p>
 <p>Let’s see what the agent-environment loop looks like in Gymnasium.
 This example will run an instance of <code class="docutils literal notranslate"><span class="pre">LunarLander-v2</span></code> environment for 1000 timesteps. Since we pass <code class="docutils literal notranslate"><span class="pre">render_mode=&quot;human&quot;</span></code>, you should see a window pop up rendering the environment.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -430,7 +430,7 @@ This example will run an instance of <code class="docutils literal notranslate">
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The output should look something like this</p>
+<p>The output should look something like this:</p>
 <figure class="align-center">
 <a class="reference internal image-reference" href="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif"><img alt="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif" src="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif" style="width: 50%;" /></a>
 </figure>
@@ -453,8 +453,8 @@ It is possible for <code class="docutils literal notranslate"><span class="pre">
 </pre></div>
 </div>
 <p>This can also be done explicitly through a wrapper:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gymasium.wrappers</span> <span class="kn">import</span> <span class="n">StepCompatibility</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">StepCompatibility</span><span class="p">(</span><span class="n">CustomEnv</span><span class="p">(),</span> <span class="n">output_truncation_bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">StepAPICompatibility</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">StepAPICompatibility</span><span class="p">(</span><span class="n">CustomEnv</span><span class="p">(),</span> <span class="n">output_truncation_bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For more details see the wrappers section.</p>
@@ -493,7 +493,8 @@ There are multiple <code class="docutils literal notranslate"><span class="pre">
 <li><p><code class="docutils literal notranslate"><span class="pre">MultiDiscrete</span></code>: consists of a series of <code class="docutils literal notranslate"><span class="pre">Discrete</span></code> action spaces with a different number of actions in each element.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">MultiDiscrete</span>
-<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="go">[ 1.6952509 -0.4399011 -0.7981693]</span>
@@ -576,7 +577,7 @@ Gymnasium already provides many commonly used wrappers for you. Some examples:</
 </div>
 <p>This opens a window of the environment and allows you to control the agent using your keyboard.</p>
 <p>Playing using the keyboard requires a key-action map. This map should have type <code class="docutils literal notranslate"><span class="pre">dict[tuple[int],</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None]</span></code>, which maps the keys pressed to action performed.
-For example, if pressing the keys <code class="docutils literal notranslate"><span class="pre">w</span></code> and <code class="docutils literal notranslate"><span class="pre">space</span></code> at the same time is supposed to perform action <code class="docutils literal notranslate"><span class="pre">2</span></code>, then the <code class="docutils literal notranslate"><span class="pre">key_to_action</span></code> dict should look like:</p>
+For example, if pressing the keys <code class="docutils literal notranslate"><span class="pre">w</span></code> and <code class="docutils literal notranslate"><span class="pre">space</span></code> at the same time is supposed to perform action <code class="docutils literal notranslate"><span class="pre">2</span></code>, then the <code class="docutils literal notranslate"><span class="pre">key_to_action</span></code> dict should look like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="c1"># ...</span>
     <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)):</span> <span class="mi">2</span><span class="p">,</span>
@@ -588,17 +589,24 @@ For example, if pressing the keys <code class="docutils literal notranslate"><sp
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">pygame</span>
 <span class="kn">from</span> <span class="nn">gymnasium.utils.play</span> <span class="kn">import</span> <span class="n">play</span>
+
 <span class="n">mapping</span> <span class="o">=</span> <span class="p">{(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">,):</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">,):</span> <span class="mi">1</span><span class="p">}</span>
-<span class="n">play</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v0&quot;</span><span class="p">),</span> <span class="n">keys_to_action</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
+<span class="n">play</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span><span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">),</span> <span class="n">keys_to_action</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where we obtain the corresponding key ID constants from pygame. If the <code class="docutils literal notranslate"><span class="pre">key_to_action</span></code> argument is not specified, then the default <code class="docutils literal notranslate"><span class="pre">key_to_action</span></code> mapping for that env is used, if provided.</p>
 <p>Furthermore, if you wish to plot real time statistics as you play, you can use <code class="docutils literal notranslate"><span class="pre">gymnasium.utils.play.PlayPlot</span></code>. Here’s some sample code for plotting the reward for last 5 second of gameplay:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">obs_t</span><span class="p">,</span> <span class="n">obs_tp1</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">rew</span><span class="p">,]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
+<span class="kn">from</span> <span class="nn">gymnasium.utils.play</span> <span class="kn">import</span> <span class="n">PlayPlot</span><span class="p">,</span> <span class="n">play</span>
+
+<span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">obs_t</span><span class="p">,</span> <span class="n">obs_tp1</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">rew</span><span class="p">,</span> <span class="p">]</span>
+
 <span class="n">plotter</span> <span class="o">=</span> <span class="n">PlayPlot</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">])</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pong-v0&quot;</span><span class="p">)</span>
-<span class="n">play</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">plotter</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+<span class="n">mapping</span> <span class="o">=</span> <span class="p">{(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">,):</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">,):</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="n">play</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">plotter</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span> <span class="n">keys_to_action</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

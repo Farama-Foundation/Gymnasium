@@ -411,17 +411,13 @@ This may, for instance, be a numpy array containing the positions and velocities
 <li><p><strong>terminated</strong> (<em>bool</em>) – whether a <cite>terminal state</cite> (as defined under the MDP of the task) is reached.
 In this case further step() calls could return undefined results.</p></li>
 <li><p><strong>truncated</strong> (<em>bool</em>) – whether a truncation condition outside the scope of the MDP is satisfied.
-Typically a timelimit, but could also be used to indicate agent physically going out of bounds.
+Typically a timelimit, but could also be used to indicate an agent physically going out of bounds.
 Can be used to end the episode prematurely before a <cite>terminal state</cite> is reached.</p></li>
 <li><p><strong>info</strong> (<em>dictionary</em>) – <cite>info</cite> contains auxiliary diagnostic information (helpful for debugging, learning, and logging).
 This might, for instance, contain: metrics that describe the agent’s performance state, variables that are
 hidden from observations, or individual reward terms that are combined to produce the total reward.
-It also can contain information that distinguishes truncation and termination, however this is deprecated in favour
+It also can contain information that distinguishes truncation and termination, however, this is deprecated in favor
 of returning two booleans, and will be removed in a future version.</p></li>
-<li><p><strong>done</strong> (<em>bool</em>) – (Deprecated) A boolean value for if the episode has ended, in which case further <a class="reference internal" href="#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> calls will
-return undefined results.
-A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,
-a certain timelimit was exceeded, or the physics simulation has entered an invalid state.</p></li>
 </ul>
 </dd>
 </dl>
@@ -527,8 +523,6 @@ in implementations to use the functionality of this method.</p>
 <dt class="sig sig-object py" id="gymnasium.Env.close">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.Env.close" title="Permalink to this definition">#</a></dt>
 <dd><p>Override close in your subclass to perform any necessary cleanup.</p>
-<p>Environments will automatically <a class="reference internal" href="#gymnasium.Env.close" title="gymnasium.Env.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code></a> themselves when
-garbage collected or when the program exits.</p>
 </dd></dl>
 
 </section>
@@ -562,7 +556,7 @@ original code.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">ObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.ObservationWrapper" title="Permalink to this definition">#</a></dt>
 <dd><p>Superclass of wrappers that can modify observations using <code class="xref py py-meth docutils literal notranslate"><span class="pre">observation()</span></code> for <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code>.</p>
 <p>If you would like to apply a function to the observation that is returned by the base environment before
-passing it to learning code, you can simply inherit from <a class="reference internal" href="#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservationWrapper</span></code></a> and overwrite the method
+passing it to the learning code, you can simply inherit from <a class="reference internal" href="#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservationWrapper</span></code></a> and overwrite the method
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">observation()</span></code> to implement that transformation. The transformation defined in that method must be
 defined on the base environment’s observation space. However, it may take values in a different space.
 In that case, you need to specify the new observation space of the wrapper by setting <code class="xref py py-attr docutils literal notranslate"><span class="pre">self.observation_space</span></code>
@@ -606,7 +600,7 @@ you can simply define <code class="xref py py-attr docutils literal notranslate"
 <p>Let us look at an example: Sometimes (especially when we do not have control over the reward
 because it is intrinsic), we want to clip the reward to a range to gain some numerical stability.
 To do that, we could, for instance, implement the following wrapper:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span> <span class="o">=</span> <span class="n">min_reward</span>
