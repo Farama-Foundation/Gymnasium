@@ -7,7 +7,6 @@ title: Vectorising your environments
 
 ## Vectorized Environments
 *Vectorized environments* are environments that run multiple independent copies of the same environment in parallel using [multiprocessing](https://docs.python.org/3/library/multiprocessing.html). Vectorized environments take as input a batch of actions, and return a batch of observations. This is particularly useful, for example, when the policy is defined as a neural network that operates over a batch of observations.
-
 Gymnasium provides two types of vectorized environments:
 
 - `gymnasium.vector.SyncVectorEnv`, where the different copies of the environment are executed sequentially.
