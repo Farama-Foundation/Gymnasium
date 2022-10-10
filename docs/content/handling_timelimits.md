@@ -1,5 +1,5 @@
 # Handling Time Limits
-In using Gymnasium environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The `done` signal received (in previous versions of gymnasium < 0.26) from `env.step` indicated whether an episode has ended. However, this signal did not distinguish whether the episode ended due to `termination` or `truncation`. 
+In using Gymnasium environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The `done` signal received (in previous versions of OpenAI Gym < 0.26) from `env.step` indicated whether an episode has ended. However, this signal did not distinguish whether the episode ended due to `termination` or `truncation`. 
 
 ### Termination
 Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment definition. Examples are - task success, task failure, robot falling down etc. Notably, this also includes episodes ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov property, a representation of the remaining time must be present in the agent's observation in finite-horizon environments. [(Reference)](https://arxiv.org/abs/1712.00378)
