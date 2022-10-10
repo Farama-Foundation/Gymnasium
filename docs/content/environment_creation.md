@@ -5,7 +5,7 @@ title: Environment Creation
 # Make your own custom environment
 
 This documentation overviews creating new environments and relevant useful wrappers, utilities and tests included in Gymnasium designed for the creation of new environments.
-You can clone gym-examples to play with the code that are presented here. We recommend that you use a virtual environment:
+You can clone gym-examples to play with the code that is presented here. We recommend that you use a virtual environment:
 
 ```console
 git clone https://github.com/Farama-Foundation/gym-examples
@@ -33,6 +33,9 @@ gym-examples/
     wrappers/
       __init__.py
       relative_position.py
+      reacher_weighted_reward.py
+      discrete_action.py
+      clip_reward.py
  ```
 
 To illustrate the process of subclassing `gymnasium.Env`, we will implement a very simplistic game, called `GridWorldEnv`.
@@ -58,13 +61,13 @@ Let us look at the source code of `GridWorldEnv` piece by piece:
 ### Declaration and Initialization
 Our custom environment will inherit from the abstract class `gymnasium.Env`. You shouldn't forget to add the `metadata` attribute to your class. 
 There, you should specify the render-modes that are supported by your environment (e.g. `"human"`, `"rgb_array"`, `"ansi"`)
-and the framerate at which your environment should be rendered. Every environment should support`None` as render-mode; you don't need to add it in the metadata.
+and the framerate at which your environment should be rendered. Every environment should support `None` as render-mode; you don't need to add it in the metadata.
 In `GridWorldEnv`, we will support the modes "rgb_array" and "human" and render at 4 FPS.
 
 The `__init__` method of our environment will accept the integer `size`, that determines the size of the square grid.
 We will set up some variables for rendering and define `self.observation_space` and `self.action_space`.
 In our case, observations should provide information about the location of the agent and target on the 2-dimensional grid. 
-We will choose to represent observations in the form of a dictionaries with keys `"agent"` and `"target"`. An observation
+We will choose to represent observations in the form of dictionaries with keys `"agent"` and `"target"`. An observation
 may look like ` {"agent": array([1, 0]), "target": array([0, 3])}`.
 Since we have 4 actions in our environment ("right", "up", "left", "down"), we will use `Discrete(4)` as an action space.
 Here is the declaration of `GridWorldEnv` and the implementation of `__init__`:
@@ -146,7 +149,7 @@ to a deterministic state. It is recommended to use the random number generator `
 base class, `gymnasium.Env`. If you only use this RNG, you do not need to worry much about seeding, *but you need to remember to
 call `super().reset(seed=seed)`* to  make sure that `gymnasium.Env` correctly seeds the RNG. 
 Once this is done, we can randomly set the state of our environment. 
-In our case, we randomly choose the agent's location and the randomly sample target positions, until it does not coincide with the agent's position.
+In our case, we randomly choose the agent's location and the random sample target positions, until it does not coincide with the agent's position.
 
 The `reset` method should return a tuple of the initial observation
 and some auxiliary information. We can use the methods `_get_obs`
@@ -354,19 +357,19 @@ After you have installed your package locally with `pip install -e gym-examples`
 
 ```python
 import gym_examples
-env = gym.make('gym_examples/GridWorld-v0')
+env = gymnasium.make('gym_examples/GridWorld-v0')
 ```
 
 You can also pass keyword arguments of your environment's constructor to `gymnasium.make` to customize the environment.
 In our case, we could do:
 
 ```python
-env = gym.make('gym_examples/GridWorld-v0', size=10)
+env = gymnasium.make('gym_examples/GridWorld-v0', size=10)
 ```
 
 Sometimes, you may find it more convenient to skip registration and call the environment's
 constructor yourself. Some may find this approach more pythonic and environments that are instantiated like this are
-also perfectly fine (but remember to add  wrappers as well!).
+also perfectly fine (but remember to add wrappers as well!).
 
 ## Using Wrappers
 Oftentimes, we want to use different variants of a custom environment, or we want to
@@ -382,7 +385,7 @@ a wrapper on top of environment instances to flatten observations into a single 
 import gym_examples
 from gymnasium.wrappers import FlattenObservation
 
-env = gym.make('gym_examples/GridWorld-v0')
+env = gymnasium.make('gym_examples/GridWorld-v0')
 wrapped_env = FlattenObservation(env)
 print(wrapped_env.reset())     # E.g.  [3 0 3 3], {}
 ```
@@ -396,7 +399,7 @@ a wrapper that does this job. This wrapper is also available in gym-examples:
 import gym_examples
 from gym_examples.wrappers import RelativePosition
 
-env = gym.make('gym_examples/GridWorld-v0')
+env = gymnasium.make('gym_examples/GridWorld-v0')
 wrapped_env = RelativePosition(env)
 print(wrapped_env.reset())     # E.g.  [-3  3], {}
 ```

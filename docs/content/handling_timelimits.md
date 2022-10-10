@@ -1,14 +1,14 @@
 # Handling Time Limits
-In using Gym environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The `done` signal received (in previous versions of gym < 0.26) from `env.step` indicated whether an episode has ended. However, this signal did not distinguish between whether the episode ended due to `termination` or `truncation`. 
+In using Gymnasium environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The `done` signal received (in previous versions of gymnasium < 0.26) from `env.step` indicated whether an episode has ended. However, this signal did not distinguish whether the episode ended due to `termination` or `truncation`. 
 
 ### Termination
-Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment definition. Examples are - task success, task failure, robot falling down etc. Notably this also includes episode ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov property, a representation of the remaining time must be present in the agent's observation in finite-horizon environments. [(Reference)](https://arxiv.org/abs/1712.00378)
+Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment definition. Examples are - task success, task failure, robot falling down etc. Notably, this also includes episodes ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov property, a representation of the remaining time must be present in the agent's observation in finite-horizon environments. [(Reference)](https://arxiv.org/abs/1712.00378)
 
 
 ### Truncation
-Truncation refers to the episode ending after an externally defined condition (that is outside the scope of the Markov Decision Process). This could be a time-limit, robot going out of bounds etc.
+Truncation refers to the episode ending after an externally defined condition (that is outside the scope of the Markov Decision Process). This could be a time-limit, a robot going out of bounds etc.
 
-An infinite-horizon environment is an obvious example where this is needed. We cannot wait forever for the episode to complete, so we set a practical time-limit after which we forcibly halt the episode. The last state in this case is not a terminal state since it has a non-zero transition probability of moving to another state as per the Markov Decision Process that defines the RL problem. This is also different from time-limits in finite horizon environments as the agent in this case has no idea about this time-limit. 
+An infinite-horizon environment is an obvious example of where this is needed. We cannot wait forever for the episode to complete, so we set a practical time-limit after which we forcibly halt the episode. The last state in this case is not a terminal state since it has a non-zero transition probability of moving to another state as per the Markov Decision Process that defines the RL problem. This is also different from time-limits in finite horizon environments as the agent in this case has no idea about this time-limit. 
 
 
 ### Importance in learning code
@@ -21,7 +21,7 @@ More formally, a common example of bootstrapping in RL is updating the estimate 
 ```math
 Q_{target}(o_t, a_t) = r_t + \gamma . \max_a(Q(o_{t+1}, a_{t+1}))
 ```
-In classical RL, the new `Q` estimate is a weighted average of previous `Q` estimate and `Q_target` while in Deep Q-Learning, the error between `Q_target` and previous `Q` estimate is minimized.
+In classical RL, the new `Q` estimate is a weighted average of the previous `Q` estimate and `Q_target` while in Deep Q-Learning, the error between `Q_target` and the previous `Q` estimate is minimized.
 
 However, at the terminal state, bootstrapping is not done,
 
@@ -31,9 +31,9 @@ Q_{target}(o_t, a_t) = r_t
 
 This is where the distinction between termination and truncation becomes important. When an episode ends due to termination we don't bootstrap, when it ends due to truncation, we bootstrap.
 
-While using gym environments, the `done` signal (default for < v0.26) is frequently used to determine whether to bootstrap or not. However this is incorrect since it does not differentiate between termination and truncation.
+While using gymnasium environments, the `done` signal (default for < v0.26) is frequently used to determine whether to bootstrap or not. However, this is incorrect since it does not differentiate between termination and truncation.
 
-A simple example for value functions is shown below. This is an illustrative example and not part of any specific algorithm.
+A simple example of value functions is shown below. This is an illustrative example and not part of any specific algorithm.
 
 ```python
 # INCORRECT
@@ -44,7 +44,7 @@ This is incorrect in the case of episode ending due to a truncation, where boots
 
 ### Solution
 
-From v0.26 onwards, gym's `env.step` API returns both termination and truncation information explicitly. In previous version truncation information was supplied through the info key `TimeLimit.truncated`. The correct way to handle terminations and truncations now is, 
+From v0.26 onwards, Gymnasium's `env.step` API returns both termination and truncation information explicitly. In the previous version truncation information was supplied through the info key `TimeLimit.truncated`. The correct way to handle terminations and truncations now is, 
 
 ```python
 # terminated = done and 'TimeLimit.truncated' not in info   # This was needed in previous versions. 
