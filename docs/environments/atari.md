@@ -5,7 +5,7 @@ lastpage:
 
 # Atari
 
-A set of Atari 2600 environment simulated through Stella and the Arcade Learning Environment.
+A set of Atari 2600 environments simulated through Stella and the Arcade Learning Environment.
 
 ```{toctree}
 :hidden:
@@ -81,8 +81,8 @@ Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]]
 
 ## AutoROM (installing the ROMs)
 
-ALE-py doesn't include the atari roms (`pip install gymnasium[atari]`) which are necessary to make any of the atari environments.
-To install the atari rom, use `pip install gymnasium[accept-rom-license]` which will install AutoROM and download the roms, install them in the default location.
+ALE-py doesn't include the atari ROMs (`pip install gymnasium[atari]`) which are necessary to make any of the atari environments.
+To install the atari ROM, use `pip install gymnasium[accept-rom-license]` which will install AutoROM and download the ROMs, install them in the default location.
 In doing so, you agree to TODO
 
 It is possible to install the ROMs in an alternative location, [repo](https://github.com/Farama-Foundation/AutoROM) has more information.
@@ -132,7 +132,7 @@ find these manuals on [AtariAge](https://atariage.com/).
 
 ## Stochasticity
 It was pointed out in [[1]](#1) that Atari games are entirely deterministic. Thus, agents could achieve
-state of the art performance by simply memorizing an optimal sequence of actions while completely ignoring observations from the environment.
+state-of-the-art performance by simply memorizing an optimal sequence of actions while completely ignoring observations from the environment.
 To avoid this, ALE implements sticky actions: Instead of always simulating the action passed to the environment, there is a small
 probability that the previously executed action is used instead.
 
@@ -148,7 +148,7 @@ Atari environment. However, legal values for `mode` and `difficulty` depend on t
 
 - **mode**: `int`. Game mode, see [[2]](#2). Legal values depend on the environment and are listed in the table above.
 
-- **difficulty**: `int`. Difficulty of the game, see [[2]](#2). Legal values depend on the environment and are listed in
+- **difficulty**: `int`. The difficulty of the game, see [[2]](#2). Legal values depend on the environment and are listed in
 the table above. Together with `mode`, this determines the "flavor" of the game.
 
 - **obs_type**: `str`. This argument determines what observations are returned by the environment. Its values are:
@@ -206,7 +206,7 @@ are in the "ALE" namespace. The suffix "-ram" is still available. Thus, we get t
 ## Flavors
 Some games allow the user to set a difficulty level and a game mode. Different modes/difficulties may have different
 game dynamics and (if a reduced action space is used) different action spaces. We follow the convention of [[2]](#2) and
-refer to the combination of difficulty level and game mode as an flavor of a game. The following table shows
+refer to the combination of difficulty level and game mode as a flavor of a game. The following table shows
 the available modes and difficulty levels for different Atari games:
 
 | Environment      | Valid Modes                                     | Default Mode   |

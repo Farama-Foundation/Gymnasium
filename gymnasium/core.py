@@ -53,7 +53,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained with the space.
     - :attr:`reward_range` - A tuple corresponding to the minimum and maximum possible rewards for an agent over an episode.
       The default reward range is set to :math:`(-\infty,+\infty)`.
-    - :attr:`spec` - An environment spec that contains the information used to initialise the environment from `gym.make`
+    - :attr:`spec` - An environment spec that contains the information used to initialize the environment from `gymnasium.make`
     - :attr:`metadata` - The metadata of the environment, i.e. render modes, render fps
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
       `super().reset(seed=seed)` and when assessing `self.np_random`.
@@ -90,7 +90,7 @@ class Env(Generic[ObsType, ActType]):
                 which can be positive or negative. An example is reaching the goal state or moving into the lava from
                 the Sutton and Barton, Gridworld. If true, the user needs to call :meth:`reset`.
             truncated (bool): Whether the truncation condition outside the scope of the MDP is satisfied.
-                Typically, this is a timelimit, but could also be used to indicate agent physically going out of bounds.
+                Typically, this is a timelimit, but could also be used to indicate an agent physically going out of bounds.
                 Can be used to end the episode prematurely before a `terminal state` is reached.
                 If true, the user needs to call :meth:`reset`.
             info (dict): Contains auxiliary diagnostic information (helpful for debugging, learning, and logging).
@@ -164,7 +164,7 @@ class Env(Generic[ObsType, ActType]):
           A frame is a `np.ndarray` with shape `(x, y, 3)` representing RGB values for an x-by-y pixel image.
         - "ansi": Return a strings (str) or StringIO.StringIO containing a terminal-style text representation
           for each time step. The text can include newlines and ANSI escape sequences (e.g. for colors).
-        - "rgb_array_list" and "ansi_list": List based version of render modes are possible (except Human) through the 
+        - "rgb_array_list" and "ansi_list": List based version of render modes are possible (except Human) through the
           wrapper, :class:`RenderCollection` that is automatically applied during `gymnasium.make(..., render_mode="rgb_array_list")`.
           The frames collected are popped after :meth:`render` is called or :meth:`reset`.
 
@@ -244,14 +244,14 @@ class Wrapper(Env[ObsType, ActType]):
     In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along
     with (possibly optional) parameters to the wrapper's constructor.
 
-    >>> import gymnasium as gym
-    >>> from gymnasium.wrappers import RescaleAction
-    >>> base_env = gym.make("BipedalWalker-v3")
-    >>> base_env.action_space
-    Box([-1. -1. -1. -1.], [1. 1. 1. 1.], (4,), float32)
-    >>> wrapped_env = RescaleAction(base_env, min_action=0, max_action=1)
-    >>> wrapped_env.action_space
-    Box([0. 0. 0. 0.], [1. 1. 1. 1.], (4,), float32)
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import RescaleAction
+        >>> base_env = gym.make("BipedalWalker-v3")
+        >>> base_env.action_space
+        Box([-1. -1. -1. -1.], [1. 1. 1. 1.], (4,), float32)
+        >>> wrapped_env = RescaleAction(base_env, min_action=0, max_action=1)
+        >>> wrapped_env.action_space
+        Box([0. 0. 0. 0.], [1. 1. 1. 1.], (4,), float32)
 
     You can access the environment underneath the **first** wrapper by using the :attr:`env` attribute.
     As the :class:`Wrapper` class inherits from :class:`Env` then :attr:`env` can be another wrapper.
@@ -413,7 +413,7 @@ class ObservationWrapper(Wrapper):
     """Superclass of wrappers that can modify observations using :meth:`observation` for :meth:`reset` and :meth:`step`.
 
     If you would like to apply a function to only the observation before
-    passing it to learning code, you can simply inherit from :class:`ObservationWrapper` and overwrite the method
+    passing it to the learning code, you can simply inherit from :class:`ObservationWrapper` and overwrite the method
     :meth:`observation` to implement that transformation. The transformation defined in that method must be
     reflected by the :attr:`env` observation space. Otherwise, you need to specify the new observation space of the
     wrapper by setting :attr:`self.observation_space` in the :meth:`__init__` method of your wrapper.
@@ -424,7 +424,7 @@ class ObservationWrapper(Wrapper):
     ``observation["target_position"] - observation["agent_position"]``. For this, you could implement an
     observation wrapper like this::
 
-        class RelativePosition(gym.ObservationWrapper):
+        class RelativePosition(gymnasium.ObservationWrapper):
             def __init__(self, env):
                 super().__init__(env)
                 self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
@@ -512,7 +512,7 @@ class ActionWrapper(Wrapper):
     Let’s say you have an environment with action space of type :class:`gymnasium.spaces.Box`, but you would only like
     to use a finite subset of actions. Then, you might want to implement the following wrapper::
 
-        class DiscreteActions(gym.ActionWrapper):
+        class DiscreteActions(gymnasium.ActionWrapper):
             def __init__(self, env, disc_to_cont):
                 super().__init__(env)
                 self.disc_to_cont = disc_to_cont
@@ -522,7 +522,7 @@ class ActionWrapper(Wrapper):
                 return self.disc_to_cont[act]
 
         if __name__ == "__main__":
-            env = gym.make("LunarLanderContinuous-v2")
+            env = gymnasium.make("LunarLanderContinuous-v2")
             wrapped_env = DiscreteActions(env, [np.array([1,0]), np.array([-1,0]),
                                                 np.array([0,1]), np.array([0,-1])])
             print(wrapped_env.action_space)         #Discrete(4)
