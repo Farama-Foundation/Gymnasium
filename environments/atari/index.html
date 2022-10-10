@@ -332,7 +332,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../box2d/lunar_lander/">Lunar Lander</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../third_party_environments/">Third Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../third_party_environments/">Third-Party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -391,7 +391,7 @@
           
           <section id="atari">
 <h1>Atari<a class="headerlink" href="#atari" title="Permalink to this heading">#</a></h1>
-<p>A set of Atari 2600 environment simulated through Stella and the Arcade Learning Environment.</p>
+<p>A set of Atari 2600 environments simulated through Stella and the Arcade Learning Environment.</p>
 <div class="toctree-wrapper compound">
 </div>
 
@@ -516,8 +516,8 @@
 <p>Atari environments are simulated via the Arcade Learning Environment (ALE) <a class="reference internal" href="#id1"><span class="std std-ref">[1]</span></a>.</p>
 <section id="autorom-installing-the-roms">
 <h2>AutoROM (installing the ROMs)<a class="headerlink" href="#autorom-installing-the-roms" title="Permalink to this heading">#</a></h2>
-<p>ALE-py doesn’t include the atari roms (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[atari]</span></code>) which are necessary to make any of the atari environments.
-To install the atari rom, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[accept-rom-license]</span></code> which will install AutoROM and download the roms, install them in the default location.
+<p>ALE-py doesn’t include the atari ROMs (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[atari]</span></code>) which are necessary to make any of the atari environments.
+To install the atari ROM, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[accept-rom-license]</span></code> which will install AutoROM and download the ROMs, install them in the default location.
 In doing so, you agree to TODO</p>
 <p>It is possible to install the ROMs in an alternative location, <a class="reference external" href="https://github.com/Farama-Foundation/AutoROM">repo</a> has more information.</p>
 </section>
@@ -613,7 +613,7 @@ find these manuals on <a class="reference external" href="https://atariage.com/"
 <section id="stochasticity">
 <h2>Stochasticity<a class="headerlink" href="#stochasticity" title="Permalink to this heading">#</a></h2>
 <p>It was pointed out in <a class="reference internal" href="#id1"><span class="std std-ref">[1]</span></a> that Atari games are entirely deterministic. Thus, agents could achieve
-state of the art performance by simply memorizing an optimal sequence of actions while completely ignoring observations from the environment.
+state-of-the-art performance by simply memorizing an optimal sequence of actions while completely ignoring observations from the environment.
 To avoid this, ALE implements sticky actions: Instead of always simulating the action passed to the environment, there is a small
 probability that the previously executed action is used instead.</p>
 <p>On top of this, Gymnasium implements stochastic frame skipping: In each environment step, the action is repeated for a random
@@ -628,7 +628,7 @@ random between <code class="docutils literal notranslate"><span class="pre">fram
 Atari environment. However, legal values for <code class="docutils literal notranslate"><span class="pre">mode</span></code> and <code class="docutils literal notranslate"><span class="pre">difficulty</span></code> depend on the environment.</p>
 <ul class="simple">
 <li><p><strong>mode</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. Game mode, see <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Legal values depend on the environment and are listed in the table above.</p></li>
-<li><p><strong>difficulty</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. Difficulty of the game, see <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Legal values depend on the environment and are listed in
+<li><p><strong>difficulty</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. The difficulty of the game, see <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Legal values depend on the environment and are listed in
 the table above. Together with <code class="docutils literal notranslate"><span class="pre">mode</span></code>, this determines the “flavor” of the game.</p></li>
 <li><p><strong>obs_type</strong>: <code class="docutils literal notranslate"><span class="pre">str</span></code>. This argument determines what observations are returned by the environment. Its values are:</p>
 <ul>
@@ -775,7 +775,7 @@ are in the “ALE” namespace. The suffix “-ram” is still available. Thus, 
 <h2>Flavors<a class="headerlink" href="#flavors" title="Permalink to this heading">#</a></h2>
 <p>Some games allow the user to set a difficulty level and a game mode. Different modes/difficulties may have different
 game dynamics and (if a reduced action space is used) different action spaces. We follow the convention of <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a> and
-refer to the combination of difficulty level and game mode as an flavor of a game. The following table shows
+refer to the combination of difficulty level and game mode as a flavor of a game. The following table shows
 the available modes and difficulty levels for different Atari games:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">

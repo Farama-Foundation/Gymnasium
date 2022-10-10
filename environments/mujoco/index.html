@@ -332,7 +332,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../box2d/lunar_lander/">Lunar Lander</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../third_party_environments/">Third Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../third_party_environments/">Third-Party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -518,13 +518,13 @@
 </div>
 
     
-<p>MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for faciliatating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.</p>
+<p>MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for facilitating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.</p>
 <p>The unique dependencies for this set of environments can be installed via:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install gymnasium<span class="o">[</span>mujoco<span class="o">]</span>
 </pre></div>
 </div>
-<p>These environments also require that the MuJoCo engine be installed. As of October 2021 DeepMind has acquired MuJoCo and is open sourcing it in 2022, making it free for everyone. Instructions on installing the MuJoCo engine can be found at their <a class="reference external" href="https://mujoco.org">website</a> and <a class="reference external" href="https://github.com/deepmind/mujoco">GitHub repository</a>. Using MuJoCo with Gymnasium also requires that the framework <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> be installed, which can be found at the <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub repository</a> (this dependency in installed with the above command).</p>
-<p>There are ten Mujoco environments: Ant, HalfCheetah, Hopper, Humanoid, HumanoidStandup, IvertedDoublePendulum, InvertedPendulum, Reacher, Swimmer, and Walker. All of these environments are stochastic in terms of their initial state, with a Gaussian noise added to a fixed initial state in order to add stochasticity. The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: a position of a body part (’<em>mujoco-py.mjsim.qpos</em>’) or joint and its corresponding velocity (’<em>mujoco-py.mjsim.qvel</em>’). Often, some of the first positional elements are omitted from the state space since the reward is calculated based on their values, leaviing it up to the algorithm to infer those hidden values indirectly.</p>
+<p>These environments also require that the MuJoCo engine be installed. As of October 2021 DeepMind has acquired MuJoCo and is open-sourcing it in 2022, making it free for everyone. Instructions on installing the MuJoCo engine can be found on their <a class="reference external" href="https://mujoco.org">website</a>](https://mujoco.org) and <a class="reference external" href="https://github.com/deepmind/mujoco">GitHub repository</a>. Using MuJoCo with Gymnasium also requires that the framework <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> be installed, which can be found in the <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub</a> repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py) (this dependency is installed with the above command).</p>
+<p>There are ten Mujoco environments: Ant, HalfCheetah, Hopper, Humanoid, HumanoidStandup, IvertedDoublePendulum, InvertedPendulum, Reacher, Swimmer, and Walker. All of these environments are stochastic in terms of their initial state, with a Gaussian noise added to a fixed initial state in order to add stochasticity. The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: a position of a body part (’<em>mujoco-py.mjsim.qpos</em>’) or joint and its corresponding velocity (’<em>mujoco-py.mjsim.qvel</em>’). Often, some of the first positional elements are omitted from the state space since the reward is calculated based on their values, leaving it up to the algorithm to infer those hidden values indirectly.</p>
 <p>Among Gymnasium environments, this set of environments can be considered as more difficult ones to solve by a policy.</p>
 <p>Environments can be configured by changing the XML files or by tweaking the parameters of their classes.</p>
 </section>

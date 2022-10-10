@@ -332,7 +332,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-Party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
@@ -391,15 +391,15 @@
           
           <section id="handling-time-limits">
 <h1>Handling Time Limits<a class="headerlink" href="#handling-time-limits" title="Permalink to this heading">#</a></h1>
-<p>In using Gym environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The <code class="docutils literal notranslate"><span class="pre">done</span></code> signal received (in previous versions of gym &lt; 0.26) from <code class="docutils literal notranslate"><span class="pre">env.step</span></code> indicated whether an episode has ended. However, this signal did not distinguish between whether the episode ended due to <code class="docutils literal notranslate"><span class="pre">termination</span></code> or <code class="docutils literal notranslate"><span class="pre">truncation</span></code>.</p>
+<p>In using Gymnasium environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The <code class="docutils literal notranslate"><span class="pre">done</span></code> signal received (in previous versions of gymnasium &lt; 0.26) from <code class="docutils literal notranslate"><span class="pre">env.step</span></code> indicated whether an episode has ended. However, this signal did not distinguish whether the episode ended due to <code class="docutils literal notranslate"><span class="pre">termination</span></code> or <code class="docutils literal notranslate"><span class="pre">truncation</span></code>.</p>
 <section id="termination">
 <h2>Termination<a class="headerlink" href="#termination" title="Permalink to this heading">#</a></h2>
-<p>Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment definition. Examples are - task success, task failure, robot falling down etc. Notably this also includes episode ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov property, a representation of the remaining time must be present in the agent’s observation in finite-horizon environments. <a class="reference external" href="https://arxiv.org/abs/1712.00378">(Reference)</a></p>
+<p>Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment definition. Examples are - task success, task failure, robot falling down etc. Notably, this also includes episodes ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov property, a representation of the remaining time must be present in the agent’s observation in finite-horizon environments. <a class="reference external" href="https://arxiv.org/abs/1712.00378">(Reference)</a></p>
 </section>
 <section id="truncation">
 <h2>Truncation<a class="headerlink" href="#truncation" title="Permalink to this heading">#</a></h2>
-<p>Truncation refers to the episode ending after an externally defined condition (that is outside the scope of the Markov Decision Process). This could be a time-limit, robot going out of bounds etc.</p>
-<p>An infinite-horizon environment is an obvious example where this is needed. We cannot wait forever for the episode to complete, so we set a practical time-limit after which we forcibly halt the episode. The last state in this case is not a terminal state since it has a non-zero transition probability of moving to another state as per the Markov Decision Process that defines the RL problem. This is also different from time-limits in finite horizon environments as the agent in this case has no idea about this time-limit.</p>
+<p>Truncation refers to the episode ending after an externally defined condition (that is outside the scope of the Markov Decision Process). This could be a time-limit, a robot going out of bounds etc.</p>
+<p>An infinite-horizon environment is an obvious example of where this is needed. We cannot wait forever for the episode to complete, so we set a practical time-limit after which we forcibly halt the episode. The last state in this case is not a terminal state since it has a non-zero transition probability of moving to another state as per the Markov Decision Process that defines the RL problem. This is also different from time-limits in finite horizon environments as the agent in this case has no idea about this time-limit.</p>
 </section>
 <section id="importance-in-learning-code">
 <h2>Importance in learning code<a class="headerlink" href="#importance-in-learning-code" title="Permalink to this heading">#</a></h2>
@@ -408,14 +408,14 @@
 <div class="highlight-math notranslate"><div class="highlight"><pre><span></span>Q_{target}(o_t, a_t) = r_t + \gamma . \max_a(Q(o_{t+1}, a_{t+1}))
 </pre></div>
 </div>
-<p>In classical RL, the new <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is a weighted average of previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate and <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> while in Deep Q-Learning, the error between <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> and previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is minimized.</p>
+<p>In classical RL, the new <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is a weighted average of the previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate and <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> while in Deep Q-Learning, the error between <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> and the previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is minimized.</p>
 <p>However, at the terminal state, bootstrapping is not done,</p>
 <div class="highlight-math notranslate"><div class="highlight"><pre><span></span>Q_{target}(o_t, a_t) = r_t
 </pre></div>
 </div>
 <p>This is where the distinction between termination and truncation becomes important. When an episode ends due to termination we don’t bootstrap, when it ends due to truncation, we bootstrap.</p>
-<p>While using gym environments, the <code class="docutils literal notranslate"><span class="pre">done</span></code> signal (default for &lt; v0.26) is frequently used to determine whether to bootstrap or not. However this is incorrect since it does not differentiate between termination and truncation.</p>
-<p>A simple example for value functions is shown below. This is an illustrative example and not part of any specific algorithm.</p>
+<p>While using gymnasium environments, the <code class="docutils literal notranslate"><span class="pre">done</span></code> signal (default for &lt; v0.26) is frequently used to determine whether to bootstrap or not. However, this is incorrect since it does not differentiate between termination and truncation.</p>
+<p>A simple example of value functions is shown below. This is an illustrative example and not part of any specific algorithm.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># INCORRECT</span>
 <span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">done</span><span class="p">)</span><span class="o">*</span> <span class="n">vf_next_state</span>
 </pre></div>
@@ -424,7 +424,7 @@
 </section>
 <section id="solution">
 <h2>Solution<a class="headerlink" href="#solution" title="Permalink to this heading">#</a></h2>
-<p>From v0.26 onwards, gym’s <code class="docutils literal notranslate"><span class="pre">env.step</span></code> API returns both termination and truncation information explicitly. In previous version truncation information was supplied through the info key <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code>. The correct way to handle terminations and truncations now is,</p>
+<p>From v0.26 onwards, Gymnasium’s <code class="docutils literal notranslate"><span class="pre">env.step</span></code> API returns both termination and truncation information explicitly. In the previous version truncation information was supplied through the info key <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code>. The correct way to handle terminations and truncations now is,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># terminated = done and &#39;TimeLimit.truncated&#39; not in info   # This was needed in previous versions. </span>
 
 <span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">terminated</span><span class="p">)</span><span class="o">*</span><span class="n">vf_next_state</span>
