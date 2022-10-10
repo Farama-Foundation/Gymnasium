@@ -24,7 +24,7 @@ Gym interface with Minecraft game focused on a specific sparse reward challenge
 
 ### [ SlimeVolleyGym: A simple environment for single and multi-agent reinforcement learning](https://github.com/hardmaru/slimevolleygym)
 
-A simple environment for benchmarking single and multi-agent reinforcement learning algorithms on a clone of Slime Volleyball game. The only dependencies are Gymnasium and NumPy. Both state and pixel observation environments are available. The motivation of this environment is to easily enable trained agents to play against each other, and also facilitate the training of agents directly in a multi-agent setting, thus adding an extra dimension for evaluating an agent's performance.
+A simple environment for benchmarking single and multi-agent reinforcement learning algorithms on a clone of Slime Volleyball game. The only dependencies are gym and NumPy. Both state and pixel observation environments are available. The motivation of this environment is to easily enable trained agents to play against each other, and also facilitate the training of agents directly in a multi-agent setting, thus adding an extra dimension for evaluating an agent's performance.
 
 ### [ stable-retro](https://github.com/MatPoliquin/stable-retro)
 
