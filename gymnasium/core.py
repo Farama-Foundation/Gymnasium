@@ -353,7 +353,7 @@ class ObservationWrapper(Wrapper):
     ``observation["target_position"] - observation["agent_position"]``. For this, you could implement an
     observation wrapper like this::
 
-        class RelativePosition(gymn.ObservationWrapper):
+        class RelativePosition(gym.ObservationWrapper):
             def __init__(self, env):
                 super().__init__(env)
                 self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
