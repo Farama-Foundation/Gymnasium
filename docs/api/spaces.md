@@ -12,29 +12,29 @@ spaces/utils
 .. autoclass:: gymnasium.spaces.Space
 ```
 
-## General Functions
+## Attributes
+
+```{eval-rst}
+.. autoproperty:: gymnasium.spaces.space.Space.shape
+.. property:: gymnasium.spaces.space.Space.dtype
+
+    Return the data type of this space.
+```
+
+## Methods
 
 Each space implements the following functions:
 
 ```{eval-rst}
-.. autofunction:: gymnasium.spaces.Space.sample
-
-.. autofunction:: gymnasium.spaces.Space.contains
-
-.. autoproperty:: gymnasium.spaces.Space.shape
-
-.. property:: gymnasium.spaces.Space.dtype
-
-    Return the data type of this space.
-
-.. autofunction:: gymnasium.spaces.Space.seed
-
-.. autofunction:: gymnasium.spaces.Space.to_jsonable
-
-.. autofunction:: gymnasium.spaces.Space.from_jsonable
+.. autofunction:: gymnasium.spaces.space.Space.sample
+.. autofunction:: gymnasium.spaces.space.Space.contains
+.. autofunction:: gymnasium.spaces.space.Space.seed
+.. autofunction:: gymnasium.spaces.space.Space.to_jsonable
+.. autofunction:: gymnasium.spaces.space.Space.from_jsonable
 ``` 
 
 ## Fundamental Spaces
+Gymnasium has a number of fundamental spaces that are used as building boxes for more complex spaces.
 
 ```{eval-rst}
 .. currentmodule:: gymnasium.spaces
@@ -47,6 +47,7 @@ Each space implements the following functions:
 ```
 
 ## Composite Spaces
+Often environment spaces require joining fundamental spaces together for vectorised environments, separate agents or readability of the space.
 
 ```{eval-rst}
 * :py:class:`Dict` - Supports a dictionary of keys and subspaces, used for a fixed number of unordered spaces

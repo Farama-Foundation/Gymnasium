@@ -4,12 +4,21 @@ title: Vector
 
 # Vector
 
+## Gymnasium.vector.VectorEnv
+
 ```{eval-rst}
-.. autofunction:: gymnasium.vector.make
-```  
+.. autoclass:: gymnasium.vector.VectorEnv
+```
 
+### Methods
 
-## VectorEnv
+```{eval-rst}
+.. automethod:: gymnasium.vector.VectorEnv.reset
+
+.. automethod:: gymnasium.vector.VectorEnv.step
+```
+
+### Attributes
 
 ```{eval-rst}
 .. attribute:: gymnasium.vector.VectorEnv.action_space
@@ -43,48 +52,10 @@ title: Vector
         >>> envs = gymnasium.vector.make("CartPole-v1", num_envs=3)
         >>> envs.single_action_space
         Box([-4.8 ...], [4.8 ...], (4,), float32)
-``` 
-
-
-
-### Reset
-
-```{eval-rst}
-.. automethod:: gymnasium.vector.VectorEnv.reset
-``` 
-
-```python
->>> import gymnasium as gym
->>> envs = gym.vector.make("CartPole-v1", num_envs=3)
->>> envs.reset()
-(array([[-0.02240574, -0.03439831, -0.03904812,  0.02810693],
-       [ 0.01586068,  0.01929009,  0.02394426,  0.04016077],
-       [-0.01314174,  0.03893502, -0.02400815,  0.0038326 ]],
-      dtype=float32), {})
 ```
-### Step
+
+## Making Vector Environments
 
 ```{eval-rst}
-.. automethod:: gymnasium.vector.VectorEnv.step
-``` 
-
-```python
->>> envs = gym.vector.make("CartPole-v1", num_envs=3)
->>> envs.reset()
->>> actions = np.array([1, 0, 1])
->>> observations, rewards, termination, truncation, infos = envs.step(actions)
-
->>> observations
-array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
-        [ 0.00788269, -0.17490888,  0.03393489,  0.31735462],
-        [ 0.04918966,  0.19421194,  0.02938497, -0.29495203]],
-        dtype=float32)
->>> rewards
-array([1., 1., 1.])
->>> termination
-array([False, False, False])
->>> termination
-array([False, False, False])
->>> infos
-{}
+.. autofunction:: gymnasium.vector.make
 ```

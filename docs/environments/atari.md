@@ -79,7 +79,7 @@ atari/zaxxon
 
 Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1).
 
-### AutoROM (installing the ROMs)
+## AutoROM (installing the ROMs)
 
 ALE-py doesn't include the atari roms (`pip install gymnasium[atari]`) which are necessary to make any of the atari environments.
 To install the atari rom, use `pip install gymnasium[accept-rom-license]` which will install AutoROM and download the roms, install them in the default location.
@@ -87,7 +87,7 @@ In doing so, you agree to TODO
 
 It is possible to install the ROMs in an alternative location, [repo](https://github.com/Farama-Foundation/AutoROM) has more information.
 
-### Action Space
+## Action Space
 
 The action space is a subset of the following discrete set of legal actions:
 
@@ -120,17 +120,17 @@ The reduced action space of an Atari environment may depend on the "flavor" of t
 the arguments `difficulty` and `mode` when constructing the environment. This documentation only provides details on the
 action spaces of default flavor choices.
 
-### Observation Space
+## Observation Space
 The observation issued by an Atari environment may be:
 - the RGB image that is displayed to a human player,
 - a grayscale version of that image or
 - the state of the 128 Bytes of RAM of the console.
 
-### Rewards
+## Rewards
 The exact reward dynamics depend on the environment and are usually documented in the game's manual. You can
 find these manuals on [AtariAge](https://atariage.com/).
 
-### Stochasticity
+## Stochasticity
 It was pointed out in [[1]](#1) that Atari games are entirely deterministic. Thus, agents could achieve
 state of the art performance by simply memorizing an optimal sequence of actions while completely ignoring observations from the environment.
 To avoid this, ALE implements sticky actions: Instead of always simulating the action passed to the environment, there is a small
@@ -142,11 +142,9 @@ a tuple of two positive integers. If `frameskip` is an integer, frame skipping i
 repeated `frameskip` many times. Otherwise, if `frameskip` is a tuple, the number of skipped frames is chosen uniformly at
 random between `frameskip[0]` (inclusive) and `frameskip[1]` (exclusive) in each environment step.
 
-
-### Common Arguments
+## Common Arguments
 When initializing Atari environments via `gymnasium.make`, you may pass some additional arguments. These work for any
 Atari environment. However, legal values for `mode` and `difficulty` depend on the environment.
-
 
 - **mode**: `int`. Game mode, see [[2]](#2). Legal values depend on the environment and are listed in the table above.
 
@@ -171,8 +169,7 @@ action space will be reduced to a subset.
 > It is highly recommended to specify `render_mode` during construction instead of calling `env.render()`.
 > This will guarantee proper scaling, audio support, and proper framerates
 
-
-### Version History and Naming Schemes
+## Version History and Naming Schemes
 All Atari games are available in three versions. They differ in the default settings of the arguments above.
 The differences are listed in the following table:
 
@@ -206,7 +203,7 @@ are in the "ALE" namespace. The suffix "-ram" is still available. Thus, we get t
 | ALE/Amidar-v5     | `"rgb"`     | `5`          | `0.25`                       | `True`               |
 | ALE/Amidar-ram-v5 | `"ram"`     | `5`          | `0.25`                       | `True`               |
 
-### Flavors
+## Flavors
 Some games allow the user to set a difficulty level and a game mode. Different modes/difficulties may have different
 game dynamics and (if a reduced action space is used) different action spaces. We follow the convention of [[2]](#2) and
 refer to the combination of difficulty level and game mode as an flavor of a game. The following table shows
@@ -279,7 +276,7 @@ the available modes and difficulty levels for different Atari games:
 
 > Each game also has a valid difficulty for the opposing AI, which has a different range depending on the game. These values can have a range of 0 - n, where n can be found at [the ALE documentation](https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/docs/games.md)
 
-### References
+## References
 
 (#1)=
 <a id="1">[1]</a>
