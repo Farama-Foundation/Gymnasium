@@ -312,8 +312,6 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
 # fmt: off
 @overload
 def make(id: str, **kwargs) -> Env: ...
-
-
 @overload
 def make(id: EnvSpec, **kwargs) -> Env: ...
 
@@ -322,21 +320,12 @@ def make(id: EnvSpec, **kwargs) -> Env: ...
 # ----------------------------------------
 @overload
 def make(id: Literal["CartPole-v0", "CartPole-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
-
-
 @overload
 def make(id: Literal["MountainCar-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
-
-
 @overload
-def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[
-    np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
-
-
+def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
 @overload
 def make(id: Literal["Pendulum-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
-
-
 @overload
 def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
 
@@ -344,15 +333,9 @@ def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarra
 # Box2d
 # ----------------------------------------
 @overload
-def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[
-    np.ndarray, Union[np.ndarray, int]]: ...
-
-
+def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
 @overload
-def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[
-    np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
-
-
+def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
 @overload
 def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
 
@@ -361,16 +344,10 @@ def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndar
 # ----------------------------------------
 @overload
 def make(id: Literal["Blackjack-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
-
-
 @overload
 def make(id: Literal["FrozenLake-v1", "FrozenLake8x8-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
-
-
 @overload
 def make(id: Literal["CliffWalking-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
-
-
 @overload
 def make(id: Literal["Taxi-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
 
@@ -391,8 +368,6 @@ def make(id: Literal[
     "HumanoidStandup-v2", "HumanoidStandup-v4",
     "Humanoid-v2", "Humanoid-v3", "Humanoid-v4",
 ], **kwargs) -> Env[np.ndarray, np.ndarray]: ...
-
-
 # fmt: on
 
 
@@ -409,8 +384,8 @@ def _check_spec_register(spec: EnvSpec):
             spec_
             for spec_ in registry.values()
             if spec_.namespace == spec.namespace
-               and spec_.name == spec.name
-               and spec_.version is not None
+            and spec_.name == spec.name
+            and spec_.version is not None
         ),
         key=lambda spec_: int(spec_.version),  # type: ignore
         default=None,
@@ -421,8 +396,8 @@ def _check_spec_register(spec: EnvSpec):
             spec_
             for spec_ in registry.values()
             if spec_.namespace == spec.namespace
-               and spec_.name == spec.name
-               and spec_.version is None
+            and spec_.name == spec.name
+            and spec_.version is None
         ),
         None,
     )
@@ -457,16 +432,16 @@ def namespace(ns: str):
 
 
 def register(
-        id: str,
-        entry_point: Union[Callable, str],
-        reward_threshold: Optional[float] = None,
-        nondeterministic: bool = False,
-        max_episode_steps: Optional[int] = None,
-        order_enforce: bool = True,
-        autoreset: bool = False,
-        disable_env_checker: bool = False,
-        apply_api_compatibility: bool = False,
-        **kwargs,
+    id: str,
+    entry_point: Union[Callable, str],
+    reward_threshold: Optional[float] = None,
+    nondeterministic: bool = False,
+    max_episode_steps: Optional[int] = None,
+    order_enforce: bool = True,
+    autoreset: bool = False,
+    disable_env_checker: bool = False,
+    apply_api_compatibility: bool = False,
+    **kwargs,
 ):
     """Register an environment with gymnasium.
 
@@ -492,8 +467,8 @@ def register(
 
     if current_namespace is not None:
         if (
-                kwargs.get("namespace") is not None
-                and kwargs.get("namespace") != current_namespace
+            kwargs.get("namespace") is not None
+            and kwargs.get("namespace") != current_namespace
         ):
             logger.warn(
                 f"Custom namespace `{kwargs.get('namespace')}` is being overridden by namespace `{current_namespace}`. "
@@ -525,12 +500,12 @@ def register(
 
 
 def make(
-        id: Union[str, EnvSpec],
-        max_episode_steps: Optional[int] = None,
-        autoreset: bool = False,
-        apply_api_compatibility: Optional[bool] = None,
-        disable_env_checker: Optional[bool] = None,
-        **kwargs,
+    id: Union[str, EnvSpec],
+    max_episode_steps: Optional[int] = None,
+    autoreset: bool = False,
+    apply_api_compatibility: Optional[bool] = None,
+    disable_env_checker: Optional[bool] = None,
+    **kwargs,
 ) -> Env:
     """Create an environment according to the given ID.
 
@@ -568,15 +543,14 @@ def make(
                     f"{e}. Environment registration via importing a module failed. "
                     f"Check whether '{module}' contains env registration and can be imported."
                 )
-
         spec_ = registry.get(id)
 
         ns, name, version = parse_env_id(id)
         latest_version = find_highest_version(ns, name)
         if (
-                version is not None
-                and latest_version is not None
-                and latest_version > version
+            version is not None
+            and latest_version is not None
+            and latest_version > version
         ):
             logger.warn(
                 f"The environment {id} is out of date. You should consider "
@@ -598,15 +572,18 @@ def make(
                 # env not found in Gymnasium, try to search in gym
                 try:
                     import gym  # noqa
-                    if gym.__version__ >= '0.26':
-                        logger.warn(f"{str(e)}Found gym installed, searching for gym environment...")
+
+                    if gym.__version__ >= "0.26":  # type: ignore
+                        logger.warn(
+                            f"{str(e)}Found gym installed, searching for gym environment..."
+                        )
                         return gym.make(
                             id=id,
                             max_episode_steps=max_episode_steps,
                             autoreset=autoreset,
                             apply_api_compatibility=apply_api_compatibility,
                             disable_env_checker=disable_env_checker,
-                            **kwargs
+                            **kwargs,
                         )
                     else:
                         raise e
@@ -645,9 +622,9 @@ def make(
 
             # Apply the `HumanRendering` wrapper, if the mode=="human" but "human" not in render_modes
             if (
-                    mode == "human"
-                    and "human" not in render_modes
-                    and ("rgb_array" in render_modes or "rgb_array_list" in render_modes)
+                mode == "human"
+                and "human" not in render_modes
+                and ("rgb_array" in render_modes or "rgb_array_list" in render_modes)
             ):
                 logger.warn(
                     "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
@@ -659,9 +636,9 @@ def make(
                 else:
                     _kwargs["render_mode"] = "rgb_array_list"
             elif (
-                    mode not in render_modes
-                    and mode.endswith("_list")
-                    and mode[: -len("_list")] in render_modes
+                mode not in render_modes
+                and mode.endswith("_list")
+                and mode[: -len("_list")] in render_modes
             ):
                 _kwargs["render_mode"] = mode[: -len("_list")]
                 apply_render_collection = True
@@ -675,7 +652,7 @@ def make(
             )
 
     if apply_api_compatibility is True or (
-            apply_api_compatibility is None and spec_.apply_api_compatibility is True
+        apply_api_compatibility is None and spec_.apply_api_compatibility is True
     ):
         # If we use the compatibility layer, we treat the render mode explicitly and don't pass it to the env creator
         render_mode = _kwargs.pop("render_mode", None)
@@ -686,8 +663,8 @@ def make(
         env = env_creator(**_kwargs)
     except TypeError as e:
         if (
-                str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
-                and apply_human_rendering
+            str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
+            and apply_human_rendering
         ):
             raise error.Error(
                 f"You passed render_mode='human' although {id} doesn't implement human-rendering natively. "
@@ -704,13 +681,13 @@ def make(
 
     # Add step API wrapper
     if apply_api_compatibility is True or (
-            apply_api_compatibility is None and spec_.apply_api_compatibility is True
+        apply_api_compatibility is None and spec_.apply_api_compatibility is True
     ):
         env = EnvCompatibility(env, render_mode)
 
     # Run the environment checker as the lowest level wrapper
     if disable_env_checker is False or (
-            disable_env_checker is None and spec_.disable_env_checker is False
+        disable_env_checker is None and spec_.disable_env_checker is False
     ):
         env = PassiveEnvChecker(env)
 
