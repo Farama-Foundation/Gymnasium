@@ -149,7 +149,7 @@ to a deterministic state. It is recommended to use the random number generator `
 base class, `gymnasium.Env`. If you only use this RNG, you do not need to worry much about seeding, *but you need to remember to
 call `super().reset(seed=seed)`* to  make sure that `gymnasium.Env` correctly seeds the RNG. 
 Once this is done, we can randomly set the state of our environment. 
-In our case, we randomly choose the agent's location and the randomly sample target positions, until it does not coincide with the agent's position.
+In our case, we randomly choose the agent's location and the random sample target positions, until it does not coincide with the agent's position.
 
 The `reset` method should return a tuple of the initial observation
 and some auxiliary information. We can use the methods `_get_obs`

@@ -10,7 +10,8 @@ title: Vectorising your environments
 Gymnasium provides two types of vectorized environments:
 
 - `gymnasium.vector.SyncVectorEnv`, where the different copies of the environment are executed sequentially.
-- `gymnasium.vector.AsyncVectorEnv, where the different copies of the environment are executed in parallel using [multiprocessing](https://docs.python.org/3/library/multiprocessing.html). This creates one process per copy.
+- `gymnasium.vector.AsyncVectorEnv`, where the different copies of the environment are executed in parallel using [multiprocessing](https://docs.python.org/3/library/multiprocessing.html). This creates one process per copy.
+
 
 
 Similar to `gymnasium.make`, you can run a vectorized version of a registered environment using the `gymnasium.vector.make` function. This runs multiple copies of the same environment (in parallel, by default).
@@ -39,7 +40,7 @@ array([False, False, False])
 {}
 ```
 
-The function `gymnasium.vector.make` is meant to be used only in basic cases (e.g. running multiple copies of the same registered environment). For any other use cases, please use either the `SyncVectorEnv` for sequential execution or `AsyncVectorEnv`` for parallel execution. These use cases may include:
+The function `gymnasium.vector.make` is meant to be used only in basic cases (e.g. running multiple copies of the same registered environment). For any other use cases, please use either the `SyncVectorEnv` for sequential execution or `AsyncVectorEnv` for parallel execution. These use cases may include:
 
 - Running multiple instances of the same environment with different parameters (e.g. ``"Pendulum-v0"`` with different values for the gravity).
 - Running multiple instances of an unregistered environment (e.g. a custom environment).

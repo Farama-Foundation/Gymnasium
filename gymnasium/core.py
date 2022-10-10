@@ -171,11 +171,7 @@ class Env(Generic[ObsType, ActType]):
         raise NotImplementedError
 
     def close(self):
-        """Override close in your subclass to perform any necessary cleanup.
-
-        Environments will automatically :meth:`close()` themselves when
-        garbage collected or when the program exits.
-        """
+        """Override close in your subclass to perform any necessary cleanup."""
         pass
 
     @property
@@ -397,7 +393,7 @@ class RewardWrapper(Wrapper):
     because it is intrinsic), we want to clip the reward to a range to gain some numerical stability.
     To do that, we could, for instance, implement the following wrapper::
 
-        class ClipReward(gymnasium.RewardWrapper):
+        class ClipReward(gym.RewardWrapper):
             def __init__(self, env, min_reward, max_reward):
                 super().__init__(env)
                 self.min_reward = min_reward
