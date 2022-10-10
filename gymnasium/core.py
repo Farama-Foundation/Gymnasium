@@ -353,7 +353,7 @@ class ObservationWrapper(Wrapper):
     ``observation["target_position"] - observation["agent_position"]``. For this, you could implement an
     observation wrapper like this::
 
-        class RelativePosition(gym.ObservationWrapper):
+        class RelativePosition(gymnasium.ObservationWrapper):
             def __init__(self, env):
                 super().__init__(env)
                 self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
@@ -427,7 +427,7 @@ class ActionWrapper(Wrapper):
     Let’s say you have an environment with action space of type :class:`gymnasium.spaces.Box`, but you would only like
     to use a finite subset of actions. Then, you might want to implement the following wrapper::
 
-        class DiscreteActions(gym.ActionWrapper):
+        class DiscreteActions(gymnasium.ActionWrapper):
             def __init__(self, env, disc_to_cont):
                 super().__init__(env)
                 self.disc_to_cont = disc_to_cont
@@ -437,7 +437,7 @@ class ActionWrapper(Wrapper):
                 return self.disc_to_cont[act]
 
         if __name__ == "__main__":
-            env = gym.make("LunarLanderContinuous-v2")
+            env = gymnasium.make("LunarLanderContinuous-v2")
             wrapped_env = DiscreteActions(env, [np.array([1,0]), np.array([-1,0]),
                                                 np.array([0,1]), np.array([0,-1])])
             print(wrapped_env.action_space)         #Discrete(4)
