@@ -259,7 +259,9 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return cls.__name__
 
     @property
-    def action_space(self) -> Union[spaces.Space[ActType], spaces.Space[WrapperActType]]:
+    def action_space(
+        self,
+    ) -> Union[spaces.Space[ActType], spaces.Space[WrapperActType]]:
         """Returns the action space of the environment."""
         if self._action_space is None:
             return self.env.action_space
@@ -270,7 +272,9 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         self._action_space = space
 
     @property
-    def observation_space(self) -> Union[spaces.Space[ObsType], spaces.Space[WrapperObsType]]:
+    def observation_space(
+        self,
+    ) -> Union[spaces.Space[ObsType], spaces.Space[WrapperObsType]]:
         """Returns the observation space of the environment."""
         if self._observation_space is None:
             return self.env.observation_space
@@ -320,7 +324,8 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
     def _np_random(self):
         """This code will never be run due to __getattr__ being called prior this.
 
-        It seems that @property overwrites the variable (`_np_random`) meaning that __getattr__ gets called with the missing variable."""
+        It seems that @property overwrites the variable (`_np_random`) meaning that __getattr__ gets called with the missing variable.
+        """
         raise AttributeError(
             "Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."
         )

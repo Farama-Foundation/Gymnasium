@@ -6,14 +6,19 @@ import numpy as np
 import pytest
 
 from gymnasium import Env, ObservationWrapper, RewardWrapper, Wrapper
-from gymnasium.core import ActionWrapper, ActType, ObsType, WrapperObsType, WrapperActType
+from gymnasium.core import (
+    ActionWrapper,
+    ActType,
+    ObsType,
+    WrapperActType,
+    WrapperObsType,
+)
 from gymnasium.spaces import Box
 from gymnasium.utils import seeding
 from tests.testing_env import GenericTestEnv
 
 
 class ExampleEnv(Env):
-
     def __init__(self):
         self.observation_space = Box(0, 1)
         self.action_space = Box(0, 1)
@@ -43,17 +48,19 @@ def test_gymnasium_env():
 
 
 class ExampleWrapper(Wrapper):
-
     def __init__(self, env: Env[ObsType, ActType]):
         super().__init__(env)
 
         self.new_reward = 3
 
-    def reset(self, *, seed: Optional[int] = None, options: Optional[Dict[str, Any]] = None) -> Tuple[
-        WrapperObsType, Dict[str, Any]]:
+    def reset(
+        self, *, seed: Optional[int] = None, options: Optional[Dict[str, Any]] = None
+    ) -> Tuple[WrapperObsType, Dict[str, Any]]:
         return super().reset(seed=seed, options=options)
 
-    def step(self, action: WrapperActType) -> Tuple[WrapperObsType, float, bool, bool, Dict[str, Any]]:
+    def step(
+        self, action: WrapperActType
+    ) -> Tuple[WrapperObsType, float, bool, bool, Dict[str, Any]]:
         obs, reward, termination, truncation, info = self.env.step(action)
         return obs, self.new_reward, termination, truncation, info
 
@@ -88,9 +95,16 @@ def test_gymnasium_wrapper():
     assert env.action_space != wrapper_env.action_space
 
     wrapper_env.np_random, _ = seeding.np_random()
-    assert env._np_random is env.np_random is wrapper_env.np_random
+    assert (
+        env._np_random is env.np_random is wrapper_env.np_random
+    )  # ignore: reportPrivateUsage
     assert 0 <= wrapper_env.np_random.uniform() <= 1
-    with pytest.raises(AttributeError, match=re.escape("Can't access `_np_random` of a wrapper, use `self.unwrapped._np_random` or `self.np_random`.")):
+    with pytest.raises(
+        AttributeError,
+        match=re.escape(
+            "Can't access `_np_random` of a wrapper, use `self.unwrapped._np_random` or `self.np_random`."
+        ),
+    ):
         print(wrapper_env.access_hidden_np_random())
 
 
