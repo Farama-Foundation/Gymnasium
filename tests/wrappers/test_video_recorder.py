@@ -7,18 +7,26 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.wrappers.monitoring.video_recorder import VideoRecorder
-from tests.generic_test_env import GenericTestEnv
 
 
-class BrokenRecordableEnv(GenericTestEnv):
+class BrokenRecordableEnv(gym.Env):
     metadata = {"render_modes": ["rgb_array_list"]}
 
     def __init__(self, render_mode="rgb_array_list"):
-        super().__init__(render_mode=render_mode)
+        self.render_mode = render_mode
+
+    def render(self):
+        pass
 
 
-class UnrecordableEnv(GenericTestEnv):
+class UnrecordableEnv(gym.Env):
     metadata = {"render_modes": [None]}
+
+    def __init__(self, render_mode=None):
+        self.render_mode = render_mode
+
+    def render(self):
+        pass
 
 
 def test_record_simple():
@@ -74,7 +82,7 @@ def test_record_unrecordable_method():
     with pytest.warns(
         UserWarning,
         match=re.escape(
-            "\x1b[33mWARN: Disabling video recorder because environment <UnrecordableEnv<TestingEnv-v0>> was not initialized with any compatible video mode between `rgb_array` and `rgb_array_list`\x1b[0m"
+            "\x1b[33mWARN: Disabling video recorder because environment <UnrecordableEnv instance> was not initialized with any compatible video mode between `rgb_array` and `rgb_array_list`\x1b[0m"
         ),
     ):
         env = UnrecordableEnv()

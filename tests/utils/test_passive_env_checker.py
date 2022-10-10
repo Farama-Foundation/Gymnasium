@@ -15,7 +15,7 @@ from gymnasium.utils.passive_env_checker import (
     env_reset_passive_checker,
     env_step_passive_checker,
 )
-from tests.generic_test_env import GenericTestEnv
+from tests.testing_env import GenericTestEnv
 
 
 def _modify_space(space: spaces.Space, attribute: str, value):

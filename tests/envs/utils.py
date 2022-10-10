@@ -19,8 +19,6 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
             return env_spec.make(disable_env_checker=True).unwrapped
         except (ImportError, gym.error.DependencyNotInstalled) as e:
             logger.warn(f"Not testing {env_spec.id} due to error: {e}")
-        except Exception as e:
-            logger.warn(f"Unexpected exception occurred: {e}")
     return None
 
 

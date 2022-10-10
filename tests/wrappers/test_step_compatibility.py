@@ -1,13 +1,35 @@
-from functools import partial
-
 import pytest
 
 import gymnasium as gym
+from gymnasium.spaces import Discrete
 from gymnasium.wrappers import StepAPICompatibility
-from tests.generic_test_env import GenericTestEnv, old_step_fn
 
-OldStepEnv = partial(GenericTestEnv, step_fn=old_step_fn)
-NewStepEnv = GenericTestEnv
+
+class OldStepEnv(gym.Env):
+    def __init__(self):
+        self.action_space = Discrete(2)
+        self.observation_space = Discrete(2)
+
+    def step(self, action):
+        obs = self.observation_space.sample()
+        rew = 0
+        done = False
+        info = {}
+        return obs, rew, done, info
+
+
+class NewStepEnv(gym.Env):
+    def __init__(self):
+        self.action_space = Discrete(2)
+        self.observation_space = Discrete(2)
+
+    def step(self, action):
+        obs = self.observation_space.sample()
+        rew = 0
+        terminated = False
+        truncated = False
+        info = {}
+        return obs, rew, terminated, truncated, info
 
 
 @pytest.mark.parametrize("env", [OldStepEnv, NewStepEnv])

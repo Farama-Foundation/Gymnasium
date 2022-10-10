@@ -8,7 +8,7 @@ import gymnasium as gym
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_initialised_envs
-from tests.generic_test_env import GenericTestEnv
+from tests.testing_env import GenericTestEnv
 
 
 @pytest.mark.parametrize(

@@ -19,7 +19,7 @@ from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_env_specs
 from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv
-from tests.generic_test_env import GenericTestEnv, old_step_fn
+from tests.testing_env import GenericTestEnv, old_step_fn
 from tests.wrappers.utils import has_wrapper
 
 gym.register(
