@@ -38,7 +38,7 @@ alongside the observation for this timestep. The reward may also be negative or 
 The agent will then be trained to maximize the reward it accumulates over many timesteps.
 
 After some timesteps, the environment may enter a terminal state. For instance, the robot may have crashed, or the agent may have succeeded in completing a task. In that case, we want to reset the environment to a new initial state. The environment issues a terminated signal to the agent if it enters such a terminal state. Sometimes we also want to end the episode after a fixed number of timesteps, in this case, the environment issues a truncated signal.
-This is a new change in API (v0.26 onwards). Earlier a commonly done signal was issued for an episode ending via any means. This is now changed in favour of issuing two signals - terminated and truncated.
+This is a new change in API (v0.26 onwards). Earlier a common done signal was issued for an episode ending via any means. This is now changed in favour of issuing two signals - terminated and truncated.
 
 Let's see what the agent-environment loop looks like in Gymnasium.
 This example will run an instance of `LunarLander-v2` environment for 1000 timesteps. Since we pass `render_mode="human"`, you should see a window pop up rendering the environment.
