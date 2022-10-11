@@ -16,12 +16,14 @@ title: Vector
 .. automethod:: gymnasium.vector.VectorEnv.reset
 
 .. automethod:: gymnasium.vector.VectorEnv.step
+
+.. automethod:: gymnasium.vector.VectorEnv.close
 ```
 
 ### Attributes
 
 ```{eval-rst}
-.. attribute:: gymnasium.vector.VectorEnv.action_space
+.. attribute:: action_space
 
     The (batched) action space. The input actions of `step` must be valid elements of `action_space`.::
 
@@ -29,7 +31,7 @@ title: Vector
         >>> envs.action_space
         MultiDiscrete([2 2 2])
 
-.. attribute:: gymnasium.vector.VectorEnv.observation_space
+.. attribute:: observation_space
 
     The (batched) observation space. The observations returned by `reset` and `step` are valid elements of `observation_space`.::
 
@@ -37,7 +39,7 @@ title: Vector
         >>> envs.observation_space
         Box([[-4.8 ...]], [[4.8 ...]], (3, 4), float32)
 
-.. attribute:: gymnasium.vector.VectorEnv.single_action_space
+.. attribute:: single_action_space
 
     The action space of an environment copy.::
 
@@ -45,7 +47,7 @@ title: Vector
         >>> envs.single_action_space
         Discrete(2)
 
-.. attribute:: gymnasium.vector.VectorEnv.single_observation_space
+.. attribute:: single_observation_space
 
     The observation space of an environment copy.::
 

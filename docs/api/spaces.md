@@ -1,3 +1,8 @@
+---
+title: Spaces
+---
+
+
 # Spaces
 
 ```{toctree}
@@ -7,7 +12,6 @@ spaces/composite
 spaces/utils
 ```
 
-
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Space
 ```
@@ -16,7 +20,7 @@ spaces/utils
 
 ```{eval-rst}
 .. autoproperty:: gymnasium.spaces.space.Space.shape
-.. property:: gymnasium.spaces.space.Space.dtype
+.. property:: Space.dtype
 
     Return the data type of this space.
 ```

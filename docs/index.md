@@ -4,7 +4,7 @@ firstpage:
 lastpage:
 ---
 
-## Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
+# Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
 
 
 ```{figure} _static/videos/box2d/lunar_lander_continuous.gif
@@ -39,7 +39,7 @@ content/basic_usage
 :hidden:
 :caption: API
 
-api/core
+api/env
 api/spaces
 api/wrappers
 api/vector

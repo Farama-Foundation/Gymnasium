@@ -112,7 +112,7 @@ class VectorEnv(gym.Env):
         seed: Optional[Union[int, List[int]]] = None,
         options: Optional[dict] = None,
     ):
-        """Reset all parallel environments and return a batch of initial observations and info
+        """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
             seed: The environment reset seeds

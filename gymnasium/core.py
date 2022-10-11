@@ -174,8 +174,7 @@ class Env(Generic[ObsType, ActType]):
         raise NotImplementedError
 
     def close(self):
-        """Cleans up the environment that should be closed before the environment goes out of scope or after the
-        environment has been used.
+        """Cleans up the environment that should be closed after the user has finished using the environment.
 
         This is critical for closing rendering windows, database or HTTP connections.
         """
@@ -206,7 +205,7 @@ class Env(Generic[ObsType, ActType]):
         self._np_random = value
 
     def __str__(self):
-        """Returns a string of the environment with :attr:`spec` id's if :attr:`spec
+        """Returns a string of the environment with :attr:`spec` id's if :attr:`spec.
 
         Returns:
             A string identifying the environment
