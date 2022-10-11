@@ -42,6 +42,7 @@ content/basic_usage
 api/env
 api/spaces
 api/wrappers
+api/registry
 api/vector
 api/utils
 ```
@@ -50,11 +51,11 @@ api/utils
 :hidden:
 :caption: Environments
 
-environments/atari
-environments/mujoco
-environments/toy_text
 environments/classic_control
 environments/box2d
+environments/toy_text
+environments/mujoco
+environments/atari
 environments/third_party_environments
 ```
 
@@ -73,5 +74,4 @@ content/handling_timelimits
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
 Donate <https://farama.org/donations>
-
 ```

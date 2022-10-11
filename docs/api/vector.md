@@ -61,3 +61,14 @@ title: Vector
 ```{eval-rst}
 .. autofunction:: gymnasium.vector.make
 ```
+
+## Async Vector Env
+
+```{eval-rst}
+.. autoclass:: gymnasium.vector.AsyncVectorEnv
+```
+
+## Sync Vector Env
+```{eval-rst}
+.. autoclass:: gymnasium.vector.SyncVectorEnv
+```

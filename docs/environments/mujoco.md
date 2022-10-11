@@ -17,6 +17,7 @@ mujoco/inverted_double_pendulum
 mujoco/inverted_pendulum
 mujoco/reacher
 mujoco/swimmer
+mujoco/pusher
 mujoco/walker2d
 ```
 

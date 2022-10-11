@@ -16,7 +16,7 @@ DEFAULT_Y = 1.0
 
 class PendulumEnv(gym.Env):
     """
-       ### Description
+    ## Description
 
     The inverted pendulum swingup problem is based on the classic problem in control theory.
     The system consists of a pendulum attached at one end to a fixed point, and the other end being free.
@@ -26,13 +26,13 @@ class PendulumEnv(gym.Env):
     The diagram below specifies the coordinate system used for the implementation of the pendulum's
     dynamic equations.
 
-    ![Pendulum Coordinate System](./diagrams/pendulum.png)
+    ![Pendulum Coordinate System](/_static/diagrams/pendulum.png)
 
     -  `x-y`: cartesian coordinates of the pendulum's end in meters.
     - `theta` : angle in radians.
     - `tau`: torque in `N m`. Defined as positive _counter-clockwise_.
 
-    ### Action Space
+    ## Action Space
 
     The action is a `ndarray` with shape `(1,)` representing the torque applied to free end of the pendulum.
 
@@ -41,7 +41,7 @@ class PendulumEnv(gym.Env):
     | 0   | Torque | -2.0 | 2.0 |
 
 
-    ### Observation Space
+    ## Observation Space
 
     The observation is a `ndarray` with shape `(3,)` representing the x-y coordinates of the pendulum's free
     end and its angular velocity.
@@ -52,7 +52,7 @@ class PendulumEnv(gym.Env):
     | 1   | y = sin(theta)   | -1.0 | 1.0 |
     | 2   | Angular Velocity | -8.0 | 8.0 |
 
-    ### Rewards
+    ## Rewards
 
     The reward function is defined as:
 
@@ -63,15 +63,15 @@ class PendulumEnv(gym.Env):
     *-(pi<sup>2</sup> + 0.1 * 8<sup>2</sup> + 0.001 * 2<sup>2</sup>) = -16.2736044*,
     while the maximum reward is zero (pendulum is upright with zero velocity and no torque applied).
 
-    ### Starting State
+    ## Starting State
 
     The starting state is a random angle in *[-pi, pi]* and a random angular velocity in *[-1,1]*.
 
-    ### Episode Truncation
+    ## Episode Truncation
 
     The episode truncates at 200 time steps.
 
-    ### Arguments
+    ## Arguments
 
     - `g`: acceleration of gravity measured in *(m s<sup>-2</sup>)* used to calculate the pendulum dynamics.
       The default value is g = 10.0 .
@@ -84,7 +84,7 @@ class PendulumEnv(gym.Env):
     On reset, the `options` parameter allows the user to change the bounds used to determine
     the new random state.
 
-    ### Version History
+    ## Version History
 
     * v1: Simplify the math equations, no difference in behavior.
     * v0: Initial versions release (1.0.0)
