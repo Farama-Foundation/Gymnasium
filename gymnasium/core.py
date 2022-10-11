@@ -36,7 +36,7 @@ class Env(Generic[ObsType, ActType]):
     r"""The main Gymnasium class for implementing Reinforcement Learning Agents environments.
 
     The class encapsulates an environment with arbitrary behind-the-scenes dynamics through the :meth:`step` and :meth:`reset` functions.
-    An environment can be partially or fully observed single agents, for multi-agent environments see PettingZoo.
+    An environment can be partially or fully observed single agents. For multi-agent environments, see PettingZoo.
 
     The main API methods that users of this class need to know are:
 
@@ -53,10 +53,12 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained with the space.
     - :attr:`reward_range` - A tuple corresponding to the minimum and maximum possible rewards for an agent over an episode.
       The default reward range is set to :math:`(-\infty,+\infty)`.
-    - :attr:`spec` - An environment spec that contains the information used to initialize the environment from `gymnasium.make`
+    - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
     - :attr:`metadata` - The metadata of the environment, i.e. render modes, render fps
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
-      `super().reset(seed=seed)` and when assessing `self.np_random`.
+      ``super().reset(seed=seed)`` and when assessing ``self.np_random``.
+
+    .. seealso:: For modifying or extending environments use the :py:class:`gymnasium.Wrapper` class
     """
 
     # Set this in SOME subclasses
@@ -76,7 +78,7 @@ class Env(Generic[ObsType, ActType]):
     def step(self, action: ActType) -> Tuple[ObsType, float, bool, bool, dict]:
         """Run one timestep of the environment's dynamics using the agent actions.
 
-        When end of episode is reached (`terminated or truncated`), it is necessary to call :meth:`reset` to
+        When end of episode is reached (``terminated or truncated``), it is necessary to call :meth:`reset` to
         reset this environment's state for the next episode.
 
         Args:
@@ -86,12 +88,12 @@ class Env(Generic[ObsType, ActType]):
             observation (ObsType): An element of the environment's :attr:`observation_space` as the next observation due to the agent actions.
                 An example is a numpy array containing the positions and velocities of the pole in CartPole.
             reward (float): The reward as a result of taking the action.
-            terminated (bool): Whether the agent reaches the `terminal state` (as defined under the MDP of the task)
+            terminated (bool): Whether the agent reaches the terminal state (as defined under the MDP of the task)
                 which can be positive or negative. An example is reaching the goal state or moving into the lava from
                 the Sutton and Barton, Gridworld. If true, the user needs to call :meth:`reset`.
             truncated (bool): Whether the truncation condition outside the scope of the MDP is satisfied.
                 Typically, this is a timelimit, but could also be used to indicate an agent physically going out of bounds.
-                Can be used to end the episode prematurely before a `terminal state` is reached.
+                Can be used to end the episode prematurely before a terminal state is reached.
                 If true, the user needs to call :meth:`reset`.
             info (dict): Contains auxiliary diagnostic information (helpful for debugging, learning, and logging).
                 This might, for instance, contain: metrics that describe the agent's performance state, variables that are
@@ -115,12 +117,12 @@ class Env(Generic[ObsType, ActType]):
 
         This method generates a new starting state often with some randomness to ensure that the agent explores the
         state space or learns a sequences of actions rather than generalised policy. This randomness can be controlled
-        with the `seed` parameter otherwise if the environment already has a random number generator and
+        with the ``seed`` parameter otherwise if the environment already has a random number generator and
         :meth:`reset` is called with ``seed=None``, the RNG is not reset.
 
         Therefore, :meth:`reset` should (in the typical use case) be called with a seed right after initialization and then never again.
 
-        For Custom environments, the first line of :meth:`reset` should be `super().reset(seed=seed)` which implements
+        For Custom environments, the first line of :meth:`reset` should be ``super().reset(seed=seed)`` which implements
         the seeding correctly.
 
         Args:
@@ -152,24 +154,24 @@ class Env(Generic[ObsType, ActType]):
         `gymnasium.make` which automatically applies a wrapper to collect rendered frames.
 
         Note:
-            As the :attr:`render_mode` is known during `__init__`, the objects used to render the environment state
-            should be initialised in `__init__`.
+            As the :attr:`render_mode` is known during ``__init__``, the objects used to render the environment state
+            should be initialised in ``__init__``.
 
         By convention, if the :attr:`render_mode` is:
 
         - None (default): no render is computed.
         - "human": The environment is continuously rendered in the current display or terminal, usually for human consumption.
-          This rendering should occur during :meth:`step` and :meth:`render` doesn't need to be called. Returns `None`.
+          This rendering should occur during :meth:`step` and :meth:`render` doesn't need to be called. Returns ``None``.
         - "rgb_array": Return a single frame representing the current state of the environment.
-          A frame is a `np.ndarray` with shape `(x, y, 3)` representing RGB values for an x-by-y pixel image.
-        - "ansi": Return a strings (str) or StringIO.StringIO containing a terminal-style text representation
+          A frame is a ``np.ndarray`` with shape ``(x, y, 3)`` representing RGB values for an x-by-y pixel image.
+        - "ansi": Return a strings (``str``) or ``StringIO.StringIO`` containing a terminal-style text representation
           for each time step. The text can include newlines and ANSI escape sequences (e.g. for colors).
         - "rgb_array_list" and "ansi_list": List based version of render modes are possible (except Human) through the
-          wrapper, :class:`RenderCollection` that is automatically applied during `gymnasium.make(..., render_mode="rgb_array_list")`.
+          wrapper, :py:class:`gymnasium.wrappers.RenderCollection` that is automatically applied during ``gymnasium.make(..., render_mode="rgb_array_list")``.
           The frames collected are popped after :meth:`render` is called or :meth:`reset`.
 
         Note:
-            Make sure that your class's metadata 'render_modes' key includes the list of supported modes.
+            Make sure that your class's :attr:`metadata` ``"render_modes"`` key includes the list of supported modes.
         """
         raise NotImplementedError
 

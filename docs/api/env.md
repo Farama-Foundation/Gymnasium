@@ -43,13 +43,19 @@ title: Utils
 
 .. autoattribute:: gymnasium.Env.metadata
 
+    The metadata of the environment containing rendering modes, rendering fps, etc
+    
 .. autoattribute:: gymnasium.Env.render_mode
+
+    The render mode of the environment determined at initialisation
 
 .. autoattribute:: gymnasium.Env.reward_range
     
     A tuple corresponding to the minimum and maximum possible rewards for an agent over an episode. The default reward range is set to :math:`(-\infty,+\infty)`.
 
 .. autoattribute:: gymnasium.Env.spec
+
+    The ``EnvSpec`` of the environment normally set during :py:meth:`gymnasium.make`
 ``` 
 
 ### Additional Methods

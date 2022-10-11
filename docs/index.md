@@ -40,9 +40,9 @@ content/basic_usage
 :caption: API
 
 api/env
+api/registry
 api/spaces
 api/wrappers
-api/registry
 api/vector
 api/utils
 ```

@@ -10,16 +10,19 @@ __all__ = ["VectorEnv"]
 
 
 class VectorEnv(gym.Env):
-    """Base class for vectorized environments to runs multiple independent copies of the same environment in parallel.
+    """Base class for vectorized environments to run multiple independent copies of the same environment in parallel.
 
-    This can provide a linear speed-up in the steps taken per second given the number of sub-environments used.
-    When a sub-environment terminates or truncates, the sub-environment is automatically reset with the final step
-    and info including in the returned info in `"final_observation"` and `"final_info"`. See :meth:`step` for more information.
+    Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
+    sub-environments at the same time. To prevent terminated environments waiting until all sub-environments have
+    terminated or truncated, the vector environments autoreset sub-environments after they terminate or truncated.
+    As a result, the final step's observation and info are overwritten by the reset's observation and info.
+    Therefore, the observation and info for the final step of a sub-environment is stored in the info parameter,
+    using `"final_observation"` and `"final_info"` respectively. See :meth:`step` for more information.
 
-    The vector environments batch observations, rewards, termination, truncation and info for each parallel environment.
-    In addition, :meth:`step` expects to receive a batch of actions for each parallel environment.
+    The vector environments batch `observations`, `rewards`, `terminations`, `truncations` and `info` for each
+    parallel environment. In addition, :meth:`step` expects to receive a batch of actions for each parallel environment.
 
-    Gymnasium contains two types of Vector environments: Asynchronous and Synchronous
+    Gymnasium contains two types of Vector environments: :class:`AsyncVectorEnv` and :class:`SyncVectorEnv`.
 
     The Vector Environments have the additional attributes for users to understand the implementation
 
