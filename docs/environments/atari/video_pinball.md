@@ -18,10 +18,10 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                       |
 | Import            | `gymnasium.make("ALE/VideoPinball-v5")` |
 
-### Description
+## Description
 Your goal is to keep the ball in play as long as possible and to score as many points as possible. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=588).
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment. However, if you use v0 or v4 or specify full_action_space=False during initialization, only a reduced number of actions (those that are meaningful in this game) are available. The reduced action space may depend on the flavor of the environment (the combination of mode and difficulty). The reduced action space for the default flavor looks like this:
 
 | Num | Action    |
@@ -35,8 +35,7 @@ By default, all actions that can be performed on an Atari 2600 are available in 
 | 6   | UPFIRE    |
 | 7   | RIGHTFIRE |
 | 8   | LEFTFIRE  |
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -53,8 +52,7 @@ instead. The respective observation spaces are
 
 The general article on Atari environments outlines different ways to instantiate corresponding environments
 via `gymnasium.make`.
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/'VideoPinball-v5")
@@ -73,7 +71,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("VideoPinball-v0")`
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

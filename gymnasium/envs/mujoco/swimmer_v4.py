@@ -11,7 +11,7 @@ DEFAULT_CAMERA_CONFIG = {}
 
 class SwimmerEnv(MujocoEnv, utils.EzPickle):
     """
-    ### Description
+    ## Description
 
     This environment corresponds to the Swimmer environment described in Rémi Coulom's PhD thesis
     ["Reinforcement Learning Using Neural Networks, with Applications to Motor Control"](https://tel.archives-ouvertes.fr/tel-00003985/document).
@@ -24,7 +24,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     uniform distribution), and the goal is to move as fast as possible towards
     the right by applying torque on the rotors and using the fluids friction.
 
-    ### Notes
+    ## Notes
 
     The problem parameters are:
     Problem parameters:
@@ -37,7 +37,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     and *k* = 0.1. It is possible to pass a custom MuJoCo XML file during construction to increase the
     number of links, or to tweak any of the parameters.
 
-    ### Action Space
+    ## Action Space
     The action space is a `Box(-1, 1, (2,), float32)`. An action represents the torques applied between *links*
 
     | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
@@ -45,7 +45,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     | 0   | Torque applied on the first rotor  | -1          | 1           | motor1_rot                       | hinge | torque (N m) |
     | 1   | Torque applied on the second rotor | -1          | 1           | motor2_rot                       | hinge | torque (N m) |
 
-    ### Observation Space
+    ## Observation Space
 
     By default, observations consists of:
     * θ<sub>i</sub>: angle of part *i* with respect to the *x* axis
@@ -71,7 +71,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     | 6   | angular velocity of first rotor      | -Inf | Inf | motor1_rot                       | hinge | angular velocity (rad/s) |
     | 7   | angular velocity of second rotor     | -Inf | Inf | motor2_rot                             | hinge | angular velocity (rad/s) |
 
-    ### Rewards
+    ## Rewards
     The reward consists of two parts:
     - *forward_reward*: A reward of moving forward which is measured
     as *`forward_reward_weight` * (x-coordinate before action - x-coordinate after action)/dt*. *dt* is
@@ -86,13 +86,13 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
 
     The total reward returned is ***reward*** *=* *forward_reward - ctrl_cost* and `info` will also contain the individual reward terms
 
-    ### Starting State
+    ## Starting State
     All observations start in state (0,0,0,0,0,0,0,0) with a Uniform noise in the range of [-`reset_noise_scale`, `reset_noise_scale`] is added to the initial state for stochasticity.
 
-    ### Episode End
+    ## Episode End
     The episode truncates when the episode length is greater than 1000.
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported in v2 and lower.
 
@@ -117,7 +117,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     | `exclude_current_positions_from_observation` | **bool**  | `True`          | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
 
 
-    ### Version History
+    ## Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
     * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)

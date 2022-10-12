@@ -3,21 +3,22 @@ firstpage:
 lastpage:
 ---
 
-## MuJoCo
+# MuJoCo
 
 ```{toctree}
 :hidden:
 
-ant
-half_cheetah
-hopper
-humanoid_standup
-humanoid
-inverted_double_pendulum
-inverted_pendulum
-reacher
-swimmer
-walker2d
+mujoco/ant
+mujoco/half_cheetah
+mujoco/hopper
+mujoco/humanoid_standup
+mujoco/humanoid
+mujoco/inverted_double_pendulum
+mujoco/inverted_pendulum
+mujoco/reacher
+mujoco/swimmer
+mujoco/pusher
+mujoco/walker2d
 ```
 
 ```{raw} html

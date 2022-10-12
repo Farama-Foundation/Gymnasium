@@ -18,7 +18,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                    |
 | Import            | `gymnasium.make("ALE/Riverraid-v5")` |
 
-### Description
+## Description
 You control a jet that flies over a river: you can move it sideways and fire missiles to destroy enemy objects. Each time an enemy object is destroyed you score points (i.e. rewards). 
 
 You lose a jet when you run out of fuel: fly over a fuel depot when you begin to run low. 
@@ -29,10 +29,9 @@ The game begins with a squadron of three jets in reserve and you're given an add
 
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=409)
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions will be available in the default flavor.
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -62,8 +61,7 @@ Score points are your only reward. You get score points each time you destroy an
 | Bridge       | 500          | 
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=409).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/Riverraid-v5")
@@ -82,7 +80,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Riverraid-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 
