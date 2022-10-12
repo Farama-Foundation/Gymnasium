@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="prev" title="Vectorising your environments" href="../vectorising/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="prev" title="Vectorizing your environments" href="../vectorising/" />
         <link rel="canonical" href="https://gymnasium.farama.org/content/handling_timelimits.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.2.3, furo 2022.09.15.dev1"/>
@@ -231,20 +231,63 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Registry</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/spaces/utils/">Spaces Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/wrappers/">Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/vector/">Vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utils</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/adventure/">Adventure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/air_raid/">Air Raid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/alien/">Alien</a></li>
@@ -308,36 +351,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/blackjack/">Blackjack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/taxi/">Taxi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/acrobot/">Acrobot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/cart_pole/">Cart Pole</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car/">Mountain Car</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/pendulum/">Pendulum</a></li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/car_racing/">Car Racing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-Party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../vectorising/">Vectorising your environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vectorising/">Vectorizing your environments</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Handling Time Limits</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
@@ -392,29 +411,48 @@
           <section id="handling-time-limits">
 <h1>Handling Time Limits<a class="headerlink" href="#handling-time-limits" title="Permalink to this heading">#</a></h1>
 <p>In using Gymnasium environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The <code class="docutils literal notranslate"><span class="pre">done</span></code> signal received (in previous versions of OpenAI Gym &lt; 0.26) from <code class="docutils literal notranslate"><span class="pre">env.step</span></code> indicated whether an episode has ended. However, this signal did not distinguish whether the episode ended due to <code class="docutils literal notranslate"><span class="pre">termination</span></code> or <code class="docutils literal notranslate"><span class="pre">truncation</span></code>.</p>
+<p>In using Gymnasium environments with reinforcement learning code, a common problem observed is how time limits are
+incorrectly handled. The <code class="docutils literal notranslate"><span class="pre">done</span></code> signal received (in previous versions of gymnasium &lt; 0.26) from <code class="docutils literal notranslate"><span class="pre">env.step</span></code> indicated
+whether an episode has ended. However, this signal did not distinguish whether the episode ended due to <code class="docutils literal notranslate"><span class="pre">termination</span></code> or <code class="docutils literal notranslate"><span class="pre">truncation</span></code>.</p>
 <section id="termination">
 <h2>Termination<a class="headerlink" href="#termination" title="Permalink to this heading">#</a></h2>
-<p>Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment definition. Examples are - task success, task failure, robot falling down etc. Notably, this also includes episodes ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov property, a representation of the remaining time must be present in the agent’s observation in finite-horizon environments. <a class="reference external" href="https://arxiv.org/abs/1712.00378">(Reference)</a></p>
+<p>Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment
+definition. Examples are - task success, task failure, robot falling down etc. Notably, this also includes episodes
+ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov
+property, a representation of the remaining time must be present in the agent’s observation in finite-horizon environments.
+<a class="reference external" href="https://arxiv.org/abs/1712.00378">(Reference)</a></p>
 </section>
 <section id="truncation">
 <h2>Truncation<a class="headerlink" href="#truncation" title="Permalink to this heading">#</a></h2>
-<p>Truncation refers to the episode ending after an externally defined condition (that is outside the scope of the Markov Decision Process). This could be a time-limit, a robot going out of bounds etc.</p>
-<p>An infinite-horizon environment is an obvious example of where this is needed. We cannot wait forever for the episode to complete, so we set a practical time-limit after which we forcibly halt the episode. The last state in this case is not a terminal state since it has a non-zero transition probability of moving to another state as per the Markov Decision Process that defines the RL problem. This is also different from time-limits in finite horizon environments as the agent in this case has no idea about this time-limit.</p>
+<p>Truncation refers to the episode ending after an externally defined condition (that is outside the scope of the Markov
+Decision Process). This could be a time-limit, a robot going out of bounds etc.</p>
+<p>An infinite-horizon environment is an obvious example of where this is needed. We cannot wait forever for the episode
+to complete, so we set a practical time-limit after which we forcibly halt the episode. The last state in this case is
+not a terminal state since it has a non-zero transition probability of moving to another state as per the Markov
+Decision Process that defines the RL problem. This is also different from time-limits in finite horizon environments
+as the agent in this case has no idea about this time-limit.</p>
 </section>
 <section id="importance-in-learning-code">
 <h2>Importance in learning code<a class="headerlink" href="#importance-in-learning-code" title="Permalink to this heading">#</a></h2>
-<p>Bootstrapping (using one or more estimated values of a variable to update estimates of the same variable) is a key aspect of Reinforcement Learning. A value function will tell you how much discounted reward you will get from a particular state if you follow a given policy. When an episode stops at any given point, by looking at the value of the final state, the agent is able to estimate how much discounted reward could have been obtained if the episode has continued. This is an example of handling truncation.</p>
+<p>Bootstrapping (using one or more estimated values of a variable to update estimates of the same variable) is a key
+aspect of Reinforcement Learning. A value function will tell you how much discounted reward you will get from a
+particular state if you follow a given policy. When an episode stops at any given point, by looking at the value of
+the final state, the agent is able to estimate how much discounted reward could have been obtained if the episode has
+continued. This is an example of handling truncation.</p>
 <p>More formally, a common example of bootstrapping in RL is updating the estimate of the Q-value function,</p>
 <div class="highlight-math notranslate"><div class="highlight"><pre><span></span>Q_{target}(o_t, a_t) = r_t + \gamma . \max_a(Q(o_{t+1}, a_{t+1}))
 </pre></div>
 </div>
-<p>In classical RL, the new <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is a weighted average of the previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate and <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> while in Deep Q-Learning, the error between <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> and the previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is minimized.</p>
+<p>In classical RL, the new <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is a weighted average of the previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate and <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> while in Deep
+Q-Learning, the error between <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> and the previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is minimized.</p>
 <p>However, at the terminal state, bootstrapping is not done,</p>
 <div class="highlight-math notranslate"><div class="highlight"><pre><span></span>Q_{target}(o_t, a_t) = r_t
 </pre></div>
 </div>
-<p>This is where the distinction between termination and truncation becomes important. When an episode ends due to termination we don’t bootstrap, when it ends due to truncation, we bootstrap.</p>
-<p>While using gymnasium environments, the <code class="docutils literal notranslate"><span class="pre">done</span></code> signal (default for &lt; v0.26) is frequently used to determine whether to bootstrap or not. However, this is incorrect since it does not differentiate between termination and truncation.</p>
+<p>This is where the distinction between termination and truncation becomes important. When an episode ends due to
+termination we don’t bootstrap, when it ends due to truncation, we bootstrap.</p>
+<p>While using gymnasium environments, the <code class="docutils literal notranslate"><span class="pre">done</span></code> signal (default for &lt; v0.26) is frequently used to determine whether to
+bootstrap or not. However, this is incorrect since it does not differentiate between termination and truncation.</p>
 <p>A simple example of value functions is shown below. This is an illustrative example and not part of any specific algorithm.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># INCORRECT</span>
 <span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">done</span><span class="p">)</span><span class="o">*</span> <span class="n">vf_next_state</span>
@@ -424,7 +462,9 @@
 </section>
 <section id="solution">
 <h2>Solution<a class="headerlink" href="#solution" title="Permalink to this heading">#</a></h2>
-<p>From v0.26 onwards, Gymnasium’s <code class="docutils literal notranslate"><span class="pre">env.step</span></code> API returns both termination and truncation information explicitly. In the previous version truncation information was supplied through the info key <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code>. The correct way to handle terminations and truncations now is,</p>
+<p>From v0.26 onwards, Gymnasium’s <code class="docutils literal notranslate"><span class="pre">env.step</span></code> API returns both termination and truncation information explicitly.
+In the previous version truncation information was supplied through the info key <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code>.
+The correct way to handle terminations and truncations now is,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># terminated = done and &#39;TimeLimit.truncated&#39; not in info   # This was needed in previous versions. </span>
 
 <span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">terminated</span><span class="p">)</span><span class="o">*</span><span class="n">vf_next_state</span>
