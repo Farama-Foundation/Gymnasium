@@ -593,11 +593,15 @@ def make(
 
         if spec_ is None:
             spec_ = _search_in_gym(id, ns, name, version)
-            disable_env_checker = True
 
-        if spec_ is None:
-            _check_version_exists(ns, name, version)
-            raise error.Error(f"No registered env with id: {id}")
+            if spec_ is not None:
+                disable_env_checker = True
+                logger.warn(
+                    "Environment has been loaded from Gym, please register the environment in the Gymnasium as well."
+                )
+            else:
+                _check_version_exists(ns, name, version)
+                raise error.Error(f"No registered env with id: {id}")
 
     _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
