@@ -81,6 +81,12 @@ class Env(Generic[ObsType, ActType]):
         When the end of an episode is reached (``terminated or truncated``), it is necessary to call :meth:`reset` to
         reset this environment's state for the next episode.
 
+        .. versionchanged:: 0.26
+
+            The Step API was changed removing ``done`` in favor of ``terminated`` and ``truncated`` to make it clearer
+            to users when the environment had terminated or truncated which is critical for reinforcement learning
+            bootstrapping algorithms.
+
         Args:
             action (ActType): an action provided by the agent to update the environment state.
 
@@ -124,6 +130,10 @@ class Env(Generic[ObsType, ActType]):
 
         For Custom environments, the first line of :meth:`reset` should be ``super().reset(seed=seed)`` which implements
         the seeding correctly.
+
+        .. versionchanged:: v0.25
+
+            The ``return_info`` parameter was removed and now info is expected to be returned.
 
         Args:
             seed (optional int): The seed that is used to initialize the environment's PRNG (`np_random`).
@@ -172,6 +182,11 @@ class Env(Generic[ObsType, ActType]):
 
         Note:
             Make sure that your class's :attr:`metadata` ``"render_modes"`` key includes the list of supported modes.
+
+        .. versionchanged:: 0.25.0
+
+            The render function was changed to no longer accept parameters, rather these parameters should be specified
+            in the environment initialised, i.e., ``gymnasium.make("CartPole-v1", render_mode="human")``
         """
         raise NotImplementedError
 
