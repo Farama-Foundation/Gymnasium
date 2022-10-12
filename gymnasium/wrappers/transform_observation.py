@@ -21,7 +21,7 @@ class TransformObservation(gym.ObservationWrapper):
     """
 
     def __init__(self, env: gym.Env, f: Callable[[Any], Any]):
-        """Initialize the :class:`TransformObservation` wrapper with an environment and a transform function :param:`f`.
+        """Initialize the :class:`TransformObservation` wrapper with an environment and a transform function :attr:`f`.
 
         Args:
             env: The environment to apply the wrapper

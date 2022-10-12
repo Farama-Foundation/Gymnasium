@@ -106,7 +106,7 @@ class FrictionDetector(contactListener):
 
 class CarRacing(gym.Env, EzPickle):
     """
-    ### Description
+    ## Description
     The easiest control task to learn from pixels - a top-down
     racing environment. The generated track is random every episode.
 
@@ -120,31 +120,31 @@ class CarRacing(gym.Env, EzPickle):
     Remember: it's a powerful rear-wheel drive car - don't press the accelerator
     and turn at the same time.
 
-    ### Action Space
+    ## Action Space
     If continuous:
         There are 3 actions: steering (-1 is full left, +1 is full right), gas, and breaking.
     If discrete:
         There are 5 actions: do nothing, steer left, steer right, gas, brake.
 
-    ### Observation Space
+    ## Observation Space
 
     A top-down 96x96 RGB image of the car and race track.
 
-    ### Rewards
+    ## Rewards
     The reward is -0.1 every frame and +1000/N for every track tile visited,
     where N is the total number of tiles visited in the track. For example,
     if you have finished in 732 frames, your reward is
     1000 - 0.1*732 = 926.8 points.
 
-    ### Starting State
+    ## Starting State
     The car starts at rest in the center of the road.
 
-    ### Episode Termination
+    ## Episode Termination
     The episode finishes when all the tiles are visited. The car can also go
     outside the playfield - that is, far off the track, in which case it will
     receive -100 reward and die.
 
-    ### Arguments
+    ## Arguments
     `lap_complete_percent` dictates the percentage of tiles that must be visited by
     the agent before a lap is considered complete.
 
@@ -154,7 +154,7 @@ class CarRacing(gym.Env, EzPickle):
     Passing `continuous=False` converts the environment to use discrete action space.
     The discrete action space has 5 actions: [do nothing, left, right, gas, brake].
 
-    ### Reset Arguments
+    ## Reset Arguments
     Passing the option `options["randomize"] = True` will change the current colour of the environment on demand.
     Correspondingly, passing the option `options["randomize"] = False` will not change the current colour of the environment.
     `domain_randomize` must be `True` on init for this argument to work.
@@ -173,14 +173,14 @@ class CarRacing(gym.Env, EzPickle):
     env.reset(options={"randomize": False})
     ```
 
-    ### Version History
+    ## Version History
     - v1: Change track completion logic and add domain randomization (0.24.0)
     - v0: Original version
 
-    ### References
+    ## References
     - Chris Campbell (2014), http://www.iforce2d.net/b2dtut/top-down-car.
 
-    ### Credits
+    ## Credits
     Created by Oleg Klimov
     """
 

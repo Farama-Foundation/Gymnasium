@@ -26,7 +26,7 @@ __author__ = "Christoph Dann <cdann@cdann.de>"
 
 class AcrobotEnv(Env):
     """
-    ### Description
+    ## Description
 
     The Acrobot environment is based on Sutton's work in
     ["Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding"](https://papers.nips.cc/paper/1995/hash/8f1d43620bc6bb580df6e80b0dc05c48-Abstract.html)
@@ -41,7 +41,7 @@ class AcrobotEnv(Env):
     to reach the target height (black horizontal line above system) by applying torque on
     the actuator.
 
-    ### Action Space
+    ## Action Space
 
     The action is discrete, deterministic, and represents the torque applied on the actuated
     joint between the two links.
@@ -52,7 +52,7 @@ class AcrobotEnv(Env):
     | 1   | apply 0 torque to the actuated joint  | torque (N m) |
     | 2   | apply 1 torque to the actuated joint  | torque (N m) |
 
-    ### Observation Space
+    ## Observation Space
 
     The observation is a `ndarray` with shape `(6,)` that provides information about the
     two rotational joint angles as well as their angular velocities:
@@ -75,25 +75,25 @@ class AcrobotEnv(Env):
     The angular velocities of `theta1` and `theta2` are bounded at ±4π, and ±9π rad/s respectively.
     A state of `[1, 0, 1, 0, ..., ...]` indicates that both links are pointing downwards.
 
-    ### Rewards
+    ## Rewards
 
     The goal is to have the free end reach a designated target height in as few steps as possible,
     and as such all steps that do not reach the goal incur a reward of -1.
     Achieving the target height results in termination with a reward of 0. The reward threshold is -100.
 
-    ### Starting State
+    ## Starting State
 
     Each parameter in the underlying state (`theta1`, `theta2`, and the two angular velocities) is initialized
     uniformly between -0.1 and 0.1. This means both links are pointing downwards with some initial stochasticity.
 
-    ### Episode End
+    ## Episode End
 
     The episode ends if one of the following occurs:
     1. Termination: The free end reaches the target height, which is constructed as:
     `-cos(theta1) - cos(theta2 + theta1) > 1.0`
     2. Truncation: Episode length is greater than 500 (200 for v0)
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported during construction.
 
@@ -125,14 +125,14 @@ class AcrobotEnv(Env):
             by setting `book_or_nips = 'nips'`
 
 
-    ### Version History
+    ## Version History
 
     - v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
     `theta1` and `theta2` in radians, having a range of `[-pi, pi]`. The v1 observation space as described here provides the
     sine and cosine of each angle instead.
     - v0: Initial versions release (1.0.0) (removed from gymnasium for v1)
 
-    ### References
+    ## References
     - Sutton, R. S. (1996). Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding.
         In D. Touretzky, M. C. Mozer, & M. Hasselmo (Eds.), Advances in Neural Information Processing Systems (Vol. 8).
         MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e80b0dc05c48-Paper.pdf

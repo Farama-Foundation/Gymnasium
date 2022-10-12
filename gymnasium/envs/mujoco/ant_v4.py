@@ -11,7 +11,7 @@ DEFAULT_CAMERA_CONFIG = {
 
 class AntEnv(MujocoEnv, utils.EzPickle):
     """
-    ### Description
+    ## Description
 
     This environment is based on the environment introduced by Schulman,
     Moritz, Levine, Jordan and Abbeel in ["High-Dimensional Continuous Control
@@ -22,7 +22,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     torques on the eight hinges connecting the two links of each leg and the torso
     (nine parts and eight hinges).
 
-    ### Action Space
+    ## Action Space
     The action space is a `Box(-1, 1, (8,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                                                            | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
@@ -36,7 +36,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 6   | Torque applied on the rotor between the torso and back right hip  | -1          | 1           | hip_4 (right_back_leg)           | hinge | torque (N m) |
     | 7   | Torque applied on the rotor between the back right two links      | -1          | 1           | angle_4 (right_back_leg)         | hinge | torque (N m) |
 
-    ### Observation Space
+    ## Observation Space
 
     Observations consist of positional values of different body parts of the ant,
     followed by the velocities of those individual parts (their derivatives) with all
@@ -98,7 +98,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     when using the Ant environment if you would like to report results with contact forces (if
     contact forces are not used in your experiments, you can use version > 2.0).
 
-    ### Rewards
+    ## Rewards
     The reward consists of three parts:
     - *healthy_reward*: Every timestep that the ant is healthy (see definition in section "Episode Termination"), it gets a reward of fixed value `healthy_reward`
     - *forward_reward*: A reward of moving forward which is measured as
@@ -115,7 +115,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost* and `info` will also contain the individual reward terms.
 
-    ### Starting State
+    ## Starting State
     All observations start in state
     (0.0, 0.0,  0.75, 1.0, 0.0  ... 0.0) with a uniform noise in the range
     of [-`reset_noise_scale`, `reset_noise_scale`] added to the positional values and standard normal noise
@@ -124,7 +124,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     to be slightly high, thereby indicating a standing up ant. The initial orientation
     is designed to make it face forward as well.
 
-    ### Episode End
+    ## Episode End
     The ant is said to be unhealthy if any of the following happens:
 
     1. Any of the state space values is no longer finite
@@ -138,7 +138,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     If `terminate_when_unhealthy=False` is passed, the episode is ended only when 1000 timesteps are exceeded.
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported in v2 and lower.
 
@@ -166,7 +166,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | `reset_noise_scale`     | **float**  | `0.1`        | Scale of random perturbations of initial position and velocity (see section on Starting State) |
     | `exclude_current_positions_from_observation`| **bool** | `True`| Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
 
-    ### Version History
+    ## Version History
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
     * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco_py >= 1.50

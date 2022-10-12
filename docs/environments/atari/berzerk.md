@@ -18,19 +18,18 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                  |
 | Import            | `gymnasium.make("ALE/Berzerk-v5")` | 
 
-### Description
+## Description
 You are stuck in a maze with evil robots. You must destroy them and avoid touching the walls of the maze, as this will kill you. You may be awarded extra lives after scoring a sufficient number of points, depending on the game mode.
 You may also be chased by an undefeatable enemy, Evil Otto, that you must avoid. Evil Otto does not appear in the default mode.
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=866&itemTypeID=HTMLMANUAL)
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions 
 will be available in the default flavor.
 
 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -51,8 +50,7 @@ via `gymnasium.make`.
 ### Rewards
 You score points for destroying robots.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=866&itemTypeID=HTMLMANUAL).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/Berzerk-v5")
@@ -71,7 +69,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Berzerk-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

@@ -18,11 +18,11 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                        |
 | Import            | `gymnasium.make("ALE/SpaceInvaders-v5")` |
 
-### Description
+## Description
 
 Your objective is to destroy the space invaders by shooting your laser cannon at them before they reach the Earth. The game ends when all your lives are lost after taking enemy fire, or when they reach the earth. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=460)
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 However, if you use v0 or v4 or specify `full_action_space=False` during initialization, only a reduced
 number of actions (those that are meaningful in this game) are available. The reduced action space may depend on the flavor of the environment (the combination of `mode` and `difficulty`). The reduced action space for the default 
@@ -37,8 +37,7 @@ flavor looks like this:
 | 4   | RIGHTFIRE |
 | 5   | LEFTFIRE  |
 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is possible to observe
 - The 128 Bytes of RAM of the console
 - A grayscale image
@@ -58,8 +57,7 @@ via `gymnasium.make`.
 ### Rewards
 
 You gain points for destroying space invaders. The invaders in the back rows are worth more points. For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=460).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/SpaceInvaders-v5")
@@ -78,7 +76,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("SpaceInvaders-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

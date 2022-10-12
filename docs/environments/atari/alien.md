@@ -19,19 +19,18 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                |
 | Import            | `gymnasium.make("ALE/Alien-v5")` | 
 
-### Description
+## Description
 You are stuck in a maze-like space ship with three aliens. You goal is to destroy their eggs that are scattered
 all over the ship while simultaneously avoiding the aliens (they are trying to kill you). You have a flamethrower that can help you turn 
 them away in tricky situations. Moreover, you can occasionally collect a power-up (pulsar) that gives you the temporary ability to kill aliens.
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=815).
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions 
 will be available in the default flavor.
 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -54,8 +53,7 @@ via `gymnasium.make`.
 You score points by destroying eggs, killing aliens, using pulsars, and collecting special prizes. When you are caught
 by an alien, you will lose one of your lives. The number of lives you have depends on the game flavor. For a
 table of scores corresponding to the different achievements, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=815).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/Alien-v5")
@@ -75,7 +73,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Alien-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

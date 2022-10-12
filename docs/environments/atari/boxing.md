@@ -18,17 +18,16 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                 |
 | Import            | `gymnasium.make("ALE/Boxing-v5")` | 
 
-### Description
+## Description
 You fight an opponent in a boxing ring. You score points for hitting the opponent. If you score 100 points, your opponent is
 knocked out.
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=882).
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions 
 will be available in the default flavor.
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -50,8 +49,7 @@ via `gymnasium.make`.
 ### Rewards
 You score points by landing punches.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=882).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/Boxing-v5")
@@ -70,7 +68,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Boxing-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

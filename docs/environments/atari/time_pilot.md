@@ -18,11 +18,11 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                    |
 | Import            | `gymnasium.make("ALE/TimePilot-v5")` |
 
-### Description
+## Description
 
 You control an aircraft. Use it to destroy your enemies. As you progress in the game, you encounter enemies with technology that is increasingly from the future. More details can be found on [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-time-pilot_8038.html)
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 However, if you use v0 or v4 or specify `full_action_space=False` during initialization, only a reduced
 number of actions (those that are meaningful in this game) are available. The reduced action space may depend on the flavor of the environment (the combination of `mode` and `difficulty`). The reduced action space for the default 
@@ -41,8 +41,7 @@ flavor looks like this:
 | 8   | LEFTFIRE  | 
 | 9   | DOWNFIRE  |
 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is possible to observe
 - The 128 Bytes of RAM of the console
 - A grayscale image
@@ -64,8 +63,7 @@ via `gymnasium.make`.
 
 You score points for destroying enemies, gaining more points for difficult enemies. For a more detailed documentation, see [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-time-pilot_8038.html).
 
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/TimePilot-v5")
@@ -83,7 +81,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("TimePilot-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

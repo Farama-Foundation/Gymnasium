@@ -7,12 +7,12 @@ from gymnasium.spaces import Box
 
 class PusherEnv(MujocoEnv, utils.EzPickle):
     """
-    ### Description
+    ## Description
     "Pusher" is a multi-jointed robot arm which is very similar to that of a human.
      The goal is to move a target cylinder (called *object*) to a goal position using the robot's end effector (called *fingertip*).
       The robot consists of shoulder, elbow, forearm, and wrist joints.
 
-    ### Action Space
+    ## Action Space
     The action space is a `Box(-2, 2, (7,), float32)`. An action `(a, b)` represents the torques applied at the hinge joints.
 
     | Num | Action                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
@@ -25,7 +25,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     | 5    | Rotation of flexing the wrist                                     | -2          | 2           | r_wrist_flex_joint               | hinge | torque (N m) |
     | 6    | Rotation of rolling the wrist                                     | -2          | 2           | r_wrist_roll_joint               | hinge | torque (N m) |
 
-    ### Observation Space
+    ## Observation Space
 
     Observations consist of
 
@@ -66,7 +66,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     | 22  | z-coordinate of the goal position of the object          | -Inf | Inf | goal                             | sphere   | position (m)             |
 
 
-    ### Rewards
+    ## Rewards
     The reward consists of two parts:
     - *reward_near *: This reward is a measure of how far the *fingertip*
     of the pusher (the unattached end) is from the object, with a more negative
@@ -88,7 +88,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     you should create a wrapper that computes the weighted reward from `info`.
 
 
-    ### Starting State
+    ## Starting State
     All pusher (not including object and goal) states start in
     (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0). A uniform noise in the range
     [-0.005, 0.005] is added to the velocity attributes only. The velocities of
@@ -99,14 +99,14 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
     The default framerate is 5 with each frame lasting for 0.01, giving rise to a *dt = 5 * 0.01 = 0.05*
 
-    ### Episode End
+    ## Episode End
 
     The episode ends when any of the following happens:
 
     1. Truncation: The episode duration reaches a 100 timesteps.
     2. Termination: Any of the state space values is no longer finite.
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported (in v2 and lower),
     but modifications can be made to the XML file in the assets folder
@@ -125,7 +125,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('Pusher-v2')
     ```
 
-    ### Version History
+    ## Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
     * v2: All continuous control environments now use mujoco_py >= 1.50

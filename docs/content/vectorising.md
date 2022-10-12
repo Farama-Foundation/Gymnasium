@@ -3,9 +3,10 @@ layout: "contents"
 title: Vectorising your environments
 ---
 
-# Vectorising your environments
+# Vectorizing your environments
 
 ## Vectorized Environments
+
 *Vectorized environments* are environments that run multiple independent copies of the same environment in parallel using [multiprocessing](https://docs.python.org/3/library/multiprocessing.html). Vectorized environments take as input a batch of actions, and return a batch of observations. This is particularly useful, for example, when the policy is defined as a neural network that operates over a batch of observations.
 Gymnasium provides two types of vectorized environments:
 
@@ -48,6 +49,7 @@ The function `gymnasium.vector.make` is meant to be used only in basic cases (e.
 
 
 ### Creating a vectorized environment
+
 To create a vectorized environment that runs multiple environment copies, you can wrap your parallel environments inside `gymnasium.vector.SyncVectorEnv` (for sequential execution), or `gymnasium.vector.AsyncVectorEnv` (for parallel execution, with [multiprocessing](https://docs.python.org/3/library/multiprocessing.html)). These vectorized environments take as input a list of callables specifying how the copies are created.
 
 ```python
@@ -81,7 +83,9 @@ When using `AsyncVectorEnv` with either the ``spawn`` or ``forkserver`` start me
 if __name__ == "__main__":
     envs = gymnasium.vector.make("CartPole-v1", num_envs=3, context="spawn")
 ```
+
 ### Working with vectorized environments
+
 While standard Gymnasium environments take a single action and return a single observation (with a reward, and boolean indicating termination), vectorized environments take a *batch of actions* as input, and return a *batch of observations*, together with an array of rewards and booleans indicating if the episode ended in each environment copy.
 
 
@@ -192,8 +196,8 @@ If the _dtype_ of the returned info is whether `int`, `float`, `bool` or any _dt
        None], dtype=object), '_final_observation': array([False,  True, False])}
 ```
 
-
 ## Observation & Action spaces
+
 Like any Gymnasium environment, vectorized environments contain the two properties `VectorEnv.observation_space` and `VectorEnv.action_space` to specify the observation and action spaces of the environments. Since vectorized environments operate on multiple environment copies, where the actions taken and observations returned by all of the copies are batched together, the observation and action *spaces* are batched as well so that the input actions are valid elements of `VectorEnv.action_space`, and the observations are valid elements of `VectorEnv.observation_space`.
 
 ```python
@@ -246,6 +250,7 @@ This is convenient, for example, if you instantiate a policy. In the following e
 ## Intermediate Usage
 
 ### Shared memory
+
 `AsyncVectorEnv` runs each environment copy inside an individual process. At each call to `AsyncVectorEnv.reset` or `AsyncVectorEnv.step`, the observations of all of the parallel environments are sent back to the main process. To avoid expensive transfers of data between processes, especially with large observations (e.g. images), `AsyncVectorEnv` uses a shared memory by default (``shared_memory=True``) that processes can write to and read from at minimal cost. This can increase the throughput of the vectorized environment.
 
 ```python
@@ -263,6 +268,7 @@ This is convenient, for example, if you instantiate a policy. In the following e
 ```
 
 ### Exception handling
+
 Because sometimes things may not go as planned, the exceptions raised in any given environment copy are re-raised in the vectorized environment, even when the copy runs in parallel with `AsyncVectorEnv`. This way, you can choose how to handle these exceptions yourself (with ``try ... except``).
 
 ```python
@@ -291,6 +297,7 @@ ValueError: An error occurred.
 ## Advanced Usage
 
 ### Custom spaces
+
 Vectorized environments will batch actions and observations if they are elements from standard Gymnasium spaces, such as `gymnasium.spaces.Box`, `gymnasium.spaces.Discrete`, or `gymnasium.spaces.Dict`. However, if you create your own environment with a custom action and/or observation space (inheriting from `gymnasium.Space`), the vectorized environment will not attempt to automatically batch the actions/observations, and instead, it will return the raw tuple of elements from all parallel environments.
 
 In the following example, we create a new environment `SMILESEnv`, whose observations are strings representing the [SMILES](https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system) notation of a molecular structure, with a custom observation space `SMILES`. The observations returned by the vectorized environment are contained in a tuple of strings. 

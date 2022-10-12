@@ -19,12 +19,12 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                 |
 | Import            | `gymnasium.make("ALE/Amidar-v5")` | 
 
-### Description
+## Description
 This game is similar to Pac-Man: You are trying to visit all places on a 2-dimensional grid while simultaneously avoiding
 your enemies. You can turn the tables at one point in the game: Your enemies turn into chickens and you can
 catch them. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=817).
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 However, if you use v0 or v4 or specify `full_action_space=False` during initialization, only a reduced
 number of actions (those that are meaningful in this game) are available. The reduced action space may depend
@@ -44,8 +44,7 @@ flavor looks like this:
 | 7   | RIGHTFIRE |
 | 8   | LEFTFIRE  |
 | 9   | DOWNFIRE  |
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -67,8 +66,7 @@ via `gymnasium.make`.
 ### Rewards
 You score points by traversing new parts of the grid. Coloring an entire box in the maze or catching chickens gives extra points.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=817).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/Amidar-v5")
@@ -87,7 +85,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Amidar-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

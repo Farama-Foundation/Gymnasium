@@ -14,7 +14,7 @@ DEFAULT_CAMERA_CONFIG = {
 
 class HopperEnv(MujocoEnv, utils.EzPickle):
     """
-    ### Description
+    ## Description
 
     This environment is based on the work done by Erez, Tassa, and Todorov in
     ["Infinite Horizon Model Predictive Control for Nonlinear Periodic Tasks"](http://www.roboticsproceedings.org/rss07/p10.pdf). The environment aims to
@@ -26,7 +26,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     forward (right) direction by applying torques on the three hinges
     connecting the four body parts.
 
-    ### Action Space
+    ## Action Space
     The action space is a `Box(-1, 1, (3,), float32)`. An action represents the torques applied between *links*
 
     | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
@@ -35,7 +35,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     | 1   | Torque applied on the leg rotor    | -1          | 1           | leg_joint                        | hinge | torque (N m) |
     | 3   | Torque applied on the foot rotor   | -1          | 1           | foot_joint                       | hinge | torque (N m) |
 
-    ### Observation Space
+    ## Observation Space
 
     Observations consist of positional values of different body parts of the
     hopper, followed by the velocities of those individual parts
@@ -66,7 +66,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     | 10  | angular velocity of the foot hinge               | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
 
 
-    ### Rewards
+    ## Rewards
     The reward consists of three parts:
     - *healthy_reward*: Every timestep that the hopper is healthy (see definition in section "Episode Termination"), it gets a reward of fixed value `healthy_reward`.
     - *forward_reward*: A reward of hopping forward which is measured
@@ -82,12 +82,12 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost* and `info` will also contain the individual reward terms
 
-    ### Starting State
+    ## Starting State
     All observations start in state
     (0.0, 1.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) with a uniform noise
      in the range of [-`reset_noise_scale`, `reset_noise_scale`] added to the values for stochasticity.
 
-    ### Episode End
+    ## Episode End
     The hopper is said to be unhealthy if any of the following happens:
 
     1. An element of `observation[1:]` (if  `exclude_current_positions_from_observation=True`, else `observation[2:]`) is no longer contained in the closed interval specified by the argument `healthy_state_range`
@@ -102,7 +102,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
     If `terminate_when_unhealthy=False` is passed, the episode is ended only when 1000 timesteps are exceeded.
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported in v2 and lower.
 
@@ -131,7 +131,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     | `reset_noise_scale`                          | **float** | `5e-3`                | Scale of random perturbations of initial position and velocity (see section on Starting State)                                                                                  |
     | `exclude_current_positions_from_observation` | **bool**  | `True`                | Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies               |
 
-    ### Version History
+    ## Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
     * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)

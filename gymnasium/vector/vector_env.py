@@ -10,14 +10,38 @@ __all__ = ["VectorEnv"]
 
 
 class VectorEnv(gym.Env):
-    """Base class for vectorized environments. Runs multiple independent copies of the same environment in parallel.
+    """Base class for vectorized environments to run multiple independent copies of the same environment in parallel.
 
-    This is not the same as 1 environment that has multiple subcomponents, but it is many copies of the same base env.
+    Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
+    sub-environments at the same time. To prevent terminated environments waiting until all sub-environments have
+    terminated or truncated, the vector environments autoreset sub-environments after they terminate or truncated.
+    As a result, the final step's observation and info are overwritten by the reset's observation and info.
+    Therefore, the observation and info for the final step of a sub-environment is stored in the info parameter,
+    using `"final_observation"` and `"final_info"` respectively. See :meth:`step` for more information.
 
-    Each observation returned from vectorized environment is a batch of observations for each parallel environment.
-    And :meth:`step` is also expected to receive a batch of actions for each parallel environment.
+    The vector environments batch `observations`, `rewards`, `terminations`, `truncations` and `info` for each
+    parallel environment. In addition, :meth:`step` expects to receive a batch of actions for each parallel environment.
 
-    Notes:
+    Gymnasium contains two types of Vector environments: :class:`AsyncVectorEnv` and :class:`SyncVectorEnv`.
+
+    The Vector Environments have the additional attributes for users to understand the implementation
+
+    - :attr:`num_envs` - The number of sub-environment in the vector environment
+    - :attr:`observation_space` - The batched observation space of the vector environment
+    - :attr:`single_observation_space` - The observation space of a single sub-environment
+    - :attr:`action_space` - The batched action space of the vector environment
+    - :attr:`single_action_space` - The action space of a single sub-environment
+
+    Note:
+        The info parameter of :meth:`reset` and :meth:`step` was originally implemented before OpenAI Gym v25 was a list
+        of dictionary for each sub-environment. However, this was modified in OpenAI Gym v25+ and in Gymnasium to a
+        dictionary with a NumPy array for each key. To use the old info style using the :class:`VectorListInfo`.
+
+    Note:
+        To render the sub-environments, use :meth:`call` with "render" arguments. Remember to set the `render_modes`
+        for all the sub-environments during initialization.
+
+    Note:
         All parallel environments should share the identical observation and action spaces.
         In other words, a vector of multiple different environments is not supported.
     """
@@ -91,14 +115,24 @@ class VectorEnv(gym.Env):
         seed: Optional[Union[int, List[int]]] = None,
         options: Optional[dict] = None,
     ):
-        """Reset all parallel environments and return a batch of initial observations.
+        """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
             seed: The environment reset seeds
             options: If to return the options
 
         Returns:
-            A batch of observations from the vectorized environment.
+            A batch of observations and info from the vectorized environment.
+
+        An example::
+
+            >>> import gymnasium as gym
+            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
+            >>> envs.reset()
+            (array([[-0.02240574, -0.03439831, -0.03904812,  0.02810693],
+                   [ 0.01586068,  0.01929009,  0.02394426,  0.04016077],
+                   [-0.01314174,  0.03893502, -0.02400815,  0.0038326 ]],
+                  dtype=float32), {})
         """
         self.reset_async(seed=seed, options=options)
         return self.reset_wait(seed=seed, options=options)
@@ -131,7 +165,33 @@ class VectorEnv(gym.Env):
             actions: element of :attr:`action_space` Batch of actions.
 
         Returns:
-            Batch of (observations, rewards, terminated, truncated, infos) or (observations, rewards, dones, infos)
+            Batch of (observations, rewards, terminations, truncations, infos)
+
+        Note:
+            As the vector environments autoreset for a terminating and truncating sub-environments,
+            the returned observation and info is not the final step's observation or info which is instead stored in
+            info as `"final_observation"` and `"final_info"`.
+
+        An example::
+
+            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
+            >>> envs.reset()
+            >>> actions = np.array([1, 0, 1])
+            >>> observations, rewards, termination, truncation, infos = envs.step(actions)
+
+            >>> observations
+            array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
+                    [ 0.00788269, -0.17490888,  0.03393489,  0.31735462],
+                    [ 0.04918966,  0.19421194,  0.02938497, -0.29495203]],
+                    dtype=float32)
+            >>> rewards
+            array([1., 1., 1.])
+            >>> termination
+            array([False, False, False])
+            >>> termination
+            array([False, False, False])
+            >>> infos
+            {}
         """
         self.step_async(actions)
         return self.step_wait()
@@ -192,7 +252,7 @@ class VectorEnv(gym.Env):
             in :meth:`close_extras`. This is generic for both synchronous and asynchronous
             vectorized environments.
 
-        Notes:
+        Note:
             This will be automatically called when garbage collected or program exited.
 
         Args:
@@ -281,7 +341,7 @@ class VectorEnvWrapper(VectorEnv):
     could override some methods to change the behavior of the original vectorized environment
     without touching the original code.
 
-    Notes:
+    Note:
         Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.
     """
 

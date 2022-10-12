@@ -18,7 +18,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                       |
 | Import            | `gymnasium.make("ALE/CrazyClimber-v5")` | 
 
-### Description
+## Description
 You are a climber trying to reach the top of four builidings, while avoiding obstacles like closing
 windows and falling objects. When you receive damage (windows closing or objects) you will fall and
 lose one life; you have a total of 5 lives before the end games. At the top of each building, there's
@@ -28,7 +28,7 @@ possible while receiving the least amount of damage.
 
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=113).
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 However, if you use v0 or v4 or specify `full_action_space=False` during initialization, only a reduced
 number of actions (those that are meaningful in this game) are available. The reduced action space may depend
@@ -46,8 +46,7 @@ flavor looks like this:
 | 6   | UPLEFT    |
 | 7   | DOWNRIGHT |
 | 8   | DOWNLEFT  |
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -67,8 +66,7 @@ via `gymnasium.make`.
 
 ### Rewards
 A table of scores awarded for completing each row of a building is provided on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=113).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/CrazyClimber-v5")
@@ -87,7 +85,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("CrazyClimber-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

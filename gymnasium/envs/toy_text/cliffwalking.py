@@ -27,7 +27,7 @@ class CliffWalkingEnv(Env):
     With inspiration from:
     [https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py](https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py)
 
-    ### Description
+    ## Description
     The board is a 4x12 matrix, with (using NumPy matrix indexing):
     - [3, 0] as the start at bottom-left
     - [3, 11] as the goal at bottom-right
@@ -36,30 +36,30 @@ class CliffWalkingEnv(Env):
     If the agent steps on the cliff, it returns to the start.
     An episode terminates when the agent reaches the goal.
 
-    ### Actions
+    ## Actions
     There are 4 discrete deterministic actions:
     - 0: move up
     - 1: move right
     - 2: move down
     - 3: move left
 
-    ### Observations
+    ## Observations
     There are 3x12 + 1 possible states. In fact, the agent cannot be at the cliff, nor at the goal
     (as this results in the end of the episode).
     It remains all the positions of the first 3 rows plus the bottom-left cell.
     The observation is simply the current position encoded as [flattened index](https://numpy.org/doc/stable/reference/generated/numpy.unravel_index.html).
 
-    ### Reward
+    ## Reward
     Each time step incurs -1 reward, and stepping into the cliff incurs -100 reward.
 
-    ### Arguments
+    ## Arguments
 
     ```python
     import gymnasium as gym
     gym.make('CliffWalking-v0')
     ```
 
-    ### Version History
+    ## Version History
     - v0: Initial version release
     """
 

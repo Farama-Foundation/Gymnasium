@@ -3,7 +3,7 @@ firstpage:
 lastpage:
 ---
 
-## Classic Control
+# Classic Control
 
 ```{toctree}
 :hidden:

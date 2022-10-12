@@ -15,18 +15,17 @@ class VectorListInfo(gym.Wrapper):
     operation on info like `RecordEpisodeStatistics` this
     need to be the outermost wrapper.
 
-    i.e. VectorListInfo(RecordEpisodeStatistics(envs))
+    i.e. `VectorListInfo(RecordEpisodeStatistics(envs))`
 
     Example::
 
-    >>> # actual
-    >>> {
-    ...      "k": np.array[0., 0., 0.5, 0.3],
-    ...      "_k": np.array[False, False, True, True]
-    ...  }
-    >>> # classic
-    >>> [{}, {}, {k: 0.5}, {k: 0.3}]
-
+        >>> # actual
+        >>> {
+        ...      "k": np.array[0., 0., 0.5, 0.3],
+        ...      "_k": np.array[False, False, True, True]
+        ...  }
+        >>> # classic
+        >>> [{}, {}, {k: 0.5}, {k: 0.3}]
     """
 
     def __init__(self, env):

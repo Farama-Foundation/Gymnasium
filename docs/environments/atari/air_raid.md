@@ -19,11 +19,11 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                  |
 | Import            | `gymnasium.make("ALE/AirRaid-v5")` | 
 
-### Description
+## Description
 You control a ship that can move sideways. You must protect two buildings (one on the right and one on the left side of the screen) from 
 flying saucers that are trying to drop bombs on them.
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 However, if you use v0 or v4 or specify `full_action_space=False` during initialization, only a reduced
 number of actions (those that are meaningful in this game) are available. The reduced action space may depend
@@ -39,8 +39,7 @@ flavor looks like this:
 | 4   | RIGHTFIRE |
 | 5   | LEFTFIRE  |
 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -57,8 +56,7 @@ instead. The respective observation spaces are
 
 respectively. The general article on Atari environments outlines different ways to instantiate corresponding environments
 via `gymnasium.make`.
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/AirRaid-v5")
@@ -77,7 +75,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("AirRaid-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

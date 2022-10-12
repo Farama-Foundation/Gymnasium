@@ -18,7 +18,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                   |
 | Import            | `gymnasium.make("ALE/Seaquest-v0")` |
 
-### Description
+## Description
 You control a sub able to move in all directions and fire torpedoes.
 The goal is to retrieve as many divers as you
 can, while dodging and blasting enemy subs and killer sharks; points will be awarded accordingly.
@@ -37,10 +37,9 @@ to surface, with less than six divers, you lose one diver as well.
 
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=424)
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions will be available in the default flavor.
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -73,8 +72,7 @@ moment you surface.  The more oxygen you have left, the more bonus points
 you're given.
  
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=424).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/Seaquest-v5")
@@ -93,7 +91,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Seaquest-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 
