@@ -33,6 +33,7 @@ env.close()
 :caption: Introduction
 
 content/basic_usage
+content/gym_compatibility
 ```
 
 ```{toctree}
