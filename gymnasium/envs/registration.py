@@ -500,7 +500,7 @@ def register(
     registry[new_spec.id] = new_spec
 
 
-def _search_spec(id, ns, name, version, env_registry):
+def _search_spec(id_, ns, name, version, env_registry):
     """Search an environment specification in the registry."""
     latest_version = find_highest_version(ns, name, env_registry)
     if version is None and latest_version is not None:
@@ -512,7 +512,7 @@ def _search_spec(id, ns, name, version, env_registry):
             f"instead of the unversioned environment."
         )
     else:
-        spec_ = env_registry.get(id)
+        spec_ = env_registry.get(id_)
 
         if (
             version is not None
@@ -527,17 +527,17 @@ def _search_spec(id, ns, name, version, env_registry):
     return spec_
 
 
-def _search_in_gym(id, ns, name, version):
+def _search_in_gym(id_, ns, name, version):
     """Search the environment in the Gym registry, if Gym is installed."""
     try:
         import gym  # noqa
 
         if gym.__version__ >= "0.26":  # type: ignore
             logger.warn(
-                f"{id} not found in Gymnasium.\n"
+                f"{id_} not found in Gymnasium.\n"
                 "Found gym installed, searching for environment in gym..."
             )
-            spec_ = _search_spec(id, ns, name, version, gym.envs.registry)
+            spec_ = _search_spec(id_, ns, name, version, gym.envs.registry)
             return spec_
     except ImportError:
         pass
