@@ -41,7 +41,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-from gymnasium import Env, error, logger, Wrapper
+from gymnasium import Env, error, logger
 
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
@@ -254,10 +254,10 @@ def _check_version_exists(ns: Optional[str], name: str, version: Optional[int]):
         )
 
 
-def find_highest_version(ns: Optional[str], name: str) -> Optional[int]:
+def find_highest_version(ns: Optional[str], name: str, env_registry) -> Optional[int]:
     version: List[int] = [
         spec_.version
-        for spec_ in registry.values()
+        for spec_ in env_registry.values()
         if spec_.namespace == ns and spec_.name == name and spec_.version is not None
     ]
     return max(version, default=None)
@@ -499,6 +499,32 @@ def register(
     registry[new_spec.id] = new_spec
 
 
+def _search_spec(id, ns, name, version, env_registry):
+    latest_version = find_highest_version(ns, name, env_registry)
+    if version is None and latest_version is not None:
+        version = latest_version
+        new_env_id = get_env_id(ns, name, version)
+        spec_ = env_registry.get(new_env_id)
+        logger.warn(
+            f"Using the latest versioned environment `{new_env_id}` "
+            f"instead of the unversioned environment."
+        )
+    else:
+        spec_ = env_registry.get(id)
+
+        if (
+            version is not None
+            and latest_version is not None
+            and latest_version > version
+        ):
+            logger.warn(
+                f"The environment {name}-{version} is out of date. You should consider "
+                f"upgrading to version `v{latest_version}`."
+            )
+
+    return spec_
+
+
 def make(
     id: Union[str, EnvSpec],
     max_episode_steps: Optional[int] = None,
@@ -543,55 +569,27 @@ def make(
                     f"{e}. Environment registration via importing a module failed. "
                     f"Check whether '{module}' contains env registration and can be imported."
                 )
-        spec_ = registry.get(id)
 
         ns, name, version = parse_env_id(id)
-        latest_version = find_highest_version(ns, name)
-        if (
-            version is not None
-            and latest_version is not None
-            and latest_version > version
-        ):
-            logger.warn(
-                f"The environment {id} is out of date. You should consider "
-                f"upgrading to version `v{latest_version}`."
-            )
-        if version is None and latest_version is not None:
-            version = latest_version
-            new_env_id = get_env_id(ns, name, version)
-            spec_ = registry.get(new_env_id)
-            logger.warn(
-                f"Using the latest versioned environment `{new_env_id}` "
-                f"instead of the unversioned environment `{id}`."
-            )
+        spec_ = _search_spec(id, ns, name, version, registry)
 
         if spec_ is None:
+            # env not found in Gymnasium, try to search in gym
             try:
-                _check_version_exists(ns, name, version)
-            except error.UnregisteredEnv as e:
-                # env not found in Gymnasium, try to search in gym
-                try:
-                    import gym  # noqa
+                import gym  # noqa
 
-                    if gym.__version__ >= "0.26":  # type: ignore
-                        logger.warn(
-                            f"{str(e)}\nFound gym installed, searching for environment in gym..."
-                        )
-                        return Wrapper(
-                            gym.make(
-                                id=id,
-                                max_episode_steps=max_episode_steps,
-                                autoreset=autoreset,
-                                apply_api_compatibility=apply_api_compatibility,
-                                disable_env_checker=disable_env_checker,
-                                **kwargs,
-                            )
-                        )
-                    else:
-                        raise e
-                except ImportError:
-                    raise e
+                if gym.__version__ >= "0.26":  # type: ignore
+                    logger.warn(
+                        f"{id} not found in Gymnasium.\n"
+                        "Found gym installed, searching for environment in gym..."
+                    )
+                    spec_ = _search_spec(id, ns, name, version, gym.envs.registry)
+                    disable_env_checker = True
+            except ImportError:
+                pass
 
+        if spec_ is None:
+            _check_version_exists(ns, name, version)
             raise error.Error(f"No registered env with id: {id}")
 
     _kwargs = spec_.kwargs.copy()
