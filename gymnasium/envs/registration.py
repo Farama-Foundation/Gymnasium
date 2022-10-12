@@ -255,6 +255,7 @@ def _check_version_exists(ns: Optional[str], name: str, version: Optional[int]):
 
 
 def find_highest_version(ns: Optional[str], name: str, env_registry) -> Optional[int]:
+    """Find the most recent version of the environment in the registry."""
     version: List[int] = [
         spec_.version
         for spec_ in env_registry.values()
@@ -500,6 +501,7 @@ def register(
 
 
 def _search_spec(id, ns, name, version, env_registry):
+    """Search an environment specification in the registry."""
     latest_version = find_highest_version(ns, name, env_registry)
     if version is None and latest_version is not None:
         version = latest_version
@@ -523,6 +525,22 @@ def _search_spec(id, ns, name, version, env_registry):
             )
 
     return spec_
+
+
+def _search_in_gym(id, ns, name, version):
+    """Search the environment in the Gym registry, if Gym is installed."""
+    try:
+        import gym  # noqa
+
+        if gym.__version__ >= "0.26":  # type: ignore
+            logger.warn(
+                f"{id} not found in Gymnasium.\n"
+                "Found gym installed, searching for environment in gym..."
+            )
+            spec_ = _search_spec(id, ns, name, version, gym.envs.registry)
+            return spec_
+    except ImportError:
+        pass
 
 
 def make(
@@ -574,19 +592,8 @@ def make(
         spec_ = _search_spec(id, ns, name, version, registry)
 
         if spec_ is None:
-            # env not found in Gymnasium, try to search in gym
-            try:
-                import gym  # noqa
-
-                if gym.__version__ >= "0.26":  # type: ignore
-                    logger.warn(
-                        f"{id} not found in Gymnasium.\n"
-                        "Found gym installed, searching for environment in gym..."
-                    )
-                    spec_ = _search_spec(id, ns, name, version, gym.envs.registry)
-                    disable_env_checker = True
-            except ImportError:
-                pass
+            spec_ = _search_in_gym(id, ns, name, version)
+            disable_env_checker = True
 
         if spec_ is None:
             _check_version_exists(ns, name, version)
