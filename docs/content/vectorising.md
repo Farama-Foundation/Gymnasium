@@ -14,6 +14,7 @@ Gymnasium provides two types of vectorized environments:
 - `gymnasium.vector.AsyncVectorEnv`, where the different copies of the environment are executed in parallel using [multiprocessing](https://docs.python.org/3/library/multiprocessing.html). This creates one process per copy.
 
 
+
 Similar to `gymnasium.make`, you can run a vectorized version of a registered environment using the `gymnasium.vector.make` function. This runs multiple copies of the same environment (in parallel, by default).
 
 The following example runs 3 copies of the ``CartPole-v1`` environment in parallel, taking as input a vector of 3 binary actions (one for each copy of the environment), and returning an array of 3 observations stacked along the first dimension, with an array of rewards returned by each copy, and an array of booleans indicating if the episode in each parallel environment has ended.
