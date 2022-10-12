@@ -5,6 +5,7 @@ title: Utils
 # Env
 
 ## gymnasium.Env
+
 ```{eval-rst}
 .. autoclass:: gymnasium.Env
 ```
@@ -16,6 +17,7 @@ title: Utils
 .. autofunction:: gymnasium.Env.reset
 .. autofunction:: gymnasium.Env.render
 ```
+
 ### Attributes
 
 ```{eval-rst}
@@ -68,6 +70,10 @@ title: Utils
 
 ### Implementing environments
 
-When implementing an environment, the :meth:`Env.reset` and :meth:`Env.step` functions much be created describing the 
-dynamics of the environment. 
-For more information see the environment creation tutorial. 
+```{eval-rst}
+.. py:currentmodule:: gymnasium
+
+When implementing an environment, the :meth:Env.reset and :meth:`Env.step` functions much be created describing the
+dynamics of the environment.
+For more information see the environment creation tutorial.
+```

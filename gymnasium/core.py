@@ -36,7 +36,7 @@ class Env(Generic[ObsType, ActType]):
     r"""The main Gymnasium class for implementing Reinforcement Learning Agents environments.
 
     The class encapsulates an environment with arbitrary behind-the-scenes dynamics through the :meth:`step` and :meth:`reset` functions.
-    An environment can be partially or fully observed single agents. For multi-agent environments, see PettingZoo.
+    An environment can be partially or fully observed by single agents. For multi-agent environments, see PettingZoo.
 
     The main API methods that users of this class need to know are:
 
@@ -47,10 +47,10 @@ class Env(Generic[ObsType, ActType]):
     - :meth:`render` - Renders the environments to help visualise what the agent see, examples modes are "human", "rgb_array", "ansi" for text.
     - :meth:`close` - Closes the environment, important when external software is used, i.e. pygame for rendering, databases
 
-    Environments have the additional attributes for users to understand the implementation
+    Environments have additional attributes for users to understand the implementation
 
-    - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained with the space.
-    - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained with the space.
+    - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.
+    - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.
     - :attr:`reward_range` - A tuple corresponding to the minimum and maximum possible rewards for an agent over an episode.
       The default reward range is set to :math:`(-\infty,+\infty)`.
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
@@ -78,7 +78,7 @@ class Env(Generic[ObsType, ActType]):
     def step(self, action: ActType) -> Tuple[ObsType, float, bool, bool, dict]:
         """Run one timestep of the environment's dynamics using the agent actions.
 
-        When end of episode is reached (``terminated or truncated``), it is necessary to call :meth:`reset` to
+        When the end of an episode is reached (``terminated or truncated``), it is necessary to call :meth:`reset` to
         reset this environment's state for the next episode.
 
         Args:
@@ -98,7 +98,7 @@ class Env(Generic[ObsType, ActType]):
             info (dict): Contains auxiliary diagnostic information (helpful for debugging, learning, and logging).
                 This might, for instance, contain: metrics that describe the agent's performance state, variables that are
                 hidden from observations, or individual reward terms that are combined to produce the total reward.
-                In OpenAI Gym <v26, it contains "TimeLimit.truncated" to distinguishes truncation and termination,
+                In OpenAI Gym <v26, it contains "TimeLimit.truncated" to distinguish truncation and termination,
                 however this is deprecated in favour of returning terminated and truncated variables.
             done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will
                 return undefined results. This was removed in OpenAI Gym v26 in favor of terminated and truncated attributes.
@@ -116,7 +116,7 @@ class Env(Generic[ObsType, ActType]):
         """Resets the environment to an initial internal state, returning an initial observation and info.
 
         This method generates a new starting state often with some randomness to ensure that the agent explores the
-        state space or learns a sequences of actions rather than generalised policy. This randomness can be controlled
+        state space and learns a generalised policy about the environment. This randomness can be controlled
         with the ``seed`` parameter otherwise if the environment already has a random number generator and
         :meth:`reset` is called with ``seed=None``, the RNG is not reset.
 
@@ -147,10 +147,10 @@ class Env(Generic[ObsType, ActType]):
             self._np_random, seed = seeding.np_random(seed)
 
     def render(self) -> Optional[Union[RenderFrame, List[RenderFrame]]]:
-        """Compute the render frames as specified by :attr:`render_mode` during initialization of the environment.
+        """Compute the render frames as specified by :attr:`render_mode` during the initialization of the environment.
 
         The environment's :attr:`metadata` render modes (`env.metadata["render_modes"]`) should contain the possible
-        ways to implement the render modes. In additional, list versions for most render modes is achieved through
+        ways to implement the render modes. In addition, list versions for most render modes is achieved through
         `gymnasium.make` which automatically applies a wrapper to collect rendered frames.
 
         Note:
@@ -176,7 +176,7 @@ class Env(Generic[ObsType, ActType]):
         raise NotImplementedError
 
     def close(self):
-        """Cleans up the environment that should be closed after the user has finished using the environment.
+        """After the user has finished using the environment, close contains the code necessary to "clean up" the environment.
 
         This is critical for closing rendering windows, database or HTTP connections.
         """

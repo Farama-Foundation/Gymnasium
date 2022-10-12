@@ -2,6 +2,7 @@
 layout: "contents"
 title: Environment Creation
 ---
+
 # Make your own custom environment
 
 This documentation overviews creating new environments and relevant useful wrappers, utilities and tests included in Gymnasium designed for the creation of new environments.
@@ -59,6 +60,7 @@ where the blue dot is the agent and the red square represents the target.
 Let us look at the source code of `GridWorldEnv` piece by piece: 
 
 ### Declaration and Initialization
+
 Our custom environment will inherit from the abstract class `gymnasium.Env`. You shouldn't forget to add the `metadata` attribute to your class. 
 There, you should specify the render-modes that are supported by your environment (e.g. `"human"`, `"rgb_array"`, `"ansi"`)
 and the framerate at which your environment should be rendered. Every environment should support `None` as render-mode; you don't need to add it in the metadata.
@@ -71,6 +73,7 @@ We will choose to represent observations in the form of dictionaries with keys `
 may look like ` {"agent": array([1, 0]), "target": array([0, 3])}`.
 Since we have 4 actions in our environment ("right", "up", "left", "down"), we will use `Discrete(4)` as an action space.
 Here is the declaration of `GridWorldEnv` and the implementation of `__init__`:
+
 ```python
 import gymnasium as gym
 from gymnasium import spaces
@@ -125,6 +128,7 @@ class GridWorldEnv(gym.Env):
 ```
 
 ### Constructing Observations From Environment States
+
 Since we will need to compute observations both in `reset` and `step`, it is often convenient to have 
 a (private) method `_get_obs` that translates the environment's state into an observation. However, this is not mandatory
 and you may as well compute observations in `reset` and `step` separately:
@@ -142,6 +146,7 @@ Oftentimes, info will also contain some data that is only available inside the `
 terms). In that case, we would have to update the dictionary that is returned by `_get_info` in `step`.
 
 ### Reset
+
 The `reset` method will be called to initiate a new episode. You may assume that the `step` method will not
 be called before `reset` has been called. Moreover, `reset` should be called whenever a done signal has been issued.
 Users may pass the `seed` keyword to `reset` to initialize any random number generator that is used by the environment
@@ -180,6 +185,7 @@ and `_get_info` that we implemented earlier for that:
 ```
 
 ### Step
+
 The `step` method usually contains most of the logic of your environment. It accepts an `action`, computes the state of 
 the environment after applying that action and returns the 4-tuple `(observation, reward, done, info)`.
 Once the new state of the environment has been computed, we can check whether it is a terminal state and we set `done`
@@ -207,6 +213,7 @@ accordingly. Since we are using sparse binary rewards in `GridWorldEnv`, computi
 ```
 
 ### Rendering
+
 Here, we are using PyGame for rendering. A similar approach to rendering is used in many environments that are included
 with Gymnasium and you can use it as a skeleton for your own environments:
 
@@ -279,6 +286,7 @@ with Gymnasium and you can use it as a skeleton for your own environments:
 ```
 
 ### Close
+
 The `close` method should close any open resources that were used by the environment. In many cases,
 you don't actually have to bother to implement this method. However, in our example `render_mode` may
 be `"human"` and we might need to close the window that has been opened:
@@ -353,6 +361,7 @@ setup(
 ```
 
 ## Creating Environment Instances  
+
 After you have installed your package locally with `pip install -e gym-examples`, you can create an instance of the environment via:
 
 ```python
@@ -372,6 +381,7 @@ constructor yourself. Some may find this approach more pythonic and environments
 also perfectly fine (but remember to add wrappers as well!).
 
 ## Using Wrappers
+
 Oftentimes, we want to use different variants of a custom environment, or we want to
 modify the behavior of an environment that is provided by Gymnasium or some other party. 
 Wrappers allow us to do this without changing the environment implementation or adding any boilerplate code.

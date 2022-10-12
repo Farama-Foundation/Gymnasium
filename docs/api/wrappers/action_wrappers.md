@@ -1,6 +1,7 @@
 # Action Wrappers
 
 ## Action Wrapper
+
 ```{eval-rst}
 .. autoclass:: gymnasium.ActionWrapper
 
@@ -8,11 +9,13 @@
 ```
 
 ## Clip Action
+
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.ClipAction
 ```
 
 ## Rescale Action
+
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.RescaleAction
 ```

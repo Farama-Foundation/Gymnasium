@@ -2,6 +2,7 @@
 # Reward Wrappers
 
 ## Reward Wrapper
+
 ```{eval-rst}
 .. autoclass:: gymnasium.RewardWrapper
 
@@ -9,11 +10,13 @@
 ```
 
 ## Transform Reward
+
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.TransformReward
 ```
 
 ## Normalize Reward
+
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.NormalizeReward
 ```

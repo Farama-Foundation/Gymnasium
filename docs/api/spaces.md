@@ -39,6 +39,7 @@ Each space implements the following functions:
 ``` 
 
 ## Fundamental Spaces
+
 Gymnasium has a number of fundamental spaces that are used as building boxes for more complex spaces.
 
 ```{eval-rst}
@@ -52,6 +53,7 @@ Gymnasium has a number of fundamental spaces that are used as building boxes for
 ```
 
 ## Composite Spaces
+
 Often environment spaces require joining fundamental spaces together for vectorised environments, separate agents or readability of the space.
 
 ```{eval-rst}
@@ -62,6 +64,7 @@ Often environment spaces require joining fundamental spaces together for vectori
 ```
 
 ## Utils
+
 Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces. 
 This can be important for passing information to neural networks.
 
@@ -73,6 +76,7 @@ This can be important for passing information to neural networks.
 ```
 
 ## Vector Utils
+
 When vectorizing environments, it is necessary to modify the observation and action spaces for new batched spaces sizes.
 Therefore, Gymnasium provides a number of additional functions used when using a space with a Vector environment.
 

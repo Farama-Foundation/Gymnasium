@@ -7,6 +7,7 @@ firstpage:
 # Basic Usage
 
 ## Initializing Environments
+
 Initializing environments is very easy in Gymnasium and can be done via: 
 
 ```python
@@ -15,6 +16,7 @@ env = gym.make('CartPole-v1')
 ```
 
 ## Interacting with the Environment
+
 Gymnasium implements the classic "agent-environment loop":
 
 ```{image} /_static/diagrams/AE_loop.png
@@ -84,6 +86,7 @@ It is possible for `terminated=True` and `truncated=True` to occur at the same t
 This is explained in detail in the `Handling Time Limits` section. 
 
 #### Backward compatibility
+
 Gym will retain support for the old API through compatibility wrappers. 
 
 Users can toggle the old API through `make` by setting `apply_api_compatibility=True`. 
@@ -100,6 +103,7 @@ For more details see the wrappers section.
 
 
 ## Checking API-Conformity
+
 If you have implemented a custom environment and would like to perform a sanity check to make sure that it conforms to 
 the API, you can run: 
 
@@ -117,6 +121,7 @@ not check the `render` method. To change this behavior, you can pass `skip_rende
 been closed!
 
 ## Spaces
+
 Spaces are usually used to specify the format of valid actions and observations.
 Every environment should have the attributes `action_space` and `observation_space`, both of which should be instances
 of classes that inherit from `Space`.
@@ -163,6 +168,7 @@ OrderedDict([('position', 0), ('velocity', 1)])
  ```
 
 ## Wrappers
+
 Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.
 Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can 
 also be chained to combine their effects. Most environments that are generated via `gymnasium.make` will already be wrapped by default.
@@ -210,6 +216,7 @@ If you have a wrapped environment, and you want to get the unwrapped environment
 ```
 
 ## Playing within an environment
+
 You can also play the environment using your keyboard using the `play` function in `gymnasium.utils.play`. 
 ```python
 from gymnasium.utils.play import play

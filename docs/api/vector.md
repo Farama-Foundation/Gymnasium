@@ -69,6 +69,7 @@ title: Vector
 ```
 
 ## Sync Vector Env
+
 ```{eval-rst}
 .. autoclass:: gymnasium.vector.SyncVectorEnv
 ```
