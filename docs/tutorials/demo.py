@@ -15,7 +15,7 @@ This file is not listed in the website and serves only to give an example of a t
 
 # This line won't be rendered as rST because there's a space after the last block.
 myvariable = 2
-print("my variable is {}".format(myvariable))
+print(f"my variable is {myvariable}")
 # This is the end of the 'code block' (if using an above IDE). All code within
 # this block can be easily executed all at once.
 
