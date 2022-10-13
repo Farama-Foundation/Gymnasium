@@ -4,7 +4,10 @@ __pycache__
 build/
 _build/
 
-tutorials/**/*.*
+tutorials/*
+!tutorials/*.md
+!tutorials/*.py
+
 environments/**/list.html
 environments/**/complete_list.html
 environments/**/complete_list.md
