@@ -25,9 +25,6 @@ jobs:
       - name: Build Envs Docs
         run: python docs/scripts/gen_mds.py && python docs/scripts/gen_envs_display.py
 
-      - name: Build Tutorials
-        run: python docs/scripts/gen_tutorials.py
-
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
 
