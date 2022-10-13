@@ -70,7 +70,7 @@ html_favicon = "_static/img/favicon.png"
 html_theme_options = {
     "light_logo": "img/gymnasium_black.svg",
     "dark_logo": "img/gymnasium_white.svg",
-    "gtag": "",
+    "gtag": "G-6H9C8TWXZ8",
 }
 html_context: Dict[str, Any] = {}
 html_context["conf_py_path"] = "/docs/"
