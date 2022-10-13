@@ -49,7 +49,7 @@ with open("README.md") as fh:
 
 setup(
     author="Farama Foundation",
-    author_email="jkterry@farama.org",
+    author_email="contact@farama.org",
     classifiers=[
         # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
         "Programming Language :: Python :: 3",
