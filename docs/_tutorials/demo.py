@@ -1,8 +1,8 @@
 """
-This is my example script
+Demo tutorial script
 =========================
 
-This example doesn't do much, it just makes a simple plot
+This file is not listed in the website and serves only to give an example of a tutorial file. And is mostly a copy-paste from sphinx-gallery.
 """
 
 # %%
@@ -26,4 +26,4 @@ print("my variable is {}".format(myvariable))
 # In the built documentation, it will be rendered as rST after the code above!
 # This is also another code block.
 
-print('my variable plus 2 is {}'.format(myvariable + 2))
+print(f'my variable plus 2 is {myvariable + 2}')

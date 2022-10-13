@@ -15,7 +15,10 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
+import os
 from typing import Any, Dict
+
+from furo import gen_tutorials
 
 import gymnasium
 
@@ -82,3 +85,10 @@ html_context["slug"] = "gymnasium"
 
 html_static_path = ["_static"]
 html_css_files = []
+
+# -- Generate Tutorials -------------------------------------------------
+
+gen_tutorials.generate(
+    os.path.join(os.path.dirname(__file__), "_tutorials"),
+    os.path.join(os.path.dirname(__file__), "tutorials"),
+)
