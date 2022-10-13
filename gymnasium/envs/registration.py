@@ -509,7 +509,7 @@ def _search_spec(id_, ns, name, version, env_registry):
         spec_ = env_registry.get(new_env_id)
         logger.warn(
             f"Using the latest versioned environment `{new_env_id}` "
-            f"instead of the unversioned environment."
+            f"instead of the unversioned environment `{id_}`."
         )
     else:
         spec_ = env_registry.get(id_)
