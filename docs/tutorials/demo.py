@@ -26,4 +26,4 @@ print(f"my variable is {myvariable}")
 # In the built documentation, it will be rendered as rST after the code above!
 # This is also another code block.
 
-print(f'my variable plus 2 is {myvariable + 2}')
+print(f"my variable plus 2 is {myvariable + 2}")
