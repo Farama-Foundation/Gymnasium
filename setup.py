@@ -60,7 +60,7 @@ header_count, long_description = get_description()
 
 setup(
     name="Gymnasium",
-    version=get_version(),
+    version=version,
     author="Farama Foundation",
     author_email="contact@farama.org",
     description="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
