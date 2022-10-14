@@ -11,7 +11,7 @@ The documentation website is at [gymnasium.farama.org](https://gymnasium.farama.
 
 ## Installation
 
-To install the base Gymnasium library, use `pip install gymnasium`.
+To install the base Gymnasium library, use `pip install gymnasium`
 
 This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install gymnasium[atari]` or use `pip install gymnasium[all]` to install all dependencies.
 
