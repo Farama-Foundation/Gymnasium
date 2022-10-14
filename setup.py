@@ -84,7 +84,13 @@ setup(
         ]
     },
     include_package_data=True,
-    install_requires=["numpy>=1.18.0", "gymnasium>=0.26.0"],
+    install_requires=[
+        "numpy >= 1.18.0",
+        "cloudpickle >= 1.2.0",
+        "importlib_metadata >= 4.8.0; python_version < '3.10'",
+        "gymnasium_notices >= 0.0.1",
+        "dataclasses == 0.8; python_version == '3.6'",
+    ],
     classifiers=[
         # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
         "Programming Language :: Python :: 3",
@@ -95,12 +101,5 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     extras_require=extras,
-    install_requires=[
-        "numpy >= 1.18.0",
-        "cloudpickle >= 1.2.0",
-        "importlib_metadata >= 4.8.0; python_version < '3.10'",
-        "gymnasium_notices >= 0.0.1",
-        "dataclasses == 0.8; python_version == '3.6'",
-    ],
     zip_safe=False,
 )
