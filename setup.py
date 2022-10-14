@@ -62,7 +62,7 @@ setup(
     version=get_version(),
     author="Farama Foundation",
     author_email="contact@farama.org",
-    description="Gymnasium for multi-agent reinforcement learning",
+    description="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
     url="https://github.com/Farama-Foundation/Gymnasium",
     license="MIT",
     license_files=("LICENSE.txt",),
