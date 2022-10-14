@@ -58,36 +58,33 @@ version = get_version()
 header_count, long_description = get_description()
 
 setup(
-
+    name="Gymnasium",
+    version=get_version(),
     author="Farama Foundation",
     author_email="contact@farama.org",
     description="Gymnasium for multi-agent reinforcement learning",
     url="https://github.com/Farama-Foundation/Gymnasium",
+    license="MIT",
     license_files=("LICENSE.txt",),
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords=["Reinforcement Learning", "game", "RL", "AI", "gymnasium"],
-    python_requires=">=3.7, <3.11",
-    packages=["pettingzoo"]
-    + ["pettingzoo." + pkg for pkg in find_packages("pettingzoo")],
+    python_requires=">=3.6",
+    tests_require=extras["testing"],
+    packages=[
+        package for package in find_packages() if package.startswith("gymnasium")
+    ],
+    package_data={
+        "gymnasium": [
+            "envs/mujoco/assets/*.xml",
+            "envs/classic_control/assets/*.png",
+            "envs/toy_text/font/*.ttf",
+            "envs/toy_text/img/*.png",
+            "py.typed",
+        ]
+    },
     include_package_data=True,
     install_requires=["numpy>=1.18.0", "gymnasium>=0.26.0"],
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-    ],
-    extras_require=extras,
-
-    name="gymnasium",
-    version=version,
-    author="Farama Foundation",
-    author_email="contact@farama.org",
-    description="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
-    url="https://gymnasium.farama.org/",
     classifiers=[
         # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
         "Programming Language :: Python :: 3",
@@ -105,23 +102,5 @@ setup(
         "gymnasium_notices >= 0.0.1",
         "dataclasses == 0.8; python_version == '3.6'",
     ],
-    license="MIT",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    packages=[
-        package for package in find_packages() if package.startswith("gymnasium")
-    ],
-    package_data={
-        "gymnasium": [
-            "envs/mujoco/assets/*.xml",
-            "envs/classic_control/assets/*.png",
-            "envs/toy_text/font/*.ttf",
-            "envs/toy_text/img/*.png",
-            "py.typed",
-        ]
-    },
-    python_requires=">=3.6",
-    tests_require=extras["testing"],
-    version=get_version(),
     zip_safe=False,
 )
