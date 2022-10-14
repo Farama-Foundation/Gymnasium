@@ -64,7 +64,7 @@ setup(
     author="Farama Foundation",
     author_email="contact@farama.org",
     description="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
-    url="https://github.com/Farama-Foundation/Gymnasium",
+    url="https://gymnasium.farama.org/",
     license="MIT",
     license_files=("LICENSE.txt",),
     long_description=long_description,
