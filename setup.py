@@ -5,6 +5,7 @@ from setuptools import find_packages, setup
 
 
 def get_description():
+    """Gets the description from the readme."""
     with open("README.md") as file:
         long_description = ""
         header_count = 0
