@@ -52,9 +52,5 @@ Gymnasium keeps strict versioning for reproducibility reasons. All environments 
 
 ## Development Roadmap
 
-We have a roadmap for future development work for Gymnasium available here:: https://github.com/Farama-Foundation/Gymnasium/issues/12
+We have a roadmap for future development work for Gymnasium available here: https://github.com/Farama-Foundation/Gymnasium/issues/12
 
-
-## Release Notes
-
-There used to be release notes for all the new Gym versions here. New release notes are being moved to [releases page](https://github.com/Farama-Foundation/Gymnasium/releases) on GitHub, like most other libraries do.
