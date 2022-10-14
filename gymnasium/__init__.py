@@ -41,3 +41,5 @@ try:
 
 except Exception:  # nosec
     pass
+
+__version__ = "0.26.2"

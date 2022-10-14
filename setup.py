@@ -1,8 +1,8 @@
 """Setups the project."""
 import itertools
-import re
 
 from setuptools import find_packages, setup
+
 
 def get_description():
     with open("README.md") as file:
@@ -17,15 +17,18 @@ def get_description():
                 break
     return header_count, long_description
 
+
 def get_version():
     """Gets the pettingzoo version."""
-    path = "gymnasium/version.py"
+    path = "pettingzoo/__init__.py"
     with open(path) as file:
-        full_version = file.read()
-        assert (
-            re.match(r'VERSION = "\d\.\d+\.\d+"\n', full_version).group(0) == full_version
-        ), f"Unexpected version: {full_version}"
-        return re.search(r"\d\.\d+\.\d+", full_version).group(0)
+        lines = file.readlines()
+
+    for line in lines:
+        if line.startswith("__version__"):
+            return line.strip().split()[-1].strip().strip('"')
+    raise RuntimeError("bad version data in __init__.py")
+
 
 # Environment-specific dependencies.
 extras = {
