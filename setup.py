@@ -4,12 +4,28 @@ import re
 
 from setuptools import find_packages, setup
 
-with open("gymnasium/version.py") as file:
-    full_version = file.read()
-    assert (
-        re.match(r'VERSION = "\d\.\d+\.\d+"\n', full_version).group(0) == full_version
-    ), f"Unexpected version: {full_version}"
-    VERSION = re.search(r"\d\.\d+\.\d+", full_version).group(0)
+def get_description():
+    with open("README.md") as file:
+        long_description = ""
+        header_count = 0
+        for line in file:
+            if line.startswith("##"):
+                header_count += 1
+            if header_count < 2:
+                long_description += line
+            else:
+                break
+    return header_count, long_description
+
+def get_version():
+    """Gets the pettingzoo version."""
+    path = "gymnasium/version.py"
+    with open(path) as file:
+        lines = file.readlines()
+        assert (
+            re.match(r'VERSION = "\d\.\d+\.\d+"\n', full_version).group(0) == full_version
+        ), f"Unexpected version: {full_version}"
+        return re.search(r"\d\.\d+\.\d+", full_version).group(0)
 
 # Environment-specific dependencies.
 extras = {
@@ -35,17 +51,7 @@ extras["all"] = list(
     set(itertools.chain.from_iterable(map(lambda group: extras[group], all_groups)))
 )
 
-# Uses the readme as the description on PyPI
-with open("README.md") as fh:
-    long_description = ""
-    header_count = 0
-    for line in fh:
-        if line.startswith("##"):
-            header_count += 1
-        if header_count < 2:
-            long_description += line
-        else:
-            break
+header_count, long_description = get_description()
 
 setup(
     author="Farama Foundation",
@@ -87,6 +93,6 @@ setup(
     python_requires=">=3.6",
     tests_require=extras["testing"],
     url="https://gymnasium.farama.org/",
-    version=VERSION,
+    version=get_version(),
     zip_safe=False,
 )
