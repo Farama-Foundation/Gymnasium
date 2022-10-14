@@ -1,10 +1,11 @@
 """Setups the project."""
 import itertools
-import re
 
 from setuptools import find_packages, setup
 
+
 def get_description():
+    """Gets the description from the readme."""
     with open("README.md") as file:
         long_description = ""
         header_count = 0
@@ -17,15 +18,18 @@ def get_description():
                 break
     return header_count, long_description
 
+
 def get_version():
-    """Gets the pettingzoo version."""
-    path = "gymnasium/version.py"
+    """Gets the gymnasium version."""
+    path = "gymnasium/__init__.py"
     with open(path) as file:
-        full_version = file.read()
-        assert (
-            re.match(r'VERSION = "\d\.\d+\.\d+"\n', full_version).group(0) == full_version
-        ), f"Unexpected version: {full_version}"
-        return re.search(r"\d\.\d+\.\d+", full_version).group(0)
+        lines = file.readlines()
+
+    for line in lines:
+        if line.startswith("__version__"):
+            return line.strip().split()[-1].strip().strip('"')
+    raise RuntimeError("bad version data in __init__.py")
+
 
 # Environment-specific dependencies.
 extras = {
@@ -51,33 +55,23 @@ extras["all"] = list(
     set(itertools.chain.from_iterable(map(lambda group: extras[group], all_groups)))
 )
 
+version = get_version()
 header_count, long_description = get_description()
 
 setup(
+    name="Gymnasium",
+    version=version,
     author="Farama Foundation",
     author_email="contact@farama.org",
-    classifiers=[
-        # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-    ],
     description="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
-    extras_require=extras,
-    install_requires=[
-        "numpy >= 1.18.0",
-        "cloudpickle >= 1.2.0",
-        "importlib_metadata >= 4.8.0; python_version < '3.10'",
-        "gymnasium_notices >= 0.0.1",
-        "dataclasses == 0.8; python_version == '3.6'",
-    ],
+    url="https://gymnasium.farama.org/",
     license="MIT",
+    license_files=("LICENSE.txt",),
     long_description=long_description,
     long_description_content_type="text/markdown",
-    name="gymnasium",
+    keywords=["Reinforcement Learning", "game", "RL", "AI", "gymnasium"],
+    python_requires=">=3.6",
+    tests_require=extras["testing"],
     packages=[
         package for package in find_packages() if package.startswith("gymnasium")
     ],
@@ -90,9 +84,23 @@ setup(
             "py.typed",
         ]
     },
-    python_requires=">=3.6",
-    tests_require=extras["testing"],
-    url="https://gymnasium.farama.org/",
-    version=get_version(),
+    include_package_data=True,
+    install_requires=[
+        "numpy >= 1.18.0",
+        "cloudpickle >= 1.2.0",
+        "importlib_metadata >= 4.8.0; python_version < '3.10'",
+        "gymnasium_notices >= 0.0.1",
+        "dataclasses == 0.8; python_version == '3.6'",
+    ],
+    classifiers=[
+        # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+    ],
+    extras_require=extras,
     zip_safe=False,
 )
