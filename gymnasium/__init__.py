@@ -19,6 +19,7 @@ import os
 import sys
 
 __all__ = ["Env", "Space", "Wrapper", "make", "spec", "register"]
+__version__ = "0.26.2"
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
 # SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using
@@ -41,4 +42,3 @@ try:
 except Exception:  # nosec
     pass
 
-__version__ = "0.26.2"
