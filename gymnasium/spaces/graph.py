@@ -108,10 +108,10 @@ class Graph(Space):
                 (Box spaces don't support sample masks).
                 If no `num_edges` is provided then the `edge_mask` is multiplied by the number of edges
             num_nodes: The number of nodes that will be sampled, the default is 10 nodes
-            num_edges: An optional number of edges, otherwise, a random number between 0 and `num_nodes`^2
+            num_edges: An optional number of edges, otherwise, a random number between 0 and `num_nodes` ^ 2
 
         Returns:
-            A NamedTuple representing a graph with attributes .nodes, .edges, and .edge_links.
+            A :class:`GraphInstance` with attributes `.nodes`, `.edges`, and `.edge_links`.
         """
         assert (
             num_nodes > 0

@@ -19,7 +19,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                               |
 | Import            | `gymnasium.make("ALE/Hero-v5")` | 
 
-### Description
+## Description
 You need to rescue miners that are stuck in a mine shaft. You have access to various tools: A propeller backpack that
 allows you to fly wherever you want, sticks of dynamite that can be used to blast through walls, a laser beam to kill
 vermin, and a raft to float across stretches of lava. 
@@ -27,13 +27,12 @@ You have a limited amount of power. Once you run out, you lose a live.
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=228)
 
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions 
 will be available in the default flavor.
 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -56,8 +55,7 @@ You score points for shooting critters, rescuing miners, and dynamiting walls.
 Extra points are rewarded for any power remaining after rescuing a miner.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=228).
 
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/Hero-v5")
@@ -76,7 +74,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Hero-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

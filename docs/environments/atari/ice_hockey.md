@@ -18,19 +18,18 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                    |
 | Import            | `gymnasium.make("ALE/IceHockey-v5")` | 
 
-### Description
+## Description
 Your goal is to score as many points as possible in a standard game of Ice Hockey over a 3-minute time period. The ball is usually called "the puck".
 There are 32 shot angles ranging from the extreme left to the extreme right. The angles can only aim towards the opponent's goal.
 Just as in real hockey, you can pass the puck by shooting it off the sides of the rink. This can be really key when you're in position to score a goal.
  Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=241)
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions 
 will be available in the default flavor.
 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -53,8 +52,7 @@ via `gymnasium.make`.
 You score points by shooting the puck into your opponent's goal. Your opponent scores in the same manner.
 There are no limits to how many points you can get per game, other than the time limit of 3-minute games.
 For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=241).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/IceHockey-v5")
@@ -73,7 +71,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Icehockey-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

@@ -7,14 +7,16 @@ firstpage:
 # Basic Usage
 
 ## Initializing Environments
+
 Initializing environments is very easy in Gymnasium and can be done via: 
 
 ```python
 import gymnasium as gym
-env = gym.make('CartPole-v0')
+env = gym.make('CartPole-v1')
 ```
 
 ## Interacting with the Environment
+
 Gymnasium implements the classic "agent-environment loop":
 
 ```{image} /_static/diagrams/AE_loop.png
@@ -38,7 +40,7 @@ alongside the observation for this timestep. The reward may also be negative or 
 The agent will then be trained to maximize the reward it accumulates over many timesteps.
 
 After some timesteps, the environment may enter a terminal state. For instance, the robot may have crashed, or the agent may have succeeded in completing a task. In that case, we want to reset the environment to a new initial state. The environment issues a terminated signal to the agent if it enters such a terminal state. Sometimes we also want to end the episode after a fixed number of timesteps, in this case, the environment issues a truncated signal.
-This is a new change in API (v0.26 onwards). Earlier a common done signal was issued for an episode ending via any means. This is now changed in favour of issuing two signals - terminated and truncated.
+This is a new change in API (v0.26 onwards). Earlier a commonly done signal was issued for an episode ending via any means. This is now changed in favour of issuing two signals - terminated and truncated.
 
 Let's see what the agent-environment loop looks like in Gymnasium.
 This example will run an instance of `LunarLander-v2` environment for 1000 timesteps. Since we pass `render_mode="human"`, you should see a window pop up rendering the environment.
@@ -60,7 +62,7 @@ for _ in range(1000):
 env.close()
 ```
 
-The output should look something like this
+The output should look something like this:
 
 ```{figure} https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif
 :width: 50%
@@ -84,6 +86,7 @@ It is possible for `terminated=True` and `truncated=True` to occur at the same t
 This is explained in detail in the `Handling Time Limits` section. 
 
 #### Backward compatibility
+
 Gym will retain support for the old API through compatibility wrappers. 
 
 Users can toggle the old API through `make` by setting `apply_api_compatibility=True`. 
@@ -93,13 +96,14 @@ env = gym.make("CartPole-v1", apply_api_compatibility=True)
 ```
 This can also be done explicitly through a wrapper: 
 ```python
-from gymasium.wrappers import StepCompatibility
-env = StepCompatibility(CustomEnv(), output_truncation_bool=False)
+from gymnasium.wrappers import StepAPICompatibility
+env = StepAPICompatibility(CustomEnv(), output_truncation_bool=False)
 ```
 For more details see the wrappers section. 
 
 
 ## Checking API-Conformity
+
 If you have implemented a custom environment and would like to perform a sanity check to make sure that it conforms to 
 the API, you can run: 
 
@@ -117,6 +121,7 @@ not check the `render` method. To change this behavior, you can pass `skip_rende
 been closed!
 
 ## Spaces
+
 Spaces are usually used to specify the format of valid actions and observations.
 Every environment should have the attributes `action_space` and `observation_space`, both of which should be instances
 of classes that inherit from `Space`.
@@ -131,7 +136,8 @@ There are multiple `Space` types available in Gymnasium:
 
 ```python
 >>> from gymnasium.spaces import Box, Discrete, Dict, Tuple, MultiBinary, MultiDiscrete
->>> 
+>>> import numpy as np 
+>>>
 >>> observation_space = Box(low=-1.0, high=2.0, shape=(3,), dtype=np.float32)
 >>> observation_space.sample()
 [ 1.6952509 -0.4399011 -0.7981693]
@@ -162,6 +168,7 @@ OrderedDict([('position', 0), ('velocity', 1)])
  ```
 
 ## Wrappers
+
 Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.
 Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can 
 also be chained to combine their effects. Most environments that are generated via `gymnasium.make` will already be wrapped by default.
@@ -209,6 +216,7 @@ If you have a wrapped environment, and you want to get the unwrapped environment
 ```
 
 ## Playing within an environment
+
 You can also play the environment using your keyboard using the `play` function in `gymnasium.utils.play`. 
 ```python
 from gymnasium.utils.play import play
@@ -217,7 +225,7 @@ play(gymnasium.make('Pong-v0'))
 This opens a window of the environment and allows you to control the agent using your keyboard.
 
 Playing using the keyboard requires a key-action map. This map should have type `dict[tuple[int], int | None]`, which maps the keys pressed to action performed.
-For example, if pressing the keys `w` and `space` at the same time is supposed to perform action `2`, then the `key_to_action` dict should look like:
+For example, if pressing the keys `w` and `space` at the same time is supposed to perform action `2`, then the `key_to_action` dict should look like this:
 ```python
 {
     # ...
@@ -230,16 +238,23 @@ As a more complete example, let's say we wish to play with `CartPole-v0` using o
 import gymnasium as gym
 import pygame
 from gymnasium.utils.play import play
+
 mapping = {(pygame.K_LEFT,): 0, (pygame.K_RIGHT,): 1}
-play(gymnasium.make("CartPole-v0"), keys_to_action=mapping)
+play(gym.make("CartPole-v1",render_mode="rgb_array"), keys_to_action=mapping)
 ```
 where we obtain the corresponding key ID constants from pygame. If the `key_to_action` argument is not specified, then the default `key_to_action` mapping for that env is used, if provided.
 
 Furthermore, if you wish to plot real time statistics as you play, you can use `gymnasium.utils.play.PlayPlot`. Here's some sample code for plotting the reward for last 5 second of gameplay:
 ```python
+import gymnasium as gym
+import pygame
+from gymnasium.utils.play import PlayPlot, play
+
 def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
-    return [rew,]
+    return [rew, ]
+
 plotter = PlayPlot(callback, 30 * 5, ["reward"])
-env = gymnasium.make("Pong-v0")
-play(env, callback=plotter.callback)
+mapping = {(pygame.K_LEFT,): 0, (pygame.K_RIGHT,): 1}
+env = gym.make("CartPole-v1", render_mode="rgb_array")
+play(env, callback=plotter.callback, keys_to_action=mapping)
 ```

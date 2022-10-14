@@ -73,7 +73,7 @@ html_favicon = "_static/img/favicon.png"
 html_theme_options = {
     "light_logo": "img/gymnasium_black.svg",
     "dark_logo": "img/gymnasium_white.svg",
-    "gtag": "",
+    "gtag": "G-6H9C8TWXZ8",
     "description": "A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
     "image": "img/gymnasium-github.png"
 }
