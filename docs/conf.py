@@ -74,6 +74,8 @@ html_theme_options = {
     "light_logo": "img/gymnasium_black.svg",
     "dark_logo": "img/gymnasium_white.svg",
     "gtag": "",
+    "description": "A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
+    "image": "img/gymnasium-github.png"
 }
 html_context: Dict[str, Any] = {}
 html_context["conf_py_path"] = "/docs/"
