@@ -19,8 +19,8 @@ def get_description():
 
 
 def get_version():
-    """Gets the pettingzoo version."""
-    path = "pettingzoo/__init__.py"
+    """Gets the gymnasium version."""
+    path = "gymnasium/__init__.py"
     with open(path) as file:
         lines = file.readlines()
 
