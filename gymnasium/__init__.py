@@ -2,7 +2,6 @@
 # isort: skip_file
 
 from gymnasium import error
-from gymnasium.version import VERSION as __version__
 
 from gymnasium.core import (
     Env,
