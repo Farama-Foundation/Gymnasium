@@ -1,4 +1,11 @@
+import gym as legacy_gym
 import gymnasium as gym
+
+
+gym.register(
+    "RegisterDuringMakeEnv-v0",
+    entry_point="tests.envs.utils_envs:RegisterDuringMakeEnv",
+)
 
 
 class RegisterDuringMakeEnv(gym.Env):
@@ -47,3 +54,11 @@ class NoHumanNoRGB(gym.Env):
     def __init__(self, render_mode=None):
         assert render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
+
+
+class LegacyEnv(legacy_gym.Env):
+    """Used to test make for legacy gym environments."""
+
+    def __init__(self):
+        self.action_space = legacy_gym.spaces.Discrete(1)
+        self.observation_space = legacy_gym.spaces.Discrete(1)

@@ -7,6 +7,7 @@ from copy import deepcopy
 import numpy as np
 import pytest
 
+import gym as legacy_gym
 import gymnasium as gym
 from gymnasium.envs.classic_control import cartpole
 from gymnasium.wrappers import (
@@ -18,7 +19,7 @@ from gymnasium.wrappers import (
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_env_specs
-from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv
+from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv, LegacyEnv
 from tests.testing_env import GenericTestEnv, old_step_fn
 from tests.wrappers.utils import has_wrapper
 
@@ -50,6 +51,10 @@ gym.register(
     entry_point="tests.envs.utils_envs:NoHumanNoRGB",
 )
 
+legacy_gym.register(
+    id="test/LegacyEnv",
+    entry_point="tests.envs.utils_envs:LegacyEnv"
+)
 
 def test_make():
     env = gym.make("CartPole-v1", disable_env_checker=True)
@@ -312,4 +317,11 @@ def test_import_module_during_make():
         disable_env_checker=True,
     )
     assert isinstance(env.unwrapped, RegisterDuringMakeEnv)
+    env.close()
+
+def test_legacy_gym():
+    env = gym.make("test/LegacyEnv")
+
+    env.reset()
+    assert isinstance(env.unwrapped, LegacyEnv)
     env.close()

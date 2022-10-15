@@ -595,9 +595,9 @@ def make(
             spec_ = _search_in_gym(id, ns, name, version)
 
             if spec_ is not None:
-                disable_env_checker = True
+                spec_.disable_env_checker = True
                 logger.warn(
-                    "Environment has been loaded from Gym, please register the environment in the Gymnasium as well."
+                    "Environment has been loaded from Gym, please register the environment in Gymnasium as well."
                 )
             else:
                 _check_version_exists(ns, name, version)
