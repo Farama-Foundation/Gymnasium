@@ -1,6 +1,6 @@
 import gym as legacy_gym
-import gymnasium as gym
 
+import gymnasium as gym
 
 gym.register(
     "RegisterDuringMakeEnv-v0",
