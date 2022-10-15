@@ -2,7 +2,12 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="" />
+    <meta property="og:url" content="https://gymnasium.farama.org/environments/atari/gopher.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Gravitar" href="../gravitar/" /><link rel="prev" title="Frostbite" href="../frostbite/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/atari/gopher.html" />
 
@@ -10,7 +15,7 @@
         <title>Gopher - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=c2d5e51f39e130612d57e150aebc94239a19910f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=a9e5ba0c0bf3b12d8e0ea7b9febdea61fa484836" />
     
     
 
@@ -37,7 +42,6 @@
   }
 </style></head>
   <body>
-
     <header class="farama-header">
       <div class="farama-header__container">
         <div class="farama-header__left">
@@ -60,10 +64,10 @@
                   <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
               </svg>
             </div>
-            <div class="farama-header-menu__list">
-              <div class="farama-header-menu-list__header">
+            <div class="farama-header-menu-container">
+              <div class="farama-header-menu__header">
                 <a href="https://farama.org">
-                  <img class="farama-header-menu__logo" src="../../../_static/img/farama_solid_white.svg">
+                  <img class="farama-header-menu__logo" src="../../../_static/img/farama_solid_white.svg" alt="The Farama Foundation">
                   <span>The Farama Foundation</span>
                 </a>
                 <button id="farama-close-menu">
@@ -74,35 +78,155 @@
                   </svg>
                 </button>
               </div>
-              <div class="farama-header-menu-list__body">
-                <span class="farama-header-menu__section-title">Projects</span>
-                <ul>
-                  <li>
-                    <a href="https://gymnasium.farama.org">Gymnasium</a>
-                  </li>
-                  <li>
-                    <a href="https://pettingzoo.farama.org">PettingZoo</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/Farama-Foundation/SuperSuit">SuperSuit</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/Farama-Foundation/MiniGrid">MiniGrid</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/Farama-Foundation/gym-robotics">Gymnasium-Robotics
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/Farama-Foundation/tinyscaler">Tinyscaler</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/Farama-Foundation/AutoROM">AutoROM</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/Farama-Foundation/Jumpy">JumPy</a>
-                  </li>
-                </ul>
+              <div class="farama-header-menu__body">
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Documentation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://gymnasium.farama.org">
+                        
+                        <img src="_static/img/gymnasium-white.svg">
+                        
+                        Gymnasium
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://pettingzoo.farama.org">
+                        
+                        <img src="_static/img/pettingzoo-white.svg">
+                        
+                        PettingZoo
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://minigrid.farama.org">
+                        
+                        <img src="_static/img/minigrid-white.svg">
+                        
+                        MiniGrid
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Mature Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/SuperSuit">
+                        
+                        <img src="_static/img/supersuit-white.svg">
+                        
+                        SuperSuit
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/gym-robotics">
+                        
+                        <img src="_static/img/gymrobotics-white.svg">
+                        
+                        Gymnasium-Robotics
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/tinyscaler">
+                        
+                        <img src="_static/img/tinyscaler-white.svg">
+                        
+                        Tinyscaler
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/AutoROM">
+                        
+                        <img src="_static/img/autorom-white.svg">
+                        
+                        AutoROM
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Jumpy">
+                        
+                        <img src="_static/img/jumpy-white.svg">
+                        
+                        JumPy
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Incubating Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MAgent2">
+                        
+                        <img src="_static/img/MAgent2-white.svg">
+                        
+                        MAgent2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/procgen2">
+                        
+                        <img src="_static/img/procgen2-white.svg">
+                        
+                        Procgen2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MiniWorld">
+                        
+                        <img src="_static/img/miniworld-white.svg">
+                        
+                        Miniworld
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/D4RL">
+                        
+                        <img src="_static/img/d4rl-white.svg">
+                        
+                        D4RL
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Kabuki">
+                        
+                        <img src="_static/img/kabuki-white.svg">
+                        
+                        Kabuki
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Foundation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://farama.org/about">
+                        
+                        About
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/project_standards">
+                        
+                        Standards
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/donations">
+                        
+                        Donations
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                
+
               </div>
             </div>
           </div>
@@ -641,10 +765,11 @@ customize the environment using the arguments above, if necessary.</p>
             <div class="copyright">
                 Copyright &#169; 2022, Farama Foundation
             </div>
+            <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
+            -->
           </div>
           <div class="right-details">
             <div class="icons">
@@ -704,7 +829,7 @@ customize the environment using the arguments above, if necessary.</p>
 
       window.onclick = function(event) {
         if (!event.target.matches('.farama-header-menu__btn')) {
-          const dropdown = document.querySelector(".farama-header-menu__list");
+          const dropdown = document.querySelector(".farama-header-menu-container");
           if (dropdown.classList.contains('active')) {
             dropdown.classList.remove('active');
             document.querySelector(".farama-header-menu__overlay").classList.remove("active");
