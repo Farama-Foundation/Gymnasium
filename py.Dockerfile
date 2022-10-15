@@ -26,6 +26,6 @@ ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
-RUN if [ "python:${PYTHON_VERSION}" = "python:3.6.15" ] ; then pip install .[box2d,classic_control,toy_text,other] pytest=="7.0.1" --no-cache-dir; else pip install .[testing] --no-cache-dir; fi
+RUN if [ "python:${PYTHON_VERSION}" = "python:3.6.15" ] ; then pip install .[box2d,classic_control,toy_text,other] pytest=="7.0.1" gym>="0.26" --no-cache-dir; else pip install .[testing] --no-cache-dir; fi
 
 ENTRYPOINT ["/usr/local/gymnasium/bin/docker_entrypoint"]
