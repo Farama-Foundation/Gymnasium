@@ -66,7 +66,7 @@ setup(
     description="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
     url="https://gymnasium.farama.org/",
     license="MIT",
-    license_files=("LICENSE.txt",),
+    license_files=("LICENSE",),
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords=["Reinforcement Learning", "game", "RL", "AI", "gymnasium"],
