@@ -12,7 +12,8 @@ lastpage:
    :width: 500
 ```
 
-**Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems:**
+**Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility
+) for old Gym environments:**
 
 ```{code-block} python
 
@@ -62,11 +63,13 @@ environments/third_party_environments
 
 ```{toctree}
 :hidden:
+:glob:
 :caption: Tutorials
 
 content/environment_creation
 content/vectorising
 content/handling_timelimits
+tutorials/*
 ```
 
 ```{toctree}
