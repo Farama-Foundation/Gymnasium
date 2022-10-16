@@ -162,7 +162,7 @@ if __name__ == "__main__":
         type_id = type_dict["id"]
         envs_path = f"../environments/{type_id}"
         if len(type_dict["list"]) > 20:
-            page = generate_page(type_dict, limit=9)
+            page = generate_page(type_dict, limit=8)
             fp = open(
                 os.path.join(os.path.dirname(__file__), envs_path, "list.html"),
                 "w",
