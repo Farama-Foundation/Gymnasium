@@ -1,9 +1,8 @@
+import gym
 import pytest
 
 import gymnasium
 from gymnasium.utils.env_checker import check_env
-
-gym = pytest.importorskip("gym")
 
 ALL_GYM_ENVS = gym.envs.registry.keys()
 
