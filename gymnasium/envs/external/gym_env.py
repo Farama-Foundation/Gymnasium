@@ -1,4 +1,3 @@
-from functools import singledispatch
 from typing import Optional, Tuple
 
 import gymnasium
@@ -118,52 +117,96 @@ def _strip_default_wrappers(env: "gym.Env") -> "gym.Env":
     return env
 
 
-@singledispatch
 def _convert_space(space: "gym.Space") -> gymnasium.Space:
-    """Blah"""
-    raise NotImplementedError(
-        f"Cannot convert space of type {type(space)}. Please upgrade your code to gymnasium."
-    )
+    """Converts a gym space to a gymnasium space.
+
+    Args:
+        space: the space to convert
+
+    Returns:
+        The converted space
+    """
+    if isinstance(space, gym.spaces.Discrete):
+        return gymnasium.spaces.Discrete(n=space.n)
+    elif isinstance(space, gym.spaces.Box):
+        return gymnasium.spaces.Box(
+            low=space.low, high=space.high, shape=space.shape, dtype=space.dtype
+        )
+    elif isinstance(space, gym.spaces.MultiDiscrete):
+        return gymnasium.spaces.MultiDiscrete(nvec=space.nvec)
+    elif isinstance(space, gym.spaces.MultiBinary):
+        return gymnasium.spaces.MultiBinary(n=space.n)
+    elif isinstance(space, gym.spaces.Tuple):
+        return gymnasium.spaces.Tuple(spaces=tuple(map(_convert_space, space.spaces)))
+    elif isinstance(space, gym.spaces.Dict):
+        return gymnasium.spaces.Dict(
+            spaces={k: _convert_space(v) for k, v in space.spaces.items()}
+        )
+    elif isinstance(space, gym.spaces.Sequence):
+        return gymnasium.spaces.Sequence(space=_convert_space(space.feature_space))
+    elif isinstance(space, gym.spaces.Graph):
+        return gymnasium.spaces.Graph(
+            node_space=_convert_space(space.node_space),  # type: ignore
+            edge_space=_convert_space(space.edge_space),  # type: ignore
+        )
+    elif isinstance(space, gym.spaces.Text):
+        return gymnasium.spaces.Text(
+            max_length=space.max_length,
+            min_length=space.min_length,
+            charset=space._char_str,
+        )
+    else:
+        raise NotImplementedError(
+            f"Cannot convert space of type {space}. Please upgrade your code to gymnasium."
+        )
 
 
-@_convert_space.register
-def _(space: "gym.spaces.Discrete") -> gymnasium.spaces.Discrete:
-    return gymnasium.spaces.Discrete(space.n)
-
-
-@_convert_space.register
-def _(space: "gym.spaces.Box") -> gymnasium.spaces.Box:
-    return gymnasium.spaces.Box(space.low, space.high, space.shape)
-
-
-@_convert_space.register
-def _(space: "gym.spaces.Tuple") -> gymnasium.spaces.Tuple:
-    return gymnasium.spaces.Tuple(_convert_space(s) for s in space.spaces)
-
-
-@_convert_space.register
-def _(space: "gym.spaces.Dict") -> gymnasium.spaces.Dict:
-    return gymnasium.spaces.Dict(
-        {k: _convert_space(s) for k, s in space.spaces.items()}
-    )
-
-
-@_convert_space.register
-def _(space: "gym.spaces.MultiDiscrete") -> gymnasium.spaces.MultiDiscrete:
-    return gymnasium.spaces.MultiDiscrete(space.nvec)
-
-
-@_convert_space.register
-def _(space: "gym.spaces.MultiBinary") -> gymnasium.spaces.MultiBinary:
-    return gymnasium.spaces.MultiBinary(space.n)
-
-
-@_convert_space.register
-def _(space: "gym.spaces.Sequence") -> gymnasium.spaces.Sequence:
-    return gymnasium.spaces.Sequence(_convert_space(space.feature_space))
-
-
-@_convert_space.register
-def _(space: "gym.spaces.Graph") -> gymnasium.spaces.Graph:
-    # Pycharm is throwing up a type warning, but as long as the base space is correct, this is valid
-    return gymnasium.spaces.Graph(_convert_space(space.node_space), _convert_space(space.edge_space))  # type: ignore
+# @singledispatch
+# def _convert_space(space: "gym.Space") -> gymnasium.Space:
+#     """Blah"""
+#     raise NotImplementedError(
+#         f"Cannot convert space of type {type(space)}. Please upgrade your code to gymnasium."
+#     )
+#
+#
+# @_convert_space.register
+# def _(space: "gym.spaces.Discrete") -> gymnasium.spaces.Discrete:
+#     return gymnasium.spaces.Discrete(space.n)
+#
+#
+# @_convert_space.register
+# def _(space: "gym.spaces.Box") -> gymnasium.spaces.Box:
+#     return gymnasium.spaces.Box(space.low, space.high, space.shape)
+#
+#
+# @_convert_space.register
+# def _(space: "gym.spaces.Tuple") -> gymnasium.spaces.Tuple:
+#     return gymnasium.spaces.Tuple(_convert_space(s) for s in space.spaces)
+#
+#
+# @_convert_space.register
+# def _(space: "gym.spaces.Dict") -> gymnasium.spaces.Dict:
+#     return gymnasium.spaces.Dict(
+#         {k: _convert_space(s) for k, s in space.spaces.items()}
+#     )
+#
+#
+# @_convert_space.register
+# def _(space: "gym.spaces.MultiDiscrete") -> gymnasium.spaces.MultiDiscrete:
+#     return gymnasium.spaces.MultiDiscrete(space.nvec)
+#
+#
+# @_convert_space.register
+# def _(space: "gym.spaces.MultiBinary") -> gymnasium.spaces.MultiBinary:
+#     return gymnasium.spaces.MultiBinary(space.n)
+#
+#
+# @_convert_space.register
+# def _(space: "gym.spaces.Sequence") -> gymnasium.spaces.Sequence:
+#     return gymnasium.spaces.Sequence(_convert_space(space.feature_space))
+#
+#
+# @_convert_space.register
+# def _(space: "gym.spaces.Graph") -> gymnasium.spaces.Graph:
+#     # Pycharm is throwing up a type warning, but as long as the base space is correct, this is valid
+#     return gymnasium.spaces.Graph(_convert_space(space.node_space), _convert_space(space.edge_space))  # type: ignore
