@@ -2,6 +2,7 @@ from functools import singledispatch
 from typing import Optional, Tuple
 
 import gymnasium
+from gymnasium import error
 from gymnasium.core import ActType, ObsType
 
 try:
@@ -14,17 +15,32 @@ else:
 
 
 class GymEnvironment(gymnasium.Env):
-    """ """
+    """
+    Converts a gym environment to a gymnasium environment.
+    """
 
-    def __init__(self, env_id: str, make_kwargs: Optional[dict] = None):
+    def __init__(
+        self,
+        env_id: Optional[str] = None,
+        make_kwargs: Optional[dict] = None,
+        env: Optional[gym.Env] = None,
+    ):
         if GYM_IMPORT_ERROR is not None:
-            raise gymnasium.error.DependencyNotInstalled(
+            raise error.DependencyNotInstalled(
                 f"{GYM_IMPORT_ERROR} (Hint: You need to install gym with `pip install gym` to use gym environments"
             )
 
         if make_kwargs is None:
             make_kwargs = {}
 
+        if env is not None:
+            self.gym_env = env
+        elif env_id is not None:
+            self.gym_env = gym.make(env_id, **make_kwargs)
+        else:
+            raise gymnasium.error.MissingArgument(
+                "Either env_id or env must be provided to create a legacy gym environment."
+            )
         self.gym_env = _strip_default_wrappers(gym.make(env_id, **make_kwargs))
 
         self.observation_space = _convert_space(self.gym_env.observation_space)
@@ -96,11 +112,6 @@ def _strip_default_wrappers(env: "gym.Env") -> "gym.Env":
     default_wrappers = (
         gym.wrappers.RenderCollection,
         gym.wrappers.HumanRendering,
-        gym.wrappers.AutoResetWrapper,
-        gym.wrappers.TimeLimit,
-        gym.wrappers.OrderEnforcing,
-        gym.wrappers.env_checker.PassiveEnvChecker,
-        gym.wrappers.compatibility.EnvCompatibility,
     )
     while isinstance(env, default_wrappers):
         env = env.env
