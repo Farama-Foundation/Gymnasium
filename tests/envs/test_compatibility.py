@@ -2,11 +2,9 @@ import sys
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
-import pytest
 
 import gymnasium
 from gymnasium.spaces import Discrete
-from gymnasium.utils.env_checker import check_env
 from gymnasium.wrappers.compatibility import EnvCompatibility, LegacyEnv
 
 
@@ -130,20 +128,3 @@ def test_make_compatibility_in_make():
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
     del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
-
-
-def test_gym_conversion_by_id():
-    gym = pytest.importorskip("gym")
-    env_list = gym.envs.registry.keys()
-    for env_id in env_list:
-        env = gymnasium.make("GymV26Environment-v0", env_id=env_id)
-        check_env(env)
-
-
-def test_gym_conversion_instantiated():
-    gym = pytest.importorskip("gym")
-    env_list = gym.envs.registry.keys()
-    for env_id in env_list:
-        env = gym.make(env_id)
-        env = gymnasium.make("GymV26Environment-v0", env=env)
-        check_env(env)
