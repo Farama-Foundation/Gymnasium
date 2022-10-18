@@ -62,7 +62,7 @@ class GymEnvironment(gymnasium.Env):
         Returns:
             (observation, info)
         """
-        super().reset(seed=None)  # We don't need the seed inside gymnasium
+        super().reset(seed=seed)
         # Options are ignored
         return self.gym_env.reset()
 
