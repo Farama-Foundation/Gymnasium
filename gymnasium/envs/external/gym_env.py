@@ -64,7 +64,7 @@ class GymEnvironment(gymnasium.Env):
         """
         super().reset(seed=seed)
         # Options are ignored
-        return self.gym_env.reset()
+        return self.gym_env.reset(seed=seed, options=options)
 
     def step(self, action: ActType) -> Tuple[ObsType, float, bool, bool, dict]:
         """Steps through the environment.
