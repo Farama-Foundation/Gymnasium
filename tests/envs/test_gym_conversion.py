@@ -1,10 +1,12 @@
-import gym
 import pytest
 
 import gymnasium
 from gymnasium.utils.env_checker import check_env
 
 pytest.importorskip("gym")
+
+import gym  # noqa: E402, isort: skip
+
 ALL_GYM_ENVS = gym.envs.registry.keys()
 
 
