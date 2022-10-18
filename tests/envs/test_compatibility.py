@@ -2,13 +2,15 @@ import sys
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
+import pytest
 
-import gymnasium as gym
+import gymnasium
 from gymnasium.spaces import Discrete
+from gymnasium.utils.env_checker import check_env
 from gymnasium.wrappers.compatibility import EnvCompatibility, LegacyEnv
 
 
-class LegacyEnvExplicit(LegacyEnv, gym.Env):
+class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
     """Legacy env that explicitly implements the old API."""
 
     observation_space = Discrete(1)
@@ -37,7 +39,7 @@ class LegacyEnvExplicit(LegacyEnv, gym.Env):
         pass
 
 
-class LegacyEnvImplicit(gym.Env):
+class LegacyEnvImplicit(gymnasium.Env):
     """Legacy env that implicitly implements the old API as a protocol."""
 
     observation_space = Discrete(1)
@@ -95,12 +97,12 @@ def test_implicit():
 
 
 def test_make_compatibility_in_spec():
-    gym.register(
+    gymnasium.register(
         id="LegacyTestEnv-v0",
         entry_point=LegacyEnvExplicit,
         apply_api_compatibility=True,
     )
-    env = gym.make("LegacyTestEnv-v0", render_mode="rgb_array")
+    env = gymnasium.make("LegacyTestEnv-v0", render_mode="rgb_array")
     assert env.observation_space == Discrete(1)
     assert env.action_space == Discrete(1)
     assert env.reset() == (0, {})
@@ -110,12 +112,12 @@ def test_make_compatibility_in_spec():
     assert isinstance(img, np.ndarray)
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
-    del gym.envs.registration.registry["LegacyTestEnv-v0"]
+    del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
 
 
 def test_make_compatibility_in_make():
-    gym.register(id="LegacyTestEnv-v0", entry_point=LegacyEnvExplicit)
-    env = gym.make(
+    gymnasium.register(id="LegacyTestEnv-v0", entry_point=LegacyEnvExplicit)
+    env = gymnasium.make(
         "LegacyTestEnv-v0", apply_api_compatibility=True, render_mode="rgb_array"
     )
     assert env.observation_space == Discrete(1)
@@ -127,4 +129,21 @@ def test_make_compatibility_in_make():
     assert isinstance(img, np.ndarray)
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
-    del gym.envs.registration.registry["LegacyTestEnv-v0"]
+    del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
+
+
+def test_gym_conversion_by_id():
+    gym = pytest.importorskip("gym")
+    env_list = gym.envs.registry.keys()
+    for env_id in env_list:
+        env = gymnasium.make("GymV26Environment-v0", env_id=env_id)
+        check_env(env)
+
+
+def test_gym_conversion_instantiated():
+    gym = pytest.importorskip("gym")
+    env_list = gym.envs.registry.keys()
+    for env_id in env_list:
+        env = gym.make(env_id)
+        env = gymnasium.make("GymV26Environment-v0", env=env)
+        check_env(env)

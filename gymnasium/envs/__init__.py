@@ -323,6 +323,6 @@ register(
 # Gym conversion
 # ----------------------------------------
 register(
-    id="GymEnvironment-v0",
+    id="GymV26Environment-v0",
     entry_point="gymnasium.envs.external.gym_env:GymEnvironment",
 )
