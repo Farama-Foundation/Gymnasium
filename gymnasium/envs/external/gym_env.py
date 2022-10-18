@@ -23,7 +23,7 @@ class GymEnvironment(gymnasium.Env):
         self,
         env_id: Optional[str] = None,
         make_kwargs: Optional[dict] = None,
-        env: Optional[gym.Env] = None,
+        env: Optional["gym.Env"] = None,
     ):
         if GYM_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
