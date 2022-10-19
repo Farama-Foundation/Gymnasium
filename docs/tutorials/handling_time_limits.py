@@ -67,7 +67,7 @@ terminated = 0
 # A simple example of value functions is shown below. This is an illustrative example and not part of any specific algorithm.
 
 # INCORRECT
-vf_target = rew + gamma * (1-done)* vf_next_state
+vf_target = rew + gamma * (1 - done) * vf_next_state
 
 # %%
 # This is incorrect in the case of episode ending due to a truncation, where bootstrapping needs to happen but it doesn't.
@@ -83,4 +83,4 @@ vf_target = rew + gamma * (1-done)* vf_next_state
 # terminated = done and 'TimeLimit.truncated' not in info
 # This was needed in previous versions.
 
-vf_target = rew + gamma*(1-terminated)*vf_next_state
+vf_target = rew + gamma * (1 - terminated) * vf_next_state

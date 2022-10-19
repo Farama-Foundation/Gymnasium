@@ -38,6 +38,7 @@ Vectorizing your environments
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
+import timeit
 
 envs = gym.vector.make("CartPole-v1", num_envs=3)
 envs.reset()
@@ -336,12 +337,12 @@ observations, rewards, termination, truncation, infos = envs.step(actions)
 env_fns = [lambda: gym.make("BreakoutNoFrameskip-v4")] * 5
 envs = gym.vector.AsyncVectorEnv(env_fns, shared_memory=False)
 envs.reset()
-%timeit envs.step(envs.action_space.sample())
+timeit("envs.step(envs.action_space.sample()", number=1000)
 
 # %%
 envs = gym.vector.AsyncVectorEnv(env_fns, shared_memory=True)
 envs.reset()
-%timeit envs.step(envs.action_space.sample())
+timeit("envs.step(envs.action_space.sample())", number=1000)
 
 # %%
 # Exception handling

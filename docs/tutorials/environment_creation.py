@@ -142,6 +142,7 @@ class GridWorldEnv(gym.Env):
         self.window = None
         self.clock = None
 
+
 # %%
 # Constructing Observations From Environment States
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,16 +153,22 @@ class GridWorldEnv(gym.Env):
 # this is not mandatory and you may as well compute observations in
 # ``reset`` and ``step`` separately:
 
+
 def _get_obs(self):
     return {"agent": self._agent_location, "target": self._target_location}
+
 
 # %%
 # We can also implement a similar method for the auxiliary information
 # that is returned by ``step`` and ``reset``. In our case, we would like
 # to provide the manhattan distance between the agent and the target:
 
+
 def _get_info(self):
-    return {"distance": np.linalg.norm(self._agent_location - self._target_location, ord=1)}
+    return {
+        "distance": np.linalg.norm(self._agent_location - self._target_location, ord=1)
+    }
+
 
 # %%
 # Oftentimes, info will also contain some data that is only available
@@ -192,6 +199,7 @@ def _get_info(self):
 # and some auxiliary information. We can use the methods ``_get_obs`` and
 # ``_get_info`` that we implemented earlier for that:
 
+
 def reset(self, seed=None, options=None):
     # We need the following line to seed self.np_random
     super().reset(seed=seed)
@@ -202,9 +210,7 @@ def reset(self, seed=None, options=None):
     # We will sample the target's location randomly until it does not coincide with the agent's location
     self._target_location = self._agent_location
     while np.array_equal(self._target_location, self._agent_location):
-        self._target_location = self.np_random.integers(
-            0, self.size, size=2, dtype=int
-        )
+        self._target_location = self.np_random.integers(0, self.size, size=2, dtype=int)
 
     observation = self._get_obs()
     info = self._get_info()
@@ -213,6 +219,7 @@ def reset(self, seed=None, options=None):
         self._render_frame()
 
     return observation, info
+
 
 # %%
 # Step
@@ -228,13 +235,12 @@ def reset(self, seed=None, options=None):
 # know ``done``. To gather ``observation`` and ``info``, we can again make
 # use of ``_get_obs`` and ``_get_info``:
 
+
 def step(self, action):
     # Map the action (element of {0,1,2,3}) to the direction we walk in
     direction = self._action_to_direction[action]
     # We use `np.clip` to make sure we don't leave the grid
-    self._agent_location = np.clip(
-        self._agent_location + direction, 0, self.size - 1
-    )
+    self._agent_location = np.clip(self._agent_location + direction, 0, self.size - 1)
     # An episode is done iff the agent has reached the target
     terminated = np.array_equal(self._agent_location, self._target_location)
     reward = 1 if terminated else 0  # Binary sparse rewards
@@ -246,6 +252,7 @@ def step(self, action):
 
     return observation, reward, terminated, False, info
 
+
 # %%
 # Rendering
 # ~~~~~~~~~
@@ -253,6 +260,7 @@ def step(self, action):
 # Here, we are using PyGame for rendering. A similar approach to rendering
 # is used in many environments that are included with Gymnasium and you
 # can use it as a skeleton for your own environments:
+
 
 def render(self):
     if self.render_mode == "rgb_array":
@@ -320,6 +328,7 @@ def render(self):
                 np.array(pygame.surfarray.pixels3d(canvas)), axes=(1, 0, 2)
             )
 
+
 # %%
 # Close
 # ~~~~~
@@ -329,10 +338,12 @@ def render(self):
 # implement this method. However, in our example ``render_mode`` may be
 # ``"human"`` and we might need to close the window that has been opened:
 
+
 def close(self):
     if self.window is not None:
         pygame.display.quit()
         pygame.quit()
+
 
 # %%
 # In other environments ``close`` might also close files that were opened
@@ -350,8 +361,8 @@ def close(self):
 from gymnasium.envs.registration import register
 
 register(
-    id='gym_examples/GridWorld-v0',
-    entry_point='gym_examples.envs:GridWorldEnv',
+    id="gym_examples/GridWorld-v0",
+    entry_point="gym_examples.envs:GridWorldEnv",
     max_episode_steps=300,
 )
 
