@@ -79,7 +79,7 @@ html_theme_options = {
 }
 html_context: Dict[str, Any] = {}
 html_context["conf_py_path"] = "/docs/"
-html_context["display_github"] = True
+html_context["display_github"] = False
 html_context["github_user"] = "Farama-Foundation"
 html_context["github_repo"] = "Gymnasium"
 html_context["github_version"] = "main"

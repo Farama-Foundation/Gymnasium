@@ -77,5 +77,4 @@ tutorials/*
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
-Donate <https://farama.org/donations>
 ```
