@@ -93,9 +93,9 @@ Let us look at the source code of ``GridWorldEnv`` piece by piece:
 # declaration of ``GridWorldEnv`` and the implementation of ``__init__``:
 
 import gymnasium as gym
-from gymnasium import spaces
-import pygame
 import numpy as np
+import pygame
+from gymnasium import spaces
 
 
 class GridWorldEnv(gym.Env):
