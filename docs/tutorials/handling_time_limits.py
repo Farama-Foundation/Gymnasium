@@ -27,15 +27,6 @@ as the agent in this case has no idea about this time-limit.
 """
 
 # %%
-# Initialize variables
-# ---------------------------
-rew = 0
-gamma = 0
-done = 0
-vf_next_state = 0
-terminated = 0
-
-# %%
 # Importance in learning code
 # ---------------------------
 # Bootstrapping (using one or more estimated values of a variable to update estimates of the same variable) is a key
@@ -65,11 +56,12 @@ terminated = 0
 # bootstrap or not. However, this is incorrect since it does not differentiate between termination and truncation.
 #
 # A simple example of value functions is shown below. This is an illustrative example and not part of any specific algorithm.
-
-# INCORRECT
-vf_target = rew + gamma * (1 - done) * vf_next_state
-
-# %%
+#
+# .. code:: python
+#
+#   # INCORRECT
+#   vf_target = rew + gamma * (1 - done) * vf_next_state
+#
 # This is incorrect in the case of episode ending due to a truncation, where bootstrapping needs to happen but it doesn't.
 
 # %%
@@ -79,8 +71,10 @@ vf_target = rew + gamma * (1 - done) * vf_next_state
 # From v0.26 onwards, Gymnasium's ``env.step`` API returns both termination and truncation information explicitly.
 # In the previous version truncation information was supplied through the info key ``TimeLimit.truncated``.
 # The correct way to handle terminations and truncations now is,
-
-# terminated = done and 'TimeLimit.truncated' not in info
-# This was needed in previous versions.
-
-vf_target = rew + gamma * (1 - terminated) * vf_next_state
+#
+# .. code:: python
+#
+#   # terminated = done and 'TimeLimit.truncated' not in info
+#   # This was needed in previous versions.
+#
+#   vf_target = rew + gamma * (1 - terminated) * vf_next_state

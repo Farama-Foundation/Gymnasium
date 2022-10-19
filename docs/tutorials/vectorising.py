@@ -116,15 +116,17 @@ env = gym.vector.AsyncVectorEnv(
 # %%
 # See the ``Observation & Action spaces`` section for more information
 # about automatic batching.
-
+#
 # When using ``AsyncVectorEnv`` with either the ``spawn`` or
 # ``forkserver`` start methods, you must wrap your code containing the
 # vectorized environment with ``if __name__ == "__main__":``. See `this
 # documentation <https://docs.python.org/3/library/multiprocessing.html#the-spawn-and-forkserver-start-methods>`__
 # for more information.
-
-if __name__ == "__main__":
-    envs = gym.vector.make("CartPole-v1", num_envs=3, context="spawn")
+#
+# .. code:: python
+#
+#     if __name__ == "__main__":
+#         envs = gym.vector.make("CartPole-v1", num_envs=3, context="spawn")
 
 # %%
 # Working with vectorized environments
