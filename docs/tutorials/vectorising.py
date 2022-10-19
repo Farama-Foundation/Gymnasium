@@ -2,6 +2,8 @@
 Vectorizing your environments
 =============================
 
+.. py:currentmodule:: gymnasium.vector
+
 """
 
 # %%
@@ -15,15 +17,15 @@ Vectorizing your environments
 # the policy is defined as a neural network that operates over a batch of
 # observations. Gymnasium provides two types of vectorized environments:
 #
-# -  ``gymnasium.vector.SyncVectorEnv``, where the different copies of the
+# -  :class:`gymnasium.vector.SyncVectorEnv`, where the different copies of the
 #    environment are executed sequentially.
-# -  ``gymnasium.vector.AsyncVectorEnv``, where the different copies of
+# -  :class:`gymnasium.vector.AsyncVectorEnv`, where the different copies of
 #    the environment are executed in parallel using
 #    `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`__.
 #    This creates one process per copy.
 #
-# Similar to ``gymnasium.make``, you can run a vectorized version of a
-# registered environment using the ``gymnasium.vector.make`` function.
+# Similar to :func:`gymnasium.make`, you can run a vectorized version of a
+# registered environment using the :func:`gymnasium.vector.make` function.
 # This runs multiple copies of the same environment (in parallel, by
 # default).
 #
@@ -38,7 +40,6 @@ Vectorizing your environments
 import timeit
 
 import gymnasium as gym
-import matplotlib.pyplot as plt
 import numpy as np
 
 envs = gym.vector.make("CartPole-v1", num_envs=3)
@@ -61,10 +62,10 @@ truncation
 infos
 
 # %%
-# The function ``gymnasium.vector.make`` is meant to be used only in basic
+# The function :func:`gymnasium.vector.make` is meant to be used only in basic
 # cases (e.g. running multiple copies of the same registered environment).
-# For any other use cases, please use either the ``SyncVectorEnv`` for
-# sequential execution or ``AsyncVectorEnv`` for parallel execution. These
+# For any other use cases, please use either the :class:`SyncVectorEnv` for
+# sequential execution or :class:`AsyncVectorEnv` for parallel execution. These
 # use cases may include:
 #
 # -  Running multiple instances of the same environment with different
@@ -80,8 +81,8 @@ infos
 #
 # To create a vectorized environment that runs multiple environment
 # copies, you can wrap your parallel environments inside
-# ``gymnasium.vector.SyncVectorEnv`` (for sequential execution), or
-# ``gymnasium.vector.AsyncVectorEnv`` (for parallel execution, with
+# :class:`gymnasium.vector.SyncVectorEnv` (for sequential execution), or
+# :class:`gymnasium.vector.AsyncVectorEnv` (for parallel execution, with
 # `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`__).
 # These vectorized environments take as input a list of callables
 # specifying how the copies are created.
@@ -97,7 +98,7 @@ envs = gym.vector.AsyncVectorEnv(
 # %%
 # Alternatively, to create a vectorized environment of multiple copies of
 # the same registered environment, you can use the function
-# ``gymnasium.vector.make()``.
+# :func:`gymnasium.vector.make`.
 
 envs = gym.vector.make("CartPole-v1", num_envs=3)  # Equivalent
 
@@ -117,7 +118,7 @@ env = gym.vector.AsyncVectorEnv(
 # See the ``Observation & Action spaces`` section for more information
 # about automatic batching.
 #
-# When using ``AsyncVectorEnv`` with either the ``spawn`` or
+# When using :class:`AsyncVectorEnv` with either the ``spawn`` or
 # ``forkserver`` start methods, you must wrap your code containing the
 # vectorized environment with ``if __name__ == "__main__":``. See `this
 # documentation <https://docs.python.org/3/library/multiprocessing.html#the-spawn-and-forkserver-start-methods>`__
@@ -165,11 +166,11 @@ infos
 # %%
 # Vectorized environments are compatible with any environment, regardless
 # of the action and observation spaces (e.g. container spaces like
-# ``gymnasium.spaces.Dict``, or any arbitrarily nested spaces). In
+# :class:`gymnasium.spaces.Dict`, or any arbitrarily nested spaces). In
 # particular, vectorized environments can automatically batch the
-# observations returned by ``VectorEnv.reset`` and ``VectorEnv.step`` for
-# any standard Gymnasium ``Space`` (e.g. ``gymnasium.spaces.Box``,
-# ``gymnasium.spaces.Discrete``, ``gymnasium.spaces.Dict``, or any nested
+# observations returned by :func:`VectorEnv.reset` and :func:`VectorEnv.step` for
+# any standard Gymnasium ``Space`` (e.g. :class:`gymnasium.spaces.Box`,
+# :class:`gymnasium.spaces.Discrete`, :class:`gymnasium.spaces.Dict`, or any nested
 # structure thereof). Similarly, vectorized environments can take batches
 # of actions from any standard Gymnasium ``Space``.
 
@@ -216,7 +217,7 @@ observations
 
 # %%
 # The environment copies inside a vectorized environment automatically
-# call ``gymnasium.Env.reset`` at the end of an episode. In the following
+# call :func:`gymnasium.Env.reset` at the end of an episode. In the following
 # example, the episode of the 3rd copy ends after 2 steps (the agent fell
 # in a hole), and the parallel environment gets reset (observation ``0``).
 
@@ -264,14 +265,14 @@ infos
 # ---------------------------
 #
 # Like any Gymnasium environment, vectorized environments contain the two
-# properties ``VectorEnv.observation_space`` and
-# ``VectorEnv.action_space`` to specify the observation and action spaces
+# properties :attr:`VectorEnv.observation_space` and
+# :attr:`VectorEnv.action_space` to specify the observation and action spaces
 # of the environments. Since vectorized environments operate on multiple
 # environment copies, where the actions taken and observations returned by
 # all of the copies are batched together, the observation and action
 # *spaces* are batched as well so that the input actions are valid
-# elements of ``VectorEnv.action_space``, and the observations are valid
-# elements of ``VectorEnv.observation_space``.
+# elements of :attr:`VectorEnv.action_space`, and the observations are valid
+# elements of :attr:`VectorEnv.observation_space`.
 
 envs = gym.vector.make("CartPole-v1", num_envs=3)
 envs.observation_space
@@ -291,8 +292,8 @@ envs = gym.vector.AsyncVectorEnv(
 # %%
 # However, sometimes it may be handy to have access to the observation and
 # action spaces of a particular copy, and not the batched spaces. You can
-# access those with the properties ``VectorEnv.single_observation_space``
-# and ``VectorEnv.single_action_space`` of the vectorized environment.
+# access those with the properties :attr:`VectorEnv.single_observation_space`
+# and :attr:`VectorEnv.single_action_space` of the vectorized environment.
 
 envs = gym.vector.make("CartPole-v1", num_envs=3)
 envs.single_observation_space
@@ -302,8 +303,8 @@ envs.single_action_space
 
 # %%
 # This is convenient, for example, if you instantiate a policy. In the
-# following example, we use ``VectorEnv.single_observation_space`` and
-# ``VectorEnv.single_action_space`` to define the weights of a linear
+# following example, we use :attr:`VectorEnv.single_observation_space` and
+# :attr:`VectorEnv.single_action_space` to define the weights of a linear
 # policy. Note that, thanks to the vectorized environment, we can apply
 # the policy directly to the whole batch of observations with a single
 # call to ``policy``.
@@ -334,12 +335,12 @@ observations, rewards, termination, truncation, infos = envs.step(actions)
 # Shared memory
 # ~~~~~~~~~~~~~
 #
-# ``AsyncVectorEnv`` runs each environment copy inside an individual
-# process. At each call to ``AsyncVectorEnv.reset`` or
-# ``AsyncVectorEnv.step``, the observations of all of the parallel
+# :class:`AsyncVectorEnv` runs each environment copy inside an individual
+# process. At each call to :func:`AsyncVectorEnv.reset` or
+# :func:`AsyncVectorEnv.step`, the observations of all of the parallel
 # environments are sent back to the main process. To avoid expensive
 # transfers of data between processes, especially with large observations
-# (e.g. images), ``AsyncVectorEnv`` uses a shared memory by default
+# (e.g. images), :class:`AsyncVectorEnv` uses a shared memory by default
 # (``shared_memory=True``) that processes can write to and read from at
 # minimal cost. This can increase the throughput of the vectorized
 # environment.
@@ -360,7 +361,7 @@ timeit("envs.step(envs.action_space.sample())", number=1000)
 #
 # Because sometimes things may not go as planned, the exceptions raised in
 # any given environment copy are re-raised in the vectorized environment,
-# even when the copy runs in parallel with ``AsyncVectorEnv``. This way,
+# even when the copy runs in parallel with :class:`AsyncVectorEnv`. This way,
 # you can choose how to handle these exceptions yourself (with
 # ``try  except``).
 
@@ -392,10 +393,10 @@ observations, rewards, termination, termination, infos = envs.step(np.array([0, 
 #
 # Vectorized environments will batch actions and observations if they are
 # elements from standard Gymnasium spaces, such as
-# ``gymnasium.spaces.Box``, ``gymnasium.spaces.Discrete``, or
-# ``gymnasium.spaces.Dict``. However, if you create your own environment
+# :class:`gymnasium.spaces.Box`, :class:`gymnasium.spaces.Discrete`, or
+# :class:`gymnasium.spaces.Dict`. However, if you create your own environment
 # with a custom action and/or observation space (inheriting from
-# ``gymnasium.Space``), the vectorized environment will not attempt to
+# :class:`gymnasium.Space`), the vectorized environment will not attempt to
 # automatically batch the actions/observations, and instead, it will
 # return the raw tuple of elements from all parallel environments.
 #
@@ -435,15 +436,15 @@ observations
 
 # %%
 # Custom observation and action spaces may inherit from the
-# ``gymnasium.Space`` class. However, most use cases should be covered by
-# the existing space classes (e.g. ``gymnasium.spaces.Box``,
-# ``gymnasium.spaces.Discrete``, etc…), and container classes
-# (``gymnasium.spaces.Tuple`` and ``gymnasium.spaces.Dict``). Moreover,
+# :class:`gymnasium.Space` class. However, most use cases should be covered by
+# the existing space classes (e.g. :class:`gymnasium.spaces.Box`,
+# :class:`gymnasium.spaces.Discrete`, etc…), and container classes
+# (:class:`gymnasium.spaces.Tuple` and :class:`gymnasium.spaces.Dict`). Moreover,
 # some implementations of reinforcement learning algorithms might not
 # handle custom spaces properly. Use custom spaces with care.
 #
-# If you use ``AsyncVectorEnv`` with a custom observation space, you must
+# If you use :class:`AsyncVectorEnv` with a custom observation space, you must
 # set ``shared_memory=False``, since shared memory and automatic batching
 # are not compatible with custom spaces. In general, if you use custom
-# spaces with ``AsyncVectorEnv``, the elements of those spaces must be
+# spaces with :class:`AsyncVectorEnv`, the elements of those spaces must be
 # ``pickleable``.
