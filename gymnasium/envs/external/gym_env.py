@@ -40,7 +40,7 @@ class GymEnvironment(gymnasium.Env):
             raise gymnasium.error.MissingArgument(
                 "Either env_id or env must be provided to create a legacy gym environment."
             )
-        self.gym_env = _strip_default_wrappers(gym.make(env_id, **make_kwargs))
+        self.gym_env = _strip_default_wrappers(self.gym_env)
 
         self.observation_space = _convert_space(self.gym_env.observation_space)
         self.action_space = _convert_space(self.gym_env.action_space)
