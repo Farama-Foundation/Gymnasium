@@ -41,6 +41,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
     "myst_parser",
+    "furo.gen_tutorials"
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -91,5 +92,6 @@ html_css_files = []
 # -- Generate Tutorials -------------------------------------------------
 
 gen_tutorials.generate(
+    os.path.dirname(__file__),
     os.path.join(os.path.dirname(__file__), "tutorials"),
 )
