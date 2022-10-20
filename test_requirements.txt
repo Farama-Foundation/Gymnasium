@@ -7,3 +7,4 @@ imageio>=2.14.1
 pygame==2.1.0
 mujoco_py<2.2,>=2.1
 pytest==7.0.1
+gym==0.26.2
