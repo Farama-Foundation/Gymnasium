@@ -5,8 +5,8 @@ Solving Blackjack with Q-Learning
 """
 
 
-######################################################################
-# .. image:: https://raw.githubusercontent.com/till2/Blackjack-Tutorial/main/images/rl_loop.jpg
+# %%
+# .. image:: https://raw.githubusercontent.com/Farama-Foundation/Gymnasium/main/docs/_static/img/tutorials/blackjack_AE_loop.jpg
 #   :width: 650
 #   :alt: agent-environment-diagram 
 #
@@ -27,9 +27,9 @@ Solving Blackjack with Q-Learning
 # 
 
 
-######################################################################
+# %%
 # Imports and Environment Setup
-# -----------------------------
+# ------------------------------
 # 
 
 # Author: Till Zemann
@@ -43,8 +43,6 @@ from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
 from collections import defaultdict
 
-matplotlib.use('TkAgg')
-plt.rcParams['text.usetex'] = True
 
 # Let's start by creating the blackjack environment.
 # Note: We are going to follow the rules from Sutton & Barto.
@@ -53,26 +51,20 @@ plt.rcParams['text.usetex'] = True
 env = gym.make('Blackjack-v1', sab=True)
 
 
-######################################################################
+# %%
 # .. code:: py
 # 
-#    # Other possible environment configurations:
+#   # Other possible environment configurations:
 # 
-# ``env = gym.make('Blackjack-v1', natural=True, sab=False)``
+#   env = gym.make('Blackjack-v1', natural=True, sab=False)``
 #
-# ``env = gym.make('Blackjack-v1', natural=False, sab=False)``
+#   env = gym.make('Blackjack-v1', natural=False, sab=False)``
 # 
 
 
-######################################################################
-# Basics: Interacting with the environment
-# ----------------------------------------
-# 
-
-
-######################################################################
+# %%
 # Observing the environment
-# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# ------------------------------
 # 
 # First of all, we call ``env.reset()`` to start an episode. This function
 # resets the environment to a starting position and returns an initial
@@ -90,7 +82,7 @@ observation, info = env.reset()
 print(observation)
 
 
-######################################################################
+# %%
 # Note that our observation is a 3-tuple consisting of 3 discrete values:
 # 
 # -  The players current sum
@@ -100,9 +92,9 @@ print(observation)
 # 
 
 
-######################################################################
+# %%
 # Executing an action
-# ~~~~~~~~~~~~~~~~~~~
+# ------------------------------
 # 
 # After receiving our first observation, we are only going to use the
 # ``env.step(action)`` function to interact with the environment. This
@@ -153,7 +145,7 @@ print('truncated:', truncated)
 print('info:', info)
 
 
-######################################################################
+# %%
 # Once ``terminated = True`` or ``truncated=True``, we should stop the
 # current episode and begin a new one with ``env.reset()``. If you
 # continue executing act`ons without resetting the environment, it still
@@ -162,9 +154,9 @@ print('info:', info)
 # 
 
 
-######################################################################
+# %%
 # Building an agent
-# -----------------
+# ------------------------------
 # 
 # Let’s build a ``Q-learning agent`` to solve *Blackjack-v1*! We’ll need
 # some functions for picking an action and updating the agents action
@@ -213,7 +205,7 @@ class BlackjackAgent():
         self.epsilon = self.epsilon - epsilon_decay
 
 
-######################################################################
+# %%
 # To train the agent, we will let the agent play one episode (one complete
 # game is called an episode) at a time and then update it’s Q-values after
 # each episode. The agent will have to experience a lot of episodes to
@@ -223,11 +215,12 @@ class BlackjackAgent():
 # 
 
 # hyperparameters
-epsilon = 0.6
-n_episodes = 300_000
-epsilon_decay = epsilon / n_episodes # eps-decay facilitates less exploration over time
+learning_rate = 5e-3
+start_epsilon = 1.0
+n_episodes = 70_000
+epsilon_decay = start_epsilon / n_episodes # less exploration over time
 
-agent = BlackjackAgent(lr=1e-3, epsilon=epsilon)
+agent = BlackjackAgent(lr=learning_rate, epsilon=start_epsilon, epsilon_decay=epsilon_decay)
 
 def train(agent, n_episodes):
     for episode in range(n_episodes):
@@ -240,23 +233,23 @@ def train(agent, n_episodes):
         while not done:
             action = agent.get_action(observation)
             next_state, reward, terminated, truncated, info = env.step(action)
-            done = terminated or truncated # set done=True if episode ended early
+            done = terminated or truncated # if the episode terminated or was truncated early, set done to True
             agent.update(state, action, reward, next_state, done)
             state = next_state
 
         agent.update(state, action, reward, next_state, done)
 
 
-######################################################################
+# %%
 # Great, let’s train!
-# 
+#
 
 train(agent, n_episodes)
 
 
-######################################################################
+# %%
 # Visualizing the results
-# -----------------------
+# ------------------------------
 # 
 
 def create_grids(agent, usable_ace=False):
@@ -274,15 +267,12 @@ def create_grids(agent, usable_ace=False):
         np.arange(1,11))  # dealers face-up card
     
     # create the value grid for plotting
-    Z = np.apply_along_axis(
-        lambda obs: V[(obs[0], obs[1], usable_ace)], axis=2, arr=np.dstack([X, Y])
-        )
+    Z = np.apply_along_axis(lambda obs: V[(obs[0], obs[1], usable_ace)], axis=2, arr=np.dstack([X, Y]))
     value_grid = X, Y, Z
     
     # create the policy grid for plotting
-    policy_grid = np.apply_along_axis(
-        lambda obs: policy[(obs[0], obs[1], usable_ace)], axis=2, arr=np.dstack([X, Y])
-        )
+    policy_grid = np.apply_along_axis(lambda obs: policy[(obs[0], obs[1], usable_ace)], 
+                                      axis=2, arr=np.dstack([X, Y]))
     return value_grid, policy_grid
 
 
@@ -303,7 +293,7 @@ def create_plots(value_grid, policy_grid, title='N/A'):
     ax1.set_xlabel("Player sum")
     ax1.set_ylabel("Dealer showing")
     ax1.zaxis.set_rotate_label(False)
-    ax1.set_zlabel('$V_{\pi}$', fontsize=14, rotation=0)
+    ax1.set_zlabel('Value', fontsize=14, rotation=90)
     ax1.view_init(20, 220)
     
     # plot the policy
@@ -321,33 +311,28 @@ def create_plots(value_grid, policy_grid, title='N/A'):
     ax2.legend(handles=legend_elements, bbox_to_anchor=(1.3, 1))
     return fig
 
+
 # state values & policy with usable ace (ace counts as 11)
 value_grid, policy_grid = create_grids(agent, usable_ace=True)
 fig1 = create_plots(value_grid, policy_grid, title='With usable ace')
 plt.show()
 
-######################################################################
-# .. image:: https://raw.githubusercontent.com/till2/Blackjack-Tutorial/main/images/with_usable_ace.png
-#   :alt: with_usable_ace 
 
 # state values & policy without usable ace (ace counts as 1)
 value_grid, policy_grid = create_grids(agent, usable_ace=False)
 fig2 = create_plots(value_grid, policy_grid, title='Without usable ace')
 plt.show()
 
-######################################################################
-# .. image:: https://raw.githubusercontent.com/till2/Blackjack-Tutorial/main/images/without_usable_ace.png
-#   :alt: without_usable_ace 
 
-######################################################################
+# %%
 # It's good practice to call env.close() at the end of your script,
 # so that any used ressources by the environment will be closed.
 
 env.close()
 
 
-######################################################################
-# I hope that this Tutorial helped you get a grip of how to interact with
+# %%
+# Hopefully this Tutorial helped you get a grip of how to interact with
 # OpenAI-Gym environments and sets you on a journey to solve many more RL
 # challenges.
 # 
