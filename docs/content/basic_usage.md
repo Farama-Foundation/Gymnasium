@@ -8,7 +8,7 @@ firstpage:
 
 ## Initializing Environments
 
-Initializing environments is very easy in Gymnasium and can be done via: 
+Initializing environments is very easy in Gymnasium and can be done via:
 
 ```python
 import gymnasium as gym
@@ -32,11 +32,11 @@ Gymnasium implements the classic "agent-environment loop":
 ```
 
 The agent performs some actions in the environment (usually by passing some control inputs to the environment, e.g. torque inputs of motors) and observes
-how the environment's state changes. One such action-observation exchange is referred to as a *timestep*. 
+how the environment's state changes. One such action-observation exchange is referred to as a *timestep*.
 
 The goal in RL is to manipulate the environment in some specific way. For instance, we want the agent to navigate a robot
 to a specific point in space. If it succeeds in doing this (or makes some progress towards that goal), it will receive a positive reward
-alongside the observation for this timestep. The reward may also be negative or 0, if the agent did not yet succeed (or did not make any progress). 
+alongside the observation for this timestep. The reward may also be negative or 0, if the agent did not yet succeed (or did not make any progress).
 The agent will then be trained to maximize the reward it accumulates over many timesteps.
 
 After some timesteps, the environment may enter a terminal state. For instance, the robot may have crashed, or the agent may have succeeded in completing a task. In that case, we want to reset the environment to a new initial state. The environment issues a terminated signal to the agent if it enters such a terminal state. Sometimes we also want to end the episode after a fixed number of timesteps, in this case, the environment issues a truncated signal.
@@ -71,41 +71,41 @@ The output should look something like this:
 
 Every environment specifies the format of valid actions by providing an `env.action_space` attribute. Similarly,
 the format of valid observations is specified by `env.observation_space`.
-In the example above we sampled random actions via `env.action_space.sample()`. Note that we need to seed the action space separately from the 
+In the example above we sampled random actions via `env.action_space.sample()`. Note that we need to seed the action space separately from the
 environment to ensure reproducible samples.
 
 
 ### Change in env.step API
 
-Previously, the step method returned only one boolean - `done`. This is being deprecated in favour of returning two booleans `terminated` and `truncated` (v0.26 onwards). 
+Previously, the step method returned only one boolean - `done`. This is being deprecated in favour of returning two booleans `terminated` and `truncated` (v0.26 onwards).
 
-`terminated` signal is set to `True` when the core environment terminates inherently because of task completion, failure etc. a condition defined in the MDP.   
-`truncated` signal is set to `True` when the episode ends specifically because of a time-limit or a condition not inherent to the environment (not defined in the MDP). 
-It is possible for `terminated=True` and `truncated=True` to occur at the same time when termination and truncation occur at the same step. 
+`terminated` signal is set to `True` when the core environment terminates inherently because of task completion, failure etc. a condition defined in the MDP.
+`truncated` signal is set to `True` when the episode ends specifically because of a time-limit or a condition not inherent to the environment (not defined in the MDP).
+It is possible for `terminated=True` and `truncated=True` to occur at the same time when termination and truncation occur at the same step.
 
-This is explained in detail in the `Handling Time Limits` section. 
+This is explained in detail in the `Handling Time Limits` section.
 
 #### Backward compatibility
 
-Gym will retain support for the old API through compatibility wrappers. 
+Gym will retain support for the old API through compatibility wrappers.
 
-Users can toggle the old API through `make` by setting `apply_api_compatibility=True`. 
+Users can toggle the old API through `make` by setting `apply_api_compatibility=True`.
 
 ```python
 env = gym.make("CartPole-v1", apply_api_compatibility=True)
 ```
-This can also be done explicitly through a wrapper: 
+This can also be done explicitly through a wrapper:
 ```python
 from gymnasium.wrappers import StepAPICompatibility
 env = StepAPICompatibility(CustomEnv(), output_truncation_bool=False)
 ```
-For more details see the wrappers section. 
+For more details see the wrappers section.
 
 
 ## Checking API-Conformity
 
-If you have implemented a custom environment and would like to perform a sanity check to make sure that it conforms to 
-the API, you can run: 
+If you have implemented a custom environment and would like to perform a sanity check to make sure that it conforms to
+the API, you can run:
 
 ```python
 >>> from gymnasium.utils.env_checker import check_env
@@ -113,8 +113,8 @@ the API, you can run:
 ```
 
 This function will throw an exception if it seems like your environment does not follow the Gymnasium API. It will also produce
-warnings if it looks like you made a mistake or do not follow a best practice (e.g. if `observation_space` looks like 
-an image but does not have the right dtype). Warnings can be turned off by passing `warn=False`. By default, `check_env` will 
+warnings if it looks like you made a mistake or do not follow a best practice (e.g. if `observation_space` looks like
+an image but does not have the right dtype). Warnings can be turned off by passing `warn=False`. By default, `check_env` will
 not check the `render` method. To change this behavior, you can pass `skip_render_check=False`.
 
 > After running `check_env` on an environment, you should not reuse the instance that was checked, as it may have already
@@ -136,7 +136,7 @@ There are multiple `Space` types available in Gymnasium:
 
 ```python
 >>> from gymnasium.spaces import Box, Discrete, Dict, Tuple, MultiBinary, MultiDiscrete
->>> import numpy as np 
+>>> import numpy as np
 >>>
 >>> observation_space = Box(low=-1.0, high=2.0, shape=(3,), dtype=np.float32)
 >>> observation_space.sample()
@@ -145,11 +145,11 @@ There are multiple `Space` types available in Gymnasium:
 >>> observation_space = Discrete(4)
 >>> observation_space.sample()
 1
->>> 
+>>>
 >>> observation_space = Discrete(5, start=-2)
 >>> observation_space.sample()
 -2
->>> 
+>>>
 >>> observation_space = Dict({"position": Discrete(2), "velocity": Discrete(3)})
 >>> observation_space.sample()
 OrderedDict([('position', 0), ('velocity', 1)])
@@ -170,7 +170,7 @@ OrderedDict([('position', 0), ('velocity', 1)])
 ## Wrappers
 
 Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.
-Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can 
+Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can
 also be chained to combine their effects. Most environments that are generated via `gymnasium.make` will already be wrapped by default.
 
 In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along
@@ -217,7 +217,7 @@ If you have a wrapped environment, and you want to get the unwrapped environment
 
 ## Playing within an environment
 
-You can also play the environment using your keyboard using the `play` function in `gymnasium.utils.play`. 
+You can also play the environment using your keyboard using the `play` function in `gymnasium.utils.play`.
 ```python
 from gymnasium.utils.play import play
 play(gymnasium.make('Pong-v0'))

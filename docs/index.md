@@ -66,9 +66,6 @@ environments/third_party_environments
 :glob:
 :caption: Tutorials
 
-content/environment_creation
-content/vectorising
-content/handling_timelimits
 tutorials/*
 ```
 
