@@ -37,7 +37,6 @@ Solving Blackjack with Q-Learning
 
 import gym
 import numpy as np
-import matplotlib
 import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
@@ -297,7 +296,7 @@ def create_plots(value_grid, policy_grid, title='N/A'):
     ax1.view_init(20, 220)
     
     # plot the policy
-    a2x = fig.add_subplot(1, 2, 2)
+    fig.add_subplot(1, 2, 2)
     ax2 = sns.heatmap(policy_grid, linewidth=0, annot=True, cmap="Accent_r", cbar=False)
     ax2.set_title('Policy: ' + title);
     ax2.set_xlabel("Player sum")
