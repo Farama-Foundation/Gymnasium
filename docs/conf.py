@@ -76,6 +76,7 @@ html_theme_options = {
     "gtag": "G-6H9C8TWXZ8",
     "description": "A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
     "image": "img/gymnasium-github.png",
+    "versioning": True
 }
 html_context: Dict[str, Any] = {}
 html_context["conf_py_path"] = "/docs/"
@@ -91,5 +92,6 @@ html_css_files = []
 # -- Generate Tutorials -------------------------------------------------
 
 gen_tutorials.generate(
+    os.path.dirname(__file__),
     os.path.join(os.path.dirname(__file__), "tutorials"),
 )
