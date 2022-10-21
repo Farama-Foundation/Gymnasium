@@ -8,7 +8,7 @@ If you are modifying a non-environment page or an atari environment page, please
 
 ### Editing an environment page
 
-If you are editing an Atari environment, directly edit the Markdown file in this repository. 
+If you are editing an Atari environment, directly edit the Markdown file in this repository.
 
 Otherwise, fork Gymnasium and edit the docstring in the environment's Python file. Then, pip install your Gymnasium fork and run `docs/scripts/gen_mds.py` in this repo. This will automatically generate a Markdown documentation file for the environment.
 
@@ -49,3 +49,7 @@ To rebuild the documentation automatically every time a change is made:
 cd docs
 sphinx-autobuild -b dirhtml . _build
 ```
+
+## Writing Tutorials
+
+We use Sphinx-Gallery to build the tutorials inside the `docs/tutorials` directory. Check `docs/tutorials/demo.py` to see an example of a tutorial and [Sphinx-Gallery documentation](https://sphinx-gallery.github.io/stable/syntax.html) for more information. To convert Jupyer Notebooks to the python tutorials you can use [this script](https://gist.github.com/mgoulao/f07f5f79f6cd9a721db8a34bba0a19a7). If you want Sphinx-Gallery to execute the tutorial (which adds outputs and plots) then the file name should start with `run_`. Note that this adds to the build time so make sure the script doesn't take more than a few seconds to execute.
