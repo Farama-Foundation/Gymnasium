@@ -106,6 +106,14 @@
                         MiniGrid
                       </a>
                     </li>
+                    <li>
+                      <a href="https://robotics.farama.org">
+                        
+                        <img src="../_static/img/gymrobotics-white.svg">
+                        
+                        Gymnasium-Robotics
+                      </a>
+                    </li>
                     
                   </ul>
                 </div>
@@ -118,14 +126,6 @@
                         <img src="../_static/img/supersuit-white.svg">
                         
                         SuperSuit
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/gym-robotics">
-                        
-                        <img src="../_static/img/gymrobotics-white.svg">
-                        
-                        Gymnasium-Robotics
                       </a>
                     </li>
                     <li>
@@ -480,9 +480,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../content/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/vectorising/">Vectorizing your environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/handling_timelimits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/handling_time_limits/">Handling Time Limits</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -580,6 +579,12 @@
 </pre></div>
 </div>
 </section>
+<section id="writing-tutorials">
+<h2>Writing Tutorials<a class="headerlink" href="#writing-tutorials" title="Permalink to this heading">#</a></h2>
+<p>We use Sphinx-Gallery to build the tutorials inside the <code class="docutils literal notranslate"><span class="pre">docs/tutorials</span></code> directory. Check <code class="docutils literal notranslate"><span class="pre">docs/tutorials/demo.py</span></code> to see an example of a tutorial and <a class="reference external" href="https://sphinx-gallery.github.io/stable/syntax.html">Sphinx-Gallery documentation</a> for more information.</p>
+<p>To convert Jupyer Notebooks to the python tutorials you can use <a class="reference external" href="https://gist.github.com/mgoulao/f07f5f79f6cd9a721db8a34bba0a19a7">this script</a>.</p>
+<p>If you want Sphinx-Gallery to execute the tutorial (which adds outputs and plots) then the file name should start with <code class="docutils literal notranslate"><span class="pre">run_</span></code>. Note that this adds to the build time so make sure the script doesn’t take more than a few seconds to execute.</p>
+</section>
 </section>
 
         </article>
@@ -634,6 +639,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#build-the-documentation">Build the Documentation</a></li>
+<li><a class="reference internal" href="#writing-tutorials">Writing Tutorials</a></li>
 </ul>
 </li>
 </ul>
@@ -709,5 +715,6 @@
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
+    
     </body>
 </html>
