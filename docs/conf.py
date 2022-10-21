@@ -41,7 +41,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
     "myst_parser",
-    "furo.gen_tutorials"
+    "furo.gen_tutorials",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
