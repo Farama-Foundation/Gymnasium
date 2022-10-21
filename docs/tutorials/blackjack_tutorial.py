@@ -6,9 +6,9 @@ Solving Blackjack with Q-Learning
 
 
 # %%
-# .. image:: https://raw.githubusercontent.com/Farama-Foundation/Gymnasium/main/docs/_static/img/tutorials/blackjack_AE_loop.jpg
+# .. image:: /_static/img/tutorials/blackjack_AE_loop.jpg
 #   :width: 650
-#   :alt: agent-environment-diagram 
+#   :alt: agent-environment-diagram
 #
 # In this tutorial, we’ll explore and solve the *Blackjack-v1*
 # environment.
@@ -215,9 +215,9 @@ class BlackjackAgent():
 # 
 
 # hyperparameters
-learning_rate = 5e-3
-start_epsilon = 1.0
-n_episodes = 70_000
+learning_rate = 1e-3
+start_epsilon = 0.8
+n_episodes = 200_000
 epsilon_decay = start_epsilon / n_episodes # less exploration over time
 
 agent = BlackjackAgent(lr=learning_rate, epsilon=start_epsilon, epsilon_decay=epsilon_decay)
@@ -318,6 +318,10 @@ fig1 = create_plots(value_grid, policy_grid, title='With usable ace')
 plt.show()
 
 
+# %%
+# .. image:: /_static/img/tutorials/blackjack_with_usable_ace.png
+#
+
 # state values & policy without usable ace (ace counts as 1)
 value_grid, policy_grid = create_grids(agent, usable_ace=False)
 fig2 = create_plots(value_grid, policy_grid, title='Without usable ace')
@@ -325,8 +329,11 @@ plt.show()
 
 
 # %%
+# .. image:: /_static/img/tutorials/blackjack_without_usable_ace.png
+#
 # It's good practice to call env.close() at the end of your script,
 # so that any used ressources by the environment will be closed.
+#
 
 env.close()
 
