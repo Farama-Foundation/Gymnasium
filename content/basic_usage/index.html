@@ -106,6 +106,14 @@
                         MiniGrid
                       </a>
                     </li>
+                    <li>
+                      <a href="https://robotics.farama.org">
+                        
+                        <img src="../../_static/img/gymrobotics-white.svg">
+                        
+                        Gymnasium-Robotics
+                      </a>
+                    </li>
                     
                   </ul>
                 </div>
@@ -118,14 +126,6 @@
                         <img src="../../_static/img/supersuit-white.svg">
                         
                         SuperSuit
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/gym-robotics">
-                        
-                        <img src="../../_static/img/gymrobotics-white.svg">
-                        
-                        Gymnasium-Robotics
                       </a>
                     </li>
                     <li>
@@ -480,9 +480,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../vectorising/">Vectorizing your environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../handling_timelimits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -584,7 +583,7 @@ environment to ensure reproducible samples.</p>
 <section id="change-in-env-step-api">
 <h3>Change in env.step API<a class="headerlink" href="#change-in-env-step-api" title="Permalink to this heading">#</a></h3>
 <p>Previously, the step method returned only one boolean - <code class="docutils literal notranslate"><span class="pre">done</span></code>. This is being deprecated in favour of returning two booleans <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code> (v0.26 onwards).</p>
-<p><code class="docutils literal notranslate"><span class="pre">terminated</span></code> signal is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> when the core environment terminates inherently because of task completion, failure etc. a condition defined in the MDP.<br />
+<p><code class="docutils literal notranslate"><span class="pre">terminated</span></code> signal is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> when the core environment terminates inherently because of task completion, failure etc. a condition defined in the MDP.
 <code class="docutils literal notranslate"><span class="pre">truncated</span></code> signal is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> when the episode ends specifically because of a time-limit or a condition not inherent to the environment (not defined in the MDP).
 It is possible for <code class="docutils literal notranslate"><span class="pre">terminated=True</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated=True</span></code> to occur at the same time when termination and truncation occur at the same step.</p>
 <p>This is explained in detail in the <code class="docutils literal notranslate"><span class="pre">Handling</span> <span class="pre">Time</span> <span class="pre">Limits</span></code> section.</p>
@@ -636,7 +635,7 @@ There are multiple <code class="docutils literal notranslate"><span class="pre">
 <li><p><code class="docutils literal notranslate"><span class="pre">MultiDiscrete</span></code>: consists of a series of <code class="docutils literal notranslate"><span class="pre">Discrete</span></code> action spaces with a different number of actions in each element.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">MultiDiscrete</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
@@ -645,11 +644,11 @@ There are multiple <code class="docutils literal notranslate"><span class="pre">
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="go">1</span>
-<span class="gp">&gt;&gt;&gt; </span>
+<span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="go">-2</span>
-<span class="gp">&gt;&gt;&gt; </span>
+<span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="go">OrderedDict([(&#39;position&#39;, 0), (&#39;velocity&#39;, 1)])</span>
@@ -891,5 +890,6 @@ For example, if pressing the keys <code class="docutils literal notranslate"><sp
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
+    
     </body>
 </html>
