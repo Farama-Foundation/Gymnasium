@@ -23,7 +23,7 @@ from furo import gen_tutorials
 import gymnasium
 
 project = "Gymnasium"
-copyright = "2022, Farama Foundation"
+copyright = "2022 Farama Foundation"
 author = "Farama Foundation"
 
 # The full version, including alpha/beta/rc tags
@@ -41,6 +41,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
     "myst_parser",
+    "furo.gen_tutorials",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -91,5 +92,6 @@ html_css_files = []
 # -- Generate Tutorials -------------------------------------------------
 
 gen_tutorials.generate(
+    os.path.dirname(__file__),
     os.path.join(os.path.dirname(__file__), "tutorials"),
 )
