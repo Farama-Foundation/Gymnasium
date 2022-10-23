@@ -33,7 +33,7 @@ The unique dependencies for this set of environments can be installed via:
 pip install gymnasium[mujoco]
 ````
 
-These environments also require that the MuJoCo engine be installed. As of October 2021 DeepMind has acquired MuJoCo and is open-sourcing it in 2022, making it free for everyone. Instructions on installing the MuJoCo engine can be found on their [website](https://mujoco.org) and [GitHub repository](https://github.com/deepmind/mujoco). Using MuJoCo with Gymnasium also requires that the framework `mujoco` be installed (this dependency is installed with the above command)..
+These environments also require that the MuJoCo engine be installed. As of October 2021 DeepMind has acquired MuJoCo and is open-sourcing it in 2022, making it free for everyone. Instructions on installing the MuJoCo engine can be found on their [website](https://mujoco.org) and [GitHub repository](https://github.com/deepmind/mujoco). Using MuJoCo with Gymnasium also requires that the framework `mujoco` be installed (this dependency is installed with the above command).
 
 For MuJoCo V3 enviroments and older the `mujoco-py` framework is required (`pip install mujoco-py`) which can be found in the [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py) 
 
