@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/content/gym_compatibility.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Env" href="../../api/env/" /><link rel="prev" title="Basic Usage" href="../basic_usage/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="v21 to v26 Migration Guide" href="../migration-guide/" /><link rel="prev" title="Basic Usage" href="../basic_usage/" />
         <link rel="canonical" href="https://gymnasium.farama.org/content/gym_compatibility.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
@@ -353,6 +353,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage/">Basic Usage</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration-guide/">v21 to v26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -537,28 +538,24 @@
 <p>Gymnasium provides a number of compatibility methods for a range of Environment implementations.</p>
 <section id="loading-openai-gym-environments">
 <h2>Loading OpenAI Gym environments<a class="headerlink" href="#loading-openai-gym-environments" title="Permalink to this heading">#</a></h2>
-<p>For environments that are registered solely in OpenAI Gym, it is still possible to import environments within Gymnasium.
-Introduced in Gymnasium v0.26.3, in <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>, if the environment id doesn’t exist in the
-gymnasium registry then a check if done to see if the environment is registered in Gym.
-If it is, then we will make environment using the gym’s registration information.</p>
-<p>An example of this is atari 0.8.0 which does not have a gymnasium implementation currently.</p>
+<p>For environments that are registered solely in OpenAI Gym, it is still possible to import environments within Gymnasium however they will not appear in the gymnasium environment registry. Introduced in Gymnasium v0.26.3, using the special environment <code class="docutils literal notranslate"><span class="pre">&quot;GymV26Environment-v0&quot;</span></code>, passing an <code class="docutils literal notranslate"><span class="pre">env_name</span></code> along with any other keyword will be passed to <code class="docutils literal notranslate"><span class="pre">gym.make</span></code>. This environment, <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.EnvCompatibility" title="gymnasium.wrappers.EnvCompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvCompatibility</span></code></a>, is also compatibilty with passing gym environment instances with the <code class="docutils literal notranslate"><span class="pre">env</span></code> keyword.</p>
+<p>An example of this is atari 0.8.0 which does not have a gymnasium implementation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;ALE/Pong-v5&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV26Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_name</span><span class="o">=</span><span class="s2">&quot;ALE/Pong-v5&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="v0-22-environment-compatibility">
-<h2>&lt; v0.22 Environment Compatibility<a class="headerlink" href="#v0-22-environment-compatibility" title="Permalink to this heading">#</a></h2>
-<p>A number of environments have not updated to the recent Gym changes, in particular since v0.21.
-Therefore, to increase backward compatibility, Gym and Gymnasium v0.26+ include an <code class="docutils literal notranslate"><span class="pre">apply_api_compatibility</span></code>
-in <code class="docutils literal notranslate"><span class="pre">{eval-rst}:py:meth:gymnasium.make</span></code> parameter that applies a wrappers to convert v0.21 environment to the v0.26 API.</p>
+<section id="gym-v0-22-environment-compatibility">
+<h2>Gym v0.22 Environment Compatibility<a class="headerlink" href="#gym-v0-22-environment-compatibility" title="Permalink to this heading">#</a></h2>
+<p>A number of environments have not updated to the recent Gym changes, in particular since v0.21. Therefore, to increase backward compatibility, Gym and Gymnasium v0.26+ include an <code class="docutils literal notranslate"><span class="pre">apply_api_compatibility</span></code> in <a class="reference internal" href="../../api/registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make()</span></code></a> parameter that applies a wrappers to convert v0.21 environment to the v0.26 API.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;OldV21Env-v0&quot;</span><span class="p">,</span> <span class="n">apply_api_compatibility</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="step-api-compatibility">
 <h2>Step API Compatibility<a class="headerlink" href="#step-api-compatibility" title="Permalink to this heading">#</a></h2>
-<p>If environments implement the (old) done step API, Gymnasium provides both functions
-(<code class="docutils literal notranslate"><span class="pre">{eval-rst}:py:meth:gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api</span></code>) and
-wrappers (<code class="docutils literal notranslate"><span class="pre">{eval-rst}:py:meth:gymnasium.wrappers.StepAPICompatibility</span></code>) that will convert the
-step function to the (new) termination and truncation step API.</p>
+<p>If environments implement the (old) done step API, Gymnasium provides both functions (<a class="reference internal" href="../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api" title="gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api()</span></code></a>) and wrappers (<a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.StepAPICompatibility" title="gymnasium.wrappers.StepAPICompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.StepAPICompatibility</span></code></a>) that will convert the step function to the (new) termination and truncation step API.</p>
 </section>
 </section>
 
@@ -567,12 +564,12 @@ step function to the (new) termination and truncation step API.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../api/env/">
+          <a class="next-page" href="../migration-guide/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Env</div>
+                <div class="title">v21 to v26 Migration Guide</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -622,7 +619,7 @@ step function to the (new) termination and truncation step API.</p>
             <ul>
 <li><a class="reference internal" href="#">Compatibility with Gym</a><ul>
 <li><a class="reference internal" href="#loading-openai-gym-environments">Loading OpenAI Gym environments</a></li>
-<li><a class="reference internal" href="#v0-22-environment-compatibility">&lt; v0.22 Environment Compatibility</a></li>
+<li><a class="reference internal" href="#gym-v0-22-environment-compatibility">Gym v0.22 Environment Compatibility</a></li>
 <li><a class="reference internal" href="#step-api-compatibility">Step API Compatibility</a></li>
 </ul>
 </li>
