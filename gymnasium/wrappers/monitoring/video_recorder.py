@@ -24,6 +24,7 @@ class VideoRecorder:
         metadata: Optional[dict] = None,
         enabled: bool = True,
         base_path: Optional[str] = None,
+        disable_logger: bool = False
     ):
         """Video recorder renders a nice movie of a rollout, frame by frame.
 
@@ -33,6 +34,7 @@ class VideoRecorder:
             metadata (Optional[dict]): Contents to save to the metadata file.
             enabled (bool): Whether to actually record video, or just no-op (for convenience)
             base_path (Optional[str]): Alternatively, path to the video file without extension, which will be added.
+            disable_logger (bool): Whether to disable moviepy logger or not.
 
         Raises:
             Error: You can pass at most one of `path` or `base_path`
@@ -48,7 +50,8 @@ class VideoRecorder:
 
         self._async = env.metadata.get("semantics.async")
         self.enabled = enabled
-        self._closed = False
+        self.disable_logger = disable_logger
+        self.closed = False
 
         self.render_history = []
         self.env = env
@@ -115,7 +118,7 @@ class VideoRecorder:
 
         if not self.functional:
             return
-        if self._closed:
+        if self.closed:
             logger.warn(
                 "The video recorder has been closed and no frames will be captured anymore."
             )
@@ -138,7 +141,7 @@ class VideoRecorder:
 
     def close(self):
         """Flush all data to disk and close any open frame encoders."""
-        if not self.enabled or self._closed:
+        if not self.enabled or self.closed:
             return
 
         # First close the environment
@@ -153,9 +156,9 @@ class VideoRecorder:
                     "MoviePy is not installed, run `pip install moviepy`"
                 )
 
-            logger.debug(f"Closing video encoder: path={self.path}")
             clip = ImageSequenceClip(self.recorded_frames, fps=self.frames_per_sec)
-            clip.write_videofile(self.path, logger=None)
+            moviepy_logger = None if self.disable_logger else 'bar'
+            clip.write_videofile(self.path, logger=moviepy_logger)
         else:
             # No frames captured. Set metadata.
             if self.metadata is None:
@@ -165,7 +168,7 @@ class VideoRecorder:
         self.write_metadata()
 
         # Stop tracking this for autoclose
-        self._closed = True
+        self.closed = True
 
     def write_metadata(self):
         """Writes metadata to metadata path."""
@@ -175,4 +178,5 @@ class VideoRecorder:
     def __del__(self):
         """Closes the environment correctly when the recorder is deleted."""
         # Make sure we've closed up shop when garbage collecting
-        self.close()
+        if not self.closed:
+            logger.warn("Unable to save last video! Did you call close()?")
