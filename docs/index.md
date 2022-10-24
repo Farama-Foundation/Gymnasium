@@ -35,6 +35,7 @@ env.close()
 
 content/basic_usage
 content/gym_compatibility
+content/terminated-truncated-api
 ```
 
 ```{toctree}
