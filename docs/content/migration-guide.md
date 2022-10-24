@@ -57,7 +57,7 @@ Gymnasium v26 changed to using the ``numpy.random.Generator`` instead of a custo
 ## Environment Reset
 
 ```{eval-rst}
-In v26, :meth:`reset` has two new parameters compared to v21 along with an extra return value. The two parmeters of ``reset`` are ``seed`` for setting the random number generator with the second parameter being ``options`` allowing additional data to be passed to the environment on reset. For example, in the classic control, the options parameter now allows users to modify the range of the state bound. See the original `PR <https://github.com/openai/gym/pull/2921>`_ for more details. 
+In v26, :meth:`reset` has two new parameters compared to v21 along with an extra return value. The two parameters of ``reset`` are ``seed`` for setting the random number generator with the second parameter being ``options`` allowing additional data to be passed to the environment on reset. For example, in the classic control, the options parameter now allows users to modify the range of the state bound. See the original `PR <https://github.com/openai/gym/pull/2921>`_ for more details. 
 
 For the new return value, ``info``, this is similar to the ``info`` returned by the :meth:`step`. This is important for ``info`` can include metrics or valid action mask that is used or saved in the next step. 
 
