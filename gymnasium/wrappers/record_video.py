@@ -45,7 +45,7 @@ class RecordVideo(gym.Wrapper):
         step_trigger: Callable[[int], bool] = None,
         video_length: int = 0,
         name_prefix: str = "rl-video",
-        disable_logger: bool = False
+        disable_logger: bool = False,
     ):
         """Wrapper records videos of rollouts.
 
@@ -123,7 +123,7 @@ class RecordVideo(gym.Wrapper):
             env=self.env,
             base_path=base_path,
             metadata={"step_id": self.step_id, "episode_id": self.episode_id},
-            disable_logger=self.disable_logger
+            disable_logger=self.disable_logger,
         )
 
         self.video_recorder.capture_frame()

@@ -24,7 +24,7 @@ class VideoRecorder:
         metadata: Optional[dict] = None,
         enabled: bool = True,
         base_path: Optional[str] = None,
-        disable_logger: bool = False
+        disable_logger: bool = False,
     ):
         """Video recorder renders a nice movie of a rollout, frame by frame.
 
@@ -157,7 +157,7 @@ class VideoRecorder:
                 )
 
             clip = ImageSequenceClip(self.recorded_frames, fps=self.frames_per_sec)
-            moviepy_logger = None if self.disable_logger else 'bar'
+            moviepy_logger = None if self.disable_logger else "bar"
             clip.write_videofile(self.path, logger=moviepy_logger)
         else:
             # No frames captured. Set metadata.
