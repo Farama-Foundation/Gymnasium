@@ -12,7 +12,7 @@ Gymnasium provides a number of compatibility methods for a range of Environment 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
 
-For environments that are registered solely in OpenAI Gym, it is still possible to import environments within Gymnasium however they will not appear in the gymnasium environment registry. Introduced in Gymnasium v0.26.3, using the special environment ``"GymV26Environment-v0"``, passing an ``env_name`` along with any other keyword will be passed to ``gym.make``. This environment, :class:`EnvCompatibility`, is also compatibilty with passing gym environment instances with the ``env`` keyword. 
+For environments that are registered solely in OpenAI Gym, it is still possible to import environments within Gymnasium however they will not appear in the gymnasium environment registry. Introduced in Gymnasium v0.26.3, using the special environment ``"GymV26Environment-v0"``, passing an ``env_name`` along with any other keyword will be passed to ``gym.make``. This environment, :class:`EnvCompatibility`, is also compatibility with passing gym environment instances with the ``env`` keyword. 
 ```
 
 An example of this is atari 0.8.0 which does not have a gymnasium implementation. 
