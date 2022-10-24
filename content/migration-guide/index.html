@@ -7,12 +7,12 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/api/spaces.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Fundamental Spaces" href="fundamental/" /><link rel="prev" title="Registry" href="../registry/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/api/spaces.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/content/migration-guide.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Env" href="../../api/env/" /><link rel="prev" title="Compatibility with Gym" href="../gym_compatibility/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/content/migration-guide.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
-        <title>Spaces - Gymnasium Documentation</title>
+        <title>v21 to v26 Migration Guide - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
@@ -350,31 +350,31 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">v21 to v26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../registry/">Registry</a></li>
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Spaces</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="fundamental/">Fundamental Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="composite/">Composite Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vector_utils/">Spaces Vector Utils</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Registry</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/utils/">Spaces Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/misc_wrappers/">Misc Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/action_wrappers/">Action Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/observation_wrappers/">Observation Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utils</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -510,7 +510,7 @@
           
     
     <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/api/spaces.md" title="Edit this page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/content/migration-guide.md" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -533,150 +533,72 @@
         </div>
         <article role="main">
           
-          <section id="spaces">
-<h1>Spaces<a class="headerlink" href="#spaces" title="Permalink to this heading">#</a></h1>
-<div class="toctree-wrapper compound">
+          <section id="v21-to-v26-migration-guide">
+<h1>v21 to v26 Migration Guide<a class="headerlink" href="#v21-to-v26-migration-guide" title="Permalink to this heading">#</a></h1>
+<p>Gymnasium is a fork of <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.26.2">OpenAI Gym v26</a>, therefore, this requires environments and training libraries to update to the v26 API. In this guide, we briefly outline the changes to the <a class="reference external" href="https://github.com/openai/gym/releases/tag/v0.21.0">Gym v21</a> API which a number of tutorials and environment have been written in. For environments that have not updated, users can use the <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.EnvCompatibility" title="gymnasium.wrappers.EnvCompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvCompatibility</span></code></a> wrapper, for more information see the <a class="reference external" href="/content/gym_compatibility">guide</a></p>
+<section id="example-code-for-v21">
+<h2>Example code for v21<a class="headerlink" href="#example-code-for-v21" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
+<span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="n">observation</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># agent policy that uses the observation and info</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    
+    <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
 </div>
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.spaces.Space">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Generator</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Space" title="Permalink to this definition">#</a></dt>
-<dd><p>Superclass that is used to define observation and action spaces.</p>
-<p>Spaces are crucially used in Gym to define the format of valid actions and observations.
-They serve various purposes:</p>
-<ul class="simple">
-<li><p>They clearly define how to interact with environments, i.e. they specify what actions need to look like
-and what observations will look like</p></li>
-<li><p>They allow us to work with highly structured data (e.g. in the form of elements of <a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> spaces)
-and painlessly transform them into flat arrays that can be used in learning code</p></li>
-<li><p>They provide a method to sample random elements. This is especially useful for exploration and debugging.</p></li>
-</ul>
-<p>Different spaces can be combined hierarchically via container spaces (<a class="reference internal" href="composite/#gymnasium.spaces.Tuple" title="gymnasium.spaces.Tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code></a> and <a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>) to build a
-more expressive space</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Custom observation &amp; action spaces can inherit from the <code class="docutils literal notranslate"><span class="pre">Space</span></code>
-class. However, most use-cases should be covered by the existing space
-classes (e.g. <a class="reference internal" href="fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a>, <a class="reference internal" href="fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code></a>, etc…), and container classes (:class`Tuple` &amp;
-<a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>). Note that parametrized probability distributions (through the
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">Space.sample()</span></code> method), and batching functions (in <a class="reference internal" href="../vector/#gymnasium.vector.VectorEnv" title="gymnasium.vector.VectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.VectorEnv</span></code></a>), are
-only well-defined for instances of spaces provided in gymnasium by default.
-Moreover, some implementations of Reinforcement Learning algorithms might
-not handle custom spaces properly. Use custom spaces with care.</p>
+</section>
+<section id="example-code-for-v26">
+<h2>Example code for v26<a class="headerlink" href="#example-code-for-v26" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
+
+<span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># agent policy that uses the observation and info</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>shape</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><em>Sequence</em></a><em>[</em><em>int</em><em>]</em><em>]</em>) – If elements of the space are numpy arrays, this should specify their shape.</p></li>
-<li><p><strong>dtype</strong> (<em>Optional</em><em>[</em><em>Type</em><em> | </em><em>str</em><em>]</em>) – If elements of the space are numpy arrays, this should specify their dtype.</p></li>
-<li><p><strong>seed</strong> – Optionally, you can use this argument to seed the RNG that is used to sample from the space</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h2>
-<dl class="py property">
-<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.shape">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.spaces.space.Space.shape" title="Permalink to this definition">#</a></dt>
-<dd><p>Return the shape of the space as an immutable property.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="Space.dtype">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#Space.dtype" title="Permalink to this definition">#</a></dt>
-<dd><p>Return the data type of this space.</p>
-</dd></dl>
-
 </section>
-<section id="methods">
-<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">#</a></h2>
-<p>Each space implements the following functions:</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.sample">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T_cov</span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.sample" title="Permalink to this definition">#</a></dt>
-<dd><p>Randomly sample an element of this space.</p>
-<p>Can be uniform or non-uniform sampling based on boundedness of space.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mask</strong> – A mask used for sampling, expected <code class="docutils literal notranslate"><span class="pre">dtype=np.int8</span></code> and see sample implementation for expected shape.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>A sampled actions from the space</strong></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.contains">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.contains" title="Permalink to this definition">#</a></dt>
-<dd><p>Return boolean specifying if x is a valid member of this space.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.seed">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.seed" title="Permalink to this definition">#</a></dt>
-<dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.to_jsonable">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">to_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.to_jsonable" title="Permalink to this definition">#</a></dt>
-<dd><p>Convert a batch of samples from this space to a JSONable data type.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.from_jsonable">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">from_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.from_jsonable" title="Permalink to this definition">#</a></dt>
-<dd><p>Convert a JSONable data type to a batch of samples from this space.</p>
-</dd></dl>
-
+<section id="seed-and-random-number-generator">
+<h2>Seed and random number generator<a class="headerlink" href="#seed-and-random-number-generator" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Env.seed()</span></code> has been removed from the Gym v26 environments in favour of <code class="docutils literal notranslate"><span class="pre">Env.reset(seed=seed)</span></code> as a majority of the time, users call seed just before resetting the environment. This decision to remove <code class="docutils literal notranslate"><span class="pre">seed</span></code> was due to environment that use emulators often cannot change the random number generator within an episode and must be done at the beginning of a new episode. We are aware of cases where controlling the random number generator is important, in these cases, if the environment uses the built in random number generator, users can set <a class="reference internal" href="../../api/env/#gymnasium.Env.np_random" title="gymnasium.Env.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a>.</p>
+<p>Gymnasium v26 changed to using the <code class="docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code> instead of a custom random number generator. This means that several functions such as <code class="docutils literal notranslate"><span class="pre">randint</span></code> were removed in favour of <code class="docutils literal notranslate"><span class="pre">integers</span></code>. While some environments might use external random number generator, we recommend using the <a class="reference internal" href="../../api/env/#gymnasium.Env.np_random" title="gymnasium.Env.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a> that wrappers and external users can access and utilise.</p>
 </section>
-<section id="fundamental-spaces">
-<h2>Fundamental Spaces<a class="headerlink" href="#fundamental-spaces" title="Permalink to this heading">#</a></h2>
-<p>Gymnasium has a number of fundamental spaces that are used as building boxes for more complex spaces.</p>
+<section id="environment-reset">
+<h2>Environment Reset<a class="headerlink" href="#environment-reset" title="Permalink to this heading">#</a></h2>
+<p>In v26, <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> has two new parameters compared to v21 along with an extra return value. The two parmeters of <code class="docutils literal notranslate"><span class="pre">reset</span></code> are <code class="docutils literal notranslate"><span class="pre">seed</span></code> for setting the random number generator with the second parameter being <code class="docutils literal notranslate"><span class="pre">options</span></code> allowing additional data to be passed to the environment on reset. For example, in the classic control, the options parameter now allows users to modify the range of the state bound. See the original <a class="reference external" href="https://github.com/openai/gym/pull/2921">PR</a> for more details.</p>
+<p>For the new return value, <code class="docutils literal notranslate"><span class="pre">info</span></code>, this is similar to the <code class="docutils literal notranslate"><span class="pre">info</span></code> returned by the <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a>. This is important for <code class="docutils literal notranslate"><span class="pre">info</span></code> can include metrics or valid action mask that is used or saved in the next step.</p>
+<p>To update environments, we highly recommend that the first line of the environment <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> function is <code class="docutils literal notranslate"><span class="pre">super().reset(seed=seed)</span></code> which will automatically update the <a class="reference internal" href="../../api/env/#gymnasium.Env.np_random" title="gymnasium.Env.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a> with the seed value.</p>
+</section>
+<section id="environment-step">
+<h2>Environment Step<a class="headerlink" href="#environment-step" title="Permalink to this heading">#</a></h2>
+<p>In v21, the type definition of <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> is <code class="docutils literal notranslate"><span class="pre">tuple[ObsType,</span> <span class="pre">SupportsFloat,</span> <span class="pre">bool,</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span></code> representing the next observation, the reward from the step, if the episode is done and additional info from the step. Due to reproductibility issues that will be expanded on a blog post soon to be published, we have changed the type definition to <code class="docutils literal notranslate"><span class="pre">tuple[ObsType,</span> <span class="pre">SupportsFloat,</span> <span class="pre">bool,</span> <span class="pre">bool,</span> <span class="pre">dict[str,</span> <span class="pre">Any]]</span></code> adding an extra boolean value. This is as the <code class="docutils literal notranslate"><span class="pre">done</span></code> value has been replaced with two variables, <cite>terminated</cite> and <cite>truncated</cite>. These changes were introduced in Gym <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.26.0">v26</a> (turned off by default in <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.25.0">v25</a>).</p>
+<p>For users wishing to update, in most cases, replacing <code class="docutils literal notranslate"><span class="pre">done</span></code> with <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated=False</span></code> in environment should address most environments. However, for environments that have custom reasons for an episode to truncate rather than terminate should read through the associated <a class="reference external" href="https://github.com/openai/gym/pull/2752">PR</a>. For users looping through an environment, they should modify <code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">=</span> <span class="pre">terminated</span> <span class="pre">or</span> <span class="pre">truncated</span></code> as is show in the example code. For training libraries, primarily requires changing <code class="docutils literal notranslate"><span class="pre">done</span></code> to <code class="docutils literal notranslate"><span class="pre">terminated</span></code>, indicating that bootstraping should or shouldn’t happen.</p>
+</section>
+<section id="environment-render">
+<h2>Environment Render<a class="headerlink" href="#environment-render" title="Permalink to this heading">#</a></h2>
+<p>In v26, a new render API was introduced such that the render mode is fixed at initialisation as some environment don’t allow the render mode to change on fly or allow the render mode to pre-compute data at initialisation. Therefore, users should now specify the render mode within <code class="docutils literal notranslate"><span class="pre">gym.make</span></code> as shown in the v26 example code above.</p>
+<p>For a more complete explanation of the changes, please refer to this <a class="reference external" href="https://younis.dev/blog/render-api/">summary</a>.</p>
+</section>
+<section id="removed-code">
+<h2>Removed code<a class="headerlink" href="#removed-code" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a> - Supports continuous (and discrete) vectors or matrices, used for vector observations, images, etc</p></li>
-<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code></a> - Supports a single discrete number of values with an optional start for the values</p></li>
-<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.MultiDiscrete" title="gymnasium.spaces.MultiDiscrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiDiscrete</span></code></a> - Supports single or matrices of binary values, used for holding down a button or if an agent has an object</p></li>
-<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.MultiBinary" title="gymnasium.spaces.MultiBinary"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiBinary</span></code></a> - Supports multiple discrete values with multiple axes, used for controller actions</p></li>
-<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Text" title="gymnasium.spaces.Text"><code class="xref py py-class docutils literal notranslate"><span class="pre">Text</span></code></a> - Supports strings, used for passing agent messages, mission details, etc</p></li>
-</ul>
-</section>
-<section id="composite-spaces">
-<h2>Composite Spaces<a class="headerlink" href="#composite-spaces" title="Permalink to this heading">#</a></h2>
-<p>Often environment spaces require joining fundamental spaces together for vectorised environments, separate agents or readability of the space.</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> - Supports a dictionary of keys and subspaces, used for a fixed number of unordered spaces</p></li>
-<li><p><a class="reference internal" href="composite/#gymnasium.spaces.Tuple" title="gymnasium.spaces.Tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code></a> - Supports a tuple of subspaces, used for multiple for a fixed number of ordered spaces</p></li>
-<li><p><a class="reference internal" href="composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a> - Supports a variable number of instances of a single subspace, used for entities spaces or selecting a variable number of actions</p></li>
-<li><p><a class="reference internal" href="composite/#gymnasium.spaces.Graph" title="gymnasium.spaces.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> - Supports graph based actions or observations with discrete or continuous nodes and edge values.</p></li>
-</ul>
-</section>
-<section id="utils">
-<h2>Utils<a class="headerlink" href="#utils" title="Permalink to this heading">#</a></h2>
-<p>Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces.
-This can be important for passing information to neural networks.</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatdim" title="gymnasium.spaces.utils.flatdim"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatdim</span></code></a> - The number of dimensions the flattened space will contain</p></li>
-<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten_space" title="gymnasium.spaces.utils.flatten_space"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatten_space</span></code></a> - Flattens a space for which the <cite>flattened</cite> space instances will contain</p></li>
-<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatten</span></code></a> - Flattens an instance of a space that is contained within the flattened version of the space</p></li>
-<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.unflatten" title="gymnasium.spaces.utils.unflatten"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.unflatten</span></code></a> - The reverse of the <cite>flatten_space</cite> function</p></li>
-</ul>
-</section>
-<section id="vector-utils">
-<h2>Vector Utils<a class="headerlink" href="#vector-utils" title="Permalink to this heading">#</a></h2>
-<p>When vectorizing environments, it is necessary to modify the observation and action spaces for new batched spaces sizes.
-Therefore, Gymnasium provides a number of additional functions used when using a space with a Vector environment.</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.batch_space" title="gymnasium.vector.utils.batch_space"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.batch_space</span></code></a></p></li>
-<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.concatenate" title="gymnasium.vector.utils.concatenate"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.concatenate</span></code></a></p></li>
-<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.iterate" title="gymnasium.vector.utils.iterate"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.iterate</span></code></a></p></li>
-<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.create_empty_array" title="gymnasium.vector.utils.create_empty_array"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.create_empty_array</span></code></a></p></li>
-<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.create_shared_memory" title="gymnasium.vector.utils.create_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.create_shared_memory</span></code></a></p></li>
-<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.read_from_shared_memory" title="gymnasium.vector.utils.read_from_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.read_from_shared_memory</span></code></a></p></li>
-<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.write_to_shared_memory" title="gymnasium.vector.utils.write_to_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.write_to_shared_memory</span></code></a></p></li>
+<li><p>GoalEnv - This was removed, users needing it should reimplement the environment or use Gymnasium Robotics which contains an implementation of this environment.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">gym.envs.classic_control</span> <span class="pre">import</span> <span class="pre">rendering</span></code> - This was removed in favour of users implementing their own rendering systems. Gymnasium environments are coded using pygame.</p></li>
+<li><p>Robotics environments - The robotics environments have been moved to the <a class="reference external" href="https://robotics.farama.org/">Gymnasium Robotics</a> project.</p></li>
+<li><p>Monitor wrapper - This wrapper was replaced with two separate wrapper, <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a> and <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></p></li>
 </ul>
 </section>
 </section>
@@ -686,23 +608,23 @@ Therefore, Gymnasium provides a number of additional functions used when using a
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="fundamental/">
+          <a class="next-page" href="../../api/env/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Fundamental Spaces</div>
+                <div class="title">Env</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-            <a class="prev-page" href="../registry/">
+            <a class="prev-page" href="../gym_compatibility/">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Registry</div>
+                <div class="title">Compatibility with Gym</div>
                 
               </div>
             </a>
@@ -739,25 +661,14 @@ Therefore, Gymnasium provides a number of additional functions used when using a
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Spaces</a><ul>
-<li><a class="reference internal" href="#gymnasium.spaces.Space"><code class="docutils literal notranslate"><span class="pre">Space</span></code></a></li>
-<li><a class="reference internal" href="#attributes">Attributes</a><ul>
-<li><a class="reference internal" href="#gymnasium.spaces.space.Space.shape"><code class="docutils literal notranslate"><span class="pre">Space.shape</span></code></a></li>
-<li><a class="reference internal" href="#Space.dtype"><code class="docutils literal notranslate"><span class="pre">Space.dtype</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#methods">Methods</a><ul>
-<li><a class="reference internal" href="#gymnasium.spaces.space.Space.sample"><code class="docutils literal notranslate"><span class="pre">sample()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.spaces.space.Space.contains"><code class="docutils literal notranslate"><span class="pre">contains()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.spaces.space.Space.seed"><code class="docutils literal notranslate"><span class="pre">seed()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.spaces.space.Space.to_jsonable"><code class="docutils literal notranslate"><span class="pre">to_jsonable()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.spaces.space.Space.from_jsonable"><code class="docutils literal notranslate"><span class="pre">from_jsonable()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#fundamental-spaces">Fundamental Spaces</a></li>
-<li><a class="reference internal" href="#composite-spaces">Composite Spaces</a></li>
-<li><a class="reference internal" href="#utils">Utils</a></li>
-<li><a class="reference internal" href="#vector-utils">Vector Utils</a></li>
+<li><a class="reference internal" href="#">v21 to v26 Migration Guide</a><ul>
+<li><a class="reference internal" href="#example-code-for-v21">Example code for v21</a></li>
+<li><a class="reference internal" href="#example-code-for-v26">Example code for v26</a></li>
+<li><a class="reference internal" href="#seed-and-random-number-generator">Seed and random number generator</a></li>
+<li><a class="reference internal" href="#environment-reset">Environment Reset</a></li>
+<li><a class="reference internal" href="#environment-step">Environment Step</a></li>
+<li><a class="reference internal" href="#environment-render">Environment Render</a></li>
+<li><a class="reference internal" href="#removed-code">Removed code</a></li>
 </ul>
 </li>
 </ul>
