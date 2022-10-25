@@ -1,0 +1,1014 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/tutorials/blackjack_tutorial.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Make your own custom environment" href="../environment_creation/" /><link rel="prev" title="Third-Party Environments" href="../../environments/third_party_environments/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/tutorials/blackjack_tutorial.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+        <title>Solving Blackjack with Q-Learning - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header">
+      <div class="farama-header__container">
+        <div class="farama-header__left">
+          <a href="../../">
+              <img class="farama-header__logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <div class="farama-header-menu__btn">
+              <span class="farama-header-menu__btn-name">
+                Farama Foundation
+              </span>
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                  <defs></defs>
+                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
+                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
+                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+              </svg>
+            </div>
+            <div class="farama-header-menu-container">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo" src="../../_static/img/farama_solid_white.svg" alt="Farama Foundation">
+                  <span>Farama Foundation</span>
+                </a>
+                <button id="farama-close-menu">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                    <line x1="3" y1="21" x2="21" y2="3"></line>
+                    <line x1="3" y1="3" x2="21" y2="21"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="farama-header-menu__body">
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Documentation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://gymnasium.farama.org">
+                        
+                        <img src="../../_static/img/gymnasium-white.svg">
+                        
+                        Gymnasium
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://pettingzoo.farama.org">
+                        
+                        <img src="../../_static/img/pettingzoo-white.svg">
+                        
+                        PettingZoo
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://minigrid.farama.org">
+                        
+                        <img src="../../_static/img/minigrid-white.svg">
+                        
+                        MiniGrid
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://robotics.farama.org">
+                        
+                        <img src="../../_static/img/gymrobotics-white.svg">
+                        
+                        Gymnasium-Robotics
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Mature Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/SuperSuit">
+                        
+                        <img src="../../_static/img/supersuit-white.svg">
+                        
+                        SuperSuit
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/tinyscaler">
+                        
+                        <img src="../../_static/img/tinyscaler-white.svg">
+                        
+                        Tinyscaler
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/AutoROM">
+                        
+                        <img src="../../_static/img/autorom-white.svg">
+                        
+                        AutoROM
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Jumpy">
+                        
+                        <img src="../../_static/img/jumpy-white.svg">
+                        
+                        JumPy
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Incubating Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MAgent2">
+                        
+                        <img src="../../_static/img/MAgent2-white.svg">
+                        
+                        MAgent2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/procgen2">
+                        
+                        <img src="../../_static/img/procgen2-white.svg">
+                        
+                        Procgen2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MiniWorld">
+                        
+                        <img src="../../_static/img/miniworld-white.svg">
+                        
+                        Miniworld
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/D4RL">
+                        
+                        <img src="../../_static/img/d4rl-white.svg">
+                        
+                        D4RL
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Kabuki">
+                        
+                        <img src="../../_static/img/kabuki-white.svg">
+                        
+                        Kabuki
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Foundation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://farama.org/about">
+                        
+                        About
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/project_standards">
+                        
+                        Standards
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/donations">
+                        
+                        Donate
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="farama-header-menu__overlay"></div>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Registry</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/utils/">Spaces Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/adventure/">Adventure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/alien/">Alien</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/amidar/">Amidar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/assault/">Assault</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asterix/">Asterix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asteroids/">Asteroids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/atlantis/">Atlantis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bank_heist/">Bank Heist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/battle_zone/">Battle Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bowling/">Bowling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/boxing/">Boxing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/breakout/">Breakout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/centipede/">Centipede</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/chopper_command/">Chopper Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/defender/">Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/demon_attack/">Demon Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/double_dunk/">Double Dunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gopher/">Gopher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ice_hockey/">IceHockey</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/jamesbond/">Jamesbond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/krull/">Krull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kung_fu_master/">Kung Fu Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/montezuma_revenge/">Montezuma Revenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ms_pacman/">Ms Pacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/phoenix/">Phoenix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pong/">Pong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pooyan/">Pooyan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/private_eye/">PrivateEye</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/qbert/">Qbert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/riverraid/">Riverraid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/road_runner/">Road Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/seaquest/">Seaquest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/solaris/">Solaris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tutankham/">Tutankham</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/venture/">Venture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_pinball/">Video Pinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/zaxxon/">Zaxxon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-Party Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handling_time_limits/">Handling Time Limits</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+    <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/tutorials/blackjack_tutorial.py" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+          <section id="solving-blackjack-with-q-learning">
+<h1>Solving Blackjack with Q-Learning<a class="headerlink" href="#solving-blackjack-with-q-learning" title="Permalink to this heading">#</a></h1>
+<a class="reference internal image-reference" href="../../_images/blackjack_AE_loop.jpg"><img alt="agent-environment-diagram" src="../../_images/blackjack_AE_loop.jpg" style="width: 650px;" /></a>
+<p>In this tutorial, we’ll explore and solve the <em>Blackjack-v1</em>
+environment.</p>
+<p><strong>Blackjack</strong> is one of the most popular casino card games that is also
+infamous for being beatable under certain conditions. This version of
+the game uses an infinite deck (we draw the cards with replacement), so
+counting cards won’t be a viable strategy in our simulated game.</p>
+<p><strong>Objective</strong>: To win, your card sum should be greater than than the
+dealers without exceeding 21.</p>
+<p><strong>Approach</strong>: To solve this environment by yourself, you can pick your
+favorite discrete RL algorithm. The presented solution uses <em>Q-learning</em>
+(a model-free RL algorithm).</p>
+<section id="imports-and-environment-setup">
+<h2>Imports and Environment Setup<a class="headerlink" href="#imports-and-environment-setup" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Author: Till Zemann</span>
+<span class="c1"># License: MIT License</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Patch</span>
+
+<span class="c1"># Let&#39;s start by creating the blackjack environment.</span>
+<span class="c1"># Note: We are going to follow the rules from Sutton &amp; Barto.</span>
+<span class="c1"># Other versions of the game can be found below for you to experiment.</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Blackjack-v1&quot;</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span># Other possible environment configurations:
+
+env = gym.make(&#39;Blackjack-v1&#39;, natural=True, sab=False)``
+
+env = gym.make(&#39;Blackjack-v1&#39;, natural=False, sab=False)``
+</pre></div>
+</div>
+</section>
+<section id="observing-the-environment">
+<h2>Observing the environment<a class="headerlink" href="#observing-the-environment" title="Permalink to this heading">#</a></h2>
+<p>First of all, we call <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> to start an episode. This function
+resets the environment to a starting position and returns an initial
+<code class="docutils literal notranslate"><span class="pre">observation</span></code>. We usually also set <code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">=</span> <span class="pre">False</span></code>. This variable
+will be useful later to check if a game is terminated. In this tutorial
+we will use the terms observation and state synonymously but in more
+complex problems a state might differ from the observation it is based
+on.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># reset the environment to get the first observation</span>
+<span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that our observation is a 3-tuple consisting of 3 discrete values:</p>
+<ul class="simple">
+<li><p>The players current sum</p></li>
+<li><p>Value of the dealers face-up card</p></li>
+<li><p>Boolean whether the player holds a usable ace (An ace is usable if it
+counts as 11 without busting)</p></li>
+</ul>
+</section>
+<section id="executing-an-action">
+<h2>Executing an action<a class="headerlink" href="#executing-an-action" title="Permalink to this heading">#</a></h2>
+<p>After receiving our first observation, we are only going to use the
+<code class="docutils literal notranslate"><span class="pre">env.step(action)</span></code> function to interact with the environment. This
+function takes an action as input and executes it in the environment.
+Because that action changes the state of the environment, it returns
+four useful variables to us. These are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">next_state</span></code>: This is the observation that the agent will receive
+after taking the action.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reward</span></code>: This is the reward that the agent will receive after
+taking the action.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminated</span></code>: This is a boolean variable that indicates whether or
+not the episode is over.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">truncated</span></code>: This is a boolean variable that also indicates whether
+the episode ended by early truncation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code>: This is a dictionary that might contain additional
+information about the environment.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">next_state</span></code>, <code class="docutils literal notranslate"><span class="pre">reward</span></code>, and <code class="docutils literal notranslate"><span class="pre">done</span></code> variables are
+self-explanatory, but the <code class="docutils literal notranslate"><span class="pre">info</span></code> variable requires some additional
+explanation. This variable contains a dictionary that might have some
+extra information about the environment, but in the Blackjack-v1
+environment you can ignore it. For example in Atari environments the
+info dictionary has a <code class="docutils literal notranslate"><span class="pre">ale.lives</span></code> key that tells us how many lives the
+agent has left. If the agent has 0 lives, then the episode is over.</p>
+<p>Blackjack-v1 doesn’t have a <code class="docutils literal notranslate"><span class="pre">env.render()</span></code> function to render the
+environment, but in other environments you can use this function to
+watch the agent play. Important to note is that using <code class="docutils literal notranslate"><span class="pre">env.render()</span></code>
+is optional - the environment is going to work even if you don’t render
+it, but it can be helpful to see an episode rendered out to get an idea
+of how the current policy behaves. Note that it is not a good idea to
+call this function in your training loop because rendering slows down
+training by a lot. Rather try to build an extra loop to evaluate and
+showcase the agent after training.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># sample a random action from all valid actions</span>
+<span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+<span class="c1"># execute the action in our environment and receive infos from the environment</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;observation:&quot;</span><span class="p">,</span> <span class="n">observation</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;reward:&quot;</span><span class="p">,</span> <span class="n">reward</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;terminated:&quot;</span><span class="p">,</span> <span class="n">terminated</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;truncated:&quot;</span><span class="p">,</span> <span class="n">truncated</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;info:&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once <code class="docutils literal notranslate"><span class="pre">terminated</span> <span class="pre">=</span> <span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated=True</span></code>, we should stop the
+current episode and begin a new one with <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code>. If you
+continue executing act`ons without resetting the environment, it still
+responds but the output won’t be useful for training (it might even be
+harmful if the agent learns on invalid data).</p>
+</section>
+<section id="building-an-agent">
+<h2>Building an agent<a class="headerlink" href="#building-an-agent" title="Permalink to this heading">#</a></h2>
+<p>Let’s build a <code class="docutils literal notranslate"><span class="pre">Q-learning</span> <span class="pre">agent</span></code> to solve <em>Blackjack-v1</em>! We’ll need
+some functions for picking an action and updating the agents action
+values. To ensure that the agents expores the environment, one possible
+solution is the <code class="docutils literal notranslate"><span class="pre">epsilon-greedy</span></code> strategy, where we pick a random
+action with the percentage <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> and the greedy action (currently
+valued as the best) <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">epsilon</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BlackjackAgent</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epsilon_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize an Reinforcement Learning agent with an empty dictionary</span>
+<span class="sd">        of state-action values (q_values), a learning rate and an epsilon.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># maps a state to action values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">epsilon_decay</span>
+
+    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the best action with probability (1 - epsilon)</span>
+<span class="sd">        and a random action with probability epsilon to ensure exploration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># with probability epsilon return a random action to explore the environment</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+        <span class="c1"># with probability (1 - epsilon) act greedily (exploit)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">state</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">action</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">done</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the Q-value of an action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">old_q_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
+        <span class="n">max_future_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_state</span><span class="p">])</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">max_future_q</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span> <span class="o">*</span> <span class="n">old_q_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">target</span>
+
+    <span class="k">def</span> <span class="nf">decay_epsilon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">-</span> <span class="n">epsilon_decay</span>
+</pre></div>
+</div>
+<p>To train the agent, we will let the agent play one episode (one complete
+game is called an episode) at a time and then update it’s Q-values after
+each episode. The agent will have to experience a lot of episodes to
+explore the environment sufficiently.</p>
+<p>Now we should be ready to build the training loop.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># hyperparameters</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">start_epsilon</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">n_episodes</span> <span class="o">=</span> <span class="mi">200_000</span>
+<span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">start_epsilon</span> <span class="o">/</span> <span class="n">n_episodes</span>  <span class="c1"># less exploration over time</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">BlackjackAgent</span><span class="p">(</span>
+    <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">start_epsilon</span><span class="p">,</span> <span class="n">epsilon_decay</span><span class="o">=</span><span class="n">epsilon_decay</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">n_episodes</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">):</span>
+
+        <span class="c1"># reset the environment</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># play one episode</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+            <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+            <span class="p">)</span>  <span class="c1"># if the episode terminated or was truncated early, set done to True</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
+
+        <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Great, let’s train!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">train</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">n_episodes</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="visualizing-the-results">
+<h2>Visualizing the results<a class="headerlink" href="#visualizing-the-results" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_grids</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">usable_ace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="c1"># convert our state-action values to state values</span>
+    <span class="c1"># and build a policy dictionary that maps observations to actions</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">obs</span><span class="p">,</span> <span class="n">action_values</span> <span class="ow">in</span> <span class="n">agent</span><span class="o">.</span><span class="n">q_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">V</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">action_values</span><span class="p">)</span>
+        <span class="n">policy</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">action_values</span><span class="p">)</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>  <span class="c1"># players count</span>
+    <span class="p">)</span>  <span class="c1"># dealers face-up card</span>
+
+    <span class="c1"># create the value grid for plotting</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">V</span><span class="p">[(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">usable_ace</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">value_grid</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span>
+
+    <span class="c1"># create the policy grid for plotting</span>
+    <span class="n">policy_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">policy</span><span class="p">[(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">usable_ace</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span>
+
+
+<span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;N/A&quot;</span><span class="p">):</span>
+
+    <span class="c1"># create a new figure with 2 subplots (left: state values, right: policy)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">value_grid</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figaspect</span><span class="p">(</span><span class="mf">0.4</span><span class="p">))</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1"># plot the state values</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">)))</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;State values: &quot;</span> <span class="o">+</span> <span class="n">title</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Player sum&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Dealer showing&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_rotate_label</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">view_init</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">220</span><span class="p">)</span>
+
+    <span class="c1"># plot the policy</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">policy_grid</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Accent_r&quot;</span><span class="p">,</span> <span class="n">cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Policy: &quot;</span> <span class="o">+</span> <span class="n">title</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Player sum&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Dealer showing&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">))</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s2">&quot;A&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">)),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+    <span class="c1"># add a legend</span>
+    <span class="n">legend_elements</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;lightgreen&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Hit&quot;</span><span class="p">),</span>
+        <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Stick&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fig</span>
+
+
+<span class="c1"># state values &amp; policy with usable ace (ace counts as 11)</span>
+<span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span> <span class="o">=</span> <span class="n">create_grids</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">usable_ace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig1</span> <span class="o">=</span> <span class="n">create_plots</span><span class="p">(</span><span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;With usable ace&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/blackjack_with_usable_ace.png" src="../../_images/blackjack_with_usable_ace.png" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># state values &amp; policy without usable ace (ace counts as 1)</span>
+<span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span> <span class="o">=</span> <span class="n">create_grids</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">usable_ace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">fig2</span> <span class="o">=</span> <span class="n">create_plots</span><span class="p">(</span><span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Without usable ace&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/blackjack_without_usable_ace.png" src="../../_images/blackjack_without_usable_ace.png" />
+<p>It’s good practice to call env.close() at the end of your script,
+so that any used resources by the environment will be closed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Hopefully this Tutorial helped you get a grip of how to interact with
+OpenAI-Gym environments and sets you on a journey to solve many more RL
+challenges.</p>
+<p>It is recommended that you solve this environment by yourself (project
+based learning is really effective!). You can apply your favorite
+discrete RL algorithm or give Monte Carlo ES a try (covered in <a class="reference external" href="http://incompleteideas.net/book/the-book-2nd.html">Sutton &amp;
+Barto</a>, section
+5.3) - this way you can compare your results directly to the book.</p>
+<p>Best of fun!</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-blackjack-tutorial-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/7784aa5068fc88abcafc19118c52cbb7/blackjack_tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">blackjack_tutorial.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/b0e7aa582a7b3c32ccdef133cbd779c5/blackjack_tutorial.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">blackjack_tutorial.ipynb</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../environment_creation/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Make your own custom environment</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+            <a class="prev-page" href="../../environments/third_party_environments/">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Third-Party Environments</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022 Farama Foundation
+            </div>
+            <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Solving Blackjack with Q-Learning</a><ul>
+<li><a class="reference internal" href="#imports-and-environment-setup">Imports and Environment Setup</a></li>
+<li><a class="reference internal" href="#observing-the-environment">Observing the environment</a></li>
+<li><a class="reference internal" href="#executing-an-action">Executing an action</a></li>
+<li><a class="reference internal" href="#building-an-agent">Building an agent</a></li>
+<li><a class="reference internal" href="#visualizing-the-results">Visualizing the results</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div>
+    <script>
+      let toggleMenu = () => {
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
+
+      window.onclick = function(event) {
+        if (!event.target.matches('.farama-header-menu__btn')) {
+          const dropdown = document.querySelector(".farama-header-menu-container");
+          if (dropdown.classList.contains('active')) {
+            dropdown.classList.remove('active');
+            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
+          }
+        }
+      }
+    </script>
+
+    
+    <script>
+          (() => {
+              if (!localStorage.getItem("shownCookieAlert")) {
+                  const boxElem = document.createElement("div");
+                  boxElem.classList.add("cookie-alert");
+                  const containerElem = document.createElement("div");
+                  containerElem.classList.add("cookie-alert__container");
+                  const textElem = document.createElement("p");
+                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                      Google Analytics</a> to collect statistics. You can disable it by blocking
+                                      the JavaScript coming from www.google-analytics.com.`;
+                                      containerElem.appendChild(textElem);
+                  const closeBtn = document.createElement("button");
+                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
+                  closeBtn.onclick = () => {
+                      localStorage.setItem("shownCookieAlert", "true");
+                      boxElem.style.display = "none";
+                  }
+                  containerElem.appendChild(closeBtn);
+                  boxElem.appendChild(containerElem);
+                  document.body.appendChild(boxElem);
+              }
+          })()
+      </script>
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-6H9C8TWXZ8');
+      </script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script></body>
+</html>

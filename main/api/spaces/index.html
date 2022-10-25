@@ -1,0 +1,862 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/api/spaces.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Fundamental Spaces" href="fundamental/" /><link rel="prev" title="Registry" href="../registry/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/api/spaces.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+        <title>Spaces - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header">
+      <div class="farama-header__container">
+        <div class="farama-header__left">
+          <a href="../../">
+              <img class="farama-header__logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <div class="farama-header-menu__btn">
+              <span class="farama-header-menu__btn-name">
+                Farama Foundation
+              </span>
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                  <defs></defs>
+                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
+                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
+                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+              </svg>
+            </div>
+            <div class="farama-header-menu-container">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo" src="../../_static/img/farama_solid_white.svg" alt="Farama Foundation">
+                  <span>Farama Foundation</span>
+                </a>
+                <button id="farama-close-menu">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                    <line x1="3" y1="21" x2="21" y2="3"></line>
+                    <line x1="3" y1="3" x2="21" y2="21"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="farama-header-menu__body">
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Documentation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://gymnasium.farama.org">
+                        
+                        <img src="../../_static/img/gymnasium-white.svg">
+                        
+                        Gymnasium
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://pettingzoo.farama.org">
+                        
+                        <img src="../../_static/img/pettingzoo-white.svg">
+                        
+                        PettingZoo
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://minigrid.farama.org">
+                        
+                        <img src="../../_static/img/minigrid-white.svg">
+                        
+                        MiniGrid
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://robotics.farama.org">
+                        
+                        <img src="../../_static/img/gymrobotics-white.svg">
+                        
+                        Gymnasium-Robotics
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Mature Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/SuperSuit">
+                        
+                        <img src="../../_static/img/supersuit-white.svg">
+                        
+                        SuperSuit
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/tinyscaler">
+                        
+                        <img src="../../_static/img/tinyscaler-white.svg">
+                        
+                        Tinyscaler
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/AutoROM">
+                        
+                        <img src="../../_static/img/autorom-white.svg">
+                        
+                        AutoROM
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Jumpy">
+                        
+                        <img src="../../_static/img/jumpy-white.svg">
+                        
+                        JumPy
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Incubating Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MAgent2">
+                        
+                        <img src="../../_static/img/MAgent2-white.svg">
+                        
+                        MAgent2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/procgen2">
+                        
+                        <img src="../../_static/img/procgen2-white.svg">
+                        
+                        Procgen2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MiniWorld">
+                        
+                        <img src="../../_static/img/miniworld-white.svg">
+                        
+                        Miniworld
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/D4RL">
+                        
+                        <img src="../../_static/img/d4rl-white.svg">
+                        
+                        D4RL
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Kabuki">
+                        
+                        <img src="../../_static/img/kabuki-white.svg">
+                        
+                        Kabuki
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Foundation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://farama.org/about">
+                        
+                        About
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/project_standards">
+                        
+                        Standards
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/donations">
+                        
+                        Donate
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="farama-header-menu__overlay"></div>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../registry/">Registry</a></li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Spaces</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/">Spaces Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vector_utils/">Spaces Vector Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wrappers/reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/adventure/">Adventure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/alien/">Alien</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/amidar/">Amidar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/assault/">Assault</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asterix/">Asterix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asteroids/">Asteroids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/atlantis/">Atlantis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bank_heist/">Bank Heist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/battle_zone/">Battle Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bowling/">Bowling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/boxing/">Boxing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/breakout/">Breakout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/centipede/">Centipede</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/chopper_command/">Chopper Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/defender/">Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/demon_attack/">Demon Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/double_dunk/">Double Dunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gopher/">Gopher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ice_hockey/">IceHockey</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/jamesbond/">Jamesbond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/krull/">Krull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kung_fu_master/">Kung Fu Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/montezuma_revenge/">Montezuma Revenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ms_pacman/">Ms Pacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/phoenix/">Phoenix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pong/">Pong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pooyan/">Pooyan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/private_eye/">PrivateEye</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/qbert/">Qbert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/riverraid/">Riverraid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/road_runner/">Road Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/seaquest/">Seaquest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/solaris/">Solaris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tutankham/">Tutankham</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/venture/">Venture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_pinball/">Video Pinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/zaxxon/">Zaxxon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-Party Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+    
+    <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/api/spaces.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+          <section id="spaces">
+<h1>Spaces<a class="headerlink" href="#spaces" title="Permalink to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.spaces.Space">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Generator</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Space" title="Permalink to this definition">#</a></dt>
+<dd><p>Superclass that is used to define observation and action spaces.</p>
+<p>Spaces are crucially used in Gym to define the format of valid actions and observations.
+They serve various purposes:</p>
+<ul class="simple">
+<li><p>They clearly define how to interact with environments, i.e. they specify what actions need to look like
+and what observations will look like</p></li>
+<li><p>They allow us to work with highly structured data (e.g. in the form of elements of <a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> spaces)
+and painlessly transform them into flat arrays that can be used in learning code</p></li>
+<li><p>They provide a method to sample random elements. This is especially useful for exploration and debugging.</p></li>
+</ul>
+<p>Different spaces can be combined hierarchically via container spaces (<a class="reference internal" href="composite/#gymnasium.spaces.Tuple" title="gymnasium.spaces.Tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code></a> and <a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>) to build a
+more expressive space</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Custom observation &amp; action spaces can inherit from the <code class="docutils literal notranslate"><span class="pre">Space</span></code>
+class. However, most use-cases should be covered by the existing space
+classes (e.g. <a class="reference internal" href="fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a>, <a class="reference internal" href="fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code></a>, etc…), and container classes (:class`Tuple` &amp;
+<a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>). Note that parametrized probability distributions (through the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">Space.sample()</span></code> method), and batching functions (in <a class="reference internal" href="../vector/#gymnasium.vector.VectorEnv" title="gymnasium.vector.VectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.VectorEnv</span></code></a>), are
+only well-defined for instances of spaces provided in gymnasium by default.
+Moreover, some implementations of Reinforcement Learning algorithms might
+not handle custom spaces properly. Use custom spaces with care.</p>
+</div>
+<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><em>Sequence</em></a><em>[</em><em>int</em><em>]</em><em>]</em>) – If elements of the space are numpy arrays, this should specify their shape.</p></li>
+<li><p><strong>dtype</strong> (<em>Optional</em><em>[</em><em>Type</em><em> | </em><em>str</em><em>]</em>) – If elements of the space are numpy arrays, this should specify their dtype.</p></li>
+<li><p><strong>seed</strong> – Optionally, you can use this argument to seed the RNG that is used to sample from the space</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h2>
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.spaces.space.Space.shape" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the shape of the space as an immutable property.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Space.dtype">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#Space.dtype" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the data type of this space.</p>
+</dd></dl>
+
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">#</a></h2>
+<p>Each space implements the following functions:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.sample">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T_cov</span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.sample" title="Permalink to this definition">#</a></dt>
+<dd><p>Randomly sample an element of this space.</p>
+<p>Can be uniform or non-uniform sampling based on boundedness of space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mask</strong> – A mask used for sampling, expected <code class="docutils literal notranslate"><span class="pre">dtype=np.int8</span></code> and see sample implementation for expected shape.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>A sampled actions from the space</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.contains">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.contains" title="Permalink to this definition">#</a></dt>
+<dd><p>Return boolean specifying if x is a valid member of this space.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.seed">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.seed" title="Permalink to this definition">#</a></dt>
+<dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.to_jsonable">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">to_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.to_jsonable" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert a batch of samples from this space to a JSONable data type.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.spaces.space.Space.from_jsonable">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.space.Space.</span></span><span class="sig-name descname"><span class="pre">from_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.space.Space.from_jsonable" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert a JSONable data type to a batch of samples from this space.</p>
+</dd></dl>
+
+</section>
+<section id="fundamental-spaces">
+<h2>Fundamental Spaces<a class="headerlink" href="#fundamental-spaces" title="Permalink to this heading">#</a></h2>
+<p>Gymnasium has a number of fundamental spaces that are used as building boxes for more complex spaces.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a> - Supports continuous (and discrete) vectors or matrices, used for vector observations, images, etc</p></li>
+<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code></a> - Supports a single discrete number of values with an optional start for the values</p></li>
+<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.MultiDiscrete" title="gymnasium.spaces.MultiDiscrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiDiscrete</span></code></a> - Supports single or matrices of binary values, used for holding down a button or if an agent has an object</p></li>
+<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.MultiBinary" title="gymnasium.spaces.MultiBinary"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiBinary</span></code></a> - Supports multiple discrete values with multiple axes, used for controller actions</p></li>
+<li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Text" title="gymnasium.spaces.Text"><code class="xref py py-class docutils literal notranslate"><span class="pre">Text</span></code></a> - Supports strings, used for passing agent messages, mission details, etc</p></li>
+</ul>
+</section>
+<section id="composite-spaces">
+<h2>Composite Spaces<a class="headerlink" href="#composite-spaces" title="Permalink to this heading">#</a></h2>
+<p>Often environment spaces require joining fundamental spaces together for vectorised environments, separate agents or readability of the space.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> - Supports a dictionary of keys and subspaces, used for a fixed number of unordered spaces</p></li>
+<li><p><a class="reference internal" href="composite/#gymnasium.spaces.Tuple" title="gymnasium.spaces.Tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code></a> - Supports a tuple of subspaces, used for multiple for a fixed number of ordered spaces</p></li>
+<li><p><a class="reference internal" href="composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a> - Supports a variable number of instances of a single subspace, used for entities spaces or selecting a variable number of actions</p></li>
+<li><p><a class="reference internal" href="composite/#gymnasium.spaces.Graph" title="gymnasium.spaces.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> - Supports graph based actions or observations with discrete or continuous nodes and edge values.</p></li>
+</ul>
+</section>
+<section id="utils">
+<h2>Utils<a class="headerlink" href="#utils" title="Permalink to this heading">#</a></h2>
+<p>Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces.
+This can be important for passing information to neural networks.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatdim" title="gymnasium.spaces.utils.flatdim"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatdim</span></code></a> - The number of dimensions the flattened space will contain</p></li>
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten_space" title="gymnasium.spaces.utils.flatten_space"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatten_space</span></code></a> - Flattens a space for which the <cite>flattened</cite> space instances will contain</p></li>
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatten</span></code></a> - Flattens an instance of a space that is contained within the flattened version of the space</p></li>
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.unflatten" title="gymnasium.spaces.utils.unflatten"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.unflatten</span></code></a> - The reverse of the <cite>flatten_space</cite> function</p></li>
+</ul>
+</section>
+<section id="vector-utils">
+<h2>Vector Utils<a class="headerlink" href="#vector-utils" title="Permalink to this heading">#</a></h2>
+<p>When vectorizing environments, it is necessary to modify the observation and action spaces for new batched spaces sizes.
+Therefore, Gymnasium provides a number of additional functions used when using a space with a Vector environment.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.batch_space" title="gymnasium.vector.utils.batch_space"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.batch_space</span></code></a></p></li>
+<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.concatenate" title="gymnasium.vector.utils.concatenate"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.concatenate</span></code></a></p></li>
+<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.iterate" title="gymnasium.vector.utils.iterate"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.iterate</span></code></a></p></li>
+<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.create_empty_array" title="gymnasium.vector.utils.create_empty_array"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.create_empty_array</span></code></a></p></li>
+<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.create_shared_memory" title="gymnasium.vector.utils.create_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.create_shared_memory</span></code></a></p></li>
+<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.read_from_shared_memory" title="gymnasium.vector.utils.read_from_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.read_from_shared_memory</span></code></a></p></li>
+<li><p><a class="reference internal" href="vector_utils/#gymnasium.vector.utils.write_to_shared_memory" title="gymnasium.vector.utils.write_to_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.write_to_shared_memory</span></code></a></p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="fundamental/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Fundamental Spaces</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+            <a class="prev-page" href="../registry/">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Registry</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022 Farama Foundation
+            </div>
+            <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Spaces</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.Space"><code class="docutils literal notranslate"><span class="pre">Space</span></code></a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.space.Space.shape"><code class="docutils literal notranslate"><span class="pre">Space.shape</span></code></a></li>
+<li><a class="reference internal" href="#Space.dtype"><code class="docutils literal notranslate"><span class="pre">Space.dtype</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#methods">Methods</a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.space.Space.sample"><code class="docutils literal notranslate"><span class="pre">sample()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.space.Space.contains"><code class="docutils literal notranslate"><span class="pre">contains()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.space.Space.seed"><code class="docutils literal notranslate"><span class="pre">seed()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.space.Space.to_jsonable"><code class="docutils literal notranslate"><span class="pre">to_jsonable()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.space.Space.from_jsonable"><code class="docutils literal notranslate"><span class="pre">from_jsonable()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fundamental-spaces">Fundamental Spaces</a></li>
+<li><a class="reference internal" href="#composite-spaces">Composite Spaces</a></li>
+<li><a class="reference internal" href="#utils">Utils</a></li>
+<li><a class="reference internal" href="#vector-utils">Vector Utils</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div>
+    <script>
+      let toggleMenu = () => {
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
+
+      window.onclick = function(event) {
+        if (!event.target.matches('.farama-header-menu__btn')) {
+          const dropdown = document.querySelector(".farama-header-menu-container");
+          if (dropdown.classList.contains('active')) {
+            dropdown.classList.remove('active');
+            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
+          }
+        }
+      }
+    </script>
+
+    
+    <script>
+          (() => {
+              if (!localStorage.getItem("shownCookieAlert")) {
+                  const boxElem = document.createElement("div");
+                  boxElem.classList.add("cookie-alert");
+                  const containerElem = document.createElement("div");
+                  containerElem.classList.add("cookie-alert__container");
+                  const textElem = document.createElement("p");
+                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                      Google Analytics</a> to collect statistics. You can disable it by blocking
+                                      the JavaScript coming from www.google-analytics.com.`;
+                                      containerElem.appendChild(textElem);
+                  const closeBtn = document.createElement("button");
+                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
+                  closeBtn.onclick = () => {
+                      localStorage.setItem("shownCookieAlert", "true");
+                      boxElem.style.display = "none";
+                  }
+                  containerElem.appendChild(closeBtn);
+                  boxElem.appendChild(containerElem);
+                  document.body.appendChild(boxElem);
+              }
+          })()
+      </script>
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-6H9C8TWXZ8');
+      </script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script></body>
+</html>

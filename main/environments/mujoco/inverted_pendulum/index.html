@@ -1,0 +1,869 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/environments/mujoco/inverted_pendulum.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Reacher" href="../reacher/" /><link rel="prev" title="Inverted Double Pendulum" href="../inverted_double_pendulum/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/environments/mujoco/inverted_pendulum.html" />
+
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+        <title>Inverted Pendulum - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header">
+      <div class="farama-header__container">
+        <div class="farama-header__left">
+          <a href="../../../">
+              <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <div class="farama-header-menu__btn">
+              <span class="farama-header-menu__btn-name">
+                Farama Foundation
+              </span>
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                  <defs></defs>
+                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
+                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
+                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+              </svg>
+            </div>
+            <div class="farama-header-menu-container">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation">
+                  <span>Farama Foundation</span>
+                </a>
+                <button id="farama-close-menu">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                    <line x1="3" y1="21" x2="21" y2="3"></line>
+                    <line x1="3" y1="3" x2="21" y2="21"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="farama-header-menu__body">
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Documentation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://gymnasium.farama.org">
+                        
+                        <img src="../../../_static/img/gymnasium-white.svg">
+                        
+                        Gymnasium
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://pettingzoo.farama.org">
+                        
+                        <img src="../../../_static/img/pettingzoo-white.svg">
+                        
+                        PettingZoo
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://minigrid.farama.org">
+                        
+                        <img src="../../../_static/img/minigrid-white.svg">
+                        
+                        MiniGrid
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://robotics.farama.org">
+                        
+                        <img src="../../../_static/img/gymrobotics-white.svg">
+                        
+                        Gymnasium-Robotics
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Mature Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/SuperSuit">
+                        
+                        <img src="../../../_static/img/supersuit-white.svg">
+                        
+                        SuperSuit
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/tinyscaler">
+                        
+                        <img src="../../../_static/img/tinyscaler-white.svg">
+                        
+                        Tinyscaler
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/AutoROM">
+                        
+                        <img src="../../../_static/img/autorom-white.svg">
+                        
+                        AutoROM
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Jumpy">
+                        
+                        <img src="../../../_static/img/jumpy-white.svg">
+                        
+                        JumPy
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Incubating Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MAgent2">
+                        
+                        <img src="../../../_static/img/MAgent2-white.svg">
+                        
+                        MAgent2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/procgen2">
+                        
+                        <img src="../../../_static/img/procgen2-white.svg">
+                        
+                        Procgen2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MiniWorld">
+                        
+                        <img src="../../../_static/img/miniworld-white.svg">
+                        
+                        Miniworld
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/D4RL">
+                        
+                        <img src="../../../_static/img/d4rl-white.svg">
+                        
+                        D4RL
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Kabuki">
+                        
+                        <img src="../../../_static/img/kabuki-white.svg">
+                        
+                        Kabuki
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Foundation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://farama.org/about">
+                        
+                        About
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/project_standards">
+                        
+                        Standards
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/donations">
+                        
+                        Donate
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="farama-header-menu__overlay"></div>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/registry/">Registry</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/spaces/utils/">Spaces Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">MuJoCo</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/adventure/">Adventure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/alien/">Alien</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/amidar/">Amidar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/assault/">Assault</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/asterix/">Asterix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/asteroids/">Asteroids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/atlantis/">Atlantis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/bank_heist/">Bank Heist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/battle_zone/">Battle Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/bowling/">Bowling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/boxing/">Boxing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/breakout/">Breakout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/centipede/">Centipede</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/chopper_command/">Chopper Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/defender/">Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/demon_attack/">Demon Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/double_dunk/">Double Dunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/gopher/">Gopher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/ice_hockey/">IceHockey</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/jamesbond/">Jamesbond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/krull/">Krull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/kung_fu_master/">Kung Fu Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/montezuma_revenge/">Montezuma Revenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/ms_pacman/">Ms Pacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/phoenix/">Phoenix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/pong/">Pong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/pooyan/">Pooyan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/private_eye/">PrivateEye</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/qbert/">Qbert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/riverraid/">Riverraid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/road_runner/">Road Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/seaquest/">Seaquest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/solaris/">Solaris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/tutankham/">Tutankham</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/venture/">Venture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/video_pinball/">Video Pinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../atari/zaxxon/">Zaxxon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../third_party_environments/">Third-Party Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+          <section id="inverted-pendulum">
+<h1>Inverted Pendulum<a class="headerlink" href="#inverted-pendulum" title="Permalink to this heading">#</a></h1>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="../../../_images/inverted_pendulum.gif"><img alt="../../../_images/inverted_pendulum.gif" src="../../../_images/inverted_pendulum.gif" style="width: 200px;" /></a>
+</figure>
+<p>This environment is part of the<a href='..'>Mujoco environments</a>.Please read that page first for general information.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Action Space</p></td>
+<td><p>Box(-3.0, 3.0, (1,), float32)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Observation Shape</p></td>
+<td><p>(4,)</p></td>
+</tr>
+<tr class="row-even"><td><p>Observation High</p></td>
+<td><p>[inf inf inf inf]</p></td>
+</tr>
+<tr class="row-odd"><td><p>Observation Low</p></td>
+<td><p>[-inf -inf -inf -inf]</p></td>
+</tr>
+<tr class="row-even"><td><p>Import</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;InvertedPendulum-v4&quot;)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
+<p>This environment is the cartpole environment based on the work done by
+Barto, Sutton, and Anderson in <a class="reference external" href="https://ieeexplore.ieee.org/document/6313077">“Neuronlike adaptive elements that can
+solve difficult learning control problems”</a>,
+just like in the classic environments but now powered by the Mujoco physics simulator -
+allowing for more complex experiments (such as varying the effects of gravity).
+This environment involves a cart that can moved linearly, with a pole fixed on it
+at one end and having another end free. The cart can be pushed left or right, and the
+goal is to balance the pole on the top of the cart by applying forces on the cart.</p>
+</section>
+<section id="action-space">
+<h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
+<p>The agent take a 1-element vector for actions.</p>
+<p>The action space is a continuous <code class="docutils literal notranslate"><span class="pre">(action)</span></code> in <code class="docutils literal notranslate"><span class="pre">[-3,</span> <span class="pre">3]</span></code>, where <code class="docutils literal notranslate"><span class="pre">action</span></code> represents
+the numerical force applied to the cart (with magnitude representing the amount of
+force and sign representing the direction)</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Num</p></th>
+<th class="head"><p>Action</p></th>
+<th class="head"><p>Control Min</p></th>
+<th class="head"><p>Control Max</p></th>
+<th class="head"><p>Name (in corresponding XML file)</p></th>
+<th class="head"><p>Joint</p></th>
+<th class="head"><p>Unit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Force applied on the cart</p></td>
+<td><p>-3</p></td>
+<td><p>3</p></td>
+<td><p>slider</p></td>
+<td><p>slide</p></td>
+<td><p>Force (N)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="observation-space">
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
+<p>The state space consists of positional values of different body parts of
+the pendulum system, followed by the velocities of those individual parts (their derivatives)
+with all the positions ordered before all the velocities.</p>
+<p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(4,)</span></code> where the elements correspond to the following:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Num</p></th>
+<th class="head"><p>Observation</p></th>
+<th class="head"><p>Min</p></th>
+<th class="head"><p>Max</p></th>
+<th class="head"><p>Name (in corresponding XML file)</p></th>
+<th class="head"><p>Joint</p></th>
+<th class="head"><p>Unit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>position of the cart along the linear surface</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>slider</p></td>
+<td><p>slide</p></td>
+<td><p>position (m)</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>vertical angle of the pole on the cart</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>hinge</p></td>
+<td><p>hinge</p></td>
+<td><p>angle (rad)</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>linear velocity of the cart</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>slider</p></td>
+<td><p>slide</p></td>
+<td><p>velocity (m/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>angular velocity of the pole on the cart</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>hinge</p></td>
+<td><p>hinge</p></td>
+<td><p>anglular velocity (rad/s)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="rewards">
+<h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
+<p>The goal is to make the inverted pendulum stand upright (within a certain angle limit)
+as long as possible - as such a reward of +1 is awarded for each timestep that
+the pole is upright.</p>
+</section>
+<section id="starting-state">
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<p>All observations start in state
+(0.0, 0.0, 0.0, 0.0) with a uniform noise in the range
+of [-0.01, 0.01] added to the values for stochasticity.</p>
+</section>
+<section id="episode-end">
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
+<p>The episode ends when any of the following happens:</p>
+<ol class="arabic simple">
+<li><p>Truncation: The episode duration reaches 1000 timesteps.</p></li>
+<li><p>Termination: Any of the state space values is no longer finite.</p></li>
+<li><p>Termination: The absolute value of the vertical angle between the pole and the cart is greater than 0.2 radian.</p></li>
+</ol>
+</section>
+<section id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
+<p>No additional arguments are currently supported.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;InvertedPendulum-v4&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There is no v3 for InvertedPendulum, unlike the robot environments where a
+v3 and beyond take <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> kwargs such as <code class="docutils literal notranslate"><span class="pre">xml_file</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code>, etc.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;InvertedPendulum-v2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="version-history">
+<h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>v4: all mujoco environments now use the mujoco bindings in mujoco&gt;=2.1.3</p></li>
+<li><p>v3: support for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> kwargs such as <code class="docutils literal notranslate"><span class="pre">xml_file</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code>, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)</p></li>
+<li><p>v2: All continuous control environments now use mujoco_py &gt;= 1.50</p></li>
+<li><p>v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum)</p></li>
+<li><p>v0: Initial versions release (1.0.0)</p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../reacher/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Reacher</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+            <a class="prev-page" href="../inverted_double_pendulum/">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Inverted Double Pendulum</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022 Farama Foundation
+            </div>
+            <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Inverted Pendulum</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#action-space">Action Space</a></li>
+<li><a class="reference internal" href="#observation-space">Observation Space</a></li>
+<li><a class="reference internal" href="#rewards">Rewards</a></li>
+<li><a class="reference internal" href="#starting-state">Starting State</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a></li>
+<li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#version-history">Version History</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div>
+    <script>
+      let toggleMenu = () => {
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
+
+      window.onclick = function(event) {
+        if (!event.target.matches('.farama-header-menu__btn')) {
+          const dropdown = document.querySelector(".farama-header-menu-container");
+          if (dropdown.classList.contains('active')) {
+            dropdown.classList.remove('active');
+            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
+          }
+        }
+      }
+    </script>
+
+    
+    <script>
+          (() => {
+              if (!localStorage.getItem("shownCookieAlert")) {
+                  const boxElem = document.createElement("div");
+                  boxElem.classList.add("cookie-alert");
+                  const containerElem = document.createElement("div");
+                  containerElem.classList.add("cookie-alert__container");
+                  const textElem = document.createElement("p");
+                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                      Google Analytics</a> to collect statistics. You can disable it by blocking
+                                      the JavaScript coming from www.google-analytics.com.`;
+                                      containerElem.appendChild(textElem);
+                  const closeBtn = document.createElement("button");
+                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
+                  closeBtn.onclick = () => {
+                      localStorage.setItem("shownCookieAlert", "true");
+                      boxElem.style.display = "none";
+                  }
+                  containerElem.appendChild(closeBtn);
+                  boxElem.appendChild(containerElem);
+                  document.body.appendChild(boxElem);
+              }
+          })()
+      </script>
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-6H9C8TWXZ8');
+      </script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script></body>
+</html>
