@@ -1,0 +1,129 @@
+<div class="versions_menu">
+    <div class="versions_menu__header">
+        Versioning Menu
+    </div>
+    <div class="versions_menu__content">
+        <span>Versions</span>
+        <ul class="versions_menu__list"></ul>
+    </div>
+    <style>
+        .versions_menu {
+            position: fixed;
+            bottom: 0;
+            right: 30px;
+            font-family: var(--font-stack, -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji);
+            border: 1px solid var(--color-background-border, #eeebee);
+            z-index: 98;
+        }
+
+        .versions_menu__header {
+            padding: 8px 10px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--color-background-border, #eeebee);
+            background-color: var(--color-background-secondary, #f8f9fb);
+            cursor: pointer;
+        }
+        .versions_menu__header:hover {
+            background-color: var(--color-background-hover, #efeff4);
+        }
+
+        .versions_menu__content {
+            width: 200px;
+            max-height: 0;
+            transition: max-height 0.5s ease-in-out;
+            background-color: var(--color-background-primary, #fff);
+            box-sizing: border-box;
+        }
+        .versions_menu__content.active {
+            max-height: 200px;
+        }
+        .versions_menu__content span {
+            display: block;
+            padding: 8px 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--color-foreground-muted, #646776);
+        }
+        .versions_menu__list {
+            list-style: none;
+            padding: 0 8px 8px;
+            margin: 0;
+        }
+        .versions_menu__list li {
+        }
+        .versions_menu__list li a {
+            display: block;
+            padding: 4px 10px;
+            font-size: 14px;
+            color: var(--color-brand-primary, #2962ff);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .versions_menu__list li:hover {
+            background-color: var(--color-background-hover, #efeff4)
+        }
+    </style>
+    <script>
+        const githubUser = versioningConfig.githubUser;
+        const repo = versioningConfig.githubRepo;
+
+        const headerElem = document.querySelector(".versions_menu__header");
+        headerElem.onclick = () => {
+            contentElem = document.querySelector(".versions_menu__content");
+            if (contentElem.classList.contains("active")) {
+                contentElem.classList.remove("active");
+            } else {
+                contentElem.classList.add("active");
+            }
+        }
+
+        if (githubUser !== null || repo !== null ) {
+            const basePath = "";
+            const mainBranchName = "main"
+            const latestBranchName = "latest"
+            const apiUrl = `https://api.github.com/repos/${githubUser}/${repo}/git/trees/gh-pages`;
+            const versionRegex = new RegExp(/[vV]?\d+\.\d+(\.?\d+)*/);
+            fetch(apiUrl).then(response => {
+                if (response.status !== 200) {
+                    console.warn("Unable to load repository tree, the repository must be public", response);
+                    return;
+                }
+                response.json().then(json => {
+                    const versions = json.tree.filter(v => versionRegex.test(v.path)).map(v => v.path);
+                    versions.reverse();
+                    // verify if exists a directory with main version
+                    if (json.tree.filter(v => v.path == mainBranchName).length > 0) {
+                        versions.unshift(mainBranchName);
+                    }
+                    versions.unshift(latestBranchName);
+                    const list_elems = [];
+                    const versions_list_elem = document.querySelector(".versions_menu__list");
+                    for (const version of versions) {
+                        const liElem = document.createElement("li");
+                        const aElem = document.createElement("a");
+                        aElem.textContent = version === mainBranchName ? version + " (unstable)" : version
+
+                        // https://domain.com/basePath/1.2.0/content/index.html -> /1.2.0/content/index.html
+                        let currentPath = document.location.href.split(document.location.origin)[1];
+                        if (basePath !== "") {
+                            currentPath = currentPath.split(basePath).slice(1).join("/");
+                        }
+                        // /v1.2.0/content/index.html -> /content/index.html
+                        if (versionRegex.test(currentPath.split("/")[1]) || currentPath.split("/")[1] === mainBranchName) {
+                            currentPath = "/" + currentPath.split("/").slice(2).join("/")
+                        }
+
+                        aElem.href = version === latestBranchName ?
+                                                `${basePath}${currentPath}` :
+                                                `${basePath}/${version}${currentPath}`;
+                        liElem.appendChild(aElem);
+                        list_elems.push(liElem);
+                        versions_list_elem.appendChild(liElem);
+                    }
+                });
+            });
+        } else {
+            console.error("Invalid versioning configuration");
+        }
+    </script>
+</div>
