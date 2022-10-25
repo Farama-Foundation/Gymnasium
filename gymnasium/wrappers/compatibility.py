@@ -10,11 +10,8 @@ from gymnasium.utils.step_api_compatibility import (
 
 if sys.version_info >= (3, 8):
     from typing import Protocol, runtime_checkable
-elif sys.version_info >= (3, 7):
-    from typing_extensions import Protocol, runtime_checkable
 else:
-    Protocol = object
-    runtime_checkable = lambda x: x  # noqa: E731
+    from typing_extensions import Protocol, runtime_checkable
 
 
 @runtime_checkable

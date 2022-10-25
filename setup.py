@@ -47,7 +47,7 @@ extras = {
 testing_group = set(extras.keys()) - {"accept-rom-license", "atari"}
 extras["testing"] = list(
     set(itertools.chain.from_iterable(map(lambda group: extras[group], testing_group)))
-) + ["pytest==7.0.1", "gym==0.26.2"]
+) + ["pytest==7.1.3", "gym==0.26.2"]
 
 # All dependency groups - accept rom license as requires user to run
 all_groups = set(extras.keys()) - {"accept-rom-license"}
@@ -70,7 +70,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords=["Reinforcement Learning", "game", "RL", "AI", "gymnasium"],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     tests_require=extras["testing"],
     packages=[
         package for package in find_packages() if package.startswith("gymnasium")
@@ -90,12 +90,9 @@ setup(
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
         "gymnasium_notices >= 0.0.1",
-        "dataclasses == 0.8; python_version == '3.6'",
     ],
     classifiers=[
-        # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
