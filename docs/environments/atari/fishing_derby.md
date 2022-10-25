@@ -18,7 +18,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                       |
 | Import            | `gymnasium.make("ALE/FishingDerby-v5")` | 
 
-### Description
+## Description
 your objective is to catch more sunfish than your opponent. But it's not just between you and the other fisherman, as a big, black shark is lurking just below the surface, waiting to steal your catch! Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=182).
 
 ### Rewards
@@ -58,8 +58,7 @@ legal space by passing the keyword argument `full_action_space=True` to `make`.
 The reduced action space of an Atari environment may depend on the flavor of the game. You can specify the flavor by providing 
 the arguments `difficulty` and `mode` when constructing the environment. This documentation only provides details on the
 action spaces of default flavors. 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -76,8 +75,7 @@ instead. The respective observation spaces are
 
 respectively. The general article on Atari environments outlines different ways to instantiate corresponding environments
 via `gymnasium.make`.
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/FishingDerby-v5")
@@ -95,7 +93,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("FishingDerby-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

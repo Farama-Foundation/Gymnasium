@@ -17,6 +17,7 @@ class AtariPreprocessing(gym.Wrapper):
     "Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents".
 
     Specifically, the following preprocess stages applies to the atari environment:
+
     - Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.
     - Frame skipping: The number of frames skipped between steps, 4 by default
     - Max-pooling: Pools over the most recent two observations from the frame skips
@@ -98,7 +99,6 @@ class AtariPreprocessing(gym.Wrapper):
                 np.empty(env.observation_space.shape, dtype=np.uint8),
             ]
 
-        self.ale = env.unwrapped.ale
         self.lives = 0
         self.game_over = False
 
@@ -111,6 +111,11 @@ class AtariPreprocessing(gym.Wrapper):
         self.observation_space = Box(
             low=_low, high=_high, shape=_shape, dtype=_obs_dtype
         )
+
+    @property
+    def ale(self):
+        """Make ale as a class property to avoid serialization error."""
+        return self.env.unwrapped.ale
 
     def step(self, action):
         """Applies the preprocessing for an :meth:`env.step`."""

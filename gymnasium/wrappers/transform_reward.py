@@ -22,7 +22,7 @@ class TransformReward(RewardWrapper):
     """
 
     def __init__(self, env: gym.Env, f: Callable[[float], float]):
-        """Initialize the :class:`TransformReward` wrapper with an environment and reward transform function :param:`f`.
+        """Initialize the :class:`TransformReward` wrapper with an environment and reward transform function :attr:`f`.
 
         Args:
             env: The environment to apply the wrapper

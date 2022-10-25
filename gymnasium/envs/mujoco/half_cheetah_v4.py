@@ -13,7 +13,7 @@ DEFAULT_CAMERA_CONFIG = {
 
 class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     """
-    ### Description
+    ## Description
 
     This environment is based on the work by P. Wawrzyński in
     ["A Cat-Like Robot Real-Time Learning to Run"](http://staff.elka.pw.edu.pl/~pwawrzyn/pub-s/0812_LSCLRR.pdf).
@@ -26,7 +26,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     over the front and back thighs (connecting to the torso), shins
     (connecting to the thighs) and feet (connecting to the shins).
 
-    ### Action Space
+    ## Action Space
     The action space is a `Box(-1, 1, (6,), float32)`. An action represents the torques applied between *links*.
 
     | Num | Action                                  | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
@@ -39,7 +39,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     | 5   | Torque applied on the front foot rotor  | -1          | 1           | ffoot                            | hinge | torque (N m) |
 
 
-    ### Observation Space
+    ## Observation Space
 
     Observations consist of positional values of different body parts of the
     cheetah, followed by the velocities of those individual parts (their derivatives) with all the positions ordered before all the velocities.
@@ -74,7 +74,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     | 15  | angular velocity of front tip        | -Inf | Inf | fshin                            | hinge | angular velocity (rad/s) |
     | 16  | angular velocity of second rotor     | -Inf | Inf | ffoot                            | hinge | angular velocity (rad/s) |
 
-    ### Rewards
+    ## Rewards
     The reward consists of two parts:
     - *forward_reward*: A reward of moving forward which is measured
     as *`forward_reward_weight` * (x-coordinate before action - x-coordinate after action)/dt*. *dt* is
@@ -89,7 +89,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
     The total reward returned is ***reward*** *=* *forward_reward - ctrl_cost* and `info` will also contain the individual reward terms
 
-    ### Starting State
+    ## Starting State
     All observations start in state (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,) with a noise added to the
     initial state for stochasticity. As seen before, the first 8 values in the
@@ -98,10 +98,10 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     normal noise with a mean of 0 and standard deviation of `reset_noise_scale` is added to the
     initial velocity values of all zeros.
 
-    ### Episode End
+    ## Episode End
     The episode truncates when the episode length is greater than 1000.
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported in v2 and lower.
 
@@ -125,7 +125,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     | `reset_noise_scale`                          | **float** | `0.1`                | Scale of random perturbations of initial position and velocity (see section on Starting State)                                                                    |
     | `exclude_current_positions_from_observation` | **bool**  | `True`               | Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
 
-    ### Version History
+    ## Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
     * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)

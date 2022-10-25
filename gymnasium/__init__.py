@@ -2,7 +2,6 @@
 # isort: skip_file
 
 from gymnasium import error
-from gymnasium.version import VERSION as __version__
 
 from gymnasium.core import (
     Env,
@@ -20,6 +19,7 @@ import os
 import sys
 
 __all__ = ["Env", "Space", "Wrapper", "make", "spec", "register"]
+__version__ = "0.26.3"
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
 # SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using

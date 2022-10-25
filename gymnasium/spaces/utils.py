@@ -173,7 +173,7 @@ def _flatten_discrete(space: Discrete, x: int) -> NDArray[np.int64]:
 def _flatten_multidiscrete(
     space: MultiDiscrete, x: NDArray[np.int64]
 ) -> NDArray[np.int64]:
-    offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
+    offsets = np.zeros((space.nvec.size + 1,), dtype=np.int32)
     offsets[1:] = np.cumsum(space.nvec.flatten())
 
     onehot = np.zeros((offsets[-1],), dtype=space.dtype)

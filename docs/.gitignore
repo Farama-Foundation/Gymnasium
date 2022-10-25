@@ -4,9 +4,13 @@ __pycache__
 build/
 _build/
 
+tutorials/*
+!tutorials/*.md
+!tutorials/*.py
+
 environments/**/list.html
 environments/**/complete_list.html
-
+environments/**/complete_list.md
 environments/box2d/*.md
 environments/classic_control/*.md
 environments/mujoco/*.md

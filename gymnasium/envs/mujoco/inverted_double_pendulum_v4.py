@@ -7,7 +7,7 @@ from gymnasium.spaces import Box
 
 class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     """
-    ### Description
+    ## Description
 
     This environment originates from control theory and builds on the cartpole
     environment based on the work done by Barto, Sutton, and Anderson in
@@ -19,7 +19,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     and the goal is to balance the second pole on top of the first pole, which is in turn on top of the
     cart, by applying continuous forces on the cart.
 
-    ### Action Space
+    ## Action Space
     The agent take a 1-element vector for actions.
     The action space is a continuous `(action)` in `[-1, 1]`, where `action` represents the
     numerical force applied to the cart (with magnitude representing the amount of force and
@@ -29,7 +29,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     |-----|---------------------------|-------------|-------------|----------------------------------|-------|-----------|
     | 0   | Force applied on the cart | -1          | 1           | slider                           | slide | Force (N) |
 
-    ### Observation Space
+    ## Observation Space
 
     The state space consists of positional values of different body parts of the pendulum system,
     followed by the velocities of those individual parts (their derivatives) with all the
@@ -64,7 +64,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     ["Analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo"](https://homes.cs.washington.edu/~todorov/papers/TodorovICRA14.pdf).
 
 
-    ### Rewards
+    ## Rewards
 
     The reward consists of two parts:
     - *alive_bonus*: The goal is to make the second inverted pendulum stand upright
@@ -79,20 +79,20 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
     The total reward returned is ***reward*** *=* *alive_bonus - distance_penalty - velocity_penalty*
 
-    ### Starting State
+    ## Starting State
     All observations start in state
     (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) with a uniform noise in the range
     of [-0.1, 0.1] added to the positional values (cart position and pole angles) and standard
     normal force with a standard deviation of 0.1 added to the velocity values for stochasticity.
 
-    ### Episode End
+    ## Episode End
     The episode ends when any of the following happens:
 
     1.Truncation:  The episode duration reaches 1000 timesteps.
     2.Termination: Any of the state space values is no longer finite.
     3.Termination: The y_coordinate of the tip of the second pole *is less than or equal* to 1. The maximum standing height of the system is 1.196 m when all the parts are perpendicularly vertical on top of each other).
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported.
 
@@ -108,7 +108,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('InvertedDoublePendulum-v2')
     ```
 
-    ### Version History
+    ## Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
     * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)

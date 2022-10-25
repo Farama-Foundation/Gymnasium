@@ -7,7 +7,7 @@ from gymnasium.spaces import Box
 
 class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     """
-    ### Description
+    ## Description
 
     This environment is the cartpole environment based on the work done by
     Barto, Sutton, and Anderson in ["Neuronlike adaptive elements that can
@@ -18,7 +18,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     at one end and having another end free. The cart can be pushed left or right, and the
     goal is to balance the pole on the top of the cart by applying forces on the cart.
 
-    ### Action Space
+    ## Action Space
     The agent take a 1-element vector for actions.
 
     The action space is a continuous `(action)` in `[-3, 3]`, where `action` represents
@@ -29,7 +29,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     |-----|---------------------------|-------------|-------------|----------------------------------|-------|-----------|
     | 0   | Force applied on the cart | -3          | 3           | slider                           | slide | Force (N) |
 
-    ### Observation Space
+    ## Observation Space
 
     The state space consists of positional values of different body parts of
     the pendulum system, followed by the velocities of those individual parts (their derivatives)
@@ -45,25 +45,25 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     | 3   | angular velocity of the pole on the cart      | -Inf | Inf | hinge                            | hinge | anglular velocity (rad/s) |
 
 
-    ### Rewards
+    ## Rewards
 
     The goal is to make the inverted pendulum stand upright (within a certain angle limit)
     as long as possible - as such a reward of +1 is awarded for each timestep that
     the pole is upright.
 
-    ### Starting State
+    ## Starting State
     All observations start in state
     (0.0, 0.0, 0.0, 0.0) with a uniform noise in the range
     of [-0.01, 0.01] added to the values for stochasticity.
 
-    ### Episode End
+    ## Episode End
     The episode ends when any of the following happens:
 
     1. Truncation: The episode duration reaches 1000 timesteps.
     2. Termination: Any of the state space values is no longer finite.
     3. Termination: The absolute value of the vertical angle between the pole and the cart is greater than 0.2 radian.
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported.
 
@@ -78,7 +78,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('InvertedPendulum-v2')
     ```
 
-    ### Version History
+    ## Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
     * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
