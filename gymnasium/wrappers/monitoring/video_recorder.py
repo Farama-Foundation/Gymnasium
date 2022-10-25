@@ -51,7 +51,7 @@ class VideoRecorder:
         self._async = env.metadata.get("semantics.async")
         self.enabled = enabled
         self.disable_logger = disable_logger
-        self.closed = False
+        self._closed = False
 
         self.render_history = []
         self.env = env
@@ -118,7 +118,7 @@ class VideoRecorder:
 
         if not self.functional:
             return
-        if self.closed:
+        if self._closed:
             logger.warn(
                 "The video recorder has been closed and no frames will be captured anymore."
             )
@@ -141,7 +141,7 @@ class VideoRecorder:
 
     def close(self):
         """Flush all data to disk and close any open frame encoders."""
-        if not self.enabled or self.closed:
+        if not self.enabled or self._closed:
             return
 
         # First close the environment
@@ -168,7 +168,7 @@ class VideoRecorder:
         self.write_metadata()
 
         # Stop tracking this for autoclose
-        self.closed = True
+        self._closed = True
 
     def write_metadata(self):
         """Writes metadata to metadata path."""
@@ -178,5 +178,5 @@ class VideoRecorder:
     def __del__(self):
         """Closes the environment correctly when the recorder is deleted."""
         # Make sure we've closed up shop when garbage collecting
-        if not self.closed:
+        if not self._closed:
             logger.warn("Unable to save last video! Did you call close()?")
