@@ -1,0 +1,1342 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/environments/atari.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Adventure" href="adventure/" /><link rel="prev" title="Walker2D" href="../mujoco/walker2d/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/environments/atari.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+        <title>Atari - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header">
+      <div class="farama-header__container">
+        <div class="farama-header__left">
+          <a href="../../">
+              <img class="farama-header__logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <div class="farama-header-menu__btn">
+              <span class="farama-header-menu__btn-name">
+                Farama Foundation
+              </span>
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                  <defs></defs>
+                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
+                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
+                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+              </svg>
+            </div>
+            <div class="farama-header-menu-container">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo" src="../../_static/img/farama_solid_white.svg" alt="Farama Foundation">
+                  <span>Farama Foundation</span>
+                </a>
+                <button id="farama-close-menu">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                    <line x1="3" y1="21" x2="21" y2="3"></line>
+                    <line x1="3" y1="3" x2="21" y2="21"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="farama-header-menu__body">
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Documentation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://gymnasium.farama.org">
+                        
+                        <img src="../../_static/img/gymnasium-white.svg">
+                        
+                        Gymnasium
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://pettingzoo.farama.org">
+                        
+                        <img src="../../_static/img/pettingzoo-white.svg">
+                        
+                        PettingZoo
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://minigrid.farama.org">
+                        
+                        <img src="../../_static/img/minigrid-white.svg">
+                        
+                        MiniGrid
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://robotics.farama.org">
+                        
+                        <img src="../../_static/img/gymrobotics-white.svg">
+                        
+                        Gymnasium-Robotics
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Mature Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/SuperSuit">
+                        
+                        <img src="../../_static/img/supersuit-white.svg">
+                        
+                        SuperSuit
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/tinyscaler">
+                        
+                        <img src="../../_static/img/tinyscaler-white.svg">
+                        
+                        Tinyscaler
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/AutoROM">
+                        
+                        <img src="../../_static/img/autorom-white.svg">
+                        
+                        AutoROM
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Jumpy">
+                        
+                        <img src="../../_static/img/jumpy-white.svg">
+                        
+                        JumPy
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Incubating Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MAgent2">
+                        
+                        <img src="../../_static/img/MAgent2-white.svg">
+                        
+                        MAgent2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/procgen2">
+                        
+                        <img src="../../_static/img/procgen2-white.svg">
+                        
+                        Procgen2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MiniWorld">
+                        
+                        <img src="../../_static/img/miniworld-white.svg">
+                        
+                        Miniworld
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/D4RL">
+                        
+                        <img src="../../_static/img/d4rl-white.svg">
+                        
+                        D4RL
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Kabuki">
+                        
+                        <img src="../../_static/img/kabuki-white.svg">
+                        
+                        Kabuki
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Foundation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://farama.org/about">
+                        
+                        About
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/project_standards">
+                        
+                        Standards
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/donations">
+                        
+                        Donate
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="farama-header-menu__overlay"></div>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Registry</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/utils/">Spaces Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Atari</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="adventure/">Adventure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="alien/">Alien</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amidar/">Amidar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="assault/">Assault</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asterix/">Asterix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asteroids/">Asteroids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="atlantis/">Atlantis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bank_heist/">Bank Heist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="battle_zone/">Battle Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bowling/">Bowling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boxing/">Boxing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="breakout/">Breakout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="centipede/">Centipede</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chopper_command/">Chopper Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="defender/">Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demon_attack/">Demon Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="double_dunk/">Double Dunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gopher/">Gopher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ice_hockey/">IceHockey</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jamesbond/">Jamesbond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="krull/">Krull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kung_fu_master/">Kung Fu Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="montezuma_revenge/">Montezuma Revenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ms_pacman/">Ms Pacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phoenix/">Phoenix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pong/">Pong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pooyan/">Pooyan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="private_eye/">PrivateEye</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qbert/">Qbert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="riverraid/">Riverraid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="road_runner/">Road Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="seaquest/">Seaquest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solaris/">Solaris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutankham/">Tutankham</a></li>
+<li class="toctree-l2"><a class="reference internal" href="up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="venture/">Venture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_pinball/">Video Pinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zaxxon/">Zaxxon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../third_party_environments/">Third-Party Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+    
+    <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/environments/atari.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+          <section id="atari">
+<h1>Atari<a class="headerlink" href="#atari" title="Permalink to this heading">#</a></h1>
+<p>A set of Atari 2600 environments simulated through Stella and the Arcade Learning Environment.</p>
+<div class="toctree-wrapper compound">
+</div>
+
+<div class="env-grid">
+    
+            <a href="adventure">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/atari/adventure.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Adventure</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="air_raid">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/atari/air_raid.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Air Raid</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="alien">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/atari/alien.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Alien</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="amidar">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/atari/amidar.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Amidar</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="assault">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/atari/assault.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Assault</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="asterix">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/atari/asterix.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Asterix</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="asteroids">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/atari/asteroids.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Asteroids</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="atlantis">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/atari/atlantis.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Atlantis</span>
+                    </div>
+                </div>
+            </a>
+    
+</div>
+
+<a href="./complete_list">
+    <button class="more-btn">
+        See More Environments
+    </button>
+</a>
+
+    
+<p>Atari environments are simulated via the Arcade Learning Environment (ALE) <a class="reference internal" href="#id1"><span class="std std-ref">[1]</span></a>.</p>
+<section id="autorom-installing-the-roms">
+<h2>AutoROM (installing the ROMs)<a class="headerlink" href="#autorom-installing-the-roms" title="Permalink to this heading">#</a></h2>
+<p>ALE-py doesn’t include the atari ROMs (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[atari]</span></code>) which are necessary to make any of the atari environments.
+To install the atari ROM, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[accept-rom-license]</span></code> which will install AutoROM and download the ROMs, install them in the default location.
+In doing so, you agree to TODO</p>
+<p>It is possible to install the ROMs in an alternative location, <a class="reference external" href="https://github.com/Farama-Foundation/AutoROM">repo</a> has more information.</p>
+</section>
+<section id="action-space">
+<h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
+<p>The action space is a subset of the following discrete set of legal actions:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Num</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>NOOP</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>FIRE</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>UP</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>RIGHT</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>LEFT</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>DOWN</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>UPRIGHT</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>UPLEFT</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>DOWNRIGHT</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>DOWNLEFT</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>UPFIRE</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>RIGHTFIRE</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>LEFTFIRE</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>DOWNFIRE</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>UPRIGHTFIRE</p></td>
+</tr>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>UPLEFTFIRE</p></td>
+</tr>
+<tr class="row-even"><td><p>16</p></td>
+<td><p>DOWNRIGHTFIRE</p></td>
+</tr>
+<tr class="row-odd"><td><p>17</p></td>
+<td><p>DOWNLEFTFIRE</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>If you use v0 or v4 and the environment is initialized via <code class="docutils literal notranslate"><span class="pre">make</span></code>, the action space will usually be much smaller since most legal actions don’t have
+any effect. Thus, the enumeration of the actions will differ. The action space can be expanded to the full
+legal space by passing the keyword argument <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> to <code class="docutils literal notranslate"><span class="pre">make</span></code>.</p>
+<p>The reduced action space of an Atari environment may depend on the “flavor” of the game. You can specify the flavor by providing
+the arguments <code class="docutils literal notranslate"><span class="pre">difficulty</span></code> and <code class="docutils literal notranslate"><span class="pre">mode</span></code> when constructing the environment. This documentation only provides details on the
+action spaces of default flavor choices.</p>
+</section>
+<section id="observation-space">
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
+<p>The observation issued by an Atari environment may be:</p>
+<ul class="simple">
+<li><p>the RGB image that is displayed to a human player,</p></li>
+<li><p>a grayscale version of that image or</p></li>
+<li><p>the state of the 128 Bytes of RAM of the console.</p></li>
+</ul>
+</section>
+<section id="rewards">
+<h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
+<p>The exact reward dynamics depend on the environment and are usually documented in the game’s manual. You can
+find these manuals on <a class="reference external" href="https://atariage.com/">AtariAge</a>.</p>
+</section>
+<section id="stochasticity">
+<h2>Stochasticity<a class="headerlink" href="#stochasticity" title="Permalink to this heading">#</a></h2>
+<p>It was pointed out in <a class="reference internal" href="#id1"><span class="std std-ref">[1]</span></a> that Atari games are entirely deterministic. Thus, agents could achieve
+state-of-the-art performance by simply memorizing an optimal sequence of actions while completely ignoring observations from the environment.
+To avoid this, ALE implements sticky actions: Instead of always simulating the action passed to the environment, there is a small
+probability that the previously executed action is used instead.</p>
+<p>On top of this, Gymnasium implements stochastic frame skipping: In each environment step, the action is repeated for a random
+number of frames. This behavior may be altered by setting the keyword argument <code class="docutils literal notranslate"><span class="pre">frameskip</span></code> to either a positive integer or
+a tuple of two positive integers. If <code class="docutils literal notranslate"><span class="pre">frameskip</span></code> is an integer, frame skipping is deterministic, and in each step the action is
+repeated <code class="docutils literal notranslate"><span class="pre">frameskip</span></code> many times. Otherwise, if <code class="docutils literal notranslate"><span class="pre">frameskip</span></code> is a tuple, the number of skipped frames is chosen uniformly at
+random between <code class="docutils literal notranslate"><span class="pre">frameskip[0]</span></code> (inclusive) and <code class="docutils literal notranslate"><span class="pre">frameskip[1]</span></code> (exclusive) in each environment step.</p>
+</section>
+<section id="common-arguments">
+<h2>Common Arguments<a class="headerlink" href="#common-arguments" title="Permalink to this heading">#</a></h2>
+<p>When initializing Atari environments via <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>, you may pass some additional arguments. These work for any
+Atari environment. However, legal values for <code class="docutils literal notranslate"><span class="pre">mode</span></code> and <code class="docutils literal notranslate"><span class="pre">difficulty</span></code> depend on the environment.</p>
+<ul class="simple">
+<li><p><strong>mode</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. Game mode, see <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Legal values depend on the environment and are listed in the table above.</p></li>
+<li><p><strong>difficulty</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. The difficulty of the game, see <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Legal values depend on the environment and are listed in
+the table above. Together with <code class="docutils literal notranslate"><span class="pre">mode</span></code>, this determines the “flavor” of the game.</p></li>
+<li><p><strong>obs_type</strong>: <code class="docutils literal notranslate"><span class="pre">str</span></code>. This argument determines what observations are returned by the environment. Its values are:</p>
+<ul>
+<li><p>ram: The 128 Bytes of RAM are returned</p></li>
+<li><p>rgb: An RGB rendering of the game is returned</p></li>
+<li><p>grayscale: A grayscale rendering is returned</p></li>
+</ul>
+</li>
+<li><p><strong>frameskip</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code> or a tuple of two <code class="docutils literal notranslate"><span class="pre">int</span></code>s. This argument controls stochastic frame skipping, as described in the section on stochasticity.</p></li>
+<li><p><strong>repeat_action_probability</strong>: <code class="docutils literal notranslate"><span class="pre">float</span></code>. The probability that an action sticks, as described in the section on stochasticity.</p></li>
+<li><p><strong>full_action_space</strong>: <code class="docutils literal notranslate"><span class="pre">bool</span></code>. If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the action space consists of all legal actions on the console. Otherwise, the
+action space will be reduced to a subset.</p></li>
+<li><p><strong>render_mode</strong>: <code class="docutils literal notranslate"><span class="pre">str</span></code>. Specifies the rendering mode. Its values are:</p>
+<ul>
+<li><p>human: We’ll interactively display the screen and enable game sounds. This will lock emulation to the ROMs specified FPS</p></li>
+<li><p>rgb_array: we’ll return the <code class="docutils literal notranslate"><span class="pre">rgb</span></code> key in step metadata with the current environment RGB frame.</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><p>It is highly recommended to specify <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> during construction instead of calling <code class="docutils literal notranslate"><span class="pre">env.render()</span></code>.
+This will guarantee proper scaling, audio support, and proper framerates</p>
+</div></blockquote>
+</section>
+<section id="version-history-and-naming-schemes">
+<h2>Version History and Naming Schemes<a class="headerlink" href="#version-history-and-naming-schemes" title="Permalink to this heading">#</a></h2>
+<p>All Atari games are available in three versions. They differ in the default settings of the arguments above.
+The differences are listed in the following table:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Version</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">frameskip=</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">repeat_action_probability=</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">full_action_space=</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>v0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">5,)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>v4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">5,)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>v5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p>Version v5 follows the best practices outlined in <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Thus, it is recommended to transition to v5 and
+customize the environment using the arguments above, if necessary.</p>
+</div></blockquote>
+<p>For each Atari game, several different configurations are registered in Gymnasium. The naming schemes are analogous for
+v0 and v4. Let us take a look at all variations of Amidar-v0 that are registered with gymnasium:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">obs_type=</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">frameskip=</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">repeat_action_probability=</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">full_action_space=</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Amidar-v0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">5,)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>AmidarDeterministic-v0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>AmidarNoframeskip-v0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Amidar-ram-v0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">5,)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Amidar-ramDeterministic-v0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Amidar-ramNoframeskip-v0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Things change in v5: The suffixes “Deterministic” and “NoFrameskip” are no longer available. Instead, you must specify the
+environment configuration via arguments passed to <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>. Moreover, the v5 environments
+are in the “ALE” namespace. The suffix “-ram” is still available. Thus, we get the following table:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">obs_type=</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">frameskip=</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">repeat_action_probability=</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">full_action_space=</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ALE/Amidar-v5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>ALE/Amidar-ram-v5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="flavors">
+<h2>Flavors<a class="headerlink" href="#flavors" title="Permalink to this heading">#</a></h2>
+<p>Some games allow the user to set a difficulty level and a game mode. Different modes/difficulties may have different
+game dynamics and (if a reduced action space is used) different action spaces. We follow the convention of <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a> and
+refer to the combination of difficulty level and game mode as a flavor of a game. The following table shows
+the available modes and difficulty levels for different Atari games:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Environment</p></th>
+<th class="head"><p>Valid Modes</p></th>
+<th class="head"><p>Default Mode</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Adventure</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>AirRaid</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">...,</span> <span class="pre">8]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Alien</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">3]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Amidar</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Assault</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Asterix</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Asteroids</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">31,</span> <span class="pre">128]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Atlantis</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">3]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>BankHeist</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">4,</span> <span class="pre">8,</span> <span class="pre">12,</span> <span class="pre">16,</span> <span class="pre">20,</span> <span class="pre">24,</span> <span class="pre">28]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>BattleZone</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>BeamRider</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Berzerk</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Bowling</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2,</span> <span class="pre">4]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Boxing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Breakout</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">4,</span> <span class="pre">8,</span> <span class="pre">12,</span> <span class="pre">16,</span> <span class="pre">20,</span> <span class="pre">24,</span> <span class="pre">28,</span> <span class="pre">32,</span> <span class="pre">36,</span> <span class="pre">40,</span> <span class="pre">44]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Carnival</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Centipede</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[22,</span> <span class="pre">86]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">22</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>ChopperCommand</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>CrazyClimber</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">3]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Defender</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">...,</span> <span class="pre">9,</span> <span class="pre">16]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>DemonAttack</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">3,</span> <span class="pre">5,</span> <span class="pre">7]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>DoubleDunk</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">15]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>ElevatorAction</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Enduro</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>FishingDerby</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Freeway</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">7]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Frostbite</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Gopher</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Gravitar</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">4]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Hero</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">4]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>IceHockey</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Jamesbond</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>JourneyEscape</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Kangaroo</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Krull</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>KungFuMaster</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>MontezumaRevenge</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>MsPacman</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">3]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>NameThisGame</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[8,</span> <span class="pre">24,</span> <span class="pre">40]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Phoenix</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Pitfall</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Pong</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Pooyan</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[10,</span> <span class="pre">30,</span> <span class="pre">50,</span> <span class="pre">70]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>PrivateEye</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">4]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Qbert</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Riverraid</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>RoadRunner</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Robotank</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Seaquest</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Skiing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Solaris</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>SpaceInvaders</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">15]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>StarGunner</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">...,</span> <span class="pre">3]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Tennis</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>TimePilot</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Tutankham</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">4,</span> <span class="pre">8,</span> <span class="pre">12]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>UpNDown</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Venture</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>VideoPinball</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>WizardOfWor</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>YarsRevenge</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">32,</span> <span class="pre">64,</span> <span class="pre">96]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Zaxxon</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">8,</span> <span class="pre">16,</span> <span class="pre">24]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p>Each game also has a valid difficulty for the opposing AI, which has a different range depending on the game. These values can have a range of 0 - n, where n can be found at <a class="reference external" href="https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/docs/games.md">the ALE documentation</a></p>
+</div></blockquote>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">#</a></h2>
+<p id="id1"><a id="1">[1]</a>
+MG Bellemare, Y Naddaf, J Veness, and M Bowling.
+“The arcade learning environment: An evaluation platform for general agents.”
+Journal of Artificial Intelligence Research (2012).</p>
+<p id="id2"><a id="2">[2]</a>
+Machado et al.
+“Revisiting the Arcade Learning Environment: Evaluation Protocols
+and Open Problems for General Agents”
+Journal of Artificial Intelligence Research (2018)
+URL: https://jair.org/index.php/jair/article/view/11182</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+            
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022 Farama Foundation
+            </div>
+            <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Atari</a><ul>
+<li><a class="reference internal" href="#autorom-installing-the-roms">AutoROM (installing the ROMs)</a></li>
+<li><a class="reference internal" href="#action-space">Action Space</a></li>
+<li><a class="reference internal" href="#observation-space">Observation Space</a></li>
+<li><a class="reference internal" href="#rewards">Rewards</a></li>
+<li><a class="reference internal" href="#stochasticity">Stochasticity</a></li>
+<li><a class="reference internal" href="#common-arguments">Common Arguments</a></li>
+<li><a class="reference internal" href="#version-history-and-naming-schemes">Version History and Naming Schemes</a></li>
+<li><a class="reference internal" href="#flavors">Flavors</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div>
+    <script>
+      let toggleMenu = () => {
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
+
+      window.onclick = function(event) {
+        if (!event.target.matches('.farama-header-menu__btn')) {
+          const dropdown = document.querySelector(".farama-header-menu-container");
+          if (dropdown.classList.contains('active')) {
+            dropdown.classList.remove('active');
+            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
+          }
+        }
+      }
+    </script>
+
+    
+    <script>
+          (() => {
+              if (!localStorage.getItem("shownCookieAlert")) {
+                  const boxElem = document.createElement("div");
+                  boxElem.classList.add("cookie-alert");
+                  const containerElem = document.createElement("div");
+                  containerElem.classList.add("cookie-alert__container");
+                  const textElem = document.createElement("p");
+                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                      Google Analytics</a> to collect statistics. You can disable it by blocking
+                                      the JavaScript coming from www.google-analytics.com.`;
+                                      containerElem.appendChild(textElem);
+                  const closeBtn = document.createElement("button");
+                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
+                  closeBtn.onclick = () => {
+                      localStorage.setItem("shownCookieAlert", "true");
+                      boxElem.style.display = "none";
+                  }
+                  containerElem.appendChild(closeBtn);
+                  boxElem.appendChild(containerElem);
+                  document.body.appendChild(boxElem);
+              }
+          })()
+      </script>
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-6H9C8TWXZ8');
+      </script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script></body>
+</html>

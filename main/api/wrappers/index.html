@@ -1,0 +1,1006 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/api/wrappers.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Misc Wrappers" href="misc_wrappers/" /><link rel="prev" title="Spaces Vector Utils" href="../spaces/vector_utils/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/api/wrappers.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+        <title>Wrappers - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header">
+      <div class="farama-header__container">
+        <div class="farama-header__left">
+          <a href="../../">
+              <img class="farama-header__logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <div class="farama-header-menu__btn">
+              <span class="farama-header-menu__btn-name">
+                Farama Foundation
+              </span>
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                  <defs></defs>
+                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
+                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
+                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+              </svg>
+            </div>
+            <div class="farama-header-menu-container">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo" src="../../_static/img/farama_solid_white.svg" alt="Farama Foundation">
+                  <span>Farama Foundation</span>
+                </a>
+                <button id="farama-close-menu">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                    <line x1="3" y1="21" x2="21" y2="3"></line>
+                    <line x1="3" y1="3" x2="21" y2="21"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="farama-header-menu__body">
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Documentation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://gymnasium.farama.org">
+                        
+                        <img src="../../_static/img/gymnasium-white.svg">
+                        
+                        Gymnasium
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://pettingzoo.farama.org">
+                        
+                        <img src="../../_static/img/pettingzoo-white.svg">
+                        
+                        PettingZoo
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://minigrid.farama.org">
+                        
+                        <img src="../../_static/img/minigrid-white.svg">
+                        
+                        MiniGrid
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://robotics.farama.org">
+                        
+                        <img src="../../_static/img/gymrobotics-white.svg">
+                        
+                        Gymnasium-Robotics
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Mature Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/SuperSuit">
+                        
+                        <img src="../../_static/img/supersuit-white.svg">
+                        
+                        SuperSuit
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/tinyscaler">
+                        
+                        <img src="../../_static/img/tinyscaler-white.svg">
+                        
+                        Tinyscaler
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/AutoROM">
+                        
+                        <img src="../../_static/img/autorom-white.svg">
+                        
+                        AutoROM
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Jumpy">
+                        
+                        <img src="../../_static/img/jumpy-white.svg">
+                        
+                        JumPy
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Incubating Projects</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MAgent2">
+                        
+                        <img src="../../_static/img/MAgent2-white.svg">
+                        
+                        MAgent2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/procgen2">
+                        
+                        <img src="../../_static/img/procgen2-white.svg">
+                        
+                        Procgen2
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/MiniWorld">
+                        
+                        <img src="../../_static/img/miniworld-white.svg">
+                        
+                        Miniworld
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/D4RL">
+                        
+                        <img src="../../_static/img/d4rl-white.svg">
+                        
+                        D4RL
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://github.com/Farama-Foundation/Kabuki">
+                        
+                        <img src="../../_static/img/kabuki-white.svg">
+                        
+                        Kabuki
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
+                  <span class="farama-header-menu__section-title">Foundation</span>
+                  <ul class="farama-header-menu-list">
+                    <li>
+                      <a href="https://farama.org/about">
+                        
+                        About
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/project_standards">
+                        
+                        Standards
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://farama.org/donations">
+                        
+                        Donate
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </div>
+                
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="farama-header-menu__overlay"></div>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../registry/">Registry</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spaces/utils/">Spaces Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spaces/vector_utils/">Spaces Vector Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Wrappers</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/adventure/">Adventure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/alien/">Alien</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/amidar/">Amidar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/assault/">Assault</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asterix/">Asterix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asteroids/">Asteroids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/atlantis/">Atlantis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bank_heist/">Bank Heist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/battle_zone/">Battle Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bowling/">Bowling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/boxing/">Boxing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/breakout/">Breakout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/centipede/">Centipede</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/chopper_command/">Chopper Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/defender/">Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/demon_attack/">Demon Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/double_dunk/">Double Dunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gopher/">Gopher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ice_hockey/">IceHockey</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/jamesbond/">Jamesbond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/krull/">Krull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kung_fu_master/">Kung Fu Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/montezuma_revenge/">Montezuma Revenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ms_pacman/">Ms Pacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/phoenix/">Phoenix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pong/">Pong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pooyan/">Pooyan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/private_eye/">PrivateEye</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/qbert/">Qbert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/riverraid/">Riverraid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/road_runner/">Road Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/seaquest/">Seaquest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/solaris/">Solaris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tutankham/">Tutankham</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/venture/">Venture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_pinball/">Video Pinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/zaxxon/">Zaxxon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-Party Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+    
+    <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/api/wrappers.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+          <section id="wrappers">
+<h1>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="gymnasium-wrapper">
+<h2>gymnasium.Wrapper<a class="headerlink" href="#gymnasium-wrapper" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.Wrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">Wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.Wrapper" title="Permalink to this definition">#</a></dt>
+<dd><p>Wraps a <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code></a> to allow a modular transformation of the <a class="reference internal" href="#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> and <a class="reference internal" href="#gymnasium.Wrapper.reset" title="gymnasium.Wrapper.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> methods.</p>
+<p>This class is the base class of all wrappers to change the behavior of the underlying environment allowing
+modification to the <a class="reference internal" href="../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a>, <a class="reference internal" href="../vector/#observation_space" title="observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a>, <a class="reference internal" href="#gymnasium.Wrapper.reward_range" title="gymnasium.Wrapper.reward_range"><code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code></a> and <a class="reference internal" href="#gymnasium.Wrapper.metadata" title="gymnasium.Wrapper.metadata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">metadata</span></code></a>
+that doesn’t change the underlying environment attributes.</p>
+<p>In addition, for several attributes (<a class="reference internal" href="../registry/#gymnasium.spec" title="gymnasium.spec"><code class="xref py py-attr docutils literal notranslate"><span class="pre">spec</span></code></a>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">render_mode</span></code>, <a class="reference internal" href="#gymnasium.Wrapper.np_random" title="gymnasium.Wrapper.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a>) will point back to the
+wrapper’s environment.</p>
+<p>Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.
+Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can
+also be chained to combine their effects. Most environments that are generated via <cite>gymnasium.make</cite> will already be wrapped by default.</p>
+<p>In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along
+with (possibly optional) parameters to the wrapper’s constructor.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RescaleAction</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;BipedalWalker-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Box([-1. -1. -1. -1.], [1. 1. 1. 1.], (4,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RescaleAction</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">min_action</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_action</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Box([0. 0. 0. 0.], [1. 1. 1. 1.], (4,), float32)</span>
+</pre></div>
+</div>
+<p>You can access the environment underneath the <strong>first</strong> wrapper by using the <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> attribute.
+As the <a class="reference internal" href="#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></a> class inherits from <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">Env</span></code></a> then <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> can be another wrapper.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
+<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>If you want to get to the environment underneath <strong>all</strong> of the layers of wrappers, you can use the <cite>.unwrapped</cite> attribute.
+If the environment is already a bare environment, the <cite>.unwrapped</cite> attribute will just return itself.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
+<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">unwrapped</span>
+<span class="go">&lt;gymnasium.envs.box2d.bipedal_walker.BipedalWalker object at 0x7f87d70712d0&gt;</span>
+</pre></div>
+</div>
+<p>There are three common things you might want a wrapper to do:</p>
+<ul class="simple">
+<li><p>Transform actions before applying them to the base environment</p></li>
+<li><p>Transform observations that are returned by the base environment</p></li>
+<li><p>Transform rewards that are returned by the base environment</p></li>
+</ul>
+<p>Such wrappers can be easily implemented by inheriting from <cite>ActionWrapper</cite>, <cite>ObservationWrapper</cite>, or <cite>RewardWrapper</cite> and implementing the
+respective transformation. If you need a wrapper to do more complicated tasks, you can inherit from the <cite>Wrapper</cite> class directly.
+The code that is presented in the following sections can also be found in
+the [gym-examples](<a class="reference external" href="https://github.com/Farama-Foundation/gym-examples">https://github.com/Farama-Foundation/gym-examples</a>) repository</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Don’t forget to call <code class="docutils literal notranslate"><span class="pre">super().__init__(env)</span></code></p>
+</div>
+<p>Wraps an environment to allow a modular transformation of the <a class="reference internal" href="#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> and <a class="reference internal" href="#gymnasium.Wrapper.reset" title="gymnasium.Wrapper.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – The environment to wrap</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.step">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.Wrapper.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.Wrapper.step" title="Permalink to this definition">#</a></dt>
+<dd><p>Uses the <a class="reference internal" href="#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> that can be overwritten to change the returned data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.reset">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.Wrapper.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.Wrapper.reset" title="Permalink to this definition">#</a></dt>
+<dd><p>Uses the <a class="reference internal" href="#gymnasium.Wrapper.reset" title="gymnasium.Wrapper.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> that can be overwritten to change the returned data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.close">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.Wrapper.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.Wrapper.close" title="Permalink to this definition">#</a></dt>
+<dd><p>Closes the wrapper and <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.action_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">action_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Wrapper.action_space" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> unless overwritten then the wrapper <a class="reference internal" href="../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> is used.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.observation_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">observation_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#gymnasium.Wrapper.observation_space" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="../vector/#observation_space" title="observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> unless overwritten then the wrapper <a class="reference internal" href="../vector/#observation_space" title="observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> is used.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.reward_range">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">reward_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Wrapper.reward_range" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="#gymnasium.Wrapper.reward_range" title="gymnasium.Wrapper.reward_range"><code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code></a> unless overwritten then the wrapper <a class="reference internal" href="#gymnasium.Wrapper.reward_range" title="gymnasium.Wrapper.reward_range"><code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code></a> is used.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.spec">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">spec</span></span><a class="headerlink" href="#gymnasium.Wrapper.spec" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="../registry/#gymnasium.spec" title="gymnasium.spec"><code class="xref py py-attr docutils literal notranslate"><span class="pre">spec</span></code></a> attribute.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.metadata">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#gymnasium.Wrapper.metadata" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="#gymnasium.Wrapper.metadata" title="gymnasium.Wrapper.metadata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">metadata</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.np_random">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#gymnasium.Wrapper.np_random" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="#gymnasium.Wrapper.np_random" title="gymnasium.Wrapper.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a> attribute.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.unwrapped">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">unwrapped</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></em><a class="headerlink" href="#gymnasium.Wrapper.unwrapped" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the base environment of the wrapper.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="gymnasium-wrappers">
+<h2>Gymnasium Wrappers<a class="headerlink" href="#gymnasium-wrappers" title="Permalink to this heading">#</a></h2>
+<p>Gymnasium provides a number of commonly used wrappers listed below. More information can be found on the particular
+wrapper in the page on the wrapper type</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.AtariPreprocessing" title="gymnasium.wrappers.AtariPreprocessing"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>Implements the common preprocessing applied tp Atari environments</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.AutoResetWrapper" title="gymnasium.wrappers.AutoResetWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoResetWrapper</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>The wrapped environment will automatically reset when the terminated or truncated  state is reached.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="action_wrappers/#gymnasium.wrappers.ClipAction" title="gymnasium.wrappers.ClipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClipAction</span></code></a></p></td>
+<td><p>Action Wrapper</p></td>
+<td><p>Clip the continuous action to the valid bound specified by the environment’s <cite>action_space</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.EnvCompatibility" title="gymnasium.wrappers.EnvCompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvCompatibility</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>Provides compatibility for environments written in the OpenAI Gym v0.21 API to look like Gymnasium environments</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.FilterObservation" title="gymnasium.wrappers.FilterObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterObservation</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>Filters a dictionary observation spaces to only requested keys</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlattenObservation</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>An Observation wrapper that flattens the observation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.FrameStack" title="gymnasium.wrappers.FrameStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameStack</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>AnObservation wrapper that stacks the observations in a rolling manner.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.GrayScaleObservation" title="gymnasium.wrappers.GrayScaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GrayScaleObservation</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>Convert the image observation from RGB to gray scale.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.HumanRendering" title="gymnasium.wrappers.HumanRendering"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>Allows human like rendering for environments that support “rgb_array” rendering</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.NormalizeObservation" title="gymnasium.wrappers.NormalizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="reward_wrappers/#gymnasium.wrappers.NormalizeReward" title="gymnasium.wrappers.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeReward</span></code></a></p></td>
+<td><p>Reward Wrapper</p></td>
+<td><p>This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.OrderEnforcing" title="gymnasium.wrappers.OrderEnforcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrderEnforcing</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>This will produce an error if <cite>step</cite> or <cite>render</cite> is called before <cite>reset</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.PixelObservationWrapper" title="gymnasium.wrappers.PixelObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">PixelObservationWrapper</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>Augment observations by pixel values obtained via <cite>render</cite> that can be added to or replaces the environments observation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>This will keep track of cumulative rewards and episode lengths returning them at the end.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>This wrapper will record videos of rollouts.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.RenderCollection" title="gymnasium.wrappers.RenderCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RenderCollection</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>Enable list versions of render modes, i.e. “rgb_array_list” for “rgb_array” such that the rendering for each step are saved in a list until <cite>render</cite> is called.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="action_wrappers/#gymnasium.wrappers.RescaleAction" title="gymnasium.wrappers.RescaleAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleAction</span></code></a></p></td>
+<td><p>Action Wrapper</p></td>
+<td><p>Rescales the continuous action space of the environment to a range [<cite>min_action</cite>, <cite>max_action</cite>], where <cite>min_action</cite> and <cite>max_action</cite> are numpy arrays or floats.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.ResizeObservation" title="gymnasium.wrappers.ResizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResizeObservation</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>This wrapper works on environments with image observations (or more generally observations of shape AxBxC) and resizes the observation to the shape given by the tuple <cite>shape</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.StepAPICompatibility" title="gymnasium.wrappers.StepAPICompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepAPICompatibility</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>Modifies an environment step function from (old) done to the (new) termination / truncation API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.TimeAwareObservation" title="gymnasium.wrappers.TimeAwareObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>Augment the observation with current time step in the trajectory (by appending it to the observation).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>This wrapper will emit a truncated signal if the specified number of steps is exceeded in an episode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.TransformObservation" title="gymnasium.wrappers.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></p></td>
+<td><p>Observation Wrapper</p></td>
+<td><p>This wrapper will apply function to observations</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformReward</span></code></a></p></td>
+<td><p>Reward Wrapper</p></td>
+<td><p>This wrapper will apply function to rewards</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.VectorListInfo" title="gymnasium.wrappers.VectorListInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VectorListInfo</span></code></a></p></td>
+<td><p>Misc Wrapper</p></td>
+<td><p>This wrapper will convert the info of a vectorized environment from the <cite>dict</cite> format to a <cite>list</cite> of dictionaries where the i-th dictionary contains info of the i-th environment.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="implementing-a-custom-wrapper">
+<h2>Implementing a custom wrapper<a class="headerlink" href="#implementing-a-custom-wrapper" title="Permalink to this heading">#</a></h2>
+<p>Sometimes you might need to implement a wrapper that does some more complicated modifications (e.g. modify the
+reward based on data in <code class="docutils literal notranslate"><span class="pre">info</span></code> or change the rendering behavior).
+Such wrappers can be implemented by inheriting from Misc Wrapper.</p>
+<ul class="simple">
+<li><p>You can set a new action or observation space by defining <code class="docutils literal notranslate"><span class="pre">self.action_space</span></code> or <code class="docutils literal notranslate"><span class="pre">self.observation_space</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>, respectively</p></li>
+<li><p>You can set new metadata and reward range by defining <code class="docutils literal notranslate"><span class="pre">self.metadata</span></code> and <code class="docutils literal notranslate"><span class="pre">self.reward_range</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>, respectively</p></li>
+<li><p>You can override <code class="docutils literal notranslate"><span class="pre">step</span></code>, <code class="docutils literal notranslate"><span class="pre">render</span></code>, <code class="docutils literal notranslate"><span class="pre">close</span></code> etc. If you do this, you can access the environment that was passed
+to your wrapper (which <em>still</em> might be wrapped in some other wrapper) by accessing the attribute <code class="docutils literal notranslate"><span class="pre">self.env</span></code>.</p></li>
+</ul>
+<p>Let’s also take a look at an example for this case. Most MuJoCo environments return a reward that consists
+of different terms: For instance, there might be a term that rewards the agent for completing the task and one term that
+penalizes large actions (i.e. energy usage). Usually, you can pass weight parameters for those terms during
+initialization of the environment. However, <em>Reacher</em> does not allow you to do this! Nevertheless, all individual terms
+of the reward are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code>, so let us build a wrapper for Reacher that allows us to weight those terms:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+
+<span class="k">class</span> <span class="nc">ReacherRewardWrapper</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">reward_dist_weight</span><span class="p">,</span> <span class="n">reward_ctrl_weight</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">=</span> <span class="n">reward_dist_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_ctrl_weight</span> <span class="o">=</span> <span class="n">reward_ctrl_weight</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">*</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;reward_dist&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_ctrl_weight</span> <span class="o">*</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;reward_ctrl&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is <em>not</em> sufficient to use a <code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code> in this case!</p>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="misc_wrappers/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Misc Wrappers</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+            <a class="prev-page" href="../spaces/vector_utils/">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Spaces Vector Utils</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022 Farama Foundation
+            </div>
+            <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium-wrapper">gymnasium.Wrapper</a><ul>
+<li><a class="reference internal" href="#gymnasium.Wrapper"><code class="docutils literal notranslate"><span class="pre">Wrapper</span></code></a></li>
+<li><a class="reference internal" href="#methods">Methods</a><ul>
+<li><a class="reference internal" href="#gymnasium.Wrapper.step"><code class="docutils literal notranslate"><span class="pre">step()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#gymnasium.Wrapper.action_space"><code class="docutils literal notranslate"><span class="pre">Wrapper.action_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.observation_space"><code class="docutils literal notranslate"><span class="pre">Wrapper.observation_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.reward_range"><code class="docutils literal notranslate"><span class="pre">Wrapper.reward_range</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.spec"><code class="docutils literal notranslate"><span class="pre">Wrapper.spec</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.metadata"><code class="docutils literal notranslate"><span class="pre">Wrapper.metadata</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.np_random"><code class="docutils literal notranslate"><span class="pre">Wrapper.np_random</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.unwrapped"><code class="docutils literal notranslate"><span class="pre">Wrapper.unwrapped</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium-wrappers">Gymnasium Wrappers</a></li>
+<li><a class="reference internal" href="#implementing-a-custom-wrapper">Implementing a custom wrapper</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div>
+    <script>
+      let toggleMenu = () => {
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
+
+      window.onclick = function(event) {
+        if (!event.target.matches('.farama-header-menu__btn')) {
+          const dropdown = document.querySelector(".farama-header-menu-container");
+          if (dropdown.classList.contains('active')) {
+            dropdown.classList.remove('active');
+            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
+          }
+        }
+      }
+    </script>
+
+    
+    <script>
+          (() => {
+              if (!localStorage.getItem("shownCookieAlert")) {
+                  const boxElem = document.createElement("div");
+                  boxElem.classList.add("cookie-alert");
+                  const containerElem = document.createElement("div");
+                  containerElem.classList.add("cookie-alert__container");
+                  const textElem = document.createElement("p");
+                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                      Google Analytics</a> to collect statistics. You can disable it by blocking
+                                      the JavaScript coming from www.google-analytics.com.`;
+                                      containerElem.appendChild(textElem);
+                  const closeBtn = document.createElement("button");
+                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
+                  closeBtn.onclick = () => {
+                      localStorage.setItem("shownCookieAlert", "true");
+                      boxElem.style.display = "none";
+                  }
+                  containerElem.appendChild(closeBtn);
+                  boxElem.appendChild(containerElem);
+                  document.body.appendChild(boxElem);
+              }
+          })()
+      </script>
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-6H9C8TWXZ8');
+      </script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script></body>
+</html>
