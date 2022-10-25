@@ -45,31 +45,6 @@ def test_record_simple():
     assert os.fstat(f.fileno()).st_size > 100
 
 
-def test_autoclose():
-    def record():
-        env = gym.make(
-            "CartPole-v1", render_mode="rgb_array_list", disable_env_checker=True
-        )
-        rec = VideoRecorder(env)
-        env.reset()
-        rec.capture_frame()
-
-        rec_path = rec.path
-
-        # The function ends without an explicit `rec.close()` call
-        # The Python interpreter will implicitly do `del rec` on garbage cleaning
-        return rec_path
-
-    rec_path = record()
-
-    gc.collect()  # do explicit garbage collection for test
-    time.sleep(5)  # wait for subprocess exiting
-
-    assert os.path.exists(rec_path)
-    f = open(rec_path)
-    assert os.fstat(f.fileno()).st_size > 100
-
-
 def test_no_frames():
     env = BrokenRecordableEnv()
     rec = VideoRecorder(env)
