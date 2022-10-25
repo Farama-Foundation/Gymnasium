@@ -1,0 +1,63 @@
+name: Manual Docs Versioning
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+          description: 'Documentation version to create'
+          required: true
+      commit:
+          description: 'Commit used to build the Documentation version'
+          required: false
+      latest:
+          description: 'Latest version'
+          type: boolean
+
+permissions:
+  contents: write
+jobs:
+  docs:
+    name: Generate Website for new version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        if: inputs.commit == ''
+
+      - uses: actions/checkout@v3
+        if: inputs.commit != ''
+        with:
+          ref: ${{ inputs.commit }}
+
+      - uses: actions/setup-python@v4
+        with:
+            python-version: '3.9'
+
+      - name: Install Library
+        run: pip install -e .
+
+      - name: Install dependencies
+        run: pip install -r ./docs/requirements.txt
+
+      - name: Build
+        run: sphinx-build -b dirhtml -v docs _build
+
+      - name: Remove CNAME
+        run: rm -f ./_build/CNAME
+
+      - name: Remove .doctrees
+        run: rm -r _build/.doctrees
+
+      - name: Upload to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _build
+          target-folder: ${{ inputs.version }}
+          clean: false
+
+      - name: Upload to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        if: inputs.latest
+        with:
+          folder: _build
+          clean-exclude: |
+            *.*.*/
+            main
