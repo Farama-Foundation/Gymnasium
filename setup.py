@@ -1,15 +1,35 @@
 """Setups the project."""
 import itertools
-import re
 
 from setuptools import find_packages, setup
 
-with open("gymnasium/version.py") as file:
-    full_version = file.read()
-    assert (
-        re.match(r'VERSION = "\d\.\d+\.\d+"\n', full_version).group(0) == full_version
-    ), f"Unexpected version: {full_version}"
-    VERSION = re.search(r"\d\.\d+\.\d+", full_version).group(0)
+
+def get_description():
+    """Gets the description from the readme."""
+    with open("README.md") as file:
+        long_description = ""
+        header_count = 0
+        for line in file:
+            if line.startswith("##"):
+                header_count += 1
+            if header_count < 2:
+                long_description += line
+            else:
+                break
+    return header_count, long_description
+
+
+def get_version():
+    """Gets the gymnasium version."""
+    path = "gymnasium/__init__.py"
+    with open(path) as file:
+        lines = file.readlines()
+
+    for line in lines:
+        if line.startswith("__version__"):
+            return line.strip().split()[-1].strip().strip('"')
+    raise RuntimeError("bad version data in __init__.py")
+
 
 # Environment-specific dependencies.
 extras = {
@@ -27,7 +47,7 @@ extras = {
 testing_group = set(extras.keys()) - {"accept-rom-license", "atari"}
 extras["testing"] = list(
     set(itertools.chain.from_iterable(map(lambda group: extras[group], testing_group)))
-) + ["pytest==7.1.3"]
+) + ["pytest==7.1.3", "gym==0.26.2"]
 
 # All dependency groups - accept rom license as requires user to run
 all_groups = set(extras.keys()) - {"accept-rom-license"}
@@ -35,41 +55,23 @@ extras["all"] = list(
     set(itertools.chain.from_iterable(map(lambda group: extras[group], all_groups)))
 )
 
-# Uses the readme as the description on PyPI
-with open("README.md") as fh:
-    long_description = ""
-    header_count = 0
-    for line in fh:
-        if line.startswith("##"):
-            header_count += 1
-        if header_count < 2:
-            long_description += line
-        else:
-            break
+version = get_version()
+header_count, long_description = get_description()
 
 setup(
+    name="Gymnasium",
+    version=version,
     author="Farama Foundation",
-    author_email="jkterry@farama.org",
-    classifiers=[
-        # Python 3.6 is minimally supported (only with basic gymnasium environments and API)
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-    ],
+    author_email="contact@farama.org",
     description="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
-    extras_require=extras,
-    install_requires=[
-        "numpy >= 1.18.0",
-        "cloudpickle >= 1.2.0",
-        "importlib_metadata >= 4.8.0; python_version < '3.10'",
-        "gymnasium_notices >= 0.0.1",
-    ],
+    url="https://gymnasium.farama.org/",
     license="MIT",
+    license_files=("LICENSE",),
     long_description=long_description,
     long_description_content_type="text/markdown",
-    name="gymnasium",
+    keywords=["Reinforcement Learning", "game", "RL", "AI", "gymnasium"],
+    python_requires=">=3.7",
+    tests_require=extras["testing"],
     packages=[
         package for package in find_packages() if package.startswith("gymnasium")
     ],
@@ -82,9 +84,20 @@ setup(
             "py.typed",
         ]
     },
-    python_requires=">=3.7",
-    tests_require=extras["testing"],
-    url="https://gymnasium.farama.org/",
-    version=VERSION,
+    include_package_data=True,
+    install_requires=[
+        "numpy >= 1.18.0",
+        "cloudpickle >= 1.2.0",
+        "importlib_metadata >= 4.8.0; python_version < '3.10'",
+        "gymnasium_notices >= 0.0.1",
+    ],
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+    ],
+    extras_require=extras,
     zip_safe=False,
 )

@@ -57,16 +57,16 @@ class PixelObservationWrapper(gym.ObservationWrapper):
 
         Args:
             env: The environment to wrap.
-            pixels_only (bool): If ``True`` (default), the original observation returned
+            pixels_only (bool): If `True` (default), the original observation returned
                 by the wrapped environment will be discarded, and a dictionary
-                observation will only include pixels. If ``False``, the
+                observation will only include pixels. If `False`, the
                 observation dictionary will contain both the original
                 observations and the pixel observations.
-            render_kwargs (dict): Optional dictionary containing that maps elements of ``pixel_keys``to
+            render_kwargs (dict): Optional dictionary containing that maps elements of `pixel_keys` to
                 keyword arguments passed to the :meth:`self.render` method.
             pixel_keys: Optional custom string specifying the pixel
-                observation's key in the ``OrderedDict`` of observations.
-                Defaults to ``(pixels,)``.
+                observation's key in the `OrderedDict` of observations.
+                Defaults to `(pixels,)`.
 
         Raises:
             AssertionError: If any of the keys in ``render_kwargs``do not show up in ``pixel_keys``.

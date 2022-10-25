@@ -161,7 +161,6 @@ def play(
         ...                                                "as": np.array([-1, 0, 1]),
         ...                                               }, noop=np.array([0,0,0]))
 
-
     Above code works also if the environment is wrapped, so it's particularly useful in
     verifying that the frame-level preprocessing does not render the game
     unplayable.
@@ -175,7 +174,6 @@ def play(
         ...        return [rew,]
         >>> plotter = PlayPlot(callback, 150, ["reward"])
         >>> play(gym.make("CartPole-v1"), callback=plotter.callback)
-
 
     Args:
         env: Environment to use for playing.
@@ -197,23 +195,29 @@ def play(
             one key.
             For example if pressing 'w' and space at the same time is supposed
             to trigger action number 2 then ``key_to_action`` dict could look like this:
+
                 >>> {
                 ...    # ...
                 ...    (ord('w'), ord(' ')): 2
                 ...    # ...
                 ... }
+
             or like this:
+
                 >>> {
                 ...    # ...
                 ...    ("w", " "): 2
                 ...    # ...
                 ... }
+
             or like this:
+
                 >>> {
                 ...    # ...
                 ...    "w ": 2
                 ...    # ...
                 ... }
+
             If ``None``, default ``key_to_action`` mapping for that environment is used, if provided.
         seed: Random seed used when resetting the environment. If None, no seed is used.
         noop: The action used when no key input has been entered, or the entered key combination is unknown.

@@ -4,7 +4,7 @@ firstpage:
 lastpage:
 ---
 
-## Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
+# Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
 
 
 ```{figure} _static/videos/box2d/lunar_lander_continuous.gif
@@ -12,7 +12,8 @@ lastpage:
    :width: 500
 ```
 
-**Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems:**
+**Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility
+) for old Gym environments:**
 
 ```{code-block} python
 
@@ -33,13 +34,16 @@ env.close()
 :caption: Introduction
 
 content/basic_usage
+content/gym_compatibility
+content/migration-guide
 ```
 
 ```{toctree}
 :hidden:
 :caption: API
 
-api/core
+api/env
+api/registry
 api/spaces
 api/wrappers
 api/vector
@@ -50,21 +54,20 @@ api/utils
 :hidden:
 :caption: Environments
 
-environments/atari
-environments/mujoco
-environments/toy_text
 environments/classic_control
 environments/box2d
+environments/toy_text
+environments/mujoco
+environments/atari
 environments/third_party_environments
 ```
 
 ```{toctree}
 :hidden:
+:glob:
 :caption: Tutorials
 
-content/environment_creation
-content/vectorising
-content/handling_timelimits
+tutorials/*
 ```
 
 ```{toctree}
@@ -72,6 +75,4 @@ content/handling_timelimits
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
-Donate <https://farama.org/donations>
-
 ```
