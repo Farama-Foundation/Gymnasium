@@ -1,4 +1,4 @@
-name: Build Documentation website
+name: Build main branch documentation website
 on:
   push:
     branches: [main]
@@ -41,5 +41,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: _build
-          clean-exclude: |
-            *.*.*/
+          target-folder: main
+          clean: false
