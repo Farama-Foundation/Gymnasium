@@ -35,6 +35,7 @@ try:
     # We check whether gym can be imported
     import gym as old_gym
 
+    # We are testing all variations of Pong which are registered in (old) Gym
     atari_ids = [
         "ALE/Pong-v5",
         "ALE/Pong-ram-v5",
