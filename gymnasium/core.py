@@ -1,7 +1,7 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, Optional, SupportsFloat, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
@@ -48,7 +48,7 @@ class Env(Generic[ObsType, ActType]):
     # Set this in SOME subclasses
     metadata: dict[str, Any] = {"render_modes": []}
     # define render_mode if your environment supports rendering
-    render_mode: Optional[str] = None
+    render_mode: str | None = None
     reward_range = (-float("inf"), float("inf"))
     spec: EnvSpec = None
 
@@ -57,7 +57,7 @@ class Env(Generic[ObsType, ActType]):
     observation_space: spaces.Space[ObsType]
 
     # Created
-    _np_random: Optional[np.random.Generator] = None
+    _np_random: np.random.Generator | None = None
 
     def step(
         self, action: ActType
@@ -102,8 +102,8 @@ class Env(Generic[ObsType, ActType]):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict[str, Any]] = None,
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment to an initial internal state, returning an initial observation and info.
 
@@ -142,7 +142,7 @@ class Env(Generic[ObsType, ActType]):
         if seed is not None:
             self._np_random, seed = seeding.np_random(seed)
 
-    def render(self) -> Optional[Union[RenderFrame, list[RenderFrame]]]:
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Compute the render frames as specified by :attr:`render_mode` during the initialization of the environment.
 
         The environment's :attr:`metadata` render modes (`env.metadata["render_modes"]`) should contain the possible
@@ -298,10 +298,10 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         """
         self.env = env
 
-        self._action_space: Optional[spaces.Space[WrapperActType]] = None
-        self._observation_space: Optional[spaces.Space[WrapperObsType]] = None
-        self._reward_range: Optional[tuple[SupportsFloat, SupportsFloat]] = None
-        self._metadata: Optional[dict[str, Any]] = None
+        self._action_space: spaces.Space[WrapperActType] | None = None
+        self._observation_space: spaces.Space[WrapperObsType] | None = None
+        self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
+        self._metadata: dict[str, Any] | None = None
 
     def __getattr__(self, name: str):
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
@@ -326,7 +326,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
     @property
     def action_space(
         self,
-    ) -> Union[spaces.Space[ActType], spaces.Space[WrapperActType]]:
+    ) -> spaces.Space[ActType] | spaces.Space[WrapperActType]:
         """Return the :attr:`Env` :attr:`action_space` unless overwritten then the wrapper :attr:`action_space` is used."""
         if self._action_space is None:
             return self.env.action_space
@@ -339,7 +339,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
     @property
     def observation_space(
         self,
-    ) -> Union[spaces.Space[ObsType], spaces.Space[WrapperObsType]]:
+    ) -> spaces.Space[ObsType] | spaces.Space[WrapperObsType]:
         """Return the :attr:`Env` :attr:`observation_space` unless overwritten then the wrapper :attr:`observation_space` is used."""
         if self._observation_space is None:
             return self.env.observation_space
@@ -372,7 +372,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         self._metadata = value
 
     @property
-    def render_mode(self) -> Optional[str]:
+    def render_mode(self) -> str | None:
         """Returns the :attr:`Env` :attr:`render_mode`."""
         return self.env.render_mode
 
@@ -400,12 +400,12 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self.env.step(action)
 
     def reset(
-        self, *, seed: Optional[int] = None, options: Optional[dict[str, Any]] = None
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data."""
         return self.env.reset(seed=seed, options=options)
 
-    def render(self) -> Optional[Union[RenderFrame, list[RenderFrame]]]:
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
         return self.env.render()
 
@@ -455,7 +455,7 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
     """
 
     def reset(
-        self, *, seed: Optional[int] = None, options: Optional[dict[str, Any]] = None
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Modifies the :attr:`env` after calling :meth:`reset`, returning a modified observation using :meth:`self.observation`."""
         obs, info = self.env.reset(seed=seed, options=options)
