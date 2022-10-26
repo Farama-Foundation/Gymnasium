@@ -2,15 +2,7 @@
 from __future__ import annotations
 
 import sys
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Generic,
-    Optional,
-    SupportsFloat,
-    TypeVar,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Generic, Optional, SupportsFloat, TypeVar, Union
 
 import numpy as np
 
@@ -62,7 +54,7 @@ class Env(Generic[ObsType, ActType]):
     # define render_mode if your environment supports rendering
     render_mode: Optional[str] = None
     reward_range = (-float("inf"), float("inf"))
-    spec: "EnvSpec" = None
+    spec: EnvSpec = None
 
     # Set these in ALL subclasses
     action_space: spaces.Space[ActType]
@@ -175,7 +167,7 @@ class Env(Generic[ObsType, ActType]):
         pass
 
     @property
-    def unwrapped(self) -> "Env[ObsType, ActType]":
+    def unwrapped(self) -> Env[ObsType, ActType]:
         """Returns the base non-wrapped environment.
 
         Returns:
@@ -240,7 +232,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return getattr(self.env, name)
 
     @property
-    def spec(self) -> "EnvSpec":
+    def spec(self) -> EnvSpec:
         """Returns the environment specification."""
         return self.env.spec
 
