@@ -35,6 +35,7 @@ env.close()
 
 content/basic_usage
 content/gym_compatibility
+content/migration-guide
 ```
 
 ```{toctree}
@@ -74,4 +75,5 @@ tutorials/*
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
+Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```
