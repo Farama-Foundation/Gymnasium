@@ -1,14 +1,13 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
+from __future__ import annotations
+
 import sys
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
     Generic,
-    List,
     Optional,
     SupportsFloat,
-    Tuple,
     TypeVar,
     Union,
 )
@@ -59,7 +58,7 @@ class Env(Generic[ObsType, ActType]):
     """
 
     # Set this in SOME subclasses
-    metadata: Dict[str, Any] = {"render_modes": []}
+    metadata: dict[str, Any] = {"render_modes": []}
     # define render_mode if your environment supports rendering
     render_mode: Optional[str] = None
     reward_range = (-float("inf"), float("inf"))
@@ -85,7 +84,7 @@ class Env(Generic[ObsType, ActType]):
 
     def step(
         self, action: ActType
-    ) -> Tuple[ObsType, float, bool, bool, Dict[str, Any]]:
+    ) -> tuple[ObsType, float, bool, bool, dict[str, Any]]:
         """Run one timestep of the environment's dynamics.
 
         When end of episode is reached, you are responsible for calling :meth:`reset` to reset this environment's state.
@@ -115,8 +114,8 @@ class Env(Generic[ObsType, ActType]):
         self,
         *,
         seed: Optional[int] = None,
-        options: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[ObsType, Dict[str, Any]]:
+        options: Optional[dict[str, Any]] = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment to an initial state and returns the initial observation.
 
         This method can reset the environment's random number generator(s) if ``seed`` is an integer or
@@ -146,7 +145,7 @@ class Env(Generic[ObsType, ActType]):
         if seed is not None:
             self._np_random, seed = seeding.np_random(seed)
 
-    def render(self) -> Optional[Union[RenderFrame, List[RenderFrame]]]:
+    def render(self) -> Optional[Union[RenderFrame, list[RenderFrame]]]:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment.
 
         The set of supported modes varies per environment. (And some
@@ -195,7 +194,7 @@ class Env(Generic[ObsType, ActType]):
         """Support with-statement for the environment."""
         return self
 
-    def __exit__(self, *args: List[Any]):
+    def __exit__(self, *args: Any):
         """Support with-statement for the environment."""
         self.close()
         # propagate exception
@@ -227,8 +226,8 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
 
         self._action_space: Optional[spaces.Space[WrapperActType]] = None
         self._observation_space: Optional[spaces.Space[WrapperObsType]] = None
-        self._reward_range: Optional[Tuple[SupportsFloat, SupportsFloat]] = None
-        self._metadata: Optional[Dict[str, Any]] = None
+        self._reward_range: Optional[tuple[SupportsFloat, SupportsFloat]] = None
+        self._metadata: Optional[dict[str, Any]] = None
 
     def __getattr__(self, name: str):
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
@@ -277,25 +276,25 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         self._observation_space = space
 
     @property
-    def reward_range(self) -> Tuple[SupportsFloat, SupportsFloat]:
+    def reward_range(self) -> tuple[SupportsFloat, SupportsFloat]:
         """Return the reward range of the environment."""
         if self._reward_range is None:
             return self.env.reward_range
         return self._reward_range
 
     @reward_range.setter
-    def reward_range(self, value: Tuple[SupportsFloat, SupportsFloat]):
+    def reward_range(self, value: tuple[SupportsFloat, SupportsFloat]):
         self._reward_range = value
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         """Returns the environment metadata."""
         if self._metadata is None:
             return self.env.metadata
         return self._metadata
 
     @metadata.setter
-    def metadata(self, value: Dict[str, Any]):
+    def metadata(self, value: dict[str, Any]):
         self._metadata = value
 
     @property
@@ -322,17 +321,17 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
             "Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."
         )
 
-    def step(self, action: ActType) -> Tuple[ObsType, float, bool, bool, dict]:
+    def step(self, action: ActType) -> tuple[ObsType, float, bool, bool, dict]:
         """Steps through the environment with action."""
         return self.env.step(action)
 
     def reset(
-        self, *, seed: Optional[int] = None, options: Optional[Dict[str, Any]] = None
-    ) -> Tuple[WrapperObsType, Dict[str, Any]]:
+        self, *, seed: Optional[int] = None, options: Optional[dict[str, Any]] = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Resets the environment with a seed and options."""
         return self.env.reset(seed=seed, options=options)
 
-    def render(self) -> Optional[Union[RenderFrame, List[RenderFrame]]]:
+    def render(self) -> Optional[Union[RenderFrame, list[RenderFrame]]]:
         """Renders the environment."""
         return self.env.render()
 
@@ -370,7 +369,7 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
     ``observation["target_position"] - observation["agent_position"]``. For this, you could implement an
     observation wrapper like this::
 
-        class RelativePosition(gymnasium.ObservationWrapper):
+        class RelativePosition(gym.ObservationWrapper):
             def __init__(self, env):
                 super().__init__(env)
                 self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
@@ -383,15 +382,15 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
     """
 
     def reset(
-        self, *, seed: Optional[int] = None, options: Optional[Dict[str, Any]] = None
-    ) -> Tuple[WrapperObsType, Dict[str, Any]]:
+        self, *, seed: Optional[int] = None, options: Optional[dict[str, Any]] = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Resets the environment, returning a modified observation using :meth:`self.observation`."""
         obs, info = self.env.reset(seed=seed, options=options)
         return self.observation(obs), info
 
     def step(
         self, action: ActType
-    ) -> Tuple[WrapperObsType, float, bool, bool, Dict[str, Any]]:
+    ) -> tuple[WrapperObsType, float, bool, bool, dict[str, Any]]:
         """Returns a modified observation using :meth:`self.observation` after calling :meth:`env.step`."""
         observation, reward, terminated, truncated, info = self.env.step(action)
         return self.observation(observation), reward, terminated, truncated, info
@@ -414,7 +413,7 @@ class RewardWrapper(Wrapper[ObsType, ActType]):
     because it is intrinsic), we want to clip the reward to a range to gain some numerical stability.
     To do that, we could, for instance, implement the following wrapper::
 
-        class ClipReward(gymnasium.RewardWrapper):
+        class ClipReward(gym.RewardWrapper):
             def __init__(self, env, min_reward, max_reward):
                 super().__init__(env)
                 self.min_reward = min_reward
@@ -427,7 +426,7 @@ class RewardWrapper(Wrapper[ObsType, ActType]):
 
     def step(
         self, action: ActType
-    ) -> Tuple[ObsType, float, bool, bool, Dict[str, Any]]:
+    ) -> tuple[ObsType, float, bool, bool, dict[str, Any]]:
         """Modifies the reward using :meth:`self.reward` after the environment :meth:`env.step`."""
         observation, reward, terminated, truncated, info = self.env.step(action)
         return observation, self.reward(reward), terminated, truncated, info
@@ -450,7 +449,7 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType]):
     Let’s say you have an environment with action space of type :class:`gymnasium.spaces.Box`, but you would only like
     to use a finite subset of actions. Then, you might want to implement the following wrapper::
 
-        class DiscreteActions(gymnasium.ActionWrapper):
+        class DiscreteActions(gym.ActionWrapper):
             def __init__(self, env, disc_to_cont):
                 super().__init__(env)
                 self.disc_to_cont = disc_to_cont
@@ -460,7 +459,7 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType]):
                 return self.disc_to_cont[act]
 
         if __name__ == "__main__":
-            env = gymnasium.make("LunarLanderContinuous-v2")
+            env = gym.make("LunarLanderContinuous-v2")
             wrapped_env = DiscreteActions(env, [np.array([1,0]), np.array([-1,0]),
                                                 np.array([0,1]), np.array([0,-1])])
             print(wrapped_env.action_space)         #Discrete(4)
@@ -471,7 +470,7 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType]):
 
     def step(
         self, action: WrapperActType
-    ) -> Tuple[ObsType, float, bool, bool, Dict[str, Any]]:
+    ) -> tuple[ObsType, float, bool, bool, dict[str, Any]]:
         """Runs the environment :meth:`env.step` using the modified ``action`` from :meth:`self.action`."""
         return self.env.step(self.action(action))
 
