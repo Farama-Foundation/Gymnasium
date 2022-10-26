@@ -48,7 +48,7 @@ try:
     all_testing_initialised_envs += [
         gym.make("GymV26Environment-v0", env_id=env_id) for env_id in atari_ids
     ]
-except (ImportError, gym.error.DependencyNotInstalled):
+except (ImportError, gym.error.DependencyNotInstalled, gym.error.NamespaceNotFound):
     # Failure because gym or ale isn't available
     logger.warn(
         "Skipping tests of atari environments because gym[atari] appears to be missing"
