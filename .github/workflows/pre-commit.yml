@@ -4,7 +4,7 @@ name: pre-commit
 on:
   pull_request:
   push:
-    branches: [master]
+    branches: [main]
 
 permissions:
   contents: read # to fetch code (actions/checkout)
