@@ -1,3 +1,8 @@
+---
+title: Spaces
+---
+
+
 # Spaces
 
 ```{toctree}
@@ -5,36 +10,37 @@
 spaces/fundamental
 spaces/composite
 spaces/utils
+spaces/vector_utils
 ```
-
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Space
 ```
 
-## General Functions
+## Attributes
+
+```{eval-rst}
+.. autoproperty:: gymnasium.spaces.space.Space.shape
+.. property:: Space.dtype
+
+    Return the data type of this space.
+```
+
+## Methods
 
 Each space implements the following functions:
 
 ```{eval-rst}
-.. autofunction:: gymnasium.spaces.Space.sample
-
-.. autofunction:: gymnasium.spaces.Space.contains
-
-.. autoproperty:: gymnasium.spaces.Space.shape
-
-.. property:: gymnasium.spaces.Space.dtype
-
-    Return the data type of this space.
-
-.. autofunction:: gymnasium.spaces.Space.seed
-
-.. autofunction:: gymnasium.spaces.Space.to_jsonable
-
-.. autofunction:: gymnasium.spaces.Space.from_jsonable
+.. autofunction:: gymnasium.spaces.space.Space.sample
+.. autofunction:: gymnasium.spaces.space.Space.contains
+.. autofunction:: gymnasium.spaces.space.Space.seed
+.. autofunction:: gymnasium.spaces.space.Space.to_jsonable
+.. autofunction:: gymnasium.spaces.space.Space.from_jsonable
 ``` 
 
 ## Fundamental Spaces
+
+Gymnasium has a number of fundamental spaces that are used as building boxes for more complex spaces.
 
 ```{eval-rst}
 .. currentmodule:: gymnasium.spaces
@@ -48,6 +54,8 @@ Each space implements the following functions:
 
 ## Composite Spaces
 
+Often environment spaces require joining fundamental spaces together for vectorised environments, separate agents or readability of the space.
+
 ```{eval-rst}
 * :py:class:`Dict` - Supports a dictionary of keys and subspaces, used for a fixed number of unordered spaces
 * :py:class:`Tuple` - Supports a tuple of subspaces, used for multiple for a fixed number of ordered spaces
@@ -57,9 +65,29 @@ Each space implements the following functions:
 
 ## Utils
 
+Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces. 
+This can be important for passing information to neural networks.
+
 ```{eval-rst}
 * :py:class:`utils.flatdim` - The number of dimensions the flattened space will contain
 * :py:class:`utils.flatten_space` - Flattens a space for which the `flattened` space instances will contain
 * :py:class:`utils.flatten` - Flattens an instance of a space that is contained within the flattened version of the space
 * :py:class:`utils.unflatten` - The reverse of the `flatten_space` function
+```
+
+## Vector Utils
+
+When vectorizing environments, it is necessary to modify the observation and action spaces for new batched spaces sizes.
+Therefore, Gymnasium provides a number of additional functions used when using a space with a Vector environment.
+
+```{eval-rst}
+.. currentmodule:: gymnasium
+
+* :py:class:`vector.utils.batch_space`
+* :py:class:`vector.utils.concatenate`
+* :py:class:`vector.utils.iterate`
+* :py:class:`vector.utils.create_empty_array`
+* :py:class:`vector.utils.create_shared_memory`
+* :py:class:`vector.utils.read_from_shared_memory`
+* :py:class:`vector.utils.write_to_shared_memory`
 ```

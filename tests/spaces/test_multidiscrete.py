@@ -1,6 +1,7 @@
+import numpy as np
 import pytest
 
-from gymnasium.spaces import Discrete, MultiDiscrete
+from gymnasium.spaces import Discrete, MultiDiscrete, flatten, unflatten
 from gymnasium.utils.env_checker import data_equivalence
 
 
@@ -64,3 +65,14 @@ def test_multidiscrete_length():
         match="Getting the length of a multi-dimensional MultiDiscrete space.",
     ):
         assert len(space) == 2
+
+
+def test_multidiscrete_integer_overflow():
+    # Check if space can be flattened and unflattened without an integer overflow
+    space = MultiDiscrete(nvec=[101, 101, 101, 101], dtype=np.int8)
+    x = space.sample()
+    y = flatten(space, x)
+    z = unflatten(space, y)
+
+    assert len(z) == 4
+    assert np.array_equal(x, z)

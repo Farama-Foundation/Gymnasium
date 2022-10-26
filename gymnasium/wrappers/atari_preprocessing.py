@@ -17,6 +17,7 @@ class AtariPreprocessing(gym.Wrapper):
     "Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents".
 
     Specifically, the following preprocess stages applies to the atari environment:
+
     - Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.
     - Frame skipping: The number of frames skipped between steps, 4 by default
     - Max-pooling: Pools over the most recent two observations from the frame skips

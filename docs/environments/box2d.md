@@ -3,7 +3,7 @@ firstpage:
 lastpage:
 ---
 
-## Box2D
+# Box2D
 
 ```{toctree}
 :hidden:

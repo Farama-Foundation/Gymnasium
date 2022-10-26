@@ -17,7 +17,11 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
     if "gymnasium.envs." in env_spec.entry_point:
         try:
             return env_spec.make(disable_env_checker=True).unwrapped
-        except (ImportError, gym.error.DependencyNotInstalled) as e:
+        except (
+            ImportError,
+            gym.error.DependencyNotInstalled,
+            gym.error.MissingArgument,
+        ) as e:
             logger.warn(f"Not testing {env_spec.id} due to error: {e}")
     return None
 

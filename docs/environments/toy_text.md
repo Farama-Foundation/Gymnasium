@@ -3,7 +3,7 @@ firstpage:
 lastpage:
 ---
 
-## Toy Text
+# Toy Text
 
 ```{toctree}
 :hidden:

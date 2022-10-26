@@ -51,7 +51,7 @@ class BlackjackEnv(gym.Env):
     Blackjack is a card game where the goal is to beat the dealer by obtaining cards
     that sum to closer to 21 (without going over 21) than the dealers cards.
 
-    ### Description
+    ## Description
     Card Values:
 
     - Face cards (Jack, Queen, King) have a point value of 10.
@@ -69,10 +69,10 @@ class BlackjackEnv(gym.Env):
     If neither the player nor the dealer busts, the outcome (win, lose, draw) is
     decided by whose sum is closer to 21.
 
-    ### Action Space
+    ## Action Space
     There are two actions: stick (0), and hit (1).
 
-    ### Observation Space
+    ## Observation Space
     The observation consists of a 3-tuple containing: the player's current sum,
     the value of the dealer's one showing card (1-10 where 1 is ace),
     and whether the player holds a usable ace (0 or 1).
@@ -81,7 +81,7 @@ class BlackjackEnv(gym.Env):
     described in Example 5.1 in Reinforcement Learning: An Introduction
     by Sutton and Barto (http://incompleteideas.net/book/the-book-2nd.html).
 
-    ### Rewards
+    ## Rewards
     - win game: +1
     - lose game: -1
     - draw game: 0
@@ -91,7 +91,7 @@ class BlackjackEnv(gym.Env):
 
         +1 (if <a href="#nat">natural</a> is False)
 
-    ### Arguments
+    ## Arguments
 
     ```python
     import gymnasium as gym
@@ -107,7 +107,7 @@ class BlackjackEnv(gym.Env):
     will win (i.e. get a reward of +1). The reverse rule does not apply.
     If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).
 
-    ### Version History
+    ## Version History
     * v0: Initial versions release (1.0.0)
     """
 

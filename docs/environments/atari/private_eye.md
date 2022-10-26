@@ -18,16 +18,15 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                     |
 | Import            | `gymnasium.make("ALE/PrivateEye-v5")` |
 
-### Description
+## Description
 You control the French Private Eye Pierre Touche. Navigate the city streets, parks, secret passages, dead-ends and one-ways in search of the ringleader, Henri Le Fiend and his gang. You also need to find evidence and stolen goods that are scattered about. There are five cases, complete each case before its statute of limitations expires. 
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=376)
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions will be available in the default flavor.
 
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is possible to observe
 - The 128 Bytes of RAM of the console
 - A grayscale image
@@ -47,8 +46,7 @@ via `gymnasium.make`.
 ### Rewards
 You score points for completing your tasks like gathering evidence, nabbing questionable characters or closing cases etc. You lose points if you get hit or if your auto is on a pothole. 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=376).
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/PrivateEye-v5")
@@ -67,7 +65,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("PrivateEye-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

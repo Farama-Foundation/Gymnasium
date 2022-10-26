@@ -1,13 +1,13 @@
-===================
-Gymnasium Code of Conduct
-===================
+=================================
+Farama Foundation Code of Conduct
+=================================
 
-Gymnasium is dedicated to providing a harassment-free experience for
+The Farama Foundation is dedicated to providing a harassment-free experience for
 everyone, regardless of gender, gender identity and expression, sexual
 orientation, disability, physical appearance, body size, age, race, or
 religion. We do not tolerate harassment of participants in any form.
 
-This code of conduct applies to all Gymnasium spaces (including Gist
+This code of conduct applies to all Farama Foundation repositories (including Gist
 comments) both online and off. Anyone who violates this code of
 conduct may be sanctioned or expelled from these spaces at the
 discretion of the moderators.
@@ -19,7 +19,7 @@ and abiding by these rules.
 -------------
 Our Standards
 -------------
-Members of the Gymnasium community are **open**, **inclusive**, and **respectful**.
+Members of the Farama Foundation community are **open**, **inclusive**, and **respectful**.
 Examples of behavior that contributes to a positive environment for our community include:
 
 * **Being open**. Members of the community are open to collaboration, whether it's on issues, PRs, problems, or otherwise
@@ -49,7 +49,7 @@ Members asked to stop any inappropriate behavior are expected to comply immediat
 ------------
 Consequences
 ------------
-If a participant engages in behavior that violates this code of conduct, the Gymnasium team may take any action they deem
+If a participant engages in behavior that violates this code of conduct, the Farama Foundation team may take any action they deem
 appropriate, including warning the offender or expulsion from the community.
 
 Thank you for helping make this a welcoming, friendly community for everyone.
