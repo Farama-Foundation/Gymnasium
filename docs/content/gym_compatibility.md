@@ -18,7 +18,7 @@ For environments that are registered solely in OpenAI Gym, it is still possible 
 An example of this is atari 0.8.0 which does not have a gymnasium implementation. 
 ```python
 import gymnasium as gym
-env = gym.make("GymV26Environment-v0", env_name="ALE/Pong-v5")
+env = gym.make("GymV26Environment-v0", env_id="ALE/Pong-v5")
 ```
 
 ## Gym v0.22 Environment Compatibility
