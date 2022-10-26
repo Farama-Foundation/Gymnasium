@@ -33,7 +33,7 @@ all_testing_initialised_envs: List[Optional[gym.Env]] = [
 
 try:
     # We check whether gym can be imported
-    import gym as _  # noqa: F401
+    import gym as old_gym
 
     atari_ids = [
         "ALE/Pong-v5",
@@ -48,11 +48,12 @@ try:
     all_testing_initialised_envs += [
         gym.make("GymV26Environment-v0", env_id=env_id) for env_id in atari_ids
     ]
-except (ImportError, gym.error.DependencyNotInstalled, gym.error.NamespaceNotFound):
-    # Failure because gym or ale isn't available
-    logger.warn(
-        "Skipping tests of atari environments because gym[atari] appears to be missing"
-    )
+except ImportError:
+    # Failure because gym isn't available
+    logger.warn("Skipping tests of atari environments because gym seems to be missing")
+except (old_gym.error.DependencyNotInstalled, old_gym.error.NamespaceNotFound):
+    # Failure because ale isn't available
+    logger.warn("Skipping tests of atari environments because ALE seems to be missing")
 
 all_testing_initialised_envs: List[gym.Env] = [
     env for env in all_testing_initialised_envs if env is not None
