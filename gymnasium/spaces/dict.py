@@ -8,13 +8,14 @@ from typing import Sequence
 from typing import Sequence as TypingSequence
 from typing import Tuple as TypingTuple
 from typing import Union
+from typing import Mapping as TypingMapping
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
 
-class Dict(Space[TypingDict[str, Any]], Mapping[str, Space[Any]]):
+class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
     """A dictionary of :class:`Space` instances.
 
     Elements of this space are (ordered) dictionaries of elements from the constituent spaces.

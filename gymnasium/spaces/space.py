@@ -1,27 +1,17 @@
 """Implementation of the `Space` metaclass."""
+from __future__ import annotations
 
-from typing import (
-    Any,
-    Generic,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import Any, Generic, Iterable, Mapping, Sequence, TypeVar
 
 import numpy as np
+import numpy.typing as npt
 
 from gymnasium.utils import seeding
 
 T_cov = TypeVar("T_cov", covariant=True)
 
 
-MASK_NDARRAY = np.ndarray[Any, np.dtype[np.int8]]
+MASK_NDARRAY = npt.NDArray[np.int8]
 
 
 class Space(Generic[T_cov]):
@@ -52,9 +42,9 @@ class Space(Generic[T_cov]):
 
     def __init__(
         self,
-        shape: Optional[Sequence[int]] = None,
-        dtype: Optional[Union[str, Type[Any], np.dtype[Any]]] = None,
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        shape: Sequence[int] | None = None,
+        dtype: npt.DTypeLike | None = None,
+        seed: int | np.random.Generator | None = None,
     ):
         """Constructor of :class:`Space`.
 
@@ -82,7 +72,7 @@ class Space(Generic[T_cov]):
         return self._np_random
 
     @property
-    def shape(self) -> Optional[Tuple[int, ...]]:
+    def shape(self) -> tuple[int, ...] | None:
         """Return the shape of the space as an immutable property."""
         return self._shape
 
@@ -91,7 +81,7 @@ class Space(Generic[T_cov]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         raise NotImplementedError
 
-    def sample(self, mask: Optional[Any] = None) -> T_cov:
+    def sample(self, mask: Any | None = None) -> T_cov:
         """Randomly sample an element of this space.
 
         Can be uniform or non-uniform sampling based on boundedness of space.
@@ -104,7 +94,7 @@ class Space(Generic[T_cov]):
         """
         raise NotImplementedError
 
-    def seed(self, seed: Optional[int] = None) -> List[int]:
+    def seed(self, seed: int | None = None) -> list[int]:
         """Seed the PRNG of this space and possibly the PRNGs of subspaces."""
         self._np_random, seed = seeding.np_random(seed)
         return [seed]
@@ -117,7 +107,7 @@ class Space(Generic[T_cov]):
         """Return boolean specifying if x is a valid member of this space."""
         return self.contains(x)
 
-    def __setstate__(self, state: Union[Iterable[Tuple[str, Any]], Mapping[str, Any]]):
+    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
         """Used when loading a pickled space.
 
         This method was implemented explicitly to allow for loading of legacy states.
@@ -134,7 +124,7 @@ class Space(Generic[T_cov]):
         #   https://github.com/openai/gym/pull/1913 -- np_random
         #
         if "shape" in state:
-            state["_shape"] = state["shape"]
+            state["_shape"] = state.get("shape")
             del state["shape"]
         if "np_random" in state:
             state["_np_random"] = state["np_random"]
@@ -143,12 +133,12 @@ class Space(Generic[T_cov]):
         # Update our state
         self.__dict__.update(state)
 
-    def to_jsonable(self, sample_n: Sequence[T_cov]) -> List[Any]:
+    def to_jsonable(self, sample_n: Sequence[T_cov]) -> list[Any]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # By default, assume identity is JSONable
         return list(sample_n)
 
-    def from_jsonable(self, sample_n: List[Any]) -> List[T_cov]:
+    def from_jsonable(self, sample_n: list[Any]) -> list[T_cov]:
         """Convert a JSONable data type to a batch of samples from this space."""
         # By default, assume identity is JSONable
         return sample_n

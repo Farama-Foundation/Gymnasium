@@ -1,5 +1,7 @@
 """Implementation of a space that represents graph information where nodes and edges can be represented with euclidean space."""
-from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple, Union
+from __future__ import annotations
+
+from typing import Any, NamedTuple, Sequence
 
 import numpy as np
 from numpy.typing import NDArray
@@ -20,8 +22,8 @@ class GraphInstance(NamedTuple):
     """
 
     nodes: NDArray[Any]
-    edges: Optional[NDArray[Any]]
-    edge_links: Optional[NDArray[Any]]
+    edges: NDArray[Any] | None
+    edge_links: NDArray[Any] | None
 
 
 class Graph(Space[GraphInstance]):
@@ -34,9 +36,9 @@ class Graph(Space[GraphInstance]):
 
     def __init__(
         self,
-        node_space: Union[Box, Discrete],
-        edge_space: Union[None, Box, Discrete],
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        node_space: Box | Discrete,
+        edge_space: None | Box | Discrete,
+        seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Graph`.
 
@@ -70,8 +72,8 @@ class Graph(Space[GraphInstance]):
         return False
 
     def _generate_sample_space(
-        self, base_space: Union[None, Box, Discrete], num: int
-    ) -> Optional[Union[Box, MultiDiscrete]]:
+        self, base_space: None | Box | Discrete, num: int
+    ) -> Box | MultiDiscrete | None:
         if num == 0 or base_space is None:
             return None
 
@@ -92,14 +94,15 @@ class Graph(Space[GraphInstance]):
 
     def sample(
         self,
-        mask: Optional[
-            Tuple[
-                Optional[Union[NDArray[Any], Tuple[Any, ...]]],
-                Optional[Union[NDArray[Any], Tuple[Any, ...]]],
+        mask: None
+        | (
+            tuple[
+                NDArray[Any] | tuple[Any, ...] | None,
+                NDArray[Any] | tuple[Any, ...] | None,
             ]
-        ] = None,
+        ) = None,
         num_nodes: int = 10,
-        num_edges: Optional[int] = None,
+        num_edges: int | None = None,
     ) -> GraphInstance:
         """Generates a single sample graph with num_nodes between 1 and 10 sampled from the Graph.
 
@@ -208,9 +211,9 @@ class Graph(Space[GraphInstance]):
 
     def to_jsonable(
         self, sample_n: Sequence[GraphInstance]
-    ) -> List[Dict[str, Union[List[int], List[float]]]]:
+    ) -> list[dict[str, list[int] | list[float]]]:
         """Convert a batch of samples from this space to a JSONable data type."""
-        ret_n: List[Dict[str, List[Union[int, float]]]] = []
+        ret_n: list[dict[str, list[int | float]]] = []
         for sample in sample_n:
             ret = {"nodes": sample.nodes.tolist()}
             if sample.edges is not None and sample.edge_links is not None:
@@ -220,10 +223,10 @@ class Graph(Space[GraphInstance]):
         return ret_n
 
     def from_jsonable(
-        self, sample_n: Sequence[Dict[str, List[Union[List[int], List[float]]]]]
-    ) -> List[GraphInstance]:
+        self, sample_n: Sequence[dict[str, list[list[int] | list[float]]]]
+    ) -> list[GraphInstance]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        ret: List[GraphInstance] = []
+        ret: list[GraphInstance] = []
         for sample in sample_n:
             if "edges" in sample:
                 ret_n = GraphInstance(

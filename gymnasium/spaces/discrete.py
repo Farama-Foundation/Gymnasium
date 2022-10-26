@@ -1,5 +1,7 @@
 """Implementation of a space consisting of finitely many elements."""
-from typing import Any, Iterable, Mapping, Optional, Tuple, Union
+from __future__ import annotations
+
+from typing import Any, Iterable, Mapping
 
 import numpy as np
 
@@ -20,7 +22,7 @@ class Discrete(Space[int]):
     def __init__(
         self,
         n: int,
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        seed: int | np.random.Generator | None = None,
         start: int = 0,
     ):
         r"""Constructor of :class:`Discrete` space.
@@ -44,7 +46,7 @@ class Discrete(Space[int]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: Optional[MASK_NDARRAY] = None) -> int:
+    def sample(self, mask: MASK_NDARRAY | None = None) -> int:
         """Generates a single random sample from this space.
 
         A sample will be chosen uniformly at random with the mask if provided
@@ -107,7 +109,7 @@ class Discrete(Space[int]):
             and self.start == other.start
         )
 
-    def __setstate__(self, state: Union[Iterable[Tuple[str, Any]], Mapping[str, Any]]):
+    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
         """Used when loading a pickled space.
 
         This method has to be implemented explicitly to allow for loading of legacy states.

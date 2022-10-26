@@ -1,16 +1,7 @@
 """Implementation of a space that represents closed boxes in euclidean space."""
-from typing import (
-    Any,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    Sequence,
-    SupportsFloat,
-    Tuple,
-    Type,
-    Union,
-)
+from __future__ import annotations
+
+from typing import Any, Iterable, Mapping, Sequence, SupportsFloat
 
 import numpy as np
 from numpy.typing import NDArray
@@ -63,11 +54,11 @@ class Box(Space[NDArray[Any]]):
 
     def __init__(
         self,
-        low: Union[SupportsFloat, NDArray[Any]],
-        high: Union[SupportsFloat, NDArray[Any]],
-        shape: Optional[Sequence[int]] = None,
-        dtype: Union[Type[np.floating[Any]], Type[np.integer[Any]]] = np.float32,
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        low: SupportsFloat | NDArray[Any],
+        high: SupportsFloat | NDArray[Any],
+        shape: Sequence[int] | None = None,
+        dtype: type[np.floating[Any]] | type[np.integer[Any]] = np.float32,
+        seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Box`.
 
@@ -129,7 +120,7 @@ class Box(Space[NDArray[Any]]):
             high.shape == shape
         ), f"high.shape doesn't match provided shape, high.shape: {high.shape}, shape: {shape}"
 
-        self._shape: Tuple[int, ...] = shape
+        self._shape: tuple[int, ...] = shape
 
         low_precision = get_precision(low.dtype)
         high_precision = get_precision(high.dtype)
@@ -145,7 +136,7 @@ class Box(Space[NDArray[Any]]):
         super().__init__(self.shape, self.dtype, seed)
 
     @property
-    def shape(self) -> Tuple[int, ...]:
+    def shape(self) -> tuple[int, ...]:
         """Has stricter type than gym.Space - never None."""
         return self._shape
 
@@ -204,8 +195,7 @@ class Box(Space[NDArray[Any]]):
         high = self.high if self.dtype.kind == "f" else self.high.astype("int64") + 1
         sample = np.empty(self.shape)
 
-        # Masking arrays which classify the coordinates according to interval
-        # type
+        # Masking arrays which classify the coordinates according to interval type
         unbounded = ~self.bounded_below & ~self.bounded_above
         upp_bounded = ~self.bounded_below & self.bounded_above
         low_bounded = self.bounded_below & ~self.bounded_above
@@ -248,13 +238,11 @@ class Box(Space[NDArray[Any]]):
             and np.all(x <= self.high)
         )
 
-    def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> List[NDArray[Any]]:
+    def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[NDArray[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return np.array(sample_n).tolist()
 
-    def from_jsonable(
-        self, sample_n: Sequence[Union[float, int]]
-    ) -> List[NDArray[Any]]:
+    def from_jsonable(self, sample_n: Sequence[float | int]) -> list[NDArray[Any]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [np.asarray(sample) for sample in sample_n]
 
@@ -279,7 +267,7 @@ class Box(Space[NDArray[Any]]):
             and np.allclose(self.high, other.high)
         )
 
-    def __setstate__(self, state: Union[Iterable[Tuple[str, Any]], Mapping[str, Any]]):
+    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
         """Sets the state of the box for unpickling a box with legacy support."""
         super().__setstate__(state)
 
@@ -291,7 +279,7 @@ class Box(Space[NDArray[Any]]):
             self.high_repr = _short_repr(self.high)
 
 
-def get_inf(dtype: np.dtype[Any], sign: str) -> SupportsFloat:
+def get_inf(dtype: np.dtype, sign: str) -> SupportsFloat:
     """Returns an infinite that doesn't break things.
 
     Args:
@@ -323,7 +311,7 @@ def get_inf(dtype: np.dtype[Any], sign: str) -> SupportsFloat:
         raise ValueError(f"Unknown dtype {dtype} for infinite bounds")
 
 
-def get_precision(dtype: np.dtype[Any]) -> SupportsFloat:
+def get_precision(dtype: np.dtype) -> SupportsFloat:
     """Get precision of a data type."""
     if np.issubdtype(dtype, np.floating):
         return np.finfo(dtype).precision
@@ -332,9 +320,9 @@ def get_precision(dtype: np.dtype[Any]) -> SupportsFloat:
 
 
 def _broadcast(
-    value: Union[SupportsFloat, NDArray[Any]],
-    dtype: np.dtype[Any],
-    shape: Tuple[int, ...],
+    value: SupportsFloat | NDArray[Any],
+    dtype: np.dtype,
+    shape: tuple[int, ...],
     inf_sign: str,
 ) -> NDArray[Any]:
     """Handle infinite bounds and broadcast at the same time if needed."""

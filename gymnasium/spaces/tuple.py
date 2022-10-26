@@ -10,7 +10,7 @@ import numpy as np
 from gymnasium.spaces.space import Space
 
 
-class Tuple(Space[TypingTuple[Any, ...]], CollectionSequence[Any]):
+class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
     Elements of this space are tuples of elements of the constituent spaces.

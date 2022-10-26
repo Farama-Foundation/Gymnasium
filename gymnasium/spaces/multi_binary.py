@@ -1,13 +1,15 @@
 """Implementation of a space that consists of binary np.ndarrays of a fixed shape."""
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from __future__ import annotations
+
+from typing import Any, Sequence
 
 import numpy as np
-from numpy.typing import NDArray
+import numpy.typing as npt
 
 from gymnasium.spaces.space import MASK_NDARRAY, Space
 
 
-class MultiBinary(Space[NDArray[np.int8]]):
+class MultiBinary(Space[npt.NDArray[np.int8]]):
     """An n-shape binary space.
 
     Elements of this space are binary arrays of a shape that is fixed during construction.
@@ -26,8 +28,8 @@ class MultiBinary(Space[NDArray[np.int8]]):
 
     def __init__(
         self,
-        n: Union[NDArray[np.integer[Any]], Sequence[int], int],
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        n: npt.NDArray[np.integer[Any]] | Sequence[int] | int,
+        seed: int | np.random.Generator | None = None,
     ):
         """Constructor of :class:`MultiBinary` space.
 
@@ -47,7 +49,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
         super().__init__(input_n, np.int8, seed)
 
     @property
-    def shape(self) -> Tuple[int, ...]:
+    def shape(self) -> tuple[int, ...]:
         """Has stricter type than gym.Space - never None."""
         return self._shape  # type: ignore
 
@@ -56,9 +58,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(
-        self, mask: Optional[MASK_NDARRAY] = None
-    ) -> np.ndarray[Any, np.dtype[np.int8]]:
+    def sample(self, mask: MASK_NDARRAY | None = None) -> npt.NDArray[np.int8]:
         """Generates a single random sample from this space.
 
         A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).
@@ -105,14 +105,14 @@ class MultiBinary(Space[NDArray[np.int8]]):
         )
 
     def to_jsonable(
-        self, sample_n: Sequence[np.ndarray[Any, np.dtype[np.int8]]]
-    ) -> List[Sequence[int]]:
+        self, sample_n: Sequence[npt.NDArray[np.int8]]
+    ) -> list[Sequence[int]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return np.array(sample_n).tolist()
 
     def from_jsonable(
-        self, sample_n: List[Sequence[int]]
-    ) -> List[np.ndarray[Any, np.dtype[np.int8]]]:
+        self, sample_n: list[Sequence[int]]
+    ) -> list[npt.NDArray[np.int8]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [np.asarray(sample, self.dtype) for sample in sample_n]
 

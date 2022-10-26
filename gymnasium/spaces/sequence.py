@@ -5,6 +5,7 @@ from typing import Sequence as TypingSequence
 from typing import Tuple, Union
 
 import numpy as np
+import numpy.typing as npt
 
 from gymnasium.spaces.space import Space
 
@@ -60,8 +61,8 @@ class Sequence(Space[Tuple[Any, ...]]):
             Tuple[
                 Optional[
                     Union[
-                        np.integer[Any],
-                        np.ndarray[Any, np.dtype[np.integer[Any]]],
+                        np.integer,
+                        npt.NDArray[np.integer],
                     ]
                 ],
                 Optional[Any],
