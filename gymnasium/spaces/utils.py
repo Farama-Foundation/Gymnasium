@@ -3,12 +3,13 @@
 These functions mostly take care of flattening and unflattening elements of spaces
  to facilitate their usage in learning code.
 """
+from __future__ import annotations
+
 import operator as op
 from collections import OrderedDict
 from functools import reduce, singledispatch
 from typing import Any
 from typing import Dict as TypingDict
-from typing import Optional
 from typing import Tuple as TypingTuple
 from typing import TypeVar, Union, cast
 
@@ -61,7 +62,7 @@ def flatdim(space: Space[Any]) -> int:
 
 @flatdim.register(Box)
 @flatdim.register(MultiBinary)
-def _flatdim_box_multibinary(space: Union[Box, MultiBinary]) -> int:
+def _flatdim_box_multibinary(space: Box | MultiBinary) -> int:
     return reduce(op.mul, space.shape, 1)
 
 
@@ -156,9 +157,7 @@ def flatten(space: Space[T], x: T) -> FlatType:
 
 @flatten.register(Box)
 @flatten.register(MultiBinary)
-def _flatten_box_multibinary(
-    space: Union[Box, MultiBinary], x: NDArray[Any]
-) -> NDArray[Any]:
+def _flatten_box_multibinary(space: Box | MultiBinary, x: NDArray[Any]) -> NDArray[Any]:
     return np.asarray(x, dtype=space.dtype).flatten()
 
 
@@ -184,7 +183,7 @@ def _flatten_multidiscrete(
 @flatten.register(Tuple)
 def _flatten_tuple(
     space: Tuple, x: TypingTuple[Any, ...]
-) -> Union[TypingTuple[Any, ...], NDArray[Any]]:
+) -> TypingTuple[Any, ...] | NDArray[Any]:
     if space.is_np_flattenable:
         return np.concatenate(
             [flatten(s, x_part) for x_part, s in zip(x, space.spaces)]
@@ -195,7 +194,7 @@ def _flatten_tuple(
 @flatten.register(Dict)
 def _flatten_dict(
     space: Dict, x: TypingDict[str, Any]
-) -> Union[TypingDict[str, Any], NDArray[Any]]:
+) -> TypingDict[str, Any] | NDArray[Any]:
     if space.is_np_flattenable:
         return np.concatenate([flatten(s, x[key]) for key, s in space.spaces.items()])
     return OrderedDict((key, flatten(s, x[key])) for key, s in space.spaces.items())
@@ -206,9 +205,9 @@ def _flatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
     """We're not using `.unflatten() for :class:`Box` and :class:`Discrete` because a graph is not a homogeneous space, see `.flatten` docstring."""
 
     def _graph_unflatten(
-        unflatten_space: Optional[Union[Discrete, Box]],
-        unflatten_x: Optional[NDArray[Any]],
-    ) -> Optional[NDArray[Any]]:
+        unflatten_space: Discrete | Box | None,
+        unflatten_x: NDArray[Any] | None,
+    ) -> NDArray[Any] | None:
         ret = None
         if unflatten_space is not None and unflatten_x is not None:
             if isinstance(unflatten_space, Box):
@@ -271,7 +270,7 @@ def unflatten(space: Space[T], x: FlatType) -> T:
 @unflatten.register(Box)
 @unflatten.register(MultiBinary)
 def _unflatten_box_multibinary(
-    space: Union[Box, MultiBinary], x: NDArray[Any]
+    space: Box | MultiBinary, x: NDArray[Any]
 ) -> NDArray[Any]:
     return np.asarray(x, dtype=space.dtype).reshape(space.shape)
 
@@ -294,7 +293,7 @@ def _unflatten_multidiscrete(
 
 @unflatten.register(Tuple)
 def _unflatten_tuple(
-    space: Tuple, x: Union[NDArray[Any], TypingTuple[Any, ...]]
+    space: Tuple, x: NDArray[Any] | TypingTuple[Any, ...]
 ) -> TypingTuple[Any, ...]:
     if space.is_np_flattenable:
         assert isinstance(
@@ -314,7 +313,7 @@ def _unflatten_tuple(
 
 @unflatten.register(Dict)
 def _unflatten_dict(
-    space: Dict, x: Union[NDArray[Any], TypingDict[str, Any]]
+    space: Dict, x: NDArray[Any] | TypingDict[str, Any]
 ) -> TypingDict[str, Any]:
     if space.is_np_flattenable:
         dims = np.asarray([flatdim(s) for s in space.spaces.values()], dtype=np.int_)
@@ -369,7 +368,7 @@ def _unflatten_sequence(
 
 
 @singledispatch
-def flatten_space(space: Space[Any]) -> Union[Box, Dict, Sequence, Tuple, Graph]:
+def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
     """Flatten a space into a space that is as flat as possible.
 
     This function will attempt to flatten `space` into a single :class:`Box` space.
@@ -438,12 +437,12 @@ def _flatten_space_box(space: Box) -> Box:
 @flatten_space.register(Discrete)
 @flatten_space.register(MultiBinary)
 @flatten_space.register(MultiDiscrete)
-def _flatten_space_binary(space: Union[Discrete, MultiBinary, MultiDiscrete]) -> Box:
+def _flatten_space_binary(space: Discrete | MultiBinary | MultiDiscrete) -> Box:
     return Box(low=0, high=1, shape=(flatdim(space),), dtype=space.dtype)
 
 
 @flatten_space.register(Tuple)
-def _flatten_space_tuple(space: Tuple) -> Union[Box, Tuple]:
+def _flatten_space_tuple(space: Tuple) -> Box | Tuple:
     if space.is_np_flattenable:
         space_list = [flatten_space(s) for s in space.spaces]
         return Box(
@@ -455,7 +454,7 @@ def _flatten_space_tuple(space: Tuple) -> Union[Box, Tuple]:
 
 
 @flatten_space.register(Dict)
-def _flatten_space_dict(space: Dict) -> Union[Box, Dict]:
+def _flatten_space_dict(space: Dict) -> Box | Dict:
     if space.is_np_flattenable:
         space_list = [flatten_space(s) for s in space.spaces.values()]
         return Box(

@@ -1,8 +1,10 @@
 """Implementation of a space that represents finite-length sequences."""
+from __future__ import annotations
+
 from collections.abc import Sequence as CollectionSequence
-from typing import Any, List, Optional
+from typing import Any
 from typing import Sequence as TypingSequence
-from typing import Tuple, Union
+from typing import Tuple
 
 import numpy as np
 import numpy.typing as npt
@@ -28,7 +30,7 @@ class Sequence(Space[Tuple[Any, ...]]):
     def __init__(
         self,
         space: Space[Any],
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        seed: int | np.random.Generator | None = None,
     ):
         """Constructor of the :class:`Sequence` space.
 
@@ -44,7 +46,7 @@ class Sequence(Space[Tuple[Any, ...]]):
         # None for shape and dtype, since it'll require special handling
         super().__init__(None, None, seed)
 
-    def seed(self, seed: Optional[int] = None) -> List[int]:
+    def seed(self, seed: int | None = None) -> list[int]:
         """Seed the PRNG of this space and the feature space."""
         seeds = super().seed(seed)
         seeds += self.feature_space.seed(seed)
@@ -57,18 +59,14 @@ class Sequence(Space[Tuple[Any, ...]]):
 
     def sample(
         self,
-        mask: Optional[
-            Tuple[
-                Optional[
-                    Union[
-                        np.integer,
-                        npt.NDArray[np.integer],
-                    ]
-                ],
-                Optional[Any],
+        mask: None
+        | (
+            tuple[
+                None | (np.integer | npt.NDArray[np.integer]),
+                Any | None,
             ]
-        ] = None,
-    ) -> Tuple[Any]:
+        ) = None,
+    ) -> tuple[Any]:
         """Generates a single random sample from this space.
 
         Args:
@@ -128,12 +126,12 @@ class Sequence(Space[Tuple[Any, ...]]):
         """Gives a string representation of this space."""
         return f"Sequence({self.feature_space})"
 
-    def to_jsonable(self, sample_n: TypingSequence[Tuple[Any, ...]]) -> List[List[Any]]:
+    def to_jsonable(self, sample_n: TypingSequence[tuple[Any, ...]]) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as dict-repr of vectors
         return [self.feature_space.to_jsonable(list(sample)) for sample in sample_n]
 
-    def from_jsonable(self, sample_n: List[List[Any]]) -> List[Tuple[Any, ...]]:
+    def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n]
 

@@ -1,9 +1,10 @@
 """Implementation of a space that represents the cartesian product of other spaces."""
+from __future__ import annotations
+
 from collections.abc import Sequence as CollectionSequence
-from typing import Any, Iterable, List, Optional
+from typing import Any, Iterable
 from typing import Sequence as TypingSequence
 from typing import Tuple as TypingTuple
-from typing import Union
 
 import numpy as np
 
@@ -26,7 +27,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
     def __init__(
         self,
         spaces: Iterable[Space[Any]],
-        seed: Optional[Union[int, TypingSequence[int], np.random.Generator]] = None,
+        seed: int | TypingSequence[int] | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Tuple` space.
 
@@ -48,7 +49,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
-    def seed(self, seed: Optional[Union[int, TypingSequence[int]]] = None) -> List[int]:
+    def seed(self, seed: int | TypingSequence[int] | None = None) -> list[int]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
@@ -59,7 +60,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
         Args:
             seed: An optional list of ints or int to seed the (sub-)spaces.
         """
-        seeds: List[int] = []
+        seeds: list[int] = []
 
         if isinstance(seed, CollectionSequence):
             assert len(seed) == len(
@@ -85,7 +86,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
         return seeds
 
     def sample(
-        self, mask: Optional[TypingTuple[Optional[Any], ...]] = None
+        self, mask: TypingTuple[Any | None, ...] | None = None
     ) -> TypingTuple[Any, ...]:
         """Generates a single random sample inside this space.
 
@@ -130,7 +131,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
 
     def to_jsonable(
         self, sample_n: TypingSequence[TypingTuple[Any, ...]]
-    ) -> List[List[Any]]:
+    ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as list-repr of tuple of vectors
         return [
@@ -138,7 +139,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
             for i, space in enumerate(self.spaces)
         ]
 
-    def from_jsonable(self, sample_n: List[List[Any]]) -> List[TypingTuple[Any, ...]]:
+    def from_jsonable(self, sample_n: list[list[Any]]) -> list[TypingTuple[Any, ...]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [
             sample
