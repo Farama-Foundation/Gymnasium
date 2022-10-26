@@ -148,15 +148,17 @@ def check_rendered(rendered_frame, mode: str):
         )
 
 
-non_mujoco_py_env_specs = [
+# We do not check render_mode for some mujoco envs and any old Gym environment wrapped by `GymEnvironment`
+render_mode_env_specs = [
     spec
     for spec in all_testing_env_specs
-    if "mujoco" not in spec.entry_point or "v4" in spec.id
+    if ("mujoco" not in spec.entry_point or "v4" in spec.id)
+    and ("GymEnvironment" not in spec.entry_point)
 ]
 
 
 @pytest.mark.parametrize(
-    "spec", non_mujoco_py_env_specs, ids=[spec.id for spec in non_mujoco_py_env_specs]
+    "spec", render_mode_env_specs, ids=[spec.id for spec in render_mode_env_specs]
 )
 def test_render_modes(spec):
     """There is a known issue where rendering a mujoco environment then mujoco-py will cause an error on non-mac based systems.
