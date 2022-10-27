@@ -27,6 +27,6 @@ COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
 RUN pip install poetry
-RUN poetry run pip install .[testing] --no-cache-dir
+RUN poetry install --all-extras
 
 ENTRYPOINT ["/usr/local/gymnasium/bin/docker_entrypoint"]
