@@ -49,9 +49,6 @@ jobs:
       - name: Update 404 links
         run: python docs/scripts/move_404.py _build/404.html
 
-      - name: Remove CNAME
-        run: rm -f ./_build/CNAME
-
       - name: Remove .doctrees
         run: rm -r _build/.doctrees
 
