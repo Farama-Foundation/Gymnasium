@@ -26,6 +26,7 @@ ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
-RUN pip install .[testing] --no-cache-dir
+RUN pip install poetry
+RUN poetry run pip install .[testing] --no-cache-dir
 
 ENTRYPOINT ["/usr/local/gymnasium/bin/docker_entrypoint"]
