@@ -68,7 +68,7 @@ class AtariPreprocessing(gym.Wrapper):
         assert screen_size > 0
         assert noop_max >= 0
         if frame_skip > 1:
-            if (
+            if (env.spec is not None and
                 "NoFrameskip" not in env.spec.id
                 and getattr(env.unwrapped, "_frameskip", None) != 1
             ):

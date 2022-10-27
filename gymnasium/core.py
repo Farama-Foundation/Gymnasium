@@ -1,7 +1,7 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, Optional, SupportsFloat, TypeVar
 
 import numpy as np
 
@@ -50,7 +50,7 @@ class Env(Generic[ObsType, ActType]):
     # define render_mode if your environment supports rendering
     render_mode: str | None = None
     reward_range = (-float("inf"), float("inf"))
-    spec: EnvSpec = None
+    spec: EnvSpec | None = None
 
     # Set these in ALL subclasses
     action_space: spaces.Space[ActType]
@@ -61,7 +61,7 @@ class Env(Generic[ObsType, ActType]):
 
     def step(
         self, action: ActType
-    ) -> tuple[ObsType, float, bool, bool, dict[str, Any]]:
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Run one timestep of the environment's dynamics using the agent actions.
 
         When the end of an episode is reached (``terminated or truncated``), it is necessary to call :meth:`reset` to
@@ -79,7 +79,7 @@ class Env(Generic[ObsType, ActType]):
         Returns:
             observation (ObsType): An element of the environment's :attr:`observation_space` as the next observation due to the agent actions.
                 An example is a numpy array containing the positions and velocities of the pole in CartPole.
-            reward (float): The reward as a result of taking the action.
+            reward (SupportsFloat): The reward as a result of taking the action.
             terminated (bool): Whether the agent reaches the terminal state (as defined under the MDP of the task)
                 which can be positive or negative. An example is reaching the goal state or moving into the lava from
                 the Sutton and Barton, Gridworld. If true, the user needs to call :meth:`reset`.
@@ -104,7 +104,7 @@ class Env(Generic[ObsType, ActType]):
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
         """Resets the environment to an initial internal state, returning an initial observation and info.
 
         This method generates a new starting state often with some randomness to ensure that the agent explores the
@@ -314,7 +314,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return getattr(self.env, name)
 
     @property
-    def spec(self) -> EnvSpec:
+    def spec(self) -> Optional[EnvSpec]:
         """Returns the :attr:`Env` :attr:`spec` attribute."""
         return self.env.spec
 
@@ -395,7 +395,9 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
             "Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."
         )
 
-    def step(self, action: ActType) -> tuple[ObsType, float, bool, bool, dict]:
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict]:
         """Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data."""
         return self.env.step(action)
 
@@ -454,6 +456,10 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
     index of the timestep to the observation.
     """
 
+    def __init__(self, env: Env[ObsType, ActType]):
+        """Constructor for the observation wrapper."""
+        super().__init__(env)
+
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[WrapperObsType, dict[str, Any]]:
@@ -463,7 +469,7 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
 
     def step(
         self, action: ActType
-    ) -> tuple[WrapperObsType, float, bool, bool, dict[str, Any]]:
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Modifies the :attr:`env` after calling :meth:`step` using :meth:`self.observation` on the returned observations."""
         observation, reward, terminated, truncated, info = self.env.step(action)
         return self.observation(observation), reward, terminated, truncated, info
@@ -500,18 +506,22 @@ class RewardWrapper(Wrapper[ObsType, ActType]):
                 self.max_reward = max_reward
                 self.reward_range = (min_reward, max_reward)
 
-            def reward(self, r: float) -> float:
+            def reward(self, r: SupportsFloat) -> SupportsFloat:
                 return np.clip(r, self.min_reward, self.max_reward)
     """
 
+    def __init__(self, env: Env[ObsType, ActType]):
+        """Constructor for the Reward wrapper."""
+        super().__init__(env)
+
     def step(
         self, action: ActType
-    ) -> tuple[ObsType, float, bool, bool, dict[str, Any]]:
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Modifies the :attr:`env` :meth:`step` reward using :meth:`self.reward`."""
         observation, reward, terminated, truncated, info = self.env.step(action)
         return observation, self.reward(reward), terminated, truncated, info
 
-    def reward(self, reward: SupportsFloat) -> float:
+    def reward(self, reward: SupportsFloat) -> SupportsFloat:
         """Returns a modified environment ``reward``.
 
         Args:
@@ -554,9 +564,13 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType]):
     Among others, Gymnasium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction` for clipping and rescaling actions.
     """
 
+    def __init__(self, env: Env[ObsType, ActType]):
+        """Constructor for the action wrapper."""
+        super().__init__(env)
+
     def step(
         self, action: WrapperActType
-    ) -> tuple[ObsType, float, bool, bool, dict[str, Any]]:
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Runs the :attr:`env` :meth:`env.step` using the modified ``action`` from :meth:`self.action`."""
         return self.env.step(self.action(action))
 

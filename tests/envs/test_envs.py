@@ -187,7 +187,7 @@ def test_render_modes(spec):
 @pytest.mark.parametrize(
     "env",
     all_testing_initialised_envs,
-    ids=[env.spec.id for env in all_testing_initialised_envs],
+    ids=[env.spec.id for env in all_testing_initialised_envs if env.spec is not None],
 )
 def test_pickle_env(env: gym.Env):
     pickled_env = pickle.loads(pickle.dumps(env))

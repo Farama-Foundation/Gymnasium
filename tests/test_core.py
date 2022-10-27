@@ -182,7 +182,7 @@ def test_gymnasium_env():
     assert env.render_mode is None
     assert env.reward_range == (-float("inf"), float("inf"))
     assert env.spec is None
-    assert env._np_random is None
+    assert env._np_random is None  # pyright: ignore [reportPrivateUsage]
 
 
 class ExampleWrapper(Wrapper):
