@@ -35,6 +35,7 @@ env.close()
 
 content/basic_usage
 content/gym_compatibility
+content/migration-guide
 ```
 
 ```{toctree}
@@ -66,9 +67,6 @@ environments/third_party_environments
 :glob:
 :caption: Tutorials
 
-content/environment_creation
-content/vectorising
-content/handling_timelimits
 tutorials/*
 ```
 
