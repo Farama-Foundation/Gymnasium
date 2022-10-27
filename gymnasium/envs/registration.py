@@ -131,8 +131,8 @@ class EnvSpec:
     """
 
     id: str
-    entry_point: Union[None, Callable, str]
-    vector_entry_point: Union[None, Callable, str]
+    entry_point: Union[None, Callable, str] = None
+    vector_entry_point: Union[None, Callable, str] = None
 
     # Environment attributes
     reward_threshold: Optional[float] = field(default=None)
