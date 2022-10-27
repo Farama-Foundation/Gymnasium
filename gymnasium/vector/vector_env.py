@@ -1,15 +1,20 @@
 """Base class for vectorized environments."""
-from typing import List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Generic, List, Optional, Tuple, TypeVar, Union
 
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.vector.utils.spaces import batch_space
+from gymnasium.core import ActType, ObsType
+
+if TYPE_CHECKING:
+    from gymnasium.envs.registration import EnvSpec
 
 __all__ = ["VectorEnv"]
 
+ArrayType = TypeVar("ArrayType")
 
-class VectorEnv:
+
+class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     """Base class for vectorized environments to run multiple independent copies of the same environment in parallel.
 
     Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
@@ -46,38 +51,29 @@ class VectorEnv:
         In other words, a vector of multiple different environments is not supported.
     """
 
-    def __init__(
-        self,
-        num_envs: int,
-        observation_space: gym.Space,
-        action_space: gym.Space,
-    ):
+    spec: "EnvSpec" = None
+
+    observation_space: gym.Space = None
+    action_space: gym.Space = None
+
+    num_envs: int
+
+    def __init__(self, **kwargs):
         """Base class for vectorized environments.
 
         Args:
             num_envs: Number of environments in the vectorized environment.
-            observation_space: Observation space of a single environment.
-            action_space: Action space of a single environment.
         """
-        self.num_envs = num_envs
         self.is_vector_env = True
-        self.observation_space = batch_space(observation_space, n=num_envs)
-        self.action_space = batch_space(action_space, n=num_envs)
 
         self.closed = False
-        self.viewer = None
-
-        # The observation and action spaces of a single environment are
-        # kept in separate properties
-        self.single_observation_space = observation_space
-        self.single_action_space = action_space
 
     def reset(
         self,
         *,
         seed: Optional[Union[int, List[int]]] = None,
         options: Optional[dict] = None,
-    ):
+    ) -> Tuple[ObsType, dict]:
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
@@ -87,19 +83,12 @@ class VectorEnv:
         Returns:
             A batch of observations and info from the vectorized environment.
 
-        An example::
-
-            >>> import gymnasium as gym
-            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
-            >>> envs.reset()
-            (array([[-0.02240574, -0.03439831, -0.03904812,  0.02810693],
-                   [ 0.01586068,  0.01929009,  0.02394426,  0.04016077],
-                   [-0.01314174,  0.03893502, -0.02400815,  0.0038326 ]],
-                  dtype=float32), {})
         """
         pass
 
-    def step(self, actions):
+    def step(
+        self, actions: ActType
+    ) -> Tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Take an action for each parallel environment.
 
         Args:
@@ -112,27 +101,6 @@ class VectorEnv:
             As the vector environments autoreset for a terminating and truncating sub-environments,
             the returned observation and info is not the final step's observation or info which is instead stored in
             info as `"final_observation"` and `"final_info"`.
-
-        An example::
-
-            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
-            >>> envs.reset()
-            >>> actions = np.array([1, 0, 1])
-            >>> observations, rewards, termination, truncation, infos = envs.step(actions)
-
-            >>> observations
-            array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
-                    [ 0.00788269, -0.17490888,  0.03393489,  0.31735462],
-                    [ 0.04918966,  0.19421194,  0.02938497, -0.29495203]],
-                    dtype=float32)
-            >>> rewards
-            array([1., 1., 1.])
-            >>> termination
-            array([False, False, False])
-            >>> termination
-            array([False, False, False])
-            >>> infos
-            {}
         """
         pass
 
@@ -159,8 +127,7 @@ class VectorEnv:
         """
         if self.closed:
             return
-        if self.viewer is not None:
-            self.viewer.close()
+
         self.close_extras(**kwargs)
         self.closed = True
 
@@ -249,6 +216,8 @@ class VectorEnvWrapper(VectorEnv):
     """
 
     def __init__(self, env: VectorEnv):
+        super().__init__()
+
         assert isinstance(env, VectorEnv)
         self.env = env
 

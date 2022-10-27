@@ -7,7 +7,9 @@ import re
 import sys
 import warnings
 from dataclasses import dataclass, field
+from functools import partial
 from typing import (
+    Any,
     Callable,
     Dict,
     List,
@@ -21,6 +23,7 @@ from typing import (
 
 import numpy as np
 
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import (
     AutoResetWrapper,
     HumanRendering,
@@ -705,10 +708,9 @@ def make(
 
 def make_vec(
     id: Union[str, EnvSpec],
-    max_episode_steps: Optional[int] = None,
-    autoreset: bool = False,
-    apply_api_compatibility: Optional[bool] = None,
-    disable_env_checker: Optional[bool] = None,
+    num_envs: int = 1,
+    vectorization_mode: str = "sync",
+    vector_kwargs: Optional[Dict[str, Any]] = None,
     **kwargs,
 ) -> Env:
     """Create an environment according to the given ID.
@@ -717,16 +719,8 @@ def make_vec(
 
     Args:
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
-        max_episode_steps: Maximum length of an episode (TimeLimit wrapper).
-        autoreset: Whether to automatically reset the environment after each episode (AutoResetWrapper).
-        apply_api_compatibility: Whether to wrap the environment with the `StepAPICompatibility` wrapper that
-            converts the environment step from a done bool to return termination and truncation bools.
-            By default, the argument is None to which the environment specification `apply_api_compatibility` is used
-            which defaults to False. Otherwise, the value of `apply_api_compatibility` is used.
-            If `True`, the wrapper is applied otherwise, the wrapper is not applied.
-        disable_env_checker: If to run the env checker, None will default to the environment specification `disable_env_checker`
-            (which is by default False, running the environment checker),
-            otherwise will run according to this parameter (`True` = not run, `False` = run)
+        num_envs: Number of environments to create
+        vectorization_mode: How to vectorize the environment. Can be either "async" or "sync"
         kwargs: Additional arguments to pass to the environment constructor.
 
     Returns:
@@ -735,6 +729,9 @@ def make_vec(
     Raises:
         Error: If the ``id`` doesn't exist then an error is raised
     """
+    if vector_kwargs is None:
+        vector_kwargs = {}
+
     if isinstance(id, EnvSpec):
         spec_ = id
     else:
@@ -743,17 +740,44 @@ def make_vec(
     _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
 
-    if spec_.vector_entry_point is None:
-        raise error.Error(
-            f"{spec_.id} registered but vector_entry_point is not specified"
-        )
-    elif callable(spec_.vector_entry_point):
-        env_creator = spec_.vector_entry_point
+    # Check if we have the necessary entry point
+    if vectorization_mode in ("sync", "async"):
+        if spec_.entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id} because it doesn't have an entry point defined."
+            )
+        entry_point = spec_.entry_point
+    elif vectorization_mode in ("custom",):
+        if spec_.vector_entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
+            )
+        entry_point = spec_.vector_entry_point
+    else:
+        raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
+
+    if callable(entry_point):
+        env_creator = entry_point
     else:
         # Assume it's a string
-        env_creator = load(spec_.vector_entry_point)
+        env_creator = load(entry_point)
 
-    env = env_creator(**_kwargs)
+    if vectorization_mode == "sync":
+        env = SyncVectorEnv(
+            env_fns=[partial(env_creator, **_kwargs) for _ in range(num_envs)]
+            * num_envs,
+            **vector_kwargs,
+        )
+    elif vectorization_mode == "async":
+        env = AsyncVectorEnv(
+            env_fns=[partial(env_creator, **_kwargs) for _ in range(num_envs)]
+            * num_envs,
+            **vector_kwargs,
+        )
+    elif vectorization_mode == "custom":
+        env = env_creator(num_envs=num_envs, **_kwargs)
+    else:
+        raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
 
     # Copies the environment creation specification and kwargs to add to the environment specification details
     spec_ = copy.deepcopy(spec_)

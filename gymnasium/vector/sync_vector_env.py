@@ -5,8 +5,8 @@ from typing import Any, Callable, Iterator, List, Optional, Union
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.spaces import Space
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
+from gymnasium.vector.utils.spaces import batch_space
 from gymnasium.vector.vector_env import VectorEnv
 
 __all__ = ["SyncVectorEnv"]
@@ -30,37 +30,32 @@ class SyncVectorEnv(VectorEnv):
     def __init__(
         self,
         env_fns: Iterator[Callable[[], Env]],
-        observation_space: Space = None,
-        action_space: Space = None,
         copy: bool = True,
     ):
         """Vectorized environment that serially runs multiple environments.
 
         Args:
             env_fns: iterable of callable functions that create the environments.
-            observation_space: Observation space of a single environment. If ``None``,
-                then the observation space of the first environment is taken.
-            action_space: Action space of a single environment. If ``None``,
-                then the action space of the first environment is taken.
             copy: If ``True``, then the :meth:`reset` and :meth:`step` methods return a copy of the observations.
 
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
                 (or, by default, the observation space of the first sub-environment).
         """
+        super().__init__()
         self.env_fns = env_fns
         self.envs = [env_fn() for env_fn in env_fns]
+        self.num_envs = len(self.envs)
         self.copy = copy
         self.metadata = self.envs[0].metadata
 
-        if (observation_space is None) or (action_space is None):
-            observation_space = observation_space or self.envs[0].observation_space
-            action_space = action_space or self.envs[0].action_space
-        super().__init__(
-            num_envs=len(self.envs),
-            observation_space=observation_space,
-            action_space=action_space,
+        self.single_observation_space = self.envs[0].observation_space
+        self.single_action_space = self.envs[0].action_space
+
+        self.observation_space = batch_space(
+            self.single_observation_space, self.num_envs
         )
+        self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         self._check_spaces()
         self.observations = create_empty_array(
@@ -70,7 +65,7 @@ class SyncVectorEnv(VectorEnv):
         self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
 
-    def reset_wait(
+    def reset(
         self,
         seed: Optional[Union[int, List[int]]] = None,
         options: Optional[dict] = None,
@@ -110,23 +105,6 @@ class SyncVectorEnv(VectorEnv):
             self.single_observation_space, observations, self.observations
         )
         return (deepcopy(self.observations) if self.copy else self.observations), infos
-
-    def reset(
-        self,
-        *,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
-        """Reset all parallel environments and return a batch of initial observations and info.
-
-        Args:
-            seed: The environment reset seeds
-            options: If to return the options
-
-        Returns:
-            A batch of observations and info from the vectorized environment.
-        """
-        return self.reset_wait(seed=seed, options=options)
 
     def step(self, actions):
         """Steps through each of the environments returning the batched results.
