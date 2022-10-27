@@ -187,6 +187,17 @@ class SyncVectorEnv(VectorEnv):
 
         return tuple(results)
 
+    def get_attr(self, name: str):
+        """Get a property from each parallel environment.
+
+        Args:
+            name (str): Name of the property to be get from each individual environment.
+
+        Returns:
+            The property with name
+        """
+        return self.call(name)
+
     def set_attr(self, name: str, values: Union[list, tuple, Any]):
         """Sets an attribute of the sub-environments.
 
