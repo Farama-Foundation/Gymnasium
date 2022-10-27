@@ -64,11 +64,17 @@ class Space(Generic[T_cov]):
 
     @property
     def np_random(self) -> np.random.Generator:
-        """Lazily seed the PRNG since this is expensive and only needed if sampling from this space."""
+        """Lazily seed the PRNG since this is expensive and only needed if sampling from this space.
+
+        As :meth:`seed` is not guaranteed to set the `_np_random` for particular seeds. We add a
+        check after :meth:`seed` to set a new random number generator.
+        """
         if self._np_random is None:
             self.seed()
 
-        assert isinstance(self._np_random, np.random.Generator)
+            if self._np_random is None:
+                self._np_random, _ = seeding.np_random()
+
         return self._np_random
 
     @property
