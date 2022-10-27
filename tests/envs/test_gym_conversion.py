@@ -7,7 +7,12 @@ pytest.importorskip("gym")
 
 import gym  # noqa: E402, isort: skip
 
-ALL_GYM_ENVS = gym.envs.registry.keys()
+# We do not test Atari environment's here because we check all variants of Pong in test_envs.py (There are too many Atari environments)
+ALL_GYM_ENVS = [
+    env_id
+    for env_id, spec in gym.envs.registry.items()
+    if "ale_py" not in spec.entry_point
+]
 
 
 @pytest.mark.parametrize(
