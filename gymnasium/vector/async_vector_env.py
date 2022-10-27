@@ -4,7 +4,7 @@ import sys
 import time
 from copy import deepcopy
 from enum import Enum
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import Any, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
@@ -260,6 +260,24 @@ class AsyncVectorEnv(VectorEnv):
 
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
+    def reset(
+        self,
+        *,
+        seed: Optional[Union[int, List[int]]] = None,
+        options: Optional[dict] = None,
+    ):
+        """Reset all parallel environments and return a batch of initial observations and info.
+
+        Args:
+            seed: The environment reset seeds
+            options: If to return the options
+
+        Returns:
+            A batch of observations and info from the vectorized environment.
+        """
+        self.reset_async(seed=seed, options=options)
+        return self.reset_wait(seed=seed, options=options)
+
     def step_async(self, actions: np.ndarray):
         """Send the calls to :obj:`step` to each sub-environment.
 
@@ -345,6 +363,18 @@ class AsyncVectorEnv(VectorEnv):
             infos,
         )
 
+    def step(self, actions):
+        """Take an action for each parallel environment.
+
+        Args:
+            actions: element of :attr:`action_space` Batch of actions.
+
+        Returns:
+            Batch of (observations, rewards, terminations, truncations, infos)
+        """
+        self.step_async(actions)
+        return self.step_wait()
+
     def call_async(self, name: str, *args, **kwargs):
         """Calls the method with name asynchronously and apply args and kwargs to the method.
 
@@ -401,6 +431,20 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.DEFAULT
 
         return results
+
+    def call(self, name: str, *args, **kwargs) -> List[Any]:
+        """Call a method, or get a property, from each parallel environment.
+
+        Args:
+            name (str): Name of the method or property to call.
+            *args: Arguments to apply to the method call.
+            **kwargs: Keyword arguments to apply to the method call.
+
+        Returns:
+            List of the results of the individual calls to the method or property for each environment.
+        """
+        self.call_async(name, *args, **kwargs)
+        return self.call_wait()
 
     def set_attr(self, name: str, values: Union[list, tuple, object]):
         """Sets an attribute of the sub-environments.

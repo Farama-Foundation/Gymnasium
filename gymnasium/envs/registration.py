@@ -120,6 +120,7 @@ class EnvSpec:
 
     * id: The string used to create the environment with `gym.make`
     * entry_point: The location of the environment to create from
+    * vector_entry_point: The location of the vectorized environment to create from
     * reward_threshold: The reward threshold for completing the environment.
     * nondeterministic: If the observation of an environment cannot be repeated with the same initial state, random number generator state and actions.
     * max_episode_steps: The max number of steps that the environment can take before truncation
@@ -130,7 +131,8 @@ class EnvSpec:
     """
 
     id: str
-    entry_point: Union[Callable, str]
+    entry_point: Union[None, Callable, str]
+    vector_entry_point: Union[None, Callable, str]
 
     # Environment attributes
     reward_threshold: Optional[float] = field(default=None)
@@ -419,6 +421,42 @@ def _check_spec_register(spec: EnvSpec):
         )
 
 
+def find_spec(id: str):
+    """Finds the relevant env spec for the given id."""
+    module, id = (None, id) if ":" not in id else id.split(":")
+    if module is not None:
+        try:
+            importlib.import_module(module)
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                f"{e}. Environment registration via importing a module failed. "
+                f"Check whether '{module}' contains env registration and can be imported."
+            )
+    spec_ = registry.get(id)
+
+    ns, name, version = parse_env_id(id)
+    latest_version = find_highest_version(ns, name)
+    if version is not None and latest_version is not None and latest_version > version:
+        logger.warn(
+            f"The environment {id} is out of date. You should consider "
+            f"upgrading to version `v{latest_version}`."
+        )
+    if version is None and latest_version is not None:
+        version = latest_version
+        new_env_id = get_env_id(ns, name, version)
+        spec_ = registry.get(new_env_id)
+        logger.warn(
+            f"Using the latest versioned environment `{new_env_id}` "
+            f"instead of the unversioned environment `{id}`."
+        )
+
+    if spec_ is None:
+        _check_version_exists(ns, name, version)
+        raise error.Error(f"No registered env with id: {id}")
+
+    return spec_
+
+
 # Public API
 
 
@@ -433,7 +471,8 @@ def namespace(ns: str):
 
 def register(
     id: str,
-    entry_point: Union[Callable, str],
+    entry_point: Union[None, Callable, str] = None,
+    vector_entry_point: Union[None, Callable, str] = None,
     reward_threshold: Optional[float] = None,
     nondeterministic: bool = False,
     max_episode_steps: Optional[int] = None,
@@ -453,6 +492,7 @@ def register(
     Args:
         id: The environment id
         entry_point: The entry point for creating the environment
+        vector_entry_point: The entry point for creating the vectorized environment
         reward_threshold: The reward threshold considered to have learnt an environment
         nondeterministic: If the environment is nondeterministic (even with knowledge of the initial seed and all actions)
         max_episode_steps: The maximum number of episodes steps before truncation. Used by the Time Limit wrapper.
@@ -462,6 +502,10 @@ def register(
         apply_api_compatibility: If to apply the `StepAPICompatibility` wrapper.
         **kwargs: arbitrary keyword arguments which are passed to the environment constructor
     """
+    assert (
+        entry_point is not None or vector_entry_point is not None
+    ), "Either `entry_point` or `vector_entry_point` (or both) must be provided"
+
     global registry, current_namespace
     ns, name, version = parse_env_id(id)
 
@@ -484,6 +528,7 @@ def register(
     new_spec = EnvSpec(
         id=full_id,
         entry_point=entry_point,
+        vector_entry_point=vector_entry_point,
         reward_threshold=reward_threshold,
         nondeterministic=nondeterministic,
         max_episode_steps=max_episode_steps,
@@ -534,40 +579,7 @@ def make(
     if isinstance(id, EnvSpec):
         spec_ = id
     else:
-        module, id = (None, id) if ":" not in id else id.split(":")
-        if module is not None:
-            try:
-                importlib.import_module(module)
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    f"{e}. Environment registration via importing a module failed. "
-                    f"Check whether '{module}' contains env registration and can be imported."
-                )
-        spec_ = registry.get(id)
-
-        ns, name, version = parse_env_id(id)
-        latest_version = find_highest_version(ns, name)
-        if (
-            version is not None
-            and latest_version is not None
-            and latest_version > version
-        ):
-            logger.warn(
-                f"The environment {id} is out of date. You should consider "
-                f"upgrading to version `v{latest_version}`."
-            )
-        if version is None and latest_version is not None:
-            version = latest_version
-            new_env_id = get_env_id(ns, name, version)
-            spec_ = registry.get(new_env_id)
-            logger.warn(
-                f"Using the latest versioned environment `{new_env_id}` "
-                f"instead of the unversioned environment `{id}`."
-            )
-
-        if spec_ is None:
-            _check_version_exists(ns, name, version)
-            raise error.Error(f"No registered env with id: {id}")
+        spec_ = find_spec(id)
 
     _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
@@ -687,6 +699,66 @@ def make(
         env = HumanRendering(env)
     elif apply_render_collection:
         env = RenderCollection(env)
+
+    return env
+
+
+def make_vec(
+    id: Union[str, EnvSpec],
+    max_episode_steps: Optional[int] = None,
+    autoreset: bool = False,
+    apply_api_compatibility: Optional[bool] = None,
+    disable_env_checker: Optional[bool] = None,
+    **kwargs,
+) -> Env:
+    """Create an environment according to the given ID.
+
+    To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
+
+    Args:
+        id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
+        max_episode_steps: Maximum length of an episode (TimeLimit wrapper).
+        autoreset: Whether to automatically reset the environment after each episode (AutoResetWrapper).
+        apply_api_compatibility: Whether to wrap the environment with the `StepAPICompatibility` wrapper that
+            converts the environment step from a done bool to return termination and truncation bools.
+            By default, the argument is None to which the environment specification `apply_api_compatibility` is used
+            which defaults to False. Otherwise, the value of `apply_api_compatibility` is used.
+            If `True`, the wrapper is applied otherwise, the wrapper is not applied.
+        disable_env_checker: If to run the env checker, None will default to the environment specification `disable_env_checker`
+            (which is by default False, running the environment checker),
+            otherwise will run according to this parameter (`True` = not run, `False` = run)
+        kwargs: Additional arguments to pass to the environment constructor.
+
+    Returns:
+        An instance of the environment.
+
+    Raises:
+        Error: If the ``id`` doesn't exist then an error is raised
+    """
+    if isinstance(id, EnvSpec):
+        spec_ = id
+    else:
+        spec_ = find_spec(id)
+
+    _kwargs = spec_.kwargs.copy()
+    _kwargs.update(kwargs)
+
+    if spec_.vector_entry_point is None:
+        raise error.Error(
+            f"{spec_.id} registered but vector_entry_point is not specified"
+        )
+    elif callable(spec_.vector_entry_point):
+        env_creator = spec_.vector_entry_point
+    else:
+        # Assume it's a string
+        env_creator = load(spec_.vector_entry_point)
+
+    env = env_creator(**_kwargs)
+
+    # Copies the environment creation specification and kwargs to add to the environment specification details
+    spec_ = copy.deepcopy(spec_)
+    spec_.kwargs = _kwargs
+    env.unwrapped.spec = spec_
 
     return env
 

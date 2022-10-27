@@ -68,6 +68,10 @@ class Env(Generic[ObsType, ActType]):
     # Created
     _np_random: Optional[np.random.Generator] = None
 
+    # Environments are not vectorized by default.
+    # This would ideally be set in __init__, but we'd need people to call super()
+    is_vector_env = False
+
     def step(self, action: ActType) -> Tuple[ObsType, float, bool, bool, dict]:
         """Run one timestep of the environment's dynamics using the agent actions.
 
@@ -305,6 +309,9 @@ class Wrapper(Env[ObsType, ActType]):
         self._observation_space: Optional[spaces.Space] = None
         self._reward_range: Optional[Tuple[SupportsFloat, SupportsFloat]] = None
         self._metadata: Optional[dict] = None
+
+        # Default - each wrapper must set this to True if it supports vectorized environments
+        self._supports_vector: bool = False
 
     def __getattr__(self, name):
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""

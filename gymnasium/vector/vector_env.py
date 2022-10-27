@@ -1,5 +1,5 @@
 """Base class for vectorized environments."""
-from typing import Any, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -9,7 +9,7 @@ from gymnasium.vector.utils.spaces import batch_space
 __all__ = ["VectorEnv"]
 
 
-class VectorEnv(gym.Env):
+class VectorEnv:
     """Base class for vectorized environments to run multiple independent copies of the same environment in parallel.
 
     Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
@@ -72,43 +72,6 @@ class VectorEnv(gym.Env):
         self.single_observation_space = observation_space
         self.single_action_space = action_space
 
-    def reset_async(
-        self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
-        """Reset the sub-environments asynchronously.
-
-        This method will return ``None``. A call to :meth:`reset_async` should be followed
-        by a call to :meth:`reset_wait` to retrieve the results.
-
-        Args:
-            seed: The reset seed
-            options: Reset options
-        """
-        pass
-
-    def reset_wait(
-        self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
-        """Retrieves the results of a :meth:`reset_async` call.
-
-        A call to this method must always be preceded by a call to :meth:`reset_async`.
-
-        Args:
-            seed: The reset seed
-            options: Reset options
-
-        Returns:
-            The results from :meth:`reset_async`
-
-        Raises:
-            NotImplementedError: VectorEnv does not implement function
-        """
-        raise NotImplementedError("VectorEnv does not implement function")
-
     def reset(
         self,
         *,
@@ -134,29 +97,7 @@ class VectorEnv(gym.Env):
                    [-0.01314174,  0.03893502, -0.02400815,  0.0038326 ]],
                   dtype=float32), {})
         """
-        self.reset_async(seed=seed, options=options)
-        return self.reset_wait(seed=seed, options=options)
-
-    def step_async(self, actions):
-        """Asynchronously performs steps in the sub-environments.
-
-        The results can be retrieved via a call to :meth:`step_wait`.
-
-        Args:
-            actions: The actions to take asynchronously
-        """
-
-    def step_wait(self, **kwargs):
-        """Retrieves the results of a :meth:`step_async` call.
-
-        A call to this method must always be preceded by a call to :meth:`step_async`.
-
-        Args:
-            **kwargs: Additional keywords for vector implementation
-
-        Returns:
-            The results from the :meth:`step_async` call
-        """
+        pass
 
     def step(self, actions):
         """Take an action for each parallel environment.
@@ -193,49 +134,7 @@ class VectorEnv(gym.Env):
             >>> infos
             {}
         """
-        self.step_async(actions)
-        return self.step_wait()
-
-    def call_async(self, name, *args, **kwargs):
-        """Calls a method name for each parallel environment asynchronously."""
-
-    def call_wait(self, **kwargs) -> List[Any]:  # type: ignore
-        """After calling a method in :meth:`call_async`, this function collects the results."""
-
-    def call(self, name: str, *args, **kwargs) -> List[Any]:
-        """Call a method, or get a property, from each parallel environment.
-
-        Args:
-            name (str): Name of the method or property to call.
-            *args: Arguments to apply to the method call.
-            **kwargs: Keyword arguments to apply to the method call.
-
-        Returns:
-            List of the results of the individual calls to the method or property for each environment.
-        """
-        self.call_async(name, *args, **kwargs)
-        return self.call_wait()
-
-    def get_attr(self, name: str):
-        """Get a property from each parallel environment.
-
-        Args:
-            name (str): Name of the property to be get from each individual environment.
-
-        Returns:
-            The property with name
-        """
-        return self.call(name)
-
-    def set_attr(self, name: str, values: Union[list, tuple, object]):
-        """Set a property in each sub-environment.
-
-        Args:
-            name (str): Name of the property to be set in each individual environment.
-            values (list, tuple, or object): Values of the property to be set to. If `values` is a list or
-                tuple, then it corresponds to the values for each individual environment, otherwise a single value
-                is set for all environments.
-        """
+        pass
 
     def close_extras(self, **kwargs):
         """Clean up the extra resources e.g. beyond what's in this base class."""
@@ -264,6 +163,10 @@ class VectorEnv(gym.Env):
             self.viewer.close()
         self.close_extras(**kwargs)
         self.closed = True
+
+    def unwrapped(self):
+        """Return the base environment."""
+        return self
 
     def _add_info(self, infos: dict, info: dict, env_num: int) -> dict:
         """Add env info to the info dictionary of the vectorized environment.
@@ -351,29 +254,18 @@ class VectorEnvWrapper(VectorEnv):
 
     # explicitly forward the methods defined in VectorEnv
     # to self.env (instead of the base class)
-    def reset_async(self, **kwargs):
-        return self.env.reset_async(**kwargs)
 
-    def reset_wait(self, **kwargs):
-        return self.env.reset_wait(**kwargs)
+    def reset(self, **kwargs):
+        return self.env.reset(**kwargs)
 
-    def step_async(self, actions):
-        return self.env.step_async(actions)
-
-    def step_wait(self):
-        return self.env.step_wait()
+    def step(self, actions):
+        return self.env.step(actions)
 
     def close(self, **kwargs):
         return self.env.close(**kwargs)
 
     def close_extras(self, **kwargs):
         return self.env.close_extras(**kwargs)
-
-    def call(self, name, *args, **kwargs):
-        return self.env.call(name, *args, **kwargs)
-
-    def set_attr(self, name, values):
-        return self.env.set_attr(name, values)
 
     # implicitly forward all other methods and attributes to self.env
     def __getattr__(self, name):

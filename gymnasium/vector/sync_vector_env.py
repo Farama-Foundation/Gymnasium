@@ -1,6 +1,6 @@
 """A synchronous vector environment."""
 from copy import deepcopy
-from typing import Any, Callable, Iterator, List, Optional, Sequence, Union
+from typing import Any, Callable, Iterator, List, Optional, Union
 
 import numpy as np
 
@@ -69,23 +69,6 @@ class SyncVectorEnv(VectorEnv):
         self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
         self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
-        self._actions = None
-
-    def seed(self, seed: Optional[Union[int, Sequence[int]]] = None):
-        """Sets the seed in all sub-environments.
-
-        Args:
-            seed: The seed
-        """
-        super().seed(seed=seed)
-        if seed is None:
-            seed = [None for _ in range(self.num_envs)]
-        if isinstance(seed, int):
-            seed = [seed + i for i in range(self.num_envs)]
-        assert len(seed) == self.num_envs
-
-        for env, single_seed in zip(self.envs, seed):
-            env.seed(single_seed)
 
     def reset_wait(
         self,
@@ -128,18 +111,33 @@ class SyncVectorEnv(VectorEnv):
         )
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
-    def step_async(self, actions):
-        """Sets :attr:`_actions` for use by the :meth:`step_wait` by converting the ``actions`` to an iterable version."""
-        self._actions = iterate(self.action_space, actions)
+    def reset(
+        self,
+        *,
+        seed: Optional[Union[int, List[int]]] = None,
+        options: Optional[dict] = None,
+    ):
+        """Reset all parallel environments and return a batch of initial observations and info.
 
-    def step_wait(self):
+        Args:
+            seed: The environment reset seeds
+            options: If to return the options
+
+        Returns:
+            A batch of observations and info from the vectorized environment.
+        """
+        return self.reset_wait(seed=seed, options=options)
+
+    def step(self, actions):
         """Steps through each of the environments returning the batched results.
 
         Returns:
             The batched environment step results
         """
+        actions = iterate(self.action_space, actions)
+
         observations, infos = [], {}
-        for i, (env, action) in enumerate(zip(self.envs, self._actions)):
+        for i, (env, action) in enumerate(zip(self.envs, actions)):
 
             (
                 observation,
