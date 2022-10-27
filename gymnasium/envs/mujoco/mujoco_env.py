@@ -154,7 +154,7 @@ class BaseMujocoEnv(gym.Env):
         # Check control input is contained in the action space
         if np.array(ctrl).shape != self.action_space.shape:
             raise ValueError(
-                "Action dimension mismatch. Expected {self.action_space.shape}, found {np.array(ctrl).shape}"
+                f"Action dimension mismatch. Expected {self.action_space.shape}, found {np.array(ctrl).shape}"
             )
         self._step_mujoco_simulation(ctrl, n_frames)
 
