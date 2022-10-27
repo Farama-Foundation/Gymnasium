@@ -31,6 +31,8 @@ all_testing_initialised_envs: List[Optional[gym.Env]] = [
     try_make_env(env_spec) for env_spec in gym.envs.registry.values()
 ]
 
+atari_initialized_envs = []
+atari_initialized_env_specs = []
 try:
     # We check whether gym can be imported
     import gym as old_gym
@@ -46,9 +48,10 @@ try:
         "Pong-ramDeterministic-v4",
         "Pong-ramNoFrameskip-v4",
     ]
-    all_testing_initialised_envs += [
+    atari_initialized_envs = [
         gym.make("GymV26Environment-v0", env_id=env_id) for env_id in atari_ids
     ]
+    atari_env_specs = [env.spec for env in atari_initialized_envs]
 except ImportError:
     # Failure because gym isn't available
     logger.warn("Skipping tests of atari environments because gym seems to be missing")
