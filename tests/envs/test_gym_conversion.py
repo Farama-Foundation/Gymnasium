@@ -14,7 +14,7 @@ import gym  # noqa: E402, isort: skip
 ALL_GYM_ENVS = [
     env_id
     for env_id, spec in gym.envs.registry.items()
-    if "ale_py" not in spec.entry_point
+    if ("ale_py" not in spec.entry_point or "Pong" in env_id)
 ]
 
 
