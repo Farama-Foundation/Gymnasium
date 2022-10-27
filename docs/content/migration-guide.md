@@ -59,7 +59,7 @@ We are aware of cases where controlling the random number generator is important
 
 Gymnasium v26 changed to using ``numpy.random.Generator`` instead of a custom random number generator.
 This means that several functions such as ``randint`` were removed in favour of ``integers``.
-While some environments might use external random number generator, we recommend using the atttribute :attr:`np_random` that wrappers and external users can access and utilise.
+While some environments might use external random number generator, we recommend using the attribute :attr:`np_random` that wrappers and external users can access and utilise.
 ```
 
 ## Environment Reset
