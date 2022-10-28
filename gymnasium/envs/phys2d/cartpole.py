@@ -13,6 +13,7 @@ import gymnasium as gym
 from gymnasium.envs.phys2d.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.utils import EzPickle
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
@@ -231,10 +232,11 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
         pygame.quit()
 
 
-class CartPoleJaxEnv(JaxEnv):
+class CartPoleJaxEnv(JaxEnv, EzPickle):
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
+        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         env = CartPoleF(**kwargs)
-        # env.transform(jax.jit)
+        env.transform(jax.jit)
         action_space = env.action_space
         observation_space = env.observation_space
         metadata = {"render_modes": ["rgb_array"], "render_fps": 50}

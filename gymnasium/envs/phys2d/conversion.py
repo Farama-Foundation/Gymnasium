@@ -1,6 +1,5 @@
 from typing import Any, Dict, Optional, Tuple
 
-import jax
 import jax.numpy as jnp
 import jax.random as jrng
 import numpy as np
@@ -9,10 +8,10 @@ import gymnasium as gym
 from gymnasium import Space
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.functional import ActType, FuncEnv, StateType
-from gymnasium.utils import EzPickle, seeding
+from gymnasium.utils import seeding
 
 
-class JaxEnv(gym.Env, EzPickle):
+class JaxEnv(gym.Env):
     """
     A conversion layer for numpy-based environments.
     """
@@ -31,15 +30,6 @@ class JaxEnv(gym.Env, EzPickle):
         spec: Optional[EnvSpec] = None,
     ):
         """Initialize the environment from a FuncEnv."""
-        EzPickle.__init__(
-            self,
-            observation_space,
-            action_space,
-            metadata,
-            render_mode,
-            reward_range,
-            spec,
-        )
         if metadata is None:
             metadata = {}
         self.func_env = func_env
@@ -49,8 +39,6 @@ class JaxEnv(gym.Env, EzPickle):
         self.render_mode = render_mode
         self.reward_range = reward_range
         self.spec = spec
-
-        self.func_env.transform(jax.jit)
 
         self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
