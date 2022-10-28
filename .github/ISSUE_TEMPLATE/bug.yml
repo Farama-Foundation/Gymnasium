@@ -27,6 +27,7 @@ body:
       description: |
         Describe the characteristic of your environment:
         * Describe how Gymnasium was installed (pip, docker, source, ...)
+        * Version of `gymnasium` (by `gymnasium.__version__`)
         * What OS/version of Linux you're using. Note that while we will accept PRs to improve Window's support, we do not officially support it.
         * Python version
 
