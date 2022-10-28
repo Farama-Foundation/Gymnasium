@@ -49,6 +49,8 @@ class SyncVectorEnv(VectorEnv):
         self.copy = copy
         self.metadata = self.envs[0].metadata
 
+        self.spec = self.envs[0].spec
+
         self.single_observation_space = self.envs[0].observation_space
         self.single_action_space = self.envs[0].action_space
 

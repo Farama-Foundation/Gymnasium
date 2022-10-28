@@ -10,8 +10,7 @@ from typing import Any, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
-import gymnasium as gym
-from gymnasium import Space, logger
+from gymnasium import logger
 from gymnasium.core import ObsType
 from gymnasium.error import (
     AlreadyPendingCallError,
@@ -62,8 +61,6 @@ class AsyncVectorEnv(VectorEnv):
     def __init__(
         self,
         env_fns: Sequence[callable],
-        observation_space: Optional[gym.Space] = None,
-        action_space: Optional[gym.Space] = None,
         shared_memory: bool = True,
         copy: bool = True,
         context: Optional[str] = None,
@@ -74,10 +71,6 @@ class AsyncVectorEnv(VectorEnv):
 
         Args:
             env_fns: Functions that create the environments.
-            observation_space: Observation space of a single environment. If ``None``,
-                then the observation space of the first environment is taken.
-            action_space: Action space of a single environment. If ``None``,
-                then the action space of the first environment is taken.
             shared_memory: If ``True``, then the observations from the worker processes are communicated back through
                 shared variables. This can improve the efficiency if the observations are large (e.g. images).
             copy: If ``True``, then the :meth:`~AsyncVectorEnv.reset` and :meth:`~AsyncVectorEnv.step` methods
@@ -107,6 +100,7 @@ class AsyncVectorEnv(VectorEnv):
         self.shared_memory = shared_memory
         self.copy = copy
 
+        # This would be nice to get rid of, but without it there's a deadlock between shared memory and pipes
         dummy_env = env_fns[0]()
         self.metadata = dummy_env.metadata
 
@@ -172,19 +166,6 @@ class AsyncVectorEnv(VectorEnv):
 
         self._state = AsyncState.DEFAULT
         self._check_spaces()
-
-        # Get the observation and action spaces from the first env only -- the rest should be identical
-        self.single_observation_space: Space = self.parent_pipes[0].send(
-            ("call", "observation_space")
-        )
-        self.single_action_space: Space = self.parent_pipes[0].send(
-            ("call", "action_space")
-        )
-
-        self.observation_space = batch_space(
-            self.single_observation_space, self.num_envs
-        )
-        self.action_space = batch_space(self.single_action_space, self.num_envs)
 
     def reset_async(
         self,

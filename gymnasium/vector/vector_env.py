@@ -198,7 +198,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         Returns:
             A string containing the class name, number of environments and environment spec id
         """
-        if self.spec is None:
+        if getattr(self, "spec", None) is None:
             return f"{self.__class__.__name__}({self.num_envs})"
         else:
             return f"{self.__class__.__name__}({self.spec.id}, {self.num_envs})"
