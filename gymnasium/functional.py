@@ -12,15 +12,21 @@ TerminalType = TypeVar("TerminalType")
 RenderStateType = TypeVar("RenderStateType")
 
 
-class FuncEnv(Generic[StateType, ObsType, ActType, RewardType, TerminalType]):
+class FuncEnv(
+    Generic[StateType, ObsType, ActType, RewardType, TerminalType, RenderStateType]
+):
     """Base class (template) for functional envs.
 
     This API is meant to be used in a stateless manner, with the environment state being passed around explicitly.
     That being said, nothing here prevents users from using the environment statefully, it's just not recommended.
-    A functional env consists of three functions (in this case, instance methods):
+    A functional env consists of the following functions (in this case, instance methods):
     - initial: returns the initial state of the POMDP
     - observation: returns the observation in a given state
-    - step: returns the next state, reward, and terminated flag after taking an action in a given state
+    - transition: returns the next state after taking an action in a given state
+    - reward: returns the reward for a given (state, action, next_state) tuple
+    - terminal: returns whether a given state is terminal
+    - state_info: optional, returns a dict of info about a given state
+    - step_info: optional, returns a dict of info about a given (state, action, next_state) tuple
 
     The class-based structure serves the purpose of allowing environment constants to be defined in the class,
     and then using them by name in the code itself.
@@ -51,6 +57,10 @@ class FuncEnv(Generic[StateType, ObsType, ActType, RewardType, TerminalType]):
         """Reward."""
         raise NotImplementedError
 
+    def terminal(self, state: StateType) -> TerminalType:
+        """Terminal state."""
+        raise NotImplementedError
+
     def state_info(self, state: StateType) -> dict:
         """Info dict about a single state."""
         return {}
@@ -60,10 +70,6 @@ class FuncEnv(Generic[StateType, ObsType, ActType, RewardType, TerminalType]):
     ) -> dict:
         """Info dict about a full transition."""
         return {}
-
-    def terminal(self, state: StateType) -> TerminalType:
-        """Terminal state."""
-        raise NotImplementedError
 
     def transform(self, func: Callable[[Callable], Callable]):
         """Functional transformations."""
@@ -83,4 +89,8 @@ class FuncEnv(Generic[StateType, ObsType, ActType, RewardType, TerminalType]):
 
     def render_init(self, **kwargs) -> RenderStateType:
         """Initialize the render state."""
+        raise NotImplementedError
+
+    def render_close(self, render_state: RenderStateType):
+        """Close the render state."""
         raise NotImplementedError

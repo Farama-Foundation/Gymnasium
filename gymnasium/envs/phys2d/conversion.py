@@ -6,6 +6,7 @@ import gymnasium as gym
 from gymnasium import Space
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.utils import seeding
 
 
 class JaxEnv(gym.Env):
@@ -42,10 +43,13 @@ class JaxEnv(gym.Env):
         else:
             self.render_state = None
 
+        _, seed = seeding.np_random()
+        self.rng = jrng.PRNGKey(seed)
+
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
-        if not hasattr(self, "rng") or seed is not None:
-            self.rng = jrng.PRNGKey(0 if seed is None else seed)
+        if seed is not None:
+            self.rng = jrng.PRNGKey(seed)
 
         rng, self.rng = jrng.split(self.rng)
 
@@ -75,3 +79,8 @@ class JaxEnv(gym.Env):
             return image
         else:
             raise NotImplementedError
+
+    def close(self):
+        if self.render_state is not None:
+            self.func_env.render_close(self.render_state)
+            self.render_state = None

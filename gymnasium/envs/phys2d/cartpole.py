@@ -218,14 +218,23 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
 
         return screen, clock
 
+    def render_close(self, render_state: RenderStateType) -> None:
+        try:
+            import pygame
+        except ImportError:
+            raise DependencyNotInstalled(
+                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+            )
+        pygame.display.quit()
+        pygame.quit()
+
 
 class CartPoleJaxEnv(JaxEnv):
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         env = CartPoleF(**kwargs)
         env.transform(jax.jit)
-        high = env.x_threshold
-        action_space = gym.spaces.Discrete(2)
-        observation_space = gym.spaces.Box(-high, high, dtype=np.float32)
+        action_space = env.action_space
+        observation_space = env.observation_space
         metadata = {"render.modes": ["rgb_array"], "render_fps": 50}
         super().__init__(
             env,
