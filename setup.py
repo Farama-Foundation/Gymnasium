@@ -43,11 +43,7 @@ extras = {
     "other": ["lz4>=3.1.0", "opencv-python>=3.0", "matplotlib>=3.0", "moviepy>=1.0.0"],
 }
 
-# Testing dependency groups.
-testing_group = set(extras.keys()) - {"accept-rom-license", "atari"}
-extras["testing"] = list(
-    set(itertools.chain.from_iterable(map(lambda group: extras[group], testing_group)))
-) + [
+extras["testing"] = list(set(itertools.chain.from_iterable(extras.values()))) + [
     "pytest==7.1.3",
     "gym[classic_control, mujoco_py, mujoco, toy_text, other, atari, accept-rom-license]==0.26.2",
 ]
