@@ -401,11 +401,9 @@ class Wrapper(Env[ObsType, ActType]):
         """Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data."""
         return self.env.reset(**kwargs)
 
-    def render(
-        self, *args, **kwargs
-    ) -> Optional[Union[RenderFrame, List[RenderFrame]]]:
+    def render(self) -> Optional[Union[RenderFrame, List[RenderFrame]]]:
         """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.render(*args, **kwargs)
+        return self.env.render()
 
     def close(self):
         """Closes the wrapper and :attr:`env`."""

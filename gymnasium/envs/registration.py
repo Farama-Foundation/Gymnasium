@@ -7,7 +7,6 @@ import re
 import sys
 import warnings
 from dataclasses import dataclass, field
-from functools import partial
 from typing import (
     Any,
     Callable,
@@ -23,7 +22,7 @@ from typing import (
 
 import numpy as np
 
-from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv, VectorEnv
 from gymnasium.wrappers import (
     AutoResetWrapper,
     HumanRendering,
@@ -44,7 +43,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-from gymnasium import Env, error, logger
+from gymnasium import Env, Wrapper, error, logger
 
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
@@ -709,10 +708,11 @@ def make(
 def make_vec(
     id: Union[str, EnvSpec],
     num_envs: int = 1,
-    vectorization_mode: str = "sync",
+    vectorization_mode: str = "async",
     vector_kwargs: Optional[Dict[str, Any]] = None,
+    wrappers: Optional[Sequence[Callable[[Env], Wrapper]]] = None,
     **kwargs,
-) -> Env:
+) -> VectorEnv:
     """Create an environment according to the given ID.
 
     To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
@@ -720,8 +720,11 @@ def make_vec(
     Args:
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
-        vectorization_mode: How to vectorize the environment. Can be either "async" or "sync"
+        vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom"
         kwargs: Additional arguments to pass to the environment constructor.
+        vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
+        wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
+        **kwargs: Additional arguments to pass to the environment constructor.
 
     Returns:
         An instance of the environment.
@@ -731,6 +734,9 @@ def make_vec(
     """
     if vector_kwargs is None:
         vector_kwargs = {}
+
+    if wrappers is None:
+        wrappers = []
 
     if isinstance(id, EnvSpec):
         spec_ = id
@@ -762,19 +768,42 @@ def make_vec(
         # Assume it's a string
         env_creator = load(entry_point)
 
+    def _create_env():
+        # Env creator for use with sync and async modes
+        render_mode = _kwargs.get("render_mode", None)
+        inner_render_mode = (
+            render_mode[: -len("_list")]
+            if render_mode is not None and render_mode.endswith("_list")
+            else render_mode
+        )
+        _kwargs_copy = _kwargs.copy()
+        _kwargs_copy["render_mode"] = inner_render_mode
+
+        _env = env_creator(**_kwargs_copy)
+        _env.spec = spec_
+        if spec_.max_episode_steps is not None:
+            _env = TimeLimit(_env, spec_.max_episode_steps)
+
+        if render_mode is not None and render_mode.endswith("_list"):
+            _env = RenderCollection(_env)
+
+        for wrapper in wrappers:
+            _env = wrapper(_env)
+        return _env
+
     if vectorization_mode == "sync":
         env = SyncVectorEnv(
-            env_fns=[partial(env_creator, **_kwargs) for _ in range(num_envs)]
-            * num_envs,
+            env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )
     elif vectorization_mode == "async":
         env = AsyncVectorEnv(
-            env_fns=[partial(env_creator, **_kwargs) for _ in range(num_envs)]
-            * num_envs,
+            env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )
     elif vectorization_mode == "custom":
+        if len(wrappers) > 0:
+            raise error.Error("Cannot use custom vectorization mode with wrappers.")
         env = env_creator(num_envs=num_envs, **_kwargs)
     else:
         raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")

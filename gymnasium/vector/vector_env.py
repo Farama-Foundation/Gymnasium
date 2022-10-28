@@ -131,6 +131,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         self.close_extras(**kwargs)
         self.closed = True
 
+    @property
     def unwrapped(self):
         """Return the base environment."""
         return self
@@ -204,7 +205,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             return f"{self.__class__.__name__}({self.spec.id}, {self.num_envs})"
 
 
-class VectorEnvWrapper(VectorEnv):
+class VectorWrapper(VectorEnv):
     """Wraps the vectorized environment to allow a modular transformation.
 
     This class is the base class for all wrappers for vectorized environments. The subclass
@@ -251,3 +252,70 @@ class VectorEnvWrapper(VectorEnv):
 
     def __del__(self):
         self.env.__del__()
+
+
+class VectorObservationWrapper(VectorWrapper):
+    """Wraps the vectorized environment to allow a modular transformation of the observation. Equivalent to :class:`gym.ObservationWrapper` for vectorized environments."""
+
+    def reset(self, **kwargs):
+        observation = self.env.reset(**kwargs)
+        return self.observation(observation)
+
+    def step(self, actions):
+        observation, reward, termination, truncation, info = self.env.step(actions)
+        return (
+            self.observation(observation),
+            observation,
+            reward,
+            termination,
+            truncation,
+            info,
+        )
+
+    def observation(self, observation: ObsType) -> ObsType:
+        """Defines the observation transformation.
+
+        Args:
+            observation (object): the observation from the environment
+
+        Returns:
+            observation (object): the transformed observation
+        """
+        raise NotImplementedError
+
+
+class VectorActionWrapper(VectorWrapper):
+    """Wraps the vectorized environment to allow a modular transformation of the actions. Equivalent of :class:`~gym.ActionWrapper` for vectorized environments."""
+
+    def step(self, actions: ActType):
+        return self.env.step(self.action(actions))
+
+    def actions(self, actions: ActType) -> ActType:
+        """Transform the actions before sending them to the environment.
+
+        Args:
+            actions (ActType): the actions to transform
+
+        Returns:
+            ActType: the transformed actions
+        """
+        raise NotImplementedError
+
+
+class VectorRewardWrapper(VectorWrapper):
+    """Wraps the vectorized environment to allow a modular transformation of the reward. Equivalent of :class:`~gym.RewardWrapper` for vectorized environments."""
+
+    def step(self, actions):
+        observation, reward, termination, truncation, info = self.env.step(actions)
+        return observation, self.reward(reward), termination, truncation, info
+
+    def reward(self, reward: ArrayType) -> ArrayType:
+        """Transform the reward before returning it.
+
+        Args:
+            reward (array): the reward to transform
+
+        Returns:
+            array: the transformed reward
+        """
+        raise NotImplementedError
