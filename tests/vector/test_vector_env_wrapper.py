@@ -8,8 +8,8 @@ class DummyWrapper(VectorEnvWrapper):
         self.env = env
         self.counter = 0
 
-    def reset_async(self, **kwargs):
-        super().reset_async()
+    def reset(self, **kwargs):
+        super().reset()
         self.counter += 1
 
 
