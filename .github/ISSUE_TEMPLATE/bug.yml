@@ -15,7 +15,7 @@ body:
     id: code-example
     attributes:
       label: Code example
-      description: >
+      description: |
         Please try to provide a minimal example to reproduce the bug. Error messages and stack traces are also helpful.
         This will be automatically formatted into code, so no need for backticks.
       render: shell
@@ -42,6 +42,6 @@ body:
       label: Checklist
       options:
         - label: >
-          I have checked that there is no similar [issue](https://github.com/Farama-Foundation/Gymnasium/issues) in
-          the repo
+            I have checked that there is no similar [issue](https://github.com/Farama-Foundation/Gymnasium/issues) in
+            the repo
           required: true

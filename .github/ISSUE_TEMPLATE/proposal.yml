@@ -1,5 +1,5 @@
 name: Proposal
-description: A clear and concise description of the proposal.
+description: Propose changes that are not fixing bugs
 title: "[Proposal] Proposal title"
 labels: ["enhancement"]
 body:
