@@ -12,10 +12,12 @@ from jax.random import PRNGKey
 import gymnasium as gym
 from gymnasium.envs.phys2d.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.functional import ActType, FuncEnv, RenderStateType, StateType
+from gymnasium.functional import ActType, FuncEnv, StateType
+
+RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
 
-class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
+class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]):
     """Cartpole but in jax and functional.
 
     Example usage:
@@ -130,7 +132,7 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
     def render_image(
         self,
         state: StateType,
-        render_state: Tuple["pygame.Surface", "pygame.time.Clock"],  # type: ignore  # noqa: F821
+        render_state: RenderStateType,
     ) -> Tuple[RenderStateType, np.ndarray]:
 
         try:

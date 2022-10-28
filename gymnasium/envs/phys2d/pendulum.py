@@ -12,10 +12,12 @@ from jax.random import PRNGKey
 import gymnasium as gym
 from gymnasium.envs.phys2d.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.functional import ActType, FuncEnv, RenderStateType, StateType
+from gymnasium.functional import ActType, FuncEnv, StateType
+
+RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
 
 
-class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool]):
+class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]):
     """Pendulum but in jax and functional."""
 
     max_speed = 8
