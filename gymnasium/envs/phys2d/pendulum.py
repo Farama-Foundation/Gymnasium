@@ -185,7 +185,7 @@ class PendulumJaxEnv(JaxEnv):
         env.transform(jax.jit)
         action_space = env.action_space
         observation_space = env.observation_space
-        metadata = {"render.modes": ["rgb_array"], "render_fps": 30}
+        metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 
         super().__init__(
             env,

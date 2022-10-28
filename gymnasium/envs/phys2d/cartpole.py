@@ -237,7 +237,7 @@ class CartPoleJaxEnv(JaxEnv):
         env.transform(jax.jit)
         action_space = env.action_space
         observation_space = env.observation_space
-        metadata = {"render.modes": ["rgb_array"], "render_fps": 50}
+        metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
         super().__init__(
             env,
             observation_space=observation_space,

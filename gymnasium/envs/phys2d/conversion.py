@@ -66,6 +66,9 @@ class JaxEnv(gym.Env):
         return obs, info
 
     def step(self, action: ActType):
+        err_msg = f"{action!r} ({type(action)}) invalid"
+        assert self.action_space.contains(action), err_msg
+
         rng, self.rng = jrng.split(self.rng)
 
         next_state = self.func_env.transition(self.state, action, rng)
