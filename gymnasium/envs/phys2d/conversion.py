@@ -43,7 +43,9 @@ class JaxEnv(gym.Env):
         else:
             self.render_state = None
 
-        _, seed = seeding.np_random()
+        np_random, _ = seeding.np_random()
+        seed = np_random.integers(0, 2 ** 32 - 1, dtype="uint32")
+
         self.rng = jrng.PRNGKey(seed)
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
