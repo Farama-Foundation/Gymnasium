@@ -31,7 +31,7 @@ class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
 
     screen_dim = 500
 
-    observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(4,), dtype=np.float32)
+    observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(3,), dtype=np.float32)
     action_space = gym.spaces.Box(-max_torque, max_torque, shape=(1,), dtype=np.float32)
 
     def initial(self, rng: PRNGKey):
