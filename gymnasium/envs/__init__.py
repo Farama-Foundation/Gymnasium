@@ -342,3 +342,11 @@ register(
     entry_point="gymnasium.envs.mujoco.humanoidstandup_v4:HumanoidStandupEnv",
     max_episode_steps=1000,
 )
+
+
+# Gym conversion
+# ----------------------------------------
+register(
+    id="GymV26Environment-v0",
+    entry_point="gymnasium.envs.external.gym_env:GymEnvironment",
+)

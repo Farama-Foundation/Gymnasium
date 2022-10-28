@@ -18,11 +18,11 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Low   | 0                                  |
 | Import            | `gymnasium.make("ALE/Assault-v5")` | 
 
-### Description
+## Description
 You control a vehicle that can move sideways. A big mother ship circles overhead and continually deploys smaller drones.
 You must destroy these enemies and dodge their attacks. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=827).
 
-### Actions
+## Actions
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
 However, if you use v0 or v4 or specify `full_action_space=False` during initialization, only a reduced
 number of actions (those that are meaningful in this game) are available. The reduced action space may depend
@@ -38,8 +38,7 @@ flavor looks like this:
 | 4   | LEFT      |
 | 5   | RIGHTFIRE |
 | 6   | LEFTFIRE  |
-
-### Observations
+## Observations
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
 - The 128 Bytes of RAM of the console
@@ -56,8 +55,7 @@ instead. The respective observation spaces are
 
 respectively. The general article on Atari environments outlines different ways to instantiate corresponding environments
 via `gymnasium.make`.
-
-### Arguments
+## Arguments
 
 ```
 env = gymnasium.make("ALE/Assault-v5")
@@ -75,7 +73,7 @@ are available. These are no longer supported in v5. In order to obtain equivalen
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("Assault-v0")`.
 
-### Version History
+## Version History
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
 general article on Atari environments. 
 

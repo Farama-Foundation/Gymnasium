@@ -76,7 +76,7 @@ class ContactDetector(contactListener):
 
 class LunarLander(gym.Env, EzPickle):
     """
-    ### Description
+    ## Description
     This environment is a classic rocket trajectory optimization problem.
     According to Pontryagin's maximum principle, it is optimal to fire the
     engine at full throttle or turn it off. This is the reason why this
@@ -95,16 +95,16 @@ class LunarLander(gym.Env, EzPickle):
     <!-- To play yourself, run: -->
     <!-- python examples/agents/keyboard_agent.py LunarLander-v2 -->
 
-    ### Action Space
+    ## Action Space
     There are four discrete actions available: do nothing, fire left
     orientation engine, fire main engine, fire right orientation engine.
 
-    ### Observation Space
+    ## Observation Space
     The state is an 8-dimensional vector: the coordinates of the lander in `x` & `y`, its linear
     velocities in `x` & `y`, its angle, its angular velocity, and two booleans
     that represent whether each leg is in contact with the ground or not.
 
-    ### Rewards
+    ## Rewards
     After every step a reward is granted. The total reward of an episode is the
     sum of the rewards for all the steps within that episode.
 
@@ -120,11 +120,11 @@ class LunarLander(gym.Env, EzPickle):
 
     An episode is considered a solution if it scores at least 200 points.
 
-    ### Starting State
+    ## Starting State
     The lander starts at the top center of the viewport with a random initial
     force applied to its center of mass.
 
-    ### Episode Termination
+    ## Episode Termination
     The episode finishes if:
     1) the lander crashes (the lander body gets in contact with the moon);
     2) the lander gets outside of the viewport (`x` coordinate is greater than 1);
@@ -137,7 +137,7 @@ class LunarLander(gym.Env, EzPickle):
     > wakes up. Bodies will also wake up if a joint or contact attached to
     > them is destroyed.
 
-    ### Arguments
+    ## Arguments
     To use to the _continuous_ environment, you need to specify the
     `continuous=True` argument like below:
     ```python
@@ -172,16 +172,16 @@ class LunarLander(gym.Env, EzPickle):
     `wind_power` dictates the maximum magnitude of linear wind applied to the craft. The recommended value for `wind_power` is between 0.0 and 20.0.
     `turbulence_power` dictates the maximum magnitude of rotational wind applied to the craft. The recommended value for `turbulence_power` is between 0.0 and 2.0.
 
-    ### Version History
+    ## Version History
     - v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters
     - v1: Legs contact with ground added in state vector; contact with ground
         give +10 reward points, and -10 if then lose contact; reward
         renormalized to 200; harder initial random push.
     - v0: Initial version
 
-    <!-- ### References -->
+    <!-- ## References -->
 
-    ### Credits
+    ## Credits
     Created by Oleg Klimov
     """
 
@@ -602,6 +602,14 @@ class LunarLander(gym.Env, EzPickle):
         return np.array(state, dtype=np.float32), reward, terminated, False, {}
 
     def render(self):
+        if self.render_mode is None:
+            gym.logger.warn(
+                "You are calling render method without specifying any render mode. "
+                "You can specify the render_mode at initialization, "
+                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+            )
+            return
+
         try:
             import pygame
             from pygame import gfxdraw

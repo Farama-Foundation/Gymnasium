@@ -1,5 +1,6 @@
 sphinx
 myst-parser
-furo
+sphinx_gallery
+git+https://github.com/Farama-Foundation/Celshast#egg=furo
 moviepy
 pygame

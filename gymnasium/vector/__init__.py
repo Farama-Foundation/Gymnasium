@@ -32,7 +32,7 @@ def make(
     Args:
         id: The environment ID. This must be a valid ID from the registry.
         num_envs: Number of copies of the environment.
-        asynchronous: If `True`, wraps the environments in an :class:`AsyncVectorEnv` (which uses `multiprocessing`_ to run the environments in parallel). If ``False``, wraps the environments in a :class:`SyncVectorEnv`.
+        asynchronous: If `True`, wraps the environments in an :class:`AsyncVectorEnv` (which uses `multiprocessing` to run the environments in parallel). If ``False``, wraps the environments in a :class:`SyncVectorEnv`.
         wrappers: If not ``None``, then apply the wrappers to each internal environment during creation.
         disable_env_checker: If to run the env checker for the first environment only. None will default to the environment spec `disable_env_checker` parameter
             (that is by default False), otherwise will run according to this argument (True = not run, False = run)

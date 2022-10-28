@@ -17,7 +17,11 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
     if "gymnasium.envs." in env_spec.entry_point:
         try:
             return env_spec.make(disable_env_checker=True).unwrapped
-        except (ImportError, gym.error.DependencyNotInstalled) as e:
+        except (
+            ImportError,
+            gym.error.DependencyNotInstalled,
+            gym.error.MissingArgument,
+        ) as e:
             logger.warn(f"Not testing {env_spec.id} due to error: {e}")
     return None
 
@@ -26,6 +30,32 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
 all_testing_initialised_envs: List[Optional[gym.Env]] = [
     try_make_env(env_spec) for env_spec in gym.envs.registry.values()
 ]
+
+try:
+    # We check whether gym can be imported
+    import gym as old_gym
+
+    # We are testing all variations of Pong which are registered in (old) Gym
+    atari_ids = [
+        "ALE/Pong-v5",
+        "ALE/Pong-ram-v5",
+        "Pong-v4",
+        "PongDeterministic-v4",
+        "PongNoFrameskip-v4",
+        "Pong-ram-v4",
+        "Pong-ramDeterministic-v4",
+        "Pong-ramNoFrameskip-v4",
+    ]
+    all_testing_initialised_envs += [
+        gym.make("GymV26Environment-v0", env_id=env_id) for env_id in atari_ids
+    ]
+except ImportError:
+    # Failure because gym isn't available
+    logger.warn("Skipping tests of atari environments because gym seems to be missing")
+except (old_gym.error.DependencyNotInstalled, old_gym.error.NamespaceNotFound):
+    # Failure because ale isn't available
+    logger.warn("Skipping tests of atari environments because ALE seems to be missing")
+
 all_testing_initialised_envs: List[gym.Env] = [
     env for env in all_testing_initialised_envs if env is not None
 ]
@@ -48,19 +78,6 @@ gym_testing_env_specs: List[EnvSpec] = [
     )
 ]
 # TODO, add minimum testing env spec in testing
-minimum_testing_env_specs = [
-    env_spec
-    for env_spec in [
-        "CartPole-v1",
-        "MountainCarContinuous-v0",
-        "LunarLander-v2",
-        "LunarLanderContinuous-v2",
-        "CarRacing-v2",
-        "Blackjack-v1",
-        "Reacher-v4",
-    ]
-    if env_spec in all_testing_env_specs
-]
 
 
 def assert_equals(a, b, prefix=None):

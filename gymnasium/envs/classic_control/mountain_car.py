@@ -15,7 +15,7 @@ from gymnasium.error import DependencyNotInstalled
 
 class MountainCarEnv(gym.Env):
     """
-    ### Description
+    ## Description
 
     The Mountain Car MDP is a deterministic MDP that consists of a car placed stochastically
     at the bottom of a sinusoidal valley, with the only possible actions being the accelerations
@@ -35,7 +35,7 @@ class MountainCarEnv(gym.Env):
     }
     ```
 
-    ### Observation Space
+    ## Observation Space
 
     The observation is a `ndarray` with shape `(2,)` where the elements correspond to the following:
 
@@ -44,7 +44,7 @@ class MountainCarEnv(gym.Env):
     | 0   | position of the car along the x-axis | -Inf | Inf | position (m) |
     | 1   | velocity of the car                  | -Inf | Inf | position (m) |
 
-    ### Action Space
+    ## Action Space
 
     There are 3 discrete deterministic actions:
 
@@ -54,7 +54,7 @@ class MountainCarEnv(gym.Env):
     | 1   | Don't accelerate        | Inf   | position (m) |
     | 2   | Accelerate to the right | Inf   | position (m) |
 
-    ### Transition Dynamics:
+    ## Transition Dynamics:
 
     Given an action, the mountain car follows the following transition dynamics:
 
@@ -66,24 +66,24 @@ class MountainCarEnv(gym.Env):
     upon collision with the wall. The position is clipped to the range `[-1.2, 0.6]` and
     velocity is clipped to the range `[-0.07, 0.07]`.
 
-    ### Reward:
+    ## Reward:
 
     The goal is to reach the flag placed on top of the right hill as quickly as possible, as such the agent is
     penalised with a reward of -1 for each timestep.
 
-    ### Starting State
+    ## Starting State
 
     The position of the car is assigned a uniform random value in *[-0.6 , -0.4]*.
     The starting velocity of the car is always assigned to 0.
 
-    ### Episode End
+    ## Episode End
 
     The episode ends if either of the following happens:
     1. Termination: The position of the car is greater than or equal to 0.5 (the goal position on top of the right hill)
     2. Truncation: The length of the episode is 200.
 
 
-    ### Arguments
+    ## Arguments
 
     ```python
     import gymnasium as gym
@@ -93,7 +93,7 @@ class MountainCarEnv(gym.Env):
     On reset, the `options` parameter allows the user to change the bounds used to determine
     the new random state.
 
-    ### Version History
+    ## Version History
 
     * v0: Initial versions release (1.0.0)
     """
@@ -170,6 +170,14 @@ class MountainCarEnv(gym.Env):
         return np.sin(3 * xs) * 0.45 + 0.55
 
     def render(self):
+        if self.render_mode is None:
+            gym.logger.warn(
+                "You are calling render method without specifying any render mode. "
+                "You can specify the render_mode at initialization, "
+                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+            )
+            return
+
         try:
             import pygame
             from pygame import gfxdraw
