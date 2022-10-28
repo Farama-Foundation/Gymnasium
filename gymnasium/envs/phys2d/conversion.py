@@ -1,6 +1,8 @@
 from typing import Any, Dict, Optional, Tuple
 
+import jax.numpy as jnp
 import jax.random as jrng
+import numpy as np
 
 import gymnasium as gym
 from gymnasium import Space
@@ -44,7 +46,7 @@ class JaxEnv(gym.Env):
             self.render_state = None
 
         np_random, _ = seeding.np_random()
-        seed = np_random.integers(0, 2 ** 32 - 1, dtype="uint32")
+        seed = np_random.integers(0, 2**32 - 1, dtype="uint32")
 
         self.rng = jrng.PRNGKey(seed)
 
@@ -59,6 +61,8 @@ class JaxEnv(gym.Env):
         obs = self.func_env.observation(self.state)
         info = self.func_env.state_info(self.state)
 
+        obs = _convert_jax_to_numpy(obs)
+
         return obs, info
 
     def step(self, action: ActType):
@@ -70,6 +74,8 @@ class JaxEnv(gym.Env):
         terminated = self.func_env.terminal(next_state)
         info = self.func_env.step_info(self.state, action, next_state)
         self.state = next_state
+
+        observation = _convert_jax_to_numpy(observation)
 
         return observation, float(reward), bool(terminated), False, info
 
@@ -86,3 +92,20 @@ class JaxEnv(gym.Env):
         if self.render_state is not None:
             self.func_env.render_close(self.render_state)
             self.render_state = None
+
+
+def _convert_jax_to_numpy(element: Any):
+    """
+    Convert a jax observation/action to a numpy array, or a numpy-based container.
+    Currently required because all tests assume that stuff is in numpy arrays, hopefully will be removed soon.
+    """
+    if isinstance(element, jnp.ndarray):
+        return np.asarray(element)
+    elif isinstance(element, tuple):
+        return tuple(_convert_jax_to_numpy(e) for e in element)
+    elif isinstance(element, list):
+        return [_convert_jax_to_numpy(e) for e in element]
+    elif isinstance(element, dict):
+        return {k: _convert_jax_to_numpy(v) for k, v in element.items()}
+    else:
+        raise TypeError(f"Cannot convert {element} to numpy")
