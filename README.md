@@ -51,12 +51,9 @@ env.close()
 
 Please note that this is an incomplete list, and just includes libraries that the maintainers most commonly point newcommers to when asked for recommendations.
 
-* [CleanRL](https://github.com/vwxyzjn/cleanrl) is a learning library based on the Gym API. It is designed to cater to newer people in the field and provides very good reference implementations.
-* [Tianshou](https://github.com/thu-ml/tianshou) is a learning library that's geared towards very experienced users and is design to allow for ease in complex algorithm modifications.
-* [TorchRL](https://github.com/pytorch/rl) is the pytorch domain library for RL. It is fully compatible with the Gym API. It provides reusable building blocks for RL algorithms. It supports single and multi-agent, single and multi-tasks, distributed learning and many more features.
-* [RLlib](https://docs.ray.io/en/latest/rllib/index.html) is a learning library that allows for distributed training and inferencing and supports an extraordinarily large number of features throughout the reinforcement learning space.
-* [PettingZoo](https://github.com/Farama-Foundation/PettingZoo) is like Gym, but for environments with multiple agents.
-
+* [CleanRL](https://github.com/vwxyzjn/cleanrl) is a learning library based on the Gymnasium API. It is designed to cater to newer people in the field and provides very good reference implementations.
+* [PettingZoo](https://github.com/Farama-Foundation/PettingZoo) is a multi-agents version of Gymnasium with a number of implemented environments, i.e. multi-agent atari environments.
+* [Farama Foundation](https://farama.org/projects) has a collection of environments that are maintained by the same team as Gymnasium.
 
 ## Environment Versioning
 

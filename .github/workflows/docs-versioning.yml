@@ -22,17 +22,23 @@ jobs:
         with:
           strip_v: true
 
-      - name: Install Library
-        run: pip install -e .
-
       - name: Install dependencies
-        run: pip install -r ./docs/requirements.txt
+        run: pip install -r docs/requirements.txt
+
+      - name: Install Gymnasium
+        run: pip install mujoco && pip install .[atari,accept-rom-license,box2d]
+
+      - name: Build Envs Docs
+        run: python docs/scripts/gen_mds.py && python docs/scripts/gen_envs_display.py
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
 
-      - name: Remove CNAME
-        run: rm -f ./_build/CNAME
+      - name: Move 404
+        run: mv _build/404/index.html _build/404.html
+
+      - name: Update 404 links
+        run: python docs/scripts/move_404.py _build/404.html
 
       - name: Remove .doctrees
         run: rm -r _build/.doctrees
