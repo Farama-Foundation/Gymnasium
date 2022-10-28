@@ -1,9 +1,8 @@
+import jax
+import jax.numpy as jnp
+import jax.random as jrng
 import numpy as np
 import pytest
-
-jax = pytest.importorskip("jax")
-jnp = pytest.importorskip("jax.numpy")
-jrng = pytest.importorskip("jax.random")
 
 from gymnasium.envs.phys2d.cartpole import CartPoleF  # noqa: E402
 from gymnasium.envs.phys2d.pendulum import PendulumF  # noqa: E402
