@@ -708,8 +708,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [extras]
 accept-rom-license = ["AutoROM"]
+all = ["ale-py", "AutoROM", "pygame", "mujoco-py", "mujoco", "lz4", "opencv-python", "matplotlib", "moviepy"]
 atari = ["ale-py"]
-box2d = ["box2d-py", "pygame", "swig"]
 classic_control = ["pygame"]
 mujoco = ["mujoco"]
 mujoco_py = ["mujoco-py"]
@@ -719,7 +719,7 @@ toy_text = ["pygame"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7.1"
-content-hash = "f65271959c753b9aaa8521be8e41f49d3b9094e1abcd8bd7bc0799331a6e8fd7"
+content-hash = "3dd8a301d1e807874030b3216945689ce18c4b1c7b9d2297b4869b2fe4b88c95"
 
 [metadata.files]
 absl-py = [

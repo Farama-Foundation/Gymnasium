@@ -27,6 +27,8 @@ COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
 RUN pip install poetry
-RUN poetry install --all-extras
+RUN poetry run pip install swig==4.0.2
+RUN poetry run pip install --no-use-pep517 box2d-py==2.3.8
+RUN poetry install -E all
 
 ENTRYPOINT ["/usr/local/gymnasium/bin/docker_entrypoint"]
