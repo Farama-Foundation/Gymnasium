@@ -40,6 +40,8 @@ class JaxEnv(gym.Env):
         self.reward_range = reward_range
         self.spec = spec
 
+        self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
+
         if self.render_mode == "rgb_array":
             self.render_state = self.func_env.render_init()
         else:
@@ -66,8 +68,13 @@ class JaxEnv(gym.Env):
         return obs, info
 
     def step(self, action: ActType):
-        err_msg = f"{action!r} ({type(action)}) invalid"
-        assert self.action_space.contains(action), err_msg
+        if self._is_box_action_space:
+            assert isinstance(self.action_space, gym.spaces.Box)  # For typing
+            action = np.clip(action, self.action_space.low, self.action_space.high)
+        else:  # Discrete
+            # For now we assume jax envs don't use complex spaces
+            err_msg = f"{action!r} ({type(action)}) invalid"
+            assert self.action_space.contains(action), err_msg
 
         rng, self.rng = jrng.split(self.rng)
 
