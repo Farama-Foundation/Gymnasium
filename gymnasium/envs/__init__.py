@@ -49,6 +49,30 @@ register(
     max_episode_steps=500,
 )
 
+
+# Phys2d (jax classic control)
+# ----------------------------------------
+
+register(
+    id="CartPoleJax-v0",
+    entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
+    max_episode_steps=200,
+    reward_threshold=195.0,
+)
+
+register(
+    id="CartPoleJax-v1",
+    entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
+    max_episode_steps=500,
+    reward_threshold=475.0,
+)
+
+register(
+    id="PendulumJax-v0",
+    entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxEnv",
+    max_episode_steps=200,
+)
+
 # Box2d
 # ----------------------------------------
 
