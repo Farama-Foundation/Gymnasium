@@ -115,7 +115,7 @@ class Env(Generic[ObsType, ActType]):
         *,
         seed: Optional[int] = None,
         options: Optional[dict] = None,
-    ) -> Tuple[ObsType, dict]:
+    ) -> Tuple[ObsType, dict]:  # type: ignore
         """Resets the environment to an initial internal state, returning an initial observation and info.
 
         This method generates a new starting state often with some randomness to ensure that the agent explores the

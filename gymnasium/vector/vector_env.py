@@ -5,6 +5,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType
+from gymnasium.utils import seeding
 
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
@@ -58,6 +59,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     num_envs: int
 
+    _np_random: Optional[np.random.Generator] = None
+
     def __init__(self, **kwargs):
         """Base class for vectorized environments.
 
@@ -73,7 +76,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         *,
         seed: Optional[Union[int, List[int]]] = None,
         options: Optional[dict] = None,
-    ) -> Tuple[ObsType, dict]:
+    ) -> Tuple[ObsType, dict]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
@@ -84,7 +87,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             A batch of observations and info from the vectorized environment.
 
         """
-        pass
+        if seed is not None:
+            self._np_random, seed = seeding.np_random(seed)
 
     def step(
         self, actions: ActType
@@ -130,6 +134,21 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
         self.close_extras(**kwargs)
         self.closed = True
+
+    @property
+    def np_random(self) -> np.random.Generator:
+        """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
+
+        Returns:
+            Instances of `np.random.Generator`
+        """
+        if self._np_random is None:
+            self._np_random, seed = seeding.np_random()
+        return self._np_random
+
+    @np_random.setter
+    def np_random(self, value: np.random.Generator):
+        self._np_random = value
 
     @property
     def unwrapped(self):

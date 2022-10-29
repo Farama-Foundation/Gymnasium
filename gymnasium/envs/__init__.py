@@ -11,6 +11,7 @@ _load_env_plugins()
 register(
     id="CartPole-v0",
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
+    vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
     max_episode_steps=200,
     reward_threshold=195.0,
 )
@@ -18,6 +19,7 @@ register(
 register(
     id="CartPole-v1",
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
+    vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
     max_episode_steps=500,
     reward_threshold=475.0,
 )
