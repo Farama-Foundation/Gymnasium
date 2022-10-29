@@ -11,14 +11,24 @@ from gymnasium.core import (
     RewardWrapper,
 )
 from gymnasium.spaces import Space
-from gymnasium.envs import make, spec, register
+from gymnasium.envs import make, spec, register, make_vec
+from gymnasium.vector import VectorEnv
 from gymnasium import logger
 from gymnasium import vector
 from gymnasium import wrappers
 import os
 import sys
 
-__all__ = ["Env", "Space", "Wrapper", "make", "spec", "register"]
+__all__ = [
+    "Env",
+    "VectorEnv",
+    "Space",
+    "Wrapper",
+    "make",
+    "make_vec",
+    "spec",
+    "register",
+]
 __version__ = "0.26.3"
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
