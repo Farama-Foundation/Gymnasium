@@ -4,9 +4,9 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
-import gym
-from gym.dev_wrappers.to_numpy import jax_to_numpy, numpy_to_jax
-from gym.wrappers import JaxToNumpyV0
+import gymnasium as gym
+from gymnasium.dev_wrappers.to_numpy import jax_to_numpy, numpy_to_jax
+from gymnasium.wrappers import JaxToNumpyV0
 
 
 class DummyJaxEnv(gym.Env):

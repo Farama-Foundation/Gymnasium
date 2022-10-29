@@ -8,8 +8,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax.interpreters.xla import DeviceArray
 
-import gymnasium as gym
-from gym import Env, Wrapper
+from gymnasium import Env, Wrapper
 
 
 @functools.singledispatch

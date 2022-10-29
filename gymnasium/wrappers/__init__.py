@@ -1,4 +1,8 @@
 """Module of wrapper classes."""
+from gymnasium.dev_wrappers import JaxToNumpyV0
+from gymnasium.dev_wrappers import JaxToTFV0
+from gymnasium.dev_wrappers import JaxToTorchV0
+
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
 from gymnasium.wrappers.clip_action import ClipAction

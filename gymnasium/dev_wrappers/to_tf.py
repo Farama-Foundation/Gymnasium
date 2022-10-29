@@ -8,9 +8,8 @@ import jax.numpy as jnp
 from jax._src import dlpack as jax_dlpack
 from jax.interpreters.xla import DeviceArray
 
-import gymnasium as gym
-from gym import Env, Wrapper
-from gym.error import DependencyNotInstalled
+from gymnasium import Env, Wrapper
+from gymnasium.error import DependencyNotInstalled
 
 try:
     import tensorflow as tf

@@ -5,9 +5,9 @@ import numpy as np
 import pytest
 import torch
 
-import gym
-from gym.dev_wrappers.torch_wrapper import jax_to_torch, torch_to_jax
-from gym.wrappers import JaxToTorchV0
+import gymnasium as gym
+from gymnasium.dev_wrappers.to_torch import jax_to_torch, torch_to_jax
+from gymnasium.wrappers import JaxToTorchV0
 
 
 class DummyJaxEnv(gym.Env):

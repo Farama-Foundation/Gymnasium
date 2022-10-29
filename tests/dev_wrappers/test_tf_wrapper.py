@@ -5,12 +5,12 @@ import numpy as np
 import pytest
 import tensorflow as tf
 
-import gym
-from gym.dev_wrappers.to_numpy import numpy_to_jax
-from gym.dev_wrappers.to_tf import jax_to_tf, tf_to_jax
-from gym.utils.env_checker import data_equivalence
-from gym.vector import AsyncVectorEnv
-from gym.wrappers import JaxToTFV0
+import gymnasium as gym
+from gymnasium.dev_wrappers.to_numpy import numpy_to_jax
+from gymnasium.dev_wrappers.to_tf import jax_to_tf, tf_to_jax
+from gymnasium.utils.env_checker import data_equivalence
+from gymnasium.vector import AsyncVectorEnv
+from gymnasium.wrappers import JaxToTFV0
 from tests.dev_wrappers.utils import is_same_types
 from tests.testing_env import GenericTestEnv
 
@@ -98,7 +98,7 @@ TESTING_JAX_ENV_GEN = lambda obs_space, action_space: GenericTestEnv(
                 )
                 for _ in range(3)
             ],
-            new_step_api=True,
+            #new_step_api=True,
         ),
     ],
 )
