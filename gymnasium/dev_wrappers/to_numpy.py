@@ -1,5 +1,6 @@
 """Helper functions and wrapper class for converting between numpy and Jax."""
 import functools
+import numbers
 from collections import abc
 from typing import Any, Dict, Iterable, Mapping, Tuple, Union
 
@@ -7,6 +8,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax.interpreters.xla import DeviceArray
 
+import gymnasium as gym
 from gym import Env, Wrapper
 
 
@@ -21,6 +23,12 @@ def numpy_to_jax(value: Any) -> Any:
 @numpy_to_jax.register(np.ndarray)
 def _numpy_to_jax(value: np.ndarray) -> DeviceArray:
     """Converts a numpy array to a Jax DeviceArray."""
+    return jnp.array(value)
+
+
+@numpy_to_jax.register(numbers.Number)
+def _numpy_number_to_jax(value: numbers.Number) -> DeviceArray:
+    """Converts a number (int, float, etc.) to a Jax DeviceArray."""
     return jnp.array(value)
 
 
@@ -79,7 +87,7 @@ class JaxToNumpyV0(Wrapper):
         Extensive testing has not been done for handling the array's data type.
     """
 
-    def __init__(self, env: Union[Env, Wrapper]):
+    def __init__(self, env: Env):
         """Wraps an environment such that the input and outputs are numpy arrays.
 
         Args:

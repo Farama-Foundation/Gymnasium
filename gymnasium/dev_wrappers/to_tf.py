@@ -1,11 +1,14 @@
 """Helper functions and wrapper class for converting between TensorFlow and Jax."""
 import functools
+import numbers
 from collections import abc
 from typing import Any, Dict, Iterable, Mapping, Tuple, Union
 
+import jax.numpy as jnp
 from jax._src import dlpack as jax_dlpack
 from jax.interpreters.xla import DeviceArray
 
+import gymnasium as gym
 from gym import Env, Wrapper
 from gym.error import DependencyNotInstalled
 
@@ -29,6 +32,12 @@ def tf_to_jax(value: Any) -> Any:
 def _tf_to_jax(value: tf.Tensor) -> DeviceArray:
     """Converts a TensorFlow Tensor to a Jax DeviceArray."""
     return jax_dlpack.from_dlpack(tf.experimental.dlpack.to_dlpack(value))
+
+
+@tf_to_jax.register(numbers.Number)
+def _tf_number_to_jax(value: numbers.Number) -> DeviceArray:
+    """Converts a number to a Jax DeviceArray."""
+    return jnp.array(value)
 
 
 @tf_to_jax.register(abc.Mapping)
@@ -74,7 +83,7 @@ def _jax_iterable_to_tf(
     value: Iterable[Union[DeviceArray, Any]]
 ) -> Iterable[Union[tf.Tensor, Any]]:
     """Converts an Iterable from Jax DeviceArrays to an iterable of TensorFlow Tensors."""
-    return type(value)(jax_to_tf(v) for v in value)
+    return type(value)([jax_to_tf(v) for v in value])
 
 
 class JaxToTFV0(Wrapper):
@@ -86,7 +95,7 @@ class JaxToTFV0(Wrapper):
         Extensive testing has not been done for handling the tensor's data type.
     """
 
-    def __init__(self, env: Union[Env, Wrapper]):
+    def __init__(self, env: Env):
         """Wraps an environment so that the input and outputs are TensorFlow tensors.
 
         Args:

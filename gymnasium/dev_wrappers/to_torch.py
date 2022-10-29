@@ -14,6 +14,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional, Tuple, Union
 from jax._src import dlpack as jax_dlpack
 from jax.interpreters.xla import DeviceArray
 
+import gymnasium as gym
 from gym import Env, Wrapper
 from gym.error import DependencyNotInstalled
 
@@ -104,7 +105,7 @@ class JaxToTorchV0(Wrapper):
         well as managing the tensor's data type.
     """
 
-    def __init__(self, env: Union[Wrapper, Env], device: Optional[torch.device] = None):
+    def __init__(self, env: Env, device: Optional[torch.device] = None):
         """Wrapper class to change inputs and outputs of environment to PyTorch tensors.
 
         Args:
