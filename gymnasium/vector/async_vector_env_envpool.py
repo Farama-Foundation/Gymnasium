@@ -102,9 +102,7 @@ class AsyncVectorEnv(VectorEnv):
         self.batch_size = batch_size
         if batch_size is None:
             self.batch_size = len(env_fns)
-        self.env_ids_queue = None
-        if batch_size is not None:
-            self.env_ids_queue = ctx.Queue()
+        self.env_ids_queue = ctx.Queue()
         self.shared_memory = shared_memory
         self.copy = copy
         dummy_env = env_fns[0]()
@@ -219,52 +217,43 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.WAITING_RESET
 
     def recv(self):
-        assert self.env_ids_queue is not None
-        observations_list, rewards, terminateds, truncateds, infos = [], [], [], [], {}
-        successes = []
-        env_ids = []
+        env_ids = [self.env_ids_queue.get()]
+        results, successes = [], []
         while len(env_ids) < self.batch_size:
-            # print("qsize", self.env_ids_queue.qsize())
             env_id = self.env_ids_queue.get(block=True)
             env_ids.append(env_id)
-            # print("len(env_ids)", len(env_ids), "env_id", env_id)
+
             result, success = self.parent_pipes[env_id].recv()
-            obs, rew, terminated, truncated, info = result
-
+            results.append(result)
             successes.append(success)
-            observations_list.append(obs)
-            rewards.append(rew)
-            terminateds.append(terminated)
-            truncateds.append(truncated)
-            # infos = self._add_info(infos, info, i) TODO: handle info
-
         
+        self._raise_if_errors(successes)
+        # self._state = AsyncState.DEFAULT
         env_ids = np.array(env_ids)
         infos = {"env_ids": env_ids}
-        # self._raise_if_errors(successes)
-        # self._state = AsyncState.DEFAULT
+        results, info_data = zip(*results)
+        for i, info in enumerate(info_data):
+            infos = self._add_info(infos, info, i)
 
-        # if not self.shared_memory:
-        #     self.observations = concatenate(
-        #         self.single_observation_space,
-        #         observations_list,
-        #         self.observations,
-        #     )
-        return (
-            deepcopy(self.observations[env_ids]) if self.copy else self.observations[env_ids],
-            np.array(rewards),
-            np.array(terminateds, dtype=np.bool_),
-            np.array(truncateds, dtype=np.bool_),
-            infos,
-        )
+        if not self.shared_memory:
+            self.observations = concatenate(
+                self.single_observation_space, results, self.observations
+            )
 
+        return (deepcopy(self.observations[env_ids]) if self.copy else self.observations), infos
 
     def send(self, actions: np.ndarray, env_ids: np.ndarray):
         self._assert_is_running()
+        # if self._state != AsyncState.DEFAULT:
+        #     raise AlreadyPendingCallError(
+        #         f"Calling `step_async` while waiting for a pending call to `{self._state.value}` to complete.",
+        #         self._state.value,
+        #     )
+
         actions = iterate(self.action_space, actions)
-        for env_id, action in zip(env_ids, actions):
-            self.parent_pipes[env_id].send(("step", action))
-        # self._state = AsyncState.WAITING_STEP
+        for pipe, action in zip(self.parent_pipes, actions):
+            pipe.send(("step", action))
+        self._state = AsyncState.WAITING_STEP
 
 
     def reset_wait(
@@ -683,11 +672,8 @@ def _worker_shared_memory(index, env_fn, pipe, parent_pipe, shared_memory, error
                 write_to_shared_memory(
                     observation_space, index, observation, shared_memory
                 )
-                if env_ids_queue:
-                    pipe.send(((None, 0, False, False, info), True))
-                    env_ids_queue.put(index)
-                else:
-                    pipe.send(((None, info), True))
+                pipe.send(((None, info), True))
+
             elif command == "step":
                 (
                     observation,
@@ -705,8 +691,6 @@ def _worker_shared_memory(index, env_fn, pipe, parent_pipe, shared_memory, error
                     observation_space, index, observation, shared_memory
                 )
                 pipe.send(((None, reward, terminated, truncated, info), True))
-                if env_ids_queue:
-                    env_ids_queue.put(index)
             elif command == "seed":
                 env.seed(data)
                 pipe.send((None, True))
@@ -739,7 +723,7 @@ def _worker_shared_memory(index, env_fn, pipe, parent_pipe, shared_memory, error
                     "be one of {`reset`, `step`, `seed`, `close`, `_call`, "
                     "`_setattr`, `_check_spaces`}."
                 )
-
+            env_ids_queue.put(index)
     except (KeyboardInterrupt, Exception):
         error_queue.put((index,) + sys.exc_info()[:2])
         pipe.send((None, False))
