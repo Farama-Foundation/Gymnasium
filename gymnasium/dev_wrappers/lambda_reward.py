@@ -77,17 +77,7 @@ class ClipRewardsV0(LambdaRewardV0):
             raise InvalidBound("Both `min_reward` and `max_reward` cannot be None")
 
         elif max_reward is not None and min_reward is not None:
-            array_bounds = isinstance(min_reward, jp.ndarray) or isinstance(
-                max_reward, jp.ndarray
-            )
-
-            invalid_bounds = (
-                any(max_reward < min_reward)
-                if array_bounds
-                else max_reward < min_reward
-            )
-
-            if invalid_bounds:
+            if jp.any(max_reward - min_reward < 0):
                 raise InvalidBound(
                     f"Min reward ({min_reward}) must be smaller than max reward ({max_reward})"
                 )
