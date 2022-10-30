@@ -1,9 +1,7 @@
 """Lambda reward wrappers that uses jumpy for compatibility with jax (i.e. brax) and numpy environments."""
 from typing import Callable, Optional, Union
 
-import jax.numpy as jnp
 import jumpy as jp
-import numpy as np
 
 import gymnasium
 from gymnasium.dev_wrappers import FuncArgType
@@ -79,9 +77,9 @@ class ClipRewardsV0(LambdaRewardV0):
             raise InvalidBound("Both `min_reward` and `max_reward` cannot be None")
 
         elif max_reward is not None and min_reward is not None:
-            array_bounds = isinstance(
-                min_reward, (np.ndarray, jnp.ndarray)
-            ) or isinstance(max_reward, (np.ndarray, jnp.ndarray))
+            array_bounds = isinstance(min_reward, jp.ndarray) or isinstance(
+                max_reward, jp.ndarray
+            )
 
             invalid_bounds = (
                 any(max_reward < min_reward)
