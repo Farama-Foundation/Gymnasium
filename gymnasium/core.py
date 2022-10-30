@@ -1,7 +1,7 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, Optional, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
@@ -314,7 +314,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return getattr(self.env, name)
 
     @property
-    def spec(self) -> Optional[EnvSpec]:
+    def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute."""
         return self.env.spec
 
