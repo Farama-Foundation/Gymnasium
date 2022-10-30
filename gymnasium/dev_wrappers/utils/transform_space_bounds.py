@@ -1,7 +1,9 @@
 """A set of utility functions for lambda wrappers."""
 import typing
 from functools import singledispatch
-from typing import Any, Callable
+from typing import Any, Callable, Union
+
+import jumpy as jp
 
 from gymnasium.dev_wrappers import FuncArgType
 from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space
@@ -26,7 +28,7 @@ def _transform_space_discrete(
 
 @transform_space_bounds.register(Box)
 def _transform_space_box(
-    space, args: FuncArgType[typing.Tuple[int, int]], fn: Callable
+    space, args: FuncArgType[typing.Tuple[Union[int, jp.ndarray], ...]], fn: Callable
 ):
     """Change `Box` space low and high value."""
     if not args:

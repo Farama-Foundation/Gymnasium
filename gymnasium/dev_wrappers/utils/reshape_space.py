@@ -31,7 +31,7 @@ def _reshape_space_not_reshapable(space, args: FuncArgType, fn: Callable):
 
 
 @reshape_space.register(Box)
-def _reshape_space_box(space, args: FuncArgType[typing.Tuple[int, int]], fn: Callable):
+def _reshape_space_box(space, args: FuncArgType[typing.Tuple[int, ...]], fn: Callable):
     """Reshape `Box` space."""
     if not args:
         return space
