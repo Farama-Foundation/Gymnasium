@@ -53,31 +53,27 @@ class TimeAwareObservationV0(gymnasium.ObservationWrapper):
         self.max_timesteps = self._get_max_timesteps(env)
         self.num_envs = getattr(env, "num_envs", 1)
 
-        self._get_time_observation = (
-            (lambda: self.timesteps / self.max_timesteps)
-            if self.normalize_time
-            else (lambda: self.max_timesteps - self.timesteps)
-        )
-        self._observation_postprocess = (
-            (
-                lambda observation: spaces.flatten(
-                    self.time_aware_observation_space, observation
-                )
-            )
-            if self.flatten
-            else (lambda observation: observation)
-        )
+        if self.normalize_time:
+            self._get_time_observation = lambda: self.timesteps / self.max_timesteps
+            time_space = Box(0, 1, (self.num_envs,))
+        else:
+            self._get_time_observation = lambda: self.max_timesteps - self.timesteps
+            time_space = Box(0, self.max_timesteps, (self.num_envs,))
 
         self.time_aware_observation_space = Dict(
-            obs=env.observation_space, time=Box(0, self.max_timesteps, (self.num_envs,))
+            obs=env.observation_space, time=time_space
         )
 
         if self.flatten:
             self.observation_space = spaces.flatten_space(
                 self.time_aware_observation_space
             )
+            self._observation_postprocess = lambda observation: spaces.flatten(
+                self.time_aware_observation_space, observation
+            )
         else:
             self.observation_space = self.time_aware_observation_space
+            self._observation_postprocess = lambda observation: observation
 
     def observation(self, observation: ObsType):
         """Adds to the observation with the current time information.
