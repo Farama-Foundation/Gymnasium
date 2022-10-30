@@ -1,4 +1,6 @@
 """An async vector environment."""
+from __future__ import annotations
+
 import multiprocessing as mp
 import sys
 import time
@@ -6,12 +8,12 @@ from copy import deepcopy
 from enum import Enum
 from multiprocessing.connection import Connection
 from multiprocessing.queues import Queue
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from typing import Any, Callable, Sequence
 
 import numpy as np
 
 from gymnasium import logger
-from gymnasium.core import ObsType
+from gymnasium.core import ActType, Env, ObsType
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
@@ -29,7 +31,12 @@ from gymnasium.vector.utils import (
     read_from_shared_memory,
     write_to_shared_memory,
 )
-from gymnasium.vector.vector_env import VectorEnv
+from gymnasium.vector.vector_env import (
+    VectorActType,
+    VectorArrayType,
+    VectorEnv,
+    VectorObsType,
+)
 
 __all__ = ["AsyncVectorEnv"]
 
@@ -41,7 +48,7 @@ class AsyncState(Enum):
     WAITING_CALL = "call"
 
 
-class AsyncVectorEnv(VectorEnv):
+class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
     """Vectorized environment that runs multiple environments in parallel.
 
     It uses ``multiprocessing`` processes, and pipes for communication.
@@ -60,12 +67,13 @@ class AsyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Sequence[callable],
+        env_fns: Sequence[Callable[[], Env[ObsType, ActType]]],
         shared_memory: bool = True,
         copy: bool = True,
-        context: Optional[str] = None,
+        context: str | None = None,
         daemon: bool = True,
-        worker: Optional[callable] = None,
+        worker: Callable[[int, callable, Connection, Connection, bool, Queue], None]
+        | None = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -169,8 +177,8 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_async(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
     ):
         """Send calls to the :obj:`reset` methods of the sub-environments.
 
@@ -212,15 +220,15 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_wait(
         self,
-        timeout: Optional[Union[int, float]] = None,
-    ) -> Union[ObsType, Tuple[ObsType, List[dict]]]:
+        timeout: int | float | None = None,
+    ) -> tuple[VectorObsType, dict[str, Any]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
             timeout: Number of seconds before the call to `reset_wait` times out. If `None`, the call to `reset_wait` never times out.
 
         Returns:
-            A tuple of batched observations and list of dictionaries
+            A tuple of batched observations and dictionary
 
         Raises:
             ClosedEnvironmentError: If the environment was closed (if :meth:`close` was previously called).
@@ -259,9 +267,9 @@ class AsyncVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
+    ) -> tuple[VectorObsType, dict[str, Any]]:
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
@@ -300,8 +308,8 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.WAITING_STEP
 
     def step_wait(
-        self, timeout: Optional[Union[int, float]] = None
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+        self, timeout: int | float | None = None
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
         """Wait for the calls to :obj:`step` in each sub-environment to finish.
 
         Args:
@@ -328,7 +336,13 @@ class AsyncVectorEnv(VectorEnv):
                 f"The call to `step_wait` has timed out after {timeout} second(s)."
             )
 
-        observations_list, rewards, terminateds, truncateds, infos = [], [], [], [], {}
+        observations_list, rewards, terminations, truncations, infos = (
+            [],
+            [],
+            [],
+            [],
+            {},
+        )
         successes = []
         for i, pipe in enumerate(self.parent_pipes):
             result, success = pipe.recv()
@@ -337,8 +351,8 @@ class AsyncVectorEnv(VectorEnv):
             successes.append(success)
             observations_list.append(obs)
             rewards.append(rew)
-            terminateds.append(terminated)
-            truncateds.append(truncated)
+            terminations.append(terminated)
+            truncations.append(truncated)
             infos = self._add_info(infos, info, i)
 
         self._raise_if_errors(successes)
@@ -354,12 +368,16 @@ class AsyncVectorEnv(VectorEnv):
         return (
             deepcopy(self.observations) if self.copy else self.observations,
             np.array(rewards),
-            np.array(terminateds, dtype=np.bool_),
-            np.array(truncateds, dtype=np.bool_),
+            np.array(terminations, dtype=np.bool_),
+            np.array(truncations, dtype=np.bool_),
             infos,
         )
 
-    def step(self, actions):
+    def step(
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorObsType, VectorArrayType, VectorArrayType, VectorArrayType, dict[str, Any]
+    ]:
         """Take an action for each parallel environment.
 
         Args:
@@ -371,7 +389,7 @@ class AsyncVectorEnv(VectorEnv):
         self.step_async(actions)
         return self.step_wait()
 
-    def call_async(self, name: str, *args, **kwargs):
+    def call_async(self, name: str, *args: list[Any], **kwargs: Any):
         """Calls the method with name asynchronously and apply args and kwargs to the method.
 
         Args:
@@ -395,7 +413,7 @@ class AsyncVectorEnv(VectorEnv):
             pipe.send(("_call", (name, args, kwargs)))
         self._state = AsyncState.WAITING_CALL
 
-    def call_wait(self, timeout: Optional[Union[int, float]] = None) -> list:
+    def call_wait(self, timeout: int | float | None = None) -> list[Any]:
         """Calls all parent pipes and waits for the results.
 
         Args:
@@ -428,7 +446,7 @@ class AsyncVectorEnv(VectorEnv):
 
         return results
 
-    def call(self, name: str, *args, **kwargs) -> List[Any]:
+    def call(self, name: str, *args: list[Any], **kwargs: Any) -> list[Any]:
         """Call a method, or get a property, from each parallel environment.
 
         Args:
@@ -442,7 +460,7 @@ class AsyncVectorEnv(VectorEnv):
         self.call_async(name, *args, **kwargs)
         return self.call_wait()
 
-    def get_attr(self, name: str):
+    def get_attr(self, name: str) -> Any:
         """Get a property from each parallel environment.
 
         Args:
@@ -453,7 +471,7 @@ class AsyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: Union[list, tuple, object]):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any):
         """Sets an attribute of the sub-environments.
 
         Args:
@@ -488,9 +506,7 @@ class AsyncVectorEnv(VectorEnv):
         _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
         self._raise_if_errors(successes)
 
-    def close_extras(
-        self, timeout: Optional[Union[int, float]] = None, terminate: bool = False
-    ):
+    def close(self, timeout: int | float | None = None, terminate: bool = False):
         """Close the environments & clean up the extra resources (processes and pipes).
 
         Args:
@@ -531,6 +547,8 @@ class AsyncVectorEnv(VectorEnv):
         for process in self.processes:
             process.join()
 
+        super().close()
+
     def _poll(self, timeout=None):
         self._assert_is_running()
         if timeout is None:
@@ -567,7 +585,7 @@ class AsyncVectorEnv(VectorEnv):
             )
 
     def _assert_is_running(self):
-        if self.closed:
+        if self.is_closed:
             raise ClosedEnvironmentError(
                 f"Trying to operate on `{type(self).__name__}`, after a call to `close()`."
             )

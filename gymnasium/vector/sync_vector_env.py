@@ -1,18 +1,24 @@
 """A synchronous vector environment."""
+from __future__ import annotations
+
 from copy import deepcopy
-from typing import Any, Callable, Iterator, List, Optional, Union
+from typing import Any, Callable, Iterator
 
 import numpy as np
 
 from gymnasium import Env
+from gymnasium.core import ActType, ObsType
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.utils.spaces import batch_space
-from gymnasium.vector.vector_env import VectorEnv
+from gymnasium.vector.vector_env import (
+    VectorActType,
+    VectorArrayType,
+    VectorEnv,
+    VectorObsType,
+)
 
-__all__ = ["SyncVectorEnv"]
 
-
-class SyncVectorEnv(VectorEnv):
+class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
     """Vectorized environment that serially runs multiple environments.
 
     Example::
@@ -29,7 +35,7 @@ class SyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Iterator[Callable[[], Env]],
+        env_fns: Iterator[Callable[[], Env[ObsType, ActType]]],
         copy: bool = True,
     ):
         """Vectorized environment that serially runs multiple environments.
@@ -42,36 +48,39 @@ class SyncVectorEnv(VectorEnv):
             RuntimeError: If the observation space of some sub-environment does not match observation_space
                 (or, by default, the observation space of the first sub-environment).
         """
-        super().__init__()
         self.env_fns = env_fns
         self.envs = [env_fn() for env_fn in env_fns]
-        self.num_envs = len(self.envs)
-        self.copy = copy
-        self.metadata = self.envs[0].metadata
+        # Add check that envs are the same environment, we should ignore additional wrappers or hyperparameters
+        self._check_spaces()
 
+        self.num_envs = len(self.envs)
+        self.metadata = self.envs[0].metadata
         self.spec = self.envs[0].spec
 
-        self.single_observation_space = self.envs[0].observation_space
-        self.single_action_space = self.envs[0].action_space
+        self.single_observation_space: ObsType = self.envs[0].observation_space
+        self.single_action_space: ActType = self.envs[0].action_space
 
-        self.observation_space = batch_space(
+        self.observation_space: VectorObsType = batch_space(
             self.single_observation_space, self.num_envs
         )
-        self.action_space = batch_space(self.single_action_space, self.num_envs)
+        self.action_space: VectorActType = batch_space(
+            self.single_action_space, self.num_envs
+        )
 
-        self._check_spaces()
-        self.observations = create_empty_array(
+        self._observations = create_empty_array(
             self.single_observation_space, n=self.num_envs, fn=np.zeros
         )
         self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
-        self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
-        self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
+
+        self.copy = copy
 
     def reset(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[VectorObsType, dict[str, Any]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
@@ -79,7 +88,7 @@ class SyncVectorEnv(VectorEnv):
             options: Option information for the environment reset
 
         Returns:
-            The reset observation of the environment and reset information
+            The reset observation and info of the environment
         """
         if seed is None:
             seed = [None for _ in range(self.num_envs)]
@@ -87,8 +96,8 @@ class SyncVectorEnv(VectorEnv):
             seed = [seed + i for i in range(self.num_envs)]
         assert len(seed) == self.num_envs
 
-        self._terminateds[:] = False
-        self._truncateds[:] = False
+        self._terminations[:] = False
+        self._truncations[:] = False
         observations = []
         infos = {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
@@ -103,12 +112,18 @@ class SyncVectorEnv(VectorEnv):
             observations.append(observation)
             infos = self._add_info(infos, info, i)
 
-        self.observations = concatenate(
-            self.single_observation_space, observations, self.observations
+        self._observations = concatenate(
+            self.single_observation_space, observations, self._observations
         )
-        return (deepcopy(self.observations) if self.copy else self.observations), infos
+        return (
+            deepcopy(self._observations) if self.copy else self._observations
+        ), infos
 
-    def step(self, actions):
+    def step(
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorObsType, VectorArrayType, VectorArrayType, VectorArrayType, dict[str, Any]
+    ]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
@@ -118,35 +133,34 @@ class SyncVectorEnv(VectorEnv):
 
         observations, infos = [], {}
         for i, (env, action) in enumerate(zip(self.envs, actions)):
-
             (
                 observation,
                 self._rewards[i],
-                self._terminateds[i],
-                self._truncateds[i],
+                self._terminations[i],
+                self._truncations[i],
                 info,
             ) = env.step(action)
 
-            if self._terminateds[i] or self._truncateds[i]:
+            if self._terminations[i] or self._truncations[i]:
                 old_observation, old_info = observation, info
                 observation, info = env.reset()
                 info["final_observation"] = old_observation
                 info["final_info"] = old_info
             observations.append(observation)
             infos = self._add_info(infos, info, i)
-        self.observations = concatenate(
-            self.single_observation_space, observations, self.observations
+        self._observations = concatenate(
+            self.single_observation_space, observations, self._observations
         )
 
         return (
-            deepcopy(self.observations) if self.copy else self.observations,
+            deepcopy(self._observations) if self.copy else self._observations,
             np.copy(self._rewards),
-            np.copy(self._terminateds),
-            np.copy(self._truncateds),
+            np.copy(self._terminations),
+            np.copy(self._truncations),
             infos,
         )
 
-    def call(self, name, *args, **kwargs) -> tuple:
+    def call(self, name: str, *args: list[Any], **kwargs: Any) -> tuple[Any, ...]:
         """Calls the method with name and applies args and kwargs.
 
         Args:
@@ -167,7 +181,7 @@ class SyncVectorEnv(VectorEnv):
 
         return tuple(results)
 
-    def get_attr(self, name: str):
+    def get_attr(self, name: str) -> Any:
         """Get a property from each parallel environment.
 
         Args:
@@ -178,7 +192,7 @@ class SyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: Union[list, tuple, Any]):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any):
         """Sets an attribute of the sub-environments.
 
         Args:
@@ -202,9 +216,10 @@ class SyncVectorEnv(VectorEnv):
         for env, value in zip(self.envs, values):
             setattr(env, name, value)
 
-    def close_extras(self, **kwargs):
+    def close(self, **kwargs: Any):
         """Close the environments."""
-        [env.close() for env in self.envs]
+        for env in self.envs:
+            env.close()
 
     def _check_spaces(self) -> bool:
         for env in self.envs:
