@@ -53,6 +53,21 @@ class TimeAwareObservationV0(gymnasium.ObservationWrapper):
         self.max_timesteps = self._get_max_timesteps(env)
         self.num_envs = getattr(env, "num_envs", 1)
 
+        self._get_time_observation = (
+            (lambda: self.timesteps / self.max_timesteps)
+            if self.normalize_time
+            else (lambda: self.max_timesteps - self.timesteps)
+        )
+        self._observation_postprocess = (
+            (
+                lambda observation: spaces.flatten(
+                    self.time_aware_observation_space, observation
+                )
+            )
+            if self.flatten
+            else (lambda observation: observation)
+        )
+
         self.time_aware_observation_space = Dict(
             obs=env.observation_space, time=Box(0, self.max_timesteps, (self.num_envs,))
         )
@@ -76,11 +91,7 @@ class TimeAwareObservationV0(gymnasium.ObservationWrapper):
         time_observation = self._get_time_observation()
         observation = OrderedDict(obs=observation, time=time_observation)
 
-        return (
-            spaces.flatten(self.time_aware_observation_space, observation)
-            if self.flatten
-            else observation
-        )
+        return self._observation_postprocess(observation)
 
     def step(self, action: ActType):
         """Steps through the environment, incrementing the time step.
@@ -112,19 +123,6 @@ class TimeAwareObservationV0(gymnasium.ObservationWrapper):
         """
         self.timesteps = jp.zeros(self.num_envs)
         return super().reset(**kwargs)
-
-    def _get_time_observation(self):
-        """Returns the `time` observation.
-
-        If normalization is applied, a value in the
-        range [0,1] is returned, otherwise, the
-        remaining timesteps before truncation.
-        """
-        return (
-            self.timesteps / self.max_timesteps
-            if self.normalize_time
-            else self.max_timesteps - self.timesteps
-        )
 
     @staticmethod
     def _get_max_timesteps(env: gymnasium.Env):
