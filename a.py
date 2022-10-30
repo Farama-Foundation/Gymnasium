@@ -3,8 +3,8 @@ import gym
 import time
 import numpy as np
 num_steps = 1000
-batch_size = 4
-num_envs = 8
+batch_size = 16
+num_envs = 64
 
 def make_env():
     env = gym.make("ALE/Pong-v5")
