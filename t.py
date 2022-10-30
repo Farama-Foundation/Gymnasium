@@ -7,7 +7,7 @@ num_envs = 64
 
 
 envs = gymnasium.vector.AsyncVectorEnv(
-    [lambda: gymnasium.make("MountainCar-v0") for _ in range(num_envs)],
+    [lambda: gymnasium.make("CartPole-v1") for _ in range(num_envs)],
     batch_size=batch_size
 )
 start_time = time.time()
@@ -23,7 +23,7 @@ print("Time taken: ", end_time - start_time)
 
 
 envs = gymnasium.vector.AsyncVectorEnv(
-    [lambda: gymnasium.make("MountainCar-v0") for _ in range(num_envs)],
+    [lambda: gymnasium.make("CartPole-v1") for _ in range(num_envs)],
 )
 start_time = time.time()
 for i in range(num_steps):
