@@ -33,6 +33,8 @@ def test_time_limit_wrapper(double_wrap):
 
     assert n_steps == max_episode_length
     assert truncated
+    assert "TimeLimit.truncated" in info
+    assert info["TimeLimit.truncated"] is True
 
 
 @pytest.mark.parametrize("double_wrap", [False, True])
@@ -52,6 +54,8 @@ def test_termination_on_last_step(double_wrap):
     if double_wrap:
         env = TimeLimit(env, max_episode_length)
     env.reset()
-    _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+    _, _, terminated, truncated, info = env.step(env.action_space.sample())
     assert terminated is True
     assert truncated is True
+    assert "TimeLimit.truncated" in info
+    assert info["TimeLimit.truncated"] is True

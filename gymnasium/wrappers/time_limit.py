@@ -53,6 +53,8 @@ class TimeLimit(gym.Wrapper):
         if self._elapsed_steps >= self._max_episode_steps:
             truncated = True
             # Store the info that time limit was reached
+            # Note: in gym 0.21, truncated=False
+            # if the episode was already terminated
             info["TimeLimit.truncated"] = True
 
         return observation, reward, terminated, truncated, info
