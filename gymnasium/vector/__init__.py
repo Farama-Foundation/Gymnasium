@@ -4,9 +4,24 @@ from typing import Iterable, List, Optional, Union
 import gymnasium as gym
 from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
-from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import (
+    VectorActionWrapper,
+    VectorEnv,
+    VectorObservationWrapper,
+    VectorRewardWrapper,
+    VectorWrapper,
+)
 
-__all__ = ["AsyncVectorEnv", "SyncVectorEnv", "VectorEnv", "VectorWrapper", "make"]
+__all__ = [
+    "VectorEnv",
+    "VectorWrapper",
+    "VectorObservationWrapper",
+    "VectorActionWrapper",
+    "VectorRewardWrapper",
+    "AsyncVectorEnv",
+    "SyncVectorEnv",
+    "make",
+]
 
 
 def make(
@@ -43,6 +58,9 @@ def make(
     Returns:
         The vectorized environment.
     """
+    gym.logger.warn(
+        "`gymnasium.vector.make` is deprecated and replaced by `gymnasium.make_vec`. This function will be removed in v0.28.0"
+    )
 
     def create_env(env_num: int):
         """Creates an environment that can enable or disable the environment checker."""

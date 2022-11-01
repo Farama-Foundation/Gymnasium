@@ -7,7 +7,7 @@ from typing import Any, Callable, Iterator
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.core import ActType, ObsType
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.utils.spaces import batch_space
 from gymnasium.vector.vector_env import (
@@ -159,6 +159,11 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
             np.copy(self._truncations),
             infos,
         )
+
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
+        """Calls render on all sub-environments."""
+        # todo improve
+        return self.call("render")
 
     def call(self, name: str, *args: list[Any], **kwargs: Any) -> tuple[Any, ...]:
         """Calls the method with name and applies args and kwargs.

@@ -13,7 +13,7 @@ from typing import Any, Callable, Sequence
 import numpy as np
 
 from gymnasium import logger
-from gymnasium.core import ActType, Env, ObsType
+from gymnasium.core import ActType, Env, ObsType, RenderFrame
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
@@ -38,10 +38,10 @@ from gymnasium.vector.vector_env import (
     VectorObsType,
 )
 
-__all__ = ["AsyncVectorEnv"]
-
 
 class AsyncState(Enum):
+    """Possible :class:`AsyncVectorEnv` states."""
+
     DEFAULT = "default"
     WAITING_RESET = "reset"
     WAITING_STEP = "step"
@@ -389,6 +389,11 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         self.step_async(actions)
         return self.step_wait()
 
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
+        """Calls render for all sub-environments."""
+        # todo improve
+        return self.call("render")
+
     def call_async(self, name: str, *args: list[Any], **kwargs: Any):
         """Calls the method with name asynchronously and apply args and kwargs to the method.
 
@@ -585,7 +590,7 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
             )
 
     def _assert_is_running(self):
-        if self.is_closed:
+        if self.closed:
             raise ClosedEnvironmentError(
                 f"Trying to operate on `{type(self).__name__}`, after a call to `close()`."
             )

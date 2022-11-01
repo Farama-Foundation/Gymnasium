@@ -13,7 +13,6 @@ from gymnasium.utils import seeding
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
 
-__all__ = ["VectorEnv"]
 
 VectorObsType = TypeVar("VectorObsType")
 VectorActType = TypeVar("VectorActType")
@@ -59,7 +58,7 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
     render_mode: str | None = None
     spec: EnvSpec | None = None
     is_vector_env: int = True
-    is_closed: int = False
+    closed: int = False
 
     action_space: spaces.Space[VectorActType]
     observation_space: spaces.Space[VectorObsType]
@@ -123,7 +122,7 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
         Note:
             This will be automatically called when garbage collected or program exited.
         """
-        self.is_closed = True
+        self.closed = True
 
     @property
     def np_random(self) -> np.random.Generator:
@@ -237,6 +236,7 @@ class VectorWrapper(
     """
 
     def __init__(self, env: VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
+        """Initialises the wrapper with :attr:`env` to wrap and an observation and action space."""
         super().__init__()
 
         assert isinstance(env, VectorEnv)
@@ -252,6 +252,7 @@ class VectorWrapper(
         seed: int | list[int] | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[VectorWrapperObsType, dict[str, Any]]:
+        """Calls :meth:`reset` on the :attr:`env` allowing for modification of observations, info or options."""
         return self.env.reset(seed=seed, options=options)
 
     def step(
@@ -263,6 +264,7 @@ class VectorWrapper(
         VectorWrapperArrayType,
         dict[str, Any],
     ]:
+        """Calls :meth:`step` on the :attr:`env` allowing for modification of actions, observations, etc."""
         return self.env.step(actions)
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
@@ -270,9 +272,11 @@ class VectorWrapper(
         return self.env.render()
 
     def close(self, **kwargs):
+        """Calls :meth:`close` on the :attr:`env`."""
         return self.env.close()
 
-    def __getattr__(self, name: str):
+    def __getattr__(self, name: str) -> Any:
+        """If the wrapper does not contain the attribute, we try to access the :attr:`env` with the attribute."""
         if name.startswith("_"):
             raise AttributeError(f"attempted to get missing private attribute '{name}'")
         return getattr(self.env, name)
@@ -283,7 +287,7 @@ class VectorWrapper(
         return self.env.spec
 
     @classmethod
-    def class_name(cls):
+    def class_name(cls) -> str:
         """Returns the class name of the wrapper."""
         return cls.__name__
 
@@ -345,13 +349,16 @@ class VectorWrapper(
         )
 
     @property
-    def unwrapped(self) -> VectorEnv:
+    def unwrapped(self) -> VectorEnv[VectorObsType, VectorActType, VectorArrayType]:
+        """Returns the base :class:`VectorEnv`."""
         return self.env.unwrapped
 
     def __repr__(self):
+        """Returns a representation of the vector wrapper."""
         return f"<{self.__class__.__name__}, {self.env}>"
 
     def __del__(self):
+        """Calls :meth:`__del__` on the :attr:`env`."""
         self.env.__del__()
 
 
@@ -361,6 +368,7 @@ class VectorObservationWrapper(
     """Wraps the vectorized environment to allow a modular transformation of the observation. Equivalent to :class:`gym.ObservationWrapper` for vectorized environments."""
 
     def __init__(self, env: VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
+        """Initialises the vector observation wrapper that modifies the observation returned by the environment."""
         super().__init__(env)
 
     def reset(
@@ -369,6 +377,7 @@ class VectorObservationWrapper(
         seed: int | list[int] | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[VectorWrapperObsType, dict[str, Any]]:
+        """Calls :meth:`reset` using the :attr:`env` and modifies the returned observation using :meth:`observation`."""
         obs, info = self.env.reset(seed=seed, options=options)
         return self.observation(obs), info
 
@@ -381,6 +390,7 @@ class VectorObservationWrapper(
         VectorArrayType,
         dict[str, Any],
     ]:
+        """Calls :meth:`step` using the :attr:`env` and modifies the returned observation using :meth:`observation`."""
         obs, rewards, terminations, truncations, info = self.env.step(actions)
         return (
             self.observation(obs),
@@ -408,9 +418,11 @@ class VectorActionWrapper(
     """Wraps the vectorized environment to allow a modular transformation of the actions. Equivalent of :class:`~gym.ActionWrapper` for vectorized environments."""
 
     def __init__(self, env: VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
+        """Initialises the vector action wrapper that modifies the actions passed to the environment."""
         super().__init__(env)
 
     def step(self, actions: VectorWrapperActType):
+        """Calls :meth:`step` using the :attr:`env` with a modified action from :meth:`actions`."""
         return self.env.step(self.action(actions))
 
     def actions(self, actions: VectorWrapperActType) -> VectorActType:
@@ -431,6 +443,7 @@ class VectorRewardWrapper(
     """Wraps the vectorized environment to allow a modular transformation of the reward. Equivalent of :class:`~gym.RewardWrapper` for vectorized environments."""
 
     def __init__(self, env: VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
+        """Initialises the vector reward wrapper that modifies the returned rewards."""
         super().__init__(env)
 
     def step(
@@ -442,6 +455,7 @@ class VectorRewardWrapper(
         VectorWrapperArrayType,
         dict[str, Any],
     ]:
+        """Calls :meth:`step` on the :attr:`env` modifying the reward using :meth:`reward`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return observation, self.reward(reward), termination, truncation, info
 
