@@ -30,32 +30,6 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
 all_testing_initialised_envs: List[Optional[gym.Env]] = [
     try_make_env(env_spec) for env_spec in gym.envs.registry.values()
 ]
-
-try:
-    # We check whether gym can be imported
-    import gym as old_gym
-
-    # We are testing all variations of Pong which are registered in (old) Gym
-    atari_ids = [
-        "ALE/Pong-v5",
-        "ALE/Pong-ram-v5",
-        "Pong-v4",
-        "PongDeterministic-v4",
-        "PongNoFrameskip-v4",
-        "Pong-ram-v4",
-        "Pong-ramDeterministic-v4",
-        "Pong-ramNoFrameskip-v4",
-    ]
-    all_testing_initialised_envs += [
-        gym.make("GymV26Environment-v0", env_id=env_id) for env_id in atari_ids
-    ]
-except ImportError:
-    # Failure because gym isn't available
-    logger.warn("Skipping tests of atari environments because gym seems to be missing")
-except (old_gym.error.DependencyNotInstalled, old_gym.error.NamespaceNotFound):
-    # Failure because ale isn't available
-    logger.warn("Skipping tests of atari environments because ALE seems to be missing")
-
 all_testing_initialised_envs: List[gym.Env] = [
     env for env in all_testing_initialised_envs if env is not None
 ]
