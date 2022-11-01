@@ -45,6 +45,7 @@ class RecordVideo(gym.Wrapper):
         step_trigger: Callable[[int], bool] = None,
         video_length: int = 0,
         name_prefix: str = "rl-video",
+        disable_logger: bool = False,
     ):
         """Wrapper records videos of rollouts.
 
@@ -56,6 +57,8 @@ class RecordVideo(gym.Wrapper):
             video_length (int): The length of recorded episodes. If 0, entire episodes are recorded.
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
+            disable_logger (bool): Whether to disable moviepy logger or not.
+
         """
         super().__init__(env)
 
@@ -68,6 +71,7 @@ class RecordVideo(gym.Wrapper):
         self.episode_trigger = episode_trigger
         self.step_trigger = step_trigger
         self.video_recorder: Optional[video_recorder.VideoRecorder] = None
+        self.disable_logger = disable_logger
 
         self.video_folder = os.path.abspath(video_folder)
         # Create output folder if needed
@@ -119,6 +123,7 @@ class RecordVideo(gym.Wrapper):
             env=self.env,
             base_path=base_path,
             metadata={"step_id": self.step_id, "episode_id": self.episode_id},
+            disable_logger=self.disable_logger,
         )
 
         self.video_recorder.capture_frame()
@@ -204,8 +209,4 @@ class RecordVideo(gym.Wrapper):
     def close(self):
         """Closes the wrapper then the video recorder."""
         super().close()
-        self.close_video_recorder()
-
-    def __del__(self):
-        """Closes the video recorder."""
         self.close_video_recorder()
