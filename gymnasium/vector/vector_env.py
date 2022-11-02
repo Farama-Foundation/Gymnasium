@@ -57,7 +57,6 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
     metadata: dict[str, Any] = {}
     render_mode: str | None = None
     spec: EnvSpec | None = None
-    is_vector_env: int = True
     closed: int = False
 
     action_space: spaces.Space[VectorActType]
@@ -202,7 +201,7 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
 
     def __del__(self):
         """Closes the vector environment."""
-        if not getattr(self, "is_closed", True):
+        if not getattr(self, "closed", True):
             self.close()
 
     def __repr__(self) -> str:
@@ -256,7 +255,7 @@ class VectorWrapper(
         return self.env.reset(seed=seed, options=options)
 
     def step(
-        self, actions: VectorActType
+        self, actions: VectorWrapperActType
     ) -> tuple[
         VectorWrapperObsType,
         VectorWrapperArrayType,
@@ -367,10 +366,6 @@ class VectorObservationWrapper(
 ):
     """Wraps the vectorized environment to allow a modular transformation of the observation. Equivalent to :class:`gym.ObservationWrapper` for vectorized environments."""
 
-    def __init__(self, env: VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
-        """Initialises the vector observation wrapper that modifies the observation returned by the environment."""
-        super().__init__(env)
-
     def reset(
         self,
         *,
@@ -417,10 +412,6 @@ class VectorActionWrapper(
 ):
     """Wraps the vectorized environment to allow a modular transformation of the actions. Equivalent of :class:`~gym.ActionWrapper` for vectorized environments."""
 
-    def __init__(self, env: VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
-        """Initialises the vector action wrapper that modifies the actions passed to the environment."""
-        super().__init__(env)
-
     def step(self, actions: VectorWrapperActType):
         """Calls :meth:`step` using the :attr:`env` with a modified action from :meth:`actions`."""
         return self.env.step(self.action(actions))
@@ -438,28 +429,24 @@ class VectorActionWrapper(
 
 
 class VectorRewardWrapper(
-    VectorWrapper[VectorObsType, VectorActType, VectorWrapperArrayType]
+    VectorWrapper[VectorObsType, VectorActType, VectorArrayType]
 ):
     """Wraps the vectorized environment to allow a modular transformation of the reward. Equivalent of :class:`~gym.RewardWrapper` for vectorized environments."""
-
-    def __init__(self, env: VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
-        """Initialises the vector reward wrapper that modifies the returned rewards."""
-        super().__init__(env)
 
     def step(
         self, actions: VectorActType
     ) -> tuple[
         VectorObsType,
-        VectorWrapperArrayType,
-        VectorWrapperArrayType,
-        VectorWrapperArrayType,
+        VectorArrayType,
+        VectorArrayType,
+        VectorArrayType,
         dict[str, Any],
     ]:
         """Calls :meth:`step` on the :attr:`env` modifying the reward using :meth:`reward`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return observation, self.reward(reward), termination, truncation, info
 
-    def reward(self, reward: VectorArrayType) -> VectorWrapperArrayType:
+    def reward(self, reward: VectorArrayType) -> VectorArrayType:
         """Transform the reward before returning it.
 
         Args:

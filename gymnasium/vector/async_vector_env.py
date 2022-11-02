@@ -418,7 +418,7 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
             pipe.send(("_call", (name, args, kwargs)))
         self._state = AsyncState.WAITING_CALL
 
-    def call_wait(self, timeout: int | float | None = None) -> list[Any]:
+    def call_wait(self, timeout: int | float | None = None) -> Any:
         """Calls all parent pipes and waits for the results.
 
         Args:
@@ -451,7 +451,7 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
 
         return results
 
-    def call(self, name: str, *args: list[Any], **kwargs: Any) -> list[Any]:
+    def call(self, name: str, *args: list[Any], **kwargs: Any) -> Any:
         """Call a method, or get a property, from each parallel environment.
 
         Args:
