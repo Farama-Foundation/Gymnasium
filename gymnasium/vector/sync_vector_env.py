@@ -1,6 +1,8 @@
 """A synchronous vector environment."""
+from __future__ import annotations
+
 from copy import deepcopy
-from typing import Any, Callable, Iterator, List, Optional, Union
+from typing import Any, Callable, Iterator
 
 import numpy as np
 
@@ -69,8 +71,8 @@ class SyncVectorEnv(VectorEnv):
 
     def reset(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
     ):
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
@@ -178,7 +180,7 @@ class SyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: Union[list, tuple, Any]):
+    def set_attr(self, name: str, values: list | tuple | Any):
         """Sets an attribute of the sub-environments.
 
         Args:

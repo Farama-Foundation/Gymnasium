@@ -1,4 +1,6 @@
 """An async vector environment."""
+from __future__ import annotations
+
 import multiprocessing as mp
 import sys
 import time
@@ -6,7 +8,7 @@ from copy import deepcopy
 from enum import Enum
 from multiprocessing.connection import Connection
 from multiprocessing.queues import Queue
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from typing import Any, Sequence
 
 import numpy as np
 
@@ -63,9 +65,9 @@ class AsyncVectorEnv(VectorEnv):
         env_fns: Sequence[callable],
         shared_memory: bool = True,
         copy: bool = True,
-        context: Optional[str] = None,
+        context: str | None = None,
         daemon: bool = True,
-        worker: Optional[callable] = None,
+        worker: callable | None = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -169,8 +171,8 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_async(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
     ):
         """Send calls to the :obj:`reset` methods of the sub-environments.
 
@@ -212,8 +214,8 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_wait(
         self,
-        timeout: Optional[Union[int, float]] = None,
-    ) -> Union[ObsType, Tuple[ObsType, List[dict]]]:
+        timeout: int | float | None = None,
+    ) -> ObsType | tuple[ObsType, list[dict]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
@@ -259,8 +261,8 @@ class AsyncVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
     ):
         """Reset all parallel environments and return a batch of initial observations and info.
 
@@ -300,8 +302,8 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.WAITING_STEP
 
     def step_wait(
-        self, timeout: Optional[Union[int, float]] = None
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+        self, timeout: int | float | None = None
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
         """Wait for the calls to :obj:`step` in each sub-environment to finish.
 
         Args:
@@ -395,7 +397,7 @@ class AsyncVectorEnv(VectorEnv):
             pipe.send(("_call", (name, args, kwargs)))
         self._state = AsyncState.WAITING_CALL
 
-    def call_wait(self, timeout: Optional[Union[int, float]] = None) -> list:
+    def call_wait(self, timeout: int | float | None = None) -> list:
         """Calls all parent pipes and waits for the results.
 
         Args:
@@ -428,7 +430,7 @@ class AsyncVectorEnv(VectorEnv):
 
         return results
 
-    def call(self, name: str, *args, **kwargs) -> List[Any]:
+    def call(self, name: str, *args, **kwargs) -> list[Any]:
         """Call a method, or get a property, from each parallel environment.
 
         Args:
@@ -453,7 +455,7 @@ class AsyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: Union[list, tuple, object]):
+    def set_attr(self, name: str, values: list | tuple | object):
         """Sets an attribute of the sub-environments.
 
         Args:
@@ -488,9 +490,7 @@ class AsyncVectorEnv(VectorEnv):
         _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
         self._raise_if_errors(successes)
 
-    def close_extras(
-        self, timeout: Optional[Union[int, float]] = None, terminate: bool = False
-    ):
+    def close_extras(self, timeout: int | float | None = None, terminate: bool = False):
         """Close the environments & clean up the extra resources (processes and pipes).
 
         Args:

@@ -1,5 +1,7 @@
 """Base class for vectorized environments."""
-from typing import TYPE_CHECKING, Generic, List, Optional, Tuple, TypeVar, Union
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 import numpy as np
 
@@ -52,14 +54,14 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         In other words, a vector of multiple different environments is not supported.
     """
 
-    spec: "EnvSpec" = None
+    spec: EnvSpec = None
 
     observation_space: gym.Space = None
     action_space: gym.Space = None
 
     num_envs: int
 
-    _np_random: Optional[np.random.Generator] = None
+    _np_random: np.random.Generator | None = None
 
     def __init__(self, **kwargs):
         """Base class for vectorized environments.
@@ -74,9 +76,9 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     def reset(
         self,
         *,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ) -> Tuple[ObsType, dict]:  # type: ignore
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
+    ) -> tuple[ObsType, dict]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
@@ -92,7 +94,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     def step(
         self, actions: ActType
-    ) -> Tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Take an action for each parallel environment.
 
         Args:
@@ -182,7 +184,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             infos[k], infos[f"_{k}"] = info_array, array_mask
         return infos
 
-    def _init_info_arrays(self, dtype: type) -> Tuple[np.ndarray, np.ndarray]:
+    def _init_info_arrays(self, dtype: type) -> tuple[np.ndarray, np.ndarray]:
         """Initialize the info array.
 
         Initialize the info array. If the dtype is numeric
