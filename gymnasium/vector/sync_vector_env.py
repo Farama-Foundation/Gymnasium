@@ -7,14 +7,20 @@ from typing import Any, Callable, Iterator
 import numpy as np
 
 from gymnasium import Env
+from gymnasium.core import ActType, ObsType
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.utils.spaces import batch_space
-from gymnasium.vector.vector_env import VectorEnv
+from gymnasium.vector.vector_env import (
+    VectorActType,
+    VectorArrayType,
+    VectorEnv,
+    VectorObsType,
+)
 
 __all__ = ["SyncVectorEnv"]
 
 
-class SyncVectorEnv(VectorEnv):
+class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
     """Vectorized environment that serially runs multiple environments.
 
     Example::
@@ -31,7 +37,7 @@ class SyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Iterator[Callable[[], Env]],
+        env_fns: Iterator[Callable[[], Env[ObsType, ActType]]],
         copy: bool = True,
     ):
         """Vectorized environment that serially runs multiple environments.
@@ -73,7 +79,7 @@ class SyncVectorEnv(VectorEnv):
         self,
         seed: int | list[int] | None = None,
         options: dict | None = None,
-    ):
+    ) -> tuple[VectorObsType, dict[str, Any]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
@@ -110,7 +116,11 @@ class SyncVectorEnv(VectorEnv):
         )
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
-    def step(self, actions):
+    def step(
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorObsType, VectorArrayType, VectorArrayType, VectorArrayType, dict[str, Any]
+    ]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
@@ -148,7 +158,7 @@ class SyncVectorEnv(VectorEnv):
             infos,
         )
 
-    def call(self, name, *args, **kwargs) -> tuple:
+    def call(self, name, *args, **kwargs) -> Any:
         """Calls the method with name and applies args and kwargs.
 
         Args:

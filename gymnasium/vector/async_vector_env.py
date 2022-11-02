@@ -8,12 +8,12 @@ from copy import deepcopy
 from enum import Enum
 from multiprocessing.connection import Connection
 from multiprocessing.queues import Queue
-from typing import Any, Sequence
+from typing import Any, Callable, Sequence
 
 import numpy as np
 
 from gymnasium import logger
-from gymnasium.core import ObsType
+from gymnasium.core import ActType, Env, ObsType
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
@@ -31,7 +31,12 @@ from gymnasium.vector.utils import (
     read_from_shared_memory,
     write_to_shared_memory,
 )
-from gymnasium.vector.vector_env import VectorEnv
+from gymnasium.vector.vector_env import (
+    VectorActType,
+    VectorArrayType,
+    VectorEnv,
+    VectorObsType,
+)
 
 __all__ = ["AsyncVectorEnv"]
 
@@ -43,7 +48,7 @@ class AsyncState(Enum):
     WAITING_CALL = "call"
 
 
-class AsyncVectorEnv(VectorEnv):
+class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
     """Vectorized environment that runs multiple environments in parallel.
 
     It uses ``multiprocessing`` processes, and pipes for communication.
@@ -62,7 +67,7 @@ class AsyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Sequence[callable],
+        env_fns: Sequence[Callable[[], Env[ObsType, ActType]]],
         shared_memory: bool = True,
         copy: bool = True,
         context: str | None = None,
@@ -263,7 +268,7 @@ class AsyncVectorEnv(VectorEnv):
         *,
         seed: int | list[int] | None = None,
         options: dict | None = None,
-    ):
+    ) -> tuple[VectorObsType, dict[str, Any]]:
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
@@ -361,7 +366,11 @@ class AsyncVectorEnv(VectorEnv):
             infos,
         )
 
-    def step(self, actions):
+    def step(
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorObsType, VectorArrayType, VectorArrayType, VectorArrayType, dict[str, Any]
+    ]:
         """Take an action for each parallel environment.
 
         Args:
