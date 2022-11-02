@@ -559,7 +559,7 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         if timeout is None:
             return True
         end_time = time.perf_counter() + timeout
-        delta = None
+
         for pipe in self.parent_pipes:
             delta = max(end_time - time.perf_counter(), 0)
             if pipe is None:

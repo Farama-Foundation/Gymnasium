@@ -428,9 +428,7 @@ class VectorActionWrapper(
         raise NotImplementedError
 
 
-class VectorRewardWrapper(
-    VectorWrapper[VectorObsType, VectorActType, VectorArrayType]
-):
+class VectorRewardWrapper(VectorWrapper[VectorObsType, VectorActType, VectorArrayType]):
     """Wraps the vectorized environment to allow a modular transformation of the reward. Equivalent of :class:`~gym.RewardWrapper` for vectorized environments."""
 
     def step(

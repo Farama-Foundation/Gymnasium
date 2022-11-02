@@ -50,13 +50,14 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         """
         self.env_fns = env_fns
         self.envs = [env_fn() for env_fn in env_fns]
-        # Add check that envs are the same environment, we should ignore additional wrappers or hyperparameters
-        self._check_spaces()
+        # todo Add check that envs are the same environment, we should ignore additional wrappers or hyperparameters
 
+        # Attributes
         self.num_envs = len(self.envs)
         self.metadata = self.envs[0].metadata
         self.spec = self.envs[0].spec
 
+        # Environment spaces
         self.single_observation_space: ObsType = self.envs[0].observation_space
         self.single_action_space: ActType = self.envs[0].action_space
 
@@ -66,7 +67,9 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         self.action_space: VectorActType = batch_space(
             self.single_action_space, self.num_envs
         )
+        self._check_spaces()
 
+        # Step information
         self._observations = create_empty_array(
             self.single_observation_space, n=self.num_envs, fn=np.zeros
         )
@@ -225,6 +228,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         """Close the environments."""
         for env in self.envs:
             env.close()
+        super().close()
 
     def _check_spaces(self) -> bool:
         for env in self.envs:
