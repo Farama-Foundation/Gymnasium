@@ -1,12 +1,11 @@
 """Base class for vectorized environments."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
 from gymnasium.utils import seeding
 
 if TYPE_CHECKING:
@@ -14,10 +13,12 @@ if TYPE_CHECKING:
 
 __all__ = ["VectorEnv"]
 
-ArrayType = TypeVar("ArrayType")
+VectorObsType = TypeVar("VectorObsType")
+VectorActType = TypeVar("VectorActType")
+VectorArrayType = TypeVar("VectorArrayType")
 
 
-class VectorEnv(Generic[ObsType, ActType, ArrayType]):
+class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
     """Base class for vectorized environments to run multiple independent copies of the same environment in parallel.
 
     Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
@@ -56,8 +57,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     spec: EnvSpec = None
 
-    observation_space: gym.Space = None
-    action_space: gym.Space = None
+    observation_space: gym.Space[VectorObsType] = None
+    action_space: gym.Space[VectorActType] = None
 
     num_envs: int
 
@@ -77,8 +78,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         self,
         *,
         seed: int | list[int] | None = None,
-        options: dict | None = None,
-    ) -> tuple[ObsType, dict]:  # type: ignore
+        options: dict[str, Any] | None = None,
+    ) -> tuple[VectorObsType, dict[str, Any]]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
@@ -87,14 +88,15 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
         Returns:
             A batch of observations and info from the vectorized environment.
-
         """
         if seed is not None:
             self._np_random, seed = seeding.np_random(seed)
 
     def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorObsType, VectorArrayType, VectorArrayType, VectorArrayType, dict[str, Any]
+    ]:
         """Take an action for each parallel environment.
 
         Args:
@@ -114,7 +116,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         """Clean up the extra resources e.g. beyond what's in this base class."""
         pass
 
-    def close(self, **kwargs):
+    def close(self, **kwargs: Any):
         """Close all parallel environments and release resources.
 
         It also closes all the existing image viewers, then calls :meth:`close_extras` and set
@@ -153,7 +155,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         self._np_random = value
 
     @property
-    def unwrapped(self):
+    def unwrapped(self) -> VectorEnv[VectorObsType, VectorActType, VectorArrayType]:
         """Return the base environment."""
         return self
 
@@ -226,7 +228,14 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             return f"{self.__class__.__name__}({self.spec.id}, {self.num_envs})"
 
 
-class VectorWrapper(VectorEnv):
+VectorWrapperObsType = TypeVar("VectorWrapperObsType")
+VectorWrapperActType = TypeVar("VectorWrapperActType")
+VectorWrapperArrayType = TypeVar("VectorWrapperArrayType")
+
+
+class VectorWrapper(
+    VectorEnv[VectorWrapperObsType, VectorWrapperActType, VectorWrapperArrayType]
+):
     """Wraps the vectorized environment to allow a modular transformation.
 
     This class is the base class for all wrappers for vectorized environments. The subclass
@@ -237,63 +246,87 @@ class VectorWrapper(VectorEnv):
         Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.
     """
 
-    def __init__(self, env: VectorEnv):
+    def __init__(self, env: VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         super().__init__()
 
         assert isinstance(env, VectorEnv)
         self.env = env
 
-    # explicitly forward the methods defined in VectorEnv
-    # to self.env (instead of the base class)
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[VectorWrapperObsType, dict[str, Any]]:
+        return self.env.reset(seed=seed, options=options)
 
-    def reset(self, **kwargs):
-        return self.env.reset(**kwargs)
-
-    def step(self, actions):
+    def step(
+        self, actions: VectorWrapperActType
+    ) -> tuple[
+        VectorWrapperObsType,
+        VectorWrapperArrayType,
+        VectorWrapperArrayType,
+        VectorWrapperArrayType,
+        dict[str, Any],
+    ]:
         return self.env.step(actions)
 
-    def close(self, **kwargs):
+    def close(self, **kwargs: Any):
         return self.env.close(**kwargs)
 
     def close_extras(self, **kwargs):
         return self.env.close_extras(**kwargs)
 
     # implicitly forward all other methods and attributes to self.env
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         if name.startswith("_"):
             raise AttributeError(f"attempted to get missing private attribute '{name}'")
         return getattr(self.env, name)
 
     @property
-    def unwrapped(self):
+    def unwrapped(self) -> VectorEnv[VectorObsType, VectorActType, VectorArrayType]:
         return self.env.unwrapped
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__.__name__}, {self.env}>"
 
     def __del__(self):
         self.env.__del__()
 
 
-class VectorObservationWrapper(VectorWrapper):
+class VectorObservationWrapper(
+    VectorWrapper[VectorWrapperObsType, VectorActType, VectorArrayType]
+):
     """Wraps the vectorized environment to allow a modular transformation of the observation. Equivalent to :class:`gym.ObservationWrapper` for vectorized environments."""
 
-    def reset(self, **kwargs):
-        observation = self.env.reset(**kwargs)
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[VectorWrapperObsType, dict[str, Any]]:
+        observation = self.env.reset(seed=seed, options=options)
         return self.observation(observation)
 
-    def step(self, actions):
+    def step(
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorWrapperObsType,
+        VectorArrayType,
+        VectorArrayType,
+        VectorArrayType,
+        dict[str, Any],
+    ]:
         observation, reward, termination, truncation, info = self.env.step(actions)
         return (
             self.observation(observation),
-            observation,
             reward,
             termination,
             truncation,
             info,
         )
 
-    def observation(self, observation: ObsType) -> ObsType:
+    def observation(self, observation: VectorActType) -> VectorWrapperObsType:
         """Defines the observation transformation.
 
         Args:
@@ -305,13 +338,19 @@ class VectorObservationWrapper(VectorWrapper):
         raise NotImplementedError
 
 
-class VectorActionWrapper(VectorWrapper):
+class VectorActionWrapper(
+    VectorWrapper[VectorObsType, VectorWrapperActType, VectorArrayType]
+):
     """Wraps the vectorized environment to allow a modular transformation of the actions. Equivalent of :class:`~gym.ActionWrapper` for vectorized environments."""
 
-    def step(self, actions: ActType):
+    def step(
+        self, actions: VectorWrapperActType
+    ) -> tuple[
+        VectorObsType, VectorArrayType, VectorArrayType, VectorArrayType, dict[str, Any]
+    ]:
         return self.env.step(self.action(actions))
 
-    def actions(self, actions: ActType) -> ActType:
+    def actions(self, actions: VectorWrapperActType) -> VectorActType:
         """Transform the actions before sending them to the environment.
 
         Args:
@@ -323,14 +362,18 @@ class VectorActionWrapper(VectorWrapper):
         raise NotImplementedError
 
 
-class VectorRewardWrapper(VectorWrapper):
+class VectorRewardWrapper(VectorWrapper[VectorObsType, VectorActType, VectorArrayType]):
     """Wraps the vectorized environment to allow a modular transformation of the reward. Equivalent of :class:`~gym.RewardWrapper` for vectorized environments."""
 
-    def step(self, actions):
+    def step(
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorObsType, VectorArrayType, VectorArrayType, VectorArrayType, dict[str, Any]
+    ]:
         observation, reward, termination, truncation, info = self.env.step(actions)
         return observation, self.reward(reward), termination, truncation, info
 
-    def reward(self, reward: ArrayType) -> ArrayType:
+    def reward(self, reward: VectorArrayType) -> VectorArrayType:
         """Transform the reward before returning it.
 
         Args:
