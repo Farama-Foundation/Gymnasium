@@ -57,7 +57,7 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
     metadata: dict[str, Any] = {}
     render_mode: str | None = None
     spec: EnvSpec | None = None
-    closed: int = False
+    closed: bool = False
 
     action_space: spaces.Space[VectorActType]
     observation_space: spaces.Space[VectorObsType]
