@@ -37,9 +37,7 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
 
     - :attr:`num_envs` - The number of sub-environment in the vector environment
     - :attr:`observation_space` - The batched observation space of the vector environment
-    - :attr:`single_observation_space` - The observation space of a single sub-environment
     - :attr:`action_space` - The batched action space of the vector environment
-    - :attr:`single_action_space` - The action space of a single sub-environment
 
     Note:
         The info parameter of :meth:`reset` and :meth:`step` was originally implemented before OpenAI Gym v25 was a list
@@ -55,15 +53,16 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
         In other words, a vector of multiple different environments is not supported.
     """
 
-    spec: EnvSpec = None
+    metadata: dict[str, Any] = {}
+    spec: EnvSpec | None = None
+    render_mode: str | None = None
+    closed: bool = False
 
-    observation_space: gym.Space[VectorObsType] = None
-    action_space: gym.Space[VectorActType] = None
-
+    observation_space: gym.Space[VectorObsType]
+    action_space: gym.Space[VectorActType]
     num_envs: int
 
     _np_random: np.random.Generator | None = None
-    closed: bool = False
 
     def reset(
         self,
@@ -205,7 +204,7 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
         Returns:
             A string containing the class name, number of environments and environment spec id
         """
-        if getattr(self, "spec", None) is None:
+        if self.spec is None:
             return f"{self.__class__.__name__}({self.num_envs})"
         else:
             return f"{self.__class__.__name__}({self.spec.id}, {self.num_envs})"

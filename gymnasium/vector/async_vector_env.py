@@ -99,17 +99,17 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
             ValueError: If observation_space is a custom space (i.e. not a default space in Gym,
                 such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.
         """
-        super().__init__()
-
         ctx = mp.get_context(context)
+
         self.env_fns = env_fns
-        self.num_envs = len(env_fns)
         self.shared_memory = shared_memory
         self.copy = copy
 
         # This would be nice to get rid of, but without it there's a deadlock between shared memory and pipes
         dummy_env = env_fns[0]()
         self.metadata = dummy_env.metadata
+        self.num_envs = len(env_fns)
+        self.spec = dummy_env.spec
 
         self.single_observation_space = dummy_env.observation_space
         self.single_action_space = dummy_env.action_space
@@ -499,7 +499,15 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
         self._raise_if_errors(successes)
 
-    def close(self, timeout: int | float | None = None, terminate: bool = False):
+    def close(self, **kwargs):
+        """Close the environment."""
+        if self.closed:
+            return
+
+        self.close_extra(**kwargs)
+        self.closed = True
+
+    def close_extra(self, timeout: int | float | None = None, terminate: bool = False):
         """Close the environments & clean up the extra resources (processes and pipes).
 
         Args:
@@ -511,9 +519,6 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         Raises:
             TimeoutError: If :meth:`close` timed out.
         """
-        if self.closed:
-            return
-
         timeout = 0 if terminate else timeout
         try:
             if self._state != AsyncState.DEFAULT:
@@ -542,8 +547,6 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
                 pipe.close()
         for process in self.processes:
             process.join()
-
-        self.closed = True
 
     def _poll(self, timeout=None):
         self._assert_is_running()

@@ -50,13 +50,12 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
             RuntimeError: If the observation space of some sub-environment does not match observation_space
                 (or, by default, the observation space of the first sub-environment).
         """
-        super().__init__()
         self.env_fns = env_fns
         self.envs = [env_fn() for env_fn in env_fns]
-        self.num_envs = len(self.envs)
         self.copy = copy
-        self.metadata = self.envs[0].metadata
 
+        self.num_envs = len(self.envs)
+        self.metadata = self.envs[0].metadata
         self.spec = self.envs[0].spec
 
         self.single_observation_space = self.envs[0].observation_space
@@ -66,8 +65,8 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
             self.single_observation_space, self.num_envs
         )
         self.action_space = batch_space(self.single_action_space, self.num_envs)
-
         self._check_spaces()
+
         self.observations = create_empty_array(
             self.single_observation_space, n=self.num_envs, fn=np.zeros
         )
