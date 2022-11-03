@@ -499,7 +499,7 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
         self._raise_if_errors(successes)
 
-    def close_extras(self, timeout: int | float | None = None, terminate: bool = False):
+    def close(self, timeout: int | float | None = None, terminate: bool = False):
         """Close the environments & clean up the extra resources (processes and pipes).
 
         Args:
@@ -511,6 +511,9 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         Raises:
             TimeoutError: If :meth:`close` timed out.
         """
+        if self.closed:
+            return
+
         timeout = 0 if terminate else timeout
         try:
             if self._state != AsyncState.DEFAULT:
@@ -540,12 +543,14 @@ class AsyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         for process in self.processes:
             process.join()
 
+        self.closed = True
+
     def _poll(self, timeout=None):
         self._assert_is_running()
         if timeout is None:
             return True
         end_time = time.perf_counter() + timeout
-        delta = None
+
         for pipe in self.parent_pipes:
             delta = max(end_time - time.perf_counter(), 0)
             if pipe is None:

@@ -63,16 +63,7 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
     num_envs: int
 
     _np_random: np.random.Generator | None = None
-
-    def __init__(self, **kwargs):
-        """Base class for vectorized environments.
-
-        Args:
-            num_envs: Number of environments in the vectorized environment.
-        """
-        self.is_vector_env = True
-
-        self.closed = False
+    closed: bool = False
 
     def reset(
         self,
@@ -112,10 +103,6 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
         """
         pass
 
-    def close_extras(self, **kwargs):
-        """Clean up the extra resources e.g. beyond what's in this base class."""
-        pass
-
     def close(self, **kwargs: Any):
         """Close all parallel environments and release resources.
 
@@ -133,10 +120,6 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
         Args:
             **kwargs: Keyword arguments passed to :meth:`close_extras`
         """
-        if self.closed:
-            return
-
-        self.close_extras(**kwargs)
         self.closed = True
 
     @property
@@ -273,9 +256,6 @@ class VectorWrapper(
 
     def close(self, **kwargs: Any):
         return self.env.close(**kwargs)
-
-    def close_extras(self, **kwargs):
-        return self.env.close_extras(**kwargs)
 
     # implicitly forward all other methods and attributes to self.env
     def __getattr__(self, name: str) -> Any:

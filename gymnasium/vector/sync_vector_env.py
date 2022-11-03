@@ -214,9 +214,14 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, VectorArrayType]):
         for env, value in zip(self.envs, values):
             setattr(env, name, value)
 
-    def close_extras(self, **kwargs):
-        """Close the environments."""
-        [env.close() for env in self.envs]
+    def close(self, **kwargs: Any):
+        """Close the sub-environments."""
+        if self.closed:
+            return
+
+        for env in self.envs:
+            env.close()
+        self.closed = True
 
     def _check_spaces(self) -> bool:
         for env in self.envs:
