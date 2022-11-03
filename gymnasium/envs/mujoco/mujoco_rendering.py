@@ -1,7 +1,6 @@
 import collections
 import os
 import time
-from threading import Lock
 from typing import Optional
 
 import glfw
@@ -39,6 +38,7 @@ _ALL_RENDERERS = collections.OrderedDict(
 
 class BaseRender:
     def __init__(self, model, data, width, height):
+        """Render context superclass for offscreen and window rendering."""
         self.model = model
         self.data = data
 
@@ -130,6 +130,7 @@ class BaseRender:
     
 
 class OffScreenViewer(BaseRender):
+    """Offscreen rendering class with opengl context."""
     def __init__(self, model, data):
         width = model.vis.global_.offwidth
         height = model.vis.global_.offheight
@@ -151,14 +152,14 @@ class OffScreenViewer(BaseRender):
 
     def _get_opengl_backend(self, width, height):
 
-        backend = os.environ.get("MUJOCO_GL")
-        if backend is not None:
+        self.backend = os.environ.get("MUJOCO_GL")
+        if self.backend is not None:
             try:
-                self.opengl_context = _ALL_RENDERERS[backend](width, height)
+                self.opengl_context = _ALL_RENDERERS[self.backend](width, height)
             except KeyError:
                 raise RuntimeError(
                     "Environment variable {} must be one of {!r}: got {!r}.".format(
-                        "MUJOCO_GL", _ALL_RENDERERS.keys(), backend
+                        "MUJOCO_GL", _ALL_RENDERERS.keys(), self.backend
                     )
                 )
 
@@ -170,7 +171,7 @@ class OffScreenViewer(BaseRender):
                     break
                 except:  # noqa:E722
                     pass
-            if backend is None:
+            if self.backend is None:
                 raise RuntimeError(
                     "No OpenGL backend could be imported. Attempting to create a "
                     "rendering context will result in a RuntimeError."
@@ -263,6 +264,7 @@ class OffScreenViewer(BaseRender):
 
 
 class WindowViewer(BaseRender):
+    """Class for window rendering in all MuJoCo environments."""
     def __init__(self, model, data):
         glfw.init()
 
@@ -567,7 +569,21 @@ class WindowViewer(BaseRender):
     
 
 class MujocoRenderer:
-    def __init__(self, model, data, default_cam_config):
+    """This is the MuJoCo renderer manager class for every MuJoCo environment.
+
+    The class has two main public methods available:
+    - :meth:`render` - Renders the environment in three possible modes: "human", "rgb_array", or "depth_array"
+    - :meth:`close` - Closes all contexts initialized with the rendere
+
+    """
+    def __init__(self, model: "mujoco.MjModel", data: "mujoco.MjData", default_cam_config: Optional[dict]=None):
+        """A wrapper for clipping continuous actions within the valid bound.
+
+            Args:
+                model: MjModel data sturcture of the MuJoCo simulation
+                data: MjData data sturcture of the MuJoCo simulation
+                default_cam_config: dictionary with attribute values of the viewer's default camera
+        """
         self.model = model
         self.data = data
         self._viewers = {}
@@ -575,6 +591,17 @@ class MujocoRenderer:
         self.default_cam_config = default_cam_config
 
     def render(self, render_mode: str , camera_id: Optional[int]=None, camera_name: Optional[str]=None):
+        """Renders a frame of trhe simulation in a specific format and camera view.
+
+        Args:
+            render_mode: The format to render the frame, it can be: "human", "rgb_array", or "depth_array"
+            camera_id: The integer camera id from which to render the frame in the MuJoCo simulation
+            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using cameara_id instead and vice versa 
+
+        Returns:
+            If render_mode is "rgb_array" or "depth_arra" it returns a numpy array in the spedified format. "human" render mode does not return anything.
+        """
+
         viewer = self._get_viewer(render_mode=render_mode)
 
         if render_mode in {
@@ -605,6 +632,10 @@ class MujocoRenderer:
             return viewer.render()
     
     def _get_viewer(self, render_mode):
+        """Initializes and returns a viewer class depending on the render_mode
+           - `WindowViewer` class for "human" render mode
+           - `OffScreenViewerr` class for "rgb_array" or "depth_array" render mode
+        """
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
             if render_mode == "human":
@@ -620,23 +651,27 @@ class MujocoRenderer:
             # Add default camera parameters
             self._viewers[render_mode] = self.viewer
 
-            if self.default_cam_config is not None:
-                self._set_cam_config()
+            self._set_cam_config()
 
         if len(self._viewers.keys()) > 1:
             # Only one context can be current at a time
             self.viewer.make_context_current()
-        
+
         return self.viewer
     
     def _set_cam_config(self):
+        """Set the default camera parameters
+        """
         assert self.viewer is not None
-        for key, value in self.default_cam_config.items():
-            if isinstance(value, np.ndarray):
-                getattr(self.viewer.cam, key)[:] = value
-            else:
-                setattr(self.viewer.cam, key, value)
+        if self.default_cam_config is not None:
+            for key, value in self.default_cam_config.items():
+                if isinstance(value, np.ndarray):
+                    getattr(self.viewer.cam, key)[:] = value
+                else:
+                    setattr(self.viewer.cam, key, value)
         
     def close(self):
+        """Close the OpenGL rendering contexts of all viewer modes
+        """
         for _, viewer in self._viewers.items():
             viewer.close()
