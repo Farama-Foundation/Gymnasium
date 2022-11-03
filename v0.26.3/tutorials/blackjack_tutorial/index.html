@@ -541,9 +541,17 @@ environment.</p>
 <p><strong>Blackjack</strong> is one of the most popular casino card games that is also
 infamous for being beatable under certain conditions. This version of
 the game uses an infinite deck (we draw the cards with replacement), so
-counting cards won’t be a viable strategy in our simulated game.</p>
-<p><strong>Objective</strong>: To win, your card sum should be greater than than the
+counting cards won’t be a viable strategy in our simulated game.
+Full documentation can be found at <a class="reference external" href="https://gymnasium.farama.org/environments/toy_text/blackjack">https://gymnasium.farama.org/environments/toy_text/blackjack</a></p>
+<p><strong>Objective</strong>: To win, your card sum should be greater than the
 dealers without exceeding 21.</p>
+<dl class="simple">
+<dt><strong>Actions</strong>: Agents can pick between two actions:</dt><dd><ul class="simple">
+<li><p>stand (0): the player takes no more cards</p></li>
+<li><p>hit (1): the player will be given another card, however the player could get over 21 and bust</p></li>
+</ul>
+</dd>
+</dl>
 <p><strong>Approach</strong>: To solve this environment by yourself, you can pick your
 favorite discrete RL algorithm. The presented solution uses <em>Q-learning</em>
 (a model-free RL algorithm).</p>
@@ -552,13 +560,17 @@ favorite discrete RL algorithm. The presented solution uses <em>Q-learning</em>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Author: Till Zemann</span>
 <span class="c1"># License: MIT License</span>
 
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
-<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Patch</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 
 <span class="c1"># Let&#39;s start by creating the blackjack environment.</span>
 <span class="c1"># Note: We are going to follow the rules from Sutton &amp; Barto.</span>
@@ -567,11 +579,13 @@ favorite discrete RL algorithm. The presented solution uses <em>Q-learning</em>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Blackjack-v1&quot;</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span># Other possible environment configurations:
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># Other possible environment configurations are:</span>
 
-env = gym.make(&#39;Blackjack-v1&#39;, natural=True, sab=False)``
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Blackjack-v1&#39;</span><span class="p">,</span> <span class="n">natural</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Whether to give an additional reward for starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).</span>
 
-env = gym.make(&#39;Blackjack-v1&#39;, natural=False, sab=False)``
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Blackjack-v1&#39;</span><span class="p">,</span> <span class="n">natural</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Whether to follow the exact rules outlined in the book by Sutton and Barto. If `sab` is `True`, the keyword argument `natural` will be ignored.</span>
 </pre></div>
 </div>
 </section>
@@ -580,18 +594,15 @@ env = gym.make(&#39;Blackjack-v1&#39;, natural=False, sab=False)``
 <p>First of all, we call <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> to start an episode. This function
 resets the environment to a starting position and returns an initial
 <code class="docutils literal notranslate"><span class="pre">observation</span></code>. We usually also set <code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">=</span> <span class="pre">False</span></code>. This variable
-will be useful later to check if a game is terminated. In this tutorial
-we will use the terms observation and state synonymously but in more
-complex problems a state might differ from the observation it is based
-on.</p>
+will be useful later to check if a game is terminated (i.e., the player wins or loses).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># reset the environment to get the first observation</span>
 <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+<span class="c1"># observation = (16, 9, False)</span>
 </pre></div>
 </div>
-<p>Note that our observation is a 3-tuple consisting of 3 discrete values:</p>
+<p>Note that our observation is a 3-tuple consisting of 3 values:</p>
 <ul class="simple">
 <li><p>The players current sum</p></li>
 <li><p>Value of the dealers face-up card</p></li>
@@ -612,44 +623,39 @@ after taking the action.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">reward</span></code>: This is the reward that the agent will receive after
 taking the action.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">terminated</span></code>: This is a boolean variable that indicates whether or
-not the episode is over.</p></li>
+not the environment has terminated.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">truncated</span></code>: This is a boolean variable that also indicates whether
-the episode ended by early truncation.</p></li>
+the episode ended by early truncation, i.e., a time limit is reached.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">info</span></code>: This is a dictionary that might contain additional
 information about the environment.</p></li>
 </ul>
-<p>The <code class="docutils literal notranslate"><span class="pre">next_state</span></code>, <code class="docutils literal notranslate"><span class="pre">reward</span></code>, and <code class="docutils literal notranslate"><span class="pre">done</span></code> variables are
+<p>The <code class="docutils literal notranslate"><span class="pre">next_state</span></code>, <code class="docutils literal notranslate"><span class="pre">reward</span></code>,  <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code> variables are
 self-explanatory, but the <code class="docutils literal notranslate"><span class="pre">info</span></code> variable requires some additional
 explanation. This variable contains a dictionary that might have some
 extra information about the environment, but in the Blackjack-v1
 environment you can ignore it. For example in Atari environments the
 info dictionary has a <code class="docutils literal notranslate"><span class="pre">ale.lives</span></code> key that tells us how many lives the
 agent has left. If the agent has 0 lives, then the episode is over.</p>
-<p>Blackjack-v1 doesn’t have a <code class="docutils literal notranslate"><span class="pre">env.render()</span></code> function to render the
-environment, but in other environments you can use this function to
-watch the agent play. Important to note is that using <code class="docutils literal notranslate"><span class="pre">env.render()</span></code>
-is optional - the environment is going to work even if you don’t render
-it, but it can be helpful to see an episode rendered out to get an idea
-of how the current policy behaves. Note that it is not a good idea to
-call this function in your training loop because rendering slows down
-training by a lot. Rather try to build an extra loop to evaluate and
-showcase the agent after training.</p>
+<p>Note that it is not a good idea to call <code class="docutils literal notranslate"><span class="pre">env.render()</span></code> in your training
+loop because rendering slows down training by a lot. Rather try to build
+an extra loop to evaluate and showcase the agent after training.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># sample a random action from all valid actions</span>
 <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="c1"># action=1</span>
 
 <span class="c1"># execute the action in our environment and receive infos from the environment</span>
 <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;observation:&quot;</span><span class="p">,</span> <span class="n">observation</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;reward:&quot;</span><span class="p">,</span> <span class="n">reward</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;terminated:&quot;</span><span class="p">,</span> <span class="n">terminated</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;truncated:&quot;</span><span class="p">,</span> <span class="n">truncated</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;info:&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+<span class="c1"># observation=(24, 10, False)</span>
+<span class="c1"># reward=-1.0</span>
+<span class="c1"># terminated=True</span>
+<span class="c1"># truncated=False</span>
+<span class="c1"># info={}</span>
 </pre></div>
 </div>
 <p>Once <code class="docutils literal notranslate"><span class="pre">terminated</span> <span class="pre">=</span> <span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated=True</span></code>, we should stop the
 current episode and begin a new one with <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code>. If you
-continue executing act`ons without resetting the environment, it still
+continue executing actions without resetting the environment, it still
 responds but the output won’t be useful for training (it might even be
 harmful if the agent learns on invalid data).</p>
 </section>
@@ -657,48 +663,74 @@ harmful if the agent learns on invalid data).</p>
 <h2>Building an agent<a class="headerlink" href="#building-an-agent" title="Permalink to this heading">#</a></h2>
 <p>Let’s build a <code class="docutils literal notranslate"><span class="pre">Q-learning</span> <span class="pre">agent</span></code> to solve <em>Blackjack-v1</em>! We’ll need
 some functions for picking an action and updating the agents action
-values. To ensure that the agents expores the environment, one possible
+values. To ensure that the agents explores the environment, one possible
 solution is the <code class="docutils literal notranslate"><span class="pre">epsilon-greedy</span></code> strategy, where we pick a random
 action with the percentage <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> and the greedy action (currently
 valued as the best) <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">epsilon</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BlackjackAgent</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epsilon_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize an Reinforcement Learning agent with an empty dictionary</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">initial_epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_decay</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">final_epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a Reinforcement Learning agent with an empty dictionary</span>
 <span class="sd">        of state-action values (q_values), a learning rate and an epsilon.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
-            <span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-        <span class="p">)</span>  <span class="c1"># maps a state to action values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">epsilon_decay</span>
 
-    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="sd">        Args:</span>
+<span class="sd">            learning_rate: The learning rate</span>
+<span class="sd">            initial_epsilon: The initial epsilon value</span>
+<span class="sd">            epsilon_decay: The decay for epsilon</span>
+<span class="sd">            final_epsilon: The final epsilon value</span>
+<span class="sd">            discount_factor: The discount factor for computing the Q-value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">=</span> <span class="n">discount_factor</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">initial_epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">epsilon_decay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_epsilon</span> <span class="o">=</span> <span class="n">final_epsilon</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the best action with probability (1 - epsilon)</span>
-<span class="sd">        and a random action with probability epsilon to ensure exploration.</span>
+<span class="sd">        otherwise a random action with probability epsilon to ensure exploration.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># with probability epsilon return a random action to explore the environment</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">:</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 
         <span class="c1"># with probability (1 - epsilon) act greedily (exploit)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">state</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">action</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">]))</span>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">done</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the Q-value of an action.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">old_q_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
-        <span class="n">max_future_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_state</span><span class="p">])</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">max_future_q</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span> <span class="o">*</span> <span class="n">old_q_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">target</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+        <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">reward</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">terminated</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">next_obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the Q-value of an action.&quot;&quot;&quot;</span>
+        <span class="n">future_q_value</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
+        <span class="n">temporal_difference</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">future_q_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">temporal_difference</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temporal_difference</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">decay_epsilon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">-</span> <span class="n">epsilon_decay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">-</span> <span class="n">epsilon_decay</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To train the agent, we will let the agent play one episode (one complete
@@ -707,83 +739,133 @@ each episode. The agent will have to experience a lot of episodes to
 explore the environment sufficiently.</p>
 <p>Now we should be ready to build the training loop.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># hyperparameters</span>
-<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">1e-3</span>
-<span class="n">start_epsilon</span> <span class="o">=</span> <span class="mf">0.8</span>
-<span class="n">n_episodes</span> <span class="o">=</span> <span class="mi">200_000</span>
-<span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">start_epsilon</span> <span class="o">/</span> <span class="n">n_episodes</span>  <span class="c1"># less exploration over time</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">n_episodes</span> <span class="o">=</span> <span class="mi">100_000</span>
+<span class="n">start_epsilon</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">start_epsilon</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_episodes</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># reduce the exploration over time</span>
+<span class="n">final_epsilon</span> <span class="o">=</span> <span class="mf">0.1</span>
 
 <span class="n">agent</span> <span class="o">=</span> <span class="n">BlackjackAgent</span><span class="p">(</span>
-    <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">start_epsilon</span><span class="p">,</span> <span class="n">epsilon_decay</span><span class="o">=</span><span class="n">epsilon_decay</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span>
+    <span class="n">initial_epsilon</span><span class="o">=</span><span class="n">start_epsilon</span><span class="p">,</span>
+    <span class="n">epsilon_decay</span><span class="o">=</span><span class="n">epsilon_decay</span><span class="p">,</span>
+    <span class="n">final_epsilon</span><span class="o">=</span><span class="n">final_epsilon</span><span class="p">,</span>
 <span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">n_episodes</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">):</span>
-
-        <span class="c1"># reset the environment</span>
-        <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="c1"># play one episode</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
-            <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-            <span class="n">done</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
-            <span class="p">)</span>  <span class="c1"># if the episode terminated or was truncated early, set done to True</span>
-            <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
-
-        <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Great, let’s train!</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">train</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">n_episodes</span><span class="p">)</span>
+<p>Info: The current hyperparameters are set to quickly train a decent agent.
+If you want to converge to the optimal policy, try increasing
+the n_episodes by 10x and lower the learning_rate (e.g. to 0.001).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">deque_size</span><span class="o">=</span><span class="n">n_episodes</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">)):</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># play one episode</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="c1"># update the agent</span>
+        <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">)</span>
+
+        <span class="c1"># update if the environment is done and the current obs</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">next_obs</span>
+
+    <span class="n">agent</span><span class="o">.</span><span class="n">decay_epsilon</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
-<section id="visualizing-the-results">
-<h2>Visualizing the results<a class="headerlink" href="#visualizing-the-results" title="Permalink to this heading">#</a></h2>
+<section id="visualizing-the-training">
+<h2>Visualizing the training<a class="headerlink" href="#visualizing-the-training" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rolling_length</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode rewards&quot;</span><span class="p">)</span>
+<span class="n">reward_moving_average</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rolling_length</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span>
+    <span class="p">)</span>
+    <span class="o">/</span> <span class="n">rolling_length</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">reward_moving_average</span><span class="p">)),</span> <span class="n">reward_moving_average</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode lengths&quot;</span><span class="p">)</span>
+<span class="n">length_moving_average</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rolling_length</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span>
+    <span class="p">)</span>
+    <span class="o">/</span> <span class="n">rolling_length</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">length_moving_average</span><span class="p">)),</span> <span class="n">length_moving_average</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Training Error&quot;</span><span class="p">)</span>
+<span class="n">training_error_moving_average</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">training_error</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rolling_length</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+    <span class="o">/</span> <span class="n">rolling_length</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">training_error_moving_average</span><span class="p">)),</span> <span class="n">training_error_moving_average</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/blackjack_training_plots.png" src="../../_images/blackjack_training_plots.png" />
+</section>
+<section id="visualising-the-policy">
+<h2>Visualising the policy<a class="headerlink" href="#visualising-the-policy" title="Permalink to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_grids</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">usable_ace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-
+    <span class="sd">&quot;&quot;&quot;Create value and policy grid given an agent.&quot;&quot;&quot;</span>
     <span class="c1"># convert our state-action values to state values</span>
     <span class="c1"># and build a policy dictionary that maps observations to actions</span>
-    <span class="n">V</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">state_value</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">policy</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">obs</span><span class="p">,</span> <span class="n">action_values</span> <span class="ow">in</span> <span class="n">agent</span><span class="o">.</span><span class="n">q_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">V</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">action_values</span><span class="p">)</span>
-        <span class="n">policy</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">action_values</span><span class="p">)</span>
+        <span class="n">state_value</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">action_values</span><span class="p">))</span>
+        <span class="n">policy</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">action_values</span><span class="p">))</span>
 
-    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>  <span class="c1"># players count</span>
-    <span class="p">)</span>  <span class="c1"># dealers face-up card</span>
+    <span class="n">player_count</span><span class="p">,</span> <span class="n">dealer_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+        <span class="c1"># players count, dealers face-up card</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+    <span class="p">)</span>
 
     <span class="c1"># create the value grid for plotting</span>
-    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
-        <span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">V</span><span class="p">[(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">usable_ace</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">])</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">state_value</span><span class="p">[(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">usable_ace</span><span class="p">)],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">arr</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">player_count</span><span class="p">,</span> <span class="n">dealer_count</span><span class="p">]),</span>
     <span class="p">)</span>
-    <span class="n">value_grid</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span>
+    <span class="n">value_grid</span> <span class="o">=</span> <span class="n">player_count</span><span class="p">,</span> <span class="n">dealer_count</span><span class="p">,</span> <span class="n">value</span>
 
     <span class="c1"># create the policy grid for plotting</span>
     <span class="n">policy_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
-        <span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">policy</span><span class="p">[(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">usable_ace</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">])</span>
+        <span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">policy</span><span class="p">[(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">usable_ace</span><span class="p">)],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">arr</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">player_count</span><span class="p">,</span> <span class="n">dealer_count</span><span class="p">]),</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span>
 
 
-<span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;N/A&quot;</span><span class="p">):</span>
-
+<span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a plot using a value and policy grid.&quot;&quot;&quot;</span>
     <span class="c1"># create a new figure with 2 subplots (left: state values, right: policy)</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">value_grid</span>
+    <span class="n">player_count</span><span class="p">,</span> <span class="n">dealer_count</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">value_grid</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figaspect</span><span class="p">(</span><span class="mf">0.4</span><span class="p">))</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
 
     <span class="c1"># plot the state values</span>
     <span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span>
+        <span class="n">player_count</span><span class="p">,</span>
+        <span class="n">dealer_count</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">,</span>
+        <span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">)))</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;State values: &quot;</span> <span class="o">+</span> <span class="n">title</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;State values: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Player sum&quot;</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Dealer showing&quot;</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_rotate_label</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
@@ -793,7 +875,7 @@ explore the environment sufficiently.</p>
     <span class="c1"># plot the policy</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">ax2</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">policy_grid</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Accent_r&quot;</span><span class="p">,</span> <span class="n">cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Policy: &quot;</span> <span class="o">+</span> <span class="n">title</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Policy: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Player sum&quot;</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Dealer showing&quot;</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">))</span>
@@ -824,7 +906,11 @@ explore the environment sufficiently.</p>
 <img alt="../../_images/blackjack_without_usable_ace.png" src="../../_images/blackjack_without_usable_ace.png" />
 <p>It’s good practice to call env.close() at the end of your script,
 so that any used resources by the environment will be closed.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</section>
+<section id="think-you-can-do-better">
+<h2>Think you can do better?<a class="headerlink" href="#think-you-can-do-better" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># You can visualize the environment using the play function</span>
+<span class="c1"># and try to win a few games.</span>
 </pre></div>
 </div>
 <p>Hopefully this Tutorial helped you get a grip of how to interact with
@@ -910,7 +996,9 @@ Barto</a>, section
 <li><a class="reference internal" href="#observing-the-environment">Observing the environment</a></li>
 <li><a class="reference internal" href="#executing-an-action">Executing an action</a></li>
 <li><a class="reference internal" href="#building-an-agent">Building an agent</a></li>
-<li><a class="reference internal" href="#visualizing-the-results">Visualizing the results</a></li>
+<li><a class="reference internal" href="#visualizing-the-training">Visualizing the training</a></li>
+<li><a class="reference internal" href="#visualising-the-policy">Visualising the policy</a></li>
+<li><a class="reference internal" href="#think-you-can-do-better">Think you can do better?</a></li>
 </ul>
 </li>
 </ul>

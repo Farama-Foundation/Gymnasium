@@ -536,27 +536,16 @@
           
           <section id="third-party-environments">
 <h1>Third-Party Environments<a class="headerlink" href="#third-party-environments" title="Permalink to this heading">#</a></h1>
+<p>Many environments that comply with the Gymnasium API are now maintained under the Farama Foundation’s <a class="reference external" href="https://farama.org/projects">projects</a>, along with Gymnasium itself. These include many of the most popular environments using the Gymnasium API, and we encourage you to check them out. This page exclusively lists interesting third party environments that are not part of the Farama Foundation.</p>
 <section id="video-game-environments">
 <h2>Video Game Environments<a class="headerlink" href="#video-game-environments" title="Permalink to this heading">#</a></h2>
-<section id="vizdoom">
-<h3><a class="reference external" href="https://github.com/mwydmuch/ViZDoom">ViZDoom</a><a class="headerlink" href="#vizdoom" title="Permalink to this heading">#</a></h3>
-<p>An environment centered around the original <a class="reference external" href="https://en.wikipedia.org/wiki/Doom_(1993_video_game)">Doom</a> game, focusing on visual control (from image to actions) at thousands of frames per second. ViZDoom supports depth and automatic annotation/labels buffers, as well as accessing the sound. The Gym wrappers provide easy-to-use access to the example scenarios that come with ViZDoom. Since 2016, the <a class="reference external" href="https://arxiv.org/abs/1605.02097">ViZDoom paper</a> has been cited more than 600 times.</p>
-</section>
-<section id="flappy-bird-gym-a-flappy-bird-environment-for-openai-gym">
-<h3><a class="reference external" href="https://github.com/Talendar/flappy-bird-gym"> flappy-bird-gym: A Flappy Bird environment for OpenAI Gym</a><a class="headerlink" href="#flappy-bird-gym-a-flappy-bird-environment-for-openai-gym" title="Permalink to this heading">#</a></h3>
+<section id="flappy-bird-gym-a-flappy-bird-environment-for-gym">
+<h3><a class="reference external" href="https://github.com/Talendar/flappy-bird-gym"> flappy-bird-gym: A Flappy Bird environment for Gym</a><a class="headerlink" href="#flappy-bird-gym-a-flappy-bird-environment-for-gym" title="Permalink to this heading">#</a></h3>
 <p>A simple environment for single-agent reinforcement learning algorithms on a clone of <a class="reference external" href="https://en.wikipedia.org/wiki/Flappy_Bird">Flappy Bird</a>, the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.</p>
 </section>
 <section id="gym-derk-gpu-accelerated-moba-environment">
 <h3><a class="reference external" href="https://gymnasium.derkgame.com"> gym-derk: GPU accelerated MOBA environment</a><a class="headerlink" href="#gym-derk-gpu-accelerated-moba-environment" title="Permalink to this heading">#</a></h3>
 <p>This is a 3v3 MOBA environment where you train creatures to fight each other. It runs entirely on the GPU so you can easily have hundreds of instances running in parallel. There are around 15 items for the creatures, 60 “senses”, 5 actions, and roughly 23 tweakable rewards. It’s also possible to benchmark an agent against other agents online. It’s available for free for training for personal use, and otherwise costs money; see licensing details on the website</p>
-</section>
-<section id="minerl">
-<h3><a class="reference external" href="https://github.com/minerllabs/minerl"> MineRL</a><a class="headerlink" href="#minerl" title="Permalink to this heading">#</a></h3>
-<p>Gym interface with Minecraft game focused on a specific sparse reward challenge</p>
-</section>
-<section id="procgen">
-<h3><a class="reference external" href="https://github.com/openai/procgen"> Procgen</a><a class="headerlink" href="#procgen" title="Permalink to this heading">#</a></h3>
-<p>16 simple-to-use procedurally-generated gym environments which provide a direct measure of how quickly a reinforcement learning agent learns generalizable skills. The environments run at high speed (thousands of steps per second) on a single core.</p>
 </section>
 <section id="slimevolleygym-a-simple-environment-for-single-and-multi-agent-reinforcement-learning">
 <h3><a class="reference external" href="https://github.com/hardmaru/slimevolleygym"> SlimeVolleyGym: A simple environment for single and multi-agent reinforcement learning</a><a class="headerlink" href="#slimevolleygym-a-simple-environment-for-single-and-multi-agent-reinforcement-learning" title="Permalink to this heading">#</a></h3>
@@ -570,76 +559,105 @@
 <h3><a class="reference external" href="https://github.com/Unity-Technologies/ml-agents"> Unity ML Agents</a><a class="headerlink" href="#unity-ml-agents" title="Permalink to this heading">#</a></h3>
 <p>Gym wrappers for arbitrary and premade environments with the Unity game engine.</p>
 </section>
+<section id="gym-games">
+<h3><a class="reference external" href="https://github.com/qlan3/gym-games"> gym-games</a><a class="headerlink" href="#gym-games" title="Permalink to this heading">#</a></h3>
+<p>Gym implementations of the MinAtar games, various PyGame Learning Environment games, and various custom exploration games</p>
 </section>
-<section id="classic-environments-board-card-etc-games">
-<h2>Classic Environments (board, card, etc. games)<a class="headerlink" href="#classic-environments-board-card-etc-games" title="Permalink to this heading">#</a></h2>
-<section id="gym-abalone-a-two-player-abstract-strategy-board-game">
-<h3><a class="reference external" href="https://github.com/towzeur/gym-abalone"> gym-abalone: A two-player abstract strategy board game</a><a class="headerlink" href="#gym-abalone-a-two-player-abstract-strategy-board-game" title="Permalink to this heading">#</a></h3>
-<p>An implementation of the board game Abalone.</p>
-</section>
-<section id="gym-spoof">
-<h3><a class="reference external" href="https://github.com/MouseAndKeyboard/gym-spoof"> gym-spoof</a><a class="headerlink" href="#gym-spoof" title="Permalink to this heading">#</a></h3>
-<p>Spoof, otherwise known as “The 3-coin game”, is a multi-agent (2-player), imperfect-information, zero-sum game.</p>
-</section>
-<section id="gym-xiangqi-xiangqi-the-chinese-chess-game">
-<h3><a class="reference external" href="https://github.com/tanliyon/gym-xiangqi"> gym-xiangqi: Xiangqi - The Chinese Chess Game</a><a class="headerlink" href="#gym-xiangqi-xiangqi-the-chinese-chess-game" title="Permalink to this heading">#</a></h3>
-<p>A reinforcement learning environment of Xiangqi, the Chinese Chess game.</p>
-</section>
-<section id="rubikscubegym">
-<h3><a class="reference external" href="https://github.com/DoubleGremlin181/RubiksCubeGym"> RubiksCubeGym</a><a class="headerlink" href="#rubikscubegym" title="Permalink to this heading">#</a></h3>
-<p>The RubiksCubeGym package provides environments for twisty puzzles with multiple reward functions to help simulate the methods used by humans.</p>
-</section>
-<section id="gymgo">
-<h3><a class="reference external" href="https://github.com/aigagror/GymGo"> GymGo</a><a class="headerlink" href="#gymgo" title="Permalink to this heading">#</a></h3>
-<p>The board game Go, also known as Weiqi. The game that was famously conquered by AlphaGo.</p>
+<section id="pge-parallel-game-engine">
+<h3><a class="reference external" href="https://github.com/222464/PGE"> PGE: Parallel Game Engine</a><a class="headerlink" href="#pge-parallel-game-engine" title="Permalink to this heading">#</a></h3>
+<p>PGE is a FOSS 3D engine for AI simulations and can interoperate with the Gym. Contains environments with modern 3D graphics, and uses Bullet for physics.</p>
 </section>
 </section>
 <section id="robotics-environments">
 <h2>Robotics Environments<a class="headerlink" href="#robotics-environments" title="Permalink to this heading">#</a></h2>
 <section id="gymfc-a-flight-control-tuning-and-training-framework">
-<h3><a class="reference external" href="https://github.com/wil3/gymfc/"> GymFC: A flight control tuning and training framework</a><a class="headerlink" href="#gymfc-a-flight-control-tuning-and-training-framework" title="Permalink to this heading">#</a></h3>
-<p>GymFC is a modular framework for synthesizing neuro-flight controllers. The architecture integrates digital twinning concepts to provide a seamless transfer of trained policies to hardware. The OpenAI environment has been used to generate policies for the world’s first open-source neural network flight control firmware <a class="reference external" href="https://github.com/wil3/neuroflight">Neuroflight</a>.</p>
+<h3><a class="reference external" href="https://github.com/wil3/gymfc/">GymFC: A flight control tuning and training framework</a><a class="headerlink" href="#gymfc-a-flight-control-tuning-and-training-framework" title="Permalink to this heading">#</a></h3>
+<p>GymFC is a modular framework for synthesizing neuro-flight controllers. The architecture integrates digital twinning concepts to provide a seamless transfer of trained policies to hardware. The environment has been used to generate policies for the world’s first open-source neural network flight control firmware <a class="reference external" href="https://github.com/wil3/neuroflight">Neuroflight</a>.</p>
 </section>
 <section id="gym-gazebo">
-<h3><a class="reference external" href="https://github.com/erlerobot/gym-gazebo/"> gym-gazebo</a><a class="headerlink" href="#gym-gazebo" title="Permalink to this heading">#</a></h3>
-<p>gym-gazebo presents an extension of the initial OpenAI gym for robotics using ROS and Gazebo, an advanced 3D modeling and
+<h3><a class="reference external" href="https://github.com/erlerobot/gym-gazebo/">gym-gazebo</a><a class="headerlink" href="#gym-gazebo" title="Permalink to this heading">#</a></h3>
+<p>gym-gazebo presents an extension of the initial Gym for robotics using ROS and Gazebo, an advanced 3D modeling and
 rendering tool.</p>
 </section>
 <section id="gym-goddard-goddard-s-rocket-problem">
-<h3><a class="reference external" href="https://github.com/osannolik/gym-goddard"> gym-goddard: Goddard’s Rocket Problem</a><a class="headerlink" href="#gym-goddard-goddard-s-rocket-problem" title="Permalink to this heading">#</a></h3>
+<h3><a class="reference external" href="https://github.com/osannolik/gym-goddard">gym-goddard: Goddard’s Rocket Problem</a><a class="headerlink" href="#gym-goddard-goddard-s-rocket-problem" title="Permalink to this heading">#</a></h3>
 <p>An environment for simulating the classical optimal control problem where the thrust of a vertically ascending rocket shall be determined such that it reaches the maximum possible altitude while being subject to varying aerodynamic drag, gravity, and mass.</p>
 </section>
 <section id="gym-jiminy-training-robots-in-jiminy">
-<h3><a class="reference external" href="https://github.com/Wandercraft/jiminy"> gym-jiminy: training Robots in Jiminy</a><a class="headerlink" href="#gym-jiminy-training-robots-in-jiminy" title="Permalink to this heading">#</a></h3>
-<p>gym-jiminy presents an extension of the initial OpenAI gym for robotics using Jiminy, an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.</p>
-</section>
-<section id="gym-miniworld">
-<h3><a class="reference external" href="https://github.com/maximecb/gym-miniworld"> gym-miniworld</a><a class="headerlink" href="#gym-miniworld" title="Permalink to this heading">#</a></h3>
-<p>MiniWorld is a minimalistic 3D interior environment simulator for reinforcement learning &amp; robotics research. It can be used to simulate environments with rooms, doors, hallways and various objects (eg: office and home environments, mazes). MiniWorld can be seen as an alternative to VizDoom or DMLab. It is written 100% in Python and designed to be easily modified or extended.</p>
+<h3><a class="reference external" href="https://github.com/Wandercraft/jiminy">gym-jiminy: training Robots in Jiminy</a><a class="headerlink" href="#gym-jiminy-training-robots-in-jiminy" title="Permalink to this heading">#</a></h3>
+<p>gym-jiminy presents an extension of the initial Gym for robotics using Jiminy, an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.</p>
 </section>
 <section id="gym-pybullet-drones">
-<h3><a class="reference external" href="https://github.com/JacopoPan/gym-pybullet-drones"> gym-pybullet-drones</a><a class="headerlink" href="#gym-pybullet-drones" title="Permalink to this heading">#</a></h3>
+<h3><a class="reference external" href="https://github.com/JacopoPan/gym-pybullet-drones">gym-pybullet-drones</a><a class="headerlink" href="#gym-pybullet-drones" title="Permalink to this heading">#</a></h3>
 <p>A simple environment using <a class="reference external" href="https://github.com/bulletphysics/bullet3">PyBullet</a> to simulate the dynamics of a <a class="reference external" href="https://www.bitcraze.io/documentation/hardware/crazyflie_2_1/crazyflie_2_1-datasheet.pdf">Bitcraze Crazyflie 2.x</a> nanoquadrotor.</p>
 </section>
 <section id="marsexplorer">
-<h3><a class="reference external" href="https://github.com/dimikout3/MarsExplorer"> MarsExplorer</a><a class="headerlink" href="#marsexplorer" title="Permalink to this heading">#</a></h3>
-<p>Mars Explorer is an openai-gym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.</p>
+<h3><a class="reference external" href="https://github.com/dimikout3/MarsExplorer">MarsExplorer</a><a class="headerlink" href="#marsexplorer" title="Permalink to this heading">#</a></h3>
+<p>Mars Explorer is a Ggym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.</p>
 </section>
 <section id="panda-gym">
-<h3><a class="reference external" href="https://github.com/qgallouedec/panda-gym/"> panda-gym </a><a class="headerlink" href="#panda-gym" title="Permalink to this heading">#</a></h3>
+<h3><a class="reference external" href="https://github.com/qgallouedec/panda-gym/">panda-gym </a><a class="headerlink" href="#panda-gym" title="Permalink to this heading">#</a></h3>
 <p>PyBullet based simulations of a robotic arm moving objects.</p>
 </section>
-<section id="pybullet-robotics-environments">
-<h3><a class="reference external" href="https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#heading=h.wz5to0x8kqmr"> PyBullet Robotics Environments</a><a class="headerlink" href="#pybullet-robotics-environments" title="Permalink to this heading">#</a></h3>
-<p>3D physics environments like the Mujoco environments but uses the Bullet physics engine and do not require a commercial license.  Works on Mac/Linux/Windows.</p>
-</section>
 <section id="robo-gym">
-<h3><a class="reference external" href="https://github.com/jr-robotics/robo-gym"> robo-gym</a><a class="headerlink" href="#robo-gym" title="Permalink to this heading">#</a></h3>
+<h3><a class="reference external" href="https://github.com/jr-robotics/robo-gym">robo-gym</a><a class="headerlink" href="#robo-gym" title="Permalink to this heading">#</a></h3>
 <p>robo-gym provides a collection of reinforcement learning environments involving robotic tasks applicable in both simulation and real-world robotics.</p>
 </section>
 <section id="offworld-gym">
-<h3><a class="reference external" href="https://github.com/offworld-projects/offworld-gym"> Offworld-gym</a><a class="headerlink" href="#offworld-gym" title="Permalink to this heading">#</a></h3>
+<h3><a class="reference external" href="https://github.com/offworld-projects/offworld-gym">Offworld-gym</a><a class="headerlink" href="#offworld-gym" title="Permalink to this heading">#</a></h3>
 <p>Gym environments that let you control physics robotics in a laboratory via the internet.</p>
+</section>
+<section id="osim-rl">
+<h3><a class="reference external" href="https://github.com/stanfordnmbl/osim-rl">osim-rl</a><a class="headerlink" href="#osim-rl" title="Permalink to this heading">#</a></h3>
+<p>Musculoskeletal Models in OpenSim. A human musculoskeletal model and a physics-based simulation environment where you can synthesize physically and physiologically accurate motion. One of the environments built in this framework is a competition environment for a NIPS 2017 challenge.</p>
+</section>
+<section id="safe-control-gym">
+<h3><a class="reference external" href="https://github.com/utiasDSL/safe-control-gym">safe-control-gym</a><a class="headerlink" href="#safe-control-gym" title="Permalink to this heading">#</a></h3>
+<p>PyBullet based CartPole and Quadrotor environments—with <a class="reference external" href="https://web.casadi.org">CasADi</a> (symbolic) <em>a priori</em> dynamics and constraints—for learning-based control and model-based reinforcement learning.</p>
+</section>
+<section id="racecar-gym">
+<h3><a class="reference external" href="https://github.com/axelbr/racecar_gym/">racecar_gym</a><a class="headerlink" href="#racecar-gym" title="Permalink to this heading">#</a></h3>
+<p>A gym environment for a miniature racecar using the pybullet physics engine.</p>
+</section>
+<section id="jiminy">
+<h3><a class="reference external" href="https://github.com/duburcqa/jiminy/">jiminy</a><a class="headerlink" href="#jiminy" title="Permalink to this heading">#</a></h3>
+<p>Jiminy: a fast and portable Python/C++ simulator of poly-articulated systems with Gym interface for reinforcement learning</p>
+</section>
+<section id="gym-softrobot">
+<h3><a class="reference external" href="https://github.com/skim0119/gym-softrobot/">gym-softrobot</a><a class="headerlink" href="#gym-softrobot" title="Permalink to this heading">#</a></h3>
+<p>Softrobotics environment package for Gym</p>
+</section>
+<section id="ostrichrl">
+<h3><a class="reference external" href="https://github.com/vittorione94/ostrichrl/">ostrichrl</a><a class="headerlink" href="#ostrichrl" title="Permalink to this heading">#</a></h3>
+<p>This is the repository accompanying the paper <a class="reference external" href="https://arxiv.org/abs/2112.06061">OstrichRL: A Musculoskeletal Ostrich Simulation to Study Bio-mechanical Locomotion</a>.</p>
+</section>
+<section id="quadruped-gym">
+<h3><a class="reference external" href="https://github.com/dtch1997/quadruped-gym/">quadruped-gym</a><a class="headerlink" href="#quadruped-gym" title="Permalink to this heading">#</a></h3>
+<p>A Gym environment for the training of legged robots</p>
+</section>
+<section id="evogym">
+<h3><a class="reference external" href="https://github.com/EvolutionGym/evogym/">evogym</a><a class="headerlink" href="#evogym" title="Permalink to this heading">#</a></h3>
+<p>A large-scale benchmark for co-optimizing the design and control of soft robots, as seen in NeurIPS 2021.</p>
+</section>
+<section id="igibson">
+<h3><a class="reference external" href="https://github.com/StanfordVL/iGibson/">iGibson</a><a class="headerlink" href="#igibson" title="Permalink to this heading">#</a></h3>
+<p>A Simulation Environment to train Robots in Large Realistic Interactive Scenes</p>
+</section>
+<section id="dexteroushands">
+<h3><a class="reference external" href="https://github.com/PKU-MARL/DexterousHands/">DexterousHands</a><a class="headerlink" href="#dexteroushands" title="Permalink to this heading">#</a></h3>
+<p>This is a library that provides dual dexterous hand manipulation tasks through Isaac Gym</p>
+</section>
+<section id="omniisaacgymenvs">
+<h3><a class="reference external" href="https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/">OmniIsaacGymEnvs</a><a class="headerlink" href="#omniisaacgymenvs" title="Permalink to this heading">#</a></h3>
+<p>Reinforcement Learning Environments for Omniverse Isaac Gym</p>
+</section>
+<section id="spacerobotenv">
+<h3><a class="reference external" href="https://github.com/Tsinghua-Space-Robot-Learning-Group/SpaceRobotEnv/">SpaceRobotEnv</a><a class="headerlink" href="#spacerobotenv" title="Permalink to this heading">#</a></h3>
+<p>A gym environment designed for free-floating space robot control based on the MuJoCo platform.</p>
+</section>
+<section id="gym-line-follower">
+<h3><a class="reference external" href="https://github.com/nplan/gym-line-follower/">gym-line-follower</a><a class="headerlink" href="#gym-line-follower" title="Permalink to this heading">#</a></h3>
+<p>Line follower robot simulator environment for Open AI Gym.</p>
 </section>
 </section>
 <section id="autonomous-driving-and-traffic-control-environments">
@@ -672,20 +690,70 @@ rendering tool.</p>
 <h3><a class="reference external" href="https://commonroad.in.tum.de/tools/commonroad-rl"> CommonRoad-RL</a><a class="headerlink" href="#commonroad-rl" title="Permalink to this heading">#</a></h3>
 <p>A Gym for solving motion planning problems for various traffic scenarios compatible with <a class="reference external" href="https://commonroad.in.tum.de/scenarios">CommonRoad benchmarks</a>, which provides configurable rewards, action spaces, and observation spaces.</p>
 </section>
+<section id="tmrl">
+<h3><a class="reference external" href="https://github.com/trackmania-rl/tmrl/">tmrl</a><a class="headerlink" href="#tmrl" title="Permalink to this heading">#</a></h3>
+<p>TrackMania 2020 through RL</p>
 </section>
-<section id="multi-agents">
-<h2>Multi-Agents<a class="headerlink" href="#multi-agents" title="Permalink to this heading">#</a></h2>
-<section id="pettingzoo">
-<h3><a class="reference external" href="https://github.com/Farama-Foundation/PettingZoo">PettingZoo</a><a class="headerlink" href="#pettingzoo" title="Permalink to this heading">#</a></h3>
-<p>PettingZoo is a Python library for conducting research in multi-agent reinforcement learning, akin to a multi-agent version of Gym.</p>
+<section id="racing-dreamer">
+<h3><a class="reference external" href="https://github.com/CPS-TUWien/racing_dreamer/">racing_dreamer</a><a class="headerlink" href="#racing-dreamer" title="Permalink to this heading">#</a></h3>
+<p>Latent Imagination Facilitates Zero-Shot Transfer in Autonomous Racing</p>
+</section>
+<section id="l2r">
+<h3><a class="reference external" href="https://github.com/learn-to-race/l2r/">l2r</a><a class="headerlink" href="#l2r" title="Permalink to this heading">#</a></h3>
+<p>An open-source reinforcement learning environment for autonomous racing.</p>
+</section>
+<section id="gym-torcs">
+<h3><a class="reference external" href="https://github.com/ugo-nama-kun/gym_torcs/">gym_torcs</a><a class="headerlink" href="#gym-torcs" title="Permalink to this heading">#</a></h3>
+<p>Gym-TORCS is the reinforcement learning (RL) environment in TORCS domain with gym-like interface. TORCS is the open-source realistic car racing simulator recently used as an RL benchmark task in several AI studies.</p>
+</section>
+</section>
+<section id="recommendation-system-environments">
+<h2>Recommendation System Environments<a class="headerlink" href="#recommendation-system-environments" title="Permalink to this heading">#</a></h2>
+<section id="gym-adserve">
+<h3><a class="reference external" href="https://github.com/falox/gym-adserver"> gym-adserve</a><a class="headerlink" href="#gym-adserve" title="Permalink to this heading">#</a></h3>
+<p>An environment that implements a typical <a class="reference external" href="https://en.wikipedia.org/wiki/Multi-armed_bandit">multi-armed bandit scenario</a> where an <a class="reference external" href="https://en.wikipedia.org/wiki/Ad_serving">ad server</a> must select the best advertisement to be displayed in a web page. Some example agents included: Random, epsilon-Greedy, Softmax, and UCB1.</p>
+</section>
+<section id="gym-recsys">
+<h3><a class="reference external" href="https://github.com/zuoxingdong/gym-recsys"> gym-recsys</a><a class="headerlink" href="#gym-recsys" title="Permalink to this heading">#</a></h3>
+<p>This package describes an Gym interface for creating a simulation environment of reinforcement learning-based recommender systems (RL-RecSys). The design strives for simple and flexible APIs to support novel research.</p>
+</section>
+<section id="virtualtaobao">
+<h3><a class="reference external" href="https://github.com/eyounx/VirtualTaobao/"> VirtualTaobao</a><a class="headerlink" href="#virtualtaobao" title="Permalink to this heading">#</a></h3>
+<p>An environment for online recommendations, where customers are learned from Taobao.com, one of the world’s largest e-commerce platforms.</p>
+</section>
+</section>
+<section id="industrial-process-environments">
+<h2>Industrial Process Environments<a class="headerlink" href="#industrial-process-environments" title="Permalink to this heading">#</a></h2>
+<section id="gym-inventory">
+<h3><a class="reference external" href="https://github.com/paulhendricks/gym-inventory"> gym-inventory</a><a class="headerlink" href="#gym-inventory" title="Permalink to this heading">#</a></h3>
+<p>gym-inventory is a single-agent domain featuring discrete state and action spaces that an AI agent might encounter in inventory control problems.</p>
+</section>
+<section id="openmodelica-microgrid-gym">
+<h3><a class="reference external" href="https://github.com/upb-lea/openmodelica-microgrid-gym"> openmodelica-microgrid-gym</a><a class="headerlink" href="#openmodelica-microgrid-gym" title="Permalink to this heading">#</a></h3>
+<p>The OpenModelica Microgrid Gym (OMG) package is a software toolbox for the simulation and control optimization of microgrids based on energy conversion by power electronic converters.</p>
+</section>
+<section id="mobile-env">
+<h3><a class="reference external" href="https://github.com/stefanbschneider/mobile-env/">mobile-env</a><a class="headerlink" href="#mobile-env" title="Permalink to this heading">#</a></h3>
+<p>An open, minimalist Gym environment for autonomous coordination in wireless mobile networks.</p>
+</section>
+<section id="pyelastica">
+<h3><a class="reference external" href="https://github.com/GazzolaLab/PyElastica/">PyElastica</a><a class="headerlink" href="#pyelastica" title="Permalink to this heading">#</a></h3>
+<p>Python implementation of Elastica, open-source software for the simulation of assemblies of slender, one-dimensional structures using Cosserat Rod theory.</p>
+</section>
+</section>
+<section id="financial-environments">
+<h2>Financial Environments<a class="headerlink" href="#financial-environments" title="Permalink to this heading">#</a></h2>
+<section id="gym-anytrading">
+<h3><a class="reference external" href="https://github.com/AminHP/gym-anytrading"> gym-anytrading</a><a class="headerlink" href="#gym-anytrading" title="Permalink to this heading">#</a></h3>
+<p>AnyTrading is a collection of Gym environments for reinforcement learning-based trading algorithms with a great focus on simplicity, flexibility, and comprehensiveness.</p>
+</section>
+<section id="gym-mtsim">
+<h3><a class="reference external" href="https://github.com/AminHP/gym-mtsim"> gym-mtsim</a><a class="headerlink" href="#gym-mtsim" title="Permalink to this heading">#</a></h3>
+<p>MtSim is a general-purpose, flexible, an</p>
 </section>
 </section>
 <section id="other-environments">
 <h2>Other Environments<a class="headerlink" href="#other-environments" title="Permalink to this heading">#</a></h2>
-<section id="anomalous-rl-envs">
-<h3><a class="reference external" href="https://github.com/modanesh/anomalous_rl_envs"> anomalous_rl_envs</a><a class="headerlink" href="#anomalous-rl-envs" title="Permalink to this heading">#</a></h3>
-<p>A set of environments from control tasks: Acrobot, CartPole, and LunarLander with various types of anomalies injected into them. It could be very useful to study the behavior and robustness of a policy.</p>
-</section>
 <section id="carl">
 <h3><a class="reference external" href="https://github.com/automl/CARL"> CARL</a><a class="headerlink" href="#carl" title="Permalink to this heading">#</a></h3>
 <p>Configurable reinforcement learning environments for testing generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.</p>
@@ -698,61 +766,22 @@ rendering tool.</p>
 <h3><a class="reference external" href="https://github.com/automl/DACBench"> DACBench</a><a class="headerlink" href="#dacbench" title="Permalink to this heading">#</a></h3>
 <p>Environments for hyperparameter configuration using RL. Includes cheap surrogate benchmarks as well as real-world algorithms from e.g. AI Planning, Evolutionary Computation and Deep Learning.</p>
 </section>
-<section id="gridworld">
-<h3><a class="reference external" href="https://github.com/addy1997/Gridworld"> Gridworld</a><a class="headerlink" href="#gridworld" title="Permalink to this heading">#</a></h3>
-<p>The Gridworld package provides grid-based environments to help simulate the results for model-based reinforcement learning algorithms. The initial release supports single agent system only. Some features in this version of the software have become obsolete. New features are being added to the software like windygrid environment.</p>
-</section>
-<section id="gym-adserve">
-<h3><a class="reference external" href="https://github.com/falox/gym-adserver"> gym-adserve</a><a class="headerlink" href="#gym-adserve" title="Permalink to this heading">#</a></h3>
-<p>An environment that implements a typical <a class="reference external" href="https://en.wikipedia.org/wiki/Multi-armed_bandit">multi-armed bandit scenario</a> where an <a class="reference external" href="https://en.wikipedia.org/wiki/Ad_serving">ad server</a> must select the best advertisement to be displayed in a web page. Some example agents included: Random, epsilon-Greedy, Softmax, and UCB1.</p>
-</section>
-<section id="gym-algorithmic">
-<h3><a class="reference external" href="https://github.com/Rohan138/gym-algorithmic"> gym-algorithmic</a><a class="headerlink" href="#gym-algorithmic" title="Permalink to this heading">#</a></h3>
-<p>These are a variety of algorithmic tasks, such as learning to copy a sequence, present in Gym prior to Gym 0.20.0.</p>
-</section>
-<section id="gym-anytrading">
-<h3><a class="reference external" href="https://github.com/AminHP/gym-anytrading"> gym-anytrading</a><a class="headerlink" href="#gym-anytrading" title="Permalink to this heading">#</a></h3>
-<p>AnyTrading is a collection of OpenAI Gym environments for reinforcement learning-based trading algorithms with a great focus on simplicity, flexibility, and comprehensiveness.</p>
-</section>
 <section id="gym-autokey">
 <h3><a class="reference external" href="https://github.com/Flunzmas/gym-autokey"> gym-autokey</a><a class="headerlink" href="#gym-autokey" title="Permalink to this heading">#</a></h3>
 <p>An environment for automated rule-based deductive program verification in the KeY verification system.</p>
-</section>
-<section id="gym-ccc">
-<h3><a class="reference external" href="https://github.com/acxz/gym-ccc"> gym-ccc</a><a class="headerlink" href="#gym-ccc" title="Permalink to this heading">#</a></h3>
-<p>Environments that extend gym’s classic control and add many new features including continuous action spaces.</p>
 </section>
 <section id="gym-cellular-automata">
 <h3><a class="reference external" href="https://github.com/elbecerrasoto/gym-cellular-automata"> gym-cellular-automata</a><a class="headerlink" href="#gym-cellular-automata" title="Permalink to this heading">#</a></h3>
 <p>Environments where the agent interacts with <em>Cellular Automata</em> by changing its cell states.</p>
 </section>
-<section id="gym-games">
-<h3><a class="reference external" href="https://github.com/qlan3/gym-games"> gym-games</a><a class="headerlink" href="#gym-games" title="Permalink to this heading">#</a></h3>
-<p>Gym implementations of the MinAtar games, various PyGame Learning Environment games, and various custom exploration games</p>
-</section>
-<section id="gym-inventory">
-<h3><a class="reference external" href="https://github.com/paulhendricks/gym-inventory"> gym-inventory</a><a class="headerlink" href="#gym-inventory" title="Permalink to this heading">#</a></h3>
-<p>gym-inventory is a single-agent domain featuring discrete state and action spaces that an AI agent might encounter in inventory control problems.</p>
-</section>
 <section id="gym-maze">
 <h3><a class="reference external" href="https://github.com/tuzzer/gym-maze/"> gym-maze</a><a class="headerlink" href="#gym-maze" title="Permalink to this heading">#</a></h3>
 <p>A simple 2D maze environment where an agent finds its way from the start position to the goal.</p>
-</section>
-<section id="gym-mtsim">
-<h3><a class="reference external" href="https://github.com/AminHP/gym-mtsim"> gym-mtsim</a><a class="headerlink" href="#gym-mtsim" title="Permalink to this heading">#</a></h3>
-<p>MtSim is a general-purpose, flexible, and easy-to-use simulator alongside an OpenAI Gym trading environment for MetaTrader 5 trading platform.</p>
-</section>
-<section id="gym-legacy-toytext">
-<h3><a class="reference external" href="https://github.com/Rohan138/gym-legacy-toytext"> gym-legacy-toytext</a><a class="headerlink" href="#gym-legacy-toytext" title="Permalink to this heading">#</a></h3>
-<p>These are the unused toy-text environments present in Gym prior to Gym 0.20.0.</p>
+<p>d easy-to-use simulator alongside a Gym trading environment for MetaTrader 5 trading platform.</p>
 </section>
 <section id="gym-riverswim">
 <h3><a class="reference external" href="https://github.com/erfanMhi/gym-riverswim"> gym-riverswim</a><a class="headerlink" href="#gym-riverswim" title="Permalink to this heading">#</a></h3>
 <p>A simple environment for benchmarking reinforcement learning exploration techniques in a simplified setting. Hard exploration.</p>
-</section>
-<section id="gym-recsys">
-<h3><a class="reference external" href="https://github.com/zuoxingdong/gym-recsys"> gym-recsys</a><a class="headerlink" href="#gym-recsys" title="Permalink to this heading">#</a></h3>
-<p>This package describes an OpenAI Gym interface for creating a simulation environment of reinforcement learning-based recommender systems (RL-RecSys). The design strives for simple and flexible APIs to support novel research.</p>
 </section>
 <section id="gym-sokoban">
 <h3><a class="reference external" href="https://github.com/mpSchrader/gym-sokoban"> gym-sokoban</a><a class="headerlink" href="#gym-sokoban" title="Permalink to this heading">#</a></h3>
@@ -774,39 +803,13 @@ rendering tool.</p>
 <h3><a class="reference external" href="https://github.com/Unity-Technologies/obstacle-tower-env"> Obstacle Tower</a><a class="headerlink" href="#obstacle-tower" title="Permalink to this heading">#</a></h3>
 <p>3D procedurally generated tower where you have to climb to the highest level possible</p>
 </section>
-<section id="openmodelica-microgrid-gym">
-<h3><a class="reference external" href="https://github.com/upb-lea/openmodelica-microgrid-gym"> openmodelica-microgrid-gym</a><a class="headerlink" href="#openmodelica-microgrid-gym" title="Permalink to this heading">#</a></h3>
-<p>The OpenModelica Microgrid Gym (OMG) package is a software toolbox for the simulation and control optimization of microgrids based on energy conversion by power electronic converters.</p>
-</section>
-<section id="osim-rl">
-<h3><a class="reference external" href="https://github.com/stanfordnmbl/osim-rl"> osim-rl</a><a class="headerlink" href="#osim-rl" title="Permalink to this heading">#</a></h3>
-<p>Musculoskeletal Models in OpenSim. A human musculoskeletal model and a physics-based simulation environment where you can synthesize physically and physiologically accurate motion. One of the environments built in this framework is a competition environment for a NIPS 2017 challenge.</p>
-</section>
-<section id="pge-parallel-game-engine">
-<h3><a class="reference external" href="https://github.com/222464/PGE"> PGE: Parallel Game Engine</a><a class="headerlink" href="#pge-parallel-game-engine" title="Permalink to this heading">#</a></h3>
-<p>PGE is a FOSS 3D engine for AI simulations and can interoperate with the Gym. Contains environments with modern 3D graphics, and uses Bullet for physics.</p>
-</section>
 <section id="qasgym">
 <h3><a class="reference external" href="https://github.com/qdevpsi3/quantum-arch-search"> QASGym</a><a class="headerlink" href="#qasgym" title="Permalink to this heading">#</a></h3>
 <p>This is a list of environments for quantum architecture search following the description in <a class="reference external" href="https://arxiv.org/abs/2104.07715">Quantum Architecture Search via Deep Reinforcement Learning</a>. The agent designs the quantum circuit by taking actions in the environment. Each action corresponds to a gate applied on some wires. The goal is to build a circuit U that generates the target n-qubit quantum state that belongs to the environment and is hidden from the agent. The circuits are built using <a class="reference external" href="https://quantumai.google/cirq">Google QuantumAI Cirq</a>.</p>
 </section>
-<section id="safe-control-gym">
-<h3><a class="reference external" href="https://github.com/utiasDSL/safe-control-gym"> safe-control-gym</a><a class="headerlink" href="#safe-control-gym" title="Permalink to this heading">#</a></h3>
-<p>PyBullet based CartPole and Quadrotor environments—with <a class="reference external" href="https://web.casadi.org">CasADi</a> (symbolic) <em>a priori</em> dynamics and constraints—for learning-based control and model-based reinforcement learning.</p>
-</section>
-<section id="virtualtaobao">
-<h3><a class="reference external" href="https://github.com/eyounx/VirtualTaobao/"> VirtualTaobao</a><a class="headerlink" href="#virtualtaobao" title="Permalink to this heading">#</a></h3>
-<p>An environment for online recommendations, where customers are learned from Taobao.com, one of the world’s largest e-commerce platforms.</p>
-</section>
 <section id="mo-gym">
 <h3><a class="reference external" href="https://github.com/LucasAlegre/mo-gym"> mo-gym</a><a class="headerlink" href="#mo-gym" title="Permalink to this heading">#</a></h3>
 <p>Multi-objective RL (MORL) gym environments, where the reward is a NumPy array of different (possibly conflicting) objectives.</p>
-</section>
-<section id="abides-gym">
-<h3><a class="reference external" href="https://github.com/jpmorganchase/abides-jpmc-public">ABIDES-Gym</a><a class="headerlink" href="#abides-gym" title="Permalink to this heading">#</a></h3>
-<p>ABIDES (Agent-Based Interactive Discrete Event Simulator) is a message-based multi-agent discrete event-based simulator. It enables simulation of complex multi-agent systems for different domains. ABIDES has already supported work in <a class="reference external" href="https://arxiv.org/abs/1904.12066">equity markets simulation</a> and <a class="reference external" href="https://dl.acm.org/doi/abs/10.1145/3383455.3422562">federated learning</a>.</p>
-<p><a class="reference external" href="https://arxiv.org/abs/2110.14771">ABIDES-Gym</a> (ACM-ICAIF21 publication) is a new wrapper built around ABIDES that enables using ABIDES simulator as an Open AI Gym environment for the training of Reinforcement Learning algorithms.</p>
-<p>We apply for this work by specifically using the market’s extension of ABIDES/ABIDES-Markets and developing two benchmark financial market Gym environments for training daily investor and execution agents. As a result, these two environments describe classic financial problems with a complex interactive market behavior response to the experimental agent’s action.</p>
 </section>
 <section id="gym-saturation">
 <h3><a class="reference external" href="https://github.com/inpefess/gym-saturation">gym-saturation</a><a class="headerlink" href="#gym-saturation" title="Permalink to this heading">#</a></h3>
@@ -820,109 +823,21 @@ rendering tool.</p>
 <h3><a class="reference external" href="https://github.com/luigiberducci/racing-rl/">racing-rl</a><a class="headerlink" href="#racing-rl" title="Permalink to this heading">#</a></h3>
 <p>reinforcement learning for f1tenth racing</p>
 </section>
-<section id="go-explore">
-<h3><a class="reference external" href="https://github.com/qgallouedec/go-explore/">go-explore</a><a class="headerlink" href="#go-explore" title="Permalink to this heading">#</a></h3>
-<p>Unofficial implementation of the Go-Explore algorithm presented in <a class="reference external" href="https://arxiv.org/abs/2004.12919">First return then explore</a> based on <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">stable-baselines3</a>.</p>
-</section>
-<section id="tmrl">
-<h3><a class="reference external" href="https://github.com/trackmania-rl/tmrl/">tmrl</a><a class="headerlink" href="#tmrl" title="Permalink to this heading">#</a></h3>
-<p>TrackMania 2020 through RL</p>
-</section>
-<section id="racing-dreamer">
-<h3><a class="reference external" href="https://github.com/CPS-TUWien/racing_dreamer/">racing_dreamer</a><a class="headerlink" href="#racing-dreamer" title="Permalink to this heading">#</a></h3>
-<p>Latent Imagination Facilitates Zero-Shot Transfer in Autonomous Racing</p>
-</section>
-<section id="racecar-gym">
-<h3><a class="reference external" href="https://github.com/axelbr/racecar_gym/">racecar_gym</a><a class="headerlink" href="#racecar-gym" title="Permalink to this heading">#</a></h3>
-<p>A gym environment for a miniature racecar using the pybullet physics engine.</p>
-</section>
-<section id="jiminy">
-<h3><a class="reference external" href="https://github.com/duburcqa/jiminy/">jiminy</a><a class="headerlink" href="#jiminy" title="Permalink to this heading">#</a></h3>
-<p>Jiminy: a fast and portable Python/C++ simulator of poly-articulated systems with OpenAI Gym interface for reinforcement learning</p>
+<section id="rubikscubegym">
+<h3><a class="reference external" href="https://github.com/DoubleGremlin181/RubiksCubeGym"> RubiksCubeGym</a><a class="headerlink" href="#rubikscubegym" title="Permalink to this heading">#</a></h3>
+<p>The RubiksCubeGym package provides environments for twisty puzzles with multiple reward functions to help simulate the methods used by humans.</p>
 </section>
 <section id="evogym-design-tool">
 <h3><a class="reference external" href="https://github.com/EvolutionGym/evogym-design-tool/">evogym-design-tool</a><a class="headerlink" href="#evogym-design-tool" title="Permalink to this heading">#</a></h3>
 <p>Design tool for creating Evolution Gym environments.</p>
 </section>
-<section id="l2r">
-<h3><a class="reference external" href="https://github.com/learn-to-race/l2r/">l2r</a><a class="headerlink" href="#l2r" title="Permalink to this heading">#</a></h3>
-<p>An open-source reinforcement learning environment for autonomous racing.</p>
-</section>
-<section id="gym-torcs">
-<h3><a class="reference external" href="https://github.com/ugo-nama-kun/gym_torcs/">gym_torcs</a><a class="headerlink" href="#gym-torcs" title="Permalink to this heading">#</a></h3>
-<p>Gym-TORCS is the reinforcement learning (RL) environment in TORCS domain with OpenAI-gym-like interface. TORCS is the open-source realistic car racing simulator recently used as an RL benchmark task in several AI studies.</p>
-</section>
-<section id="mobile-env">
-<h3><a class="reference external" href="https://github.com/stefanbschneider/mobile-env/">mobile-env</a><a class="headerlink" href="#mobile-env" title="Permalink to this heading">#</a></h3>
-<p>An open, minimalist Gym environment for autonomous coordination in wireless mobile networks.</p>
-</section>
-<section id="gym-softrobot">
-<h3><a class="reference external" href="https://github.com/skim0119/gym-softrobot/">gym-softrobot</a><a class="headerlink" href="#gym-softrobot" title="Permalink to this heading">#</a></h3>
-<p>Softrobotics environment package for OpenAI Gym</p>
-</section>
-<section id="pyelastica">
-<h3><a class="reference external" href="https://github.com/GazzolaLab/PyElastica/">PyElastica</a><a class="headerlink" href="#pyelastica" title="Permalink to this heading">#</a></h3>
-<p>Python implementation of Elastica, open-source software for the simulation of assemblies of slender, one-dimensional structures using Cosserat Rod theory.</p>
-</section>
-<section id="tuxkart-ai">
-<h3><a class="reference external" href="https://github.com/notjedi/tuxkart-ai/">tuxkart-ai</a><a class="headerlink" href="#tuxkart-ai" title="Permalink to this heading">#</a></h3>
-<p>RL agent for the SuperTuxKart game.</p>
-</section>
-<section id="ostrichrl">
-<h3><a class="reference external" href="https://github.com/vittorione94/ostrichrl/">ostrichrl</a><a class="headerlink" href="#ostrichrl" title="Permalink to this heading">#</a></h3>
-<p>This is the repository accompanying the paper <a class="reference external" href="https://arxiv.org/abs/2112.06061">OstrichRL: A Musculoskeletal Ostrich Simulation to Study Bio-mechanical Locomotion</a>.</p>
-</section>
-<section id="quadruped-gym">
-<h3><a class="reference external" href="https://github.com/dtch1997/quadruped-gym/">quadruped-gym</a><a class="headerlink" href="#quadruped-gym" title="Permalink to this heading">#</a></h3>
-<p>An OpenAI gym environment for the training of legged robots</p>
-</section>
-<section id="pogo-stick-jumping">
-<h3><a class="reference external" href="https://github.com/asalbright/Pogo-Stick-Jumping/">Pogo-Stick-Jumping</a><a class="headerlink" href="#pogo-stick-jumping" title="Permalink to this heading">#</a></h3>
-<p>OpenAI gym environment, testing and evaluation.</p>
-</section>
-<section id="evogym">
-<h3><a class="reference external" href="https://github.com/EvolutionGym/evogym/">evogym</a><a class="headerlink" href="#evogym" title="Permalink to this heading">#</a></h3>
-<p>A large-scale benchmark for co-optimizing the design and control of soft robots, as seen in NeurIPS 2021.</p>
-</section>
-<section id="igibson">
-<h3><a class="reference external" href="https://github.com/StanfordVL/iGibson/">iGibson</a><a class="headerlink" href="#igibson" title="Permalink to this heading">#</a></h3>
-<p>A Simulation Environment to train Robots in Large Realistic Interactive Scenes</p>
-</section>
-<section id="snakerl">
-<h3><a class="reference external" href="https://github.com/tboulet/SnakeRL/">SnakeRL</a><a class="headerlink" href="#snakerl" title="Permalink to this heading">#</a></h3>
-<p>Repo for Snake RL</p>
-</section>
 <section id="starship-landing-gym">
 <h3><a class="reference external" href="https://github.com/Armandpl/starship-landing-gym/">starship-landing-gym</a><a class="headerlink" href="#starship-landing-gym" title="Permalink to this heading">#</a></h3>
-<p>A Gym env for propulsive rocket landing.</p>
-</section>
-<section id="id1">
-<h3><a class="reference external" href="https://github.com/facebookresearch/CompilerGym/">CompilerGym</a><a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
-<p>Reinforcement learning environments for compiler and program optimization tasks</p>
+<p>A simple Gym environment for propulsive rocket landing</p>
 </section>
 <section id="raveforce">
 <h3><a class="reference external" href="https://github.com/chaosprint/RaveForce/">RaveForce</a><a class="headerlink" href="#raveforce" title="Permalink to this heading">#</a></h3>
-<p>RaveForce - An OpenAI Gym style toolkit for music generation experiments.</p>
-</section>
-<section id="gym-line-follower">
-<h3><a class="reference external" href="https://github.com/nplan/gym-line-follower/">gym-line-follower</a><a class="headerlink" href="#gym-line-follower" title="Permalink to this heading">#</a></h3>
-<p>Line follower robot simulator environment for Open AI Gym.</p>
-</section>
-<section id="dexteroushands">
-<h3><a class="reference external" href="https://github.com/PKU-MARL/DexterousHands/">DexterousHands</a><a class="headerlink" href="#dexteroushands" title="Permalink to this heading">#</a></h3>
-<p>This is a library that provides dual dexterous hand manipulation tasks through Isaac Gym</p>
-</section>
-<section id="omniisaacgymenvs">
-<h3><a class="reference external" href="https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/">OmniIsaacGymEnvs</a><a class="headerlink" href="#omniisaacgymenvs" title="Permalink to this heading">#</a></h3>
-<p>Reinforcement Learning Environments for Omniverse Isaac Gym</p>
-</section>
-<section id="border">
-<h3><a class="reference external" href="https://github.com/taku-y/border/">border</a><a class="headerlink" href="#border" title="Permalink to this heading">#</a></h3>
-<p>A reinforcement learning library in Rust</p>
-</section>
-<section id="spacerobotenv">
-<h3><a class="reference external" href="https://github.com/Tsinghua-Space-Robot-Learning-Group/SpaceRobotEnv/">SpaceRobotEnv</a><a class="headerlink" href="#spacerobotenv" title="Permalink to this heading">#</a></h3>
-<p>A gym environment designed for free-floating space robot control based on the MuJoCo platform.</p>
+<p>RaveForce - A Gym style toolkit for music generation experiments.</p>
 </section>
 <section id="gymnax">
 <h3><a class="reference external" href="https://github.com/RobertTLange/gymnax/">gymnax</a><a class="headerlink" href="#gymnax" title="Permalink to this heading">#</a></h3>
@@ -991,36 +906,38 @@ rendering tool.</p>
             <ul>
 <li><a class="reference internal" href="#">Third-Party Environments</a><ul>
 <li><a class="reference internal" href="#video-game-environments">Video Game Environments</a><ul>
-<li><a class="reference internal" href="#vizdoom">ViZDoom</a></li>
-<li><a class="reference internal" href="#flappy-bird-gym-a-flappy-bird-environment-for-openai-gym"> flappy-bird-gym: A Flappy Bird environment for OpenAI Gym</a></li>
+<li><a class="reference internal" href="#flappy-bird-gym-a-flappy-bird-environment-for-gym"> flappy-bird-gym: A Flappy Bird environment for Gym</a></li>
 <li><a class="reference internal" href="#gym-derk-gpu-accelerated-moba-environment"> gym-derk: GPU accelerated MOBA environment</a></li>
-<li><a class="reference internal" href="#minerl"> MineRL</a></li>
-<li><a class="reference internal" href="#procgen"> Procgen</a></li>
 <li><a class="reference internal" href="#slimevolleygym-a-simple-environment-for-single-and-multi-agent-reinforcement-learning"> SlimeVolleyGym: A simple environment for single and multi-agent reinforcement learning</a></li>
 <li><a class="reference internal" href="#stable-retro"> stable-retro</a></li>
 <li><a class="reference internal" href="#unity-ml-agents"> Unity ML Agents</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#classic-environments-board-card-etc-games">Classic Environments (board, card, etc. games)</a><ul>
-<li><a class="reference internal" href="#gym-abalone-a-two-player-abstract-strategy-board-game"> gym-abalone: A two-player abstract strategy board game</a></li>
-<li><a class="reference internal" href="#gym-spoof"> gym-spoof</a></li>
-<li><a class="reference internal" href="#gym-xiangqi-xiangqi-the-chinese-chess-game"> gym-xiangqi: Xiangqi - The Chinese Chess Game</a></li>
-<li><a class="reference internal" href="#rubikscubegym"> RubiksCubeGym</a></li>
-<li><a class="reference internal" href="#gymgo"> GymGo</a></li>
+<li><a class="reference internal" href="#gym-games"> gym-games</a></li>
+<li><a class="reference internal" href="#pge-parallel-game-engine"> PGE: Parallel Game Engine</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#robotics-environments">Robotics Environments</a><ul>
-<li><a class="reference internal" href="#gymfc-a-flight-control-tuning-and-training-framework"> GymFC: A flight control tuning and training framework</a></li>
-<li><a class="reference internal" href="#gym-gazebo"> gym-gazebo</a></li>
-<li><a class="reference internal" href="#gym-goddard-goddard-s-rocket-problem"> gym-goddard: Goddard’s Rocket Problem</a></li>
-<li><a class="reference internal" href="#gym-jiminy-training-robots-in-jiminy"> gym-jiminy: training Robots in Jiminy</a></li>
-<li><a class="reference internal" href="#gym-miniworld"> gym-miniworld</a></li>
-<li><a class="reference internal" href="#gym-pybullet-drones"> gym-pybullet-drones</a></li>
-<li><a class="reference internal" href="#marsexplorer"> MarsExplorer</a></li>
-<li><a class="reference internal" href="#panda-gym"> panda-gym </a></li>
-<li><a class="reference internal" href="#pybullet-robotics-environments"> PyBullet Robotics Environments</a></li>
-<li><a class="reference internal" href="#robo-gym"> robo-gym</a></li>
-<li><a class="reference internal" href="#offworld-gym"> Offworld-gym</a></li>
+<li><a class="reference internal" href="#gymfc-a-flight-control-tuning-and-training-framework">GymFC: A flight control tuning and training framework</a></li>
+<li><a class="reference internal" href="#gym-gazebo">gym-gazebo</a></li>
+<li><a class="reference internal" href="#gym-goddard-goddard-s-rocket-problem">gym-goddard: Goddard’s Rocket Problem</a></li>
+<li><a class="reference internal" href="#gym-jiminy-training-robots-in-jiminy">gym-jiminy: training Robots in Jiminy</a></li>
+<li><a class="reference internal" href="#gym-pybullet-drones">gym-pybullet-drones</a></li>
+<li><a class="reference internal" href="#marsexplorer">MarsExplorer</a></li>
+<li><a class="reference internal" href="#panda-gym">panda-gym </a></li>
+<li><a class="reference internal" href="#robo-gym">robo-gym</a></li>
+<li><a class="reference internal" href="#offworld-gym">Offworld-gym</a></li>
+<li><a class="reference internal" href="#osim-rl">osim-rl</a></li>
+<li><a class="reference internal" href="#safe-control-gym">safe-control-gym</a></li>
+<li><a class="reference internal" href="#racecar-gym">racecar_gym</a></li>
+<li><a class="reference internal" href="#jiminy">jiminy</a></li>
+<li><a class="reference internal" href="#gym-softrobot">gym-softrobot</a></li>
+<li><a class="reference internal" href="#ostrichrl">ostrichrl</a></li>
+<li><a class="reference internal" href="#quadruped-gym">quadruped-gym</a></li>
+<li><a class="reference internal" href="#evogym">evogym</a></li>
+<li><a class="reference internal" href="#igibson">iGibson</a></li>
+<li><a class="reference internal" href="#dexteroushands">DexterousHands</a></li>
+<li><a class="reference internal" href="#omniisaacgymenvs">OmniIsaacGymEnvs</a></li>
+<li><a class="reference internal" href="#spacerobotenv">SpaceRobotEnv</a></li>
+<li><a class="reference internal" href="#gym-line-follower">gym-line-follower</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#autonomous-driving-and-traffic-control-environments">Autonomous Driving and Traffic Control Environments</a><ul>
@@ -1031,73 +948,52 @@ rendering tool.</p>
 <li><a class="reference internal" href="#longicontrol"> LongiControl</a></li>
 <li><a class="reference internal" href="#sumo-rl"> sumo-rl</a></li>
 <li><a class="reference internal" href="#commonroad-rl"> CommonRoad-RL</a></li>
+<li><a class="reference internal" href="#tmrl">tmrl</a></li>
+<li><a class="reference internal" href="#racing-dreamer">racing_dreamer</a></li>
+<li><a class="reference internal" href="#l2r">l2r</a></li>
+<li><a class="reference internal" href="#gym-torcs">gym_torcs</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#multi-agents">Multi-Agents</a><ul>
-<li><a class="reference internal" href="#pettingzoo">PettingZoo</a></li>
+<li><a class="reference internal" href="#recommendation-system-environments">Recommendation System Environments</a><ul>
+<li><a class="reference internal" href="#gym-adserve"> gym-adserve</a></li>
+<li><a class="reference internal" href="#gym-recsys"> gym-recsys</a></li>
+<li><a class="reference internal" href="#virtualtaobao"> VirtualTaobao</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#industrial-process-environments">Industrial Process Environments</a><ul>
+<li><a class="reference internal" href="#gym-inventory"> gym-inventory</a></li>
+<li><a class="reference internal" href="#openmodelica-microgrid-gym"> openmodelica-microgrid-gym</a></li>
+<li><a class="reference internal" href="#mobile-env">mobile-env</a></li>
+<li><a class="reference internal" href="#pyelastica">PyElastica</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#financial-environments">Financial Environments</a><ul>
+<li><a class="reference internal" href="#gym-anytrading"> gym-anytrading</a></li>
+<li><a class="reference internal" href="#gym-mtsim"> gym-mtsim</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#other-environments">Other Environments</a><ul>
-<li><a class="reference internal" href="#anomalous-rl-envs"> anomalous_rl_envs</a></li>
 <li><a class="reference internal" href="#carl"> CARL</a></li>
 <li><a class="reference internal" href="#compilergym"> CompilerGym</a></li>
 <li><a class="reference internal" href="#dacbench"> DACBench</a></li>
-<li><a class="reference internal" href="#gridworld"> Gridworld</a></li>
-<li><a class="reference internal" href="#gym-adserve"> gym-adserve</a></li>
-<li><a class="reference internal" href="#gym-algorithmic"> gym-algorithmic</a></li>
-<li><a class="reference internal" href="#gym-anytrading"> gym-anytrading</a></li>
 <li><a class="reference internal" href="#gym-autokey"> gym-autokey</a></li>
-<li><a class="reference internal" href="#gym-ccc"> gym-ccc</a></li>
 <li><a class="reference internal" href="#gym-cellular-automata"> gym-cellular-automata</a></li>
-<li><a class="reference internal" href="#gym-games"> gym-games</a></li>
-<li><a class="reference internal" href="#gym-inventory"> gym-inventory</a></li>
 <li><a class="reference internal" href="#gym-maze"> gym-maze</a></li>
-<li><a class="reference internal" href="#gym-mtsim"> gym-mtsim</a></li>
-<li><a class="reference internal" href="#gym-legacy-toytext"> gym-legacy-toytext</a></li>
 <li><a class="reference internal" href="#gym-riverswim"> gym-riverswim</a></li>
-<li><a class="reference internal" href="#gym-recsys"> gym-recsys</a></li>
 <li><a class="reference internal" href="#gym-sokoban"> gym-sokoban</a></li>
 <li><a class="reference internal" href="#math-prog-synth-env"> math-prog-synth-env</a></li>
 <li><a class="reference internal" href="#nasgym"> NASGym</a></li>
 <li><a class="reference internal" href="#nlpgym-a-toolkit-to-develop-rl-agents-to-solve-nlp-tasks"> NLPGym: A toolkit to develop RL agents to solve NLP tasks</a></li>
 <li><a class="reference internal" href="#obstacle-tower"> Obstacle Tower</a></li>
-<li><a class="reference internal" href="#openmodelica-microgrid-gym"> openmodelica-microgrid-gym</a></li>
-<li><a class="reference internal" href="#osim-rl"> osim-rl</a></li>
-<li><a class="reference internal" href="#pge-parallel-game-engine"> PGE: Parallel Game Engine</a></li>
 <li><a class="reference internal" href="#qasgym"> QASGym</a></li>
-<li><a class="reference internal" href="#safe-control-gym"> safe-control-gym</a></li>
-<li><a class="reference internal" href="#virtualtaobao"> VirtualTaobao</a></li>
 <li><a class="reference internal" href="#mo-gym"> mo-gym</a></li>
-<li><a class="reference internal" href="#abides-gym">ABIDES-Gym</a></li>
 <li><a class="reference internal" href="#gym-saturation">gym-saturation</a></li>
 <li><a class="reference internal" href="#shinrl">ShinRL</a></li>
 <li><a class="reference internal" href="#racing-rl">racing-rl</a></li>
-<li><a class="reference internal" href="#go-explore">go-explore</a></li>
-<li><a class="reference internal" href="#tmrl">tmrl</a></li>
-<li><a class="reference internal" href="#racing-dreamer">racing_dreamer</a></li>
-<li><a class="reference internal" href="#racecar-gym">racecar_gym</a></li>
-<li><a class="reference internal" href="#jiminy">jiminy</a></li>
+<li><a class="reference internal" href="#rubikscubegym"> RubiksCubeGym</a></li>
 <li><a class="reference internal" href="#evogym-design-tool">evogym-design-tool</a></li>
-<li><a class="reference internal" href="#l2r">l2r</a></li>
-<li><a class="reference internal" href="#gym-torcs">gym_torcs</a></li>
-<li><a class="reference internal" href="#mobile-env">mobile-env</a></li>
-<li><a class="reference internal" href="#gym-softrobot">gym-softrobot</a></li>
-<li><a class="reference internal" href="#pyelastica">PyElastica</a></li>
-<li><a class="reference internal" href="#tuxkart-ai">tuxkart-ai</a></li>
-<li><a class="reference internal" href="#ostrichrl">ostrichrl</a></li>
-<li><a class="reference internal" href="#quadruped-gym">quadruped-gym</a></li>
-<li><a class="reference internal" href="#pogo-stick-jumping">Pogo-Stick-Jumping</a></li>
-<li><a class="reference internal" href="#evogym">evogym</a></li>
-<li><a class="reference internal" href="#igibson">iGibson</a></li>
-<li><a class="reference internal" href="#snakerl">SnakeRL</a></li>
 <li><a class="reference internal" href="#starship-landing-gym">starship-landing-gym</a></li>
-<li><a class="reference internal" href="#id1">CompilerGym</a></li>
 <li><a class="reference internal" href="#raveforce">RaveForce</a></li>
-<li><a class="reference internal" href="#gym-line-follower">gym-line-follower</a></li>
-<li><a class="reference internal" href="#dexteroushands">DexterousHands</a></li>
-<li><a class="reference internal" href="#omniisaacgymenvs">OmniIsaacGymEnvs</a></li>
-<li><a class="reference internal" href="#border">border</a></li>
-<li><a class="reference internal" href="#spacerobotenv">SpaceRobotEnv</a></li>
 <li><a class="reference internal" href="#gymnax">gymnax</a></li>
 </ul>
 </li>
