@@ -240,7 +240,12 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         )
 
         MujocoEnv.__init__(
-            self, xml_file, 5, observation_space=observation_space, **kwargs
+            self,
+            xml_file,
+            5,
+            observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            **kwargs
         )
 
     @property
@@ -315,8 +320,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
         reward = rewards - costs
 
-        if self.render_mode == "human":
-            self.render()
         return observation, reward, terminated, False, info
 
     def _get_obs(self):
@@ -348,11 +351,3 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         observation = self._get_obs()
 
         return observation
-
-    def viewer_setup(self):
-        assert self.viewer is not None
-        for key, value in DEFAULT_CAMERA_CONFIG.items():
-            if isinstance(value, np.ndarray):
-                getattr(self.viewer.cam, key)[:] = value
-            else:
-                setattr(self.viewer.cam, key, value)
