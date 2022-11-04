@@ -140,7 +140,6 @@ class OffScreenViewer(BaseRender):
 
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
-        self.opengl_context.make_current()
 
         super().__init__(model, data, width, height)
 
@@ -300,10 +299,8 @@ class WindowViewer(BaseRender):
         self._hide_menu = False
 
         width, height = glfw.get_video_mode(glfw.get_primary_monitor()).size
+        glfw.window_hint(glfw.VISIBLE, 1)
         self.window = glfw.create_window(width // 2, height // 2, "mujoco", None, None)
-
-        self.make_context_current()
-        glfw.swap_interval(1)
 
         self.width, self.height = glfw.get_framebuffer_size(self.window)
         window_width, _ = glfw.get_window_size(self.window)
@@ -314,8 +311,9 @@ class WindowViewer(BaseRender):
         glfw.set_mouse_button_callback(self.window, self._mouse_button_callback)
         glfw.set_scroll_callback(self.window, self._scroll_callback)
         glfw.set_key_callback(self.window, self._key_callback)
-
+        
         super().__init__(model, data, width, height)
+        glfw.swap_interval(1)
 
     def _set_mujoco_buffer(self):
         mujoco.mjr_setBuffer(mujoco.mjtFramebuffer.mjFB_WINDOW, self.con)
@@ -676,14 +674,14 @@ class MujocoRenderer:
                     f"Unexpected mode: {render_mode}, expected modes: human, rgb_arrray, or depth_array"
                 )
 
-            # Add default camera parameters
-            self._viewers[render_mode] = self.viewer
-
             self._set_cam_config()
 
         if len(self._viewers.keys()) > 1:
             # Only one context can be current at a time
             self.viewer.make_context_current()
+
+        # Add default camera parameters
+        self._viewers[render_mode] = self.viewer
 
         return self.viewer
 
