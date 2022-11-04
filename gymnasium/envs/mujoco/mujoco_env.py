@@ -372,7 +372,9 @@ class MujocoEnv(BaseMujocoEnv):
         mujoco.mj_rnePostConstraint(self.model, self.data)
 
     def render(self):
-        return self.mujoco_renderer.render(self.render_mode, self.camera_id, self.camera_name)
+        return self.mujoco_renderer.render(
+            self.render_mode, self.camera_id, self.camera_name
+        )
 
     def close(self):
         if self.mujoco_renderer is not None:

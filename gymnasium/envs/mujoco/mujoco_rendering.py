@@ -253,7 +253,7 @@ class OffScreenViewer(BaseRender):
             return depth_img[::-1, :]
         else:
             rgb_img = rgb_arr.reshape(self.viewport.height, self.viewport.width, 3)
-            
+
             if segmentation:
                 seg_img = (
                     rgb_img[:, :, 0]
@@ -274,7 +274,7 @@ class OffScreenViewer(BaseRender):
 
             # original image is upside-down, so flip i
             return rgb_img[::-1, :, :]
-    
+
     def close(self):
         self.free()
         glfw.terminate()
