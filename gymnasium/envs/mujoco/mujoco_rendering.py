@@ -253,7 +253,7 @@ class OffScreenViewer(BaseRender):
             return depth_img[::-1, :]
         else:
             rgb_img = rgb_arr.reshape(self.viewport.height, self.viewport.width, 3)
-
+            
             if segmentation:
                 seg_img = (
                     rgb_img[:, :, 0]
@@ -274,6 +274,10 @@ class OffScreenViewer(BaseRender):
 
             # original image is upside-down, so flip i
             return rgb_img[::-1, :, :]
+    
+    def close(self):
+        self.free()
+        glfw.terminate()
 
 
 class WindowViewer(BaseRender):
@@ -311,7 +315,7 @@ class WindowViewer(BaseRender):
         glfw.set_mouse_button_callback(self.window, self._mouse_button_callback)
         glfw.set_scroll_callback(self.window, self._scroll_callback)
         glfw.set_key_callback(self.window, self._key_callback)
-        
+
         super().__init__(model, data, width, height)
         glfw.swap_interval(1)
 
@@ -634,7 +638,6 @@ class MujocoRenderer:
             "rgb_array",
             "depth_array",
         }:
-
             if camera_id is not None and camera_name is not None:
                 raise ValueError(
                     "Both `camera_id` and `camera_name` cannot be"
@@ -651,8 +654,8 @@ class MujocoRenderer:
                     mujoco.mjtObj.mjOBJ_CAMERA,
                     camera_name,
                 )
-
-            return viewer.render(render_mode=render_mode, camera_id=camera_id)
+            img = viewer.render(render_mode=render_mode, camera_id=camera_id)
+            return img
 
         elif render_mode == "human":
             return viewer.render()
@@ -673,15 +676,13 @@ class MujocoRenderer:
                 raise AttributeError(
                     f"Unexpected mode: {render_mode}, expected modes: human, rgb_arrray, or depth_array"
                 )
-
+            # Add default camera parameters
             self._set_cam_config()
+            self._viewers[render_mode] = self.viewer
 
         if len(self._viewers.keys()) > 1:
             # Only one context can be current at a time
             self.viewer.make_context_current()
-
-        # Add default camera parameters
-        self._viewers[render_mode] = self.viewer
 
         return self.viewer
 

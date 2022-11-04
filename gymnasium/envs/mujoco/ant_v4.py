@@ -327,7 +327,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     def _get_obs(self):
         position = self.data.qpos.flat.copy()
         velocity = self.data.qvel.flat.copy()
-        
 
         if self._exclude_current_positions_from_observation:
             position = position[2:]
