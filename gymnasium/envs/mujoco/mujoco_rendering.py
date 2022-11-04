@@ -301,7 +301,7 @@ class WindowViewer(BaseRender):
 
         width, height = glfw.get_video_mode(glfw.get_primary_monitor()).size
         self.window = glfw.create_window(width // 2, height // 2, "mujoco", None, None)
-        print(self.window)
+
         self.make_context_current()
         glfw.swap_interval(1)
 

@@ -1,4 +1,8 @@
 from gymnasium.envs.mujoco.mujoco_env import MujocoEnv, MuJocoPyEnv  # isort:skip
+<<<<<<< HEAD
+=======
+
+>>>>>>> 69810cbd (fix ant rendering)
 
 # ^^^^^ so that user gets the correct error
 # message if mujoco is not installed correctly
