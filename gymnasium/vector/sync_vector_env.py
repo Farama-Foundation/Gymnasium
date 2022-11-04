@@ -1,6 +1,6 @@
 """A synchronous vector environment."""
 from copy import deepcopy
-from typing import Any, Callable, Iterator, List, Optional, Union
+from typing import Any, Callable, Dict, Iterator, Optional, Sequence, Union
 
 import numpy as np
 
@@ -48,8 +48,8 @@ class SyncVectorEnv(VectorEnv):
         self.num_envs = len(self.envs)
         self.copy = copy
         self.metadata = self.envs[0].metadata
-
         self.spec = self.envs[0].spec
+        self.options = [None] * self.num_envs
 
         self.single_observation_space = self.envs[0].observation_space
         self.single_action_space = self.envs[0].action_space
@@ -69,14 +69,14 @@ class SyncVectorEnv(VectorEnv):
 
     def reset(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: Optional[int] = None,
+        options: Optional[Union[Dict[str, Any], Dict[str, Sequence[Any]]]] = None,
     ):
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
-            seed: The reset environment seed
-            options: Option information for the environment reset
+            seed: The reset seed for the first environment. The rest will be reset using [seed+1, seed+num_envs].
+            options: Option information for the environment reset.
 
         Returns:
             The reset observation of the environment and reset information
@@ -87,17 +87,48 @@ class SyncVectorEnv(VectorEnv):
             seed = [seed + i for i in range(self.num_envs)]
         assert len(seed) == self.num_envs
 
+        if options is None:
+            options = self.options
+            pass  # Reuse cached self.options.
+        else:
+            # Check if options is dict[str, Sequence].
+            is_dict_of_sequences = True
+            for values in options.values():
+                is_sequence = isinstance(values, (list, tuple, np.ndarray))
+                if not is_sequence:
+                    is_dict_of_sequences = False
+                    break
+
+                correct_length = len(values) == self.num_envs
+                if not correct_length:
+                    is_dict_of_sequences = False
+                    break
+
+            if is_dict_of_sequences:
+                # Convert options from dict[str, Sequence[Any]] -> Sequence[dict[str, Any]]
+                options = [
+                    dict(zip(options.keys(), values))
+                    for values in zip(*options.values())
+                ]
+            else:
+                # Broadcasting the same options to all sub environments.
+                options = [dict(options) for _ in range(self.num_envs)]
+
+        self.options = options  # Cache options.
+
         self._terminateds[:] = False
         self._truncateds[:] = False
         observations = []
         infos = {}
-        for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
+        for i, (env, single_seed, option) in enumerate(
+            zip(self.envs, seed, self.options)
+        ):
 
             kwargs = {}
             if single_seed is not None:
                 kwargs["seed"] = single_seed
-            if options is not None:
-                kwargs["options"] = options
+            if option is not None:
+                kwargs["options"] = option
 
             observation, info = env.reset(**kwargs)
             observations.append(observation)

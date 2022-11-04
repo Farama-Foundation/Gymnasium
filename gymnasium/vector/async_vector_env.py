@@ -6,7 +6,7 @@ from copy import deepcopy
 from enum import Enum
 from multiprocessing.connection import Connection
 from multiprocessing.queues import Queue
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
@@ -99,6 +99,7 @@ class AsyncVectorEnv(VectorEnv):
         self.num_envs = len(env_fns)
         self.shared_memory = shared_memory
         self.copy = copy
+        self.options = [None] * self.num_envs
 
         # This would be nice to get rid of, but without it there's a deadlock between shared memory and pipes
         dummy_env = env_fns[0]()
@@ -169,16 +170,16 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_async(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: Optional[int] = None,
+        options: Optional[Union[Dict[str, Any], Dict[str, Sequence[Any]]]] = None,
     ):
         """Send calls to the :obj:`reset` methods of the sub-environments.
 
         To get the results of these calls, you may invoke :meth:`reset_wait`.
 
         Args:
-            seed: List of seeds for each environment
-            options: The reset option
+            seed: The reset seed for the first environment. The rest will be reset using [seed+1, seed+num_envs].
+            options: Option information for the environment reset.
 
         Raises:
             ClosedEnvironmentError: If the environment was closed (if :meth:`close` was previously called).
@@ -194,18 +195,47 @@ class AsyncVectorEnv(VectorEnv):
             seed = [seed + i for i in range(self.num_envs)]
         assert len(seed) == self.num_envs
 
+        if options is None:
+            options = self.options
+            pass  # Reuse cached self.options.
+        else:
+            # Check if options is dict[str, Sequence].
+            is_dict_of_sequences = True
+            for values in options.values():
+                is_sequence = isinstance(values, (list, tuple, np.ndarray))
+                if not is_sequence:
+                    is_dict_of_sequences = False
+                    break
+
+                correct_length = len(values) == self.num_envs
+                if not correct_length:
+                    is_dict_of_sequences = False
+                    break
+
+            if is_dict_of_sequences:
+                # Convert options from dict[str, Sequence[Any]] -> Sequence[dict[str, Any]]
+                options = [
+                    dict(zip(options.keys(), values))
+                    for values in zip(*options.values())
+                ]
+            else:
+                # Broadcasting the same options to all sub environments.
+                options = [dict(options) for _ in range(self.num_envs)]
+
+        self.options = options  # Cache options.
+
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
                 f"Calling `reset_async` while waiting for a pending call to `{self._state.value}` to complete",
                 str(self._state.value),
             )
 
-        for pipe, single_seed in zip(self.parent_pipes, seed):
+        for pipe, single_seed, option in zip(self.parent_pipes, seed, options):
             single_kwargs = {}
             if single_seed is not None:
                 single_kwargs["seed"] = single_seed
-            if options is not None:
-                single_kwargs["options"] = options
+            if option is not None:
+                single_kwargs["options"] = option
 
             pipe.send(("reset", single_kwargs))
         self._state = AsyncState.WAITING_RESET
@@ -259,14 +289,14 @@ class AsyncVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: Optional[int] = None,
+        options: Optional[Union[Dict[str, Any], Dict[str, Sequence[Any]]]] = None,
     ):
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
-            seed: The environment reset seeds
-            options: If to return the options
+            seed: The reset seed for the first environment. The rest will be reset using [seed+1, seed+num_envs].
+            options: Option information for the environment reset.
 
         Returns:
             A batch of observations and info from the vectorized environment.
