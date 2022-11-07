@@ -1,8 +1,4 @@
 from gymnasium.envs.mujoco.mujoco_env import MujocoEnv, MuJocoPyEnv  # isort:skip
-from gymnasium.envs.mujoco.mujoco_rendering import (  # isort:skip
-    RenderContextOffscreen,
-    Viewer,
-)
 
 # ^^^^^ so that user gets the correct error
 # message if mujoco is not installed correctly
