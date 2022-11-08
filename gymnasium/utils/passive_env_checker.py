@@ -23,7 +23,8 @@ def _check_box_observation_space(observation_space: spaces.Box):
             )
         if np.any(observation_space.low != 0) or np.any(observation_space.high != 255):
             logger.warn(
-                "It seems a Box observation space is an image but the upper and lower bounds are not in [0, 255]. "
+                "It seems a Box observation space is an image but the lower and upper bounds are not [0, 255]. "
+                f"Actual lower bound: {np.min(observation_space.low)}, upper bound: {np.max(observation_space.high)}. "
                 "Generally, CNN policies assume observations are within that range, so you may encounter an issue if the observation values are not."
             )
 
