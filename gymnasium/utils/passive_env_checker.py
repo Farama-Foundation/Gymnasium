@@ -15,7 +15,9 @@ def _check_box_observation_space(observation_space: spaces.Box):
         observation_space: A box observation space
     """
     # Check if the box is an image
-    if len(observation_space.shape) == 3:
+    if (len(observation_space.shape) == 3 and observation_space.shape[0] != 1) or (
+        len(observation_space.shape) == 4 and observation_space.shape[0] == 1
+    ):
         if observation_space.dtype != np.uint8:
             logger.warn(
                 f"It seems a Box observation space is an image but the `dtype` is not `np.uint8`, actual type: {observation_space.dtype}. "
