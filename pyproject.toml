@@ -15,7 +15,7 @@ strict = [
 ]
 
 typeCheckingMode = "basic"
-pythonVersion = "3.6"
+pythonVersion = "3.7"
 pythonPlatform = "All"
 typeshedPath = "typeshed"
 enableTypeIgnoreComments = true
@@ -39,4 +39,5 @@ reportPrivateUsage = "warning"
 reportUnboundVariable = "warning"
 
 [tool.pytest.ini_options]
+filterwarnings = ['ignore:.*The environment .* is out of date.*']
 # filterwarnings = ['ignore:.*step API.*:DeprecationWarning']

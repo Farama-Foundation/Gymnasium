@@ -1,16 +1,31 @@
-name: Build main branch documentation website
+name: Manual Docs Versioning
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+          description: 'Documentation version to create'
+          required: true
+      commit:
+          description: 'Commit used to build the Documentation version'
+          required: false
+      latest:
+          description: 'Latest version'
+          type: boolean
+
 permissions:
   contents: write
 jobs:
   docs:
-    name: Generate Website
+    name: Generate Website for new version
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
+        if: inputs.commit == ''
+
+      - uses: actions/checkout@v3
+        if: inputs.commit != ''
+        with:
+          ref: ${{ inputs.commit }}
 
       - uses: actions/setup-python@v4
         with:
@@ -41,5 +56,14 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: _build
-          target-folder: main
+          target-folder: ${{ inputs.version }}
           clean: false
+
+      - name: Upload to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        if: inputs.latest
+        with:
+          folder: _build
+          clean-exclude: |
+            *.*.*/
+            main

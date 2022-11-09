@@ -1,20 +1,26 @@
-name: Build main branch documentation website
+name: Docs Versioning
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v?*.*.*'
 permissions:
   contents: write
 jobs:
   docs:
-    name: Generate Website
+    name: Generate Website for new version
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-python@v4
         with:
             python-version: '3.9'
+
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        with:
+          strip_v: true
 
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
@@ -41,5 +47,13 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: _build
-          target-folder: main
+          target-folder: ${{steps.tag.outputs.tag}}
           clean: false
+
+      - name: Upload to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _build
+          clean-exclude: |
+            *.*.*/
+            main

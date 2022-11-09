@@ -36,7 +36,9 @@ CHECK_ENV_IGNORE_WARNINGS = [
 
 
 @pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
+    "spec",
+    all_testing_env_specs,
+    ids=[spec.id for spec in all_testing_env_specs],
 )
 def test_envs_pass_env_checker(spec):
     """Check that all environments pass the environment checker with no warnings other than the expected."""
@@ -58,7 +60,9 @@ NUM_STEPS = 50
 
 
 @pytest.mark.parametrize(
-    "env_spec", all_testing_env_specs, ids=[env.id for env in all_testing_env_specs]
+    "env_spec",
+    all_testing_env_specs,
+    ids=[env.id for env in all_testing_env_specs],
 )
 def test_env_determinism_rollout(env_spec: EnvSpec):
     """Run a rollout with two environments and assert equality.
@@ -148,7 +152,8 @@ def check_rendered(rendered_frame, mode: str):
         )
 
 
-non_mujoco_py_env_specs = [
+# We do not check render_mode for some mujoco envs and any old Gym environment wrapped by `GymEnvironment`
+render_mode_env_specs = [
     spec
     for spec in all_testing_env_specs
     if "mujoco" not in spec.entry_point or "v4" in spec.id
@@ -156,7 +161,7 @@ non_mujoco_py_env_specs = [
 
 
 @pytest.mark.parametrize(
-    "spec", non_mujoco_py_env_specs, ids=[spec.id for spec in non_mujoco_py_env_specs]
+    "spec", render_mode_env_specs, ids=[spec.id for spec in render_mode_env_specs]
 )
 def test_render_modes(spec):
     """There is a known issue where rendering a mujoco environment then mujoco-py will cause an error on non-mac based systems.

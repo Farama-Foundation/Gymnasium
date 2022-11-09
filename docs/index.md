@@ -21,7 +21,7 @@ import gymnasium as gym
 env = gym.make("LunarLander-v2", render_mode="human")
 observation, info = env.reset(seed=42)
 for _ in range(1000):
-   action = policy(observation)  # User-defined policy function
+   action = env.action_space.sample()  # this is where you would insert your policy
    observation, reward, terminated, truncated, info = env.step(action)
 
    if terminated or truncated:
@@ -35,6 +35,7 @@ env.close()
 
 content/basic_usage
 content/gym_compatibility
+content/migration-guide
 ```
 
 ```{toctree}
@@ -74,4 +75,5 @@ tutorials/*
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
+Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```
