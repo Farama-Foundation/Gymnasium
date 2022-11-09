@@ -29,11 +29,12 @@ def _check_box_observation_space(observation_space: spaces.Box):
             )
 
     if len(observation_space.shape) not in [1, 3]:
-        logger.warn(
-            "A Box observation space has an unconventional shape (neither an image, nor a 1D vector). "
-            "We recommend flattening the observation to have only a 1D vector or use a custom policy to properly process the data. "
-            f"Actual observation shape: {observation_space.shape}"
-        )
+        if not (len(observation_space.shape) == 2 and observation_space.shape[0] == 1):
+            logger.warn(
+                "A Box observation space has an unconventional shape (neither an image, nor a 1D vector). "
+                "We recommend flattening the observation to have only a 1D vector or use a custom policy to properly process the data. "
+                f"Actual observation shape: {observation_space.shape}"
+            )
 
     assert (
         observation_space.low.shape == observation_space.shape
@@ -43,9 +44,15 @@ def _check_box_observation_space(observation_space: spaces.Box):
     ), f"The Box observation space shape and high shape have have different shapes, high shape: {observation_space.high.shape}, box shape: {observation_space.shape}"
 
     if np.any(observation_space.low == observation_space.high):
-        logger.warn("A Box observation space maximum and minimum values are equal.")
+        logger.warn(
+            "A Box observation space maximum and minimum values are equal. "
+            f"Actual equal coordinates: {[x for x in zip(*np.where(observation_space.low == observation_space.high))]}"
+        )
     elif np.any(observation_space.high < observation_space.low):
-        logger.warn("A Box observation space low value is greater than a high value.")
+        logger.warn(
+            "A Box observation space low value is greater than a high value. "
+            f"Actual less than coordinates: {[x for x in zip(*np.where(observation_space.high < observation_space.low))]}"
+        )
 
 
 def _check_box_action_space(action_space: spaces.Box):
@@ -62,9 +69,15 @@ def _check_box_action_space(action_space: spaces.Box):
     ), f"The Box action space shape and high shape have different shapes, high shape: {action_space.high.shape}, box shape: {action_space.shape}"
 
     if np.any(action_space.low == action_space.high):
-        logger.warn("A Box action space maximum and minimum values are equal.")
+        logger.warn(
+            "A Box action space maximum and minimum values are equal. "
+            f"Actual equal coordinates: {[x for x in zip(*np.where(action_space.low == action_space.high))]}"
+        )
     elif np.any(action_space.high < action_space.low):
-        logger.warn("A Box action space low value is greater than a high value.")
+        logger.warn(
+            "A Box action space low value is greater than a high value. "
+            f"Actual less than coordinates: {[x for x in zip(*np.where(action_space.high < action_space.low))]}"
+        )
 
 
 def check_space(

@@ -27,7 +27,7 @@ def test_gym_conversion_by_id(env_id):
         check_env(env)
     for warning in caught_warnings:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
-            raise gym.error.Error(f"Unexpected warning: {warning.message}")
+            raise gymnasium.error.Error(f"Unexpected warning: {warning.message}")
 
 
 @pytest.mark.parametrize(
@@ -40,4 +40,4 @@ def test_gym_conversion_instantiated(env_id):
         check_env(env)
     for warning in caught_warnings:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
-            raise gym.error.Error(f"Unexpected warning: {warning.message}")
+            raise gymnasium.error.Error(f"Unexpected warning: {warning.message}")
