@@ -267,7 +267,6 @@ def env_step_passive_checker(env, action):
 
 def _check_render_return(render_mode, render_return):
     """Produces warning if `render_return` doesn't match `render_mode`."""
-    # This many if statements are ugly, but we need it for short-circuiting in the rgb_array case (dict approach become difficult here)
     if render_mode == "human":
         if render_return is not None:
             logger.warn(
@@ -278,22 +277,19 @@ def _check_render_return(render_mode, render_return):
             logger.warn(
                 f"RGB-array rendering should return a numpy array, got {type(render_return)}"
             )
-        if isinstance(render_return, np.ndarray) and render_return.dtype != np.uint8:
-            logger.warn(
-                f"RGB-array rendering should return a numpy array with dtype uint8, got {render_return.dtype}"
-            )
-        if isinstance(render_return, np.ndarray) and render_return.ndim != 3:
-            logger.warn(
-                f"RGB-array rendering should return a numpy array with three axes, got {render_return.ndim}"
-            )
-        if (
-            isinstance(render_return, np.ndarray)
-            and render_return.ndim == 3
-            and render_return.shape[2] != 3
-        ):
-            logger.warn(
-                f"RGB-array rendering should return a numpy array in which the last axis has three dimensions, got {render_return.shape[2]}"
-            )
+        else:
+            if render_return.dtype != np.uint8:
+                logger.warn(
+                    f"RGB-array rendering should return a numpy array with dtype uint8, got {render_return.dtype}"
+                )
+            if render_return.ndim != 3:
+                logger.warn(
+                    f"RGB-array rendering should return a numpy array with three axes, got {render_return.ndim}"
+                )
+            if render_return.ndim == 3 and render_return.shape[2] != 3:
+                logger.warn(
+                    f"RGB-array rendering should return a numpy array in which the last axis has three dimensions, got {render_return.shape[2]}"
+                )
     elif render_mode == "depth_array":
         if not isinstance(render_return, np.ndarray):
             logger.warn(
