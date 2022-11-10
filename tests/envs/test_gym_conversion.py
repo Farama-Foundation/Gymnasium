@@ -24,7 +24,7 @@ ALL_GYM_ENVS = [
 def test_gym_conversion_by_id(env_id):
     env = gymnasium.make("GymV26Environment-v0", env_id=env_id).unwrapped
     with warnings.catch_warnings(record=True) as caught_warnings:
-        check_env(env)
+        check_env(env, skip_render_check=True)
     for warning in caught_warnings:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
             raise gym.error.Error(f"Unexpected warning: {warning.message}")
@@ -37,7 +37,7 @@ def test_gym_conversion_instantiated(env_id):
     env = gym.make(env_id)
     env = gymnasium.make("GymV26Environment-v0", env=env).unwrapped
     with warnings.catch_warnings(record=True) as caught_warnings:
-        check_env(env)
+        check_env(env, skip_render_check=True)
     for warning in caught_warnings:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
             raise gym.error.Error(f"Unexpected warning: {warning.message}")
