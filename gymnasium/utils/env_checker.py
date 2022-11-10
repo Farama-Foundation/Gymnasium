@@ -307,4 +307,8 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
         if env.render_mode is not None:
             env_render_passive_checker(env)
 
-        # todo: recreate the environment with a different render_mode for check that each work
+        for render_mode in env.metadata["render_modes"]:
+            new_env = env.spec.make(render_mode=render_mode)
+            new_env.reset()
+            env_render_passive_checker(new_env)
+            new_env.close()

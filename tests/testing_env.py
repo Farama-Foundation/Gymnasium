@@ -46,11 +46,11 @@ class GenericTestEnv(gym.Env):
         reset_fn: callable = basic_reset_fn,
         step_fn: callable = new_step_fn,
         render_fn: callable = basic_render_fn,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Dict[str, Any] = {"render_modes": []},
         render_mode: Optional[str] = None,
         spec: EnvSpec = EnvSpec("TestingEnv-v0", "testing-env-no-entry-point"),
     ):
-        self.metadata = {} if metadata is None else metadata
+        self.metadata = metadata
         self.render_mode = render_mode
         self.spec = spec
 
