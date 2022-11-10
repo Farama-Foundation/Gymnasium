@@ -660,204 +660,195 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clock</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="c1"># %%</span>
-    <span class="c1"># Constructing Observations From Environment States</span>
-    <span class="c1"># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
-    <span class="c1">#</span>
-    <span class="c1"># Since we will need to compute observations both in ``reset`` and</span>
-    <span class="c1"># ``step``, it is often convenient to have a (private) method ``_get_obs``</span>
-    <span class="c1"># that translates the environment’s state into an observation. However,</span>
-    <span class="c1"># this is not mandatory and you may as well compute observations in</span>
-    <span class="c1"># ``reset`` and ``step`` separately:</span>
-
-    <span class="k">def</span> <span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
-
-    <span class="c1"># %%</span>
-    <span class="c1"># We can also implement a similar method for the auxiliary information</span>
-    <span class="c1"># that is returned by ``step`` and ``reset``. In our case, we would like</span>
-    <span class="c1"># to provide the manhattan distance between the agent and the target:</span>
-
-    <span class="k">def</span> <span class="nf">_get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">1</span>
-            <span class="p">)</span>
-        <span class="p">}</span>
-
-    <span class="c1"># %%</span>
-    <span class="c1"># Oftentimes, info will also contain some data that is only available</span>
-    <span class="c1"># inside the ``step`` method (e.g. individual reward terms). In that case,</span>
-    <span class="c1"># we would have to update the dictionary that is returned by ``_get_info``</span>
-    <span class="c1"># in ``step``.</span>
-
-    <span class="c1"># %%</span>
-    <span class="c1"># Reset</span>
-    <span class="c1"># ~~~~~</span>
-    <span class="c1">#</span>
-    <span class="c1"># The ``reset`` method will be called to initiate a new episode. You may</span>
-    <span class="c1"># assume that the ``step`` method will not be called before ``reset`` has</span>
-    <span class="c1"># been called. Moreover, ``reset`` should be called whenever a done signal</span>
-    <span class="c1"># has been issued. Users may pass the ``seed`` keyword to ``reset`` to</span>
-    <span class="c1"># initialize any random number generator that is used by the environment</span>
-    <span class="c1"># to a deterministic state. It is recommended to use the random number</span>
-    <span class="c1"># generator ``self.np_random`` that is provided by the environment’s base</span>
-    <span class="c1"># class, ``gymnasium.Env``. If you only use this RNG, you do not need to</span>
-    <span class="c1"># worry much about seeding, *but you need to remember to call</span>
-    <span class="c1"># ``super().reset(seed=seed)``* to make sure that ``gymnasium.Env``</span>
-    <span class="c1"># correctly seeds the RNG. Once this is done, we can randomly set the</span>
-    <span class="c1"># state of our environment. In our case, we randomly choose the agent’s</span>
-    <span class="c1"># location and the random sample target positions, until it does not</span>
-    <span class="c1"># coincide with the agent’s position.</span>
-    <span class="c1">#</span>
-    <span class="c1"># The ``reset`` method should return a tuple of the initial observation</span>
-    <span class="c1"># and some auxiliary information. We can use the methods ``_get_obs`` and</span>
-    <span class="c1"># ``_get_info`` that we implemented earlier for that:</span>
-
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># We need the following line to seed self.np_random</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-
-        <span class="c1"># Choose the agent&#39;s location uniformly at random</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-
-        <span class="c1"># We will sample the target&#39;s location randomly until it does not coincide with the agent&#39;s location</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span>
-        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
-                <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span>
-            <span class="p">)</span>
-
-        <span class="n">observation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">()</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_render_frame</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">info</span>
-
-    <span class="c1"># %%</span>
-    <span class="c1"># Step</span>
-    <span class="c1"># ~~~~</span>
-    <span class="c1">#</span>
-    <span class="c1"># The ``step`` method usually contains most of the logic of your</span>
-    <span class="c1"># environment. It accepts an ``action``, computes the state of the</span>
-    <span class="c1"># environment after applying that action and returns the 4-tuple</span>
-    <span class="c1"># ``(observation, reward, done, info)``. Once the new state of the</span>
-    <span class="c1"># environment has been computed, we can check whether it is a terminal</span>
-    <span class="c1"># state and we set ``done`` accordingly. Since we are using sparse binary</span>
-    <span class="c1"># rewards in ``GridWorldEnv``, computing ``reward`` is trivial once we</span>
-    <span class="c1"># know ``done``. To gather ``observation`` and ``info``, we can again make</span>
-    <span class="c1"># use of ``_get_obs`` and ``_get_info``:</span>
-
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="c1"># Map the action (element of {0,1,2,3}) to the direction we walk in</span>
-        <span class="n">direction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
-        <span class="c1"># We use `np.clip` to make sure we don&#39;t leave the grid</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="n">direction</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</section>
+<section id="constructing-observations-from-environment-states">
+<h3>Constructing Observations From Environment States<a class="headerlink" href="#constructing-observations-from-environment-states" title="Permalink to this heading">#</a></h3>
+<p>Since we will need to compute observations both in <code class="docutils literal notranslate"><span class="pre">reset</span></code> and
+<code class="docutils literal notranslate"><span class="pre">step</span></code>, it is often convenient to have a (private) method <code class="docutils literal notranslate"><span class="pre">_get_obs</span></code>
+that translates the environment’s state into an observation. However,
+this is not mandatory and you may as well compute observations in
+<code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> separately:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>We can also implement a similar method for the auxiliary information
+that is returned by <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset</span></code>. In our case, we would like
+to provide the manhattan distance between the agent and the target:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">1</span>
         <span class="p">)</span>
-        <span class="c1"># An episode is done iff the agent has reached the target</span>
-        <span class="n">terminated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">)</span>
-        <span class="n">reward</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">terminated</span> <span class="k">else</span> <span class="mi">0</span>  <span class="c1"># Binary sparse rewards</span>
-        <span class="n">observation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">()</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info</span><span class="p">()</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Oftentimes, info will also contain some data that is only available
+inside the <code class="docutils literal notranslate"><span class="pre">step</span></code> method (e.g. individual reward terms). In that case,
+we would have to update the dictionary that is returned by <code class="docutils literal notranslate"><span class="pre">_get_info</span></code>
+in <code class="docutils literal notranslate"><span class="pre">step</span></code>.</p>
+</section>
+<section id="reset">
+<h3>Reset<a class="headerlink" href="#reset" title="Permalink to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">reset</span></code> method will be called to initiate a new episode. You may
+assume that the <code class="docutils literal notranslate"><span class="pre">step</span></code> method will not be called before <code class="docutils literal notranslate"><span class="pre">reset</span></code> has
+been called. Moreover, <code class="docutils literal notranslate"><span class="pre">reset</span></code> should be called whenever a done signal
+has been issued. Users may pass the <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword to <code class="docutils literal notranslate"><span class="pre">reset</span></code> to
+initialize any random number generator that is used by the environment
+to a deterministic state. It is recommended to use the random number
+generator <code class="docutils literal notranslate"><span class="pre">self.np_random</span></code> that is provided by the environment’s base
+class, <code class="docutils literal notranslate"><span class="pre">gymnasium.Env</span></code>. If you only use this RNG, you do not need to
+worry much about seeding, <em>but you need to remember to call
+``super().reset(seed=seed)``</em> to make sure that <code class="docutils literal notranslate"><span class="pre">gymnasium.Env</span></code>
+correctly seeds the RNG. Once this is done, we can randomly set the
+state of our environment. In our case, we randomly choose the agent’s
+location and the random sample target positions, until it does not
+coincide with the agent’s position.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">reset</span></code> method should return a tuple of the initial observation
+and some auxiliary information. We can use the methods <code class="docutils literal notranslate"><span class="pre">_get_obs</span></code> and
+<code class="docutils literal notranslate"><span class="pre">_get_info</span></code> that we implemented earlier for that:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># We need the following line to seed self.np_random</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_render_frame</span><span class="p">()</span>
+    <span class="c1"># Choose the agent&#39;s location uniformly at random</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">info</span>
+    <span class="c1"># We will sample the target&#39;s location randomly until it does not coincide with the agent&#39;s location</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span>
+    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span>
+        <span class="p">)</span>
 
-    <span class="c1"># %%</span>
-    <span class="c1"># Rendering</span>
-    <span class="c1"># ~~~~~~~~~</span>
-    <span class="c1">#</span>
-    <span class="c1"># Here, we are using PyGame for rendering. A similar approach to rendering</span>
-    <span class="c1"># is used in many environments that are included with Gymnasium and you</span>
-    <span class="c1"># can use it as a skeleton for your own environments:</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">()</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_frame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_render_frame</span><span class="p">()</span>
 
-        <span class="k">def</span> <span class="nf">_render_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
-                <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
-                <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span>
-                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">)</span>
-                <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clock</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">clock</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">Clock</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">info</span>
+</pre></div>
+</div>
+</section>
+<section id="step">
+<h3>Step<a class="headerlink" href="#step" title="Permalink to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">step</span></code> method usually contains most of the logic of your
+environment. It accepts an <code class="docutils literal notranslate"><span class="pre">action</span></code>, computes the state of the
+environment after applying that action and returns the 4-tuple
+<code class="docutils literal notranslate"><span class="pre">(observation,</span> <span class="pre">reward,</span> <span class="pre">done,</span> <span class="pre">info)</span></code>. Once the new state of the
+environment has been computed, we can check whether it is a terminal
+state and we set <code class="docutils literal notranslate"><span class="pre">done</span></code> accordingly. Since we are using sparse binary
+rewards in <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>, computing <code class="docutils literal notranslate"><span class="pre">reward</span></code> is trivial once we
+know <code class="docutils literal notranslate"><span class="pre">done</span></code>. To gather <code class="docutils literal notranslate"><span class="pre">observation</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>, we can again make
+use of <code class="docutils literal notranslate"><span class="pre">_get_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">_get_info</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="c1"># Map the action (element of {0,1,2,3}) to the direction we walk in</span>
+    <span class="n">direction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
+    <span class="c1"># We use `np.clip` to make sure we don&#39;t leave the grid</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="n">direction</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="c1"># An episode is done iff the agent has reached the target</span>
+    <span class="n">terminated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">)</span>
+    <span class="n">reward</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">terminated</span> <span class="k">else</span> <span class="mi">0</span>  <span class="c1"># Binary sparse rewards</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">()</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info</span><span class="p">()</span>
 
-            <span class="n">canvas</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">))</span>
-            <span class="n">canvas</span><span class="o">.</span><span class="n">fill</span><span class="p">((</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>
-            <span class="n">pix_square_size</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
-            <span class="p">)</span>  <span class="c1"># The size of a single grid square in pixels</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_render_frame</span><span class="p">()</span>
 
-            <span class="c1"># First we draw the target</span>
-            <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span>
-                <span class="n">canvas</span><span class="p">,</span>
-                <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
-                    <span class="n">pix_square_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span>
-                    <span class="p">(</span><span class="n">pix_square_size</span><span class="p">,</span> <span class="n">pix_square_size</span><span class="p">),</span>
-                <span class="p">),</span>
-            <span class="p">)</span>
-            <span class="c1"># Now we draw the agent</span>
-            <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
-                <span class="n">canvas</span><span class="p">,</span>
-                <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">pix_square_size</span><span class="p">,</span>
-                <span class="n">pix_square_size</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">info</span>
+</pre></div>
+</div>
+</section>
+<section id="rendering">
+<h3>Rendering<a class="headerlink" href="#rendering" title="Permalink to this heading">#</a></h3>
+<p>Here, we are using PyGame for rendering. A similar approach to rendering
+is used in many environments that are included with Gymnasium and you
+can use it as a skeleton for your own environments:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_frame</span><span class="p">()</span>
 
-            <span class="c1"># Finally, add some gridlines</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
-                    <span class="n">canvas</span><span class="p">,</span>
-                    <span class="mi">0</span><span class="p">,</span>
-                    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pix_square_size</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
-                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="n">pix_square_size</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
-                    <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
-                    <span class="n">canvas</span><span class="p">,</span>
-                    <span class="mi">0</span><span class="p">,</span>
-                    <span class="p">(</span><span class="n">pix_square_size</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                    <span class="p">(</span><span class="n">pix_square_size</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">),</span>
-                    <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                <span class="p">)</span>
+<span class="k">def</span> <span class="nf">_render_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clock</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clock</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">Clock</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
-                <span class="c1"># The following line copies our drawings from `canvas` to the visible window</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">canvas</span><span class="o">.</span><span class="n">get_rect</span><span class="p">())</span>
-                <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">pump</span><span class="p">()</span>
-                <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+    <span class="n">canvas</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">))</span>
+    <span class="n">canvas</span><span class="o">.</span><span class="n">fill</span><span class="p">((</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>
+    <span class="n">pix_square_size</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+    <span class="p">)</span>  <span class="c1"># The size of a single grid square in pixels</span>
 
-                <span class="c1"># We need to ensure that human-rendering occurs at the predefined framerate.</span>
-                <span class="c1"># The following line will automatically add a delay to keep the framerate stable.</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_fps&quot;</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>  <span class="c1"># rgb_array</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">surfarray</span><span class="o">.</span><span class="n">pixels3d</span><span class="p">(</span><span class="n">canvas</span><span class="p">)),</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-                <span class="p">)</span>
+    <span class="c1"># First we draw the target</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span>
+        <span class="n">canvas</span><span class="p">,</span>
+        <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+            <span class="n">pix_square_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">pix_square_size</span><span class="p">,</span> <span class="n">pix_square_size</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="c1"># Now we draw the agent</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
+        <span class="n">canvas</span><span class="p">,</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">pix_square_size</span><span class="p">,</span>
+        <span class="n">pix_square_size</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="c1"># %%</span>
-    <span class="c1"># Close</span>
-    <span class="c1"># ~~~~~</span>
-    <span class="c1">#</span>
-    <span class="c1"># The ``close`` method should close any open resources that were used by</span>
-    <span class="c1"># the environment. In many cases, you don’t actually have to bother to</span>
-    <span class="c1"># implement this method. However, in our example ``render_mode`` may be</span>
-    <span class="c1"># ``&quot;human&quot;`` and we might need to close the window that has been opened:</span>
+    <span class="c1"># Finally, add some gridlines</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+            <span class="n">canvas</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pix_square_size</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="n">pix_square_size</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+            <span class="n">canvas</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">pix_square_size</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">pix_square_size</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-            <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
+        <span class="c1"># The following line copies our drawings from `canvas` to the visible window</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">canvas</span><span class="o">.</span><span class="n">get_rect</span><span class="p">())</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">pump</span><span class="p">()</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+        <span class="c1"># We need to ensure that human-rendering occurs at the predefined framerate.</span>
+        <span class="c1"># The following line will automatically add a delay to keep the framerate stable.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_fps&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># rgb_array</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">surfarray</span><span class="o">.</span><span class="n">pixels3d</span><span class="p">(</span><span class="n">canvas</span><span class="p">)),</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="close">
+<h3>Close<a class="headerlink" href="#close" title="Permalink to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">close</span></code> method should close any open resources that were used by
+the environment. In many cases, you don’t actually have to bother to
+implement this method. However, in our example <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> may be
+<code class="docutils literal notranslate"><span class="pre">&quot;human&quot;</span></code> and we might need to close the window that has been opened:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>In other environments <code class="docutils literal notranslate"><span class="pre">close</span></code> might also close files that were opened
@@ -1102,6 +1093,11 @@ in gym-examples:</p>
 <li><a class="reference internal" href="#">Make your own custom environment</a><ul>
 <li><a class="reference internal" href="#subclassing-gymnasium-env">Subclassing gymnasium.Env</a><ul>
 <li><a class="reference internal" href="#declaration-and-initialization">Declaration and Initialization</a></li>
+<li><a class="reference internal" href="#constructing-observations-from-environment-states">Constructing Observations From Environment States</a></li>
+<li><a class="reference internal" href="#reset">Reset</a></li>
+<li><a class="reference internal" href="#step">Step</a></li>
+<li><a class="reference internal" href="#rendering">Rendering</a></li>
+<li><a class="reference internal" href="#close">Close</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#registering-envs">Registering Envs</a></li>
