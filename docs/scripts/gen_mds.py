@@ -146,6 +146,8 @@ title: {title_env_name}
                 if hasattr(low, "shape"):
                     if len(low.shape) == 3:
                         low = low[0][0][0]
+                if env_type == "mujoco":
+                    low = low[0]
                 low = np.round(low, 2)
                 low = str(low).replace("\n", " ")
                 env_table += f"| Observation Low | {low} |\n"
