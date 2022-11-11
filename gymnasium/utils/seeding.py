@@ -19,7 +19,14 @@ def np_random(seed: Optional[int] = None) -> Tuple[np.random.Generator, Any]:
         Error: Seed must be a non-negative integer or omitted
     """
     if seed is not None and not (isinstance(seed, int) and 0 <= seed):
-        raise error.Error(f"Seed must be a non-negative integer or omitted, not {seed}")
+        if isinstance(seed, int) is False:
+            raise error.Error(
+                f"Seed must be a python integer, actual type: {type(seed)}"
+            )
+        else:
+            raise error.Error(
+                f"Seed must be greater or equal to zero, actual value: {seed}"
+            )
 
     seed_seq = np.random.SeedSequence(seed)
     np_seed = seed_seq.entropy
