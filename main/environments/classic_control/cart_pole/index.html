@@ -567,23 +567,10 @@ in the left and right direction on the cart.</p>
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
 <p>The action is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> which can take values <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1}</span></code> indicating the direction
 of the fixed force the cart is pushed with.</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Num</p></th>
-<th class="head"><p>Action</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>0</p></td>
-<td><p>Push cart to the left</p></td>
-</tr>
-<tr class="row-odd"><td><p>1</p></td>
-<td><p>Push cart to the right</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<ul class="simple">
+<li><p>0: Push cart to the left</p></li>
+<li><p>1: Push cart to the right</p></li>
+</ul>
 <p><strong>Note</strong>: The velocity that is reduced or increased by the applied force is not fixed and it depends on the angle
 the pole is pointing. The center of gravity of the pole varies the amount of energy needed to move the cart underneath it</p>
 </section>
