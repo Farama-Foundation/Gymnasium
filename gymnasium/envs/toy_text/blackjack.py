@@ -70,7 +70,9 @@ class BlackjackEnv(gym.Env):
     decided by whose sum is closer to 21.
 
     ## Action Space
-    There are two actions: stick (0), and hit (1).
+    There are two actions:
+    - 0: stick
+    - 1: hit
 
     ## Observation Space
     The observation consists of a 3-tuple containing: the player's current sum,
