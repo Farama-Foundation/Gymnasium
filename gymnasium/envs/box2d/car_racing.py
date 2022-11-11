@@ -121,10 +121,10 @@ class CarRacing(gym.Env, EzPickle):
     and turn at the same time.
 
     ## Action Space
-    If continuous there are 3 actions (S, G, B):
-    - (S) steering, -1 is full left, +1 is full right
-    - (G) gas
-    - (B) breaking
+    If continuous there are 3 actions :
+    - 0: steering, -1 is full left, +1 is full right
+    - 1: gas
+    - 2: breaking
 
     If discrete there are 5 actions:
     - 0: do nothing
