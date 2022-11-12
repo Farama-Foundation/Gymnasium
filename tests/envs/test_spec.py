@@ -16,6 +16,7 @@ def test_spec():
 def test_spec_kwargs():
     map_name_value = "8x8"
     env = gym.make("FrozenLake-v1", map_name=map_name_value)
+    assert env.spec is not None
     assert env.spec.kwargs["map_name"] == map_name_value
 
 

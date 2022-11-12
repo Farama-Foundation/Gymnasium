@@ -183,6 +183,7 @@ def test_make_latest_versioned_env(register_testing_envs):
         env = gym.make(
             "MyAwesomeNamespace/MyAwesomeVersionedEnv", disable_env_checker=True
         )
+    assert env.spec is not None
     assert env.spec.id == "MyAwesomeNamespace/MyAwesomeVersionedEnv-v5"
 
 

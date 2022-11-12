@@ -30,6 +30,7 @@ class TimeLimit(gym.Wrapper):
         """
         super().__init__(env)
         if max_episode_steps is None and self.env.spec is not None:
+            assert env.spec is not None
             max_episode_steps = env.spec.max_episode_steps
         if self.env.spec is not None:
             self.env.spec.max_episode_steps = max_episode_steps
