@@ -1,17 +1,16 @@
 """Implementation of a space that represents the cartesian product of other spaces."""
 from __future__ import annotations
 
-from collections.abc import Sequence as CollectionSequence
+import collections.abc
+import typing
 from typing import Any, Iterable
-from typing import Sequence as TypingSequence
-from typing import Tuple as TypingTuple
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
 
-class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
+class Tuple(Space[typing.Tuple[Any, ...]], collections.abc.Sequence[Any]):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
     Elements of this space are tuples of elements of the constituent spaces.
@@ -27,7 +26,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
     def __init__(
         self,
         spaces: Iterable[Space[Any]],
-        seed: int | TypingSequence[int] | np.random.Generator | None = None,
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Tuple` space.
 
@@ -49,7 +48,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
-    def seed(self, seed: int | TypingSequence[int] | None = None) -> list[int]:
+    def seed(self, seed: int | typing.Sequence[int] | None = None) -> list[int]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
@@ -62,7 +61,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
         """
         seeds: list[int] = []
 
-        if isinstance(seed, CollectionSequence):
+        if isinstance(seed, collections.abc.Sequence):
             assert len(seed) == len(
                 self.spaces
             ), f"Expects that the subspaces of seeds equals the number of subspaces. Actual length of seeds: {len(seeds)}, length of subspaces: {len(self.spaces)}"
@@ -85,9 +84,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
 
         return seeds
 
-    def sample(
-        self, mask: TypingTuple[Any | None, ...] | None = None
-    ) -> TypingTuple[Any, ...]:
+    def sample(self, mask: tuple[Any | None, ...] | None = None) -> tuple[Any, ...]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -130,7 +127,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
         return "Tuple(" + ", ".join([str(s) for s in self.spaces]) + ")"
 
     def to_jsonable(
-        self, sample_n: TypingSequence[TypingTuple[Any, ...]]
+        self, sample_n: typing.Sequence[tuple[Any, ...]]
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as list-repr of tuple of vectors
@@ -139,7 +136,7 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
             for i, space in enumerate(self.spaces)
         ]
 
-    def from_jsonable(self, sample_n: list[list[Any]]) -> list[TypingTuple[Any, ...]]:
+    def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [
             sample
@@ -159,6 +156,6 @@ class Tuple(Space[TypingTuple[Any, ...]], TypingSequence[Any]):
         """Get the number of subspaces that are involved in the cartesian product."""
         return len(self.spaces)
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return isinstance(other, Tuple) and self.spaces == other.spaces

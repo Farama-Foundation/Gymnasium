@@ -6,12 +6,10 @@ These functions mostly take care of flattening and unflattening elements of spac
 from __future__ import annotations
 
 import operator as op
+import typing
 from collections import OrderedDict
 from functools import reduce, singledispatch
-from typing import Any
-from typing import Dict as TypingDict
-from typing import Tuple as TypingTuple
-from typing import TypeVar, Union, cast
+from typing import Any, TypeVar, Union, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -108,7 +106,7 @@ def _flatdim_text(space: Text) -> int:
 
 T = TypeVar("T")
 FlatType = Union[
-    NDArray[Any], TypingDict[str, Any], TypingTuple[Any, ...], GraphInstance
+    NDArray[Any], typing.Dict[str, Any], typing.Tuple[Any, ...], GraphInstance
 ]
 
 
@@ -181,9 +179,7 @@ def _flatten_multidiscrete(
 
 
 @flatten.register(Tuple)
-def _flatten_tuple(
-    space: Tuple, x: TypingTuple[Any, ...]
-) -> TypingTuple[Any, ...] | NDArray[Any]:
+def _flatten_tuple(space: Tuple, x: tuple[Any, ...]) -> tuple[Any, ...] | NDArray[Any]:
     if space.is_np_flattenable:
         return np.concatenate(
             [flatten(s, x_part) for x_part, s in zip(x, space.spaces)]
@@ -192,9 +188,7 @@ def _flatten_tuple(
 
 
 @flatten.register(Dict)
-def _flatten_dict(
-    space: Dict, x: TypingDict[str, Any]
-) -> TypingDict[str, Any] | NDArray[Any]:
+def _flatten_dict(space: Dict, x: dict[str, Any]) -> dict[str, Any] | NDArray[Any]:
     if space.is_np_flattenable:
         return np.concatenate([flatten(s, x[key]) for key, s in space.spaces.items()])
     return OrderedDict((key, flatten(s, x[key])) for key, s in space.spaces.items())
@@ -241,9 +235,7 @@ def _flatten_text(space: Text, x: str) -> NDArray[np.int32]:
 
 
 @flatten.register(Sequence)
-def _flatten_sequence(
-    space: Sequence, x: TypingTuple[Any, ...]
-) -> TypingTuple[Any, ...]:
+def _flatten_sequence(space: Sequence, x: tuple[Any, ...]) -> tuple[Any, ...]:
     return tuple(flatten(space.feature_space, item) for item in x)
 
 
@@ -293,8 +285,8 @@ def _unflatten_multidiscrete(
 
 @unflatten.register(Tuple)
 def _unflatten_tuple(
-    space: Tuple, x: NDArray[Any] | TypingTuple[Any, ...]
-) -> TypingTuple[Any, ...]:
+    space: Tuple, x: NDArray[Any] | tuple[Any, ...]
+) -> tuple[Any, ...]:
     if space.is_np_flattenable:
         assert isinstance(
             x, np.ndarray
@@ -312,9 +304,7 @@ def _unflatten_tuple(
 
 
 @unflatten.register(Dict)
-def _unflatten_dict(
-    space: Dict, x: NDArray[Any] | TypingDict[str, Any]
-) -> TypingDict[str, Any]:
+def _unflatten_dict(space: Dict, x: NDArray[Any] | dict[str, Any]) -> dict[str, Any]:
     if space.is_np_flattenable:
         dims = np.asarray([flatdim(s) for s in space.spaces.values()], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
@@ -361,9 +351,7 @@ def _unflatten_text(space: Text, x: NDArray[np.int32]) -> str:
 
 
 @unflatten.register(Sequence)
-def _unflatten_sequence(
-    space: Sequence, x: TypingTuple[Any, ...]
-) -> TypingTuple[Any, ...]:
+def _unflatten_sequence(space: Sequence, x: tuple[Any, ...]) -> tuple[Any, ...]:
     return tuple(unflatten(space.feature_space, item) for item in x)
 
 

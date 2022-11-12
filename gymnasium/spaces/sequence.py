@@ -1,10 +1,9 @@
 """Implementation of a space that represents finite-length sequences."""
 from __future__ import annotations
 
-from collections.abc import Sequence as CollectionSequence
+import collections.abc
+import typing
 from typing import Any
-from typing import Sequence as TypingSequence
-from typing import Tuple
 
 import numpy as np
 import numpy.typing as npt
@@ -12,7 +11,7 @@ import numpy.typing as npt
 from gymnasium.spaces.space import Space
 
 
-class Sequence(Space[Tuple[Any, ...]]):
+class Sequence(Space[typing.Tuple[Any, ...]]):
     r"""This space represent sets of finite-length sequences.
 
     This space represents the set of tuples of the form :math:`(a_0, \dots, a_n)` where the :math:`a_i` belong
@@ -62,8 +61,8 @@ class Sequence(Space[Tuple[Any, ...]]):
         mask: None
         | (
             tuple[
-                None | (np.integer | npt.NDArray[np.integer]),
-                Any | None,
+                None | np.integer | npt.NDArray[np.integer],
+                Any,
             ]
         ) = None,
     ) -> tuple[Any]:
@@ -118,7 +117,7 @@ class Sequence(Space[Tuple[Any, ...]]):
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        return isinstance(x, CollectionSequence) and all(
+        return isinstance(x, collections.abc.Sequence) and all(
             self.feature_space.contains(item) for item in x
         )
 
@@ -126,7 +125,9 @@ class Sequence(Space[Tuple[Any, ...]]):
         """Gives a string representation of this space."""
         return f"Sequence({self.feature_space})"
 
-    def to_jsonable(self, sample_n: TypingSequence[tuple[Any, ...]]) -> list[list[Any]]:
+    def to_jsonable(
+        self, sample_n: typing.Sequence[tuple[Any, ...]]
+    ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as dict-repr of vectors
         return [self.feature_space.to_jsonable(list(sample)) for sample in sample_n]
@@ -135,6 +136,6 @@ class Sequence(Space[Tuple[Any, ...]]):
         """Convert a JSONable data type to a batch of samples from this space."""
         return [tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n]
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return isinstance(other, Sequence) and self.feature_space == other.feature_space

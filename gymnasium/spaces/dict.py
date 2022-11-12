@@ -1,19 +1,17 @@
 """Implementation of a space that represents the cartesian product of other spaces as a dictionary."""
 from __future__ import annotations
 
+import collections.abc
+import typing
 from collections import OrderedDict
-from collections.abc import Mapping as CollectionsMapping
-from typing import Any
-from typing import Dict as TypingDict
-from typing import Mapping as TypingMapping
-from typing import Sequence
+from typing import Any, Sequence
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
 
-class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
+class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
     """A dictionary of :class:`Space` instances.
 
     Elements of this space are (ordered) dictionaries of elements from the constituent spaces.
@@ -54,7 +52,7 @@ class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
 
     def __init__(
         self,
-        spaces: None | (TypingDict[str, Space] | Sequence[tuple[str, Space]]) = None,
+        spaces: None | dict[str, Space] | Sequence[tuple[str, Space]] = None,
         seed: dict | int | np.random.Generator | None = None,
         **spaces_kwargs: Space,
     ):
@@ -78,7 +76,7 @@ class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
             **spaces_kwargs: If ``spaces`` is ``None``, you need to pass the constituent spaces as keyword arguments, as described above.
         """
         # Convert the spaces into an OrderedDict
-        if isinstance(spaces, CollectionsMapping) and not isinstance(
+        if isinstance(spaces, collections.abc.Mapping) and not isinstance(
             spaces, OrderedDict
         ):
             try:
@@ -105,7 +103,7 @@ class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
                     f"Dict space keyword '{key}' already exists in the spaces dictionary."
                 )
 
-        self.spaces: TypingDict[str, Space[Any]] = spaces
+        self.spaces: dict[str, Space[Any]] = spaces
         for key, space in self.spaces.items():
             assert isinstance(
                 space, Space
@@ -119,7 +117,7 @@ class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces.values())
 
-    def seed(self, seed: TypingDict[str, Any] | int | None = None) -> list[int]:
+    def seed(self, seed: dict[str, Any] | int | None = None) -> list[int]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
@@ -156,7 +154,7 @@ class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
 
         return seeds
 
-    def sample(self, mask: TypingDict[str, Any] | None = None) -> TypingDict[str, Any]:
+    def sample(self, mask: dict[str, Any] | None = None) -> dict[str, Any]:
         """Generates a single random sample from this space.
 
         The sample is an ordered dictionary of independent samples from the constituent spaces.
@@ -211,7 +209,7 @@ class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
             "Dict(" + ", ".join([f"{k!r}: {s}" for k, s in self.spaces.items()]) + ")"
         )
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance."""
         return (
             isinstance(other, Dict)
@@ -219,9 +217,7 @@ class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
             and self.spaces == other.spaces  # OrderedDict.__eq__
         )
 
-    def to_jsonable(
-        self, sample_n: Sequence[TypingDict[str, Any]]
-    ) -> TypingDict[str, list[Any]]:
+    def to_jsonable(self, sample_n: Sequence[dict[str, Any]]) -> dict[str, list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as dict-repr of vectors
         return {
@@ -229,11 +225,9 @@ class Dict(Space[TypingDict[str, Any]], TypingMapping[str, Space[Any]]):
             for key, space in self.spaces.items()
         }
 
-    def from_jsonable(
-        self, sample_n: TypingDict[str, list[Any]]
-    ) -> list[TypingDict[str, Any]]:
+    def from_jsonable(self, sample_n: dict[str, list[Any]]) -> list[dict[str, Any]]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        dict_of_list: TypingDict[str, list[Any]] = {
+        dict_of_list: dict[str, list[Any]] = {
             key: space.from_jsonable(sample_n[key])
             for key, space in self.spaces.items()
         }

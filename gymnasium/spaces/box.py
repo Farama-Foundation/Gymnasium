@@ -257,7 +257,7 @@ class Box(Space[NDArray[Any]]):
         """
         return f"Box({self.low_repr}, {self.high_repr}, {self.shape}, {self.dtype})"
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance. Doesn't check dtype equivalence."""
         return (
             isinstance(other, Box)

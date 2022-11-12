@@ -201,7 +201,7 @@ class Graph(Space[GraphInstance]):
         """
         return f"Graph({self.node_space}, {self.edge_space})"
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance."""
         return (
             isinstance(other, Graph)

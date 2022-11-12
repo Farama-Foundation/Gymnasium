@@ -6,7 +6,7 @@ from typing import Any, Sequence
 import numpy as np
 import numpy.typing as npt
 
-from gymnasium.spaces.space import MASK_NDARRAY, Space
+from gymnasium.spaces.space import MaskNDArray, Space
 
 
 class MultiBinary(Space[npt.NDArray[np.int8]]):
@@ -58,7 +58,7 @@ class MultiBinary(Space[npt.NDArray[np.int8]]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: MASK_NDARRAY | None = None) -> npt.NDArray[np.int8]:
+    def sample(self, mask: MaskNDArray | None = None) -> npt.NDArray[np.int8]:
         """Generates a single random sample from this space.
 
         A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).
@@ -120,6 +120,6 @@ class MultiBinary(Space[npt.NDArray[np.int8]]):
         """Gives a string representation of this space."""
         return f"MultiBinary({self.n})"
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance."""
         return isinstance(other, MultiBinary) and self.n == other.n

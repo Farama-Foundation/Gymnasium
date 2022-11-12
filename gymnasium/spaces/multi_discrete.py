@@ -8,7 +8,7 @@ import numpy.typing as npt
 
 import gymnasium as gym
 from gymnasium.spaces.discrete import Discrete
-from gymnasium.spaces.space import MASK_NDARRAY, Space
+from gymnasium.spaces.space import MaskNDArray, Space
 
 
 class MultiDiscrete(Space[npt.NDArray[np.integer]]):
@@ -70,7 +70,7 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
         return True
 
     def sample(
-        self, mask: tuple[MASK_NDARRAY, ...] | None = None
+        self, mask: tuple[MaskNDArray, ...] | None = None
     ) -> npt.NDArray[np.integer[Any]]:
         """Generates a single random sample this space.
 
@@ -85,8 +85,8 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
         if mask is not None:
 
             def _apply_mask(
-                sub_mask: MASK_NDARRAY | tuple[MASK_NDARRAY, ...],
-                sub_nvec: MASK_NDARRAY | np.integer[Any],
+                sub_mask: MaskNDArray | tuple[MaskNDArray, ...],
+                sub_nvec: MaskNDArray | np.integer[Any],
             ) -> int | Sequence[int]:
                 if isinstance(sub_nvec, np.ndarray):
                     assert isinstance(
@@ -179,7 +179,7 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
             )
         return len(self.nvec)
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return bool(
             isinstance(other, MultiDiscrete) and np.all(self.nvec == other.nvec)

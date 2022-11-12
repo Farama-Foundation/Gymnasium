@@ -11,7 +11,7 @@ from gymnasium.utils import seeding
 T_cov = TypeVar("T_cov", covariant=True)
 
 
-MASK_NDARRAY = npt.NDArray[np.int8]
+MaskNDArray = npt.NDArray[np.int8]
 
 
 class Space(Generic[T_cov]):

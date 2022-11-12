@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 from gymnasium.spaces.space import Space
 
@@ -71,8 +72,7 @@ class Text(Space[str]):
 
     def sample(
         self,
-        mask: None
-        | (tuple[int | None, np.ndarray[Any, np.dtype[np.int8]] | None]) = None,
+        mask: None | (tuple[int | None, npt.NDArray[np.int8] | None]) = None,
     ) -> str:
         """Generates a single random sample from this space with by default a random length between `min_length` and `max_length` and sampled from the `charset`.
 
@@ -155,7 +155,7 @@ class Text(Space[str]):
             f"Text({self.min_length}, {self.max_length}, characters={self.characters})"
         )
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return (
             isinstance(other, Text)
