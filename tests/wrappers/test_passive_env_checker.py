@@ -14,7 +14,7 @@ from tests.testing_env import GenericTestEnv
 @pytest.mark.parametrize(
     "env",
     all_testing_initialised_envs,
-    ids=[env.spec.id for env in all_testing_initialised_envs],
+    ids=[env.spec.id for env in all_testing_initialised_envs if env.spec is not None],
 )
 def test_passive_checker_wrapper_warnings(env):
     with warnings.catch_warnings(record=True) as caught_warnings:
