@@ -33,7 +33,7 @@ def get_version():
 
 # Environment-specific dependencies.
 extras = {
-    "atari": ["shimmy[atari]>=0.1.0"],
+    "atari": ["shimmy[atari]>=0.1.0,<1.0"],
     "accept-rom-license": ["autorom[accept-rom-license]~=0.4.2"],
     "box2d": ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
     "classic_control": ["pygame==2.1.0"],
@@ -88,7 +88,7 @@ setup(
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
         "gymnasium_notices >= 0.0.1",
-        "shimmy>=0.1.0",
+        "shimmy>=0.1.0, <1.0",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
