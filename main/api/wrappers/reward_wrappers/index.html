@@ -540,7 +540,7 @@
 <h2>Reward Wrapper<a class="headerlink" href="#reward-wrapper" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.RewardWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">RewardWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.RewardWrapper" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">RewardWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.RewardWrapper" title="Permalink to this definition">#</a></dt>
 <dd><p>Superclass of wrappers that can modify the returning reward from a step.</p>
 <p>If you would like to apply a function to the reward that is returned by the base environment before
 passing it to learning code, you can simply inherit from <a class="reference internal" href="#gymnasium.RewardWrapper" title="gymnasium.RewardWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">RewardWrapper</span></code></a> and overwrite the method
@@ -550,26 +550,21 @@ you can simply define <code class="xref py py-attr docutils literal notranslate"
 <p>Let us look at an example: Sometimes (especially when we do not have control over the reward
 because it is intrinsic), we want to clip the reward to a range to gain some numerical stability.
 To do that, we could, for instance, implement the following wrapper:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span> <span class="o">=</span> <span class="n">min_reward</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_reward</span> <span class="o">=</span> <span class="n">max_reward</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_reward</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SupportsFloat</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_reward</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Wraps an environment to allow a modular transformation of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> methods.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env</strong> – The environment to wrap</p>
-</dd>
-</dl>
+<p>Constructor for the Reward wrapper.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.RewardWrapper.RewardWrapper.reward">
-<span class="sig-name descname"><span class="pre">reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.RewardWrapper.RewardWrapper.reward" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SupportsFloat</span></span></span><a class="headerlink" href="#gymnasium.RewardWrapper.RewardWrapper.reward" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a modified environment <code class="docutils literal notranslate"><span class="pre">reward</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
