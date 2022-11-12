@@ -6,6 +6,7 @@ import importlib.util
 import re
 import sys
 import warnings
+from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import (
     Callable,
@@ -150,6 +151,10 @@ class EnvSpec:
     namespace: Optional[str] = field(init=False)
     name: str = field(init=False)
     version: Optional[int] = field(init=False)
+
+    def __str__(self):
+        # Only return the name and version.
+        return f"{self.name}-v{self.version}"
 
     def __post_init__(self):
         # Initialize namespace, name, version
@@ -701,3 +706,32 @@ def spec(env_id: str) -> EnvSpec:
     else:
         assert isinstance(spec_, EnvSpec)
         return spec_
+
+
+def list_envs(max_rows: int = 10) -> None:
+    """List the environments currently supported."""
+
+    # Defaultdict to store environment names according to namespace.
+    namespace_envs = defaultdict(lambda: [])
+    for env in registry.values():
+        # Since namespace is currently none, use regex to obtain namespace from entrypoints.
+        env_entry_point = re.sub(r":\w+", "", env.entry_point)
+        namespace = env_entry_point.split(".")[2]
+        namespace_envs[namespace].append(str(env))
+
+    # Get max length to justify.
+    max_justify = max(len(env) for env in namespace_envs.values())
+
+    # Iterate through each namespace and print environment alphabetically.
+    for namespace, envs in namespace_envs.items():
+        print(f"{'=' * 5} {namespace} {'=' * 5}")  # Print namespace.
+        num_columns = (
+            len(envs) // max_rows
+        ) + 1  # Calculate number of columns required.
+        # Reference: https://stackoverflow.com/a/33464001
+        for count, item in enumerate(sorted(envs), 1):
+            print(item.ljust(max_justify), end=" ")  # Print column with justification.
+            # Once all rows printed, switch to new column.
+            if count % num_columns == 0 or count == len(envs):
+                print()
+        print()
