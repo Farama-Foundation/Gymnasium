@@ -1,24 +1,38 @@
-"""Root __init__ of the gymnasium module setting the __all__ of gymnasium modules."""
-# isort: skip_file
+"""Root `__init__` of the gymnasium module setting the `__all__` of gymnasium modules."""
 
-from gymnasium import error
-
-from gymnasium.core import (
-    Env,
-    Wrapper,
-    ObservationWrapper,
-    ActionWrapper,
-    RewardWrapper,
-)
-from gymnasium.spaces import Space
-from gymnasium.envs import make, spec, register
-from gymnasium import logger
-from gymnasium import vector
-from gymnasium import wrappers
 import os
 import sys
 
-__all__ = ["Env", "Space", "Wrapper", "make", "spec", "register"]
+from gymnasium import error, logger, vector, wrappers
+from gymnasium.core import (
+    ActionWrapper,
+    Env,
+    ObservationWrapper,
+    RewardWrapper,
+    Wrapper,
+)
+from gymnasium.envs.registration import make, register, registry, spec
+from gymnasium.spaces.space import Space
+
+__all__ = [
+    # core classes
+    "Env",
+    "Wrapper",
+    "ObservationWrapper",
+    "ActionWrapper",
+    "RewardWrapper",
+    "Space",
+    # registration
+    "make",
+    "spec",
+    "register",
+    "registry",
+    # root files
+    "error",
+    "logger",
+    "vector",
+    "wrappers",
+]
 __version__ = "0.26.3"
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
@@ -38,6 +52,5 @@ try:
     notice = notices.notices.get(__version__)
     if notice:
         print(notice, file=sys.stderr)
-
 except Exception:  # nosec
     pass
