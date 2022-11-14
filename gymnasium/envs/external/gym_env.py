@@ -6,7 +6,6 @@ from gymnasium.core import ActType, ObsType
 
 try:
     import gym
-    import gym.wrappers
 except ImportError as e:
     GYM_IMPORT_ERROR = e
 else:
@@ -105,6 +104,7 @@ def _strip_default_wrappers(env: "gym.Env") -> "gym.Env":
     Returns:
         The environment without builtin wrappers
     """
+    import gym.wrappers
 
     default_wrappers = (
         gym.wrappers.render_collection.RenderCollection,
