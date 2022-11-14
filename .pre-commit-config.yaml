@@ -10,7 +10,7 @@ repos:
       - id: codespell
         args:
           - --ignore-words-list=nd,reacher,thist,ths, ure, referenc,wile
-  - repo: https://gitlab.com/PyCQA/flake8
+  - repo: https://gitlab.com/PyCQA/flake8 
     rev: 4.0.1
     hooks:
       - id: flake8
