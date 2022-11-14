@@ -59,10 +59,7 @@ class VideoRecorder:
 
         self.render_mode = env.render_mode
 
-        if (
-            "rgb_array_list" != self.render_mode
-            and "rgb_array" != self.render_mode
-        ):
+        if "rgb_array_list" != self.render_mode and "rgb_array" != self.render_mode:
             logger.warn(
                 f"Disabling video recorder because environment {env} was not initialized with any compatible video "
                 "mode between `rgb_array` and `rgb_array_list`"
@@ -75,9 +72,7 @@ class VideoRecorder:
             return
 
         if path is not None and base_path is not None:
-            raise error.Error(
-                "You can pass at most one of `path` or `base_path`."
-            )
+            raise error.Error("You can pass at most one of `path` or `base_path`.")
 
         required_ext = ".mp4"
         if path is None:
@@ -157,17 +152,13 @@ class VideoRecorder:
         # Close the encoder
         if len(self.recorded_frames) > 0:
             try:
-                from moviepy.video.io.ImageSequenceClip import (
-                    ImageSequenceClip,
-                )
+                from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
             except ImportError:
                 raise error.DependencyNotInstalled(
                     "MoviePy is not installed, run `pip install moviepy`"
                 )
 
-            clip = ImageSequenceClip(
-                self.recorded_frames, fps=self.frames_per_sec
-            )
+            clip = ImageSequenceClip(self.recorded_frames, fps=self.frames_per_sec)
             moviepy_logger = None if self.disable_logger else "bar"
             clip.write_videofile(self.path, logger=moviepy_logger)
         else:
