@@ -100,7 +100,7 @@ class LunarLander(gym.Env, EzPickle):
     - 0: do nothing
     - 1: fire left orientation engine
     - 2: fire main engine
-    - 3: fire right orientation engine    
+    - 3: fire right orientation engine
 
     ## Observation Space
     The state is an 8-dimensional vector: the coordinates of the lander in `x` & `y`, its linear
