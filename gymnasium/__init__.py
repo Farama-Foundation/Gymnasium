@@ -1,18 +1,18 @@
 """Root `__init__` of the gymnasium module setting the `__all__` of gymnasium modules."""
+# isort: skip_file
 
+from gymnasium.core import (
+    Env,
+    Wrapper,
+    ObservationWrapper,
+    ActionWrapper,
+    RewardWrapper,
+)
+from gymnasium.spaces.space import Space
+from gymnasium.envs.registration import make, spec, register, registry
+from gymnasium import logger, vector, wrappers, error
 import os
 import sys
-
-from gymnasium import error, logger, vector, wrappers
-from gymnasium.core import (
-    ActionWrapper,
-    Env,
-    ObservationWrapper,
-    RewardWrapper,
-    Wrapper,
-)
-from gymnasium.envs.registration import make, register, registry, spec
-from gymnasium.spaces.space import Space
 
 __all__ = [
     # core classes
