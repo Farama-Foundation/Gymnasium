@@ -1,14 +1,17 @@
 """Implementation of a space that represents the cartesian product of `Discrete` spaces."""
-from typing import Iterable, List, Optional, Sequence, Tuple, Union
+from __future__ import annotations
+
+from typing import Any, Sequence
 
 import numpy as np
+import numpy.typing as npt
 
-from gymnasium import logger
+import gymnasium as gym
 from gymnasium.spaces.discrete import Discrete
-from gymnasium.spaces.space import Space
+from gymnasium.spaces.space import MaskNDArray, Space
 
 
-class MultiDiscrete(Space[np.ndarray]):
+class MultiDiscrete(Space[npt.NDArray[np.integer]]):
     """This represents the cartesian product of arbitrary :class:`Discrete` spaces.
 
     It is useful to represent game controllers or keyboards where each key can be represented as a discrete action space.
@@ -29,17 +32,17 @@ class MultiDiscrete(Space[np.ndarray]):
 
     Example::
 
-        >>> d = MultiDiscrete(np.array([[1, 2], [3, 4]]))
-        >>> d.sample()
+        >> d = MultiDiscrete(np.array([[1, 2], [3, 4]]))
+        >> d.sample()
         array([[0, 0],
                [2, 3]])
     """
 
     def __init__(
         self,
-        nvec: Union[np.ndarray, list],
-        dtype=np.int64,
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        nvec: npt.NDArray[np.integer[Any]] | list[int],
+        dtype: str | type[np.integer[Any]] = np.int64,
+        seed: int | np.random.Generator | None = None,
     ):
         """Constructor of :class:`MultiDiscrete` space.
 
@@ -57,8 +60,8 @@ class MultiDiscrete(Space[np.ndarray]):
         super().__init__(self.nvec.shape, dtype, seed)
 
     @property
-    def shape(self) -> Tuple[int, ...]:
-        """Has stricter type than :class:`gymnasium.Space` - never None."""
+    def shape(self) -> tuple[int, ...]:
+        """Has stricter type than :class:`gym.Space` - never None."""
         return self._shape  # type: ignore
 
     @property
@@ -66,7 +69,9 @@ class MultiDiscrete(Space[np.ndarray]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: Optional[tuple] = None) -> np.ndarray:
+    def sample(
+        self, mask: tuple[MaskNDArray, ...] | None = None
+    ) -> npt.NDArray[np.integer[Any]]:
         """Generates a single random sample this space.
 
         Args:
@@ -80,9 +85,9 @@ class MultiDiscrete(Space[np.ndarray]):
         if mask is not None:
 
             def _apply_mask(
-                sub_mask: Union[np.ndarray, tuple],
-                sub_nvec: Union[np.ndarray, np.integer],
-            ) -> Union[int, List[int]]:
+                sub_mask: MaskNDArray | tuple[MaskNDArray, ...],
+                sub_nvec: MaskNDArray | np.integer[Any],
+            ) -> int | Sequence[int]:
                 if isinstance(sub_nvec, np.ndarray):
                     assert isinstance(
                         sub_mask, tuple
@@ -122,7 +127,7 @@ class MultiDiscrete(Space[np.ndarray]):
 
         return (self.np_random.random(self.nvec.shape) * self.nvec).astype(self.dtype)
 
-    def contains(self, x) -> bool:
+    def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, Sequence):
             x = np.array(x)  # Promote list to array for contains check
@@ -137,11 +142,15 @@ class MultiDiscrete(Space[np.ndarray]):
             and np.all(x < self.nvec)
         )
 
-    def to_jsonable(self, sample_n: Iterable[np.ndarray]):
+    def to_jsonable(
+        self, sample_n: Sequence[npt.NDArray[np.integer[Any]]]
+    ) -> list[Sequence[int]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [sample.tolist() for sample in sample_n]
 
-    def from_jsonable(self, sample_n):
+    def from_jsonable(
+        self, sample_n: list[Sequence[int]]
+    ) -> list[npt.NDArray[np.integer[Any]]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return np.array(sample_n)
 
@@ -149,7 +158,7 @@ class MultiDiscrete(Space[np.ndarray]):
         """Gives a string representation of this space."""
         return f"MultiDiscrete({self.nvec})"
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         """Extract a subspace from this ``MultiDiscrete`` space."""
         nvec = self.nvec[index]
         if nvec.ndim == 0:
@@ -165,11 +174,13 @@ class MultiDiscrete(Space[np.ndarray]):
     def __len__(self):
         """Gives the ``len`` of samples from this space."""
         if self.nvec.ndim >= 2:
-            logger.warn(
+            gym.logger.warn(
                 "Getting the length of a multi-dimensional MultiDiscrete space."
             )
         return len(self.nvec)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
-        return isinstance(other, MultiDiscrete) and np.all(self.nvec == other.nvec)
+        return bool(
+            isinstance(other, MultiDiscrete) and np.all(self.nvec == other.nvec)
+        )

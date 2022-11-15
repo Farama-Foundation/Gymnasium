@@ -1,3 +1,5 @@
+import re
+import warnings
 from collections import OrderedDict
 
 import numpy as np
@@ -25,18 +27,18 @@ def test_dict_init():
     ):
         Dict(a=Discrete(2), b="Box")
 
-    with pytest.warns(None) as warnings:
+    with warnings.catch_warnings(record=True) as caught_warnings:
         a = Dict({"a": Discrete(2), "b": Box(low=0.0, high=1.0)})
         b = Dict(OrderedDict(a=Discrete(2), b=Box(low=0.0, high=1.0)))
         c = Dict((("a", Discrete(2)), ("b", Box(low=0.0, high=1.0))))
         d = Dict(a=Discrete(2), b=Box(low=0.0, high=1.0))
 
         assert a == b == c == d
-    assert len(warnings) == 0
+    assert len(caught_warnings) == 0
 
-    with pytest.warns(None) as warnings:
+    with warnings.catch_warnings(record=True) as caught_warnings:
         Dict({1: Discrete(2), "a": Discrete(3)})
-    assert len(warnings) == 0
+    assert len(caught_warnings) == 0
 
 
 DICT_SPACE = Dict(
@@ -109,7 +111,12 @@ def test_none_seeding():
 
 
 def test_bad_seed():
-    with pytest.raises(TypeError):
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            "Expected seed type: dict, int or None, actual type: <class 'str'>"
+        ),
+    ):
         DICT_SPACE.seed("a")
 
 

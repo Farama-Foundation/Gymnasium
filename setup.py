@@ -85,7 +85,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "numpy >= 1.18.0",
+        "numpy >= 1.21.0",
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
         "gymnasium_notices >= 0.0.1",
