@@ -1,14 +1,16 @@
 """Implementation of a space that represents closed boxes in euclidean space."""
-from typing import Dict, List, Optional, Sequence, SupportsFloat, Tuple, Type, Union
+from __future__ import annotations
+
+from typing import Any, Iterable, Mapping, Sequence, SupportsFloat
 
 import numpy as np
+from numpy.typing import NDArray
 
 import gymnasium as gym
-from gymnasium import logger
 from gymnasium.spaces.space import Space
 
 
-def _short_repr(arr: np.ndarray) -> str:
+def _short_repr(arr: NDArray[Any]) -> str:
     """Create a shortened string representation of a numpy array.
 
     If arr is a multiple of the all-ones vector, return a string representation of the multiplier.
@@ -25,12 +27,12 @@ def _short_repr(arr: np.ndarray) -> str:
     return str(arr)
 
 
-def is_float_integer(var) -> bool:
+def is_float_integer(var: Any) -> bool:
     """Checks if a variable is an integer or float."""
     return np.issubdtype(type(var), np.integer) or np.issubdtype(type(var), np.floating)
 
 
-class Box(Space[np.ndarray]):
+class Box(Space[NDArray[Any]]):
     r"""A (possibly unbounded) box in :math:`\mathbb{R}^n`.
 
     Specifically, a Box represents the Cartesian product of n closed intervals.
@@ -52,11 +54,11 @@ class Box(Space[np.ndarray]):
 
     def __init__(
         self,
-        low: Union[SupportsFloat, np.ndarray],
-        high: Union[SupportsFloat, np.ndarray],
-        shape: Optional[Sequence[int]] = None,
-        dtype: Type = np.float32,
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        low: SupportsFloat | NDArray[Any],
+        high: SupportsFloat | NDArray[Any],
+        shape: Sequence[int] | None = None,
+        dtype: type[np.floating[Any]] | type[np.integer[Any]] = np.float32,
+        seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Box`.
 
@@ -102,12 +104,12 @@ class Box(Space[np.ndarray]):
 
         # Capture the boundedness information before replacing np.inf with get_inf
         _low = np.full(shape, low, dtype=float) if is_float_integer(low) else low
-        self.bounded_below = -np.inf < _low
+        self.bounded_below: bool = -np.inf < _low
         _high = np.full(shape, high, dtype=float) if is_float_integer(high) else high
-        self.bounded_above = np.inf > _high
+        self.bounded_above: bool = np.inf > _high
 
-        low = _broadcast(low, dtype, shape, inf_sign="-")  # type: ignore
-        high = _broadcast(high, dtype, shape, inf_sign="+")  # type: ignore
+        low: NDArray[Any] = _broadcast(low, dtype, shape, inf_sign="-")
+        high: NDArray[Any] = _broadcast(high, dtype, shape, inf_sign="+")
 
         assert isinstance(low, np.ndarray)
         assert (
@@ -118,13 +120,13 @@ class Box(Space[np.ndarray]):
             high.shape == shape
         ), f"high.shape doesn't match provided shape, high.shape: {high.shape}, shape: {shape}"
 
-        self._shape: Tuple[int, ...] = shape
+        self._shape: tuple[int, ...] = shape
 
         low_precision = get_precision(low.dtype)
         high_precision = get_precision(high.dtype)
         dtype_precision = get_precision(self.dtype)
-        if min(low_precision, high_precision) > dtype_precision:  # type: ignore
-            logger.warn(f"Box bound precision lowered by casting to {self.dtype}")
+        if min(low_precision, high_precision) > dtype_precision:
+            gym.logger.warn(f"Box bound precision lowered by casting to {self.dtype}")
         self.low = low.astype(self.dtype)
         self.high = high.astype(self.dtype)
 
@@ -134,8 +136,8 @@ class Box(Space[np.ndarray]):
         super().__init__(self.shape, self.dtype, seed)
 
     @property
-    def shape(self) -> Tuple[int, ...]:
-        """Has stricter type than gymnasium.Space - never None."""
+    def shape(self) -> tuple[int, ...]:
+        """Has stricter type than gym.Space - never None."""
         return self._shape
 
     @property
@@ -168,7 +170,7 @@ class Box(Space[np.ndarray]):
                 f"manner is not in {{'below', 'above', 'both'}}, actual value: {manner}"
             )
 
-    def sample(self, mask: None = None) -> np.ndarray:
+    def sample(self, mask: None = None) -> NDArray[Any]:
         r"""Generates a single random sample inside the Box.
 
         In creating a sample of the box, each coordinate is sampled (independently) from a distribution
@@ -193,8 +195,7 @@ class Box(Space[np.ndarray]):
         high = self.high if self.dtype.kind == "f" else self.high.astype("int64") + 1
         sample = np.empty(self.shape)
 
-        # Masking arrays which classify the coordinates according to interval
-        # type
+        # Masking arrays which classify the coordinates according to interval type
         unbounded = ~self.bounded_below & ~self.bounded_above
         upp_bounded = ~self.bounded_below & self.bounded_above
         low_bounded = self.bounded_below & ~self.bounded_above
@@ -221,10 +222,10 @@ class Box(Space[np.ndarray]):
 
         return sample.astype(self.dtype)
 
-    def contains(self, x) -> bool:
+    def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if not isinstance(x, np.ndarray):
-            logger.warn("Casting input x to numpy array.")
+            gym.logger.warn("Casting input x to numpy array.")
             try:
                 x = np.asarray(x, dtype=self.dtype)
             except (ValueError, TypeError):
@@ -237,11 +238,11 @@ class Box(Space[np.ndarray]):
             and np.all(x <= self.high)
         )
 
-    def to_jsonable(self, sample_n):
+    def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[NDArray[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return np.array(sample_n).tolist()
 
-    def from_jsonable(self, sample_n: Sequence[Union[float, int]]) -> List[np.ndarray]:
+    def from_jsonable(self, sample_n: Sequence[float | int]) -> list[NDArray[Any]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [np.asarray(sample) for sample in sample_n]
 
@@ -256,7 +257,7 @@ class Box(Space[np.ndarray]):
         """
         return f"Box({self.low_repr}, {self.high_repr}, {self.shape}, {self.dtype})"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance. Doesn't check dtype equivalence."""
         return (
             isinstance(other, Box)
@@ -266,7 +267,7 @@ class Box(Space[np.ndarray]):
             and np.allclose(self.high, other.high)
         )
 
-    def __setstate__(self, state: Dict):
+    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
         """Sets the state of the box for unpickling a box with legacy support."""
         super().__setstate__(state)
 
@@ -278,7 +279,7 @@ class Box(Space[np.ndarray]):
             self.high_repr = _short_repr(self.high)
 
 
-def get_inf(dtype, sign: str) -> SupportsFloat:
+def get_inf(dtype: np.dtype, sign: str) -> SupportsFloat:
     """Returns an infinite that doesn't break things.
 
     Args:
@@ -310,7 +311,7 @@ def get_inf(dtype, sign: str) -> SupportsFloat:
         raise ValueError(f"Unknown dtype {dtype} for infinite bounds")
 
 
-def get_precision(dtype) -> SupportsFloat:
+def get_precision(dtype: np.dtype) -> SupportsFloat:
     """Get precision of a data type."""
     if np.issubdtype(dtype, np.floating):
         return np.finfo(dtype).precision
@@ -319,14 +320,14 @@ def get_precision(dtype) -> SupportsFloat:
 
 
 def _broadcast(
-    value: Union[SupportsFloat, np.ndarray],
-    dtype,
-    shape: Tuple[int, ...],
+    value: SupportsFloat | NDArray[Any],
+    dtype: np.dtype,
+    shape: tuple[int, ...],
     inf_sign: str,
-) -> np.ndarray:
+) -> NDArray[Any]:
     """Handle infinite bounds and broadcast at the same time if needed."""
     if is_float_integer(value):
-        value = get_inf(dtype, inf_sign) if np.isinf(value) else value  # type: ignore
+        value = get_inf(dtype, inf_sign) if np.isinf(value) else value
         value = np.full(shape, value, dtype=dtype)
     else:
         assert isinstance(value, np.ndarray)
