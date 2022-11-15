@@ -21,17 +21,21 @@ from gymnasium.spaces.tuple import Tuple
 from gymnasium.spaces.utils import flatdim, flatten, flatten_space, unflatten
 
 __all__ = [
+    # base space
     "Space",
+    # fundamental spaces
     "Box",
     "Discrete",
     "Text",
-    "Graph",
-    "GraphInstance",
     "MultiDiscrete",
     "MultiBinary",
+    # composite spaces
+    "Graph",
+    "GraphInstance",
     "Tuple",
     "Sequence",
     "Dict",
+    # util functions (there are more utility functions in vector/utils/spaces.py)
     "flatdim",
     "flatten_space",
     "flatten",
