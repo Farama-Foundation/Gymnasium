@@ -10,7 +10,8 @@ from gymnasium.core import (
 )
 from gymnasium.spaces.space import Space
 from gymnasium.envs.registration import make, spec, register, registry
-from gymnasium import logger, vector, wrappers, error
+from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
+
 import os
 import sys
 
@@ -28,10 +29,13 @@ __all__ = [
     "register",
     "registry",
     # root files
-    "error",
-    "logger",
+    "envs",
+    "spaces",
+    "utils",
     "vector",
     "wrappers",
+    "error",
+    "logger",
 ]
 __version__ = "0.26.3"
 
