@@ -72,8 +72,9 @@ class Space(Generic[T_cov]):
         if self._np_random is None:
             self.seed()
 
-            if self._np_random is None:
-                self._np_random, _ = seeding.np_random()
+        # As `seed` is not guaranteed (in particular for composite spaces) to set the `_np_random` then we set it randomly.
+        if self._np_random is None:
+            self._np_random, _ = seeding.np_random()
 
         return self._np_random
 
