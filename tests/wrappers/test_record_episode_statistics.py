@@ -16,6 +16,7 @@ def test_record_episode_statistics(env_id, deque_size):
         assert env.episode_returns is not None and env.episode_lengths is not None
         assert env.episode_returns[0] == 0.0
         assert env.episode_lengths[0] == 0
+        assert env.spec is not None
         for t in range(env.spec.max_episode_steps):
             _, _, terminated, truncated, info = env.step(env.action_space.sample())
             if terminated or truncated:

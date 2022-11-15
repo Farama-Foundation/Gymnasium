@@ -72,6 +72,7 @@ class PlayableGame:
             elif hasattr(self.env.unwrapped, "get_keys_to_action"):
                 keys_to_action = self.env.unwrapped.get_keys_to_action()
             else:
+                assert self.env.spec is not None
                 raise MissingKeysToAction(
                     f"{self.env.spec.id} does not have explicit key to action mapping, "
                     "please specify one manually"
@@ -230,6 +231,7 @@ def play(
         elif hasattr(env.unwrapped, "get_keys_to_action"):
             keys_to_action = env.unwrapped.get_keys_to_action()
         else:
+            assert env.spec is not None
             raise MissingKeysToAction(
                 f"{env.spec.id} does not have explicit key to action mapping, "
                 "please specify one manually"

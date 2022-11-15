@@ -119,7 +119,7 @@ title: {title_env_name}
             + f" \n:width: 200px\n:name: {snake_env_name}\n```"
         )
         info = (
-            "This environment is part of the"
+            "This environment is part of the "
             + f"<a href='..'>{env_type_title} environments</a>."
             + "Please read that page first for general information."
         )
@@ -135,6 +135,8 @@ title: {title_env_name}
                 if hasattr(high, "shape"):
                     if len(high.shape) == 3:
                         high = high[0][0][0]
+                if env_type == "mujoco":
+                    high = high[0]
                 high = np.round(high, 2)
                 high = str(high).replace("\n", " ")
                 env_table += f"| Observation High | {high} |\n"
@@ -144,6 +146,8 @@ title: {title_env_name}
                 if hasattr(low, "shape"):
                     if len(low.shape) == 3:
                         low = low[0][0][0]
+                if env_type == "mujoco":
+                    low = low[0]
                 low = np.round(low, 2)
                 low = str(low).replace("\n", " ")
                 env_table += f"| Observation Low | {low} |\n"
