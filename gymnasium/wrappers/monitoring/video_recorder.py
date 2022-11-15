@@ -54,7 +54,6 @@ class VideoRecorder:
         self._closed = False
 
         self.render_history = []
-        self.last_frame = None
         self.env = env
 
         self.render_mode = env.render_mode
@@ -116,7 +115,6 @@ class VideoRecorder:
         if isinstance(frame, List):
             self.render_history += frame
             frame = frame[-1]
-        self.last_frame = frame
 
         if not self.functional:
             return
