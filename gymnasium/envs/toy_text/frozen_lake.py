@@ -169,6 +169,7 @@ class FrozenLakeEnv(Env):
         desc=None,
         map_name="4x4",
         is_slippery=True,
+    ##if is_slippery is true, 1/3 probability to move in intended direction, 1/3 probability to move in each perpendicular directions
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
