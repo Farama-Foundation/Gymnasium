@@ -11,7 +11,7 @@ from gymnasium.core import (
     RewardWrapper,
 )
 from gymnasium.spaces import Space
-from gymnasium.envs import make, spec, register, list_envs
+from gymnasium.envs import make, spec, register, registry, pprint_registry
 from gymnasium import logger
 from gymnasium import vector
 from gymnasium import wrappers

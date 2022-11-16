@@ -152,10 +152,6 @@ class EnvSpec:
     name: str = field(init=False)
     version: Optional[int] = field(init=False)
 
-    def __str__(self):
-        # Only return the name and version.
-        return f"{self.name}-v{self.version}"
-
     def __post_init__(self):
         # Initialize namespace, name, version
         self.namespace, self.name, self.version = parse_env_id(self.id)
@@ -708,30 +704,56 @@ def spec(env_id: str) -> EnvSpec:
         return spec_
 
 
-def list_envs(max_rows: int = 10) -> None:
+def pprint_registry(
+    _registry: dict = registry,
+    max_rows: int = 10,
+    exclude_namespaces: Optional[List[str]] = None,
+) -> None:
     """List the environments currently supported."""
 
     # Defaultdict to store environment names according to namespace.
     namespace_envs = defaultdict(lambda: [])
-    for env in registry.values():
-        # Since namespace is currently none, use regex to obtain namespace from entrypoints.
-        env_entry_point = re.sub(r":\w+", "", env.entry_point)
-        namespace = env_entry_point.split(".")[2]
-        namespace_envs[namespace].append(str(env))
-
-    # Get max length to justify.
-    max_justify = max(len(env) for env in namespace_envs.values())
+    max_justify = float("-inf")
+    for env in _registry.values():
+        namespace, _, _ = parse_env_id(env.id)
+        print(namespace, env.id, env.entry_point)
+        if namespace is None:
+            # Since namespace is currently none, use regex to obtain namespace from entrypoints.
+            env_entry_point = re.sub(r":\w+", "", env.entry_point)
+            e_ep_split = env_entry_point.split(".")
+            if len(e_ep_split) >= 3:
+                # If namespace is of the format - gymnasium.envs.mujoco.ant_v4:AntEnv
+                # or gymnasium.envs.mujoco:HumanoidEnv
+                idx = 2
+                namespace = e_ep_split[idx]
+            elif len(e_ep_split) > 1:
+                # If namespace is of the format - shimmy.atari_env
+                idx = 1
+                namespace = e_ep_split[idx]
+            else:
+                # If namespace cannot be found, default to env id.
+                namespace = env.id
+        namespace_envs[namespace].append(env.id)
+        max_justify = max(max_justify, len(env.id))
 
     # Iterate through each namespace and print environment alphabetically.
+    return_str = ""
     for namespace, envs in namespace_envs.items():
-        print(f"{'=' * 5} {namespace} {'=' * 5}")  # Print namespace.
+        # Ignore namespaces to exclude.
+        if exclude_namespaces is not None and namespace in exclude_namespaces:
+            continue
+        return_str += f"{'=' * 5} {namespace} {'=' * 5}\n"  # Print namespace.
         num_columns = (
             len(envs) // max_rows
         ) + 1  # Calculate number of columns required.
         # Reference: https://stackoverflow.com/a/33464001
         for count, item in enumerate(sorted(envs), 1):
-            print(item.ljust(max_justify), end=" ")  # Print column with justification.
+            return_str += (
+                item.ljust(max_justify) + " "
+            )  # Print column with justification.
             # Once all rows printed, switch to new column.
             if count % num_columns == 0 or count == len(envs):
-                print()
-        print()
+                return_str += "\n"
+        return_str += "\n"
+
+    return return_str
