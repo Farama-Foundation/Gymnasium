@@ -142,7 +142,9 @@ class FrozenLakeEnv(Env):
             "FFFHFFFG",
         ]
 
-    `is_slippery`: True/False. If True will move in intended direction with
+
+    #### Option is_slippery
+    Boolean, set true by default. When True, will move in intended direction with
     probability of 1/3 else will move in either perpendicular direction with
     equal probability of 1/3 in both directions.
 
