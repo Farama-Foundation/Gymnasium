@@ -4,26 +4,26 @@ import gymnasium as gym
 # flake8: noqa
 
 
-def test_pprint_custom_registry():
+def test_pprint_custom_registry(capfd):
     """Testing a registry different from default."""
     a = {
         "CartPole-v0": gym.envs.registry["CartPole-v0"],
         "CartPole-v1": gym.envs.registry["CartPole-v1"],
     }
-    out = gym.pprint_registry(a)
+    gym.pprint_registry(a)
 
     correct_out = """===== classic_control =====
 CartPole-v0 
 CartPole-v1 
 
 """
-
+    out, err = capfd.readouterr()
     assert out == correct_out
 
 
-def test_pprint_registry():
+def test_pprint_registry(capfd):
     """Testing the default registry, with no changes."""
-    out = gym.pprint_registry()
+    gym.pprint_registry()
 
     correct_out = """===== classic_control =====
 Acrobot-v1                   
@@ -73,12 +73,13 @@ test/NoHumanNoRGB-v0
 test/NoHumanOldAPI-v0        
 
 """
+    out, err = capfd.readouterr()
     assert out == correct_out
 
 
-def test_pprint_registry_exclude_namespaces():
+def test_pprint_registry_exclude_namespaces(capfd):
     """Testing the default registry, with no changes."""
-    out = gym.pprint_registry(
+    gym.pprint_registry(
         max_rows=20,
         exclude_namespaces=["classic_control"],
     )
@@ -127,14 +128,15 @@ test/NoHumanNoRGB-v0
 test/NoHumanOldAPI-v0        
 
 """
+    out, err = capfd.readouterr()
     assert out == correct_out
 
 
-def test_pprint_registry_no_entry_point():
+def test_pprint_registry_no_entry_point(capfd):
     """Test registry if there is environment with no entry point."""
 
     gym.register("NoNamespaceEnv", "no-entry-point")
-    out = gym.pprint_registry()
+    gym.pprint_registry()
 
     correct_out = """===== classic_control =====
 Acrobot-v1                   
@@ -187,6 +189,7 @@ test/NoHumanOldAPI-v0
 NoNamespaceEnv               
 
 """
+    out, err = capfd.readouterr()
     assert out == correct_out
 
     del gym.envs.registry["NoNamespaceEnv"]
