@@ -51,7 +51,7 @@ class PlayableGame:
             zoom: If to zoom in on the environment render
         """
         if env.render_mode not in {"rgb_array", "rgb_array_list"}:
-            logger.error(
+            raise ValueError(
                 "PlayableGame wrapper works only with rgb_array and rgb_array_list render modes, "
                 f"but your environment render_mode = {env.render_mode}."
             )
