@@ -57,7 +57,9 @@ DISCRETE_ENVS = list(
 
 
 @pytest.mark.parametrize(
-    "env", DISCRETE_ENVS, ids=[env.spec.id for env in DISCRETE_ENVS]
+    "env",
+    DISCRETE_ENVS,
+    ids=[env.spec.id for env in DISCRETE_ENVS if env.spec is not None],
 )
 def test_discrete_actions_out_of_bound(env: gym.Env):
     """Test out of bound actions in Discrete action_space.
@@ -87,7 +89,9 @@ BOX_ENVS = list(
 OOB_VALUE = 100
 
 
-@pytest.mark.parametrize("env", BOX_ENVS, ids=[env.spec.id for env in BOX_ENVS])
+@pytest.mark.parametrize(
+    "env", BOX_ENVS, ids=[env.spec.id for env in BOX_ENVS if env.spec is not None]
+)
 def test_box_actions_out_of_bound(env: gym.Env):
     """Test out of bound actions in Box action_space.
 
@@ -100,6 +104,7 @@ def test_box_actions_out_of_bound(env: gym.Env):
     """
     env.reset(seed=42)
 
+    assert env.spec is not None
     oob_env = gym.make(env.spec.id, disable_env_checker=True)
     oob_env.reset(seed=42)
 

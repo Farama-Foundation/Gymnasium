@@ -96,8 +96,11 @@ class LunarLander(gym.Env, EzPickle):
     <!-- python examples/agents/keyboard_agent.py LunarLander-v2 -->
 
     ## Action Space
-    There are four discrete actions available: do nothing, fire left
-    orientation engine, fire main engine, fire right orientation engine.
+    There are four discrete actions available:
+    - 0: do nothing
+    - 1: fire left orientation engine
+    - 2: fire main engine
+    - 3: fire right orientation engine
 
     ## Observation Space
     The state is an 8-dimensional vector: the coordinates of the lander in `x` & `y`, its linear
@@ -603,6 +606,7 @@ class LunarLander(gym.Env, EzPickle):
 
     def render(self):
         if self.render_mode is None:
+            assert self.spec is not None
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "

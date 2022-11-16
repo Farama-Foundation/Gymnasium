@@ -69,7 +69,8 @@ class AtariPreprocessing(gym.Wrapper):
         assert noop_max >= 0
         if frame_skip > 1:
             if (
-                "NoFrameskip" not in env.spec.id
+                env.spec is not None
+                and "NoFrameskip" not in env.spec.id
                 and getattr(env.unwrapped, "_frameskip", None) != 1
             ):
                 raise ValueError(
