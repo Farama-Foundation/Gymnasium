@@ -201,10 +201,7 @@ class RecordVideo(gym.Wrapper):
             else:
                 return recorded_frames + super().render(*args, **kwargs)
         else:
-            if self.recording:
-                return self.video_recorder.last_frame
-            else:
-                return super().render(*args, **kwargs)
+            return super().render(*args, **kwargs)
 
     def close(self):
         """Closes the wrapper then the video recorder."""
