@@ -206,4 +206,12 @@ def test_play_loop_real_env():
 
 def test_play_no_keys():
     with pytest.raises(MissingKeysToAction):
-        play(gym.make("CartPole-v1"))
+        play(gym.make("CartPole-v1", render_mode="rgb_array"))
+
+
+def test_wrong_render_mode():
+    with pytest.raises(
+        ValueError,
+        match=r"PlayableGame wrapper works only with rgb_array and rgb_array_list render modes",
+    ):
+        play(gym.make("CartPole-v1"), keys_to_action={})
