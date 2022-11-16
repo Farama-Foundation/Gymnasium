@@ -4,7 +4,7 @@ opencv-python>=3.0
 mujoco==2.2.0
 matplotlib>=3.0
 imageio>=2.14.1
-pygame==2.1.0
+pygame==2.1.2
 mujoco_py<2.2,>=2.1
 pytest==7.1.3
 gym==0.26.2
