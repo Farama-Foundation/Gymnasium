@@ -29,10 +29,8 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     The action is a `ndarray` with shape `(1,)` which can take values `{0, 1}` indicating the direction
      of the fixed force the cart is pushed with.
 
-    | Num | Action                 |
-    |-----|------------------------|
-    | 0   | Push cart to the left  |
-    | 1   | Push cart to the right |
+    - 0: Push cart to the left
+    - 1: Push cart to the right
 
     **Note**: The velocity that is reduced or increased by the applied force is not fixed and it depends on the angle
      the pole is pointing. The center of gravity of the pole varies the amount of energy needed to move the cart underneath it
@@ -210,6 +208,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     def render(self):
         if self.render_mode is None:
+            assert self.spec is not None
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "

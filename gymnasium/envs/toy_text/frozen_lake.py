@@ -270,6 +270,7 @@ class FrozenLakeEnv(Env):
 
     def render(self):
         if self.render_mode is None:
+            assert self.spec is not None
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "

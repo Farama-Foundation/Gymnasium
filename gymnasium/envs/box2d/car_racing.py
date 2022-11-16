@@ -121,10 +121,17 @@ class CarRacing(gym.Env, EzPickle):
     and turn at the same time.
 
     ## Action Space
-    If continuous:
-        There are 3 actions: steering (-1 is full left, +1 is full right), gas, and breaking.
-    If discrete:
-        There are 5 actions: do nothing, steer left, steer right, gas, brake.
+    If continuous there are 3 actions :
+    - 0: steering, -1 is full left, +1 is full right
+    - 1: gas
+    - 2: breaking
+
+    If discrete there are 5 actions:
+    - 0: do nothing
+    - 1: steer left
+    - 2: steer right
+    - 3: gas
+    - 4: brake
 
     ## Observation Space
 
@@ -570,6 +577,7 @@ class CarRacing(gym.Env, EzPickle):
 
     def render(self):
         if self.render_mode is None:
+            assert self.spec is not None
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "
