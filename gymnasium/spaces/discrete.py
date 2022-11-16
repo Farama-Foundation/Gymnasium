@@ -1,9 +1,11 @@
 """Implementation of a space consisting of finitely many elements."""
-from typing import Optional, Union
+from __future__ import annotations
+
+from typing import Any, Iterable, Mapping
 
 import numpy as np
 
-from gymnasium.spaces.space import Space
+from gymnasium.spaces.space import MaskNDArray, Space
 
 
 class Discrete(Space[int]):
@@ -20,7 +22,7 @@ class Discrete(Space[int]):
     def __init__(
         self,
         n: int,
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        seed: int | np.random.Generator | None = None,
         start: int = 0,
     ):
         r"""Constructor of :class:`Discrete` space.
@@ -44,7 +46,7 @@ class Discrete(Space[int]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: Optional[np.ndarray] = None) -> int:
+    def sample(self, mask: MaskNDArray | None = None) -> int:
         """Generates a single random sample from this space.
 
         A sample will be chosen uniformly at random with the mask if provided
@@ -80,14 +82,14 @@ class Discrete(Space[int]):
 
         return int(self.start + self.np_random.integers(self.n))
 
-    def contains(self, x) -> bool:
+    def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, int):
             as_int = x
         elif isinstance(x, (np.generic, np.ndarray)) and (
             np.issubdtype(x.dtype, np.integer) and x.shape == ()
         ):
-            as_int = int(x)  # type: ignore
+            as_int = int(x)
         else:
             return False
 
@@ -99,7 +101,7 @@ class Discrete(Space[int]):
             return f"Discrete({self.n}, start={self.start})"
         return f"Discrete({self.n})"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return (
             isinstance(other, Discrete)
@@ -107,7 +109,7 @@ class Discrete(Space[int]):
             and self.start == other.start
         )
 
-    def __setstate__(self, state):
+    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
         """Used when loading a pickled space.
 
         This method has to be implemented explicitly to allow for loading of legacy states.
