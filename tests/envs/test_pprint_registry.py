@@ -4,26 +4,25 @@ import gymnasium as gym
 # flake8: noqa
 
 
-def test_pprint_custom_registry(capfd):
+def test_pprint_custom_registry():
     """Testing a registry different from default."""
     a = {
         "CartPole-v0": gym.envs.registry["CartPole-v0"],
         "CartPole-v1": gym.envs.registry["CartPole-v1"],
     }
-    gym.pprint_registry(a)
+    out = gym.pprint_registry(a, disable_print=True)
 
     correct_out = """===== classic_control =====
 CartPole-v0 
 CartPole-v1 
 
 """
-    out, err = capfd.readouterr()
     assert out == correct_out
 
 
-def test_pprint_registry(capfd):
+def test_pprint_registry():
     """Testing the default registry, with no changes."""
-    gym.pprint_registry()
+    out = gym.pprint_registry(disable_print=True)
 
     correct_out = """===== classic_control =====
 Acrobot-v1                   
@@ -73,15 +72,13 @@ test/NoHumanNoRGB-v0
 test/NoHumanOldAPI-v0        
 
 """
-    out, err = capfd.readouterr()
     assert out == correct_out
 
 
-def test_pprint_registry_exclude_namespaces(capfd):
+def test_pprint_registry_exclude_namespaces():
     """Testing the default registry, with no changes."""
-    gym.pprint_registry(
-        max_rows=20,
-        exclude_namespaces=["classic_control"],
+    out = gym.pprint_registry(
+        max_rows=20, exclude_namespaces=["classic_control"], disable_print=True
     )
 
     correct_out = """===== box2d =====
@@ -128,15 +125,14 @@ test/NoHumanNoRGB-v0
 test/NoHumanOldAPI-v0        
 
 """
-    out, err = capfd.readouterr()
     assert out == correct_out
 
 
-def test_pprint_registry_no_entry_point(capfd):
+def test_pprint_registry_no_entry_point():
     """Test registry if there is environment with no entry point."""
 
     gym.register("NoNamespaceEnv", "no-entry-point")
-    gym.pprint_registry()
+    out = gym.pprint_registry(disable_print=True)
 
     correct_out = """===== classic_control =====
 Acrobot-v1                   
@@ -189,7 +185,6 @@ test/NoHumanOldAPI-v0
 NoNamespaceEnv               
 
 """
-    out, err = capfd.readouterr()
     assert out == correct_out
 
     del gym.envs.registry["NoNamespaceEnv"]
