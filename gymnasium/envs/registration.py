@@ -708,9 +708,17 @@ def pprint_registry(
     _registry: dict = registry,
     max_rows: int = 10,
     exclude_namespaces: Optional[List[str]] = None,
-    disable_print=False,
-) -> None:
-    """List the environments currently supported."""
+    disable_print: bool = False,
+) -> Optional[str]:
+    """Pretty print the environments in the registry.
+
+    Args:
+        _registry: Environment registry to be printed.
+        max_rows: Number of rows per column.
+        exclude_namespaces: Exclude any namespaces from being printed.
+        disable_print: Whether to return a string of all the namespaces and environment IDs
+            instead of printing it to console.
+    """
 
     # Defaultdict to store environment names according to namespace.
     namespace_envs = defaultdict(lambda: [])
