@@ -131,6 +131,9 @@ def test_frozenlake_map_generation_with_seed(map_size: int, seed: int):
     map1 = generate_random_map(size=map_size, seed=seed)
     map2 = generate_random_map(size=map_size, seed=seed)
     assert map1 == map2
+    map1 = generate_random_map(size=map_size)
+    map2 = generate_random_map(size=map_size)
+    assert map1 != map2
 
 
 def test_taxi_action_mask():
