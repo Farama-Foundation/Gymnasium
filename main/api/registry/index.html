@@ -630,7 +630,7 @@ otherwise will run according to this parameter (<cite>True</cite> = not run, <ci
 </section>
 <section id="all-registered-environments">
 <h2>All registered environments<a class="headerlink" href="#all-registered-environments" title="Permalink to this heading">#</a></h2>
-<p>To find all the registered Gymnasium environments, use the <code class="docutils literal notranslate"><span class="pre">gymnasium.envs.registry.keys()</span></code>.
+<p>To find all the registered Gymnasium environments, use the <code class="docutils literal notranslate"><span class="pre">gymnasium.pprint_registry()</span></code>.
 This will not include environments registered only in OpenAI Gym however can be loaded by <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.</p>
 </section>
 <section id="spec">
@@ -639,6 +639,26 @@ This will not include environments registered only in OpenAI Gym however can be 
 <dt class="sig sig-object py" id="gymnasium.spec">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">EnvSpec</span></span></span><a class="headerlink" href="#gymnasium.spec" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve the spec for the given environment from the global registry.</p>
+</dd></dl>
+
+</section>
+<section id="pretty-print-registry">
+<h2>Pretty print registry<a class="headerlink" href="#pretty-print-registry" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.pprint_registry">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">pprint_registry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_registry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">registry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_namespaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_print</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.pprint_registry" title="Permalink to this definition">#</a></dt>
+<dd><p>Pretty print the environments in the registry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_registry</strong> – Environment registry to be printed.</p></li>
+<li><p><strong>max_rows</strong> – Number of rows per column.</p></li>
+<li><p><strong>exclude_namespaces</strong> – Exclude any namespaces from being printed.</p></li>
+<li><p><strong>disable_print</strong> – Whether to return a string of all the namespaces and environment IDs
+instead of printing it to console.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -714,6 +734,10 @@ This will not include environments registered only in OpenAI Gym however can be 
 <li><a class="reference internal" href="#all-registered-environments">All registered environments</a></li>
 <li><a class="reference internal" href="#spec">Spec</a><ul>
 <li><a class="reference internal" href="#gymnasium.spec"><code class="docutils literal notranslate"><span class="pre">spec()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pretty-print-registry">Pretty print registry</a><ul>
+<li><a class="reference internal" href="#gymnasium.pprint_registry"><code class="docutils literal notranslate"><span class="pre">pprint_registry()</span></code></a></li>
 </ul>
 </li>
 </ul>
