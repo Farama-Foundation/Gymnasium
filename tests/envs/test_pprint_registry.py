@@ -10,20 +10,19 @@ def test_pprint_custom_registry():
         "CartPole-v0": gym.envs.registry["CartPole-v0"],
         "CartPole-v1": gym.envs.registry["CartPole-v1"],
     }
-    out = gym.pprint_registry(a)
+    out = gym.pprint_registry(a, disable_print=True)
 
     correct_out = """===== classic_control =====
 CartPole-v0 
 CartPole-v1 
 
 """
-
     assert out == correct_out
 
 
 def test_pprint_registry():
     """Testing the default registry, with no changes."""
-    out = gym.pprint_registry()
+    out = gym.pprint_registry(disable_print=True)
 
     correct_out = """===== classic_control =====
 Acrobot-v1                   
@@ -79,8 +78,7 @@ test/NoHumanOldAPI-v0
 def test_pprint_registry_exclude_namespaces():
     """Testing the default registry, with no changes."""
     out = gym.pprint_registry(
-        max_rows=20,
-        exclude_namespaces=["classic_control"],
+        max_rows=20, exclude_namespaces=["classic_control"], disable_print=True
     )
 
     correct_out = """===== box2d =====
@@ -134,7 +132,7 @@ def test_pprint_registry_no_entry_point():
     """Test registry if there is environment with no entry point."""
 
     gym.register("NoNamespaceEnv", "no-entry-point")
-    out = gym.pprint_registry()
+    out = gym.pprint_registry(disable_print=True)
 
     correct_out = """===== classic_control =====
 Acrobot-v1                   
