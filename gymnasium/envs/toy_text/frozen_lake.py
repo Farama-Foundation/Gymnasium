@@ -9,6 +9,7 @@ import gymnasium as gym
 from gymnasium import Env, spaces, utils
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
+from gymnasium.utils import seeding
 
 LEFT = 0
 DOWN = 1
@@ -51,7 +52,7 @@ def is_valid(board: List[List[str]], max_size: int) -> bool:
     return False
 
 
-def generate_random_map(size: int = 8, p: float = 0.8) -> List[str]:
+def generate_random_map(size: int = 8, p: float = 0.8, seed: int = None) -> List[str]:
     """Generates a random valid map (one that has a path from start to goal)
 
     Args:
@@ -64,9 +65,13 @@ def generate_random_map(size: int = 8, p: float = 0.8) -> List[str]:
     valid = False
     board = []  # initialize to make pyright happy
 
+    rng = np.random
+    if seed is not None:
+        rng, seed = seeding.np_random(seed)
+
     while not valid:
         p = min(1, p)
-        board = np.random.choice(["F", "H"], (size, size), p=[p, 1 - p])
+        board = rng.choice(["F", "H"], (size, size), p=[p, 1 - p])
         board[0][0] = "S"
         board[-1][-1] = "G"
         valid = is_valid(board, size)
