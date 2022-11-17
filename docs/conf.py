@@ -60,6 +60,7 @@ napoleon_custom_sections = [("Returns", "params_style")]
 
 # Autodoc
 autoclass_content = "both"
+autodoc_preserve_defaults = True
 
 # -- Options for HTML output -------------------------------------------------
 
