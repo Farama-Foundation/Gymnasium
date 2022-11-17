@@ -154,13 +154,10 @@ class FrozenLakeEnv(Env):
         - P(move down)=1/3
 
     To init the environment without a default value, specify explicitly the value of is_slippery
-    in the make command :
-
-    ```python
-    import gymnasium as gym
-    gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
-    ```
-
+    in the make command:
+    
+        import gymnasium as gym
+        gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
 
     ## Version History
     * v1: Bug fixes to rewards
