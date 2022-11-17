@@ -153,6 +153,15 @@ class FrozenLakeEnv(Env):
         - P(move up)=1/3
         - P(move down)=1/3
 
+    To init the environment without a default value, specify explicitly the value of is_slippery
+    in the make command :
+
+    ```python
+    import gymnasium as gym
+    gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
+    ```
+
+
     ## Version History
     * v1: Bug fixes to rewards
     * v0: Initial versions release (1.0.0)
@@ -169,7 +178,6 @@ class FrozenLakeEnv(Env):
         desc=None,
         map_name="4x4",
         is_slippery=True,
-    ##if is_slippery is true, 1/3 probability to move in intended direction, 1/3 probability to move in each perpendicular directions
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
