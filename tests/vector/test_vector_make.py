@@ -37,6 +37,9 @@ def test_vector_make_wrappers():
 
     sub_env = env.envs[0]
     assert isinstance(sub_env, gym.Env)
+    assert sub_env.spec is not None
+    if sub_env.spec.order_enforce:
+        assert has_wrapper(sub_env, OrderEnforcing)
     if sub_env.spec.max_episode_steps is not None:
         assert has_wrapper(sub_env, TimeLimit)
 

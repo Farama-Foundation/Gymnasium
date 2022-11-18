@@ -142,7 +142,9 @@ class FrozenLakeEnv(Env):
             "FFFHFFFG",
         ]
 
-    `is_slippery`: True/False. If True will move in intended direction with
+
+    #### Option is_slippery
+    Boolean, set true by default. When True, will move in intended direction with
     probability of 1/3 else will move in either perpendicular direction with
     equal probability of 1/3 in both directions.
 
@@ -150,6 +152,12 @@ class FrozenLakeEnv(Env):
         - P(move left)=1/3
         - P(move up)=1/3
         - P(move down)=1/3
+
+    To init the environment without a default value, specify explicitly the value of is_slippery
+    in the make command:
+
+        import gymnasium as gym
+        gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
 
     ## Version History
     * v1: Bug fixes to rewards
@@ -270,10 +278,11 @@ class FrozenLakeEnv(Env):
 
     def render(self):
         if self.render_mode is None:
+            assert self.spec is not None
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "
-                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+                f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
             )
             return
 

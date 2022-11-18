@@ -1,7 +1,5 @@
-"""Root __init__ of the gymnasium module setting the __all__ of gymnasium modules."""
+"""Root `__init__` of the gymnasium module setting the `__all__` of gymnasium modules."""
 # isort: skip_file
-
-from gymnasium import error
 
 from gymnasium.core import (
     Env,
@@ -10,24 +8,38 @@ from gymnasium.core import (
     ActionWrapper,
     RewardWrapper,
 )
-from gymnasium.spaces import Space
-from gymnasium.envs import make, spec, register, make_vec
+from gymnasium.spaces.space import Space
+from gymnasium.envs.registration import make, spec, register, registry, make_vec, pprint_registry
 from gymnasium.vector import VectorEnv
-from gymnasium import logger
-from gymnasium import vector
-from gymnasium import wrappers
+from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
+
 import os
 import sys
 
 __all__ = [
+    # core classes
     "Env",
     "VectorEnv",
-    "Space",
     "Wrapper",
+    "ObservationWrapper",
+    "ActionWrapper",
+    "RewardWrapper",
+    "Space",
+    # registration
     "make",
     "make_vec",
     "spec",
     "register",
+    "registry",
+    "pprint_registry",
+    # root files
+    "envs",
+    "spaces",
+    "utils",
+    "vector",
+    "wrappers",
+    "error",
+    "logger",
 ]
 __version__ = "0.26.3"
 
@@ -48,6 +60,5 @@ try:
     notice = notices.notices.get(__version__)
     if notice:
         print(notice, file=sys.stderr)
-
 except Exception:  # nosec
     pass

@@ -36,7 +36,9 @@ CHECK_ENV_IGNORE_WARNINGS = [
 
 
 @pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
+    "spec",
+    all_testing_env_specs,
+    ids=[spec.id for spec in all_testing_env_specs],
 )
 def test_envs_pass_env_checker(spec):
     """Check that all environments pass the environment checker with no warnings other than the expected."""
@@ -58,7 +60,9 @@ NUM_STEPS = 50
 
 
 @pytest.mark.parametrize(
-    "env_spec", all_testing_env_specs, ids=[env.id for env in all_testing_env_specs]
+    "env_spec",
+    all_testing_env_specs,
+    ids=[env.id for env in all_testing_env_specs],
 )
 def test_env_determinism_rollout(env_spec: EnvSpec):
     """Run a rollout with two environments and assert equality.
@@ -152,8 +156,7 @@ def check_rendered(rendered_frame, mode: str):
 render_mode_env_specs = [
     spec
     for spec in all_testing_env_specs
-    if ("mujoco" not in spec.entry_point or "v4" in spec.id)
-    and ("GymEnvironment" not in spec.entry_point)
+    if "mujoco" not in spec.entry_point or "v4" in spec.id
 ]
 
 
@@ -188,7 +191,7 @@ def test_render_modes(spec):
 @pytest.mark.parametrize(
     "env",
     all_testing_initialised_envs,
-    ids=[env.spec.id for env in all_testing_initialised_envs],
+    ids=[env.spec.id for env in all_testing_initialised_envs if env.spec is not None],
 )
 def test_pickle_env(env: gym.Env):
     pickled_env = pickle.loads(pickle.dumps(env))
