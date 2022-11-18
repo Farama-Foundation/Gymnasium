@@ -233,6 +233,9 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
 
 
 class CartPoleJaxEnv(JaxEnv, EzPickle):
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         env = CartPoleF(**kwargs)
