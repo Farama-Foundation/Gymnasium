@@ -75,8 +75,11 @@ GymV26Environment-v0
 
 def test_pprint_registry_exclude_namespaces():
     """Testing the default registry, with no changes."""
-    out = gym.pprint_registry(reduced_registry,
-        max_rows=20, exclude_namespaces=["classic_control"], disable_print=True
+    out = gym.pprint_registry(
+        reduced_registry,
+        max_rows=20,
+        exclude_namespaces=["classic_control"],
+        disable_print=True,
     )
 
     correct_out = """===== box2d =====
