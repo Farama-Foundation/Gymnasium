@@ -1,6 +1,7 @@
 import numpy as np
+import pytest
 
-from gymnasium import logger
+from gymnasium.logger import warn
 from tests.envs.utils import all_testing_env_specs
 
 
@@ -32,9 +33,10 @@ def check_rendered(rendered_frame, mode: str):
         assert isinstance(rendered_frame, np.ndarray)
         assert len(rendered_frame.shape) == 2
     else:
-        logger.warn(
+        warn(
             f"Unknown render mode: {mode}, cannot check that the rendered data is correct. Add case to `check_rendered`"
         )
+
 
 # We do not check render_mode for some mujoco envs and any old Gym environment wrapped by `GymEnvironment`
 render_mode_env_specs = [
@@ -55,7 +57,6 @@ def test_render_modes(spec):
     env = spec.make()
 
     assert "rgb_array" in env.metadata["render_modes"]
-    assert "human" in env.metadata["render_modes"]
 
     for mode in env.metadata["render_modes"]:
         if mode != "human":
