@@ -9,7 +9,7 @@ from gymnasium.core import (
     RewardWrapper,
 )
 from gymnasium.spaces.space import Space
-from gymnasium.envs.registration import make, spec, register, registry
+from gymnasium.envs.registration import make, spec, register, registry, pprint_registry
 from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
 
 import os
@@ -28,6 +28,7 @@ __all__ = [
     "spec",
     "register",
     "registry",
+    "pprint_registry",
     # root files
     "envs",
     "spaces",
