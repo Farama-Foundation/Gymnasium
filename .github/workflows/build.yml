@@ -5,7 +5,7 @@ permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
-  build:
+  build-all:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -13,8 +13,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-           docker build -f py.Dockerfile \
+           docker build -f bin/all-py.Dockerfile \
              --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
-             --tag gymnasium-docker .
+             --tag gymnasium-all-docker .
       - name: Run tests
-        run: docker run gymnasium-docker pytest
+        run: docker run gymnasium-all-docker pytest
+
+  build-necessary:
+    runs-on:
+      ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+           docker build -f bin/necessary-py.Dockerfile \
+             --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
+             --tag gymnasium-necessary-docker .
+      - name: Run tests
+        run: docker run gymnasium-all-docker pytest tests/test_core.py tests/envs/test_compatibility.py tests/envs/test_envs.py tests/spaces
