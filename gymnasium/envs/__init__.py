@@ -1,5 +1,12 @@
 from gymnasium.envs.registration import load_env_plugins as _load_env_plugins
-from gymnasium.envs.registration import make, make_vec, pprint_registry, register, registry, spec
+from gymnasium.envs.registration import (
+    make,
+    make_vec,
+    pprint_registry,
+    register,
+    registry,
+    spec,
+)
 
 # Hook to load plugins from entry points
 _load_env_plugins()
