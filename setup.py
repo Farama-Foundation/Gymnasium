@@ -43,16 +43,15 @@ extras = {
     "other": ["lz4>=3.1.0", "opencv-python>=3.0", "matplotlib>=3.0", "moviepy>=1.0.0"],
 }
 
-extras["testing"] = list(set(itertools.chain.from_iterable(extras.values()))) + [
-    "pytest==7.1.3",
-    "gym[classic_control, mujoco_py, mujoco, toy_text, other, atari, accept-rom-license]==0.26.2",
-]
-
 # All dependency groups - accept rom license as requires user to run
 all_groups = set(extras.keys()) - {"accept-rom-license"}
 extras["all"] = list(
     set(itertools.chain.from_iterable(map(lambda group: extras[group], all_groups)))
 )
+extras["testing"] = [
+    "pytest==7.1.3",
+    "gym==0.26.2",
+]
 
 version = get_version()
 header_count, long_description = get_description()
