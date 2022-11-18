@@ -173,7 +173,7 @@ class MountainCarEnv(gym.Env):
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "
-                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+                f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
             )
             return
 
