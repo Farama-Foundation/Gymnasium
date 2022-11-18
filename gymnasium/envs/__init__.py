@@ -1,9 +1,12 @@
-from gymnasium.envs.registration import load_env_plugins as _load_env_plugins
-from gymnasium.envs.registration import make, pprint_registry, register, registry, spec
-
-# Hook to load plugins from entry points
-_load_env_plugins()
-
+"""Registers the internal gym envs then loads the env plugins for module using the entry point."""
+from gymnasium.envs.registration import (
+    load_env_plugins,
+    make,
+    pprint_registry,
+    register,
+    registry,
+    spec,
+)
 
 # Classic
 # ----------------------------------------
@@ -318,3 +321,7 @@ register(
     entry_point="gymnasium.envs.mujoco.humanoidstandup_v4:HumanoidStandupEnv",
     max_episode_steps=1000,
 )
+
+
+# Hook to load plugins from entry points
+load_env_plugins()
