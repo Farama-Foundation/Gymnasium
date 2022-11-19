@@ -4,18 +4,18 @@ from typing import Any, Callable, Optional, Union
 
 import numpy as np
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.dev_wrappers import ArgType
 from gymnasium.error import InvalidBound
 
 
-class LambdaRewardV0(gymnasium.RewardWrapper):
+class LambdaRewardV0(gym.RewardWrapper):
     """A reward wrapper that allows a custom function to modify the step reward.
 
     Example:
-        >>> import gymnasium
+        >>> import gymnasium as gym
         >>> from gymnasium.wrappers import LambdaRewardV0
-        >>> env = gymnasium.make("CartPole-v1")
+        >>> env = gym.make("CartPole-v1")
         >>> env = LambdaRewardV0(env, lambda r: 2 * r + 1)
         >>> _ = env.reset()
         >>> _, rew, _, _, _ = env.step(0)
@@ -25,7 +25,7 @@ class LambdaRewardV0(gymnasium.RewardWrapper):
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         func: Callable[[ArgType], Any],
     ):
         """Initialize LambdaRewardV0 wrapper.
@@ -51,9 +51,9 @@ class ClipRewardsV0(LambdaRewardV0):
     """A wrapper that clips the rewards for an environment between an upper and lower bound.
 
     Example with an upper and lower bound:
-        >>> import gymnasium
+        >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ClipRewardsV0
-        >>> env = gymnasium.make("CartPole-v1")
+        >>> env = gym.make("CartPole-v1")
         >>> env = ClipRewardsV0(env, 0, 0.5)
         >>> env.reset()
         >>> _, rew, _, _, _ = env.step(1)
@@ -63,7 +63,7 @@ class ClipRewardsV0(LambdaRewardV0):
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         min_reward: Optional[Union[float, np.ndarray]] = None,
         max_reward: Optional[Union[float, np.ndarray]] = None,
     ):

@@ -6,7 +6,7 @@ import gymnasium as gym
 from gymnasium.error import InvalidAction
 from gymnasium.spaces import Box
 from gymnasium.wrappers import LambdaActionV0
-from tests.dev_wrappers.utils import TestingEnv
+from tests.testing_env import GenericTestEnv
 
 NUM_ENVS = 3
 BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
@@ -15,7 +15,7 @@ BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
 @pytest.mark.parametrize(
     ("env", "func", "action", "expected"),
     [
-        (TestingEnv(action_space=BOX_SPACE), lambda action: action + 2, 1, 3),
+        (GenericTestEnv(action_space=BOX_SPACE), lambda action: action + 2, 1, 3),
     ],
 )
 def test_lambda_action_v0(env, func, action, expected):

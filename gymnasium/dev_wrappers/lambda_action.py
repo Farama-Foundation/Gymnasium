@@ -2,17 +2,17 @@
 
 from typing import Any, Callable
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.core import ActType
 from gymnasium.dev_wrappers import ArgType
 
 
-class LambdaActionV0(gymnasium.ActionWrapper):
+class LambdaActionV0(gym.ActionWrapper):
     """A wrapper that provides a function to modify the action passed to :meth:`step`."""
 
     def __init__(
         self,
-        env: gymnasium.Env,
+        env: gym.Env,
         func: Callable[[ArgType], Any],
     ):
         """Initialize LambdaAction.
