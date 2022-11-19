@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.error import InvalidBound
 from gymnasium.wrappers import ClipRewardsV0, LambdaRewardV0
 
@@ -23,7 +23,7 @@ def test_lambda_reward(reward_fn, expected_reward):
     Tests if function is correctly applied
     to reward.
     """
-    env = gymnasium.make(ENV_ID)
+    env = gym.make(ENV_ID)
     env = LambdaRewardV0(env, reward_fn)
     env.reset(seed=SEED)
 
@@ -46,7 +46,7 @@ def test_lambda_reward_within_vector(reward_fn, expected_reward):
     to reward in a vectorized environment.
     """
     actions = [DISCRETE_ACTION for _ in range(NUM_ENVS)]
-    env = gymnasium.vector.make(ENV_ID, num_envs=NUM_ENVS)
+    env = gym.vector.make(ENV_ID, num_envs=NUM_ENVS)
     env = LambdaRewardV0(env, reward_fn)
     env.reset(seed=SEED)
 
@@ -64,7 +64,7 @@ def test_clip_reward(lower_bound, upper_bound, expected_reward):
     Test if reward is correctly clipped
     accordingly to the input args.
     """
-    env = gymnasium.make(ENV_ID)
+    env = gym.make(ENV_ID)
     env = ClipRewardsV0(env, lower_bound, upper_bound)
     env.reset(seed=SEED)
     _, rew, _, _, _ = env.step(DISCRETE_ACTION)
@@ -83,7 +83,7 @@ def test_clip_reward_within_vector(lower_bound, upper_bound, expected_reward):
     """
     actions = [DISCRETE_ACTION for _ in range(NUM_ENVS)]
 
-    env = gymnasium.vector.make(ENV_ID, num_envs=NUM_ENVS)
+    env = gym.vector.make(ENV_ID, num_envs=NUM_ENVS)
     env = ClipRewardsV0(env, lower_bound, upper_bound)
     env.reset(seed=SEED)
 
@@ -103,7 +103,7 @@ def test_clip_reward_incorrect_params(lower_bound, upper_bound):
     clip_rewards should raise an exception if, both low and upper
     bound of reward are `None` or if upper bound is lower than lower bound.
     """
-    env = gymnasium.make(ENV_ID)
+    env = gym.make(ENV_ID)
 
     with pytest.raises(InvalidBound):
         env = ClipRewardsV0(env, lower_bound, upper_bound)

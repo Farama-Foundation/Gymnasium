@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.error import InvalidAction
 from gymnasium.spaces import Box
 from gymnasium.wrappers import LambdaActionV0
@@ -13,16 +13,12 @@ BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
 
 
 @pytest.mark.parametrize(
-    ("env", "func", "action"),
+    ("env", "func", "action", "expected"),
     [
-        (
-            TestingEnv(action_space=BOX_SPACE),
-            lambda action: action.astype(np.int32),
-            np.float64(10),
-        ),
+        (TestingEnv(action_space=BOX_SPACE), lambda action: action + 2, 1, 3),
     ],
 )
-def test_lambda_action_v0(env, func, action):
+def test_lambda_action_v0(env, func, action, expected):
     """Tests lambda action.
     Tests if function is correctly applied to environment's action.
     """
@@ -30,27 +26,20 @@ def test_lambda_action_v0(env, func, action):
     _, _, _, _, info = wrapped_env.step(action)
     executed_action = info["action"]
 
-    assert isinstance(executed_action, type(func(action)))
+    assert executed_action == expected
 
 
-@pytest.mark.parametrize(
-    ("env", "func", "action"),
-    [
-        (
-            gymnasium.vector.make(
-                "CarRacing-v2", continuous=False, num_envs=NUM_ENVS, asynchronous=False
-            ),
-            lambda action: action.astype(np.int32),
-            np.array([np.float64(1.2) for _ in range(NUM_ENVS)]),
-        ),
-    ],
-)
-def test_lambda_action_v0_within_vector(env, func, action):
+def test_lambda_action_v0_within_vector():
     """Tests lambda action in vectorized environments.
     Tests if function is correctly applied to environment's action
     in vectorized environment.
     """
-    wrapped_env = LambdaActionV0(env, func)
+    env = gym.vector.make(
+        "CarRacing-v2", continuous=False, num_envs=NUM_ENVS, asynchronous=False
+    )
+    action = np.ones(NUM_ENVS, dtype=np.float64)
+
+    wrapped_env = LambdaActionV0(env, lambda action: action.astype(int))
     wrapped_env.reset()
 
     wrapped_env.step(action)
