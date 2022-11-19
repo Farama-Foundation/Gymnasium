@@ -709,7 +709,6 @@ def pprint_registry(
     num_cols: int = 3,
     exclude_namespaces: Optional[List[str]] = None,
     disable_print: bool = False,
-    test=None,
 ) -> Optional[str]:
     """Pretty print the environments in the registry.
 
@@ -752,7 +751,6 @@ def pprint_registry(
         if exclude_namespaces is not None and namespace in exclude_namespaces:
             continue
         return_str += f"{'=' * 5} {namespace} {'=' * 5}\n"  # Print namespace.
-        num_rows = (len(envs) // num_cols) + 1  # Calculate number of rows required.
         # Reference: https://stackoverflow.com/a/33464001
         for count, item in enumerate(sorted(envs), 1):
             return_str += (
