@@ -15,7 +15,7 @@ RUN apt-get -y update \
     ffmpeg cmake \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/

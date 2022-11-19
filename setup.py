@@ -1,5 +1,6 @@
 """Setups the project."""
 import itertools
+from typing import List, Dict
 
 from setuptools import find_packages, setup
 
@@ -32,7 +33,7 @@ def get_version():
 
 
 # Environment-specific dependencies.
-extras = {
+extras: Dict[str, List[str]] = {
     "atari": ["ale-py~=0.8.0"],
     "accept-rom-license": ["autorom[accept-rom-license]~=0.4.2"],
     "box2d": ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
@@ -51,7 +52,7 @@ extras["all"] = list(
 )
 extras["testing"] = [
     "pytest==7.1.3",
-    "gym==0.26.2",
+    "gym[atari, accept-rom-license]==0.26.2",
 ]
 
 version = get_version()
