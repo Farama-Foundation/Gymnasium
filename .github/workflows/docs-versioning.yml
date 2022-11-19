@@ -1,0 +1,59 @@
+name: Docs Versioning
+on:
+  push:
+    tags:
+      - 'v?*.*.*'
+permissions:
+  contents: write
+jobs:
+  docs:
+    name: Generate Website for new version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+            python-version: '3.9'
+
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        with:
+          strip_v: true
+
+      - name: Install dependencies
+        run: pip install -r docs/requirements.txt
+
+      - name: Install Gymnasium
+        run: pip install mujoco && pip install .[atari,accept-rom-license,box2d]
+
+      - name: Build Envs Docs
+        run: python docs/scripts/gen_mds.py && python docs/scripts/gen_envs_display.py
+
+      - name: Build
+        run: sphinx-build -b dirhtml -v docs _build
+
+      - name: Move 404
+        run: mv _build/404/index.html _build/404.html
+
+      - name: Update 404 links
+        run: python docs/scripts/move_404.py _build/404.html
+
+      - name: Remove .doctrees
+        run: rm -r _build/.doctrees
+
+      - name: Upload to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _build
+          target-folder: ${{steps.tag.outputs.tag}}
+          clean: false
+
+      - name: Upload to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _build
+          clean-exclude: |
+            *.*.*/
+            main

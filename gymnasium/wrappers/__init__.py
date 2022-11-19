@@ -6,6 +6,8 @@ from gymnasium.dev_wrappers.lambda_reward import ClipRewardsV0, LambdaRewardV0
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
 from gymnasium.wrappers.clip_action import ClipAction
+from gymnasium.wrappers.compatibility import EnvCompatibility
+from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from gymnasium.wrappers.filter_observation import FilterObservation
 from gymnasium.wrappers.flatten_observation import FlattenObservation
 from gymnasium.wrappers.frame_stack import FrameStack, LazyFrames
@@ -13,6 +15,7 @@ from gymnasium.wrappers.gray_scale_observation import GrayScaleObservation
 from gymnasium.wrappers.human_rendering import HumanRendering
 from gymnasium.wrappers.normalize import NormalizeObservation, NormalizeReward
 from gymnasium.wrappers.order_enforcing import OrderEnforcing
+from gymnasium.wrappers.pixel_observation import PixelObservationWrapper
 from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from gymnasium.wrappers.record_video import RecordVideo, capped_cubic_video_schedule
 from gymnasium.wrappers.render_collection import RenderCollection

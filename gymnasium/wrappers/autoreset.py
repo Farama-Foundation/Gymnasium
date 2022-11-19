@@ -8,6 +8,7 @@ class AutoResetWrapper(gym.Wrapper):
     When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,
     and the return format of :meth:`self.step` is as follows: ``(new_obs, final_reward, final_terminated, final_truncated, info)``
     with new step API and ``(new_obs, final_reward, final_done, info)`` with the old step API.
+
      - ``new_obs`` is the first observation after calling :meth:`self.env.reset`
      - ``final_reward`` is the reward after calling :meth:`self.env.step`, prior to calling :meth:`self.env.reset`.
      - ``final_terminated`` is the terminated value before calling :meth:`self.env.reset`.

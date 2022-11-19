@@ -53,6 +53,7 @@ gym.register(
 
 def test_make():
     env = gym.make("CartPole-v1", disable_env_checker=True)
+    assert env.spec is not None
     assert env.spec.id == "CartPole-v1"
     assert isinstance(env.unwrapped, cartpole.CartPoleEnv)
     env.close()
@@ -73,6 +74,7 @@ def test_make_max_episode_steps():
     # Default, uses the spec's
     env = gym.make("CartPole-v1", disable_env_checker=True)
     assert has_wrapper(env, TimeLimit)
+    assert env.spec is not None
     assert (
         env.spec.max_episode_steps == gym.envs.registry["CartPole-v1"].max_episode_steps
     )
@@ -81,6 +83,7 @@ def test_make_max_episode_steps():
     # Custom max episode steps
     env = gym.make("CartPole-v1", max_episode_steps=100, disable_env_checker=True)
     assert has_wrapper(env, TimeLimit)
+    assert env.spec is not None
     assert env.spec.max_episode_steps == 100
     env.close()
 
@@ -297,6 +300,7 @@ def test_make_kwargs():
         arg3="override_arg3",
         disable_env_checker=True,
     )
+    assert env.spec is not None
     assert env.spec.id == "test.ArgumentEnv-v0"
     assert isinstance(env.unwrapped, ArgumentEnv)
     assert env.arg1 == "arg1"

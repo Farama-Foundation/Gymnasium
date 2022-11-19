@@ -1,12 +1,15 @@
 """Implementation of a space that consists of binary np.ndarrays of a fixed shape."""
-from typing import Optional, Sequence, Tuple, Union
+from __future__ import annotations
+
+from typing import Any, Sequence
 
 import numpy as np
+import numpy.typing as npt
 
-from gymnasium.spaces.space import Space
+from gymnasium.spaces.space import MaskNDArray, Space
 
 
-class MultiBinary(Space[np.ndarray]):
+class MultiBinary(Space[npt.NDArray[np.int8]]):
     """An n-shape binary space.
 
     Elements of this space are binary arrays of a shape that is fixed during construction.
@@ -25,8 +28,8 @@ class MultiBinary(Space[np.ndarray]):
 
     def __init__(
         self,
-        n: Union[np.ndarray, Sequence[int], int],
-        seed: Optional[Union[int, np.random.Generator]] = None,
+        n: npt.NDArray[np.integer[Any]] | Sequence[int] | int,
+        seed: int | np.random.Generator | None = None,
     ):
         """Constructor of :class:`MultiBinary` space.
 
@@ -46,8 +49,8 @@ class MultiBinary(Space[np.ndarray]):
         super().__init__(input_n, np.int8, seed)
 
     @property
-    def shape(self) -> Tuple[int, ...]:
-        """Has stricter type than gymnasium.Space - never None."""
+    def shape(self) -> tuple[int, ...]:
+        """Has stricter type than gym.Space - never None."""
         return self._shape  # type: ignore
 
     @property
@@ -55,7 +58,7 @@ class MultiBinary(Space[np.ndarray]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: Optional[np.ndarray] = None) -> np.ndarray:
+    def sample(self, mask: MaskNDArray | None = None) -> npt.NDArray[np.int8]:
         """Generates a single random sample from this space.
 
         A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).
@@ -90,7 +93,7 @@ class MultiBinary(Space[np.ndarray]):
 
         return self.np_random.integers(low=0, high=2, size=self.n, dtype=self.dtype)
 
-    def contains(self, x) -> bool:
+    def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, Sequence):
             x = np.array(x)  # Promote list to array for contains check
@@ -98,14 +101,18 @@ class MultiBinary(Space[np.ndarray]):
         return bool(
             isinstance(x, np.ndarray)
             and self.shape == x.shape
-            and np.all((x == 0) | (x == 1))
+            and np.all(np.logical_or(x == 0, x == 1))
         )
 
-    def to_jsonable(self, sample_n) -> list:
+    def to_jsonable(
+        self, sample_n: Sequence[npt.NDArray[np.int8]]
+    ) -> list[Sequence[int]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return np.array(sample_n).tolist()
 
-    def from_jsonable(self, sample_n) -> list:
+    def from_jsonable(
+        self, sample_n: list[Sequence[int]]
+    ) -> list[npt.NDArray[np.int8]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [np.asarray(sample, self.dtype) for sample in sample_n]
 
@@ -113,6 +120,6 @@ class MultiBinary(Space[np.ndarray]):
         """Gives a string representation of this space."""
         return f"MultiBinary({self.n})"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance."""
         return isinstance(other, MultiBinary) and self.n == other.n

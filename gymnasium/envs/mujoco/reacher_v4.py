@@ -7,11 +7,11 @@ from gymnasium.spaces import Box
 
 class ReacherEnv(MujocoEnv, utils.EzPickle):
     """
-    ### Description
+    ## Description
     "Reacher" is a two-jointed robot arm. The goal is to move the robot's end effector (called *fingertip*) close to a
     target that is spawned at a random position.
 
-    ### Action Space
+    ## Action Space
     The action space is a `Box(-1, 1, (2,), float32)`. An action `(a, b)` represents the torques applied at the hinge joints.
 
     | Num | Action                                                                          | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit |
@@ -19,7 +19,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     | 0   | Torque applied at the first hinge (connecting the link to the point of fixture) | -1 | 1 | joint0  | hinge | torque (N m) |
     | 1   |  Torque applied at the second hinge (connecting the two links)                  | -1 | 1 | joint1  | hinge | torque (N m) |
 
-    ### Observation Space
+    ## Observation Space
 
     Observations consist of
 
@@ -60,7 +60,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     | 3   | y-coordinate of the target  | -Inf     | Inf      | target_y                         | slide | position (m)       |
 
 
-    ### Rewards
+    ## Rewards
     The reward consists of two parts:
     - *reward_distance*: This reward is a measure of how far the *fingertip*
     of the reacher (the unattached end) is from the target, with a more negative
@@ -78,7 +78,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     you should create a wrapper that computes the weighted reward from `info`.
 
 
-    ### Starting State
+    ## Starting State
     All observations start in state
     (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     with a noise added for stochasticity. A uniform noise in the range
@@ -89,14 +89,14 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     element ("fingertip" - "target") is calculated at the end once everything
     is set. The default setting has a framerate of 2 and a *dt = 2 * 0.01 = 0.02*
 
-    ### Episode End
+    ## Episode End
 
     The episode ends when any of the following happens:
 
     1. Truncation: The episode duration reaches a 50 timesteps (with a new random target popping up if the reacher's fingertip reaches it before 50 timesteps)
     2. Termination: Any of the state space values is no longer finite.
 
-    ### Arguments
+    ## Arguments
 
     No additional arguments are currently supported (in v2 and lower),
     but modifications can be made to the XML file in the assets folder
@@ -110,7 +110,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     There is no v3 for Reacher, unlike the robot environments where a v3 and
     beyond take `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc.
 
-    ### Version History
+    ## Version History
 
     * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
     * v2: All continuous control environments now use mujoco_py >= 1.50

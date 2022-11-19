@@ -1,14 +1,13 @@
-import sys
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
-import gymnasium as gym
+import gymnasium
 from gymnasium.spaces import Discrete
 from gymnasium.wrappers.compatibility import EnvCompatibility, LegacyEnv
 
 
-class LegacyEnvExplicit(LegacyEnv, gym.Env):
+class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
     """Legacy env that explicitly implements the old API."""
 
     observation_space = Discrete(1)
@@ -37,7 +36,7 @@ class LegacyEnvExplicit(LegacyEnv, gym.Env):
         pass
 
 
-class LegacyEnvImplicit(gym.Env):
+class LegacyEnvImplicit(gymnasium.Env):
     """Legacy env that implicitly implements the old API as a protocol."""
 
     observation_space = Discrete(1)
@@ -81,9 +80,7 @@ def test_explicit():
 
 def test_implicit():
     old_env = LegacyEnvImplicit()
-    if sys.version_info >= (3, 7):
-        # We need to give up on typing in Python 3.6
-        assert isinstance(old_env, LegacyEnv)
+    assert isinstance(old_env, LegacyEnv)
     env = EnvCompatibility(old_env, render_mode="rgb_array")
     assert env.observation_space == Discrete(1)
     assert env.action_space == Discrete(1)
@@ -95,12 +92,12 @@ def test_implicit():
 
 
 def test_make_compatibility_in_spec():
-    gym.register(
+    gymnasium.register(
         id="LegacyTestEnv-v0",
         entry_point=LegacyEnvExplicit,
         apply_api_compatibility=True,
     )
-    env = gym.make("LegacyTestEnv-v0", render_mode="rgb_array")
+    env = gymnasium.make("LegacyTestEnv-v0", render_mode="rgb_array")
     assert env.observation_space == Discrete(1)
     assert env.action_space == Discrete(1)
     assert env.reset() == (0, {})
@@ -110,12 +107,12 @@ def test_make_compatibility_in_spec():
     assert isinstance(img, np.ndarray)
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
-    del gym.envs.registration.registry["LegacyTestEnv-v0"]
+    del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
 
 
 def test_make_compatibility_in_make():
-    gym.register(id="LegacyTestEnv-v0", entry_point=LegacyEnvExplicit)
-    env = gym.make(
+    gymnasium.register(id="LegacyTestEnv-v0", entry_point=LegacyEnvExplicit)
+    env = gymnasium.make(
         "LegacyTestEnv-v0", apply_api_compatibility=True, render_mode="rgb_array"
     )
     assert env.observation_space == Discrete(1)
@@ -127,4 +124,4 @@ def test_make_compatibility_in_make():
     assert isinstance(img, np.ndarray)
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
-    del gym.envs.registration.registry["LegacyTestEnv-v0"]
+    del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]

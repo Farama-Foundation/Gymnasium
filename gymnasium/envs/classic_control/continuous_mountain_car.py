@@ -26,7 +26,7 @@ from gymnasium.error import DependencyNotInstalled
 
 class Continuous_MountainCarEnv(gym.Env):
     """
-    ### Description
+    ## Description
 
     The Mountain Car MDP is a deterministic MDP that consists of a car placed stochastically
     at the bottom of a sinusoidal valley, with the only possible actions being the accelerations
@@ -46,7 +46,7 @@ class Continuous_MountainCarEnv(gym.Env):
     }
     ```
 
-    ### Observation Space
+    ## Observation Space
 
     The observation is a `ndarray` with shape `(2,)` where the elements correspond to the following:
 
@@ -55,12 +55,12 @@ class Continuous_MountainCarEnv(gym.Env):
     | 0   | position of the car along the x-axis | -Inf | Inf | position (m) |
     | 1   | velocity of the car                  | -Inf | Inf | position (m) |
 
-    ### Action Space
+    ## Action Space
 
     The action is a `ndarray` with shape `(1,)`, representing the directional force applied on the car.
     The action is clipped in the range `[-1,1]` and multiplied by a power of 0.0015.
 
-    ### Transition Dynamics:
+    ## Transition Dynamics:
 
     Given an action, the mountain car follows the following transition dynamics:
 
@@ -72,24 +72,24 @@ class Continuous_MountainCarEnv(gym.Env):
     The collisions at either end are inelastic with the velocity set to 0 upon collision with the wall.
     The position is clipped to the range [-1.2, 0.6] and velocity is clipped to the range [-0.07, 0.07].
 
-    ### Reward
+    ## Reward
 
     A negative reward of *-0.1 * action<sup>2</sup>* is received at each timestep to penalise for
     taking actions of large magnitude. If the mountain car reaches the goal then a positive reward of +100
     is added to the negative reward for that timestep.
 
-    ### Starting State
+    ## Starting State
 
     The position of the car is assigned a uniform random value in `[-0.6 , -0.4]`.
     The starting velocity of the car is always assigned to 0.
 
-    ### Episode End
+    ## Episode End
 
     The episode ends if either of the following happens:
     1. Termination: The position of the car is greater than or equal to 0.45 (the goal position on top of the right hill)
     2. Truncation: The length of the episode is 999.
 
-    ### Arguments
+    ## Arguments
 
     ```python
     import gymnasium as gym
@@ -99,7 +99,7 @@ class Continuous_MountainCarEnv(gym.Env):
     On reset, the `options` parameter allows the user to change the bounds used to determine
     the new random state.
 
-    ### Version History
+    ## Version History
 
     * v0: Initial versions release (1.0.0)
     """
@@ -193,6 +193,15 @@ class Continuous_MountainCarEnv(gym.Env):
         return np.sin(3 * xs) * 0.45 + 0.55
 
     def render(self):
+        if self.render_mode is None:
+            assert self.spec is not None
+            gym.logger.warn(
+                "You are calling render method without specifying any render mode. "
+                "You can specify the render_mode at initialization, "
+                f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
+            )
+            return
+
         try:
             import pygame
             from pygame import gfxdraw

@@ -1,5 +1,5 @@
 from gymnasium.envs.registration import load_env_plugins as _load_env_plugins
-from gymnasium.envs.registration import make, register, registry, spec
+from gymnasium.envs.registration import make, pprint_registry, register, registry, spec
 
 # Hook to load plugins from entry points
 _load_env_plugins()
@@ -47,6 +47,30 @@ register(
     entry_point="gymnasium.envs.classic_control.acrobot:AcrobotEnv",
     reward_threshold=-100.0,
     max_episode_steps=500,
+)
+
+
+# Phys2d (jax classic control)
+# ----------------------------------------
+
+register(
+    id="CartPoleJax-v0",
+    entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
+    max_episode_steps=200,
+    reward_threshold=195.0,
+)
+
+register(
+    id="CartPoleJax-v1",
+    entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
+    max_episode_steps=500,
+    reward_threshold=475.0,
+)
+
+register(
+    id="PendulumJax-v0",
+    entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxEnv",
+    max_episode_steps=200,
 )
 
 # Box2d
@@ -317,4 +341,12 @@ register(
     id="HumanoidStandup-v4",
     entry_point="gymnasium.envs.mujoco.humanoidstandup_v4:HumanoidStandupEnv",
     max_episode_steps=1000,
+)
+
+
+# Gym conversion
+# ----------------------------------------
+register(
+    id="GymV26Environment-v0",
+    entry_point="gymnasium.envs.external.gym_env:GymEnvironment",
 )

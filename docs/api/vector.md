@@ -4,15 +4,26 @@ title: Vector
 
 # Vector
 
-```{eval-rst}
-.. autofunction:: gymnasium.vector.make
-```  
-
-
-## VectorEnv
+## Gymnasium.vector.VectorEnv
 
 ```{eval-rst}
-.. attribute:: gymnasium.vector.VectorEnv.action_space
+.. autoclass:: gymnasium.vector.VectorEnv
+```
+
+### Methods
+
+```{eval-rst}
+.. automethod:: gymnasium.vector.VectorEnv.reset
+
+.. automethod:: gymnasium.vector.VectorEnv.step
+
+.. automethod:: gymnasium.vector.VectorEnv.close
+```
+
+### Attributes
+
+```{eval-rst}
+.. attribute:: action_space
 
     The (batched) action space. The input actions of `step` must be valid elements of `action_space`.::
 
@@ -20,7 +31,7 @@ title: Vector
         >>> envs.action_space
         MultiDiscrete([2 2 2])
 
-.. attribute:: gymnasium.vector.VectorEnv.observation_space
+.. attribute:: observation_space
 
     The (batched) observation space. The observations returned by `reset` and `step` are valid elements of `observation_space`.::
 
@@ -28,7 +39,7 @@ title: Vector
         >>> envs.observation_space
         Box([[-4.8 ...]], [[4.8 ...]], (3, 4), float32)
 
-.. attribute:: gymnasium.vector.VectorEnv.single_action_space
+.. attribute:: single_action_space
 
     The action space of an environment copy.::
 
@@ -36,52 +47,29 @@ title: Vector
         >>> envs.single_action_space
         Discrete(2)
 
-.. attribute:: gymnasium.vector.VectorEnv.single_observation_space
+.. attribute:: single_observation_space
 
     The observation space of an environment copy.::
 
         >>> envs = gymnasium.vector.make("CartPole-v1", num_envs=3)
         >>> envs.single_action_space
         Box([-4.8 ...], [4.8 ...], (4,), float32)
-``` 
-
-
-
-### Reset
-
-```{eval-rst}
-.. automethod:: gymnasium.vector.VectorEnv.reset
-``` 
-
-```python
->>> envs = gymnasium.vector.make("CartPole-v1", num_envs=3)
->>> envs.reset()
-(array([[-0.02240574, -0.03439831, -0.03904812,  0.02810693],
-       [ 0.01586068,  0.01929009,  0.02394426,  0.04016077],
-       [-0.01314174,  0.03893502, -0.02400815,  0.0038326 ]],
-      dtype=float32), {})
 ```
-### Step
+
+## Making Vector Environments
 
 ```{eval-rst}
-.. automethod:: gymnasium.vector.VectorEnv.step
-``` 
+.. autofunction:: gymnasium.vector.make
+```
 
-```python
->>> envs = gymnasium.vector.make("CartPole-v1", num_envs=3)
->>> envs.reset()
->>> actions = np.array([1, 0, 1])
->>> observations, rewards, dones, infos = envs.step(actions)
+## Async Vector Env
 
->>> observations
-array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
-        [ 0.00788269, -0.17490888,  0.03393489,  0.31735462],
-        [ 0.04918966,  0.19421194,  0.02938497, -0.29495203]],
-        dtype=float32)
->>> rewards
-array([1., 1., 1.])
->>> dones
-array([False, False, False])
->>> infos
-{}
+```{eval-rst}
+.. autoclass:: gymnasium.vector.AsyncVectorEnv
+```
+
+## Sync Vector Env
+
+```{eval-rst}
+.. autoclass:: gymnasium.vector.SyncVectorEnv
 ```
