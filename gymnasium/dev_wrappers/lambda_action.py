@@ -8,18 +8,7 @@ from gymnasium.dev_wrappers import ArgType
 
 
 class LambdaActionV0(gymnasium.ActionWrapper):
-    """A wrapper that provides a function to modify the action passed to :meth:`step`.
-
-    Example to convert continuous actions to discrete:
-        >>> import gymnasium as gym
-        >>> import numpy as np
-        >>> from gymnasium.spaces import Dict
-        >>> from gymnasium.wrappers import LambdaActionV0
-        >>> env = gym.make("CarRacing-v2", continuous=False)
-        >>> env = LambdaActionV0(env, lambda action: action.astype(np.int32))
-        >>> _ = env.reset()
-        >>> obs, rew, term, trunc, info = env.step(np.float64(1.2))
-    """
+    """A wrapper that provides a function to modify the action passed to :meth:`step`."""
 
     def __init__(
         self,
