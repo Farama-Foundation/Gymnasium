@@ -1,4 +1,5 @@
 """Module of wrapper classes."""
+from gymnasium.dev_wrappers.time_aware_observation import TimeAwareObservationV0
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
 from gymnasium.wrappers.clip_action import ClipAction
