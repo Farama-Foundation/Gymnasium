@@ -1,4 +1,4 @@
-"""Lambda reward wrappers that uses jumpy for compatibility with jax (i.e. brax) and numpy environments."""
+"""Lambda reward wrappers which apply a function to the reward."""
 
 from typing import Any, Callable, Optional, Union
 
@@ -17,7 +17,7 @@ class LambdaRewardV0(gymnasium.RewardWrapper):
         >>> from gymnasium.wrappers import LambdaRewardV0
         >>> env = gymnasium.make("CartPole-v1")
         >>> env = LambdaRewardV0(env, lambda r: 2 * r + 1)
-        >>> env.reset()
+        >>> _ = env.reset()
         >>> _, rew, _, _, _ = env.step(0)
         >>> rew
         3.0
