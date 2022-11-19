@@ -8,19 +8,7 @@ from gymnasium.dev_wrappers import ArgType
 
 
 class LambdaObservationsV0(gymnasium.ObservationWrapper):
-    """Lambda observation wrapper where a function is provided that is applied to the observation.
-
-    Example:
-        >>> import gymnasium as gym
-        >>> from gymnasium.spaces import Dict, Discrete
-        >>> from gymnasium.wrappers import LambdaObservationsV0
-        >>> env = gym.make("CartPole-v1")
-        >>> env = LambdaObservationsV0(env, lambda obs: obs * 100)
-        >>> _ = env.reset()
-        >>> obs, rew, term, trunc, info = env.step(1)
-        >>> obs
-        array([ 9.995892, 432.83587, 23.945259, -626.16], dtype=float32)
-    """
+    """Lambda observation wrapper where a function is provided that is applied to the observation."""
 
     def __init__(
         self,
