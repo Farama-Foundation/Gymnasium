@@ -332,7 +332,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -472,11 +472,10 @@ For training libraries, the primary difference is to change <code class="docutil
 <h2>Removed code<a class="headerlink" href="#removed-code" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>GoalEnv - This was removed, users needing it should reimplement the environment or use Gymnasium Robotics which contains an implementation of this environment.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">gym.envs.classic_control</span> <span class="pre">import</span> <span class="pre">rendering</span></code> - This was removed in favour of users implementing their own rendering systems.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">gym.envs.classic_control</span> <span class="pre">import</span> <span class="pre">rendering</span></code> - This was removed in favour of users implementing their own rendering systems. Gymnasium environments are coded using pygame.</p></li>
+<li><p>Robotics environments - The robotics environments have been moved to the <a class="reference external" href="https://robotics.farama.org/">Gymnasium Robotics</a> project.</p></li>
+<li><p>Monitor wrapper - This wrapper was replaced with two separate wrapper, <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a> and <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></p></li>
 </ul>
-<p>Gymnasium environments are coded using pygame.
-* Robotics environments - The robotics environments have been moved to the <a class="reference external" href="https://robotics.farama.org/">Gymnasium Robotics</a> project.
-* Monitor wrapper - This wrapper was replaced with two separate wrapper, <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a> and <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></p>
 </section>
 </section>
 
