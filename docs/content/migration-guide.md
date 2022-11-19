@@ -106,8 +106,8 @@ For a more complete explanation of the changes, please refer to this `summary <h
 .. py:currentmodule:: gymnasium.wrappers
 
 * GoalEnv - This was removed, users needing it should reimplement the environment or use Gymnasium Robotics which contains an implementation of this environment.
-* ``from gym.envs.classic_control import rendering`` - This was removed in favour of users implementing their own rendering systems.
-Gymnasium environments are coded using pygame.
+* ``from gym.envs.classic_control import rendering`` - This was removed in favour of users implementing their own rendering systems. Gymnasium environments are coded using pygame.
 * Robotics environments - The robotics environments have been moved to the `Gymnasium Robotics <https://robotics.farama.org/>`_ project.
 * Monitor wrapper - This wrapper was replaced with two separate wrapper, :class:`RecordVideo` and :class:`RecordEpisodeStatistics`
+
 ```
