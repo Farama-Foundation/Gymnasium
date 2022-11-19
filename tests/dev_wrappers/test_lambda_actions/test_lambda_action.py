@@ -12,10 +12,19 @@ NUM_ENVS = 3
 BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
 
 
+def env_step_fn(self, action):
+    return 0, 0, False, False, {"action": action}
+
+
 @pytest.mark.parametrize(
     ("env", "func", "action", "expected"),
     [
-        (GenericTestEnv(action_space=BOX_SPACE), lambda action: action + 2, 1, 3),
+        (
+            GenericTestEnv(action_space=BOX_SPACE, step_fn=env_step_fn),
+            lambda action: action + 2,
+            1,
+            3,
+        ),
     ],
 )
 def test_lambda_action_v0(env, func, action, expected):
