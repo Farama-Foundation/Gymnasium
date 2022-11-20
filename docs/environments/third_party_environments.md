@@ -98,7 +98,7 @@ Reinforcement learning environments for compiler optimization tasks, such as LLV
 ### [CARL: context adaptive RL](https://github.com/automl/CARL)
 Configurable reinforcement learning environments for testing generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.
 
-### [matrix-mdp: Easily create discrete MDOs](https://github.com/Paul-543NA/matrix-mdp-gym)
+### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (`P_0(s)`, `P(s'| s, a)` and `R(s', s, a)`) into a gym environment that represents the discrete MDP ruled by these dynamics.
 
 ### [mo-gym: Multi-objective Reinforcement Learning environments](https://github.com/LucasAlegre/mo-gym)
