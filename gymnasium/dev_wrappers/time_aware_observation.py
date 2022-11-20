@@ -28,6 +28,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         OrderedDict([('obs',
         ...       array([ 0.02866629,  0.2310988 , -0.02614601, -0.2600732 ], dtype=float32)),
         ...      ('time', array([0.002]))])
+
     Flatten observation space example:
         >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservationV0(env, flatten=True)
