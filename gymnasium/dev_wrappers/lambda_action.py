@@ -6,7 +6,7 @@ import jumpy as jp
 
 import gymnasium as gym
 from gymnasium.core import ActType
-from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
+from gymnasium.dev_wrappers import ArgType, CompositeParameterType, ParameterType
 from gymnasium.dev_wrappers.tree_utils.make_scale_args import make_scale_args
 from gymnasium.dev_wrappers.tree_utils.transform_space_bounds import (
     transform_space_bounds,
@@ -60,7 +60,7 @@ class LambdaCompositeActionV0(LambdaActionV0):
         self,
         env: gym.Env,
         func: Callable[[Union[ArgType, ParameterType]], Any],
-        args: TreeParameterType,
+        args: CompositeParameterType,
         action_space: Optional[gym.Space] = None,
     ):
         """Initialize LambdaCompositeAction.
@@ -83,7 +83,7 @@ class LambdaCompositeActionV0(LambdaActionV0):
         """Apply function to action."""
         return apply_function(self.action_space, action, self.func, self.func_args)
 
-    def _transform_space(self, env: gym.Env, args: TreeParameterType) -> Any:
+    def _transform_space(self, env: gym.Env, args: CompositeParameterType) -> Any:
         """Process the space and apply the transformation."""
         return transform_space_bounds(env.action_space, args, transform_space_bounds)
 
@@ -119,7 +119,7 @@ class ClipActionV0(LambdaCompositeActionV0):
         Dict(body: Dict(head: Box(0.0, 3.0, (1,), float32)), left_arm: Discrete(4), right_arm: Box(0.0, 2.0, (1,), float32))
     """
 
-    def __init__(self, env: gym.Env, args: TreeParameterType):
+    def __init__(self, env: gym.Env, args: CompositeParameterType):
         """Constructor for the clip action wrapper.
 
         Args:
@@ -155,7 +155,7 @@ class RescaleActionsV0(LambdaCompositeActionV0):
         Dict(left_arm: Box(-1, 1, (1,), float32), right_arm: Box(-1, 1, (1,), float32))
     """
 
-    def __init__(self, env: gym.Env, args: TreeParameterType):
+    def __init__(self, env: gym.Env, args: CompositeParameterType):
         """Constructor for the scale action wrapper.
 
         Args:
@@ -168,7 +168,7 @@ class RescaleActionsV0(LambdaCompositeActionV0):
         super().__init__(env, self._scale, args, action_space)
 
     @staticmethod
-    def _scale(action: ActType, args: TreeParameterType) -> jp.ndarray:
+    def _scale(action: ActType, args: CompositeParameterType) -> jp.ndarray:
         new_low, new_high = args[:2]
         old_low, old_high = args[2:]
 
@@ -180,5 +180,7 @@ class RescaleActionsV0(LambdaCompositeActionV0):
         )
 
     @staticmethod
-    def _make_scale_args(env: gym.Env, args: TreeParameterType) -> TreeParameterType:
+    def _make_scale_args(
+        env: gym.Env, args: CompositeParameterType
+    ) -> CompositeParameterType:
         return make_scale_args(env.action_space, args, make_scale_args)

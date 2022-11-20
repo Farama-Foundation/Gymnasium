@@ -2,14 +2,14 @@
 from functools import singledispatch
 from typing import Any, Callable, Union
 
-from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
+from gymnasium.dev_wrappers import ArgType, CompositeParameterType, ParameterType
 from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space
 
 
 @singledispatch
 def transform_space_bounds(
     space: Space,
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
 ):
     """Transform space bounds with the provided args."""
@@ -21,7 +21,7 @@ def transform_space_bounds(
 @transform_space_bounds.register(MultiDiscrete)
 def _transform_space_discrete(
     space: Union[Discrete, MultiBinary, MultiDiscrete],
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
 ) -> Union[Discrete, MultiBinary, MultiDiscrete]:
     return space
@@ -30,7 +30,7 @@ def _transform_space_discrete(
 @transform_space_bounds.register(Box)
 def _transform_space_box(
     space: Box,
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
 ) -> Box:
     """Change `Box` space low and high value."""

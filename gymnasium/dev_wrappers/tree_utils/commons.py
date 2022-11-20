@@ -2,7 +2,7 @@
 from copy import deepcopy
 from typing import Any, Callable, Sequence, Union
 
-from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
+from gymnasium.dev_wrappers import ArgType, CompositeParameterType, ParameterType
 from gymnasium.dev_wrappers.tree_utils.transform_space_bounds import (
     transform_space_bounds,
 )
@@ -12,7 +12,7 @@ from gymnasium.spaces import Dict, Tuple
 @transform_space_bounds.register(Tuple)
 def _process_space_tuple(
     space: Tuple,
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
 ) -> Tuple:
     assert isinstance(args, Sequence)
@@ -29,7 +29,7 @@ def _process_space_tuple(
 @transform_space_bounds.register(Dict)
 def _process_space_dict(
     space: Dict,
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
 ) -> Dict:
     assert isinstance(args, dict)

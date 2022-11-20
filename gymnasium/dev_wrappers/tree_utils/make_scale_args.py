@@ -3,7 +3,7 @@ from copy import deepcopy
 from functools import singledispatch
 from typing import Any, Callable, Sequence, Union
 
-from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
+from gymnasium.dev_wrappers import ArgType, CompositeParameterType, ParameterType
 from gymnasium.spaces import (
     Box,
     Dict,
@@ -18,7 +18,7 @@ from gymnasium.spaces import (
 @singledispatch
 def make_scale_args(
     space: Space,
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
 ):
     """Compute args for rescaling action function.
@@ -38,7 +38,7 @@ def make_scale_args(
 @make_scale_args.register(MultiBinary)
 def _make_scale_args_not_scalable(
     space: Space,
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
 ):
     """Do nothing in case of not scalable spaces.
@@ -60,9 +60,9 @@ def _make_scale_args_box(
 @make_scale_args.register(Dict)
 def _make_scale_args_dict(
     space: Dict,
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
-) -> TreeParameterType:
+) -> CompositeParameterType:
     extended_args = deepcopy(args)
 
     for arg in args:
@@ -74,9 +74,9 @@ def _make_scale_args_dict(
 @make_scale_args.register(Tuple)
 def _make_scale_args_tuple(
     space: Tuple,
-    args: TreeParameterType,
+    args: CompositeParameterType,
     func: Callable[[Union[ArgType, ParameterType]], Any],
-) -> TreeParameterType:
+) -> CompositeParameterType:
     assert isinstance(args, Sequence)
     assert len(space) == len(args)
 

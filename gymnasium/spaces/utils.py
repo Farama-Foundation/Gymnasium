@@ -14,7 +14,7 @@ from typing import Any, Callable, TypeVar, Union, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
+from gymnasium.dev_wrappers import ArgType, CompositeParameterType, ParameterType
 from gymnasium.error import InvalidSpaceArguments
 from gymnasium.spaces import (
     Box,
@@ -486,7 +486,7 @@ def apply_function(
     space: Space,
     x: Any,
     func: Callable[[ArgType | ParameterType], Any],
-    args: TreeParameterType,
+    args: CompositeParameterType,
 ) -> Any:
     """Applies a function on ``x`` of shape ``space`` using the ``func`` callable and ``args`` arguments.
 
@@ -526,7 +526,7 @@ def _apply_function_fundamental(
     _,
     x: Any,
     func: Callable[[ArgType | ParameterType], Any],
-    *args: TreeParameterType,
+    *args: CompositeParameterType,
 ) -> Any:
     return func(x, *args)
 
@@ -537,7 +537,7 @@ def _apply_function_multidiscrete(
     space: list,
     x: Any,
     func: Callable[[ArgType | ParameterType], Any],
-    *args: TreeParameterType,
+    *args: CompositeParameterType,
 ) -> list[Any]:
     return [
         apply_function(subspace, val, func, arg)
@@ -550,7 +550,7 @@ def _apply_function_dict(
     space: Dict,
     x: dict[Any, Any],
     func: Callable[[ArgType | ParameterType], Any],
-    args: TreeParameterType,
+    args: CompositeParameterType,
 ) -> OrderedDict[Any, Any]:
     if not args:
         return OrderedDict(
@@ -579,7 +579,7 @@ def _apply_function_tuple(
     space: Tuple,
     x: Any,
     func: Callable[[ArgType | ParameterType], Any],
-    args: TreeParameterType,
+    args: CompositeParameterType,
 ) -> Tuple[Any]:
     if args is None:
         return tuple(
