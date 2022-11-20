@@ -6,21 +6,18 @@ import gymnasium as gym
 from gymnasium.error import InvalidAction
 from gymnasium.spaces import Box
 from gymnasium.wrappers import LambdaActionV0
+from tests.dev_wrappers.mock_data import generic_step_fn
 from tests.testing_env import GenericTestEnv
 
 NUM_ENVS = 3
 BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
 
 
-def env_step_fn(self, action):
-    return 0, 0, False, False, {"action": action}
-
-
 @pytest.mark.parametrize(
     ("env", "func", "action", "expected"),
     [
         (
-            GenericTestEnv(action_space=BOX_SPACE, step_fn=env_step_fn),
+            GenericTestEnv(action_space=BOX_SPACE, step_fn=generic_step_fn),
             lambda action: action + 2,
             1,
             3,
