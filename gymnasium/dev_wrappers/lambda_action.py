@@ -1,12 +1,12 @@
 """Lambda action wrapper which apply a function to the provided action."""
 
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Union
 
 import jumpy as jp
 
 import gymnasium as gym
 from gymnasium.core import ActType
-from gymnasium.dev_wrappers import ArgType, TreeParameterType
+from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
 from gymnasium.dev_wrappers.tree_utils.make_scale_args import make_scale_args
 from gymnasium.dev_wrappers.tree_utils.transform_space_bounds import (
     transform_space_bounds,
@@ -59,7 +59,7 @@ class LambdaCompositeActionV0(LambdaActionV0):
     def __init__(
         self,
         env: gym.Env,
-        func: Callable,
+        func: Callable[[Union[ArgType, ParameterType]], Any],
         args: TreeParameterType,
         action_space: Optional[gym.Space] = None,
     ):
@@ -79,11 +79,11 @@ class LambdaCompositeActionV0(LambdaActionV0):
         else:
             self.action_space = action_space
 
-    def action(self, action):
+    def action(self, action: ActType) -> Any:
         """Apply function to action."""
         return apply_function(self.action_space, action, self.func, self.func_args)
 
-    def _transform_space(self, env: gym.Env, args: TreeParameterType):
+    def _transform_space(self, env: gym.Env, args: TreeParameterType) -> Any:
         """Process the space and apply the transformation."""
         return transform_space_bounds(env.action_space, args, transform_space_bounds)
 
@@ -168,7 +168,7 @@ class ScaleActionsV0(LambdaCompositeActionV0):
         super().__init__(env, self._scale, args, action_space)
 
     @staticmethod
-    def _scale(action, args):
+    def _scale(action: ActType, args: TreeParameterType) -> jp.ndarray:
         new_low, new_high = args[:2]
         old_low, old_high = args[2:]
 
@@ -180,5 +180,5 @@ class ScaleActionsV0(LambdaCompositeActionV0):
         )
 
     @staticmethod
-    def _make_scale_args(env: gym.Env, args: TreeParameterType):
+    def _make_scale_args(env: gym.Env, args: TreeParameterType) -> TreeParameterType:
         return make_scale_args(env.action_space, args, make_scale_args)

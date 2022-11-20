@@ -1,9 +1,9 @@
 """A set of utility functions for lambda wrappers."""
 from copy import deepcopy
 from functools import singledispatch
-from typing import Callable, Sequence
+from typing import Any, Callable, Sequence, Union
 
-from gymnasium.dev_wrappers import TreeParameterType
+from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
 from gymnasium.spaces import (
     Box,
     Dict,
@@ -16,7 +16,11 @@ from gymnasium.spaces import (
 
 
 @singledispatch
-def make_scale_args(space: Space, args: TreeParameterType, fn: Callable):
+def make_scale_args(
+    space: Space,
+    args: TreeParameterType,
+    func: Callable[[Union[ArgType, ParameterType]], Any],
+):
     """Compute args for rescaling action function.
 
     Action space args needs to be extended in order
@@ -32,38 +36,52 @@ def make_scale_args(space: Space, args: TreeParameterType, fn: Callable):
 @make_scale_args.register(Discrete)
 @make_scale_args.register(MultiDiscrete)
 @make_scale_args.register(MultiBinary)
-def _make_scale_args_not_scalable(space: Space, args: TreeParameterType, fn: Callable):
+def _make_scale_args_not_scalable(
+    space: Space,
+    args: TreeParameterType,
+    func: Callable[[Union[ArgType, ParameterType]], Any],
+):
     """Do nothing in case of not scalable spaces.
 
-    aTrying to rescale `Discrete`, `Multibinary` and `MultiDiscrete`
+    Trying to rescale `Discrete`, `Multibinary` and `MultiDiscrete`
     spaces has no effect.
     """
 
 
 @make_scale_args.register(Box)
-def _make_scale_args_box(space: Box, args: Sequence, fn: Callable):
+def _make_scale_args_box(
+    space: Box, args: Sequence, func: Callable[[Union[ArgType, ParameterType]], Any]
+) -> ParameterType:
     if args is None:
         return (space.low, space.high, space.low, space.high)
     return (*args, space.low, space.high)
 
 
 @make_scale_args.register(Dict)
-def _make_scale_args_dict(space: Dict, args: TreeParameterType, fn: Callable):
+def _make_scale_args_dict(
+    space: Dict,
+    args: TreeParameterType,
+    func: Callable[[Union[ArgType, ParameterType]], Any],
+) -> TreeParameterType:
     extended_args = deepcopy(args)
 
     for arg in args:
-        extended_args[arg] = fn(space[arg], args[arg], fn)
+        extended_args[arg] = func(space[arg], args[arg], func)
 
     return extended_args
 
 
 @make_scale_args.register(Tuple)
-def _make_scale_args_tuple(space: Tuple, args: TreeParameterType, fn: Callable):
+def _make_scale_args_tuple(
+    space: Tuple,
+    args: TreeParameterType,
+    func: Callable[[Union[ArgType, ParameterType]], Any],
+) -> TreeParameterType:
     assert isinstance(args, Sequence)
     assert len(space) == len(args)
 
     extended_args = [arg for arg in args]
 
     for i in range(len(args)):
-        extended_args[i] = fn(space[i], args[i], fn)
+        extended_args[i] = func(space[i], args[i], func)
     return extended_args

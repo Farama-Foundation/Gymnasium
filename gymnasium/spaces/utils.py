@@ -14,7 +14,7 @@ from typing import Any, Callable, TypeVar, Union, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from gymnasium.dev_wrappers import TreeParameterType
+from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
 from gymnasium.error import InvalidSpaceArguments
 from gymnasium.spaces import (
     Box,
@@ -482,7 +482,12 @@ def _flatten_space_sequence(space: Sequence) -> Sequence:
 
 
 @singledispatch
-def apply_function(space: Space, x, func: Callable, args: TreeParameterType) -> Any:
+def apply_function(
+    space: Space,
+    x: Any,
+    func: Callable[[ArgType | ParameterType], Any],
+    args: TreeParameterType,
+) -> Any:
     """Applies a function on ``x`` of shape ``space`` using the ``func`` callable and ``args`` arguments.
 
     Example with fundamental space::
@@ -517,15 +522,23 @@ def apply_function(space: Space, x, func: Callable, args: TreeParameterType) -> 
 
 @apply_function.register(Box)
 @apply_function.register(Discrete)
-def _apply_function_fundamental(_, x: Any, func: Callable, *args: Any | None):
+def _apply_function_fundamental(
+    _,
+    x: Any,
+    func: Callable[[ArgType | ParameterType], Any],
+    *args: TreeParameterType,
+) -> Any:
     return func(x, *args)
 
 
 @apply_function.register(MultiBinary)
 @apply_function.register(MultiDiscrete)
 def _apply_function_multidiscrete(
-    space: list, x: Any, func: Callable, *args: Any | None
-):
+    space: list,
+    x: Any,
+    func: Callable[[ArgType | ParameterType], Any],
+    *args: TreeParameterType,
+) -> list[Any]:
     return [
         apply_function(subspace, val, func, arg)
         for subspace, val, arg in zip(space, x, *args)
@@ -534,8 +547,11 @@ def _apply_function_multidiscrete(
 
 @apply_function.register(Dict)
 def _apply_function_dict(
-    space: Dict, x: dict[Any, Any], func: Callable, args: Any | None
-):
+    space: Dict,
+    x: dict[Any, Any],
+    func: Callable[[ArgType | ParameterType], Any],
+    args: TreeParameterType,
+) -> OrderedDict[Any, Any]:
     if not args:
         return OrderedDict(
             [
@@ -559,7 +575,12 @@ def _apply_function_dict(
 
 
 @apply_function.register(Tuple)
-def _apply_function_tuple(space: Tuple, x: Any, func: Callable, args: Any | None):
+def _apply_function_tuple(
+    space: Tuple,
+    x: Any,
+    func: Callable[[ArgType | ParameterType], Any],
+    args: TreeParameterType,
+) -> Tuple[Any]:
     if args is None:
         return tuple(
             apply_function(subspace, val, func, None)
