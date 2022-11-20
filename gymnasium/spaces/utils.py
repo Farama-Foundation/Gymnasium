@@ -9,11 +9,12 @@ import operator as op
 import typing
 from collections import OrderedDict
 from functools import reduce, singledispatch
-from typing import Any, TypeVar, Union, cast
+from typing import Any, Callable, List, Optional, TypeVar, Union, cast
 
 import numpy as np
 from numpy.typing import NDArray
 
+from gymnasium.error import InvalidSpaceArguments
 from gymnasium.spaces import (
     Box,
     Dict,
@@ -477,3 +478,99 @@ def _flatten_space_text(space: Text) -> Box:
 @flatten_space.register(Sequence)
 def _flatten_space_sequence(space: Sequence) -> Sequence:
     return Sequence(flatten_space(space.feature_space))
+
+
+@singledispatch
+def apply_function(space: Space, x, func: Callable, args: FuncArgType[Any]) -> Any:
+    """Applies a function on ``x`` of shape ``space`` using the ``func`` callable and ``args`` arguments.
+
+    Example with fundamental space::
+        >>> box = Box(-1, 1, (1,))
+        >>> apply_function(box, 1, lambda x, arg: x * arg, 10)
+        ... 10
+
+    Example with dict (composite) space::
+        >>> space = Dict(left_arm=Box(-1, 1, (1,)), right_arm=Box(-1, 1, (1,)))
+        >>> x = {"left_arm": 1, "right_arm": 1}
+        >>> args = {"left_arm": 10, "right_arm": -10}
+        >>> apply_function(space, x, lambda x, arg: x * arg, args)
+        ... OrderedDict([('left_arm', 10), ('right_arm', -10)])
+
+    Example with tuple (composite) space::
+        >>> space = Tuple([Box(-1, 1, (1,)), Box(-1, 1, (1,))])
+        >>> x = [1, 1]
+        >>> args = [10, -10]
+        >>> apply_function(space, x, lambda x, arg: x * arg, args)
+        ... (10, -10)
+
+    Args:
+        space: The space of ``x``
+        x: The parameter to apply the function to
+        func: The function to apply to ``x``
+        args: The arguments to use with the function
+
+    Returns:
+        The updated ``x`` through the applied function and arguments
+    """
+
+
+@apply_function.register(Box)
+@apply_function.register(Discrete)
+def _apply_function_fundamental(_, x: Any, func: Callable, *args: Any | None):
+    return func(x, *args)
+
+
+@apply_function.register(MultiBinary)
+@apply_function.register(MultiDiscrete)
+def _apply_function_multidiscrete(
+    space: list, x: Any, func: Callable, *args: Any | None
+):
+    return [
+        apply_function(subspace, val, func, arg)
+        for subspace, val, arg in zip(space, x, *args)
+    ]
+
+
+@apply_function.register(Dict)
+def _apply_function_dict(
+    space: Dict, x: dict[Any, Any], func: Callable, args: Any | None
+):
+    if not args:
+        return OrderedDict(
+            [
+                (k, apply_function(subspace, x.get(k), func, None))
+                for k, subspace in space.spaces.items()
+            ]
+        )
+    elif isinstance(args, dict):
+        return OrderedDict(
+            [
+                (k, apply_function(subspace, x.get(k), func, args.get(k)))
+                if args.get(k) is not None
+                else (k, x.get(k))
+                for k, subspace in space.spaces.items()
+            ]
+        )
+    else:
+        raise InvalidSpaceArguments(
+            f"You are trying to apply a function on a `Dict` space with arguments of type {type(args)}. This is not supported; you should instead using args of type `dict` or `None`."
+        )
+
+
+@apply_function.register(Tuple)
+def _apply_function_tuple(space: Tuple, x: Any, func: Callable, args: Any | None):
+    if args is None:
+        return tuple(
+            apply_function(subspace, val, func, None)
+            for subspace, val in zip(space.spaces, x)
+        )
+    elif isinstance(args, typing.Sequence):
+        assert len(args) == len(space)
+        return tuple(
+            apply_function(subspace, val, func, arg) if arg is not None else val
+            for subspace, val, arg in zip(space.spaces, x, args)
+        )
+    else:
+        raise InvalidSpaceArguments(
+            f"You are trying to apply a function on a `Tuple` space with arguments of type {type(args)}. This is not supported; you should instead using args of type `Sequence` or `None`."
+        )
