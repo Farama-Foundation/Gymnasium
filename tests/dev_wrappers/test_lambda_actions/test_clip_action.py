@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import ClipActionsV0
+from gymnasium.wrappers import ClipActionV0
 from tests.dev_wrappers.mock_data import (
     DICT_SPACE,
     DICT_WITHIN_TUPLE_SPACE,
@@ -67,7 +67,7 @@ def test_clip_actions_v0(env, args, action_unclipped_env, action_clipped_env):
     obs, _, _, _, _ = env.step(action_unclipped_env)
 
     env.reset(seed=SEED)
-    wrapped_env = ClipActionsV0(env, args)
+    wrapped_env = ClipActionV0(env, args)
     wrapped_obs, _, _, _, _ = wrapped_env.step(action_clipped_env)
 
     assert np.alltrue(obs == wrapped_obs)
@@ -89,7 +89,7 @@ def test_clip_actions_v0_dict_action(env, args, action):
     Check whether actions in `Dict` action spaces are
     correctly clipped.
     """
-    wrapped_env = ClipActionsV0(env, args)
+    wrapped_env = ClipActionV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 
@@ -131,7 +131,7 @@ def test_clip_actions_v0_nested_dict_action(env, args, action):
     Check whether actions in nested `Dict` action spaces are
     correctly clipped.
     """
-    wrapped_env = ClipActionsV0(env, args)
+    wrapped_env = ClipActionV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 
@@ -159,7 +159,7 @@ def test_clip_actions_v0_tuple_action(env, args, action):
     Check whether actions in `Tuple` action spaces are
     correctly clipped.
     """
-    wrapped_env = ClipActionsV0(env, args)
+    wrapped_env = ClipActionV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 
@@ -193,7 +193,7 @@ def test_clip_actions_v0_nested_tuple_action(env, args, action):
     Check whether actions in nested `Tuple` action spaces are
     correctly clipped.
     """
-    wrapped_env = ClipActionsV0(env, args)
+    wrapped_env = ClipActionV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 
@@ -221,7 +221,7 @@ def test_clip_actions_v0_dict_within_tuple(env, args, action):
     Check whether actions performed in `Dict` action space
     within an outer `Tuple` action space is correctly clipped.
     """
-    wrapped_env = ClipActionsV0(env, args)
+    wrapped_env = ClipActionV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 
@@ -244,7 +244,7 @@ def test_clip_actions_v0_tuple_within_dict(env, args, action):
     Check whether actions performed in `Tuple` action space
     within an outer `Dict` action space is correctly clipped.
     """
-    wrapped_env = ClipActionsV0(env, args)
+    wrapped_env = ClipActionV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 

@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 import gymnasium
-from gymnasium.wrappers import ScaleActionsV0
+from gymnasium.wrappers import RescaleActionsV0
 from tests.dev_wrappers.mock_data import (
     BOX_HIGH,
     BOX_LOW,
@@ -52,7 +52,7 @@ def test_scale_actions_v0_box(env, args, action, scaled_action):
     obs, _, _, _, _ = env.step(action)
 
     env.reset(seed=SEED)
-    wrapped_env = ScaleActionsV0(env, args)
+    wrapped_env = RescaleActionsV0(env, args)
 
     obs_scaled, _, _, _, _ = wrapped_env.step(scaled_action)
 
@@ -92,7 +92,7 @@ def test_scale_actions_v0_box(env, args, action, scaled_action):
 )
 def test_scale_actions_v0_nested_dict(env, args, action):
     """Test action rescaling for nested `Dict` action spaces."""
-    wrapped_env = ScaleActionsV0(env, args)
+    wrapped_env = RescaleActionsV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 
@@ -110,7 +110,7 @@ def test_scale_actions_v0_tuple():
     args = [None, (NEW_BOX_LOW, NEW_BOX_HIGH)]
     action = [DISCRETE_ACTION, NEW_BOX_HIGH]
 
-    wrapped_env = ScaleActionsV0(env, args)
+    wrapped_env = RescaleActionsV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 
@@ -137,7 +137,7 @@ def test_scale_actions_v0_tuple():
 )
 def test_scale_actions_v0_nested_tuple(env, args, action):
     """Test action rescaling for nested `Tuple` action spaces."""
-    wrapped_env = ScaleActionsV0(env, args)
+    wrapped_env = RescaleActionsV0(env, args)
     _, _, _, _, info = wrapped_env.step(action)
     executed_actions = info["action"]
 

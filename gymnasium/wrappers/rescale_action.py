@@ -5,6 +5,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium import spaces
+from gymnasium.logger import deprecation
 
 
 class RescaleAction(gym.ActionWrapper):
@@ -40,6 +41,10 @@ class RescaleAction(gym.ActionWrapper):
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
+        deprecation(
+            "`RescaleAction` is marked as deprecated and will be removed in the near future. "
+            "Use RescaleActionV0 instead which allows support for composite action space and Jax."
+        )
         assert isinstance(
             env.action_space, spaces.Box
         ), f"expected Box action space, got {type(env.action_space)}"

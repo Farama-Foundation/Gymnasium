@@ -63,7 +63,7 @@ class LambdaCompositeActionV0(LambdaActionV0):
         args: TreeParameterType,
         action_space: Optional[gym.Space] = None,
     ):
-        """Initialize LambdaAction.
+        """Initialize LambdaCompositeAction.
 
         Args:
             env (Env): The gymnasium environment
@@ -88,16 +88,16 @@ class LambdaCompositeActionV0(LambdaActionV0):
         return transform_space_bounds(env.action_space, args, transform_space_bounds)
 
 
-class ClipActionsV0(LambdaCompositeActionV0):
+class ClipActionV0(LambdaCompositeActionV0):
     """A wrapper that clips actions passed to :meth:`step` with an upper and lower bound.
 
     Basic Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import ClipActionsV0
+        >>> from gymnasium.wrappers import ClipActionV0
         >>> env = gym.make("BipedalWalker-v3")
         >>> env.action_space
         Box(-1.0, 1.0, (4,), float32)
-        >>> env = ClipActionsV0(env, (-0.5, 0.5))
+        >>> env = ClipActionV0(env, (-0.5, 0.5))
         >>> env.action_space
         Box(-0.5, 0.5, (4,), float32)
 
@@ -105,7 +105,7 @@ class ClipActionsV0(LambdaCompositeActionV0):
         >>> env = gym.make('CarRacing-v2')
         >>> env.action_space
         Box([-1.  0.  0.], 1.0, (3,), float32)
-        >>> env = ClipActionsV0(env, (None, 0.5))
+        >>> env = ClipActionV0(env, (None, 0.5))
         >>> env.action_space
         Box([-1.  0.  0.], 0.5, (3,), float32)
 
@@ -114,7 +114,7 @@ class ClipActionsV0(LambdaCompositeActionV0):
         >>> env.action_space
         Dict(body: Dict(head: Box(0.0, 10.0, (1,), float32)), left_arm: Discrete(4), right_arm: Box(0.0, 5.0, (1,), float32))
         >>> args = {"right_arm": (0, 2), "body": {"head": (0, 3)}}
-        >>> env = ClipActionsV0(env, args)
+        >>> env = ClipActionV0(env, args)
         >>> env.action_space
         Dict(body: Dict(head: Box(0.0, 3.0, (1,), float32)), left_arm: Discrete(4), right_arm: Box(0.0, 2.0, (1,), float32))
     """
@@ -133,16 +133,16 @@ class ClipActionsV0(LambdaCompositeActionV0):
         )
 
 
-class ScaleActionsV0(LambdaCompositeActionV0):
+class RescaleActionsV0(LambdaCompositeActionV0):
     """A wrapper that scales actions passed to :meth:`step` with a scale factor.
 
     Basic Example:
         >>> import gymnasium
-        >>> from gymnasium.wrappers import ScaleActionsV0
+        >>> from gymnasium.wrappers import RescaleActionsV0
         >>> env = gym.make('BipedalWalker-v3')
         >>> env.action_space
         Box(-1.0, 1.0, (4,), float32)
-        >>> env = ScaleActionsV0(env, (-0.5, 0.5))
+        >>> env = RescaleActionsV0(env, (-0.5, 0.5))
         >>> env.action_space
         Box(-0.5, 0.5, (4,), float32)
 
@@ -150,7 +150,7 @@ class ScaleActionsV0(LambdaCompositeActionV0):
         >>> env = ExampleEnv(
         ...    action_space=Dict(left_arm=Box(-2, 2, (1,)), right_arm=Box(-2, 2, (1,))
         ... )
-        >>> env = ScaleActionsV0(env, {"left_arm": (-1,1), "right_arm": (-1,1)})
+        >>> env = RescaleActionsV0(env, {"left_arm": (-1,1), "right_arm": (-1,1)})
         >>> env.action_space
         Dict(left_arm: Box(-1, 1, (1,), float32), right_arm: Box(-1, 1, (1,), float32))
     """

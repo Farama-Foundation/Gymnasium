@@ -3,6 +3,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium import ActionWrapper
+from gymnasium.logger import deprecation
 from gymnasium.spaces import Box
 
 
@@ -25,6 +26,10 @@ class ClipAction(ActionWrapper):
         Args:
             env: The environment to apply the wrapper
         """
+        deprecation(
+            "`ClipAction` is marked as deprecated and will be removed in the near future. "
+            "Use ClipActionV0 instead which allows support for composite action space and Jax."
+        )
         assert isinstance(env.action_space, Box)
         super().__init__(env)
 

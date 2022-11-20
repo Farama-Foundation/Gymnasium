@@ -1,10 +1,10 @@
 """Module of wrapper classes."""
 from gymnasium import error
 from gymnasium.dev_wrappers.lambda_action import (
-    ClipActionsV0,
+    ClipActionV0,
     LambdaActionV0,
     LambdaCompositeActionV0,
-    ScaleActionsV0,
+    RescaleActionsV0,
 )
 from gymnasium.dev_wrappers.lambda_observations import LambdaObservationsV0
 from gymnasium.dev_wrappers.lambda_reward import ClipRewardsV0, LambdaRewardV0
