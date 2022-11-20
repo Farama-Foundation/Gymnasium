@@ -68,8 +68,8 @@ class LambdaCompositeActionV0(LambdaActionV0):
         Args:
             env (Env): The gymnasium environment
             func (Callable): function to apply to action
-            args: function arcuments
-            action_space: wrapped environment action space
+            args (TreeParameterType): function arguments
+            action_space (Space): wrapped environment action space
         """
         super().__init__(env, func)
 
@@ -123,8 +123,8 @@ class ClipActionsV0(LambdaCompositeActionV0):
         """Constructor for the clip action wrapper.
 
         Args:
-            env: The environment to wrap
-            args: The arguments for clipping the action space
+            env (Env): The environment to wrap
+            args (TreeParameterType): The arguments for clipping the action space
         """
         action_space = self._transform_space(env, args)
 
@@ -159,8 +159,8 @@ class ScaleActionsV0(LambdaCompositeActionV0):
         """Constructor for the scale action wrapper.
 
         Args:
-            env: The environment to wrap
-            args: The arguments for scaling the actions
+            env (Env): The environment to wrap
+            args (TreeParameterType): The arguments for scaling the actions
         """
         action_space = self._transform_space(env, args)
         args = self._make_scale_args(env, args)
