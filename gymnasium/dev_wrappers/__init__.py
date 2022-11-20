@@ -5,5 +5,5 @@ ArgType = TypeVar("ArgType")
 
 ParameterType = TypeVar("ParameterType")  # (float, float)
 TreeParameterType = Union[
-    ParameterType, Dict[str, "TreeParameterType"], Sequence["TreeParameterType"], None
+    ParameterType, Dict[str, "TreeParameterType"], Sequence["TreeParameterType"]
 ]

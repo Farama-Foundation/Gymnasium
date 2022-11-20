@@ -9,11 +9,12 @@ import operator as op
 import typing
 from collections import OrderedDict
 from functools import reduce, singledispatch
-from typing import Any, Callable, List, Optional, TypeVar, Union, cast
+from typing import Any, Callable, TypeVar, Union, cast
 
 import numpy as np
 from numpy.typing import NDArray
 
+from gymnasium.dev_wrappers import TreeParameterType
 from gymnasium.error import InvalidSpaceArguments
 from gymnasium.spaces import (
     Box,
@@ -481,7 +482,7 @@ def _flatten_space_sequence(space: Sequence) -> Sequence:
 
 
 @singledispatch
-def apply_function(space: Space, x, func: Callable, args: FuncArgType[Any]) -> Any:
+def apply_function(space: Space, x, func: Callable, args: TreeParameterType) -> Any:
     """Applies a function on ``x`` of shape ``space`` using the ``func`` callable and ``args`` arguments.
 
     Example with fundamental space::

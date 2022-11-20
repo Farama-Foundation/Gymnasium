@@ -6,7 +6,12 @@ import jumpy as jp
 
 import gymnasium as gym
 from gymnasium.core import ActType
-from gymnasium.dev_wrappers import ArgType, ParameterType, TreeParameterType
+from gymnasium.dev_wrappers import ArgType, TreeParameterType
+from gymnasium.dev_wrappers.tree_utils.make_scale_args import make_scale_args
+from gymnasium.dev_wrappers.tree_utils.transform_space_bounds import (
+    transform_space_bounds,
+)
+from gymnasium.spaces.utils import apply_function
 
 
 class LambdaActionV0(gym.ActionWrapper):
@@ -75,7 +80,7 @@ class LambdaCompositeActionV0(LambdaActionV0):
             args: function arcuments
             action_space: wrapped environment action space
         """
-        super().__init__(env)
+        super().__init__(env, func)
 
         self.func_args = args
         if action_space is None:
@@ -87,7 +92,7 @@ class LambdaCompositeActionV0(LambdaActionV0):
         """Apply function to action."""
         return apply_function(self.action_space, action, self.func, self.func_args)
 
-    def _transform_space(self, env: gym.Env, args: FuncArgType):
+    def _transform_space(self, env: gym.Env, args: TreeParameterType):
         """Process the space and apply the transformation."""
         return transform_space_bounds(env.action_space, args, transform_space_bounds)
 
@@ -123,7 +128,7 @@ class ClipActionsV0(LambdaCompositeActionV0):
         Dict(body: Dict(head: Box(0.0, 3.0, (1,), float32)), left_arm: Discrete(4), right_arm: Box(0.0, 2.0, (1,), float32))
     """
 
-    def __init__(self, env: gym.Env, args: FuncArgType[typing.Tuple[float, float]]):
+    def __init__(self, env: gym.Env, args: TreeParameterType):
         """Constructor for the clip action wrapper.
 
         Args:
@@ -159,9 +164,9 @@ class ScaleActionsV0(LambdaCompositeActionV0):
         Dict(left_arm: Box(-1, 1, (1,), float32), right_arm: Box(-1, 1, (1,), float32))
     """
 
-    def __init__(self, env: gym.Env, args: FuncArgType[typing.Tuple[float, float]]):
+    def __init__(self, env: gym.Env, args: TreeParameterType):
         """Constructor for the scale action wrapper.
-        
+
         Args:
             env: The environment to wrap
             args: The arguments for scaling the actions
@@ -184,5 +189,5 @@ class ScaleActionsV0(LambdaCompositeActionV0):
         )
 
     @staticmethod
-    def _make_scale_args(env: gym.Env, args: FuncArgType):
+    def _make_scale_args(env: gym.Env, args: TreeParameterType):
         return make_scale_args(env.action_space, args, make_scale_args)
