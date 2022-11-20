@@ -13,3 +13,4 @@ ale-py~=0.8.0
 mujoco==2.2
 mujoco_py<2.2,>=2.1
 imageio>=2.14.1
+brax-jumpy>=0.1.0
