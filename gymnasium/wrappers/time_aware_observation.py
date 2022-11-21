@@ -2,6 +2,7 @@
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.logger import deprecation
 from gymnasium.spaces import Box
 
 
@@ -27,6 +28,10 @@ class TimeAwareObservation(gym.ObservationWrapper):
         Args:
             env: The environment to apply the wrapper
         """
+        deprecation(
+            "`TimeAwareObservation` is marked as deprecated and will be removed in the near future."
+            "Use TimeAwareObservationV0 instead which allows support for composite action space and Jax."
+        )
         super().__init__(env)
         assert isinstance(env.observation_space, Box)
         assert env.observation_space.dtype == np.float32
