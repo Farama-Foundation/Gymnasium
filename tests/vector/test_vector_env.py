@@ -112,3 +112,62 @@ def test_final_obs_info(vectoriser):
     assert info["final_observation"] == np.array([0]) and info["final_info"] == {
         "action": 3
     }
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    (
+        SyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=True),
+        partial(AsyncVectorEnv, shared_memory=False),
+    ),
+    ids=["Sync", "Async with shared memory", "Async without shared memory"],
+)
+def test_reset_with_list_of_options(vectoriser):
+    """Tests that the vector environments can be reset with different options."""
+
+    def reset_fn(self, seed=None, options=None):
+        return [0], dict(options=options, **(options or {}))
+
+    def thunk():
+        return GenericTestEnv(reset_fn=reset_fn)
+
+    env = vectoriser([thunk, thunk, thunk])
+    _, infos = env.reset()
+    assert np.array_equal(infos["options"], (None, None, None))
+
+    # Test options broadcasting.
+    options = {"arg1": 123, "arg2": "abc", "arg3": True}
+    _, infos = env.reset(options=options)
+    assert np.array_equal(infos["options"], (options, options, options))
+    assert np.array_equal(infos["arg1"], (123, 123, 123))
+    assert np.array_equal(infos["arg2"], ("abc", "abc", "abc"))
+    assert np.array_equal(infos["arg3"], (True, True, True))
+
+    # When not all options are either list, tuple, or ndarray, default to options broadcasting.
+    options = {"arg1": "123", "arg2": ("a", "b", "c")}
+    _, infos = env.reset(options=options)
+    assert np.array_equal(infos["options"], (options, options, options))
+    assert np.array_equal(infos["arg1"], ("123", "123", "123"))
+    for value in infos["arg2"]:
+        assert value == ("a", "b", "c")
+
+    # When not all options have the same length, default to options broadcasting.
+    options = {"arg1": [1, 2], "arg2": [1, 2, 3]}
+    _, infos = env.reset(options=options)
+    assert np.array_equal(infos["options"], (options, options, options))
+
+    for dtype in (list, tuple, np.array):
+        options = {"arg1": dtype([1, 2, 3]), "arg2": [1, 2, 3]}
+        _, infos = env.reset(options=options)
+        assert np.array_equal(infos["arg1"], options["arg1"])
+        assert np.array_equal(infos["arg2"], options["arg2"])
+
+        # When options is omitted (or None), reuse cached options.
+        _, infos = env.reset()
+        assert np.array_equal(infos["arg1"], options["arg1"])
+        assert np.array_equal(infos["arg2"], options["arg2"])
+
+        _, infos = env.reset(options=None)
+        assert np.array_equal(infos["arg1"], options["arg1"])
+        assert np.array_equal(infos["arg2"], options["arg2"])
