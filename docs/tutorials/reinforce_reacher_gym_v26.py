@@ -237,6 +237,7 @@ sns.set(style='darkgrid', context='talk', palette='rainbow')
 sns.lineplot(x="episodes", y="reward", data=df1).set(title = 'REINFORCE for Reacher-v4')
 plt.show()
 
+# Learning curve: /_static/img/tutorials/reinforce_reacher_gym_v26.png
 
 # %%
 # References
