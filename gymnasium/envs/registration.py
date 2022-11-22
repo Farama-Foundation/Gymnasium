@@ -706,7 +706,7 @@ def spec(env_id: str) -> EnvSpec:
 
 def pprint_registry(
     _registry: dict = registry,
-    max_rows: int = 10,
+    num_cols: int = 3,
     exclude_namespaces: Optional[List[str]] = None,
     disable_print: bool = False,
 ) -> Optional[str]:
@@ -714,7 +714,7 @@ def pprint_registry(
 
     Args:
         _registry: Environment registry to be printed.
-        max_rows: Number of rows per column.
+        num_cols: Number of columns to arrange environments in, for display.
         exclude_namespaces: Exclude any namespaces from being printed.
         disable_print: Whether to return a string of all the namespaces and environment IDs
             instead of printing it to console.
@@ -751,16 +751,13 @@ def pprint_registry(
         if exclude_namespaces is not None and namespace in exclude_namespaces:
             continue
         return_str += f"{'=' * 5} {namespace} {'=' * 5}\n"  # Print namespace.
-        num_columns = (
-            len(envs) // max_rows
-        ) + 1  # Calculate number of columns required.
         # Reference: https://stackoverflow.com/a/33464001
         for count, item in enumerate(sorted(envs), 1):
             return_str += (
                 item.ljust(max_justify) + " "
             )  # Print column with justification.
             # Once all rows printed, switch to new column.
-            if count % num_columns == 0 or count == len(envs):
+            if count % num_cols == 0 or count == len(envs):
                 return_str += "\n"
         return_str += "\n"
 
