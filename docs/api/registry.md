@@ -21,11 +21,18 @@ Environments can also be created through python imports.
 
 ## All registered environments
 
-To find all the registered Gymnasium environments, use the `gymnasium.envs.registry.keys()`.
+To find all the registered Gymnasium environments, use the `gymnasium.pprint_registry()`.
 This will not include environments registered only in OpenAI Gym however can be loaded by `gymnasium.make`.
 
 ## Spec
 
 ```{eval-rst}
 .. autofunction:: gymnasium.spec
+```
+
+
+## Pretty print registry
+
+```{eval-rst}
+.. autofunction:: gymnasium.pprint_registry
 ```
