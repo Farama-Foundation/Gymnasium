@@ -65,13 +65,11 @@ def generate_random_map(size: int = 8, p: float = 0.8, seed: int = None) -> List
     valid = False
     board = []  # initialize to make pyright happy
 
-    rng = np.random
-    if seed is not None:
-        rng, seed = seeding.np_random(seed)
+    np_random, _ = seeding.np_random(seed)
 
     while not valid:
         p = min(1, p)
-        board = rng.choice(["F", "H"], (size, size), p=[p, 1 - p])
+        board = np_random.choice(["F", "H"], (size, size), p=[p, 1 - p])
         board[0][0] = "S"
         board[-1][-1] = "G"
         valid = is_valid(board, size)
