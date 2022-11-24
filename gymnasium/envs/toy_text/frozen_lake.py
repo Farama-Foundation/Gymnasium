@@ -58,6 +58,7 @@ def generate_random_map(size: int = 8, p: float = 0.8, seed: int = None) -> List
     Args:
         size: size of each side of the grid
         p: probability that a tile is frozen
+        seed: optional seed to ensure the generation of reproducible maps
 
     Returns:
         A random valid map
