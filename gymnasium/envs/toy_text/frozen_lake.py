@@ -52,7 +52,9 @@ def is_valid(board: List[List[str]], max_size: int) -> bool:
     return False
 
 
-def generate_random_map(size: int = 8, p: float = 0.8, seed: int = None) -> List[str]:
+def generate_random_map(
+    size: int = 8, p: float = 0.8, seed: Optional[int] = None
+) -> List[str]:
     """Generates a random valid map (one that has a path from start to goal)
 
     Args:
