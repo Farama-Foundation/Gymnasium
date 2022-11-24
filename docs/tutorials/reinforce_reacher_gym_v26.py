@@ -1,30 +1,62 @@
-"""Gymnasium v26 new step function - Solving Reacher-v4 with REINFORCE.
+"""Solving Reacher-v4 with REINFORCE.
 
 ====================================================================
 
-This tutorial aims to familiarise users with Gymnasium v26's new .step() function
+
 """
 
 # %%
-# Introduction
-# ------------------------
-# This tutorial aims to familiarise users with Gymnasium v26’s new
-# .step() function.
-#    In v21, the type definition of step() is
-#    tuple\ ``[ObsType, SupportsFloat, bool, dict[str, Any]`` representing
-#    the next observation, the reward from the step, if the episode is
-#    done, and additional info from the step. Due to reproducibility
-#    issues that will be expanded on in a blog post soon, we have changed
-#    the type definition to
-#    tuple\ ``[ObsType, SupportsFloat, bool, bool, dict[str, Any]``]
-#    adding an extra boolean value. This additional bool corresponds to
-#    the older done, which has been changed to terminated and
-#    truncated.These changes were introduced in Gym v26 (turned off by
-#    default in v25).
-# In this tutorial, we will be using the REINFORCE algorithm [1] to solve
-# the task of 'Reacher'. Reacher is a two-jointed robot arm. The goal is
-# to move the robot's end effector (called a fingertip) close to a target
-# that is spawned at a random position.
+# .. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig1.jpeg
+#   :width: 650
+#   :alt: agent-environment-diagram
+#
+# This tutorial serves 2 purposes:
+# - To understand how to implement REINFORCE [1] from scratch to solve Mujoco's Reacher
+# - Understand Gymnasium v26's new .step() function
+
+# We will be using **REINFORCE**, one of the earliest policy gradient methods. Unlike going under the burden of learning a value function first and then deriving a policy out of it,
+# REINFORCE optimizes the policy directly. In other words, it is trained to maximize the probability of Monte-Carlo returns. More on that later.
+
+# We will be solving a simple robotic-arm task, called **Reacher**. Reacher is a two-jointed robot arm.
+# The goal is to move the robot's end effector (called a fingertip) close to a target that is spawned at a random position. More information on the environment could be
+# found at https://gymnasium.farama.org/environments/mujoco/reacher/
+#
+
+# Now something on Gymnasium v26's new .step() function
+#
+# ``env.step(A)`` allows us to take an action 'A' in the current environment 'env'. The environment then executes the action
+# and returns five variables (as of Gymnasium v26):
+#
+# -  ``next_state``: This is the observation that the agent will receive
+#    after taking the action.
+# -  ``reward``: This is the reward that the agent will receive after
+#    taking the action.
+# -  ``terminated``: This is a boolean variable that indicates whether or
+#    not the environment has terminated.
+# -  ``truncated``: This is a boolean variable that also indicates whether
+#    the episode ended by early truncation, i.e., a time limit is reached.
+# -  ``info``: This is a dictionary that might contain additional
+#    information about the environment.
+
+# **Summary**
+#
+# **Objective**: To move Reacher's fingertip close to the target
+#
+# **Actions**: Reacher is a continuous action space. An action (a, b) represents:
+#  - a: Torque applied at the first hinge (connecting the link to the point of fixture)
+#  - b: Torque applied at the second hinge (connecting the two links)
+#
+# **Approach**: We use PyTorch to code REINFORCE from scratch to train a Neural Network policy to master Reacher.
+#
+
+
+# %%
+# Imports and Environment Setup
+# ------------------------------
+#
+
+# Author: Siddarth Chandrasekar
+# License: MIT License
 
 import random
 
@@ -43,10 +75,14 @@ plt.rcParams["figure.figsize"] = (10, 5)
 
 # %%
 # Policy Network
-# ------------------------
-# A policy is a mapping from the current environment observation to a probability distribution of the actions to be taken. The policy used in tutorial is
-# parameterized by a neural network. It consists of a 2 linear layers that is shared between both the predicted mean and standard deviation.
-# Further, single individual linear layer is used to estimate the mean and the standard deviation. TanH is used as a non-linearity between the hidden layers.
+# ------------------------------
+#
+# We start by building a policy that the agent will learn using REINFORCE.
+# A policy is a mapping from the current environment observation to a probability distribution of the actions to be taken.
+# The policy used in the tutorial is parameterized by a neural network. It consists of 2 linear layers that are shared between both the predicted mean and standard deviation.
+# Further, the single individual linear layers are used to estimate the mean and the standard deviation. ``nn.Tanh`` is used as a non-linearity between the hidden layers.
+# The following function estimates a mean and standard deviation of a normal distribution from which an action is sampled. Hence it is expected for the policy to learn
+# appropriate weights to output means and standard deviation based on the current observation.
 
 
 class Policy_Network(nn.Module):
@@ -62,8 +98,8 @@ class Policy_Network(nn.Module):
         """
         super().__init__()
 
-        hidden_space1 = 16
-        hidden_space2 = 32
+        hidden_space1 = 16  # Nothing special with 16, feel free to change
+        hidden_space2 = 32  # Nothing special with 32, feel free to change
 
         # Shared Network
         self.shared_net = nn.Sequential(
@@ -80,7 +116,7 @@ class Policy_Network(nn.Module):
         self.policy_stddev_net = nn.Sequential(nn.Linear(hidden_space2, action_space))
 
     def forward(self, x):
-        """Returns the mean and standard deviation of a normal distribution from which an action is sampled from.
+        """Conditioned on the observation, returns the mean and standard deviation of a normal distribution from which an action is sampled from.
 
         Args:
             x : tensor - Observation from the environment
@@ -105,11 +141,21 @@ class Policy_Network(nn.Module):
 
 
 # %%
-# REINFORCE Algorithm
-# ------------------------
-# REINFORCE is a policy gradient algorithm that aims to maximize the expected reward. It is a Monte-Carlo variant of policy gradients.
-# It involves collecting trajectories using the current policy to update the policy parameters at end of the episode.
-# This implementation uses entropy regularization which promotes action diversity
+# Building an agent
+# ------------------------------
+#
+# .. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig1.jpeg
+#
+# Now that we are done building the policy, let us build **REINFORCE** which gives life to the policy network.
+# The algorithm of REINFORCE could be found above. On top of REINFORCE, we use entropy regularization to promote action diversity.
+# Doing so, we aim to maximize, not just the Monte-Carlo return, but also the entropy of the action. The impact of entropy or the amount of
+# exploration is controlled by a parameter, namely ``beta``.
+#
+# Note: The choice of hyperparameters is to train a decently performing agent. No extensive hyperparameter
+# tuning was done.
+
+# Tip: Increase total episodes and play with ``learning_rate`` and ``beta`` to improve the agent's performance
+#
 
 
 class REINFORCE:
@@ -124,15 +170,15 @@ class REINFORCE:
             beta : float - entropy weight factor (controls exploration)
 
         """
+
+        # Hyperparameters
         self.learning_rate = 1e-4  # Learning rate for policy optimization
         self.gamma = 0.99  # Discount factor
         self.beta = beta  # Entropy weight - controls the level of exploration
-
         self.eps = 1e-6  # small number for mathematical stability
 
         self.probs = []  # Stores probability values of the sampled action
         self.rewards = []  # Stores the corresponding rewards
-
         self.entropy = 0
 
         self.net = Policy_Network(observation_space, action_space)
@@ -175,7 +221,7 @@ class REINFORCE:
         deltas = torch.tensor(Gs)
 
         loss = 0
-        # minimize -1 * prob * (reward obtained  entropy)
+        # minimize -1 * prob * (reward obtained + entropy)
         for log_prob, delta in zip(self.probs, deltas):
             loss += log_prob.mean() * (delta + (self.beta * self.entropy)) * (-1)
 
@@ -191,25 +237,26 @@ class REINFORCE:
 
 
 # %%
-# Train the Agent
-# -------------------
+# Now lets train the policy using REINFORCE to master the task of Reacher.
 #
 # Following is the overview of the training procedure
-#
 #
 #    for seed in random seeds:
 #        reinitialize agent
 #        for episode in max no of episodes:
 #            until episode is done:
 #                sample action based on current observation
-#                take action to receive reward and next observation
+#                take action and receive reward and next observation
 #                store action take, its probability, and the observed reward
 #            update the policy
 #
+# Note: Deep RL is fairly brittle concerning random seed in a lot of common use cases (https://spinningup.openai.com/en/latest/spinningup/spinningup.html).
+# Hence it is important to test out various seeds, which we will be doing.
+
 
 # Create and wrap the environment
 env = gym.make("Reacher-v4")
-wrapped_env = gym.wrappers.RecordEpisodeStatistics(env, 50)
+wrapped_env = gym.wrappers.RecordEpisodeStatistics(env, 50)  # Records episode-reward
 
 episodes = int(7e3)  # Total number of episodes
 observation_space = 11  # Observation-space of Reacher-v4
@@ -276,6 +323,9 @@ sns.set(style="darkgrid", context="talk", palette="rainbow")
 sns.lineplot(x="episodes", y="reward", data=df1).set(title="REINFORCE for Reacher-v4")
 plt.show()
 
+# %%
+# .. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig3.png
+#
 
 # %%
 # References
