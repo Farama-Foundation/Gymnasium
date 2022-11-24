@@ -37,7 +37,7 @@ extras = {
     "accept-rom-license": ["autorom[accept-rom-license]~=0.4.2"],
     "box2d": ["box2d-py==2.3.5", "pygame==2.1.3.dev8", "swig==4.*"],
     "classic_control": ["pygame==2.1.3.dev8"],
-    "mujoco_py": ["mujoco_py<2.2,>=2.1"],
+    "mujoco_py": ["mujoco_py"],
     "mujoco": ["mujoco==2.2", "imageio>=2.14.1"],
     "toy_text": ["pygame==2.1.3.dev8"],
     "jax": ["jax==0.3.25", "jaxlib==0.3.25"],
