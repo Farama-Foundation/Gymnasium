@@ -2,7 +2,7 @@
 Training using REINFORCE for Mujoco
 ===================================
 
-.. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig1.jpeg
+.. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig1.gif
   :width: 650
   :alt: agent-environment-diagram
 
@@ -60,6 +60,8 @@ plt.rcParams["figure.figsize"] = (10, 5)
 # %%
 # Policy Network
 # ~~~~~~~~~~~~~~
+#
+# .. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig2.jpeg
 #
 # We start by building a policy that the agent will learn using REINFORCE.
 # A policy is a mapping from the current environment observation to a probability distribution of the actions to be taken.
@@ -128,7 +130,7 @@ class Policy_Network(nn.Module):
 # Building an agent
 # ~~~~~~~~~~~~~~~~~
 #
-# .. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig2.jpeg
+# .. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig3.jpeg
 #
 # Now that we are done building the policy, let us build **REINFORCE** which gives life to the policy network.
 # The algorithm of REINFORCE could be found above. On top of REINFORCE, we use entropy regularization to promote action diversity.
@@ -303,7 +305,7 @@ sns.lineplot(x="episodes", y="reward", data=df1).set(title="REINFORCE for Reache
 plt.show()
 
 # %%
-# .. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig3.png
+# .. image:: /_static/img/tutorials/reinforce_reacher_gym_v26_fig4.png
 #
 # Author: Siddarth Chandrasekar
 #
