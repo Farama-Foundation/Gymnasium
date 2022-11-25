@@ -601,7 +601,7 @@ def make(
     render_modes = None
     if hasattr(env_creator, "metadata"):
         _check_metadata(env_creator.metadata)
-        render_modes = env_creator.get("render_modes")
+        render_modes = env_creator.metadata.get("render_modes")
     mode = _kwargs.get("render_mode")
     apply_human_rendering = False
     apply_render_collection = False
