@@ -608,14 +608,13 @@ def make(
 
     if mode is not None and render_modes is not None and mode not in render_modes:
         # Apply the `HumanRendering` wrapper, if the mode=="human" but "human" not in render_modes
-        displayable_mode = render_modes.get("rgb_array_list")
-        displayable_mode = render_modes.get("rgb_array", displayable_mode)
-        if mode == "human" and displayable_mode is not None:
+        displayable_modes = {"rgb_array", "rgb_array_list"}.intersection(render_modes)
+        if mode == "human" and len(displayable_modes) > 0:
             logger.warn(
                 "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
                 "The HumanRendering wrapper is being applied to your environment."
             )
-            _kwargs["render_mode"] = displayable_mode
+            _kwargs["render_mode"] = displayable_modes.pop()
             apply_human_rendering = True
         elif mode.endswith("_list") and mode[: -len("_list")] in render_modes:
             _kwargs["render_mode"] = mode[: -len("_list")]
