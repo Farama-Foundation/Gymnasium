@@ -422,7 +422,9 @@ def _check_spec_register(spec: EnvSpec):
 
 def _check_metadata(metadata_: dict):
     if not isinstance(metadata_, dict):
-        raise error.InvalidMetadata(f"Expect the environment metadata to be dict, actual type: {type(metadata)}")
+        raise error.InvalidMetadata(
+            f"Expect the environment metadata to be dict, actual type: {type(metadata)}"
+        )
 
     render_modes = metadata_.get("render_modes")
     if render_modes is None:
