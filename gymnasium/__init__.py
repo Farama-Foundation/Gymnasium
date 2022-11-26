@@ -10,10 +10,8 @@ from gymnasium.core import (
 )
 from gymnasium.spaces.space import Space
 from gymnasium.envs.registration import make, spec, register, registry, pprint_registry
-from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
+from gymnasium import envs, spaces, utils, vector, wrappers, error, logger, experimental
 
-import os
-import sys
 
 __all__ = [
     # core classes
@@ -37,6 +35,7 @@ __all__ = [
     "wrappers",
     "error",
     "logger",
+    "experimental",
 ]
 __version__ = "0.26.3"
 
@@ -44,6 +43,9 @@ __version__ = "0.26.3"
 # SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using
 #   pygame
 # DSP is far more benign (and should probably be the default in SDL anyways)
+
+import os
+import sys
 
 if sys.platform.startswith("linux"):
     os.environ["SDL_AUDIODRIVER"] = "dsp"
