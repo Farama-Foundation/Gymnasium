@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from typing import (
     Callable,
     Dict,
+    Iterable,
     List,
     Optional,
     Sequence,
@@ -431,9 +432,9 @@ def _check_metadata(metadata_: dict):
         logger.warn(
             f"The environment creator metadata doesn't include `render_modes`, contains: {list(metadata_.keys())}"
         )
-    elif not isinstance(render_modes, Sequence):
+    elif not isinstance(render_modes, Iterable):
         logger.warn(
-            f"Expects the environment metadata render_modes to be a Sequence, actual type: {type(render_modes)}"
+            f"Expects the environment metadata render_modes to be a Iterable, actual type: {type(render_modes)}"
         )
 
 
