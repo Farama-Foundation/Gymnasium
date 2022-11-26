@@ -1,9 +1,10 @@
+# fmt: off
 """
 Training using REINFORCE for Mujoco
 ===================================
 
 .. image:: /_static/img/tutorials/reinforce_invpend_gym_v26_fig1.gif
-  :width: 650
+  :width: 400
   :alt: agent-environment-diagram
 
 This tutorial serves 2 purposes:
@@ -13,13 +14,17 @@ This tutorial serves 2 purposes:
 We will be using **REINFORCE**, one of the earliest policy gradient methods. Unlike going under the burden of learning a value function first and then deriving a policy out of it,
 REINFORCE optimizes the policy directly. In other words, it is trained to maximize the probability of Monte-Carlo returns. More on that later.
 
-**Inverted Pendulum** is Mujoco's cartpole but now powered by the Mujoco physics simulator - whcih allows more complex experiments (such as varying the effects of gravity). 
-This environment involves a cart that can moved linearly, with a pole fixed on it at one end and having another end free. The cart can be pushed left or right, and the goal is to balance the pole on the top of the cart by applying forces on the cart. 
+**Inverted Pendulum** is Mujoco's cartpole but now powered by the Mujoco physics simulator -
+which allows more complex experiments (such as varying the effects of gravity).
+This environment involves a cart that can moved linearly, with a pole fixed on it at one end and having another end free.
+The cart can be pushed left or right, and the goal is to balance the pole on the top of the cart by applying forces on the cart.
 More information on the environment could be found at https://gymnasium.farama.org/environments/mujoco/inverted_pendulum/
 
 **Training Objectives**: To balance the pole (inverted pendulum) on top of the cart
 
-**Actions**: The agent takes a 1D vector for actions. The action space is a continuous ``(action)`` in ``[-3, 3]``, where action represents the numerical force applied to the cart (with magnitude representing the amount of force and sign representing the direction)
+**Actions**: The agent takes a 1D vector for actions. The action space is a continuous ``(action)`` in ``[-3, 3]``,
+where action represents the numerical force applied to the cart
+(with magnitude representing the amount of force and sign representing the direction)
 
 **Approach**: We use PyTorch to code REINFORCE from scratch to train a Neural Network policy to master Inverted Pendulum.
 
@@ -33,11 +38,7 @@ and returns five variables:
 -  ``terminated``: This is a boolean variable that indicates whether or not the environment has terminated.
 -  ``truncated``: This is a boolean variable that also indicates whether the episode ended by early truncation, i.e., a time limit is reached.
 -  ``info``: This is a dictionary that might contain additional information about the environment.
-
-Imports and Environment Setup
-------------------------------
 """
-
 from __future__ import annotations
 
 import random
@@ -134,11 +135,10 @@ class Policy_Network(nn.Module):
 # The algorithm of REINFORCE could be found above. As mentioned before, REINFORCE aims to maximize the Monte-Carlo returns.
 #
 # Fun Fact: REINFROCE is an acronym for " 'RE'ward 'I'ncrement 'N'on-negative 'F'actor times 'O'ffset 'R'einforcement times 'C'haracteristic 'E'ligibility
-# 
+#
 # Note: The choice of hyperparameters is to train a decently performing agent. No extensive hyperparameter
 # tuning was done.
 #
-
 
 
 class REINFORCE:
@@ -181,7 +181,7 @@ class REINFORCE:
         distrib = Normal(action_means[0] + self.eps, action_stddevs[0] + self.eps)
         action = distrib.sample()
         prob = distrib.log_prob(action)
-        
+
         action = action.numpy()
 
         self.probs.append(prob)
@@ -220,11 +220,11 @@ class REINFORCE:
 #
 # Following is the overview of the training procedure
 #
-#    for seed in random seeds:
+#    for seed in random seeds
 #        reinitialize agent
 #
-#        for episode in range of max number of episodes:
-#            until episode is done:
+#        for episode in range of max number of episodes
+#            until episode is done
 #                sample action based on current observation
 #
 #                take action and receive reward and next observation
@@ -241,8 +241,10 @@ env = gym.make("InvertedPendulum-v4")
 wrapped_env = gym.wrappers.RecordEpisodeStatistics(env, 50)  # Records episode-reward
 
 total_num_episodes = int(5e3)  # Total number of episodes
-obs_space_dims = env.observation_space.shape[0]  # Observation-space of InvertedPendulum-v4 (4)
-action_space_dims = env.action_space.shape[0]  # Action-space of InvertedPendulum-v4 (1)
+# Observation-space of InvertedPendulum-v4 (4)
+obs_space_dims = env.observation_space.shape[0]
+# Action-space of InvertedPendulum-v4 (1)
+action_space_dims = env.action_space.shape[0]
 rewards_over_seeds = []
 
 for seed in [1, 2, 3, 5, 8]:  # Fibonacci seeds
@@ -294,7 +296,9 @@ rewards_to_plot = [[reward[0] for reward in rewards] for rewards in rewards_over
 df1 = pd.DataFrame(rewards_to_plot).melt()
 df1.rename(columns={"variable": "episodes", "value": "reward"}, inplace=True)
 sns.set(style="darkgrid", context="talk", palette="rainbow")
-sns.lineplot(x="episodes", y="reward", data=df1).set(title="REINFORCE for InvertedPendulum-v4")
+sns.lineplot(x="episodes", y="reward", data=df1).set(
+    title="REINFORCE for InvertedPendulum-v4"
+)
 plt.show()
 
 # %%
