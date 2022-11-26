@@ -182,7 +182,7 @@ class PendulumFunctional(
         pygame.quit()
 
 
-class PendulumEnv(FunctionalJaxCompatibilityEnv, EzPickle):
+class PendulumJaxEnv(FunctionalJaxCompatibilityEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 
