@@ -5,7 +5,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.error import InvalidBound
-from gymnasium.experimental.wrappers import ClipRewardsV0, LambdaRewardV0
+from gymnasium.experimental.wrappers import ClipRewardV0, LambdaRewardV0
 
 ENV_ID = "CartPole-v1"
 DISCRETE_ACTION = 0
@@ -65,7 +65,7 @@ def test_clip_reward(lower_bound, upper_bound, expected_reward):
     accordingly to the input args.
     """
     env = gym.make(ENV_ID)
-    env = ClipRewardsV0(env, lower_bound, upper_bound)
+    env = ClipRewardV0(env, lower_bound, upper_bound)
     env.reset(seed=SEED)
     _, rew, _, _, _ = env.step(DISCRETE_ACTION)
 
@@ -84,7 +84,7 @@ def test_clip_reward_within_vector(lower_bound, upper_bound, expected_reward):
     actions = [DISCRETE_ACTION for _ in range(NUM_ENVS)]
 
     env = gym.vector.make(ENV_ID, num_envs=NUM_ENVS)
-    env = ClipRewardsV0(env, lower_bound, upper_bound)
+    env = ClipRewardV0(env, lower_bound, upper_bound)
     env.reset(seed=SEED)
 
     _, rew, _, _, _ = env.step(actions)
@@ -106,4 +106,4 @@ def test_clip_reward_incorrect_params(lower_bound, upper_bound):
     env = gym.make(ENV_ID)
 
     with pytest.raises(InvalidBound):
-        env = ClipRewardsV0(env, lower_bound, upper_bound)
+        env = ClipRewardV0(env, lower_bound, upper_bound)

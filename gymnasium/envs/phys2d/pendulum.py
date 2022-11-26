@@ -10,15 +10,17 @@ import numpy as np
 from jax.random import PRNGKey
 
 import gymnasium as gym
-from gymnasium.envs.phys2d.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
+from gymnasium.experimental.func2env import FunctionalJaxCompatibilityEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
 
 
-class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]):
+class PendulumFunctional(
+    FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
+):
     """Pendulum but in jax and functional."""
 
     max_speed = 8
@@ -180,13 +182,13 @@ class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
         pygame.quit()
 
 
-class PendulumJaxEnv(JaxEnv, EzPickle):
+class PendulumFunctionalJaxCompatibilityEnv(FunctionalJaxCompatibilityEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-        env = PendulumF(**kwargs)
+        env = PendulumFunctional(**kwargs)
         env.transform(jax.jit)
         action_space = env.action_space
         observation_space = env.observation_space

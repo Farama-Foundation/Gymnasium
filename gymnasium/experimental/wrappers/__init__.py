@@ -6,16 +6,16 @@ from typing import TypeVar
 ArgType = TypeVar("ArgType")
 
 from gymnasium.experimental.wrappers.lambda_action import LambdaActionV0
-from gymnasium.experimental.wrappers.lambda_observations import LambdaObservationsV0
-from gymnasium.experimental.wrappers.lambda_reward import ClipRewardsV0, LambdaRewardV0
+from gymnasium.experimental.wrappers.lambda_observations import LambdaObservationV0
+from gymnasium.experimental.wrappers.lambda_reward import ClipRewardV0, LambdaRewardV0
 
 __all__ = [
     "ArgType",
     # Lambda Action
     "LambdaActionV0",
-    # Lambda Observations
-    "LambdaObservationsV0",
-    # Lambda Rewards
+    # Lambda Observation
+    "LambdaObservationV0",
+    # Lambda Reward
     "LambdaRewardV0",
-    "ClipRewardsV0",
+    "ClipRewardV0",
 ]

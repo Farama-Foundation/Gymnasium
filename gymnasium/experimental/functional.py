@@ -44,12 +44,12 @@ class FuncEnv(
         """Initial state."""
         raise NotImplementedError
 
-    def observation(self, state: StateType) -> ObsType:
-        """Observation."""
-        raise NotImplementedError
-
     def transition(self, state: StateType, action: ActType, rng: Any) -> StateType:
         """Transition."""
+        raise NotImplementedError
+
+    def observation(self, state: StateType) -> ObsType:
+        """Observation."""
         raise NotImplementedError
 
     def reward(

@@ -3,7 +3,7 @@
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.experimental.wrappers import LambdaObservationsV0
+from gymnasium.experimental.wrappers import LambdaObservationV0
 from gymnasium.spaces import Box
 
 NUM_ENVS = 3
@@ -25,7 +25,7 @@ def test_lambda_observation_v0():
     observation_shift = 1
 
     env.reset(seed=SEED)
-    wrapped_env = LambdaObservationsV0(
+    wrapped_env = LambdaObservationV0(
         env, lambda observation: observation + observation_shift
     )
     wrapped_obs, _, _, _, _ = wrapped_env.step(DISCRETE_ACTION)
@@ -48,7 +48,7 @@ def test_lambda_observation_v0_within_vector():
     observation_shift = 1
 
     env.reset(seed=SEED)
-    wrapped_env = LambdaObservationsV0(
+    wrapped_env = LambdaObservationV0(
         env, lambda observation: observation + observation_shift
     )
     wrapped_obs, _, _, _, _ = wrapped_env.step(
