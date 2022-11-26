@@ -182,7 +182,7 @@ class PendulumF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
 
 class PendulumJaxEnv(JaxEnv, EzPickle):
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
+    metadata = {"render_modes": {"rgb_array"}, "render_fps": 30}
 
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
@@ -190,7 +190,7 @@ class PendulumJaxEnv(JaxEnv, EzPickle):
         env.transform(jax.jit)
         action_space = env.action_space
         observation_space = env.observation_space
-        metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
+        metadata = {"render_modes": {"rgb_array"}, "render_fps": 30}
 
         super().__init__(
             env,

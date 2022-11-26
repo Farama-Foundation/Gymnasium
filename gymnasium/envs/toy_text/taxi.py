@@ -123,7 +123,7 @@ class TaxiEnv(Env):
     """
 
     metadata = {
-        "render_modes": ["human", "ansi", "rgb_array"],
+        "render_modes": {"human", "ansi", "rgb_array"},
         "render_fps": 4,
     }
 

@@ -1,7 +1,7 @@
 """A set of functions for passively checking environment implementations."""
 import inspect
 from functools import partial
-from typing import Callable
+from typing import Callable, Iterable
 
 import numpy as np
 
@@ -341,9 +341,9 @@ def env_render_passive_checker(env):
             "No render modes was declared in the environment (env.metadata['render_modes'] is None or not defined), you may have trouble when calling `.render()`."
         )
     else:
-        if not isinstance(render_modes, (list, tuple)):
+        if not isinstance(render_modes, Iterable):
             logger.warn(
-                f"Expects the render_modes to be a sequence (i.e. list, tuple), actual type: {type(render_modes)}"
+                f"Expects the render_modes to be an Iterable, actual type: {type(render_modes)}"
             )
         elif not all(isinstance(mode, str) for mode in render_modes):
             logger.warn(

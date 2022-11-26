@@ -62,7 +62,7 @@ class EnvCompatibility(gym.Env):
             old_env (LegacyEnv): the env to wrap, implemented with the old API
             render_mode (str): the render mode to use when rendering the environment, passed automatically to env.render
         """
-        self.metadata = getattr(old_env, "metadata", {"render_modes": []})
+        self.metadata = getattr(old_env, "metadata", {"render_modes": {}})
         self.render_mode = render_mode
         self.reward_range = getattr(old_env, "reward_range", None)
         self.spec = getattr(old_env, "spec", None)

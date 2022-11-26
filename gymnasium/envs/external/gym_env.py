@@ -44,7 +44,7 @@ class GymEnvironment(gymnasium.Env):
         self.observation_space = _convert_space(self.gym_env.observation_space)
         self.action_space = _convert_space(self.gym_env.action_space)
 
-        self.metadata = getattr(self.gym_env, "metadata", {"render_modes": []})
+        self.metadata = getattr(self.gym_env, "metadata", {"render_modes": {}})
         self.render_mode = self.gym_env.render_mode
         self.reward_range = getattr(self.gym_env, "reward_range", None)
         self.spec = getattr(self.gym_env, "spec", None)

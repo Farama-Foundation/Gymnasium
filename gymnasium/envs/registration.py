@@ -17,7 +17,7 @@ from typing import (
     SupportsFloat,
     Tuple,
     Union,
-    overload,
+    overload, Iterable,
 )
 
 import numpy as np
@@ -593,9 +593,9 @@ def make(
 
         if "render_modes" in env_creator.metadata:
             render_modes = env_creator.metadata["render_modes"]
-            if not isinstance(render_modes, Sequence):
+            if not isinstance(render_modes, Iterable):
                 logger.warn(
-                    f"Expects the environment metadata render_modes to be a Sequence (tuple or list), actual type: {type(render_modes)}"
+                    f"Expects the environment metadata render_modes to be a Iterable, actual type: {type(render_modes)}"
                 )
 
             # Apply the `HumanRendering` wrapper, if the mode=="human" but "human" not in render_modes

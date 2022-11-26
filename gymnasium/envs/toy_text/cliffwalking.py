@@ -64,7 +64,7 @@ class CliffWalkingEnv(Env):
     """
 
     metadata = {
-        "render_modes": ["human", "rgb_array", "ansi"],
+        "render_modes": {"human", "rgb_array", "ansi"},
         "render_fps": 4,
     }
 
