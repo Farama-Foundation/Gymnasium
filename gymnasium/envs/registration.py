@@ -606,8 +606,8 @@ def make(
     apply_human_rendering = False
     apply_render_collection = False
 
+    # If mode is not valid, try applying HumanRendering/RenderCollection wrappers
     if mode is not None and render_modes is not None and mode not in render_modes:
-        # Apply the `HumanRendering` wrapper, if the mode=="human" but "human" not in render_modes
         displayable_modes = {"rgb_array", "rgb_array_list"}.intersection(render_modes)
         if mode == "human" and len(displayable_modes) > 0:
             logger.warn(
