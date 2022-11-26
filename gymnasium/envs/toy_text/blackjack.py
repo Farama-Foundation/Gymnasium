@@ -52,46 +52,72 @@ class BlackjackEnv(gym.Env):
     that sum to closer to 21 (without going over 21) than the dealers cards.
 
     ## Description
-    Card Values:
+    The game starts with the dealer having one face up and one face down card,
+    while the player has two face up cards. All cards are drawn from an infinite deck
+    (i.e. with replacement).
 
+    The card values are:
     - Face cards (Jack, Queen, King) have a point value of 10.
     - Aces can either count as 11 (called a 'usable ace') or 1.
     - Numerical cards (2-9) have a value equal to their number.
 
-    This game is played with an infinite deck (or with replacement).
-    The game starts with the dealer having one face up and one face down card,
-    while the player has two face up cards.
+    The player has the sum of cards held. The player can request
+    additional cards (hit) until they decide to stop (stick) or exceed 21 (bust,
+    immediate loss).
 
-    The player can request additional cards (hit, action=1) until they decide to stop (stick, action=0)
-    or exceed 21 (bust, immediate loss).
-    After the player sticks, the dealer reveals their facedown card, and draws
-    until their sum is 17 or greater.  If the dealer goes bust, the player wins.
+    After the player sticks, the dealer reveals their facedown card, and draws cards
+    until their sum is 17 or greater. If the dealer goes bust, the player wins.
+
     If neither the player nor the dealer busts, the outcome (win, lose, draw) is
     decided by whose sum is closer to 21.
 
+    This environment corresponds to the version of the blackjack problem
+    described in Example 5.1 in Reinforcement Learning: An Introduction
+    by Sutton and Barto [<a href="#ref">1</a>].
+
     ## Action Space
-    There are two actions:
-    - 0: stick
-    - 1: hit
+    The action shape is `(1,)` in the range `{0, 1}` indicating
+    whether to stick or hit.
+
+    - 0: Stick
+    - 1: Hit
 
     ## Observation Space
     The observation consists of a 3-tuple containing: the player's current sum,
     the value of the dealer's one showing card (1-10 where 1 is ace),
     and whether the player holds a usable ace (0 or 1).
 
-    This environment corresponds to the version of the blackjack problem
-    described in Example 5.1 in Reinforcement Learning: An Introduction
-    by Sutton and Barto (http://incompleteideas.net/book/the-book-2nd.html).
+    The observation is returned as `(int(), int(), int())`.
+
+    ## Starting State
+    The starting state is initialised in the following range.
+
+    | Observation               | Min  | Max  |
+    |---------------------------|------|------|
+    | Player current sum        |  4   |  12  |
+    | Dealer showing card value |  2   |  11  |
+    | Usable Ace                |  0   |  1   |
 
     ## Rewards
     - win game: +1
     - lose game: -1
     - draw game: 0
     - win game with natural blackjack:
+    +1.5 (if <a href="#nat">natural</a> is True)
+    +1 (if <a href="#nat">natural</a> is False)
 
-        +1.5 (if <a href="#nat">natural</a> is True)
+    ## Episode End
+    The episode ends if the following happens:
 
-        +1 (if <a href="#nat">natural</a> is False)
+    - Termination:
+    1. The player hits and the sum of hand exceeds 21.
+    2. The player sticks.
+
+    An ace will always be counted as usable (11) unless it busts the player.
+
+    ## Information
+
+    No additional information is returned.
 
     ## Arguments
 
@@ -100,17 +126,22 @@ class BlackjackEnv(gym.Env):
     gym.make('Blackjack-v1', natural=False, sab=False)
     ```
 
-    <a id="nat">`natural=False`</a>: Whether to give an additional reward for
+    <a id="nat"></a>`natural=False`: Whether to give an additional reward for
     starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).
 
-    <a id="sab">`sab=False`</a>: Whether to follow the exact rules outlined in the book by
+    <a id="sab"></a>`sab=False`: Whether to follow the exact rules outlined in the book by
     Sutton and Barto. If `sab` is `True`, the keyword argument `natural` will be ignored.
     If the player achieves a natural blackjack and the dealer does not, the player
     will win (i.e. get a reward of +1). The reverse rule does not apply.
     If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).
 
+    ## References<a id="ref"></a>
+    [1] R. Sutton and A. Barto, “Reinforcement Learning:
+    An Introduction” 2020. [Online]. Available: [http://www.incompleteideas.net/book/RLbook2020.pdf](http://www.incompleteideas.net/book/RLbook2020.pdf)
+
     ## Version History
-    * v0: Initial versions release (1.0.0)
+    * v1: Fix the natural handling in Blackjack
+    * v0: Initial version release
     """
 
     metadata = {

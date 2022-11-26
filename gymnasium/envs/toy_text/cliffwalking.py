@@ -18,39 +18,60 @@ LEFT = 3
 
 class CliffWalkingEnv(Env):
     """
-    This is a simple implementation of the Gridworld Cliff
-    reinforcement learning task.
+    Cliff walking involves crossing a gridworld from start to goal while avoiding falling off a cliff.
 
-    Adapted from Example 6.6 (page 106) from [Reinforcement Learning: An Introduction
-    by Sutton and Barto](http://incompleteideas.net/book/bookdraft2018jan1.pdf).
+    ## Description
+    The game starts with the player at location [3, 0] of the 4x12 grid world with the
+    goal located at [3, 11]. If the player reaches the goal the episode ends.
+
+    A cliff runs along [3, 1..10]. If the player moves to a cliff location it
+    returns to the start location.
+
+    The player makes moves until they reach the goal.
+
+    Adapted from Example 6.6 (page 132) from Reinforcement Learning: An Introduction
+    by Sutton and Barto [<a href="#ref">1</a>].
 
     With inspiration from:
     [https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py](https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py)
 
-    ## Description
-    The board is a 4x12 matrix, with (using NumPy matrix indexing):
-    - [3, 0] as the start at bottom-left
-    - [3, 11] as the goal at bottom-right
-    - [3, 1..10] as the cliff at bottom-center
+    ## Action Space
+    The action shape is `(1,)` in the range `{0, 3}` indicating
+    which direction to move the player.
 
-    If the agent steps on the cliff, it returns to the start.
-    An episode terminates when the agent reaches the goal.
+    - 0: Move up
+    - 1: Move right
+    - 2: Move down
+    - 3: Move left
 
-    ## Actions
-    There are 4 discrete deterministic actions:
-    - 0: move up
-    - 1: move right
-    - 2: move down
-    - 3: move left
+    ## Observation Space
+    There are 3 x 12 + 1 possible states. The player cannot be at the cliff, nor at
+    the goal as the latter results in the end of the episode. What remains are all
+    the positions of the first 3 rows plus the bottom-left cell.
 
-    ## Observations
-    There are 3x12 + 1 possible states. In fact, the agent cannot be at the cliff, nor at the goal
-    (as this results in the end of the episode).
-    It remains all the positions of the first 3 rows plus the bottom-left cell.
-    The observation is simply the current position encoded as [flattened index](https://numpy.org/doc/stable/reference/generated/numpy.unravel_index.html).
+    The observation is a value representing the player's current position as
+    current_row * nrows + current_col (where both the row and col start at 0).
+
+    For example, the stating position can be calculated as follows: 3 * 12 + 0 = 36.
+
+    The observation is returned as an `int()`.
+
+    ## Starting State
+    The episode starts with the player in state `[36]` (location [3, 0]).
 
     ## Reward
-    Each time step incurs -1 reward, and stepping into the cliff incurs -100 reward.
+    Each time step incurs -1 reward, unless the player stepped into the cliff,
+    which incurs -100 reward.
+
+    ## Episode End
+    The episode terminates when the player enters state `[47]` (location [3, 11]).
+
+    ## Information
+
+    `step()` and `reset()` return a dict with the following keys:
+    - "p" - transition proability for the state.
+
+    As cliff walking is not stochastic, the transition probability returned always 1.0.
 
     ## Arguments
 
@@ -59,8 +80,13 @@ class CliffWalkingEnv(Env):
     gym.make('CliffWalking-v0')
     ```
 
+    ## References<a id="ref"></a>
+    [1] R. Sutton and A. Barto, “Reinforcement Learning:
+    An Introduction” 2020. [Online]. Available: [http://www.incompleteideas.net/book/RLbook2020.pdf](http://www.incompleteideas.net/book/RLbook2020.pdf)
+
     ## Version History
     - v0: Initial version release
+
     """
 
     metadata = {
