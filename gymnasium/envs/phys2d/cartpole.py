@@ -233,7 +233,7 @@ class CartPoleFunctional(
         pygame.quit()
 
 
-class CartPoleFunctionalJaxCompatibilityEnv(FunctionalJaxCompatibilityEnv, EzPickle):
+class CartPoleJaxEnv(FunctionalJaxCompatibilityEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
