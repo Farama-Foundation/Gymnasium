@@ -34,12 +34,12 @@ def get_version():
 
 # Environment-specific dependencies.
 extras: Dict[str, List[str]] = {
-    "atari": ["ale-py~=0.8.0"],
+    "atari": ["shimmy[atari]>=0.1.0,<1.0"],
     "accept-rom-license": ["autorom[accept-rom-license]~=0.4.2"],
     "box2d": ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
     "classic_control": ["pygame==2.1.0"],
     "mujoco_py": ["mujoco_py<2.2,>=2.1"],
-    "mujoco": ["mujoco==2.2", "imageio>=2.14.1"],
+    "mujoco": ["mujoco==2.3", "imageio>=2.14.1"],
     "toy_text": ["pygame==2.1.0"],
     "jax": ["jax==0.3.20", "jaxlib==0.3.20"],
     "other": ["lz4>=3.1.0", "opencv-python>=3.0", "matplotlib>=3.0", "moviepy>=1.0.0"],
@@ -52,7 +52,7 @@ extras["all"] = list(
 )
 extras["testing"] = [
     "pytest==7.1.3",
-    "gym[atari, accept-rom-license]==0.26.2",
+    "gym==0.26.2",
 ]
 
 version = get_version()
@@ -90,6 +90,7 @@ setup(
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
         "gymnasium_notices >= 0.0.1",
+        "shimmy>=0.1.0, <1.0",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
