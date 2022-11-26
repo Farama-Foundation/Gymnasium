@@ -1,6 +1,6 @@
 """Setups the project."""
 import itertools
-from typing import List, Dict
+from typing import Dict, List
 
 from setuptools import find_packages, setup
 
