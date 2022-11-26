@@ -17,7 +17,7 @@ jobs:
              --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
              --tag gymnasium-all-docker .
       - name: Run tests
-        run: docker run gymnasium-all-docker pytest
+        run: docker run gymnasium-all-docker pytest tests/*
 
   build-necessary:
     runs-on:
@@ -29,4 +29,8 @@ jobs:
              --build-arg PYTHON_VERSION='3.10' \
              --tag gymnasium-necessary-docker .
       - name: Run tests
-        run: docker run gymnasium-all-docker pytest tests/test_core.py tests/envs/test_compatibility.py tests/envs/test_envs.py tests/spaces
+        run: |
+           docker run gymnasium-necessary-docker pytest \
+             tests/test_core.py \
+             tests/envs/test_compatibility.py tests/envs/test_envs.py \ 
+             tests/spaces
