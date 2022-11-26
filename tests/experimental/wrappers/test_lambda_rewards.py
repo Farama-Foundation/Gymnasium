@@ -5,7 +5,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.error import InvalidBound
-from gymnasium.wrappers import ClipRewardsV0, LambdaRewardV0
+from gymnasium.experimental.wrappers import ClipRewardsV0, LambdaRewardV0
 
 ENV_ID = "CartPole-v1"
 DISCRETE_ACTION = 0

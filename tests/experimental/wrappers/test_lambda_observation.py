@@ -3,8 +3,8 @@
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.experimental.wrappers import LambdaObservationsV0
 from gymnasium.spaces import Box
-from gymnasium.wrappers import LambdaObservationsV0
 
 NUM_ENVS = 3
 BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
