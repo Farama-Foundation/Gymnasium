@@ -7,7 +7,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import Space
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
 
 
