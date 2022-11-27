@@ -1,5 +1,6 @@
 """Lambda action wrapper which apply a function to the provided action."""
 
+from functools import partial
 from typing import Any, Callable, Sequence
 
 import jumpy as jp
@@ -61,7 +62,9 @@ class ClipActionV0(LambdaActionV0):
             env (Env): The environment to wrap
             args (Sequence): The arguments for clipping the action space
         """
-        super().__init__(env, lambda action, args: jp.clip(action, *args))
+        super().__init__(
+            env, partial(lambda action, args: jp.clip(action, *args), args=args)
+        )
 
 
 class RescaleActionsV0(LambdaActionV0):
@@ -93,7 +96,9 @@ class RescaleActionsV0(LambdaActionV0):
             env (Env): The environment to wrap
             args (Sequence): The arguments for scaling the actions
         """
-        super().__init__(env, lambda action, args: self._scale(action, args))
+        super().__init__(
+            env, partial(lambda action, args: self._scale(action, args), args=args)
+        )
 
     def _scale(self, action: ActType, args: Sequence) -> jp.ndarray:
         new_low, new_high = args
