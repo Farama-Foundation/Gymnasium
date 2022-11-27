@@ -3,7 +3,6 @@ from gymnasium import error
 from gymnasium.dev_wrappers.lambda_action import (
     ClipActionV0,
     LambdaActionV0,
-    LambdaCompositeActionV0,
     RescaleActionsV0,
 )
 from gymnasium.dev_wrappers.lambda_observations import LambdaObservationsV0

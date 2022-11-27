@@ -6,11 +6,14 @@ import gymnasium as gym
 from gymnasium.error import InvalidAction
 from gymnasium.spaces import Box
 from gymnasium.wrappers import LambdaActionV0
-from tests.dev_wrappers.mock_data import generic_step_fn
 from tests.testing_env import GenericTestEnv
 
 NUM_ENVS = 3
 BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
+
+
+def generic_step_fn(self, action):
+    return 0, 0, False, False, {"action": action}
 
 
 @pytest.mark.parametrize(
