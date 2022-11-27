@@ -11,8 +11,9 @@ class ClipActionV0(gym.ActionWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('Bipedal-Walker-v3')
-        >>> env = ClipAction(env)
+        >>> import numpy as np
+        >>> env = gym.make('BipedalWalker-v3', disable_env_checker=True)
+        >>> env = ClipActionV0(env)
         >>> env.action_space
         Box(-1.0, 1.0, (4,), float32)
         >>> env.step(np.array([5.0, 2.0, -10.0, 0.0]))
