@@ -1,8 +1,9 @@
 """Test suite for RescaleActionV0."""
+import jax
 import numpy as np
 import pytest
 
-import gymnasium
+import gymnasium as gym
 from gymnasium.wrappers import RescaleActionV0
 
 SEED = 42
@@ -14,11 +15,27 @@ NUM_ENVS = 3
     [
         (
             # BipedalWalker action space: Box(-1.0, 1.0, (4,), float32)
-            gymnasium.make("BipedalWalker-v3"),
+            gym.make("BipedalWalker-v3"),
             -0.5,
             0.5,
             np.array([1, 1, 1, 1]),
             np.array([0.5, 0.5, 0.5, 0.5]),
+        ),
+        (
+            # BipedalWalker action space: Box(-1.0, 1.0, (4,), float32)
+            gym.make("BipedalWalker-v3"),
+            -0.5,
+            0.5,
+            jax.numpy.array([1, 1, 1, 1]),
+            jax.numpy.array([0.5, 0.5, 0.5, 0.5]),
+        ),
+        (
+            # BipedalWalker action space: Box(-1.0, 1.0, (4,), float32)
+            gym.make("BipedalWalker-v3"),
+            np.array([-0.5, -0.5, -1, -1], dtype=np.float32),
+            np.array([0.5, 0.5, 1, 1], dtype=np.float32),
+            jax.numpy.array([1, 1, 1, 1]),
+            jax.numpy.array([0.5, 0.5, 1, 1]),
         ),
     ],
 )
