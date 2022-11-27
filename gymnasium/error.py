@@ -73,10 +73,6 @@ class InvalidBound(Error):
     """Raised when the clipping an array with invalid upper and/or lower bound."""
 
 
-class InvalidSpaceArguments(Error):
-    """Raised when using incompatible dtype arguments in lambda_wrappers."""
-
-
 # API errors
 
 
