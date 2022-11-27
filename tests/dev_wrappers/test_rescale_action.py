@@ -7,7 +7,6 @@ import gymnasium as gym
 from gymnasium.wrappers import RescaleActionV0
 
 SEED = 42
-NUM_ENVS = 3
 
 
 @pytest.mark.parametrize(

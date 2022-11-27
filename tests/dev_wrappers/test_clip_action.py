@@ -5,7 +5,6 @@ import pytest
 import gymnasium as gym
 from gymnasium.wrappers import ClipActionV0
 
-NUM_ENVS = 3
 SEED = 42
 
 
