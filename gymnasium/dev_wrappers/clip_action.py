@@ -1,9 +1,10 @@
 """Wrapper for clipping actions within a valid bound."""
 import jumpy as jp
+import numpy as np
 
 import gymnasium as gym
-from gymnasium import spaces
 from gymnasium.core import ActType
+from gymnasium.spaces import Box
 
 
 class ClipActionV0(gym.ActionWrapper):
@@ -26,8 +27,10 @@ class ClipActionV0(gym.ActionWrapper):
         Args:
             env: The environment to apply the wrapper
         """
-        assert isinstance(env.action_space, spaces.Box)
+        assert isinstance(env.action_space, Box)
         super().__init__(env)
+
+        self.action_space = Box(-np.inf, np.inf, env.action_space.shape)
 
     def action(self, action: ActType) -> jp.ndarray:
         """Clips the action within the valid bounds.
