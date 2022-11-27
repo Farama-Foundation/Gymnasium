@@ -1,12 +1,10 @@
 """Module of wrapper classes."""
 from gymnasium import error
-from gymnasium.dev_wrappers.lambda_action import (
-    ClipActionV0,
-    LambdaActionV0,
-    RescaleActionsV0,
-)
+from gymnasium.dev_wrappers.clip_action import ClipActionV0
+from gymnasium.dev_wrappers.lambda_action import LambdaActionV0
 from gymnasium.dev_wrappers.lambda_observations import LambdaObservationsV0
 from gymnasium.dev_wrappers.lambda_reward import ClipRewardsV0, LambdaRewardV0
+from gymnasium.dev_wrappers.rescale_action import RescaleActionV0
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
 from gymnasium.wrappers.clip_action import ClipAction
