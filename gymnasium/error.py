@@ -53,6 +53,10 @@ class UnsupportedMode(Error):
     """Raised when the user requests a rendering mode not supported by the environment."""
 
 
+class InvalidMetadata(Error):
+    """Raised when the metadata of an environment is not valid."""
+
+
 class ResetNeeded(Error):
     """When the order enforcing is violated, i.e. step or render is called before reset."""
 
