@@ -10,7 +10,6 @@ from gymnasium.spaces import Box, Dict
 from gymnasium.wrappers import TimeAwareObservationV0
 
 NUM_STEPS = 20
-NUM_ENVS = 3
 SEED = 0
 
 
@@ -19,8 +18,6 @@ SEED = 0
     [
         gym.make("CartPole-v1", disable_env_checker=True),
         gym.make("CarRacing-v2", disable_env_checker=True),
-        gym.vector.make("CartPole-v1", disable_env_checker=True, num_envs=NUM_ENVS),
-        gym.vector.make("CarRacing-v2", disable_env_checker=True, num_envs=NUM_ENVS),
     ],
 )
 def test_time_aware_observation_creation(env):
@@ -78,79 +75,11 @@ def test_time_aware_observation_step(env, flatten, normalize_time):
             break
 
 
-@pytest.mark.parametrize("normalize_time", [True, False])
-@pytest.mark.parametrize("flatten", [False, True])
-@pytest.mark.parametrize(
-    "env",
-    [
-        gym.vector.make("CartPole-v1", disable_env_checker=True, num_envs=NUM_ENVS),
-        gym.vector.make("CarRacing-v2", disable_env_checker=True, num_envs=NUM_ENVS),
-    ],
-)
-def test_time_aware_observation_step_within_vector(env, flatten, normalize_time):
-    """Test TimeAwareObservationV0 step in vectorized environment.
-
-    This tests checks if wrapped env with TimeAwareObservationV0
-    steps correctly in vectorized environment.
-    When a the i-th environment call `reset` on termination,
-    the i-th `time` observation should also reset.
-    """
-    env.action_space.seed(SEED)
-    max_timesteps = env.get_attr("_max_episode_steps")[0]
-
-    wrapped_env = TimeAwareObservationV0(
-        env, flatten=flatten, normalize_time=normalize_time
-    )
-    wrapped_env.reset(seed=SEED)
-
-    terminated = np.zeros(NUM_ENVS, dtype=bool)
-    for timestep in range(1, NUM_STEPS):
-        action = env.action_space.sample()
-        observation, _, terminated, _, _ = wrapped_env.step(action)
-
-        expected_time_obs = (
-            timestep / max_timesteps if normalize_time else max_timesteps - timestep
-        )
-
-        if flatten:
-            assert np.all(observation[-wrapped_env.num_envs :] == expected_time_obs)
-        else:
-            assert np.all(observation["time"] == expected_time_obs)
-        if any(terminated):
-            break
-
-    action = env.action_space.sample()
-    observation, _, _, _, _ = wrapped_env.step(action)
-
-    expected_initial_time_obs = (
-        1 / max_timesteps if normalize_time else max_timesteps - 1
-    )
-
-    if flatten:
-        assert np.all(
-            observation[-wrapped_env.num_envs :][np.where(terminated)]
-            == expected_initial_time_obs
-        )
-        assert np.all(
-            observation[-wrapped_env.num_envs :][np.where(~terminated)]
-            != expected_initial_time_obs
-        )
-    else:
-        assert np.all(
-            observation["time"][np.where(terminated)] == expected_initial_time_obs
-        )
-        assert np.all(
-            observation["time"][np.where(~terminated)] != expected_initial_time_obs
-        )
-
-
 @pytest.mark.parametrize(
     "env",
     [
         gym.make("CartPole-v1", disable_env_checker=True),
         gym.make("CarRacing-v2", disable_env_checker=True),
-        gym.vector.make("CartPole-v1", disable_env_checker=True, num_envs=NUM_ENVS),
-        gym.vector.make("CarRacing-v2", disable_env_checker=True, num_envs=NUM_ENVS),
     ],
 )
 def test_time_aware_observation_creation_flatten(env):
