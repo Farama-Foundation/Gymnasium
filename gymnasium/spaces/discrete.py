@@ -21,7 +21,7 @@ class Discrete(Space[np.int64]):
 
     def __init__(
         self,
-        n: int | np.int64,
+        n: int | np.integer[Any],
         seed: int | np.random.Generator | None = None,
         start: int | np.integer[Any] = 0,
     ):
