@@ -23,7 +23,7 @@ class Discrete(Space[np.int64]):
         self,
         n: int | np.int64,
         seed: int | np.random.Generator | None = None,
-        start: int | np.int64 = 0,
+        start: int | np.integer[Any] = 0,
     ):
         r"""Constructor of :class:`Discrete` space.
 
