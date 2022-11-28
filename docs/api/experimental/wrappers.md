@@ -4,6 +4,13 @@
 
 ```{eval-rst}
 .. autoclass:: gymnasium.experimental.wrappers.LambdaObservationV0
+.. autoclass:: gymnasium.experimental.wrappers.FilterObservationV0
+.. autoclass:: gymnasium.experimental.wrappers.FlattenObservationV0
+.. autoclass:: gymnasium.experimental.wrappers.GrayscaleObservationV0
+.. autoclass:: gymnasium.experimental.wrappers.ResizeObservationV0
+.. autoclass:: gymnasium.experimental.wrappers.ReshapeObservationV0
+.. autoclass:: gymnasium.experimental.wrappers.RescaleObservationV0
+.. autoclass:: gymnasium.experimental.wrappers.DtypeObservationV0
 ```
 
 ## Lambda Action Wrappers
