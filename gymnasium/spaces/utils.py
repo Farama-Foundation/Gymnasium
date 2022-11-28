@@ -368,7 +368,10 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
     with flat boundaries and `edge_space` being a `Box` with flat boundaries or
     `None`. The box has exactly :func:`flatdim` dimensions. Flattening a sample
     of the original space has the same effect as taking a sample of the flattenend
-    space.
+    space. However, sampling from the flattened space is not necessarily reversible.
+    For example, sampling from a flattened Discrete space is the same as sampling from
+    a Box, and the results may not be integers or one-hot encodings. This may result in
+    errors or non-uniform sampling.
 
     Example::
         >>> from gymnasium.spaces import Box
