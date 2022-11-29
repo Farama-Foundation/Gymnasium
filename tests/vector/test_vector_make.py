@@ -2,7 +2,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
-from gymnasium.wrappers import OrderEnforcing, TimeLimit, TransformObservation
+from gymnasium.wrappers import TimeLimit, TransformObservation
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.wrappers.utils import has_wrapper
 
@@ -38,8 +38,7 @@ def test_vector_make_wrappers():
 
     sub_env = env.envs[0]
     assert isinstance(sub_env, gym.Env)
-    if sub_env.spec.order_enforce:
-        assert has_wrapper(sub_env, OrderEnforcing)
+    assert sub_env.spec is not None
     if sub_env.spec.max_episode_steps is not None:
         assert has_wrapper(sub_env, TimeLimit)
 

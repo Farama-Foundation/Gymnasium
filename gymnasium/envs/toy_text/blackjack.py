@@ -70,7 +70,9 @@ class BlackjackEnv(gym.Env):
     decided by whose sum is closer to 21.
 
     ## Action Space
-    There are two actions: stick (0), and hit (1).
+    There are two actions:
+    - 0: stick
+    - 1: hit
 
     ## Observation Space
     The observation consists of a 3-tuple containing: the player's current sum,
@@ -192,10 +194,11 @@ class BlackjackEnv(gym.Env):
 
     def render(self):
         if self.render_mode is None:
+            assert self.spec is not None
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "
-                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+                f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
             )
             return
 

@@ -39,4 +39,5 @@ reportPrivateUsage = "warning"
 reportUnboundVariable = "warning"
 
 [tool.pytest.ini_options]
+filterwarnings = ['ignore:.*The environment .* is out of date.*']
 # filterwarnings = ['ignore:.*step API.*:DeprecationWarning']

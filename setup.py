@@ -40,14 +40,14 @@ extras = {
     "mujoco_py": ["mujoco_py<2.2,>=2.1"],
     "mujoco": ["mujoco==2.2", "imageio>=2.14.1"],
     "toy_text": ["pygame==2.1.0"],
+    "jax": ["jax==0.3.20", "jaxlib==0.3.20"],
     "other": ["lz4>=3.1.0", "opencv-python>=3.0", "matplotlib>=3.0", "moviepy>=1.0.0"],
 }
 
-# Testing dependency groups.
-testing_group = set(extras.keys()) - {"accept-rom-license", "atari"}
-extras["testing"] = list(
-    set(itertools.chain.from_iterable(map(lambda group: extras[group], testing_group)))
-) + ["pytest==7.1.3", "gym==0.26.2"]
+extras["testing"] = list(set(itertools.chain.from_iterable(extras.values()))) + [
+    "pytest==7.1.3",
+    "gym[classic_control, mujoco_py, mujoco, toy_text, other, atari, accept-rom-license]==0.26.2",
+]
 
 # All dependency groups - accept rom license as requires user to run
 all_groups = set(extras.keys()) - {"accept-rom-license"}
@@ -86,7 +86,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "numpy >= 1.18.0",
+        "numpy >= 1.21.0",
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
         "gymnasium_notices >= 0.0.1",

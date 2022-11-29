@@ -15,7 +15,9 @@ def _check_box_observation_space(observation_space: spaces.Box):
         observation_space: A box observation space
     """
     # Check if the box is an image
-    if len(observation_space.shape) == 3:
+    if (len(observation_space.shape) == 3 and observation_space.shape[0] != 1) or (
+        len(observation_space.shape) == 4 and observation_space.shape[0] == 1
+    ):
         if observation_space.dtype != np.uint8:
             logger.warn(
                 f"It seems a Box observation space is an image but the `dtype` is not `np.uint8`, actual type: {observation_space.dtype}. "
@@ -23,16 +25,18 @@ def _check_box_observation_space(observation_space: spaces.Box):
             )
         if np.any(observation_space.low != 0) or np.any(observation_space.high != 255):
             logger.warn(
-                "It seems a Box observation space is an image but the upper and lower bounds are not in [0, 255]. "
+                "It seems a Box observation space is an image but the lower and upper bounds are not [0, 255]. "
+                f"Actual lower bound: {np.min(observation_space.low)}, upper bound: {np.max(observation_space.high)}. "
                 "Generally, CNN policies assume observations are within that range, so you may encounter an issue if the observation values are not."
             )
 
     if len(observation_space.shape) not in [1, 3]:
-        logger.warn(
-            "A Box observation space has an unconventional shape (neither an image, nor a 1D vector). "
-            "We recommend flattening the observation to have only a 1D vector or use a custom policy to properly process the data. "
-            f"Actual observation shape: {observation_space.shape}"
-        )
+        if not (len(observation_space.shape) == 2 and observation_space.shape[0] == 1):
+            logger.warn(
+                "A Box observation space has an unconventional shape (neither an image, nor a 1D vector). "
+                "We recommend flattening the observation to have only a 1D vector or use a custom policy to properly process the data. "
+                f"Actual observation shape: {observation_space.shape}"
+            )
 
     assert (
         observation_space.low.shape == observation_space.shape
@@ -42,9 +46,15 @@ def _check_box_observation_space(observation_space: spaces.Box):
     ), f"The Box observation space shape and high shape have have different shapes, high shape: {observation_space.high.shape}, box shape: {observation_space.shape}"
 
     if np.any(observation_space.low == observation_space.high):
-        logger.warn("A Box observation space maximum and minimum values are equal.")
+        logger.warn(
+            "A Box observation space maximum and minimum values are equal. "
+            f"Actual equal coordinates: {[x for x in zip(*np.where(observation_space.low == observation_space.high))]}"
+        )
     elif np.any(observation_space.high < observation_space.low):
-        logger.warn("A Box observation space low value is greater than a high value.")
+        logger.warn(
+            "A Box observation space low value is greater than a high value. "
+            f"Actual less than coordinates: {[x for x in zip(*np.where(observation_space.high < observation_space.low))]}"
+        )
 
 
 def _check_box_action_space(action_space: spaces.Box):
@@ -61,9 +71,15 @@ def _check_box_action_space(action_space: spaces.Box):
     ), f"The Box action space shape and high shape have different shapes, high shape: {action_space.high.shape}, box shape: {action_space.shape}"
 
     if np.any(action_space.low == action_space.high):
-        logger.warn("A Box action space maximum and minimum values are equal.")
+        logger.warn(
+            "A Box action space maximum and minimum values are equal. "
+            f"Actual equal coordinates: {[x for x in zip(*np.where(action_space.low == action_space.high))]}"
+        )
     elif np.any(action_space.high < action_space.low):
-        logger.warn("A Box action space low value is greater than a high value.")
+        logger.warn(
+            "A Box action space low value is greater than a high value. "
+            f"Actual less than coordinates: {[x for x in zip(*np.where(action_space.high < action_space.low))]}"
+        )
 
 
 def check_space(
@@ -265,7 +281,59 @@ def env_step_passive_checker(env, action):
     return result
 
 
-def env_render_passive_checker(env, *args, **kwargs):
+def _check_render_return(render_mode, render_return):
+    """Produces warning if `render_return` doesn't match `render_mode`."""
+    if render_mode == "human":
+        if render_return is not None:
+            logger.warn(
+                f"Human rendering should return `None`, got {type(render_return)}"
+            )
+    elif render_mode == "rgb_array":
+        if not isinstance(render_return, np.ndarray):
+            logger.warn(
+                f"RGB-array rendering should return a numpy array, got {type(render_return)}"
+            )
+        else:
+            if render_return.dtype != np.uint8:
+                logger.warn(
+                    f"RGB-array rendering should return a numpy array with dtype uint8, got {render_return.dtype}"
+                )
+            if render_return.ndim != 3:
+                logger.warn(
+                    f"RGB-array rendering should return a numpy array with three axes, got {render_return.ndim}"
+                )
+            if render_return.ndim == 3 and render_return.shape[2] != 3:
+                logger.warn(
+                    f"RGB-array rendering should return a numpy array in which the last axis has three dimensions, got {render_return.shape[2]}"
+                )
+    elif render_mode == "depth_array":
+        if not isinstance(render_return, np.ndarray):
+            logger.warn(
+                f"Depth-array rendering should return a numpy array, got {type(render_return)}"
+            )
+        elif render_return.ndim != 2:
+            logger.warn(
+                f"Depth-array rendering should return a numpy array with two axes, got {render_return.ndim}"
+            )
+    elif render_mode in ["ansi", "ascii"]:
+        if not isinstance(render_return, str):
+            logger.warn(
+                f"ANSI/ASCII rendering should produce a string, got {type(render_return)}"
+            )
+    elif render_mode.endswith("_list"):
+        if not isinstance(render_return, list):
+            logger.warn(
+                f"Render mode `{render_mode}` should produce a list, got {type(render_return)}"
+            )
+        else:
+            base_render_mode = render_mode[: -len("_list")]
+            for item in render_return:
+                _check_render_return(
+                    base_render_mode, item
+                )  # Check that each item of the list matches the base render mode
+
+
+def env_render_passive_checker(env):
     """A passive check of the `Env.render` that the declared render modes/fps in the metadata of the environment is declared."""
     render_modes = env.metadata.get("render_modes")
     if render_modes is None:
@@ -313,8 +381,8 @@ def env_render_passive_checker(env, *args, **kwargs):
                 f"Render mode: {env.render_mode}, modes: {render_modes}"
             )
 
-    result = env.render(*args, **kwargs)
-
-    # TODO: Check that the result is correct
+    result = env.render()
+    if env.render_mode is not None:
+        _check_render_return(env.render_mode, result)
 
     return result

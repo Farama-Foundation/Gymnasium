@@ -55,7 +55,7 @@ env.close()
 The ``Env.seed()`` has been removed from the Gym v26 environments in favour of ``Env.reset(seed=seed)``.
 This allows seeding to only be changed on environment reset.
 The decision to remove ``seed`` was because some environments use emulators that cannot change random number generators within an episode and must be done at the beginning of a new episode.
-We are aware of cases where controlling the random number generator is important, in these cases, if the environment uses the built in random number generator, users can set the seed manually with the attribute :attr:`np_random`.
+We are aware of cases where controlling the random number generator is important, in these cases, if the environment uses the built-in random number generator, users can set the seed manually with the attribute :attr:`np_random`.
 
 Gymnasium v26 changed to using ``numpy.random.Generator`` instead of a custom random number generator.
 This means that several functions such as ``randint`` were removed in favour of ``integers``.
@@ -68,7 +68,7 @@ While some environments might use external random number generator, we recommend
 In v26, :meth:`reset` takes two optional parameters and returns one value.
 This contrasts to v21 which takes no parameters and returns ``None``.
 The two parameters are ``seed`` for setting the random number generator and ``options`` which allows additional data to be passed to the environment on reset.
-For example, in classic control, the options parameter now allows users to modify the range of the state bound.
+For example, in classic control, the ``options`` parameter now allows users to modify the range of the state bound.
 See the original `PR <https://github.com/openai/gym/pull/2921>`_ for more details.
 
 :meth:`reset` further returns ``info``, similar to the ``info`` returned by :meth:`step`.
@@ -82,14 +82,14 @@ This will automatically update the :attr:`np_random` with the seed value.
 
 ```{eval-rst}
 In v21, the type definition of :meth:`step` is ``tuple[ObsType, SupportsFloat, bool, dict[str, Any]`` representing the next observation, the reward from the step, if the episode is done and additional info from the step.
-Due to reproductibility issues that will be expanded on in a blog post soon, we have changed the type definition to ``tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]`` adding an extra boolean value.
+Due to reproducibility issues that will be expanded on in a blog post soon, we have changed the type definition to ``tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]`` adding an extra boolean value.
 This extra bool corresponds to the older `done` now changed to `terminated` and `truncated`.
 These changes were introduced in Gym `v26 <https://github.com/openai/gym/releases/tag/0.26.0>`_ (turned off by default in `v25 <https://github.com/openai/gym/releases/tag/0.25.0>`_).
 
 For users wishing to update, in most cases, replacing ``done`` with ``terminated`` and ``truncated=False`` in :meth:`step` should address most issues.
 However, environments that have reasons for episode truncation rather than termination should read through the associated `PR <https://github.com/openai/gym/pull/2752>`_.
 For users looping through an environment, they should modify ``done = terminated or truncated`` as is show in the example code.
-For training libraries, the primary difference is to change ``done`` to ``terminated``, indicating whether bootstraping should or shouldn't happen.
+For training libraries, the primary difference is to change ``done`` to ``terminated``, indicating whether bootstrapping should or shouldn't happen.
 ```
 
 ## Environment Render
@@ -106,8 +106,8 @@ For a more complete explanation of the changes, please refer to this `summary <h
 .. py:currentmodule:: gymnasium.wrappers
 
 * GoalEnv - This was removed, users needing it should reimplement the environment or use Gymnasium Robotics which contains an implementation of this environment.
-* ``from gym.envs.classic_control import rendering`` - This was removed in favour of users implementing their own rendering systems.
-Gymnasium environments are coded using pygame.
+* ``from gym.envs.classic_control import rendering`` - This was removed in favour of users implementing their own rendering systems. Gymnasium environments are coded using pygame.
 * Robotics environments - The robotics environments have been moved to the `Gymnasium Robotics <https://robotics.farama.org/>`_ project.
 * Monitor wrapper - This wrapper was replaced with two separate wrapper, :class:`RecordVideo` and :class:`RecordEpisodeStatistics`
+
 ```

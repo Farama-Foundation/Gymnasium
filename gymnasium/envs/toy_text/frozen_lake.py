@@ -9,6 +9,7 @@ import gymnasium as gym
 from gymnasium import Env, spaces, utils
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
+from gymnasium.utils import seeding
 
 LEFT = 0
 DOWN = 1
@@ -51,12 +52,15 @@ def is_valid(board: List[List[str]], max_size: int) -> bool:
     return False
 
 
-def generate_random_map(size: int = 8, p: float = 0.8) -> List[str]:
+def generate_random_map(
+    size: int = 8, p: float = 0.8, seed: Optional[int] = None
+) -> List[str]:
     """Generates a random valid map (one that has a path from start to goal)
 
     Args:
         size: size of each side of the grid
         p: probability that a tile is frozen
+        seed: optional seed to ensure the generation of reproducible maps
 
     Returns:
         A random valid map
@@ -64,9 +68,11 @@ def generate_random_map(size: int = 8, p: float = 0.8) -> List[str]:
     valid = False
     board = []  # initialize to make pyright happy
 
+    np_random, _ = seeding.np_random(seed)
+
     while not valid:
         p = min(1, p)
-        board = np.random.choice(["F", "H"], (size, size), p=[p, 1 - p])
+        board = np_random.choice(["F", "H"], (size, size), p=[p, 1 - p])
         board[0][0] = "S"
         board[-1][-1] = "G"
         valid = is_valid(board, size)
@@ -142,7 +148,9 @@ class FrozenLakeEnv(Env):
             "FFFHFFFG",
         ]
 
-    `is_slippery`: True/False. If True will move in intended direction with
+
+    #### Option is_slippery
+    Boolean, set true by default. When True, will move in intended direction with
     probability of 1/3 else will move in either perpendicular direction with
     equal probability of 1/3 in both directions.
 
@@ -150,6 +158,12 @@ class FrozenLakeEnv(Env):
         - P(move left)=1/3
         - P(move up)=1/3
         - P(move down)=1/3
+
+    To init the environment without a default value, specify explicitly the value of is_slippery
+    in the make command:
+
+        import gymnasium as gym
+        gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
 
     ## Version History
     * v1: Bug fixes to rewards
@@ -270,10 +284,11 @@ class FrozenLakeEnv(Env):
 
     def render(self):
         if self.render_mode is None:
+            assert self.spec is not None
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "
-                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+                f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
             )
             return
 

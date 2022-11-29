@@ -51,7 +51,7 @@ class PlayableGame:
             zoom: If to zoom in on the environment render
         """
         if env.render_mode not in {"rgb_array", "rgb_array_list"}:
-            logger.error(
+            raise ValueError(
                 "PlayableGame wrapper works only with rgb_array and rgb_array_list render modes, "
                 f"but your environment render_mode = {env.render_mode}."
             )
@@ -72,6 +72,7 @@ class PlayableGame:
             elif hasattr(self.env.unwrapped, "get_keys_to_action"):
                 keys_to_action = self.env.unwrapped.get_keys_to_action()
             else:
+                assert self.env.spec is not None
                 raise MissingKeysToAction(
                     f"{self.env.spec.id} does not have explicit key to action mapping, "
                     "please specify one manually"
@@ -230,6 +231,7 @@ def play(
         elif hasattr(env.unwrapped, "get_keys_to_action"):
             keys_to_action = env.unwrapped.get_keys_to_action()
         else:
+            assert env.spec is not None
             raise MissingKeysToAction(
                 f"{env.spec.id} does not have explicit key to action mapping, "
                 "please specify one manually"
