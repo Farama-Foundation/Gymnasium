@@ -11,7 +11,7 @@ from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.func2env import FunctionalJaxCompatibilityEnv
+from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
 
@@ -182,7 +182,7 @@ class PendulumFunctional(
         pygame.quit()
 
 
-class PendulumJaxEnv(FunctionalJaxCompatibilityEnv, EzPickle):
+class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 

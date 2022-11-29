@@ -14,7 +14,7 @@ from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
 
 
-class FunctionalJaxCompatibilityEnv(gym.Env):
+class FunctionalJaxEnv(gym.Env):
     """A conversion layer for jax-based environments."""
 
     state: StateType
