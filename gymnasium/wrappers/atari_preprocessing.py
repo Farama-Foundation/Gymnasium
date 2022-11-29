@@ -101,7 +101,7 @@ class AtariPreprocessing(gym.Wrapper):
             ]
 
         self.lives = 0
-        self.game_over = False
+        self.game_over = True
 
         _low, _high, _obs_dtype = (
             (0, 255, np.uint8) if not scale_obs else (0, 1, np.float32)
@@ -130,7 +130,6 @@ class AtariPreprocessing(gym.Wrapper):
             if self.terminal_on_life_loss:
                 new_lives = self.ale.lives()
                 terminated = terminated or new_lives < self.lives
-                self.game_over = terminated
                 self.lives = new_lives
 
             if terminated or truncated:
@@ -149,27 +148,29 @@ class AtariPreprocessing(gym.Wrapper):
 
     def reset(self, **kwargs):
         """Resets the environment using preprocessing."""
-        # NoopReset
-        _, reset_info = self.env.reset(**kwargs)
-
-        noops = (
-            self.env.unwrapped.np_random.integers(1, self.noop_max + 1)
-            if self.noop_max > 0
-            else 0
-        )
-        for _ in range(noops):
-            _, _, terminated, truncated, step_info = self.env.step(0)
-            reset_info.update(step_info)
-            if terminated or truncated:
-                _, reset_info = self.env.reset(**kwargs)
-
-        self.lives = self.ale.lives()
-        if self.grayscale_obs:
-            self.ale.getScreenGrayscale(self.obs_buffer[0])
+        if self.terminal_on_life_loss and not self.game_over:
+            _, _, _, _, reset_info = self.env.step(0)
         else:
-            self.ale.getScreenRGB(self.obs_buffer[0])
-        self.obs_buffer[1].fill(0)
+            # NoopReset
+            _, reset_info = self.env.reset(**kwargs)
 
+            noops = (
+                self.env.unwrapped.np_random.integers(1, self.noop_max + 1)
+                if self.noop_max > 0
+                else 0
+            )
+            for _ in range(noops):
+                _, _, terminated, truncated, step_info = self.env.step(0)
+                reset_info.update(step_info)
+                if terminated or truncated:
+                    _, reset_info = self.env.reset(**kwargs)
+
+            if self.grayscale_obs:
+                self.ale.getScreenGrayscale(self.obs_buffer[0])
+            else:
+                self.ale.getScreenRGB(self.obs_buffer[0])
+            self.obs_buffer[1].fill(0)
+        self.lives = self.ale.lives()
         return self._get_obs(), reset_info
 
     def _get_obs(self):
