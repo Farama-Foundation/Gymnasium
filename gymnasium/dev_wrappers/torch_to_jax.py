@@ -7,14 +7,19 @@
 # Under the Apache 2.0 license. Copyright is held by the authors
 
 """Helper functions and wrapper class for converting between PyTorch and Jax."""
-import functools
-from collections import abc
-from typing import Any, Dict, Iterable, Mapping, Optional, Tuple, Union
+from __future__ import annotations
 
-from jax._src import dlpack as jax_dlpack
-from jax.interpreters.xla import DeviceArray
+import functools
+import numbers
+from collections import abc
+from typing import Any, Iterable, Mapping, SupportsFloat, Union
+
+import jax.numpy as jnp
+from jax import dlpack as jax_dlpack
 
 from gymnasium import Env, Wrapper
+from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
+from gymnasium.dev_wrappers.numpy_to_jax import jax_to_numpy
 from gymnasium.error import DependencyNotInstalled
 
 try:
@@ -35,42 +40,45 @@ def torch_to_jax(value: Any) -> Any:
     )
 
 
+@torch_to_jax.register(numbers.Number)
+def _number_torch_to_jax(value: numbers.Number) -> Any:
+    return jnp.array(value)
+
+
 @torch_to_jax.register(torch.Tensor)
-def _torch_to_jax(value: torch.Tensor) -> DeviceArray:
+def _tensor_torch_to_jax(value: torch.Tensor) -> jnp.DeviceArray:
     """Converts a PyTorch Tensor into a Jax DeviceArray."""
-    tensor = torch_dlpack.to_dlpack(value)  # pyright: ignore
-    tensor = jax_dlpack.from_dlpack(tensor)
+    tensor = torch_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
+    tensor = jax_dlpack.from_dlpack(tensor)  # pyright: ignore[reportPrivateImportUsage]
     return tensor
 
 
 @torch_to_jax.register(abc.Mapping)
-def _torch_mapping_to_jax(
-    value: Mapping[str, Union[torch.Tensor, Any]]
-) -> Mapping[str, Union[DeviceArray, Any]]:
+def _mapping_torch_to_jax(value: Mapping[str, Any]) -> Mapping[str, Any]:
     """Converts a mapping of PyTorch Tensors into a Dictionary of Jax DeviceArrays."""
     return type(value)(**{k: torch_to_jax(v) for k, v in value.items()})
 
 
 @torch_to_jax.register(abc.Iterable)
-def _torch_iterable_to_jax(
-    value: Iterable[Union[torch.Tensor, Any]]
-) -> Iterable[Union[DeviceArray, Any]]:
+def _iterable_torch_to_jax(value: Iterable[Any]) -> Iterable[Any]:
     """Converts an Iterable from PyTorch Tensors to an iterable of Jax DeviceArrays."""
     return type(value)(torch_to_jax(v) for v in value)
 
 
 @functools.singledispatch
-def jax_to_torch(value: Any, device: Device = None) -> Any:
+def jax_to_torch(value: Any, device: Device | None = None) -> Any:
     """Converts a Jax DeviceArray into a PyTorch Tensor."""
     raise Exception(
-        f"No conversion for Jax to PyTorch registered for type: {type(value)}"
+        f"No conversion for Jax to PyTorch registered for type={type(value)} and device: {device}"
     )
 
 
-@jax_to_torch.register(DeviceArray)
-def _jax_to_torch(value: DeviceArray, device: Device = None) -> torch.Tensor:
+@jax_to_torch.register(jnp.DeviceArray)
+def _devicearray_jax_to_torch(
+    value: jnp.DeviceArray, device: Device | None = None
+) -> torch.Tensor:
     """Converts a Jax DeviceArray into a PyTorch Tensor."""
-    dlpack = jax_dlpack.to_dlpack(value.astype("float32"))
+    dlpack = jax_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
     tensor = torch_dlpack.from_dlpack(dlpack)
     if device:
         return tensor.to(device=device)
@@ -80,31 +88,29 @@ def _jax_to_torch(value: DeviceArray, device: Device = None) -> torch.Tensor:
 
 @jax_to_torch.register(abc.Mapping)
 def _jax_mapping_to_torch(
-    value: Mapping[str, Union[DeviceArray, Any]], device: Device = None
-) -> Mapping[str, Union[torch.Tensor, Any]]:
+    value: Mapping[str, Any], device: Device | None = None
+) -> Mapping[str, Any]:
     """Converts a mapping of Jax DeviceArrays into a Dictionary of PyTorch Tensors."""
     return type(value)(**{k: jax_to_torch(v, device) for k, v in value.items()})
 
 
 @jax_to_torch.register(abc.Iterable)
 def _jax_iterable_to_torch(
-    value: Iterable[Union[torch.Tensor, Any]]
-) -> Iterable[Union[DeviceArray, Any]]:
+    value: Iterable[Any], device: Device | None = None
+) -> Iterable[Any]:
     """Converts an Iterable from Jax DeviceArrays to an iterable of PyTorch Tensors."""
-    return type(value)(jax_to_torch(v) for v in value)
+    return type(value)(jax_to_torch(v, device) for v in value)
 
 
 class JaxToTorchV0(Wrapper):
-    """Wraps an environment so that it can be interacted with through PyTorch Tensors.
+    """Wraps a jax-based environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
 
-    Note:
-        Extensive testing has not been done for handling the device that the Tensor is stored on as
-        well as managing the tensor's data type.
+    For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
     """
 
-    def __init__(self, env: Env, device: Optional[torch.device] = None):
+    def __init__(self, env: Env, device: Device | None = None):
         """Wrapper class to change inputs and outputs of environment to PyTorch tensors.
 
         Args:
@@ -112,11 +118,11 @@ class JaxToTorchV0(Wrapper):
             device: The device the torch Tensors should be moved to
         """
         super().__init__(env)
-        self.device: Optional[torch.device] = device
+        self.device: Device | None = device
 
     def step(
-        self, action: torch.Tensor
-    ) -> Tuple[Union[torch.Tensor, Dict[str, torch.Tensor]], float, bool, Dict]:
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict]:
         """Performs the given action within the environment.
 
         Args:
@@ -126,16 +132,33 @@ class JaxToTorchV0(Wrapper):
             The next observation, reward, done and extra info
         """
         jax_action = torch_to_jax(action)
-        obs, reward, done, info = self.env.step(jax_action)
+        obs, reward, terminated, truncated, info = self.env.step(jax_action)
 
-        obs = jax_to_torch(obs, device=self.device)
+        return (
+            jax_to_torch(obs, self.device),
+            float(reward),
+            bool(terminated),
+            bool(truncated),
+            jax_to_torch(info, self.device),
+        )
 
-        return obs, reward, done, info
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
+        """Resets the environment returning PyTorch-based observation and info.
 
-    def reset(self, **kwargs) -> Union[torch.Tensor, Tuple[torch.Tensor, Dict]]:
-        """Resets the environment."""
-        result = self.env.reset(**kwargs)
-        if kwargs.get("return_info", False):
-            return jax_to_torch(result[0], device=self.device), result[1]
-        else:
-            return jax_to_torch(result, device=self.device)
+        Args:
+            seed: The seed for resetting the environment
+            options: The options for resetting the environment, these are converted to jax arrays.
+
+        Returns:
+            PyTorch-based observations and info
+        """
+        if options is not None:
+            options = torch_to_jax(options)
+
+        return jax_to_torch(self.env.reset(seed=seed, options=options), self.device)
+
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
+        """Returns the rendered frames as a NumPy array."""
+        return jax_to_numpy(self.env.render())
