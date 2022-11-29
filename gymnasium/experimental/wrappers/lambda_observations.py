@@ -4,10 +4,10 @@ from typing import Any, Callable
 
 import gymnasium as gym
 from gymnasium.core import ObsType
-from gymnasium.dev_wrappers import ArgType
+from gymnasium.experimental.wrappers import ArgType
 
 
-class LambdaObservationsV0(gym.ObservationWrapper):
+class LambdaObservationV0(gym.ObservationWrapper):
     """Lambda observation wrapper where a function is provided that is applied to the observation."""
 
     def __init__(

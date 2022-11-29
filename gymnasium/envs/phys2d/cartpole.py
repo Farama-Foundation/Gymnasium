@@ -10,41 +10,42 @@ import numpy as np
 from jax.random import PRNGKey
 
 import gymnasium as gym
-from gymnasium.envs.phys2d.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
+from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
 
-class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]):
+class CartPoleFunctional(
+    FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
+):
     """Cartpole but in jax and functional.
 
     Example usage:
-    ```
-    import jax
-    import jax.numpy as jnp
 
-    key = jax.random.PRNGKey(0)
+        >>> import jax
+        >>> import jax.numpy as jnp
 
-    env = CartPole({"x_init": 0.5})
-    state = env.initial(key)
-    print(state)
-    print(env.step(state, 0))
+        >>> key = jax.random.PRNGKey(0)
 
-    env.transform(jax.jit)
+        >>> env = CartPole({"x_init": 0.5})
+        >>> state = env.initial(key)
+        >>> print(state)
+        >>> print(env.step(state, 0))
 
-    state = env.initial(key)
-    print(state)
-    print(env.step(state, 0))
+        >>> env.transform(jax.jit)
 
-    vkey = jax.random.split(key, 10)
-    env.transform(jax.vmap)
-    vstate = env.initial(vkey)
-    print(vstate)
-    print(env.step(vstate, jnp.array([0 for _ in range(10)])))
-    ```
+        >>> state = env.initial(key)
+        >>> print(state)
+        >>> print(env.step(state, 0))
+
+        >>> vkey = jax.random.split(key, 10)
+        >>> env.transform(jax.vmap)
+        >>> vstate = env.initial(vkey)
+        >>> print(vstate)
+        >>> print(env.step(vstate, jnp.array([0 for _ in range(10)])))
     """
 
     gravity = 9.8
@@ -232,13 +233,13 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
         pygame.quit()
 
 
-class CartPoleJaxEnv(JaxEnv, EzPickle):
+class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-        env = CartPoleF(**kwargs)
+        env = CartPoleFunctional(**kwargs)
         env.transform(jax.jit)
         action_space = env.action_space
         observation_space = env.observation_space

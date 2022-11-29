@@ -4,7 +4,7 @@ from typing import Any, Callable
 
 import gymnasium as gym
 from gymnasium.core import ActType
-from gymnasium.dev_wrappers import ArgType
+from gymnasium.experimental.wrappers import ArgType
 
 
 class LambdaActionV0(gym.ActionWrapper):
