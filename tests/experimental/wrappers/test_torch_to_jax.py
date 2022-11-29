@@ -3,8 +3,8 @@ import numpy as np
 import pytest
 import torch
 
-from gymnasium.dev_wrappers import JaxToTorchV0
-from gymnasium.dev_wrappers.torch_to_jax import jax_to_torch, torch_to_jax
+from gymnasium.experimental.wrappers import JaxToTorchV0
+from gymnasium.experimental.wrappers.torch_to_jax import jax_to_torch, torch_to_jax
 from tests.testing_env import GenericTestEnv
 
 
