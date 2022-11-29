@@ -160,7 +160,7 @@ def _flatten_box_multibinary(space: Box | MultiBinary, x: NDArray[Any]) -> NDArr
 
 
 @flatten.register(Discrete)
-def _flatten_discrete(space: Discrete, x: int) -> NDArray[np.int64]:
+def _flatten_discrete(space: Discrete, x: np.int64) -> NDArray[np.int64]:
     onehot = np.zeros(space.n, dtype=space.dtype)
     onehot[x - space.start] = 1
     return onehot
@@ -268,14 +268,14 @@ def _unflatten_box_multibinary(
 
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> int:
-    return int(space.start + np.nonzero(x)[0][0])
+def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
+    return space.start + np.nonzero(x)[0][0]
 
 
 @unflatten.register(MultiDiscrete)
 def _unflatten_multidiscrete(
-    space: MultiDiscrete, x: NDArray[np.int32]
-) -> NDArray[np.int32]:
+    space: MultiDiscrete, x: NDArray[np.integer[Any]]
+) -> NDArray[np.integer[Any]]:
     offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
     offsets[1:] = np.cumsum(space.nvec.flatten())
 
@@ -367,8 +367,11 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
     the result for graph spaces is always a `Graph` with `node_space` being a `Box`
     with flat boundaries and `edge_space` being a `Box` with flat boundaries or
     `None`. The box has exactly :func:`flatdim` dimensions. Flattening a sample
-    of the original space has the same effect as taking a sample of the flattenend
-    space.
+    of the original space has the same effect as taking a sample of the flattened
+    space. However, sampling from the flattened space is not necessarily reversible.
+    For example, sampling from a flattened Discrete space is the same as sampling from
+    a Box, and the results may not be integers or one-hot encodings. This may result in
+    errors or non-uniform sampling.
 
     Example::
         >>> from gymnasium.spaces import Box
