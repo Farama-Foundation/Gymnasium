@@ -407,83 +407,78 @@
 </tbody>
 </table>
 </div>
-<p>The Taxi Problem
-from “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition”
-by Tom Dietterich</p>
+<p>The Taxi Problem involves navigating to passengers in a grid world, picking them up and dropping them
+off at one of four locations.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
-<p>There are four designated locations in the grid world indicated by R(ed),
-G(reen), Y(ellow), and B(lue). When the episode starts, the taxi starts off
-at a random square and the passenger is at a random location. The taxi
-drives to the passenger’s location, picks up the passenger, drives to the
-passenger’s destination (another one of the four specified locations), and
-then drops off the passenger. Once the passenger is dropped off, the episode ends.</p>
+<p>There are four designated pick-up and drop-off locations (Red, Green, Yellow and Blue) in the
+5x5 grid world. The taxi starts off at a random square and the passenger at one of the
+designated locations.</p>
+<p>The goal is move the taxi to the passenger’s location, pick up the passenger,
+move to the passenger’s desired destination, and
+drop off the passenger. Once the passenger is dropped off, the episode ends.</p>
+<p>The player receives positive rewards for successfully dropping-off the passenger at the correct
+location. Negative rewards for incorrect attempts to pick-up/drop-off passenger and
+for each step where another reward is not received.</p>
 <p>Map:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+---------+
-|R: | : :G|
-| : | : : |
-| : : : : |
-| | : | : |
-|Y| : |B: |
-+---------+
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    +---------+
+    |R: | : :G|
+    | : | : : |
+    | : : : : |
+    | | : | : |
+    |Y| : |B: |
+    +---------+
 </pre></div>
 </div>
+<p>From “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition”
+by Tom Dietterich [<a href="#taxi_ref">1</a>].</p>
 </section>
-<section id="actions">
-<h2>Actions<a class="headerlink" href="#actions" title="Permalink to this heading">#</a></h2>
-<p>There are 6 discrete deterministic actions:</p>
+<section id="action-space">
+<h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
+<p>The action shape is <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> in the range <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">5}</span></code> indicating
+which direction to move the taxi or to pickup/drop off passengers.</p>
 <ul class="simple">
-<li><p>0: move south</p></li>
-<li><p>1: move north</p></li>
-<li><p>2: move east</p></li>
-<li><p>3: move west</p></li>
-<li><p>4: pickup passenger</p></li>
-<li><p>5: drop off passenger</p></li>
+<li><p>0: Move south (down)</p></li>
+<li><p>1: Move north (up)</p></li>
+<li><p>2: Move east (right)</p></li>
+<li><p>3: Move west (left)</p></li>
+<li><p>4: Pickup passenger</p></li>
+<li><p>5: Drop off passenger</p></li>
 </ul>
 </section>
-<section id="observations">
-<h2>Observations<a class="headerlink" href="#observations" title="Permalink to this heading">#</a></h2>
+<section id="observation-space">
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
 <p>There are 500 discrete states since there are 25 taxi positions, 5 possible
 locations of the passenger (including the case when the passenger is in the
 taxi), and 4 destination locations.</p>
+<p>Destination on the map are represented with the first letter of the color.</p>
+<p>Passenger locations:</p>
+<ul class="simple">
+<li><p>0: Red</p></li>
+<li><p>1: Green</p></li>
+<li><p>2: Yellow</p></li>
+<li><p>3: Blue</p></li>
+<li><p>4: In taxi</p></li>
+</ul>
+<p>Destinations:</p>
+<ul class="simple">
+<li><p>0: Red</p></li>
+<li><p>1: Green</p></li>
+<li><p>2: Yellow</p></li>
+<li><p>3: Blue</p></li>
+</ul>
+<p>An observation is returned as an <code class="docutils literal notranslate"><span class="pre">int()</span></code> that encodes the corresponding state, calculated by
+<code class="docutils literal notranslate"><span class="pre">((taxi_row</span> <span class="pre">*</span> <span class="pre">5</span> <span class="pre">+</span> <span class="pre">taxi_col)</span> <span class="pre">*</span> <span class="pre">5</span> <span class="pre">+</span> <span class="pre">passenger_location)</span> <span class="pre">*</span> <span class="pre">4</span> <span class="pre">+</span> <span class="pre">destination</span></code></p>
 <p>Note that there are 400 states that can actually be reached during an
 episode. The missing states correspond to situations in which the passenger
 is at the same location as their destination, as this typically signals the
 end of an episode. Four additional states can be observed right after a
 successful episodes, when both the passenger and the taxi are at the destination.
 This gives a total of 404 reachable discrete states.</p>
-<p>Each state space is represented by the tuple:
-(taxi_row, taxi_col, passenger_location, destination)</p>
-<p>An observation is an integer that encodes the corresponding state.
-The state tuple can then be decoded with the “decode” method.</p>
-<p>Passenger locations:</p>
-<ul class="simple">
-<li><p>0: R(ed)</p></li>
-<li><p>1: G(reen)</p></li>
-<li><p>2: Y(ellow)</p></li>
-<li><p>3: B(lue)</p></li>
-<li><p>4: in taxi</p></li>
-</ul>
-<p>Destinations:</p>
-<ul class="simple">
-<li><p>0: R(ed)</p></li>
-<li><p>1: G(reen)</p></li>
-<li><p>2: Y(ellow)</p></li>
-<li><p>3: B(lue)</p></li>
-</ul>
 </section>
-<section id="info">
-<h2>Info<a class="headerlink" href="#info" title="Permalink to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> will return an info dictionary that contains “p” and “action_mask” containing
-the probability that the state is taken and a mask of what actions will result in a change of state to speed up training.</p>
-<p>As Taxi’s initial state is a stochastic, the “p” key represents the probability of the
-transition however this value is currently bugged being 1.0, this will be fixed soon.
-As the steps are deterministic, “p” represents the probability of the transition which is always 1.0</p>
-<p>For some cases, taking an action will have no effect on the state of the agent.
-In v0.25.0, <code class="docutils literal notranslate"><span class="pre">info[&quot;action_mask&quot;]</span></code> contains a np.ndarray for each of the action specifying
-if the action will change the state.</p>
-<p>To sample a modifying action, use <code class="docutils literal notranslate"><span class="pre">action</span> <span class="pre">=</span> <span class="pre">env.action_space.sample(info[&quot;action_mask&quot;])</span></code>
-Or with a Q-value based algorithm <code class="docutils literal notranslate"><span class="pre">action</span> <span class="pre">=</span> <span class="pre">np.argmax(q_values[obs,</span> <span class="pre">np.where(info[&quot;action_mask&quot;]</span> <span class="pre">==</span> <span class="pre">1)[0]])</span></code>.</p>
+<section id="starting-state">
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<p>The episode starts with the player in a random state.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
@@ -492,6 +487,34 @@ Or with a Q-value based algorithm <code class="docutils literal notranslate"><sp
 <li><p>+20 delivering passenger.</p></li>
 <li><p>-10  executing “pickup” and “drop-off” actions illegally.</p></li>
 </ul>
+<p>An action that results a noop, like moving into a wall, will incur the time step
+penalty. Noops can be avoided by sampling the <code class="docutils literal notranslate"><span class="pre">action_mask</span></code> returned in <code class="docutils literal notranslate"><span class="pre">info</span></code>.</p>
+</section>
+<section id="episode-end">
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
+<p>The episode ends if the following happens:</p>
+<ul class="simple">
+<li><p>Termination:
+1. The taxi drops off the passenger.</p></li>
+<li><p>Truncation (when using the time_limit wrapper):
+1. The length of the episode is 200.</p></li>
+</ul>
+</section>
+<section id="information">
+<h2>Information<a class="headerlink" href="#information" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">step()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> return a dict with the following keys:</p>
+<ul class="simple">
+<li><p>p - transition proability for the state.</p></li>
+<li><p>action_mask - if actions will cause a transition to a new state.</p></li>
+</ul>
+<p>As taxi is not stochastic, the transition probability is always 1.0. Implementing
+a transitional probability in line with the Dietterich paper (‘The fickle taxi task’)
+is a TODO.</p>
+<p>For some cases, taking an action will have no effect on the state of the episode.
+In v0.25.0, <code class="docutils literal notranslate"><span class="pre">info[&quot;action_mask&quot;]</span></code> contains a np.ndarray for each of the actions specifying
+if the action will change the state.</p>
+<p>To sample a modifying action, use <code class="docutils literal notranslate"><span class="pre">action</span> <span class="pre">=</span> <span class="pre">env.action_space.sample(info[&quot;action_mask&quot;])</span></code>
+Or with a Q-value based algorithm <code class="docutils literal notranslate"><span class="pre">action</span> <span class="pre">=</span> <span class="pre">np.argmax(q_values[obs,</span> <span class="pre">np.where(info[&quot;action_mask&quot;]</span> <span class="pre">==</span> <span class="pre">1)[0]])</span></code>.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
@@ -500,13 +523,18 @@ Or with a Q-value based algorithm <code class="docutils literal notranslate"><sp
 </pre></div>
 </div>
 </section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">#</a></h2>
+<p><a id="taxi_ref"></a>[1] T. G. Dietterich, “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition,”
+Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.</p>
+</section>
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information</p></li>
 <li><p>v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.</p></li>
 <li><p>v1: Remove (3,2) from locs, add passidx&lt;4 check</p></li>
-<li><p>v0: Initial versions release</p></li>
+<li><p>v0: Initial version release</p></li>
 </ul>
 </section>
 </section>
@@ -563,11 +591,14 @@ Or with a Q-value based algorithm <code class="docutils literal notranslate"><sp
             <ul>
 <li><a class="reference internal" href="#">Taxi</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
-<li><a class="reference internal" href="#actions">Actions</a></li>
-<li><a class="reference internal" href="#observations">Observations</a></li>
-<li><a class="reference internal" href="#info">Info</a></li>
+<li><a class="reference internal" href="#action-space">Action Space</a></li>
+<li><a class="reference internal" href="#observation-space">Observation Space</a></li>
+<li><a class="reference internal" href="#starting-state">Starting State</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a></li>
+<li><a class="reference internal" href="#information">Information</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>
 </ul>
 </li>
