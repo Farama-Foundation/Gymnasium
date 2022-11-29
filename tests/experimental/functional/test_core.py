@@ -2,10 +2,10 @@ from typing import Any, Dict, Optional
 
 import numpy as np
 
-from gymnasium.functional import FuncEnv
+from gymnasium.experimental import FuncEnv
 
 
-class TestEnv(FuncEnv):
+class GenericTestFuncEnv(FuncEnv):
     def __init__(self, options: Optional[Dict[str, Any]] = None):
         super().__init__(options)
 
@@ -26,7 +26,7 @@ class TestEnv(FuncEnv):
 
 
 def test_api():
-    env = TestEnv()
+    env = GenericTestFuncEnv()
     state = env.initial(None)
     obs = env.observation(state)
     assert state.shape == (2,)
