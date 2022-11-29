@@ -30,7 +30,7 @@ class CliffWalkingEnv(Env):
     The player makes moves until they reach the goal.
 
     Adapted from Example 6.6 (page 132) from Reinforcement Learning: An Introduction
-    by Sutton and Barto [<a href="#ref">1</a>].
+    by Sutton and Barto [<a href="#cliffwalk_ref">1</a>].
 
     With inspiration from:
     [https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py](https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py)
@@ -80,8 +80,8 @@ class CliffWalkingEnv(Env):
     gym.make('CliffWalking-v0')
     ```
 
-    ## References<a id="ref"></a>
-    [1] R. Sutton and A. Barto, “Reinforcement Learning:
+    ## References
+    <a id="cliffwalk_ref"></a>[1] R. Sutton and A. Barto, “Reinforcement Learning:
     An Introduction” 2020. [Online]. Available: [http://www.incompleteideas.net/book/RLbook2020.pdf](http://www.incompleteideas.net/book/RLbook2020.pdf)
 
     ## Version History

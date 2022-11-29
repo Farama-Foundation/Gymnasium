@@ -73,7 +73,7 @@ class BlackjackEnv(gym.Env):
 
     This environment corresponds to the version of the blackjack problem
     described in Example 5.1 in Reinforcement Learning: An Introduction
-    by Sutton and Barto [<a href="#ref">1</a>].
+    by Sutton and Barto [<a href="#blackjack_ref">1</a>].
 
     ## Action Space
     The action shape is `(1,)` in the range `{0, 1}` indicating
@@ -135,8 +135,8 @@ class BlackjackEnv(gym.Env):
     will win (i.e. get a reward of +1). The reverse rule does not apply.
     If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).
 
-    ## References<a id="ref"></a>
-    [1] R. Sutton and A. Barto, “Reinforcement Learning:
+    ## References
+    <a id="blackjack_ref"></a>[1] R. Sutton and A. Barto, “Reinforcement Learning:
     An Introduction” 2020. [Online]. Available: [http://www.incompleteideas.net/book/RLbook2020.pdf](http://www.incompleteideas.net/book/RLbook2020.pdf)
 
     ## Version History

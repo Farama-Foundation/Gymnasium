@@ -51,7 +51,7 @@ class TaxiEnv(Env):
             +---------+
 
     From "Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition"
-    by Tom Dietterich [<a href="#ref">1</a>].
+    by Tom Dietterich [<a href="#taxi_ref">1</a>].
 
     ## Action Space
     The action shape is `(1,)` in the range `{0, 5}` indicating
@@ -139,8 +139,8 @@ class TaxiEnv(Env):
     gym.make('Taxi-v3')
     ```
 
-    # References<a id="ref"></a>
-    [1] T. G. Dietterich, “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition,”
+    ## References
+    <a id="taxi_ref"></a>[1] T. G. Dietterich, “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition,”
     Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.
 
     ## Version History
