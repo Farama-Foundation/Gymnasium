@@ -411,28 +411,33 @@
 that sum to closer to 21 (without going over 21) than the dealers cards.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
-<p>Card Values:</p>
+<p>The game starts with the dealer having one face up and one face down card,
+while the player has two face up cards. All cards are drawn from an infinite deck
+(i.e. with replacement).</p>
+<p>The card values are:</p>
 <ul class="simple">
 <li><p>Face cards (Jack, Queen, King) have a point value of 10.</p></li>
 <li><p>Aces can either count as 11 (called a ‘usable ace’) or 1.</p></li>
 <li><p>Numerical cards (2-9) have a value equal to their number.</p></li>
 </ul>
-<p>This game is played with an infinite deck (or with replacement).
-The game starts with the dealer having one face up and one face down card,
-while the player has two face up cards.</p>
-<p>The player can request additional cards (hit, action=1) until they decide to stop (stick, action=0)
-or exceed 21 (bust, immediate loss).
-After the player sticks, the dealer reveals their facedown card, and draws
-until their sum is 17 or greater.  If the dealer goes bust, the player wins.
-If neither the player nor the dealer busts, the outcome (win, lose, draw) is
+<p>The player has the sum of cards held. The player can request
+additional cards (hit) until they decide to stop (stick) or exceed 21 (bust,
+immediate loss).</p>
+<p>After the player sticks, the dealer reveals their facedown card, and draws cards
+until their sum is 17 or greater. If the dealer goes bust, the player wins.</p>
+<p>If neither the player nor the dealer busts, the outcome (win, lose, draw) is
 decided by whose sum is closer to 21.</p>
+<p>This environment corresponds to the version of the blackjack problem
+described in Example 5.1 in Reinforcement Learning: An Introduction
+by Sutton and Barto [<a href="#blackjack_ref">1</a>].</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
-<p>There are two actions:</p>
+<p>The action shape is <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> in the range <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1}</span></code> indicating
+whether to stick or hit.</p>
 <ul class="simple">
-<li><p>0: stick</p></li>
-<li><p>1: hit</p></li>
+<li><p>0: Stick</p></li>
+<li><p>1: Hit</p></li>
 </ul>
 </section>
 <section id="observation-space">
@@ -440,21 +445,62 @@ decided by whose sum is closer to 21.</p>
 <p>The observation consists of a 3-tuple containing: the player’s current sum,
 the value of the dealer’s one showing card (1-10 where 1 is ace),
 and whether the player holds a usable ace (0 or 1).</p>
-<p>This environment corresponds to the version of the blackjack problem
-described in Example 5.1 in Reinforcement Learning: An Introduction
-by Sutton and Barto (http://incompleteideas.net/book/the-book-2nd.html).</p>
+<p>The observation is returned as <code class="docutils literal notranslate"><span class="pre">(int(),</span> <span class="pre">int(),</span> <span class="pre">int())</span></code>.</p>
+</section>
+<section id="starting-state">
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<p>The starting state is initialised in the following range.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Observation</p></th>
+<th class="head"><p>Min</p></th>
+<th class="head"><p>Max</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Player current sum</p></td>
+<td><p>4</p></td>
+<td><p>12</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dealer showing card value</p></td>
+<td><p>2</p></td>
+<td><p>11</p></td>
+</tr>
+<tr class="row-even"><td><p>Usable Ace</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
-<ul>
+<ul class="simple">
 <li><p>win game: +1</p></li>
 <li><p>lose game: -1</p></li>
 <li><p>draw game: 0</p></li>
-<li><p>win game with natural blackjack:</p>
-<p>+1.5 (if <a href="#nat">natural</a> is True)</p>
-<p>+1 (if <a href="#nat">natural</a> is False)</p>
-</li>
+<li><p>win game with natural blackjack:
++1.5 (if <a href="#nat">natural</a> is True)
++1 (if <a href="#nat">natural</a> is False)</p></li>
 </ul>
+</section>
+<section id="episode-end">
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
+<p>The episode ends if the following happens:</p>
+<ul class="simple">
+<li><p>Termination:</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>The player hits and the sum of hand exceeds 21.</p></li>
+<li><p>The player sticks.</p></li>
+</ol>
+<p>An ace will always be counted as usable (11) unless it busts the player.</p>
+</section>
+<section id="information">
+<h2>Information<a class="headerlink" href="#information" title="Permalink to this heading">#</a></h2>
+<p>No additional information is returned.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
@@ -462,18 +508,24 @@ by Sutton and Barto (http://incompleteideas.net/book/the-book-2nd.html).</p>
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Blackjack-v1&#39;</span><span class="p">,</span> <span class="n">natural</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><a id="nat"><code class="docutils literal notranslate"><span class="pre">natural=False</span></code></a>: Whether to give an additional reward for
+<p><a id="nat"></a><code class="docutils literal notranslate"><span class="pre">natural=False</span></code>: Whether to give an additional reward for
 starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).</p>
-<p><a id="sab"><code class="docutils literal notranslate"><span class="pre">sab=False</span></code></a>: Whether to follow the exact rules outlined in the book by
+<p><a id="sab"></a><code class="docutils literal notranslate"><span class="pre">sab=False</span></code>: Whether to follow the exact rules outlined in the book by
 Sutton and Barto. If <code class="docutils literal notranslate"><span class="pre">sab</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the keyword argument <code class="docutils literal notranslate"><span class="pre">natural</span></code> will be ignored.
 If the player achieves a natural blackjack and the dealer does not, the player
 will win (i.e. get a reward of +1). The reverse rule does not apply.
 If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).</p>
 </section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">#</a></h2>
+<p><a id="blackjack_ref"></a>[1] R. Sutton and A. Barto, “Reinforcement Learning:
+An Introduction” 2020. [Online]. Available: <a class="reference external" href="http://www.incompleteideas.net/book/RLbook2020.pdf">http://www.incompleteideas.net/book/RLbook2020.pdf</a></p>
+</section>
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p>v0: Initial versions release (1.0.0)</p></li>
+<li><p>v1: Fix the natural handling in Blackjack</p></li>
+<li><p>v0: Initial version release</p></li>
 </ul>
 </section>
 </section>
@@ -530,8 +582,12 @@ If both the player and the dealer get a natural, it will be a draw (i.e. reward 
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#action-space">Action Space</a></li>
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
+<li><a class="reference internal" href="#starting-state">Starting State</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a></li>
+<li><a class="reference internal" href="#information">Information</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>
 </ul>
 </li>
