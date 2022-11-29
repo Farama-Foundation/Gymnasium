@@ -160,7 +160,7 @@ def _flatten_box_multibinary(space: Box | MultiBinary, x: NDArray[Any]) -> NDArr
 
 
 @flatten.register(Discrete)
-def _flatten_discrete(space: Discrete, x: int) -> NDArray[np.int64]:
+def _flatten_discrete(space: Discrete, x: np.int64) -> NDArray[np.int64]:
     onehot = np.zeros(space.n, dtype=space.dtype)
     onehot[x - space.start] = 1
     return onehot
@@ -268,14 +268,14 @@ def _unflatten_box_multibinary(
 
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> int:
-    return int(space.start + np.nonzero(x)[0][0])
+def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
+    return space.start + np.nonzero(x)[0][0]
 
 
 @unflatten.register(MultiDiscrete)
 def _unflatten_multidiscrete(
-    space: MultiDiscrete, x: NDArray[np.int32]
-) -> NDArray[np.int32]:
+    space: MultiDiscrete, x: NDArray[np.integer[Any]]
+) -> NDArray[np.integer[Any]]:
     offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
     offsets[1:] = np.cumsum(space.nvec.flatten())
 
