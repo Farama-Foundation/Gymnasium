@@ -48,6 +48,7 @@ api/spaces
 api/wrappers
 api/vector
 api/utils
+api/experimental
 ```
 
 ```{toctree}
