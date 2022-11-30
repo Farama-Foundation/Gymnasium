@@ -1,8 +1,5 @@
 """Wrapper for adding time aware observations to environment observation."""
-
 from collections import OrderedDict
-
-import jumpy as jp
 
 import gymnasium as gym
 import gymnasium.spaces as spaces
@@ -51,15 +48,14 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         super().__init__(env)
         self.flatten = flatten
         self.normalize_time = normalize_time
-        self.max_timesteps = self._get_max_timesteps(env)
-        self.num_envs = getattr(env, "num_envs", 1)
+        self.max_timesteps = getattr(env, "_max_episode_steps")
 
         if self.normalize_time:
             self._get_time_observation = lambda: self.timesteps / self.max_timesteps
-            time_space = Box(0, 1, (self.num_envs,))
+            time_space = Box(0, 1)
         else:
             self._get_time_observation = lambda: self.max_timesteps - self.timesteps
-            time_space = Box(0, self.max_timesteps, (self.num_envs,))
+            time_space = Box(0, self.max_timesteps)
 
         self.time_aware_observation_space = Dict(
             obs=env.observation_space, time=time_space
@@ -93,9 +89,6 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
     def step(self, action: ActType):
         """Steps through the environment, incrementing the time step.
 
-        In vectorized environments, if any of the environments
-        reach a terminal state, set the respective time value to zero.
-
         Args:
             action: The action to take
 
@@ -104,8 +97,6 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         """
         self.timesteps += 1
         observation, reward, terminated, truncated, info = super().step(action)
-
-        self.timesteps = jp.where(terminated, 0, self.timesteps)
 
         return observation, reward, terminated, truncated, info
 
@@ -118,18 +109,5 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         Returns:
             The reset environment
         """
-        self.timesteps = jp.zeros(self.num_envs)
+        self.timesteps = 0
         return super().reset(**kwargs)
-
-    @staticmethod
-    def _get_max_timesteps(env: gym.Env):
-        """Get the max episode steps before truncation occurs.
-
-        Args:
-            env: the provided environment
-        """
-        return (
-            env.get_attr("_max_episode_steps")[0]
-            if hasattr(env, "is_vector_env")
-            else getattr(env, "_max_episode_steps")
-        )

@@ -89,13 +89,10 @@ def test_time_aware_observation_creation_flatten(env):
     is correctly created when the `flatten` parameter is set to `True`.
     When flattened, the observation space should be a 1 dimension `Box`
     with time appended to the end.
-    In vectorized environments there will be `n` times observation at
-    the end, where `n` is the number of environments.
     """
     wrapped_env = TimeAwareObservationV0(env, flatten=True)
     obs, _ = wrapped_env.reset()
 
     assert isinstance(wrapped_env.observation_space, Box)
     assert isinstance(obs, np.ndarray)
-    assert np.all(obs[-wrapped_env.num_envs :] == 0)
     assert env.observation_space == wrapped_env.time_aware_observation_space["obs"]
