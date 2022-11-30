@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from typing import (
     Callable,
     Dict,
+    Iterable,
     List,
     Optional,
     Sequence,
@@ -420,6 +421,23 @@ def _check_spec_register(spec: EnvSpec):
         )
 
 
+def _check_metadata(metadata_: dict):
+    if not isinstance(metadata_, dict):
+        raise error.InvalidMetadata(
+            f"Expect the environment metadata to be dict, actual type: {type(metadata)}"
+        )
+
+    render_modes = metadata_.get("render_modes")
+    if render_modes is None:
+        logger.warn(
+            f"The environment creator metadata doesn't include `render_modes`, contains: {list(metadata_.keys())}"
+        )
+    elif not isinstance(render_modes, Iterable):
+        logger.warn(
+            f"Expects the environment metadata render_modes to be a Iterable, actual type: {type(render_modes)}"
+        )
+
+
 # Public API
 
 
@@ -581,52 +599,31 @@ def make(
         # Assume it's a string
         env_creator = load(spec_.entry_point)
 
+    render_modes = None
+    if hasattr(env_creator, "metadata"):
+        _check_metadata(env_creator.metadata)
+        render_modes = env_creator.metadata.get("render_modes")
     mode = _kwargs.get("render_mode")
     apply_human_rendering = False
     apply_render_collection = False
 
-    # If we have access to metadata we check that "render_mode" is valid and see if the HumanRendering wrapper needs to be applied
-    if mode is not None and hasattr(env_creator, "metadata"):
-        assert isinstance(
-            env_creator.metadata, dict
-        ), f"Expect the environment creator ({env_creator}) metadata to be dict, actual type: {type(env_creator.metadata)}"
-
-        if "render_modes" in env_creator.metadata:
-            render_modes = env_creator.metadata["render_modes"]
-            if not isinstance(render_modes, Sequence):
-                logger.warn(
-                    f"Expects the environment metadata render_modes to be a Sequence (tuple or list), actual type: {type(render_modes)}"
-                )
-
-            # Apply the `HumanRendering` wrapper, if the mode=="human" but "human" not in render_modes
-            if (
-                mode == "human"
-                and "human" not in render_modes
-                and ("rgb_array" in render_modes or "rgb_array_list" in render_modes)
-            ):
-                logger.warn(
-                    "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
-                    "The HumanRendering wrapper is being applied to your environment."
-                )
-                apply_human_rendering = True
-                if "rgb_array" in render_modes:
-                    _kwargs["render_mode"] = "rgb_array"
-                else:
-                    _kwargs["render_mode"] = "rgb_array_list"
-            elif (
-                mode not in render_modes
-                and mode.endswith("_list")
-                and mode[: -len("_list")] in render_modes
-            ):
-                _kwargs["render_mode"] = mode[: -len("_list")]
-                apply_render_collection = True
-            elif mode not in render_modes:
-                logger.warn(
-                    f"The environment is being initialised with mode ({mode}) that is not in the possible render_modes ({render_modes})."
-                )
-        else:
+    # If mode is not valid, try applying HumanRendering/RenderCollection wrappers
+    if mode is not None and render_modes is not None and mode not in render_modes:
+        displayable_modes = {"rgb_array", "rgb_array_list"}.intersection(render_modes)
+        if mode == "human" and len(displayable_modes) > 0:
             logger.warn(
-                f"The environment creator metadata doesn't include `render_modes`, contains: {list(env_creator.metadata.keys())}"
+                "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
+                "The HumanRendering wrapper is being applied to your environment."
+            )
+            _kwargs["render_mode"] = displayable_modes.pop()
+            apply_human_rendering = True
+        elif mode.endswith("_list") and mode[: -len("_list")] in render_modes:
+            _kwargs["render_mode"] = mode[: -len("_list")]
+            apply_render_collection = True
+        else:
+            raise error.UnsupportedMode(
+                f"The environment is being initialised with render_mode={mode} "
+                f"that is not in the possible render_modes ({render_modes})."
             )
 
     if apply_api_compatibility is True or (
@@ -706,7 +703,7 @@ def spec(env_id: str) -> EnvSpec:
 
 def pprint_registry(
     _registry: dict = registry,
-    max_rows: int = 10,
+    num_cols: int = 3,
     exclude_namespaces: Optional[List[str]] = None,
     disable_print: bool = False,
 ) -> Optional[str]:
@@ -714,7 +711,7 @@ def pprint_registry(
 
     Args:
         _registry: Environment registry to be printed.
-        max_rows: Number of rows per column.
+        num_cols: Number of columns to arrange environments in, for display.
         exclude_namespaces: Exclude any namespaces from being printed.
         disable_print: Whether to return a string of all the namespaces and environment IDs
             instead of printing it to console.
@@ -751,16 +748,13 @@ def pprint_registry(
         if exclude_namespaces is not None and namespace in exclude_namespaces:
             continue
         return_str += f"{'=' * 5} {namespace} {'=' * 5}\n"  # Print namespace.
-        num_columns = (
-            len(envs) // max_rows
-        ) + 1  # Calculate number of columns required.
         # Reference: https://stackoverflow.com/a/33464001
         for count, item in enumerate(sorted(envs), 1):
             return_str += (
                 item.ljust(max_justify) + " "
             )  # Print column with justification.
             # Once all rows printed, switch to new column.
-            if count % num_columns == 0 or count == len(envs):
+            if count % num_cols == 0 or count == len(envs):
                 return_str += "\n"
         return_str += "\n"
 
