@@ -26,7 +26,7 @@ def test_lambda_observation_v0():
 
     env.reset(seed=SEED)
     wrapped_env = LambdaObservationV0(
-        env, lambda observation: observation + observation_shift
+        env, lambda observation: observation + observation_shift, None
     )
     wrapped_obs, _, _, _, _ = wrapped_env.step(DISCRETE_ACTION)
 
@@ -49,7 +49,7 @@ def test_lambda_observation_v0_within_vector():
 
     env.reset(seed=SEED)
     wrapped_env = LambdaObservationV0(
-        env, lambda observation: observation + observation_shift
+        env, lambda observation: observation + observation_shift, None
     )
     wrapped_obs, _, _, _, _ = wrapped_env.step(
         np.array([DISCRETE_ACTION for _ in range(NUM_ENVS)])

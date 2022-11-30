@@ -90,7 +90,7 @@ setup(
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
         "gymnasium_notices >= 0.0.1",
-        "jax-jumpy>=0.2.0"
+        "jax-jumpy>=0.2.0",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
