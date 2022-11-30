@@ -6,8 +6,8 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
+from gymnasium.experimental.wrappers import TimeAwareObservationV0
 from gymnasium.spaces import Box, Dict
-from gymnasium.wrappers import TimeAwareObservationV0
 
 NUM_STEPS = 20
 SEED = 0

@@ -2,7 +2,7 @@
 import pytest
 
 from gymnasium.error import InvalidProbability
-from gymnasium.wrappers import StickyActionV0
+from gymnasium.experimental.wrappers import StickyActionV0
 from tests.testing_env import GenericTestEnv
 
 SEED = 42

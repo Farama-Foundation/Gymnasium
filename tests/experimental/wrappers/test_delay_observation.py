@@ -1,7 +1,7 @@
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.wrappers import DelayObservationV0
+from gymnasium.experimental.wrappers import DelayObservationV0
 
 SEED = 42
 
