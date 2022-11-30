@@ -5,6 +5,7 @@ from typing import Any, Callable, Sequence
 
 import jumpy as jp
 import numpy as np
+import numpy.typing as npt
 
 import gymnasium as gym
 from gymnasium import spaces
@@ -207,14 +208,14 @@ class ResizeObservationV0(LambdaObservationV0):
         assert all(np.issubdtype(type(elem), np.integer) for elem in shape)
         assert all(x > 0 for x in shape)
 
-        self.shape = tuple(shape)
-
         try:
             import cv2
         except ImportError:
             raise DependencyNotInstalled(
                 "opencv is not install, run `pip install gymnasium[other]`"
             )
+
+        self.shape = tuple(shape)
 
         new_observation_space = spaces.Box(
             low=0, high=255, shape=self.shape + env.observation_space.shape[2:]
@@ -239,8 +240,8 @@ class ReshapeObservationV0(LambdaObservationV0):
         assert all(x > 0 for x in shape)
 
         new_observation_space = spaces.Box(
-            low=np.reshape(np.flatten(env.observation_space.low), shape),
-            high=np.reshape(np.flatten(env.observation_space.high), shape),
+            low=np.reshape(np.ravel(env.observation_space.low), shape),
+            high=np.reshape(np.ravel(env.observation_space.high), shape),
             shape=shape,
             dtype=env.observation_space.dtype,
         )
@@ -260,8 +261,6 @@ class RescaleObservationV0(LambdaObservationV0):
     ):
         """Constructor that requires the env observation spaces to be a :class:`Box`."""
         assert isinstance(env.observation_space, spaces.Box)
-        env_low = env.observation_space.low
-        env_high = env.observation_space.high
 
         if not isinstance(min_obs, np.ndarray):
             assert np.issubdtype(type(min_obs), np.integer) or np.issubdtype(
@@ -279,6 +278,9 @@ class RescaleObservationV0(LambdaObservationV0):
         assert max_obs.shape == env.observation_space.shape
         assert not np.any(max_obs == np.inf)
 
+        env_low = env.observation_space.low
+        env_high = env.observation_space.high
+
         new_observation_space = spaces.Box(low=min_obs, high=max_obs)
         super().__init__(
             env,
@@ -291,7 +293,7 @@ class RescaleObservationV0(LambdaObservationV0):
 class DtypeObservationV0(LambdaObservationV0):
     """Observation wrapper for transforming the dtype of an observation."""
 
-    def __init__(self, env: gym.Env, dtype):
+    def __init__(self, env: gym.Env, dtype: npt.DTypeLike):
         """Constructor for Dtype, this is only valid with :class:`Box`, :class:`Discrete`, :class:`MultiDiscrete` and :class:`MultiBinary` observation spaces."""
         assert isinstance(
             env.observation_space,
