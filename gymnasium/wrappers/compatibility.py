@@ -64,8 +64,8 @@ class EnvCompatibility(gym.Env):
             render_mode (str): the render mode to use when rendering the environment, passed automatically to env.render
         """
         logger.warn(
-            "The `gym.make(..., apply_api_compatibility=...)` parameter is deprecated and will be removed in v28. "
-            "Instead use `gym.make('GymV22Compatibility', env_name=...)` or `from shimmy import EnvCompatibility`"
+            "The `gymnasium.make(..., apply_api_compatibility=...)` parameter is deprecated and will be removed in v28. "
+            "Instead use `gym.make('GymV22Compatibility-v0', env_name=...)` or `from shimmy import GymV22CompatibilityV0`"
         )
         self.metadata = getattr(old_env, "metadata", {"render_modes": []})
         self.render_mode = render_mode
