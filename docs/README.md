@@ -34,6 +34,8 @@ Install the required packages and Gymnasium (or your fork):
 ```
 pip install -r requirements.txt
 pip install gymnasium
+cd docs
+pip install -r requirements.txt  # To install document builder requirements.
 ```
 
 To build the documentation once:
