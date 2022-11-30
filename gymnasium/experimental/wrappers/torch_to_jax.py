@@ -19,8 +19,8 @@ from jax import dlpack as jax_dlpack
 
 from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
-from gymnasium.dev_wrappers.numpy_to_jax import jax_to_numpy
 from gymnasium.error import DependencyNotInstalled
+from gymnasium.experimental.wrappers.numpy_to_jax import jax_to_numpy
 
 try:
     import torch

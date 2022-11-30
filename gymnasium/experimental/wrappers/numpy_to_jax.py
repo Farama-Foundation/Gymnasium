@@ -8,7 +8,6 @@ from typing import Any, Iterable, Mapping, SupportsFloat
 
 import jax.numpy as jnp
 import numpy as np
-from jax.interpreters.xla import DeviceArray
 
 from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
@@ -24,7 +23,7 @@ def numpy_to_jax(value: Any) -> Any:
 
 @numpy_to_jax.register(numbers.Number)
 @numpy_to_jax.register(np.ndarray)
-def _number_ndarray_numpy_to_jax(value: np.ndarray | numbers.Number) -> DeviceArray:
+def _number_ndarray_numpy_to_jax(value: np.ndarray | numbers.Number) -> jnp.DeviceArray:
     """Converts a numpy array or  number (int, float, etc.) to a Jax DeviceArray."""
     return jnp.array(value)
 
@@ -38,7 +37,7 @@ def _mapping_numpy_to_jax(value: Mapping[str, Any]) -> Mapping[str, Any]:
 @numpy_to_jax.register(abc.Iterable)
 def _iterable_numpy_to_jax(
     value: Iterable[np.ndarray | Any],
-) -> Iterable[DeviceArray | Any]:
+) -> Iterable[jnp.DeviceArray | Any]:
     """Converts an Iterable from Numpy Arrays to an iterable of Jax DeviceArrays."""
     return type(value)(numpy_to_jax(v) for v in value)
 
@@ -51,15 +50,15 @@ def jax_to_numpy(value: Any) -> Any:
     )
 
 
-@jax_to_numpy.register(DeviceArray)
-def _devicearray_jax_to_numpy(value: DeviceArray) -> np.ndarray:
+@jax_to_numpy.register(jnp.DeviceArray)
+def _devicearray_jax_to_numpy(value: jnp.DeviceArray) -> np.ndarray:
     """Converts a Jax DeviceArray to a numpy array."""
     return np.array(value)
 
 
 @jax_to_numpy.register(abc.Mapping)
 def _mapping_jax_to_numpy(
-    value: Mapping[str, DeviceArray | Any]
+    value: Mapping[str, jnp.DeviceArray | Any]
 ) -> Mapping[str, np.ndarray | Any]:
     """Converts a dictionary of Jax DeviceArrays to a mapping of numpy arrays."""
     return type(value)(**{k: jax_to_numpy(v) for k, v in value.items()})
@@ -68,7 +67,7 @@ def _mapping_jax_to_numpy(
 @jax_to_numpy.register(abc.Iterable)
 def _iterable_jax_to_numpy(
     value: Iterable[np.ndarray | Any],
-) -> Iterable[DeviceArray | Any]:
+) -> Iterable[jnp.DeviceArray | Any]:
     """Converts an Iterable from Numpy arrays to an iterable of Jax DeviceArrays."""
     return type(value)(jax_to_numpy(v) for v in value)
 
