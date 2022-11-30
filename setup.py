@@ -41,7 +41,14 @@ extras = {
     "mujoco": ["mujoco==2.2", "imageio>=2.14.1"],
     "toy_text": ["pygame==2.1.0"],
     "jax": ["jax==0.3.20", "jaxlib==0.3.20"],
-    "other": ["lz4>=3.1.0", "opencv-python>=3.0", "matplotlib>=3.0", "moviepy>=1.0.0"],
+    "other": [
+        "lz4>=3.1.0",
+        "opencv-python>=3.0",
+        "matplotlib>=3.0",
+        "moviepy>=1.0.0",
+        "tensorflow>=2.1.0",
+        "torch>=1.0.0",
+    ],
 }
 
 extras["testing"] = list(set(itertools.chain.from_iterable(extras.values()))) + [
