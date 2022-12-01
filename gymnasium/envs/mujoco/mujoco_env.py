@@ -52,11 +52,8 @@ class BaseMujocoEnv(gym.Env):
 
         self.init_qpos = self.data.qpos.ravel().copy()
         self.init_qvel = self.data.qvel.ravel().copy()
-        self._viewers = {}
 
         self.frame_skip = frame_skip
-
-        self.viewer = None
 
         assert self.metadata["render_modes"] == [
             "human",
@@ -89,12 +86,6 @@ class BaseMujocoEnv(gym.Env):
         Implement this in each subclass.
         """
         raise NotImplementedError
-
-    def viewer_setup(self):
-        """
-        This method is called when the viewer is initialized.
-        Optionally implement this method, if you need to tinker with camera position and so forth.
-        """
 
     def _initialize_simulation(self):
         """
@@ -159,9 +150,8 @@ class BaseMujocoEnv(gym.Env):
         self._step_mujoco_simulation(ctrl, n_frames)
 
     def close(self):
-        if self.viewer is not None:
-            self.viewer = None
-            self._viewers = {}
+        """Close all processes like rendering contexts"""
+        raise NotImplementedError
 
     def get_body_com(self, body_name):
         """Return the cartesian position of a body frame"""
@@ -197,6 +187,9 @@ class MuJocoPyEnv(BaseMujocoEnv):
             "you are trying to precisely replicate previous works)."
         )
 
+        self.viewer = None
+        self._viewers = {}
+
         super().__init__(
             model_path,
             frame_skip,
@@ -222,6 +215,9 @@ class MuJocoPyEnv(BaseMujocoEnv):
         state = mujoco_py.MjSimState(state.time, qpos, qvel, state.act, state.udd_state)
         self.sim.set_state(state)
         self.sim.forward()
+
+    def get_body_com(self, body_name):
+        return self.data.get_body_xpos(body_name)
 
     def _step_mujoco_simulation(self, ctrl, n_frames):
         self.sim.data.ctrl[:] = ctrl
@@ -297,8 +293,17 @@ class MuJocoPyEnv(BaseMujocoEnv):
 
         return self.viewer
 
-    def get_body_com(self, body_name):
-        return self.data.get_body_xpos(body_name)
+    def close(self):
+        if self.viewer is not None:
+            self.viewer = None
+            self._viewers = {}
+
+    def viewer_setup(self):
+        """
+        This method is called when the viewer is initialized.
+        Optionally implement this method, if you need to tinker with camera position and so forth.
+        """
+        raise NotImplementedError
 
 
 class MujocoEnv(BaseMujocoEnv):
@@ -314,11 +319,13 @@ class MujocoEnv(BaseMujocoEnv):
         height: int = DEFAULT_SIZE,
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
+        default_camera_config: Optional[dict] = None,
     ):
         if MUJOCO_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
                 f"{MUJOCO_IMPORT_ERROR}. (HINT: you need to install mujoco)"
             )
+
         super().__init__(
             model_path,
             frame_skip,
@@ -328,6 +335,12 @@ class MujocoEnv(BaseMujocoEnv):
             height,
             camera_id,
             camera_name,
+        )
+
+        from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
+
+        self.mujoco_renderer = MujocoRenderer(
+            self.model, self.data, default_camera_config
         )
 
     def _initialize_simulation(self):
@@ -359,85 +372,13 @@ class MujocoEnv(BaseMujocoEnv):
         mujoco.mj_rnePostConstraint(self.model, self.data)
 
     def render(self):
-        if self.render_mode is None:
-            assert self.spec is not None
-            gym.logger.warn(
-                "You are calling render method without specifying any render mode. "
-                "You can specify the render_mode at initialization, "
-                f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
-            )
-            return
-
-        if self.render_mode in {
-            "rgb_array",
-            "depth_array",
-        }:
-            camera_id = self.camera_id
-            camera_name = self.camera_name
-
-            if camera_id is not None and camera_name is not None:
-                raise ValueError(
-                    "Both `camera_id` and `camera_name` cannot be"
-                    " specified at the same time."
-                )
-
-            no_camera_specified = camera_name is None and camera_id is None
-            if no_camera_specified:
-                camera_name = "track"
-
-            if camera_id is None:
-                camera_id = mujoco.mj_name2id(
-                    self.model,
-                    mujoco.mjtObj.mjOBJ_CAMERA,
-                    camera_name,
-                )
-
-                self._get_viewer(self.render_mode).render(camera_id=camera_id)
-
-        if self.render_mode == "rgb_array":
-            data = self._get_viewer(self.render_mode).read_pixels(depth=False)
-            # original image is upside-down, so flip it
-            return data[::-1, :, :]
-        elif self.render_mode == "depth_array":
-            self._get_viewer(self.render_mode).render()
-            # Extract depth part of the read_pixels() tuple
-            data = self._get_viewer(self.render_mode).read_pixels(depth=True)[1]
-            # original image is upside-down, so flip it
-            return data[::-1, :]
-        elif self.render_mode == "human":
-            self._get_viewer(self.render_mode).render()
+        return self.mujoco_renderer.render(
+            self.render_mode, self.camera_id, self.camera_name
+        )
 
     def close(self):
-        if self.viewer is not None:
-            self.viewer.close()
-        super().close()
-
-    def _get_viewer(
-        self, mode
-    ) -> Union[
-        "gym.envs.mujoco.mujoco_rendering.Viewer",
-        "gym.envs.mujoco.mujoco_rendering.RenderContextOffscreen",
-    ]:
-        self.viewer = self._viewers.get(mode)
-        if self.viewer is None:
-            if mode == "human":
-                from gymnasium.envs.mujoco.mujoco_rendering import Viewer
-
-                self.viewer = Viewer(self.model, self.data)
-            elif mode in {"rgb_array", "depth_array"}:
-                from gymnasium.envs.mujoco.mujoco_rendering import (
-                    RenderContextOffscreen,
-                )
-
-                self.viewer = RenderContextOffscreen(self.model, self.data)
-            else:
-                raise AttributeError(
-                    f"Unexpected mode: {mode}, expected modes: {self.metadata['render_modes']}"
-                )
-
-            self.viewer_setup()
-            self._viewers[mode] = self.viewer
-        return self.viewer
+        if self.mujoco_renderer is not None:
+            self.mujoco_renderer.close()
 
     def get_body_com(self, body_name):
         return self.data.body(body_name).xpos
