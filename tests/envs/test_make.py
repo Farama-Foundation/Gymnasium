@@ -22,33 +22,45 @@ from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv
 from tests.testing_env import GenericTestEnv, old_step_fn
 from tests.wrappers.utils import has_wrapper
 
-gym.register(
-    "RegisterDuringMakeEnv-v0",
-    entry_point="tests.envs.utils_envs:RegisterDuringMakeEnv",
-)
 
-gym.register(
-    id="test.ArgumentEnv-v0",
-    entry_point="tests.envs.utils_envs:ArgumentEnv",
-    kwargs={
-        "arg1": "arg1",
-        "arg2": "arg2",
-    },
-)
+@pytest.fixture(scope="function")
+def register_make_testing_envs():
+    """Registers testing envs for `gym.make`"""
+    gym.register(
+        "RegisterDuringMakeEnv-v0",
+        entry_point="tests.envs.utils_envs:RegisterDuringMakeEnv",
+    )
 
-gym.register(
-    id="test/NoHuman-v0",
-    entry_point="tests.envs.utils_envs:NoHuman",
-)
-gym.register(
-    id="test/NoHumanOldAPI-v0",
-    entry_point="tests.envs.utils_envs:NoHumanOldAPI",
-)
+    gym.register(
+        id="test.ArgumentEnv-v0",
+        entry_point="tests.envs.utils_envs:ArgumentEnv",
+        kwargs={
+            "arg1": "arg1",
+            "arg2": "arg2",
+        },
+    )
 
-gym.register(
-    id="test/NoHumanNoRGB-v0",
-    entry_point="tests.envs.utils_envs:NoHumanNoRGB",
-)
+    gym.register(
+        id="test/NoHuman-v0",
+        entry_point="tests.envs.utils_envs:NoHuman",
+    )
+    gym.register(
+        id="test/NoHumanOldAPI-v0",
+        entry_point="tests.envs.utils_envs:NoHumanOldAPI",
+    )
+
+    gym.register(
+        id="test/NoHumanNoRGB-v0",
+        entry_point="tests.envs.utils_envs:NoHumanNoRGB",
+    )
+
+    yield
+
+    del gym.envs.registration.registry["RegisterDuringMakeEnv-v0"]
+    del gym.envs.registration.registry["test.ArgumentEnv-v0"]
+    del gym.envs.registration.registry["test/NoHuman-v0"]
+    del gym.envs.registration.registry["test/NoHumanOldAPI-v0"]
+    del gym.envs.registration.registry["test/NoHumanNoRGB-v0"]
 
 
 def test_make():
@@ -70,7 +82,7 @@ def test_make_deprecated():
             gym.make("Humanoid-v0", disable_env_checker=True)
 
 
-def test_make_max_episode_steps():
+def test_make_max_episode_steps(register_make_testing_envs):
     # Default, uses the spec's
     env = gym.make("CartPole-v1", disable_env_checker=True)
     assert has_wrapper(env, TimeLimit)
@@ -208,7 +220,7 @@ def test_make_order_enforcing():
     env.close()
 
 
-def test_make_render_mode():
+def test_make_render_mode(register_make_testing_envs):
     env = gym.make("CartPole-v1", disable_env_checker=True)
     assert env.render_mode is None
     env.close()
@@ -293,7 +305,7 @@ def test_make_render_mode():
         gym.make("CarRacing-v2", render="human")
 
 
-def test_make_kwargs():
+def test_make_kwargs(register_make_testing_envs):
     env = gym.make(
         "test.ArgumentEnv-v0",
         arg2="override_arg2",
@@ -309,7 +321,7 @@ def test_make_kwargs():
     env.close()
 
 
-def test_import_module_during_make():
+def test_import_module_during_make(register_make_testing_envs):
     # Test custom environment which is registered at make
     env = gym.make(
         "tests.envs.utils:RegisterDuringMakeEnv-v0",
