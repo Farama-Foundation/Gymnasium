@@ -203,7 +203,12 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
             )
 
         MujocoEnv.__init__(
-            self, "hopper.xml", 4, observation_space=observation_space, **kwargs
+            self,
+            "hopper.xml",
+            4,
+            observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            **kwargs
         )
 
     @property

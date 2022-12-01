@@ -4,6 +4,11 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
+DEFAULT_CAMERA_CONFIG = {
+    "trackbodyid": 0,
+    "distance": 2.04,
+}
+
 
 class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     """
@@ -104,6 +109,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
             "inverted_pendulum.xml",
             2,
             observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs
         )
 
@@ -128,9 +134,3 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         return np.concatenate([self.data.qpos, self.data.qvel]).ravel()
-
-    def viewer_setup(self):
-        assert self.viewer is not None
-        v = self.viewer
-        v.cam.trackbodyid = 0
-        v.cam.distance = self.model.stat.extent

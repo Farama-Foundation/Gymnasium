@@ -6,8 +6,6 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
-DEFAULT_CAMERA_CONFIG = {}
-
 
 class SwimmerEnv(MujocoEnv, utils.EzPickle):
     """
@@ -231,11 +229,3 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
 
         observation = self._get_obs()
         return observation
-
-    def viewer_setup(self):
-        assert self.viewer is not None
-        for key, value in DEFAULT_CAMERA_CONFIG.items():
-            if isinstance(value, np.ndarray):
-                getattr(self.viewer.cam, key)[:] = value
-            else:
-                setattr(self.viewer.cam, key, value)

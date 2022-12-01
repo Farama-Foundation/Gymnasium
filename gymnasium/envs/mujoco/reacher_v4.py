@@ -4,6 +4,8 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
+DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
+
 
 class ReacherEnv(MujocoEnv, utils.EzPickle):
     """
@@ -131,7 +133,12 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self, **kwargs)
         observation_space = Box(low=-np.inf, high=np.inf, shape=(11,), dtype=np.float64)
         MujocoEnv.__init__(
-            self, "reacher.xml", 2, observation_space=observation_space, **kwargs
+            self,
+            "reacher.xml",
+            2,
+            observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            **kwargs
         )
 
     def step(self, a):
@@ -152,10 +159,6 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
             False,
             dict(reward_dist=reward_dist, reward_ctrl=reward_ctrl),
         )
-
-    def viewer_setup(self):
-        assert self.viewer is not None
-        self.viewer.cam.trackbodyid = 0
 
     def reset_model(self):
         qpos = (
