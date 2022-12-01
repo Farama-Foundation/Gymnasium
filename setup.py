@@ -1,5 +1,6 @@
 """Setups the project."""
 import itertools
+from typing import Dict, List
 
 from setuptools import find_packages, setup
 
@@ -32,28 +33,26 @@ def get_version():
 
 
 # Environment-specific dependencies.
-extras = {
-    "atari": ["ale-py~=0.8.0"],
+extras: Dict[str, List[str]] = {
+    "atari": ["shimmy[atari]>=0.1.0,<1.0"],
     "accept-rom-license": ["autorom[accept-rom-license]~=0.4.2"],
-    "box2d": ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
-    "classic_control": ["pygame==2.1.0"],
-    "mujoco_py": ["mujoco_py<2.2,>=2.1"],
+    "box2d": ["box2d-py==2.3.5", "pygame==2.1.3.dev8", "swig==4.*"],
+    "classic_control": ["pygame==2.1.3.dev8"],
+    "mujoco_py": ["mujoco_py"],
     "mujoco": ["mujoco==2.2", "imageio>=2.14.1"],
-    "toy_text": ["pygame==2.1.0"],
-    "jax": ["jax==0.3.20", "jaxlib==0.3.20"],
+    "toy_text": ["pygame==2.1.3.dev8"],
+    "jax": ["jax==0.3.25", "jaxlib==0.3.25"],
     "other": ["lz4>=3.1.0", "opencv-python>=3.0", "matplotlib>=3.0", "moviepy>=1.0.0"],
 }
-
-extras["testing"] = list(set(itertools.chain.from_iterable(extras.values()))) + [
-    "pytest==7.1.3",
-    "gym[classic_control, mujoco_py, mujoco, toy_text, other, atari, accept-rom-license]==0.26.2",
-]
 
 # All dependency groups - accept rom license as requires user to run
 all_groups = set(extras.keys()) - {"accept-rom-license"}
 extras["all"] = list(
     set(itertools.chain.from_iterable(map(lambda group: extras[group], all_groups)))
 )
+extras["testing"] = [
+    "pytest==7.1.3",
+]
 
 version = get_version()
 header_count, long_description = get_description()
@@ -90,6 +89,7 @@ setup(
         "cloudpickle >= 1.2.0",
         "importlib_metadata >= 4.8.0; python_version < '3.10'",
         "gymnasium_notices >= 0.0.1",
+        "shimmy>=0.1.0, <1.0",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -97,6 +97,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
     extras_require=extras,
     zip_safe=False,

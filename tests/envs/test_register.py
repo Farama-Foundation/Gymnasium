@@ -8,8 +8,8 @@ import gymnasium as gym
 
 
 @pytest.fixture(scope="function")
-def register_testing_envs():
-    """Registers testing environments."""
+def register_registration_testing_envs():
+    """Register testing envs for `gym.register`."""
     namespace = "MyAwesomeNamespace"
     versioned_name = "MyAwesomeVersionedEnv"
     unversioned_name = "MyAwesomeUnversionedEnv"
@@ -105,7 +105,9 @@ def test_register_error(env_id):
         ("MyAwesomeNamespace/MyAwesomeVersioneEnv", "MyAwesomeVersionedEnv"),
     ],
 )
-def test_env_suggestions(register_testing_envs, env_id_input, env_id_suggested):
+def test_env_suggestions(
+    register_registration_testing_envs, env_id_input, env_id_suggested
+):
     with pytest.raises(
         gym.error.UnregisteredEnv, match=f"Did you mean: `{env_id_suggested}`?"
     ):
@@ -124,7 +126,10 @@ def test_env_suggestions(register_testing_envs, env_id_input, env_id_suggested):
     ],
 )
 def test_env_version_suggestions(
-    register_testing_envs, env_id_input, suggested_versions, default_version
+    register_registration_testing_envs,
+    env_id_input,
+    suggested_versions,
+    default_version,
 ):
     if default_version:
         with pytest.raises(
@@ -173,7 +178,7 @@ def test_register_versioned_unversioned():
     del gym.envs.registry[unversioned_env]
 
 
-def test_make_latest_versioned_env(register_testing_envs):
+def test_make_latest_versioned_env(register_registration_testing_envs):
     with pytest.warns(
         UserWarning,
         match=re.escape(
