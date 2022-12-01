@@ -180,7 +180,12 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
             )
 
         MujocoEnv.__init__(
-            self, "half_cheetah.xml", 5, observation_space=observation_space, **kwargs
+            self,
+            "half_cheetah.xml",
+            5,
+            observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            **kwargs
         )
 
     def control_cost(self, action):
@@ -237,11 +242,3 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
         observation = self._get_obs()
         return observation
-
-    def viewer_setup(self):
-        assert self.viewer is not None
-        for key, value in DEFAULT_CAMERA_CONFIG.items():
-            if isinstance(value, np.ndarray):
-                getattr(self.viewer.cam, key)[:] = value
-            else:
-                setattr(self.viewer.cam, key, value)
