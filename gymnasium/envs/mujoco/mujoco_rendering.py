@@ -661,7 +661,11 @@ class MujocoRenderer:
                 camera_name = "track"
 
             if camera_id is None:
-                camera_id = self.model.camera(camera_name).id
+                camera_id = mujoco.mj_name2id(
+                    self.model,
+                    mujoco.mjtObj.mjOBJ_CAMERA,
+                    camera_name,
+                )
 
             img = viewer.render(render_mode=render_mode, camera_id=camera_id)
             return img
