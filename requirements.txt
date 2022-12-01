@@ -8,7 +8,7 @@ opencv-python>=3.0
 lz4>=3.1.0
 matplotlib>=3.0
 box2d-py==2.3.5
-pygame==2.1.0
+pygame==2.1.3.dev8
 ale-py~=0.8.0
 mujoco==2.2
 mujoco_py<2.2,>=2.1
