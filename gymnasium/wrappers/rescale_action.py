@@ -4,7 +4,7 @@ from typing import Union
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import spaces
+from gymnasium.spaces import Box
 
 
 class RescaleAction(gym.ActionWrapper):
@@ -41,7 +41,7 @@ class RescaleAction(gym.ActionWrapper):
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
         assert isinstance(
-            env.action_space, spaces.Box
+            env.action_space, Box
         ), f"expected Box action space, got {type(env.action_space)}"
         assert np.less_equal(min_action, max_action).all(), (min_action, max_action)
 
@@ -51,12 +51,6 @@ class RescaleAction(gym.ActionWrapper):
         )
         self.max_action = (
             np.zeros(env.action_space.shape, dtype=env.action_space.dtype) + max_action
-        )
-        self.action_space = spaces.Box(
-            low=min_action,
-            high=max_action,
-            shape=env.action_space.shape,
-            dtype=env.action_space.dtype,
         )
 
     def action(self, action):
