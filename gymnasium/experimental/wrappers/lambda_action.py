@@ -33,7 +33,7 @@ class LambdaActionV0(gym.ActionWrapper):
         return self.func(action)
 
 
-class ClipActionV0(gym.ActionWrapper):
+class ClipActionV0(LambdaActionV0):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -54,23 +54,15 @@ class ClipActionV0(gym.ActionWrapper):
             env: The environment to apply the wrapper
         """
         assert isinstance(env.action_space, spaces.Box)
-        super().__init__(env)
+        super().__init__(
+            env,
+            lambda action: jp.clip(action, env.action_space.low, env.action_space.high),
+        )
 
         self.action_space = spaces.Box(-np.inf, np.inf, env.action_space.shape)
 
-    def action(self, action: ActType) -> jp.ndarray:
-        """Clips the action within the valid bounds.
 
-        Args:
-            action: The action to clip
-
-        Returns:
-            The clipped action
-        """
-        return jp.clip(action, self.action_space.low, self.action_space.high)
-
-
-class RescaleActionV0(gym.ActionWrapper):
+class RescaleActionV0(LambdaActionV0):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
@@ -80,14 +72,14 @@ class RescaleActionV0(gym.ActionWrapper):
         >>> import gymnasium as gym
         >>> import numpy as np
         >>> env = gym.make('BipedalWalker-v3', disable_env_checker=True)
-        >>> env.action_space
-        Box(-1.0, 1.0, (4,), float32)
+        >>> _ = env.reset(seed=42)
+        >>> obs, _, _, _, _ = env.step(np.array([1,1,1,1]))
+        >>> _ = env.reset(seed=42)
         >>> min_action = -0.5
         >>> max_action = np.array([0.0, 0.5, 1.0, 0.75])
-        >>> env = RescaleActionV0(env, min_action=min_action, max_action=max_action)
-        >>> env.action_space
-        Box(-0.5, [0.   0.5  1.   0.75], (4,), float32)
-        >>> RescaleAction(env, min_action, max_action).action_space == gym.spaces.Box(min_action, max_action)
+        >>> wrapped_env = RescaleActionV0(env, min_action=min_action, max_action=max_action)
+        >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
+        >>> np.alltrue(obs == wrapped_env_obs)
         True
     """
 
@@ -109,7 +101,9 @@ class RescaleActionV0(gym.ActionWrapper):
         ), f"expected Box action space, got {type(env.action_space)}"
         assert np.less_equal(min_action, max_action).all(), (min_action, max_action)
 
-        super().__init__(env)
+        low = env.action_space.low
+        high = env.action_space.high
+
         self.min_action = np.full(
             env.action_space.shape, min_action, dtype=env.action_space.dtype
         )
@@ -117,25 +111,13 @@ class RescaleActionV0(gym.ActionWrapper):
             env.action_space.shape, max_action, dtype=env.action_space.dtype
         )
 
-        self.action_space = spaces.Box(
-            low=min_action,
-            high=max_action,
-            shape=env.action_space.shape,
-            dtype=env.action_space.dtype,
+        super().__init__(
+            env,
+            lambda action: jp.clip(
+                low
+                + (high - low)
+                * ((action - self.min_action) / (self.max_action - self.min_action)),
+                low,
+                high,
+            ),
         )
-
-    def action(self, action: ActType) -> jp.ndarray:
-        """Rescales the action affinely from  [:attr:`min_action`, :attr:`max_action`] to the action space of the base environment, :attr:`env`.
-
-        Args:
-            action: The action to rescale
-
-        Returns:
-            The rescaled action
-        """
-        low = self.env.action_space.low
-        high = self.env.action_space.high
-        action = low + (high - low) * (
-            (action - self.min_action) / (self.max_action - self.min_action)
-        )
-        return jp.clip(action, low, high)
