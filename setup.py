@@ -1,5 +1,6 @@
 """Setups the project."""
 import itertools
+from typing import Dict, List
 
 from setuptools import find_packages, setup
 
@@ -32,7 +33,7 @@ def get_version():
 
 
 # Environment-specific dependencies.
-extras = {
+extras: Dict[str, List[str]] = {
     "atari": ["shimmy[atari]>=0.1.0,<1.0"],
     "accept-rom-license": ["autorom[accept-rom-license]~=0.4.2"],
     "box2d": ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
@@ -44,15 +45,14 @@ extras = {
     "other": ["lz4>=3.1.0", "opencv-python>=3.0", "matplotlib>=3.0", "moviepy>=1.0.0"],
 }
 
-extras["testing"] = list(set(itertools.chain.from_iterable(extras.values()))) + [
-    "pytest==7.1.3",
-]
-
 # All dependency groups - accept rom license as requires user to run
 all_groups = set(extras.keys()) - {"accept-rom-license"}
 extras["all"] = list(
     set(itertools.chain.from_iterable(map(lambda group: extras[group], all_groups)))
 )
+extras["testing"] = [
+    "pytest==7.1.3",
+]
 
 version = get_version()
 header_count, long_description = get_description()
