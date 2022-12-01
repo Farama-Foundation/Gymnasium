@@ -32,6 +32,9 @@ jobs:
         - os: ubuntu-latest
           python: 310
           platform: manylinux_x86_64
+        - os: ubuntu-latest
+          python: 311
+          platform: manylinux_x86_64
 
     steps:
     - uses: actions/checkout@v3
