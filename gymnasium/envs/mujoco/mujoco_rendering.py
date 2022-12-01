@@ -333,9 +333,21 @@ class WindowViewer(BaseRender):
         self.window = None
 
     def __del__(self):
+        """Eliminate all of the OpenGL glfw contexts and windows"""
         self.free()
 
     def render(self):
+        """
+        Renders the environment geometries in the OpenGL glfw window:
+            1. Create the overlay for the left side panel menu.
+            2. Update the geometries used for rendering based on the current state of the model - `mujoco.mjv_updateScene()`.
+            3. Add markers to scene, these are additional geometries to include in the model, i.e arrows, https://mujoco.readthedocs.io/en/latest/APIreference.html?highlight=arrow#mjtgeom.
+                These markers are added with the `add_marker()` method before rendering.
+            4. Render the 3D scene to the window context - `mujoco.mjr_render()`.
+            5. Render overlays in the window context - `mujoco.mjr_overlay()`.
+            6. Swap front and back buffer, https://www.glfw.org/docs/3.3/quick.html.
+            7. Poll events like mouse clicks or keyboard input.
+        """
         # mjv_updateScene, mjr_render, mjr_overlay
         def update():
             # fill overlay items
@@ -607,7 +619,7 @@ class MujocoRenderer:
         Args:
             model: MjModel data structure of the MuJoCo simulation
             data: MjData data structure of the MuJoCo simulation
-            default_cam_config: dictionary with attribute values of the viewer's default camera
+            default_cam_config: dictionary with attribute values of the viewer's default camera, https://mujoco.readthedocs.io/en/latest/XMLreference.html?highlight=camera#visual-global
         """
         self.model = model
         self.data = data
@@ -649,8 +661,8 @@ class MujocoRenderer:
                 camera_name = "track"
 
             if camera_id is None:
-                camera_id = self.model.camera(camera_name).id    
-                
+                camera_id = self.model.camera(camera_name).id
+
             img = viewer.render(render_mode=render_mode, camera_id=camera_id)
             return img
 
@@ -660,7 +672,7 @@ class MujocoRenderer:
     def _get_viewer(self, render_mode: str):
         """Initializes and returns a viewer class depending on the render_mode
         - `WindowViewer` class for "human" render mode
-        - `OffScreenViewerr` class for "rgb_array" or "depth_array" render mode
+        - `OffScreenViewer` class for "rgb_array" or "depth_array" render mode
         """
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
