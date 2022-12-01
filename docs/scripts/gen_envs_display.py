@@ -12,6 +12,7 @@ all_envs = [
             "humanoid",
             "inverted_double_pendulum",
             "inverted_pendulum",
+            "pusher",
             "reacher",
             "swimmer",
             "walker2d",
