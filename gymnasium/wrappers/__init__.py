@@ -1,5 +1,4 @@
 """Module of wrapper classes."""
-from gymnasium import error
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
 from gymnasium.wrappers.clip_action import ClipAction
