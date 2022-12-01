@@ -1,6 +1,7 @@
 """Base class and definitions for an alternative, functional backend for gym envs, particularly suitable for hardware accelerated and otherwise transformed environments."""
+from __future__ import annotations
 
-from typing import Any, Callable, Dict, Generic, Optional, Tuple, TypeVar
+from typing import Any, Callable, Generic, TypeVar
 
 import numpy as np
 
@@ -35,7 +36,7 @@ class FuncEnv(
     we intend to flesh it out and officially expose it to end users.
     """
 
-    def __init__(self, options: Optional[Dict[str, Any]] = None):
+    def __init__(self, options: dict[str, Any] | None = None):
         """Initialize the environment constants."""
         self.__dict__.update(options or {})
 
@@ -43,12 +44,12 @@ class FuncEnv(
         """Initial state."""
         raise NotImplementedError
 
-    def observation(self, state: StateType) -> ObsType:
-        """Observation."""
-        raise NotImplementedError
-
     def transition(self, state: StateType, action: ActType, rng: Any) -> StateType:
         """Transition."""
+        raise NotImplementedError
+
+    def observation(self, state: StateType) -> ObsType:
+        """Observation."""
         raise NotImplementedError
 
     def reward(
@@ -83,7 +84,7 @@ class FuncEnv(
 
     def render_image(
         self, state: StateType, render_state: RenderStateType
-    ) -> Tuple[RenderStateType, np.ndarray]:
+    ) -> tuple[RenderStateType, np.ndarray]:
         """Show the state."""
         raise NotImplementedError
 

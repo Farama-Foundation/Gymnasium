@@ -4,8 +4,8 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.error import InvalidAction
+from gymnasium.experimental.wrappers import LambdaActionV0
 from gymnasium.spaces import Box
-from gymnasium.wrappers import LambdaActionV0
 from tests.testing_env import GenericTestEnv
 
 NUM_ENVS = 3
