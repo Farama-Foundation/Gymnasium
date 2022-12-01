@@ -39,7 +39,7 @@ extras: Dict[str, List[str]] = {
     "box2d": ["box2d-py==2.3.5", "pygame==2.1.0", "swig==4.*"],
     "classic_control": ["pygame==2.1.0"],
     "mujoco_py": ["mujoco_py<2.2,>=2.1"],
-    "mujoco": ["mujoco==2.3", "imageio>=2.14.1"],
+    "mujoco": ["mujoco==2.2", "imageio>=2.14.1"],
     "toy_text": ["pygame==2.1.0"],
     "jax": ["jax==0.3.20", "jaxlib==0.3.20"],
     "other": ["lz4>=3.1.0", "opencv-python>=3.0", "matplotlib>=3.0", "moviepy>=1.0.0"],
@@ -52,7 +52,6 @@ extras["all"] = list(
 )
 extras["testing"] = [
     "pytest==7.1.3",
-    "gym==0.26.2",
 ]
 
 version = get_version()
