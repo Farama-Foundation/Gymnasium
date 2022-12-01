@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import ClipActionV0
+from gymnasium.experimental.wrappers import ClipActionV0
 
 SEED = 42
 

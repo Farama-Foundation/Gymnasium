@@ -1,5 +1,5 @@
-"""Wrapper for rescaling actions to within a max and min action."""
-from typing import Union
+"""Lambda action wrapper which apply a function to the provided action."""
+from typing import Any, Callable, Union
 
 import jumpy as jp
 import numpy as np
@@ -7,6 +7,67 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.core import ActType
+from gymnasium.experimental.wrappers import ArgType
+
+
+class LambdaActionV0(gym.ActionWrapper):
+    """A wrapper that provides a function to modify the action passed to :meth:`step`."""
+
+    def __init__(
+        self,
+        env: gym.Env,
+        func: Callable[[ArgType], Any],
+    ):
+        """Initialize LambdaAction.
+
+        Args:
+            env (Env): The gymnasium environment
+            func (Callable): function to apply to action
+        """
+        super().__init__(env)
+
+        self.func = func
+
+    def action(self, action: ActType) -> Any:
+        """Apply function to action."""
+        return self.func(action)
+
+
+class ClipActionV0(gym.ActionWrapper):
+    """Clip the continuous action within the valid :class:`Box` observation space bound.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> import numpy as np
+        >>> env = gym.make('BipedalWalker-v3', disable_env_checker=True)
+        >>> env = ClipActionV0(env)
+        >>> env.action_space
+        Box(-1.0, 1.0, (4,), float32)
+        >>> env.step(np.array([5.0, 2.0, -10.0, 0.0]))
+        # Executes the action np.array([1.0, 1.0, -1.0, 0]) in the base environment
+    """
+
+    def __init__(self, env: gym.Env):
+        """A wrapper for clipping continuous actions within the valid bound.
+
+        Args:
+            env: The environment to apply the wrapper
+        """
+        assert isinstance(env.action_space, spaces.Box)
+        super().__init__(env)
+
+        self.action_space = spaces.Box(-np.inf, np.inf, env.action_space.shape)
+
+    def action(self, action: ActType) -> jp.ndarray:
+        """Clips the action within the valid bounds.
+
+        Args:
+            action: The action to clip
+
+        Returns:
+            The clipped action
+        """
+        return jp.clip(action, self.action_space.low, self.action_space.high)
 
 
 class RescaleActionV0(gym.ActionWrapper):
