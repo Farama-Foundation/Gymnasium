@@ -14,19 +14,25 @@ spaces/vector_utils
 ```
 
 ```{eval-rst}
+.. automodule:: gymnasium.spaces
+```
+
+## The Base Class
+```{eval-rst}
 .. autoclass:: gymnasium.spaces.Space
 ```
 
-## Attributes
+### Attributes
 
 ```{eval-rst}
 .. autoproperty:: gymnasium.spaces.space.Space.shape
 .. property:: Space.dtype
 
     Return the data type of this space.
+.. autoproperty:: gymnasium.spaces.space.Space.is_np_flattenable
 ```
 
-## Methods
+### Methods
 
 Each space implements the following functions:
 
