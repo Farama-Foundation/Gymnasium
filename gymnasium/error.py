@@ -73,6 +73,10 @@ class MissingArgument(Error):
     """Raised when a required argument in the initializer is missing."""
 
 
+class InvalidProbability(Error):
+    """Raised when given an invalid value for a probability."""
+
+
 class InvalidBound(Error):
     """Raised when the clipping an array with invalid upper and/or lower bound."""
 
