@@ -47,3 +47,16 @@ For classes, code block examples can be provided in the top docstring and not th
 
 To check your docstrings are correct, run `pre-commit run --all-files` or `pydocstyle --source --explain --convention=google`.
 If all docstrings that fail, the source and reason for the failure is provided. 
+
+## Building the docs
+Make sure that you have install the requirements:
+```shell
+cd docs
+pip install -r requirements.txt
+```
+Then run
+```
+python scripts/gen_mds.py 
+make dirhtml
+```
+Now, navigate to `_build/dirhtml` and open `index.html` in your browser.
