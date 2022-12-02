@@ -4,6 +4,13 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
+DEFAULT_CAMERA_CONFIG = {
+    "trackbodyid": 1,
+    "distance": 4.0,
+    "lookat": np.array((0.0, 0.0, 0.8925)),
+    "elevation": -20.0,
+}
+
 
 class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     """
@@ -201,6 +208,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             "humanoidstandup.xml",
             5,
             observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs
         )
         utils.EzPickle.__init__(self, **kwargs)
@@ -255,10 +263,3 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             ),
         )
         return self._get_obs()
-
-    def viewer_setup(self):
-        assert self.viewer is not None
-        self.viewer.cam.trackbodyid = 1
-        self.viewer.cam.distance = self.model.stat.extent * 1.0
-        self.viewer.cam.lookat[2] = 0.8925
-        self.viewer.cam.elevation = -20
