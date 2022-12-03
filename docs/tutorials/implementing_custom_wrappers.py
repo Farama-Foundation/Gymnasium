@@ -13,6 +13,7 @@ We will show how to create a wrapper by
 - Inheriting from :class:`gymnasium.RewardWrapper`
 - Inheriting from :class:`gymnasium.Wrapper`
 
+Before following this tutorial, make sure to check out the docs of the :mod:`gymnasium.wrappers` module.
 """
 
 # %%

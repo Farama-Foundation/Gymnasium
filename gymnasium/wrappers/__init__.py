@@ -43,6 +43,8 @@ There are three common things you might want a wrapper to do:
 Such wrappers can be easily implemented by inheriting from :class:`gymnasium.ActionWrapper`,
 :class:`gymnasium.ObservationWrapper`, or :class:`gymnasium.RewardWrapper` and implementing the respective transformation.
 If you need a wrapper to do more complicated tasks, you can inherit from the :class:`gymnasium.Wrapper` class directly.
+
+If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/implementing_custom_wrappers>`_.
 """
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
