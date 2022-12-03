@@ -1,22 +1,17 @@
 
 # Reward Wrappers
 
-## Reward Wrapper
+## Base Class
 
 ```{eval-rst}
 .. autoclass:: gymnasium.RewardWrapper
 
-    .. autofunction:: gymnasium.RewardWrapper.reward
+    .. automethod:: gymnasium.RewardWrapper.reward
 ```
 
-## Transform Reward
+## Available Reward Wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.TransformReward
-```
-
-## Normalize Reward
-
-```{eval-rst}
 .. autoclass:: gymnasium.wrappers.NormalizeReward
 ```

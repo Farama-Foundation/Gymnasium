@@ -12,6 +12,11 @@ wrappers/observation_wrappers
 wrappers/reward_wrappers
 ```
 
+```{eval-rst}
+.. automodule:: gymnasium.wrappers
+
+```
+
 ## gymnasium.Wrapper
 
 ```{eval-rst}
@@ -35,6 +40,13 @@ wrappers/reward_wrappers
 .. autoproperty:: gymnasium.Wrapper.spec
 .. autoproperty:: gymnasium.Wrapper.metadata
 .. autoproperty:: gymnasium.Wrapper.np_random
+.. attribute:: gymnasium.Wrapper.env
+
+    The environment (one level underneath) this wrapper. 
+    
+    This may itself be a wrapped environment. 
+    To obtain the environment underneath all layers of wrappers, use :attr:`gymnasium.Wrapper.unwrapped`.
+
 .. autoproperty:: gymnasium.Wrapper.unwrapped
 ```
 
@@ -124,43 +136,4 @@ wrapper in the page on the wrapper type
     * - :class:`VectorListInfo`          
       - Misc Wrapper            
       - This wrapper will convert the info of a vectorized environment from the `dict` format to a `list` of dictionaries where the i-th dictionary contains info of the i-th environment. 
-```
-
-## Implementing a custom wrapper
-
-Sometimes you might need to implement a wrapper that does some more complicated modifications (e.g. modify the
-reward based on data in `info` or change the rendering behavior). 
-Such wrappers can be implemented by inheriting from Misc Wrapper. 
-
-- You can set a new action or observation space by defining `self.action_space` or `self.observation_space` in `__init__`, respectively
-- You can set new metadata and reward range by defining `self.metadata` and `self.reward_range` in `__init__`, respectively
-- You can override `step`, `render`, `close` etc. If you do this, you can access the environment that was passed
-to your wrapper (which *still* might be wrapped in some other wrapper) by accessing the attribute `self.env`.
-
-Let's also take a look at an example for this case. Most MuJoCo environments return a reward that consists
-of different terms: For instance, there might be a term that rewards the agent for completing the task and one term that
-penalizes large actions (i.e. energy usage). Usually, you can pass weight parameters for those terms during
-initialization of the environment. However, *Reacher* does not allow you to do this! Nevertheless, all individual terms
-of the reward are returned in `info`, so let us build a wrapper for Reacher that allows us to weight those terms:
-
-```python
-import gymnasium as gym
-
-class ReacherRewardWrapper(gym.Wrapper):
-    def __init__(self, env, reward_dist_weight, reward_ctrl_weight):
-        super().__init__(env)
-        self.reward_dist_weight = reward_dist_weight
-        self.reward_ctrl_weight = reward_ctrl_weight
-
-    def step(self, action):
-        obs, _, terminated, truncated, info = self.env.step(action)
-        reward = (
-            self.reward_dist_weight * info["reward_dist"]
-            + self.reward_ctrl_weight * info["reward_ctrl"]
-        )
-        return obs, reward, terminated, truncated, info
-```
-
-```{note}
-It is *not* sufficient to use a `RewardWrapper` in this case!
 ```
