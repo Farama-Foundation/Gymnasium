@@ -348,6 +348,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
@@ -401,8 +402,8 @@
           
           <section id="observation-wrappers">
 <h1>Observation Wrappers<a class="headerlink" href="#observation-wrappers" title="Permalink to this heading">#</a></h1>
-<section id="observation-wrapper">
-<h2>Observation Wrapper<a class="headerlink" href="#observation-wrapper" title="Permalink to this heading">#</a></h2>
+<section id="base-class">
+<h2>Base Class<a class="headerlink" href="#base-class" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.ObservationWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">ObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.ObservationWrapper" title="Permalink to this definition">#</a></dt>
@@ -412,28 +413,12 @@ passing it to the learning code, you can simply inherit from <a class="reference
 <a class="reference internal" href="#gymnasium.ObservationWrapper.observation" title="gymnasium.ObservationWrapper.observation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">observation()</span></code></a> to implement that transformation. The transformation defined in that method must be
 reflected by the <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> observation space. Otherwise, you need to specify the new observation space of the
 wrapper by setting <code class="xref py py-attr docutils literal notranslate"><span class="pre">self.observation_space</span></code> in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> method of your wrapper.</p>
-<p>For example, you might have a 2D navigation task where the environment returns dictionaries as observations with
-keys <code class="docutils literal notranslate"><span class="pre">&quot;agent_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;target_position&quot;</span></code>. A common thing to do might be to throw away some degrees of
-freedom and only consider the position of the target relative to the agent, i.e.
-<code class="docutils literal notranslate"><span class="pre">observation[&quot;target_position&quot;]</span> <span class="pre">-</span> <span class="pre">observation[&quot;agent_position&quot;]</span></code>. For this, you could implement an
-observation wrapper like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RelativePosition</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;agent&quot;</span><span class="p">]</span>
-</pre></div>
-</div>
 <p>Among others, Gymnasium provides the observation wrapper <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code>, which adds information about the
 index of the timestep to the observation.</p>
 <p>Constructor for the observation wrapper.</p>
-</dd></dl>
-
-<dl class="py function">
+<dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.ObservationWrapper.observation">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.ObservationWrapper.</span></span><span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ObsType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WrapperObsType</span></span></span><a class="headerlink" href="#gymnasium.ObservationWrapper.observation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ObsType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WrapperObsType</span></span></span><a class="headerlink" href="#gymnasium.ObservationWrapper.observation" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a modified observation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -445,9 +430,11 @@ index of the timestep to the observation.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
 </section>
-<section id="transform-observation">
-<h2>Transform Observation<a class="headerlink" href="#transform-observation" title="Permalink to this heading">#</a></h2>
+<section id="available-observation-wrappers">
+<h2>Available Observation Wrappers<a class="headerlink" href="#available-observation-wrappers" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.TransformObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TransformObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.TransformObservation" title="Permalink to this definition">#</a></dt>
@@ -474,9 +461,6 @@ index of the timestep to the observation.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="filter-observation">
-<h2>Filter Observation<a class="headerlink" href="#filter-observation" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.FilterObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">FilterObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.FilterObservation" title="Permalink to this definition">#</a></dt>
@@ -513,9 +497,6 @@ index of the timestep to the observation.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="flatten-observation">
-<h2>Flatten Observation<a class="headerlink" href="#flatten-observation" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.FlattenObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">FlattenObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.FlattenObservation" title="Permalink to this definition">#</a></dt>
@@ -541,9 +522,6 @@ index of the timestep to the observation.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="framestack-observations">
-<h2>Framestack Observations<a class="headerlink" href="#framestack-observations" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.FrameStack">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">FrameStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_stack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lz4_compress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.FrameStack" title="Permalink to this definition">#</a></dt>
@@ -585,9 +563,6 @@ I.e. the observation returned by <code class="xref py py-meth docutils literal n
 </dl>
 </dd></dl>
 
-</section>
-<section id="gray-scale-observation">
-<h2>Gray Scale Observation<a class="headerlink" href="#gray-scale-observation" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.GrayScaleObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">GrayScaleObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.GrayScaleObservation" title="Permalink to this definition">#</a></dt>
@@ -616,9 +591,6 @@ Otherwise, they are of shape AxB.</p></li>
 </dl>
 </dd></dl>
 
-</section>
-<section id="normalize-observation">
-<h2>Normalize Observation<a class="headerlink" href="#normalize-observation" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.NormalizeObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.NormalizeObservation" title="Permalink to this definition">#</a></dt>
@@ -639,9 +611,6 @@ newly instantiated or the policy was changed recently.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="pixel-observation-wrapper">
-<h2>Pixel Observation Wrapper<a class="headerlink" href="#pixel-observation-wrapper" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.PixelObservationWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">PixelObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('pixels',)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.PixelObservationWrapper" title="Permalink to this definition">#</a></dt>
@@ -707,9 +676,6 @@ Defaults to <cite>(pixels,)</cite>.</p></li>
 </dl>
 </dd></dl>
 
-</section>
-<section id="resize-observation">
-<h2>Resize Observation<a class="headerlink" href="#resize-observation" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.ResizeObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ResizeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.ResizeObservation" title="Permalink to this definition">#</a></dt>
@@ -738,9 +704,6 @@ In that case, the observation is scaled to a square of side-length <code class="
 </dl>
 </dd></dl>
 
-</section>
-<section id="time-aware-observation">
-<h2>Time Aware Observation<a class="headerlink" href="#time-aware-observation" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.TimeAwareObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TimeAwareObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.TimeAwareObservation" title="Permalink to this definition">#</a></dt>
@@ -827,44 +790,22 @@ In particular, pixel observations are not supported. This wrapper will append th
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Observation Wrappers</a><ul>
-<li><a class="reference internal" href="#observation-wrapper">Observation Wrapper</a><ul>
-<li><a class="reference internal" href="#gymnasium.ObservationWrapper"><code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.ObservationWrapper.observation"><code class="docutils literal notranslate"><span class="pre">observation()</span></code></a></li>
+<li><a class="reference internal" href="#base-class">Base Class</a><ul>
+<li><a class="reference internal" href="#gymnasium.ObservationWrapper"><code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.ObservationWrapper.observation"><code class="docutils literal notranslate"><span class="pre">ObservationWrapper.observation()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#transform-observation">Transform Observation</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#available-observation-wrappers">Available Observation Wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.TransformObservation"><code class="docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#filter-observation">Filter Observation</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.FilterObservation"><code class="docutils literal notranslate"><span class="pre">FilterObservation</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#flatten-observation">Flatten Observation</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.FlattenObservation"><code class="docutils literal notranslate"><span class="pre">FlattenObservation</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#framestack-observations">Framestack Observations</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.FrameStack"><code class="docutils literal notranslate"><span class="pre">FrameStack</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#gray-scale-observation">Gray Scale Observation</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.GrayScaleObservation"><code class="docutils literal notranslate"><span class="pre">GrayScaleObservation</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#normalize-observation">Normalize Observation</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.NormalizeObservation"><code class="docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pixel-observation-wrapper">Pixel Observation Wrapper</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.PixelObservationWrapper"><code class="docutils literal notranslate"><span class="pre">PixelObservationWrapper</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#resize-observation">Resize Observation</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.ResizeObservation"><code class="docutils literal notranslate"><span class="pre">ResizeObservation</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#time-aware-observation">Time Aware Observation</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.TimeAwareObservation"><code class="docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></li>
 </ul>
 </li>

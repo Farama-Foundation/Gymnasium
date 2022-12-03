@@ -348,6 +348,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
@@ -401,8 +402,6 @@
           
           <section id="misc-wrappers">
 <h1>Misc Wrappers<a class="headerlink" href="#misc-wrappers" title="Permalink to this heading">#</a></h1>
-<section id="atari-preprocessing">
-<h2>Atari Preprocessing<a class="headerlink" href="#atari-preprocessing" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.AtariPreprocessing">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">AtariPreprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">noop_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">84</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminal_on_life_loss</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale_newaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.AtariPreprocessing" title="Permalink to this definition">#</a></dt>
@@ -450,9 +449,6 @@ optimization benefits of FrameStack Wrapper.</p></li>
 </dl>
 </dd></dl>
 
-</section>
-<section id="autoreset">
-<h2>Autoreset<a class="headerlink" href="#autoreset" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.AutoResetWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">AutoResetWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.AutoResetWrapper" title="Permalink to this definition">#</a></dt>
@@ -487,9 +483,6 @@ Make sure you know what you’re doing if you use this wrapper!</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="compatibility">
-<h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.EnvCompatibility">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">EnvCompatibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LegacyEnv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.EnvCompatibility" title="Permalink to this definition">#</a></dt>
@@ -546,9 +539,6 @@ New step API refers to step() method returning (observation, reward, terminated,
 </dl>
 </dd></dl>
 
-</section>
-<section id="passive-environment-checker">
-<h2>Passive Environment Checker<a class="headerlink" href="#passive-environment-checker" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.PassiveEnvChecker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">PassiveEnvChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.PassiveEnvChecker" title="Permalink to this definition">#</a></dt>
@@ -556,9 +546,6 @@ New step API refers to step() method returning (observation, reward, terminated,
 <p>Initialises the wrapper with the environments, run the observation and action space tests.</p>
 </dd></dl>
 
-</section>
-<section id="human-rendering">
-<h2>Human Rendering<a class="headerlink" href="#human-rendering" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.HumanRendering">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">HumanRendering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.HumanRendering" title="Permalink to this definition">#</a></dt>
@@ -601,9 +588,6 @@ implement human-rendering natively (i.e. <code class="docutils literal notransla
 </dl>
 </dd></dl>
 
-</section>
-<section id="order-enforcing">
-<h2>Order Enforcing<a class="headerlink" href="#order-enforcing" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.OrderEnforcing">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">OrderEnforcing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_render_order_enforcing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.OrderEnforcing" title="Permalink to this definition">#</a></dt>
@@ -632,9 +616,6 @@ implement human-rendering natively (i.e. <code class="docutils literal notransla
 </dl>
 </dd></dl>
 
-</section>
-<section id="record-episode-statistics">
-<h2>Record Episode Statistics<a class="headerlink" href="#record-episode-statistics" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.RecordEpisodeStatistics">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordEpisodeStatistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">deque_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.RecordEpisodeStatistics" title="Permalink to this definition">#</a></dt>
@@ -687,9 +668,6 @@ the episode statistics.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="record-video">
-<h2>Record Video<a class="headerlink" href="#record-video" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.RecordVideo">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordVideo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rl-video'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.RecordVideo" title="Permalink to this definition">#</a></dt>
@@ -719,9 +697,6 @@ Otherwise, snippets of the specified length are captured</p></li>
 </dl>
 </dd></dl>
 
-</section>
-<section id="render-collection">
-<h2>Render Collection<a class="headerlink" href="#render-collection" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.RenderCollection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RenderCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_clean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.RenderCollection" title="Permalink to this definition">#</a></dt>
@@ -740,9 +715,6 @@ Otherwise, snippets of the specified length are captured</p></li>
 </dl>
 </dd></dl>
 
-</section>
-<section id="time-limit">
-<h2>Time Limit<a class="headerlink" href="#time-limit" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.TimeLimit">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TimeLimit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_episode_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.TimeLimit" title="Permalink to this definition">#</a></dt>
@@ -767,9 +739,6 @@ Critically, this is different from the <cite>terminated</cite> signal that origi
 </dl>
 </dd></dl>
 
-</section>
-<section id="vector-list-info">
-<h2>Vector List Info<a class="headerlink" href="#vector-list-info" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.VectorListInfo">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">VectorListInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.VectorListInfo" title="Permalink to this definition">#</a></dt>
@@ -799,7 +768,6 @@ need to be the outermost wrapper.</p>
 </dl>
 </dd></dl>
 
-</section>
 </section>
 
         </article>
@@ -861,51 +829,18 @@ need to be the outermost wrapper.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Misc Wrappers</a><ul>
-<li><a class="reference internal" href="#atari-preprocessing">Atari Preprocessing</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.AtariPreprocessing"><code class="docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#autoreset">Autoreset</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.AutoResetWrapper"><code class="docutils literal notranslate"><span class="pre">AutoResetWrapper</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#compatibility">Compatibility</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.EnvCompatibility"><code class="docutils literal notranslate"><span class="pre">EnvCompatibility</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.StepAPICompatibility"><code class="docutils literal notranslate"><span class="pre">StepAPICompatibility</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#passive-environment-checker">Passive Environment Checker</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.PassiveEnvChecker"><code class="docutils literal notranslate"><span class="pre">PassiveEnvChecker</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#human-rendering">Human Rendering</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.HumanRendering"><code class="docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#order-enforcing">Order Enforcing</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.OrderEnforcing"><code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#record-episode-statistics">Record Episode Statistics</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.RecordEpisodeStatistics"><code class="docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#record-video">Record Video</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.RecordVideo"><code class="docutils literal notranslate"><span class="pre">RecordVideo</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#render-collection">Render Collection</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.RenderCollection"><code class="docutils literal notranslate"><span class="pre">RenderCollection</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#time-limit">Time Limit</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.TimeLimit"><code class="docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#vector-list-info">Vector List Info</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.VectorListInfo"><code class="docutils literal notranslate"><span class="pre">VectorListInfo</span></code></a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>

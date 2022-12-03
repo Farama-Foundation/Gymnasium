@@ -346,6 +346,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
@@ -395,6 +396,8 @@
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/wrappers/action_wrappers/#gymnasium.ActionWrapper.action">action() (gymnasium.ActionWrapper method)</a>
+</li>
         <li><a href="../api/vector/#action_space">action_space</a>
 
         <ul>
@@ -403,11 +406,9 @@
           <li><a href="../api/wrappers/#gymnasium.Wrapper.action_space">(gymnasium.Wrapper property)</a>
 </li>
         </ul></li>
-        <li><a href="../api/wrappers/action_wrappers/#gymnasium.ActionWrapper">ActionWrapper (class in gymnasium)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/wrappers/action_wrappers/#gymnasium.ActionWrapper.ActionWrapper.action">ActionWrapper.action() (in module gymnasium.ActionWrapper)</a>
+        <li><a href="../api/wrappers/action_wrappers/#gymnasium.ActionWrapper">ActionWrapper (class in gymnasium)</a>
 </li>
         <li><a href="../api/vector/#gymnasium.vector.AsyncVectorEnv">AsyncVectorEnv (class in gymnasium.vector)</a>
 </li>
@@ -499,6 +500,8 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/wrappers/#gymnasium.wrappers.gymnasium.Wrapper.env">env (gymnasium.wrappers.gymnasium.Wrapper attribute)</a>
+</li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.EnvCompatibility">EnvCompatibility (class in gymnasium.wrappers)</a>
 </li>
     </ul></td>
@@ -539,13 +542,20 @@
 </li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.GrayScaleObservation">GrayScaleObservation (class in gymnasium.wrappers)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     gymnasium.spaces
 
         <ul>
           <li><a href="../api/spaces/#module-gymnasium.spaces">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    gymnasium.wrappers
+
+        <ul>
+          <li><a href="../api/wrappers/#module-gymnasium.wrappers">module</a>
 </li>
         </ul></li>
     </ul></td>
@@ -620,6 +630,8 @@
         <ul>
           <li><a href="../api/spaces/#module-gymnasium.spaces">gymnasium.spaces</a>
 </li>
+          <li><a href="../api/wrappers/#module-gymnasium.wrappers">gymnasium.wrappers</a>
+</li>
         </ul></li>
         <li><a href="../api/spaces/fundamental/#gymnasium.spaces.MultiBinary">MultiBinary (class in gymnasium.spaces)</a>
 </li>
@@ -655,10 +667,10 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.observation">observation() (in module gymnasium.experimental.FuncEnv)</a>, <a href="../api/experimental/functional/#id1">[1]</a>
+        <li><a href="../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper.observation">observation() (gymnasium.ObservationWrapper method)</a>
 
         <ul>
-          <li><a href="../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper.observation">(in module gymnasium.ObservationWrapper)</a>
+          <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.observation">(in module gymnasium.experimental.FuncEnv)</a>, <a href="../api/experimental/functional/#id1">[1]</a>
 </li>
         </ul></li>
         <li><a href="../api/vector/#observation_space">observation_space</a>
@@ -741,8 +753,12 @@
         </ul></li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.ResizeObservation">ResizeObservation (class in gymnasium.wrappers)</a>
 </li>
-        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.reward">reward() (in module gymnasium.experimental.FuncEnv)</a>
+        <li><a href="../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper.reward">reward() (gymnasium.RewardWrapper method)</a>
+
+        <ul>
+          <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.reward">(in module gymnasium.experimental.FuncEnv)</a>
 </li>
+        </ul></li>
         <li><a href="../api/env/#gymnasium.Env.reward_range">reward_range (gymnasium.Env attribute)</a>
 
         <ul>
@@ -750,8 +766,6 @@
 </li>
         </ul></li>
         <li><a href="../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper">RewardWrapper (class in gymnasium)</a>
-</li>
-        <li><a href="../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper.RewardWrapper.reward">RewardWrapper.reward() (in module gymnasium.RewardWrapper)</a>
 </li>
     </ul></td>
   </tr></table>

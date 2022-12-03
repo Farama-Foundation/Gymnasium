@@ -348,6 +348,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
@@ -401,41 +402,23 @@
           
           <section id="action-wrappers">
 <h1>Action Wrappers<a class="headerlink" href="#action-wrappers" title="Permalink to this heading">#</a></h1>
-<section id="action-wrapper">
-<h2>Action Wrapper<a class="headerlink" href="#action-wrapper" title="Permalink to this heading">#</a></h2>
+<section id="base-class">
+<h2>Base Class<a class="headerlink" href="#base-class" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.ActionWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">ActionWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.ActionWrapper" title="Permalink to this definition">#</a></dt>
 <dd><p>Superclass of wrappers that can modify the action before <code class="xref py py-meth docutils literal notranslate"><span class="pre">env.step()</span></code>.</p>
 <p>If you would like to apply a function to the action before passing it to the base environment,
-you can simply inherit from <a class="reference internal" href="#gymnasium.ActionWrapper" title="gymnasium.ActionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionWrapper</span></code></a> and overwrite the method <code class="xref py py-meth docutils literal notranslate"><span class="pre">action()</span></code> to implement
+you can simply inherit from <a class="reference internal" href="#gymnasium.ActionWrapper" title="gymnasium.ActionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionWrapper</span></code></a> and overwrite the method <a class="reference internal" href="#gymnasium.ActionWrapper.action" title="gymnasium.ActionWrapper.action"><code class="xref py py-meth docutils literal notranslate"><span class="pre">action()</span></code></a> to implement
 that transformation. The transformation defined in that method must take values in the base environment’s
 action space. However, its domain might differ from the original action space.
 In that case, you need to specify the new action space of the wrapper by setting <code class="xref py py-attr docutils literal notranslate"><span class="pre">self.action_space</span></code> in
 the <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> method of your wrapper.</p>
-<p>Let’s say you have an environment with action space of type <a class="reference internal" href="../../spaces/fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.spaces.Box</span></code></a>, but you would only like
-to use a finite subset of actions. Then, you might want to implement the following wrapper:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DiscreteActions</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">disc_to_cont</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">disc_to_cont</span> <span class="o">=</span> <span class="n">disc_to_cont</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">disc_to_cont</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disc_to_cont</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLanderContinuous-v2&quot;</span><span class="p">)</span>
-    <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">DiscreteActions</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
-                                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>         <span class="c1">#Discrete(4)</span>
-</pre></div>
-</div>
 <p>Among others, Gymnasium provides the action wrappers <code class="xref py py-class docutils literal notranslate"><span class="pre">ClipAction</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleAction</span></code> for clipping and rescaling actions.</p>
 <p>Constructor for the action wrapper.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.ActionWrapper.ActionWrapper.action">
-<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WrapperActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ActType</span></span></span><a class="headerlink" href="#gymnasium.ActionWrapper.ActionWrapper.action" title="Permalink to this definition">#</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.ActionWrapper.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WrapperActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ActType</span></span></span><a class="headerlink" href="#gymnasium.ActionWrapper.action" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a modified action before <code class="xref py py-meth docutils literal notranslate"><span class="pre">env.step()</span></code> is called.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -450,8 +433,8 @@ to use a finite subset of actions. Then, you might want to implement the followi
 </dd></dl>
 
 </section>
-<section id="clip-action">
-<h2>Clip Action<a class="headerlink" href="#clip-action" title="Permalink to this heading">#</a></h2>
+<section id="available-action-wrappers">
+<h2>Available Action Wrappers<a class="headerlink" href="#available-action-wrappers" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.ClipAction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ClipAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.ClipAction" title="Permalink to this definition">#</a></dt>
@@ -474,9 +457,6 @@ to use a finite subset of actions. Then, you might want to implement the followi
 </dl>
 </dd></dl>
 
-</section>
-<section id="rescale-action">
-<h2>Rescale Action<a class="headerlink" href="#rescale-action" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.RescaleAction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RescaleAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.wrappers.RescaleAction" title="Permalink to this definition">#</a></dt>
@@ -571,16 +551,15 @@ or <code class="xref py py-attr docutils literal notranslate"><span class="pre">
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Action Wrappers</a><ul>
-<li><a class="reference internal" href="#action-wrapper">Action Wrapper</a><ul>
-<li><a class="reference internal" href="#gymnasium.ActionWrapper"><code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.ActionWrapper.ActionWrapper.action"><code class="docutils literal notranslate"><span class="pre">ActionWrapper.action()</span></code></a></li>
+<li><a class="reference internal" href="#base-class">Base Class</a><ul>
+<li><a class="reference internal" href="#gymnasium.ActionWrapper"><code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.ActionWrapper.action"><code class="docutils literal notranslate"><span class="pre">ActionWrapper.action()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#clip-action">Clip Action</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#available-action-wrappers">Available Action Wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.ClipAction"><code class="docutils literal notranslate"><span class="pre">ClipAction</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#rescale-action">Rescale Action</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.RescaleAction"><code class="docutils literal notranslate"><span class="pre">RescaleAction</span></code></a></li>
 </ul>
 </li>
