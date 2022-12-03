@@ -438,8 +438,8 @@
 </div>
 <p>It can be convenient to use <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> spaces if you want to make complex observations or actions more human-readable.
 Usually, it will not be possible to use elements of this space directly in learning code. However, you can easily
-convert <cite>Dict</cite> observations to flat arrays by using a <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.wrappers.FlattenObservation</span></code> wrapper. Similar wrappers can be
-implemented to deal with <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> actions.</p>
+convert <cite>Dict</cite> observations to flat arrays by using a <a class="reference internal" href="../../wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.FlattenObservation</span></code></a> wrapper.
+Similar wrappers can be implemented to deal with <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> actions.</p>
 <p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> space.</p>
 <p>This space can be instantiated in one of two ways: Either you pass a dictionary
 of spaces to <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> via the <code class="docutils literal notranslate"><span class="pre">spaces</span></code> argument, or you pass the spaces as separate
@@ -482,10 +482,12 @@ keyword arguments (where you will need to avoid the keys <code class="docutils l
 <dt class="sig sig-object py" id="gymnasium.spaces.Dict.seed">
 <span class="sig-prename descclassname"><span class="pre">Dict.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Dict.seed" title="Permalink to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and all subspaces.</p>
-<p>Depending on the type of seed, the subspaces will be seeded differently
-* None - All the subspaces will use a random initial seed
-* Int - The integer is used to seed the <cite>Dict</cite> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
-* Dict - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (<cite>Dict[“space”: Dict[…], …]</cite> with <cite>{“space”: {…}, …}</cite>).</p>
+<p>Depending on the type of seed, the subspaces will be seeded differently</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> - All the subspaces will use a random initial seed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Int</span></code> - The integer is used to seed the <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Dict</span></code> - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (<code class="docutils literal notranslate"><span class="pre">Dict[&quot;space&quot;:</span> <span class="pre">Dict[...],</span> <span class="pre">...]</span></code> with <code class="docutils literal notranslate"><span class="pre">{&quot;space&quot;:</span> <span class="pre">{...},</span> <span class="pre">...}</span></code>).</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – An optional list of ints or int to seed the (sub-)spaces.</p>
@@ -540,10 +542,12 @@ expects the same number of masks as spaces</p>
 <dt class="sig sig-object py" id="gymnasium.spaces.Tuple.seed">
 <span class="sig-prename descclassname"><span class="pre">Tuple.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Tuple.seed" title="Permalink to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and all subspaces.</p>
-<p>Depending on the type of seed, the subspaces will be seeded differently
-* None - All the subspaces will use a random initial seed
-* Int - The integer is used to seed the <cite>Tuple</cite> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
-* List - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces (<cite>List(42, 54, …)</cite>).</p>
+<p>Depending on the type of seed, the subspaces will be seeded differently</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> - All the subspaces will use a random initial seed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Int</span></code> - The integer is used to seed the <cite>Tuple</cite> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">List</span></code> - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces (<code class="docutils literal notranslate"><span class="pre">List(42,</span> <span class="pre">54,</span> <span class="pre">...</span></code>).</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – An optional list of ints or int to seed the (sub-)spaces.</p>
@@ -588,14 +592,17 @@ to some space that is specified during initialization and the integer <span clas
 <dd><p>Generates a single random sample from this space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mask</strong> – An optional mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
+<dd class="field-odd"><p><strong>mask</strong> – <p>An optional mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
 If you specify <cite>mask</cite>, it is expected to be a tuple of the form <cite>(length_mask, sample_mask)</cite> where <cite>length_mask</cite>
-is
-- <cite>None</cite> The length will be randomly drawn from a geometric distribution
-- <cite>np.ndarray</cite> of integers, in which case the length of the sampled sequence is randomly drawn from this array.
-- <cite>int</cite> for a fixed length sample
-The second element of the mask tuple <cite>sample</cite> mask specifies a mask that is applied when
+is</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> The length will be randomly drawn from a geometric distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> of integers, in which case the length of the sampled sequence is randomly drawn from this array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code> for a fixed length sample</p></li>
+</ul>
+<p>The second element of the mask tuple <cite>sample</cite> mask specifies a mask that is applied when
 sampling elements from the base space. The mask is applied for each feature space sample.</p>
+</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>A tuple of random length with random samples of elements from the :attr:`feature_space`.</strong></p>
