@@ -82,8 +82,7 @@ def _devicearray_jax_to_torch(
     tensor = torch_dlpack.from_dlpack(dlpack)
     if device:
         return tensor.to(device=device)
-    else:
-        return tensor
+    return tensor
 
 
 @jax_to_torch.register(abc.Mapping)
@@ -129,7 +128,7 @@ class JaxToTorchV0(Wrapper):
             action: The action to perform as a PyTorch Tensor
 
         Returns:
-            The next observation, reward, done and extra info
+            The next observation, reward, termination, truncation, and extra info
         """
         jax_action = torch_to_jax(action)
         obs, reward, terminated, truncated, info = self.env.step(jax_action)
@@ -154,7 +153,7 @@ class JaxToTorchV0(Wrapper):
         Returns:
             PyTorch-based observations and info
         """
-        if options is not None:
+        if options:
             options = torch_to_jax(options)
 
         return jax_to_torch(self.env.reset(seed=seed, options=options), self.device)

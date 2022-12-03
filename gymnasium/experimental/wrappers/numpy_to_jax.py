@@ -99,7 +99,7 @@ class JaxToNumpyV0(Wrapper):
             action: the action to perform as a numpy array
 
         Returns:
-            A tuple containing the next observation, reward, done, and extra info.
+            A tuple containing the next observation, reward, termination, truncation, and extra info.
         """
         jax_action = numpy_to_jax(action)
         obs, reward, terminated, truncated, info = self.env.step(jax_action)
@@ -124,7 +124,7 @@ class JaxToNumpyV0(Wrapper):
         Returns:
             Numpy-based observations and info
         """
-        if options is not None:
+        if options:
             options = numpy_to_jax(options)
 
         return jax_to_numpy(self.env.reset(seed=seed, options=options))
