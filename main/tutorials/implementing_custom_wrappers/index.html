@@ -7,12 +7,12 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/api/experimental.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Functional Environment" href="functional/" /><link rel="prev" title="Utils" href="../utils/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/api/experimental.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/tutorials/implementing_custom_wrappers.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Training using REINFORCE for Mujoco" href="../reinforce_invpend_gym_v26/" /><link rel="prev" title="Handling Time Limits" href="../handling_time_limits/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/tutorials/implementing_custom_wrappers.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
-        <title>Experimental - Gymnasium Documentation</title>
+        <title>Implementing Custom Wrappers - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=685fa18242db31520d31c3a9d25d30ba22d0f107" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=403a31844f8e23b4c27a66e8d07df595b970be09" />
@@ -213,30 +213,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../registry/">Registry</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/fundamental/">Fundamental Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/composite/">Composite Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/vector_utils/">Spaces Vector Utils</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Registry</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/utils/">Spaces Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/misc_wrappers/">Misc Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/action_wrappers/">Action Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/observation_wrappers/">Observation Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a></li>
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Experimental</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vector_wrappers/">Vector Environment Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/vector/">Vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utils</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/experimental/functional/">Functional Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/experimental/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/experimental/vector/">Vectorizing Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
 </ul>
 </li>
 </ul>
@@ -344,12 +344,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Implementing Custom Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -375,9 +375,8 @@
         </a>
         <div class="content-icon-container">
           
-    
     <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/api/experimental.md" title="Edit this page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/tutorials/implementing_custom_wrappers.py" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -400,258 +399,138 @@
         </div>
         <article role="main">
           
-          <section id="experimental">
-<h1>Experimental<a class="headerlink" href="#experimental" title="Permalink to this heading">#</a></h1>
-<div class="toctree-wrapper compound">
-</div>
-<section id="functional-environments">
-<h2>Functional Environments<a class="headerlink" href="#functional-environments" title="Permalink to this heading">#</a></h2>
-<p>The gymnasium <code class="docutils literal notranslate"><span class="pre">Env</span></code> provides high flexibility for the implementation of individual environments however this can complicate parallelism of environments. Therefore, we propose the :class:<code class="docutils literal notranslate"><span class="pre">gymnasium.experimental.FuncEnv</span></code> where each part of environment has its own function related to it.</p>
-</section>
-<section id="wrappers">
-<h2>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this heading">#</a></h2>
-<p>Gymnasium already contains a large collection of wrappers, but we believe that the wrappers can be improved to</p>
+          <section id="implementing-custom-wrappers">
+<h1>Implementing Custom Wrappers<a class="headerlink" href="#implementing-custom-wrappers" title="Permalink to this heading">#</a></h1>
+<p>In this tutorial we will describe how to implement your own custom wrappers.
+Wrappers are a great way to add functionality to your environments in a modular way.
+This will save you a lot of boilerplate code.</p>
+<p>We will show how to create a wrapper by</p>
 <ul class="simple">
-<li><p>Support arbitrarily complex observation / action spaces. As RL has advanced, action and observation spaces are becoming more complex and the current wrappers were not implemented with these spaces in mind.</p></li>
-<li><p>Support for numpy, jax and pytorch data. With hardware accelerated environments, i.e. Brax, written in Jax and similar pytorch based programs, numpy is not the only game in town anymore. Therefore, these upgrades will use Jumpy for calling numpy, jax and torch depending on the data.</p></li>
-<li><p>More wrappers. Projects like Supersuit aimed to bring more wrappers for RL however wrappers can be moved into Gymnasium.</p></li>
-<li><p>Versioning. Like environments, the implementation details of wrapper can cause changes agent performance. Therefore, we propose adding version numbers with all wrappers.</p></li>
-<li><p>In v28, we aim to rewrite the VectorEnv to not inherit from Env, as a result new vectorised versions of the wrappers will be provided.</p></li>
+<li><p>Inheriting from <a class="reference internal" href="../../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></a></p></li>
+<li><p>Inheriting from <a class="reference internal" href="../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper" title="gymnasium.ActionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper</span></code></a></p></li>
+<li><p>Inheriting from <a class="reference internal" href="../../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper" title="gymnasium.RewardWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper</span></code></a></p></li>
+<li><p>Inheriting from <a class="reference internal" href="../../api/wrappers/#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a></p></li>
 </ul>
-<section id="lambda-observation-wrappers">
-<h3>Lambda Observation Wrappers<a class="headerlink" href="#lambda-observation-wrappers" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Old name</p></th>
-<th class="head"><p>New name</p></th>
-<th class="head"><p>Vector version</p></th>
-<th class="head"><p>Tree structure</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.TransformObservation" title="gymnasium.wrappers.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.TransformObservation</span></code></a></p></td>
-<td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.LambdaObservationV0" title="gymnasium.experimental.wrappers.LambdaObservationV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.LambdaObservationV0</span></code></a></p></td>
-<td><p>VectorLambdaObservation</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.FilterObservation" title="gymnasium.wrappers.FilterObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.FilterObservation</span></code></a></p></td>
-<td><p>FilterObservation</p></td>
-<td><p>VectorFilterObservation (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.FlattenObservation</span></code></a></p></td>
-<td><p>FlattenObservation</p></td>
-<td><p>VectorFlattenObservation (*)</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.GrayScaleObservation" title="gymnasium.wrappers.GrayScaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.GrayScaleObservation</span></code></a></p></td>
-<td><p>GrayscaleObservation</p></td>
-<td><p>VectorGrayscaleObservation (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.PixelObservationWrapper" title="gymnasium.wrappers.PixelObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.PixelObservationWrapper</span></code></a></p></td>
-<td><p>PixelObservation</p></td>
-<td><p>VectorPixelObservation (*)</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.ResizeObservation" title="gymnasium.wrappers.ResizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.ResizeObservation</span></code></a></p></td>
-<td><p>ResizeObservation</p></td>
-<td><p>VectorResizeObservation (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-even"><td><p>Not Implemented</p></td>
-<td><p>ReshapeObservation</p></td>
-<td><p>VectorReshapeObservation (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-odd"><td><p>Not Implemented</p></td>
-<td><p>RescaleObservation</p></td>
-<td><p>VectorRescaleObservation (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-even"><td><p>Not Implemented</p></td>
-<td><p>DtypeObservation</p></td>
-<td><p>VectorDtypeObservation (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></p></td>
-<td><p>NormalizeObservation</p></td>
-<td><p>VectorNormalizeObservation</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></p></td>
-<td><p>TimeAwareObservation</p></td>
-<td><p>VectorTimeAwareObservation</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameStack</span></code></p></td>
-<td><p>FrameStackObservation</p></td>
-<td><p>VectorFrameStackObservation</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-even"><td><p>Not Implemented</p></td>
-<td><p>DelayObservation</p></td>
-<td><p>VectorDelayObservation</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></p></td>
-<td><p>AtariPreprocessing</p></td>
-<td><p>Not Implemented</p></td>
-<td><p>No</p></td>
-</tr>
-</tbody>
-</table>
+<p>Before following this tutorial, make sure to check out the docs of the <a class="reference internal" href="../../api/wrappers/#module-gymnasium.wrappers" title="gymnasium.wrappers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gymnasium.wrappers</span></code></a> module.</p>
+<section id="inheriting-from-gymnasium-observationwrapper">
+<h2>Inheriting from <a class="reference internal" href="../../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-observationwrapper" title="Permalink to this heading">#</a></h2>
+<p>Observation wrappers are useful if you want to apply some function to the observations that are returned
+by an environment. If you implement an observation wrapper, you only need to define this transformation
+by implementing the <a class="reference internal" href="../../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper.observation" title="gymnasium.ObservationWrapper.observation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper.observation()</span></code></a> method. Moreover, you should remember to
+update the observation space, if the transformation changes the shape of observations (e.g. by transforming
+dictionaries into numpy arrays, as in the following example).</p>
+<p>Imagine you have a 2D navigation task where the environment returns dictionaries as observations with
+keys <code class="docutils literal notranslate"><span class="pre">&quot;agent_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;target_position&quot;</span></code>. A common thing to do might be to throw away some degrees of
+freedom and only consider the position of the target relative to the agent, i.e.
+<code class="docutils literal notranslate"><span class="pre">observation[&quot;target_position&quot;]</span> <span class="pre">-</span> <span class="pre">observation[&quot;agent_position&quot;]</span></code>. For this, you could implement an
+observation wrapper like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">gym</span> <span class="kn">import</span> <span class="n">ActionWrapper</span><span class="p">,</span> <span class="n">ObservationWrapper</span><span class="p">,</span> <span class="n">RewardWrapper</span><span class="p">,</span> <span class="n">Wrapper</span>
+
+<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
+
+
+<span class="k">class</span> <span class="nc">RelativePosition</span><span class="p">(</span><span class="n">ObservationWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;agent&quot;</span><span class="p">]</span>
+</pre></div>
 </div>
 </section>
-<section id="lambda-action-wrappers">
-<h3>Lambda Action Wrappers<a class="headerlink" href="#lambda-action-wrappers" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Old name</p></th>
-<th class="head"><p>New name</p></th>
-<th class="head"><p>Vector version</p></th>
-<th class="head"><p>Tree structure</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Not Implemented</p></td>
-<td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.LambdaActionV0" title="gymnasium.experimental.wrappers.LambdaActionV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.LambdaActionV0</span></code></a></p></td>
-<td><p>VectorLambdaAction</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/action_wrappers/#gymnasium.wrappers.ClipAction" title="gymnasium.wrappers.ClipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.ClipAction</span></code></a></p></td>
-<td><p>ClipAction</p></td>
-<td><p>VectorClipAction (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/action_wrappers/#gymnasium.wrappers.RescaleAction" title="gymnasium.wrappers.RescaleAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.RescaleAction</span></code></a></p></td>
-<td><p>RescaleAction</p></td>
-<td><p>VectorRescaleAction (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-odd"><td><p>Not Implemented</p></td>
-<td><p>NanAction</p></td>
-<td><p>VectorNanAction (*)</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-even"><td><p>Not Implemented</p></td>
-<td><p>StickyAction</p></td>
-<td><p>VectorStickyAction</p></td>
-<td><p>No</p></td>
-</tr>
-</tbody>
-</table>
+<section id="inheriting-from-gymnasium-actionwrapper">
+<h2>Inheriting from <a class="reference internal" href="../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper" title="gymnasium.ActionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-actionwrapper" title="Permalink to this heading">#</a></h2>
+<p>Action wrappers can be used to apply a transformation to actions before applying them to the environment.
+If you implement an action wrapper, you need to define that transformation by implementing
+<a class="reference internal" href="../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper.action" title="gymnasium.ActionWrapper.action"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper.action()</span></code></a>. Moreover, you should specify the domain of that transformation
+by updating the action space of the wrapper.</p>
+<p>Let’s say you have an environment with action space of type <a class="reference internal" href="../../api/spaces/fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.spaces.Box</span></code></a>, but you would only like
+to use a finite subset of actions. Then, you might want to implement the following wrapper:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DiscreteActions</span><span class="p">(</span><span class="n">ActionWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">disc_to_cont</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disc_to_cont</span> <span class="o">=</span> <span class="n">disc_to_cont</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">disc_to_cont</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disc_to_cont</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLanderContinuous-v2&quot;</span><span class="p">)</span>
+    <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">DiscreteActions</span><span class="p">(</span>
+        <span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>  <span class="c1"># Discrete(4)</span>
+</pre></div>
 </div>
 </section>
-<section id="lambda-reward-wrappers">
-<h3>Lambda Reward Wrappers<a class="headerlink" href="#lambda-reward-wrappers" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Old name</p></th>
-<th class="head"><p>New name</p></th>
-<th class="head"><p>Vector version</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.TransformReward</span></code></a></p></td>
-<td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.LambdaRewardV0" title="gymnasium.experimental.wrappers.LambdaRewardV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.LambdaRewardV0</span></code></a></p></td>
-<td><p>VectorLambdaReward</p></td>
-</tr>
-<tr class="row-odd"><td><p>Not Implemented</p></td>
-<td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.ClipRewardV0" title="gymnasium.experimental.wrappers.ClipRewardV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.ClipRewardV0</span></code></a></p></td>
-<td><p>VectorClipReward (*)</p></td>
-</tr>
-<tr class="row-even"><td><p>Not Implemented</p></td>
-<td><p>RescaleReward</p></td>
-<td><p>VectorRescaleReward (*)</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/reward_wrappers/#gymnasium.wrappers.NormalizeReward" title="gymnasium.wrappers.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.NormalizeReward</span></code></a></p></td>
-<td><p>NormalizeReward</p></td>
-<td><p>VectorNormalizeReward</p></td>
-</tr>
-</tbody>
-</table>
+<section id="inheriting-from-gymnasium-rewardwrapper">
+<h2>Inheriting from <a class="reference internal" href="../../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper" title="gymnasium.RewardWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-rewardwrapper" title="Permalink to this heading">#</a></h2>
+<p>Reward wrappers are used to transform the reward that is returned by an environment.
+As for the previous wrappers, you need to specify that transformation by implementing the
+<a class="reference internal" href="../../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper.reward" title="gymnasium.RewardWrapper.reward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper.reward()</span></code></a> method. Also, you might want to update the reward range of the wrapper.</p>
+<p>Let us look at an example: Sometimes (especially when we do not have control over the reward
+because it is intrinsic), we want to clip the reward to a range to gain some numerical stability.
+To do that, we could, for instance, implement the following wrapper:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">SupportsFloat</span>
+
+
+<span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">RewardWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span> <span class="o">=</span> <span class="n">min_reward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_reward</span> <span class="o">=</span> <span class="n">max_reward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SupportsFloat</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_reward</span><span class="p">)</span>
+</pre></div>
 </div>
 </section>
-<section id="common-wrappers">
-<h3>Common Wrappers<a class="headerlink" href="#common-wrappers" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Old name</p></th>
-<th class="head"><p>New name</p></th>
-<th class="head"><p>Vector version</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.AutoResetWrapper" title="gymnasium.wrappers.AutoResetWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.AutoResetWrapper</span></code></a></p></td>
-<td><p>AutoReset</p></td>
-<td><p>VectorAutoReset</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.PassiveEnvChecker" title="gymnasium.wrappers.PassiveEnvChecker"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.PassiveEnvChecker</span></code></a></p></td>
-<td><p>PassiveEnvChecker</p></td>
-<td><p>VectorPassiveEnvChecker</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.OrderEnforcing" title="gymnasium.wrappers.OrderEnforcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.OrderEnforcing</span></code></a></p></td>
-<td><p>OrderEnforcing</p></td>
-<td><p>VectorOrderEnforcing (*)</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.EnvCompatibility" title="gymnasium.wrappers.EnvCompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.EnvCompatibility</span></code></a></p></td>
-<td><p>Moved to <a class="reference external" href="https://github.com/Farama-Foundation/Shimmy/blob/main/shimmy/openai_gym_compatibility.py">shimmy</a></p></td>
-<td><p>Not Implemented</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></p></td>
-<td><p>RecordEpisodeStatistics</p></td>
-<td><p>VectorRecordEpisodeStatistics</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">RenderCollection</span></code></p></td>
-<td><p>RenderCollection</p></td>
-<td><p>VectorRenderCollection</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanRendering</span></code></p></td>
-<td><p>HumanRendering</p></td>
-<td><p>Not Implemented</p></td>
-</tr>
-<tr class="row-odd"><td><p>Not Implemented</p></td>
-<td><p>JaxToNumpy</p></td>
-<td><p>VectorJaxToNumpy</p></td>
-</tr>
-<tr class="row-even"><td><p>Not Implemented</p></td>
-<td><p>JaxToTorch</p></td>
-<td><p>VectorJaxToTorch</p></td>
-</tr>
-</tbody>
-</table>
+<section id="inheriting-from-gymnasium-wrapper">
+<h2>Inheriting from <a class="reference internal" href="../../api/wrappers/#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-wrapper" title="Permalink to this heading">#</a></h2>
+<p>Sometimes you might need to implement a wrapper that does some more complicated modifications (e.g. modify the
+reward based on data in <code class="docutils literal notranslate"><span class="pre">info</span></code> or change the rendering behavior).
+Such wrappers can be implemented by inheriting from <a class="reference internal" href="../../api/wrappers/#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a>.</p>
+<ul class="simple">
+<li><p>You can set a new action or observation space by defining <code class="docutils literal notranslate"><span class="pre">self.action_space</span></code> or <code class="docutils literal notranslate"><span class="pre">self.observation_space</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>, respectively</p></li>
+<li><p>You can set new metadata and reward range by defining <code class="docutils literal notranslate"><span class="pre">self.metadata</span></code> and <code class="docutils literal notranslate"><span class="pre">self.reward_range</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>, respectively</p></li>
+<li><p>You can override <a class="reference internal" href="../../api/wrappers/#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.Wrapper.step()</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.Wrapper.render()</span></code>, <a class="reference internal" href="../../api/wrappers/#gymnasium.Wrapper.close" title="gymnasium.Wrapper.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.Wrapper.close()</span></code></a> etc.</p></li>
+</ul>
+<p>If you do this, you can access the environment that was passed
+to your wrapper (which <em>still</em> might be wrapped in some other wrapper) by accessing the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code>.</p>
+<p>Let’s also take a look at an example for this case. Most MuJoCo environments return a reward that consists
+of different terms: For instance, there might be a term that rewards the agent for completing the task and one term that
+penalizes large actions (i.e. energy usage). Usually, you can pass weight parameters for those terms during
+initialization of the environment. However, <em>Reacher</em> does not allow you to do this! Nevertheless, all individual terms
+of the reward are returned in <cite>info</cite>, so let us build a wrapper for Reacher that allows us to weight those terms:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReacherRewardWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">reward_dist_weight</span><span class="p">,</span> <span class="n">reward_ctrl_weight</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">=</span> <span class="n">reward_dist_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_ctrl_weight</span> <span class="o">=</span> <span class="n">reward_ctrl_weight</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">*</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;reward_dist&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_ctrl_weight</span> <span class="o">*</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;reward_ctrl&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+</pre></div>
 </div>
-</section>
-<section id="vector-only-wrappers">
-<h3>Vector Only Wrappers<a class="headerlink" href="#vector-only-wrappers" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Old name</p></th>
-<th class="head"><p>New name</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.VectorListInfo" title="gymnasium.wrappers.VectorListInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.VectorListInfo</span></code></a></p></td>
-<td><p>VectorListInfo</p></td>
-</tr>
-</tbody>
-</table>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-implementing-custom-wrappers-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/6f2a99877a488456d33ac44780187aa4/implementing_custom_wrappers.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">implementing_custom_wrappers.py</span></code></a></p>
 </div>
-</section>
-</section>
-<section id="vector-environment">
-<h2>Vector Environment<a class="headerlink" href="#vector-environment" title="Permalink to this heading">#</a></h2>
-<p>These changes will be made in v0.28</p>
-</section>
-<section id="wrappers-for-vector-environments">
-<h2>Wrappers for Vector Environments<a class="headerlink" href="#wrappers-for-vector-environments" title="Permalink to this heading">#</a></h2>
-<p>These changes will be made in v0.28</p>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/cbfb989de54c286b47aa60ed45417281/implementing_custom_wrappers.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">implementing_custom_wrappers.ipynb</span></code></a></p>
+</div>
+</div>
 </section>
 </section>
 
@@ -660,23 +539,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="functional/">
+          <a class="next-page" href="../reinforce_invpend_gym_v26/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Functional Environment</div>
+                <div class="title">Training using REINFORCE for Mujoco</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-            <a class="prev-page" href="../utils/">
+            <a class="prev-page" href="../handling_time_limits/">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Utils</div>
+                <div class="title">Handling Time Limits</div>
                 
               </div>
             </a>
@@ -713,18 +592,11 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Experimental</a><ul>
-<li><a class="reference internal" href="#functional-environments">Functional Environments</a></li>
-<li><a class="reference internal" href="#wrappers">Wrappers</a><ul>
-<li><a class="reference internal" href="#lambda-observation-wrappers">Lambda Observation Wrappers</a></li>
-<li><a class="reference internal" href="#lambda-action-wrappers">Lambda Action Wrappers</a></li>
-<li><a class="reference internal" href="#lambda-reward-wrappers">Lambda Reward Wrappers</a></li>
-<li><a class="reference internal" href="#common-wrappers">Common Wrappers</a></li>
-<li><a class="reference internal" href="#vector-only-wrappers">Vector Only Wrappers</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#vector-environment">Vector Environment</a></li>
-<li><a class="reference internal" href="#wrappers-for-vector-environments">Wrappers for Vector Environments</a></li>
+<li><a class="reference internal" href="#">Implementing Custom Wrappers</a><ul>
+<li><a class="reference internal" href="#inheriting-from-gymnasium-observationwrapper">Inheriting from <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></a></li>
+<li><a class="reference internal" href="#inheriting-from-gymnasium-actionwrapper">Inheriting from <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper</span></code></a></li>
+<li><a class="reference internal" href="#inheriting-from-gymnasium-rewardwrapper">Inheriting from <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper</span></code></a></li>
+<li><a class="reference internal" href="#inheriting-from-gymnasium-wrapper">Inheriting from <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a></li>
 </ul>
 </li>
 </ul>
