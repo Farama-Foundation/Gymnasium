@@ -43,37 +43,37 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorLambdaObservation
       - No
     * - :class:`wrappers.FilterObservation`
-      - FilterObservation
+      - :class:`experimental.wrappers.FilterObservation`
       - VectorFilterObservation (*)
       - Yes
     * - :class:`wrappers.FlattenObservation`
-      - FlattenObservation
+      - `:class:`experimental.wrappers.FlattenObservation`
       - VectorFlattenObservation (*)
       - No
     * - :class:`wrappers.GrayScaleObservation`
-      - GrayscaleObservation
+      - `:class:`experimental.wrappers.GrayscaleObservation`
       - VectorGrayscaleObservation (*)
       - Yes
-    * - :class:`wrappers.PixelObservationWrapper`
-      - PixelObservation 
-      - VectorPixelObservation (*)
-      - No
     * - :class:`wrappers.ResizeObservation`
-      - ResizeObservation
+      - :class:`experimental.wrappers.ResizeObservation`
       - VectorResizeObservation (*)
       - Yes
     * - Not Implemented
-      - ReshapeObservation
+      - :class:`experimental.wrappers.ReshapeObservation`
       - VectorReshapeObservation (*)
       - Yes
     * - Not Implemented
-      - RescaleObservation
+      - :class:`experimental.wrappers.RescaleObservation`
       - VectorRescaleObservation (*)
       - Yes
     * - Not Implemented
-      - DtypeObservation
+      - :class:`experimental.wrappers.DtypeObservation`
       - VectorDtypeObservation (*)
       - Yes
+    * - :class:`wrappers.PixelObservationWrapper`
+      - PixelObservation 
+      - VectorPixelObservation
+      - No
     * - :class:`NormalizeObservation`
       - NormalizeObservation 
       - VectorNormalizeObservation
