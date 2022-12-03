@@ -12,6 +12,8 @@ from gymnasium.experimental.wrappers.lambda_action import (
 )
 from gymnasium.experimental.wrappers.lambda_observations import LambdaObservationV0
 from gymnasium.experimental.wrappers.lambda_reward import ClipRewardV0, LambdaRewardV0
+from gymnasium.experimental.wrappers.numpy_to_jax import JaxToNumpyV0
+from gymnasium.experimental.wrappers.torch_to_jax import JaxToTorchV0
 from gymnasium.experimental.wrappers.sticky_action import StickyActionV0
 from gymnasium.experimental.wrappers.time_aware_observation import (
     TimeAwareObservationV0,
@@ -32,4 +34,7 @@ __all__ = [
     # Lambda Reward
     "LambdaRewardV0",
     "ClipRewardV0",
+    # Jax conversion wrappers
+    "JaxToNumpyV0",
+    "JaxToTorchV0",
 ]

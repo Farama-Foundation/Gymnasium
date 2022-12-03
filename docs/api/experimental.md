@@ -175,21 +175,21 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
     * - :class:`wrappers.EnvCompatibility`
       - Moved to `shimmy <https://github.com/Farama-Foundation/Shimmy/blob/main/shimmy/openai_gym_compatibility.py>`_
       - Not Implemented
-    * - :class:`RecordEpisodeStatistics`
+    * - :class:`wrappers.RecordEpisodeStatistics`
       - RecordEpisodeStatistics
       - VectorRecordEpisodeStatistics
-    * - :class:`RenderCollection`
+    * - :class:`wrappers.RenderCollection`
       - RenderCollection
       - VectorRenderCollection
-    * - :class:`HumanRendering`
+    * - :class:`wrappers.HumanRendering`
       - HumanRendering
       - Not Implemented
     * - Not Implemented
-      - JaxToNumpy
-      - VectorJaxToNumpy
+      - :class:`experimental.wrappers.JaxToNumpy`
+      - VectorJaxToNumpy (*)
     * - Not Implemented
-      - JaxToTorch
-      - VectorJaxToTorch
+      - :class:`experimental.wrappers.JaxToTorch`
+      - VectorJaxToTorch (*)
 ```
 
 ### Vector Only Wrappers
