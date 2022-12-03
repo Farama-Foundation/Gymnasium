@@ -46,8 +46,8 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
 
     It can be convenient to use :class:`Dict` spaces if you want to make complex observations or actions more human-readable.
     Usually, it will not be possible to use elements of this space directly in learning code. However, you can easily
-    convert `Dict` observations to flat arrays by using a :class:`gym.wrappers.FlattenObservation` wrapper. Similar wrappers can be
-    implemented to deal with :class:`Dict` actions.
+    convert `Dict` observations to flat arrays by using a :class:`gymnasium.wrappers.FlattenObservation` wrapper.
+    Similar wrappers can be implemented to deal with :class:`Dict` actions.
     """
 
     def __init__(
@@ -121,9 +121,10 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
-        * None - All the subspaces will use a random initial seed
-        * Int - The integer is used to seed the `Dict` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
-        * Dict - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (`Dict["space": Dict[...], ...]` with `{"space": {...}, ...}`).
+
+        * ``None`` - All the subspaces will use a random initial seed
+        * ``Int`` - The integer is used to seed the :class:`Dict` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
+        * ``Dict`` - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (``Dict["space": Dict[...], ...]`` with ``{"space": {...}, ...}``).
 
         Args:
             seed: An optional list of ints or int to seed the (sub-)spaces.

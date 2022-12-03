@@ -52,9 +52,10 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
-        * None - All the subspaces will use a random initial seed
-        * Int - The integer is used to seed the `Tuple` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
-        * List - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces (`List(42, 54, ...)`).
+
+        * ``None`` - All the subspaces will use a random initial seed
+        * ``Int`` - The integer is used to seed the `Tuple` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
+        * ``List`` - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces (``List(42, 54, ...``).
 
         Args:
             seed: An optional list of ints or int to seed the (sub-)spaces.
