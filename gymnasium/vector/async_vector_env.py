@@ -318,14 +318,15 @@ class AsyncVectorEnv(VectorEnv):
         successes = []
         for i, pipe in enumerate(self.parent_pipes):
             result, success = pipe.recv()
-            obs, rew, terminated, truncated, info = result
-
             successes.append(success)
-            observations_list.append(obs)
-            rewards.append(rew)
-            terminateds.append(terminated)
-            truncateds.append(truncated)
-            infos = self._add_info(infos, info, i)
+            if success:
+                obs, rew, terminated, truncated, info = result
+
+                observations_list.append(obs)
+                rewards.append(rew)
+                terminateds.append(terminated)
+                truncateds.append(truncated)
+                infos = self._add_info(infos, info, i)
 
         self._raise_if_errors(successes)
         self._state = AsyncState.DEFAULT
