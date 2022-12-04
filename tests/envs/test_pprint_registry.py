@@ -1,6 +1,7 @@
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
 
+
 # To ignore the trailing whitespaces, will need flake to ignore this file.
 # flake8: noqa
 
@@ -20,7 +21,7 @@ def test_pprint_custom_registry():
     out = gym.pprint_registry(a, disable_print=True)
 
     correct_out = """===== classic_control =====
-CartPole-v0 CartPole-v1 
+CartPole-v0 CartPole-v1
 
 """
     assert out == correct_out

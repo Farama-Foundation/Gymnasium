@@ -7,6 +7,7 @@ import gymnasium as gym
 from gymnasium.error import InvalidBound
 from gymnasium.experimental.wrappers import ClipRewardV0, LambdaRewardV0
 
+
 ENV_ID = "CartPole-v1"
 DISCRETE_ACTION = 0
 NUM_ENVS = 3

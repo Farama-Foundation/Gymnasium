@@ -8,6 +8,7 @@ from gymnasium.envs.registration import (
     spec,
 )
 
+
 # Classic
 # ----------------------------------------
 

@@ -10,6 +10,7 @@ from gymnasium import Env, spaces, utils
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 
+
 MAP = [
     "+---------+",
     "|R: | : :G|",

@@ -15,6 +15,7 @@ For more information, see the `guide </content/gym_compatibility>`_
 ```
 
 ### Example code for v21
+
 ```python
 import gym
 env = gym.make("LunarLander-v2", options={})
@@ -32,6 +33,7 @@ env.close()
 ```
 
 ### Example code for v26
+
 ```python
 import gym
 env = gym.make("LunarLander-v2", render_mode="human")

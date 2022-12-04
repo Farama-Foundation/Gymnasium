@@ -10,6 +10,7 @@ from gymnasium import Env, spaces
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 
+
 UP = 0
 RIGHT = 1
 DOWN = 2
