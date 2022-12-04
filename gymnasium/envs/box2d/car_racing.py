@@ -11,6 +11,7 @@ from gymnasium.envs.box2d.car_dynamics import Car
 from gymnasium.error import DependencyNotInstalled, InvalidAction
 from gymnasium.utils import EzPickle
 
+
 try:
     import Box2D
     from Box2D.b2 import contactListener, fixtureDef, polygonShape

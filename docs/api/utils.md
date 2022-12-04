@@ -9,11 +9,11 @@ title: Utils
 ```{eval-rst}
 .. autofunction:: gymnasium.utils.play.play
 .. autoclass:: gymnasium.utils.play.PlayPlot
-    
+
     .. automethod:: callback
 
 .. autoclass:: gymnasium.utils.play.PlayableGame
-    
+
     .. automethod:: process_event
 ```
 
@@ -42,4 +42,4 @@ title: Utils
 
 ```{eval-rst}
 .. autofunction:: gymnasium.utils.env_checker.check_env
-``` 
+```

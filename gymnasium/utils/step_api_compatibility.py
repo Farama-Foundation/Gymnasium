@@ -5,6 +5,7 @@ import numpy as np
 
 from gymnasium.core import ObsType
 
+
 DoneStepType = Tuple[
     Union[ObsType, np.ndarray],
     Union[float, np.ndarray],

@@ -2,7 +2,6 @@
 title: Spaces
 ---
 
-
 # Spaces
 
 ```{toctree}
@@ -18,6 +17,7 @@ spaces/vector_utils
 ```
 
 ## The Base Class
+
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Space
 ```
@@ -42,7 +42,7 @@ Each space implements the following functions:
 .. autofunction:: gymnasium.spaces.space.Space.seed
 .. autofunction:: gymnasium.spaces.space.Space.to_jsonable
 .. autofunction:: gymnasium.spaces.space.Space.from_jsonable
-``` 
+```
 
 ## Fundamental Spaces
 
@@ -55,7 +55,7 @@ Gymnasium has a number of fundamental spaces that are used as building boxes for
 * :py:class:`Discrete` - Supports a single discrete number of values with an optional start for the values
 * :py:class:`MultiDiscrete` - Supports single or matrices of binary values, used for holding down a button or if an agent has an object
 * :py:class:`MultiBinary` - Supports multiple discrete values with multiple axes, used for controller actions
-* :py:class:`Text` - Supports strings, used for passing agent messages, mission details, etc 
+* :py:class:`Text` - Supports strings, used for passing agent messages, mission details, etc
 ```
 
 ## Composite Spaces
@@ -71,7 +71,7 @@ Often environment spaces require joining fundamental spaces together for vectori
 
 ## Utils
 
-Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces. 
+Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces.
 This can be important for passing information to neural networks.
 
 ```{eval-rst}

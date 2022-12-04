@@ -6,6 +6,7 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
 
+
 DEFAULT_CAMERA_CONFIG = {
     "trackbodyid": 2,
     "distance": 3.0,

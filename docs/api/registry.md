@@ -5,7 +5,7 @@ title: Registry
 # Registry
 
 Gymnasium allows users to automatically load environments, pre-wrapped with several important wrappers.
-Environments can also be created through python imports. 
+Environments can also be created through python imports.
 
 ## Make
 
@@ -29,7 +29,6 @@ This will not include environments registered only in OpenAI Gym however can be 
 ```{eval-rst}
 .. autofunction:: gymnasium.spec
 ```
-
 
 ## Pretty print registry
 

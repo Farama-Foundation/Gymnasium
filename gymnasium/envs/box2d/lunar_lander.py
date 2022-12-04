@@ -12,6 +12,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle, colorize
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
+
 try:
     import Box2D
     from Box2D.b2 import (

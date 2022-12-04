@@ -8,6 +8,7 @@ from gymnasium.experimental.wrappers import LambdaActionV0
 from gymnasium.spaces import Box
 from tests.testing_env import GenericTestEnv
 
+
 NUM_ENVS = 3
 BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
 

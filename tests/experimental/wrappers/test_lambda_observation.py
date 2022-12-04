@@ -6,6 +6,7 @@ import gymnasium as gym
 from gymnasium.experimental.wrappers import LambdaObservationV0
 from gymnasium.spaces import Box
 
+
 NUM_ENVS = 3
 BOX_SPACE = Box(-5, 5, (1,), dtype=np.float64)
 

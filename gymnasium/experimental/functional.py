@@ -5,6 +5,7 @@ from typing import Any, Callable, Generic, TypeVar
 
 import numpy as np
 
+
 StateType = TypeVar("StateType")
 ActType = TypeVar("ActType")
 ObsType = TypeVar("ObsType")

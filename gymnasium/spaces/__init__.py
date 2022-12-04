@@ -22,6 +22,7 @@ from gymnasium.spaces.text import Text
 from gymnasium.spaces.tuple import Tuple
 from gymnasium.spaces.utils import flatdim, flatten, flatten_space, unflatten
 
+
 __all__ = [
     # base space
     "Space",

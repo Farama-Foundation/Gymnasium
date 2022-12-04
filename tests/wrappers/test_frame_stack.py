@@ -4,6 +4,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.wrappers import FrameStack
 
+
 try:
     import lz4
 except ImportError:

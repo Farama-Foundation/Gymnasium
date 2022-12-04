@@ -1,12 +1,12 @@
 <mujoco model="arm3d">
   <compiler inertiafromgeom="true" angle="radian" coordinate="local"/>
   <option timestep="0.01" gravity="0 0 0" iterations="20" integrator="Euler" />
-  
+
   <default>
     <joint armature='0.04' damping="1" limited="true"/>
     <geom friction=".8 .1 .1" density="300" margin="0.002" condim="1" contype="0" conaffinity="0"/>
   </default>
-  
+
   <worldbody>
     <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
     <geom name="table" type="plane" pos="0 0.5 -0.325" size="1 1 0.1" contype="1" conaffinity="1"/>
@@ -75,7 +75,7 @@
     <body name="goal" pos="0.45 -0.05 -0.3230">
       <geom rgba="1 0 0 1" type="cylinder" size="0.08 0.001 0.1" density='0.00001' contype="0" conaffinity="0"/>
       <joint name="goal_slidey" type="slide" pos="0 0 0" axis="0 1 0" range="-10.3213 10.3" damping="0.5"/>
-      <joint name="goal_slidex" type="slide" pos="0 0 0" axis="1 0 0" range="-10.3213 10.3" damping="0.5"/> 
+      <joint name="goal_slidex" type="slide" pos="0 0 0" axis="1 0 0" range="-10.3213 10.3" damping="0.5"/>
     </body>
   </worldbody>
 

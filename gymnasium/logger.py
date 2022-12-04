@@ -5,6 +5,7 @@ from typing import Optional, Type
 
 from gymnasium.utils import colorize
 
+
 DEBUG = 10
 INFO = 20
 WARN = 30

@@ -65,4 +65,3 @@ Attribution
 -----------
 This Code of Conduct is adapted from `Python's Code of Conduct <https://www.python.org/psf/conduct/>`_, which is under a `Creative Commons License
 <https://creativecommons.org/licenses/by-sa/3.0/>`_.
-

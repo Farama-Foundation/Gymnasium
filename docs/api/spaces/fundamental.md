@@ -12,7 +12,7 @@ title: Fundamental Spaces
 .. automethod:: gymnasium.spaces.Box.sample
 .. automethod:: gymnasium.spaces.Box.seed
 .. automethod:: gymnasium.spaces.Box.is_bounded
-``` 
+```
 
 ## Discrete
 
@@ -20,7 +20,7 @@ title: Fundamental Spaces
 .. autoclass:: gymnasium.spaces.Discrete
 .. automethod:: gymnasium.spaces.Discrete.sample
 .. automethod:: gymnasium.spaces.Discrete.seed
-``` 
+```
 
 ## MultiBinary
 
@@ -28,7 +28,7 @@ title: Fundamental Spaces
 .. autoclass:: gymnasium.spaces.MultiBinary
 .. automethod:: gymnasium.spaces.MultiBinary.sample
 .. automethod:: gymnasium.spaces.MultiBinary.seed
-``` 
+```
 
 ## MultiDiscrete
 
@@ -37,7 +37,7 @@ title: Fundamental Spaces
 
 .. automethod:: gymnasium.spaces.MultiDiscrete.sample
 .. automethod:: gymnasium.spaces.MultiDiscrete.seed
-``` 
+```
 
 ## Text
 
@@ -46,4 +46,4 @@ title: Fundamental Spaces
 
 .. automethod:: gymnasium.spaces.Text.sample
 .. automethod:: gymnasium.spaces.Text.seed
-``` 
+```

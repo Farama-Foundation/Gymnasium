@@ -8,6 +8,7 @@ import numpy.typing as npt
 
 from gymnasium.spaces.space import Space
 
+
 alphanumeric: frozenset[str] = frozenset(
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )

@@ -7,6 +7,7 @@ import gymnasium as gym
 from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.utils.seeding import RandomNumberGenerator
 
+
 spaces = [
     Box(low=np.array(-1.0), high=np.array(1.0), dtype=np.float64),
     Box(low=np.array([0.0]), high=np.array([10.0]), dtype=np.float64),

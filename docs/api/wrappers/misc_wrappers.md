@@ -1,4 +1,5 @@
 # Misc Wrappers
+
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.AtariPreprocessing
 .. autoclass:: gymnasium.wrappers.AutoResetWrapper

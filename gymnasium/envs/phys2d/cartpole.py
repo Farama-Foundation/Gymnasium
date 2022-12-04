@@ -15,6 +15,7 @@ from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
 
+
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
 

@@ -7,7 +7,7 @@
 
 .. automethod:: gymnasium.spaces.Dict.sample
 .. automethod:: gymnasium.spaces.Dict.seed
-``` 
+```
 
 ## Tuple
 
@@ -16,7 +16,7 @@
 
 .. automethod:: gymnasium.spaces.Tuple.sample
 .. automethod:: gymnasium.spaces.Tuple.seed
-``` 
+```
 
 ## Sequence
 
@@ -25,7 +25,7 @@
 
 .. automethod:: gymnasium.spaces.Sequence.sample
 .. automethod:: gymnasium.spaces.Sequence.seed
-``` 
+```
 
 ## Graph
 

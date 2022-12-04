@@ -22,6 +22,7 @@ from furo import gen_tutorials
 
 import gymnasium
 
+
 project = "Gymnasium"
 copyright = "2022 Farama Foundation"
 author = "Farama Foundation"

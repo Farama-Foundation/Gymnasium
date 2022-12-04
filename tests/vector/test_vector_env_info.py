@@ -5,6 +5,7 @@ import gymnasium as gym
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from tests.vector.utils import make_env
 
+
 ENV_ID = "CartPole-v1"
 NUM_ENVS = 3
 ENV_STEPS = 50

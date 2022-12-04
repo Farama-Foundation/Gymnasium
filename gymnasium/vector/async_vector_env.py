@@ -29,6 +29,7 @@ from gymnasium.vector.utils import (
 )
 from gymnasium.vector.vector_env import VectorEnv
 
+
 __all__ = ["AsyncVectorEnv"]
 
 

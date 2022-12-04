@@ -12,6 +12,7 @@ from tests.envs.utils import (
     assert_equals,
 )
 
+
 # This runs a smoketest on each official registered env. We may want
 # to try also running environments which are not officially registered envs.
 PASSIVE_CHECK_IGNORE_WARNING = [

@@ -9,8 +9,8 @@
 ```
 
 ## Available Action Wrappers
+
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.ClipAction
 .. autoclass:: gymnasium.wrappers.RescaleAction
 ```
-

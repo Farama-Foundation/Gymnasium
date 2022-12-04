@@ -6,9 +6,10 @@ import re
 
 from PIL import Image
 from tqdm import tqdm
-from utils import kill_strs
 
 import gymnasium
+from utils import kill_strs
+
 
 # snake to camel case: https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case # noqa: E501
 pattern = re.compile(r"(?<!^)(?=[A-Z])")

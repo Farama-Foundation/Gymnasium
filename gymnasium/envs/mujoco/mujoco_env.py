@@ -7,6 +7,7 @@ import gymnasium as gym
 from gymnasium import error, logger, spaces
 from gymnasium.spaces import Space
 
+
 try:
     import mujoco_py
 except ImportError as e:

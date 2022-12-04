@@ -14,6 +14,7 @@ Please delete options that are not relevant.
 - [ ] This change requires a documentation update
 
 ### Screenshots
+
 Please attach before and after screenshots of the change if applicable.
 
 <!--

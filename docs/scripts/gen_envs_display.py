@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 all_envs = [
     {
         "id": "mujoco",

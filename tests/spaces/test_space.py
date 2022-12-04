@@ -5,6 +5,7 @@ import pytest
 from gymnasium import Space
 from gymnasium.spaces import utils
 
+
 TESTING_SPACE = Space()
 
 

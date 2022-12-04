@@ -121,16 +121,20 @@ the arguments `difficulty` and `mode` when constructing the environment. This do
 action spaces of default flavor choices.
 
 ## Observation Space
+
 The observation issued by an Atari environment may be:
+
 - the RGB image that is displayed to a human player,
 - a grayscale version of that image or
 - the state of the 128 Bytes of RAM of the console.
 
 ## Rewards
+
 The exact reward dynamics depend on the environment and are usually documented in the game's manual. You can
 find these manuals on [AtariAge](https://atariage.com/).
 
 ## Stochasticity
+
 It was pointed out in [[1]](#1) that Atari games are entirely deterministic. Thus, agents could achieve
 state-of-the-art performance by simply memorizing an optimal sequence of actions while completely ignoring observations from the environment.
 To avoid this, ALE implements sticky actions: Instead of always simulating the action passed to the environment, there is a small
@@ -143,6 +147,7 @@ repeated `frameskip` many times. Otherwise, if `frameskip` is a tuple, the numbe
 random between `frameskip[0]` (inclusive) and `frameskip[1]` (exclusive) in each environment step.
 
 ## Common Arguments
+
 When initializing Atari environments via `gymnasium.make`, you may pass some additional arguments. These work for any
 Atari environment. However, legal values for `mode` and `difficulty` depend on the environment.
 
@@ -170,6 +175,7 @@ action space will be reduced to a subset.
 > This will guarantee proper scaling, audio support, and proper framerates
 
 ## Version History and Naming Schemes
+
 All Atari games are available in three versions. They differ in the default settings of the arguments above.
 The differences are listed in the following table:
 
@@ -204,6 +210,7 @@ are in the "ALE" namespace. The suffix "-ram" is still available. Thus, we get t
 | ALE/Amidar-ram-v5 | `"ram"`     | `5`          | `0.25`                       | `True`               |
 
 ## Flavors
+
 Some games allow the user to set a difficulty level and a game mode. Different modes/difficulties may have different
 game dynamics and (if a reduced action space is used) different action spaces. We follow the convention of [[2]](#2) and
 refer to the combination of difficulty level and game mode as a flavor of a game. The following table shows

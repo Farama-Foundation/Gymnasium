@@ -17,6 +17,7 @@ from gymnasium.spaces import (
     Tuple,
 )
 
+
 BaseGymSpaces = (Box, Discrete, MultiDiscrete, MultiBinary)
 _BaseGymSpaces = BaseGymSpaces
 __all__ = ["BaseGymSpaces", "_BaseGymSpaces", "batch_space", "iterate"]

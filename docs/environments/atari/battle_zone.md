@@ -1,10 +1,10 @@
 ---
 title: Battle Zone
 ---
-   
+
 # Battle Zone
 
-```{figure} ../../_static/videos/atari/battle_zone.gif 
+```{figure} ../../_static/videos/atari/battle_zone.gif
 :width: 120px
 :name: BattleZone
 ```
@@ -17,27 +17,31 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Space | (210, 160, 3)                         |
 | Observation High  | 255                                   |
 | Observation Low   | 0                                     |
-| Import            | `gymnasium.make("ALE/BattleZone-v5")` | 
+| Import            | `gymnasium.make("ALE/BattleZone-v5")` |
 
 ## Description
-You control a tank and must destroy enemy vehicles. This game is played in a first-person perspective and creates 
+
+You control a tank and must destroy enemy vehicles. This game is played in a first-person perspective and creates
 a 3D illusion. A radar screen shows enemies around you. You start with 5 lives and gain up to 2 extra lives if you reach
 a sufficient score.
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=859&itemTypeID=HTMLMANUAL)
 
-
 ## Actions
+
 By default, all actions that can be performed on an Atari 2600 are available in this environment.
-Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions 
+Even if you use v0 or v4 or specify `full_action_space=False` during initialization, all actions
 will be available in the default flavor.
 
 ## Observations
+
 By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
 possible to observe
+
 - The 128 Bytes of RAM of the console
 - A grayscale image
 
 instead. The respective observation spaces are
+
 - `Box([0 ... 0], [255 ... 255], (128,), uint8)`
 - `Box([[0 ... 0]
  ...
@@ -50,31 +54,33 @@ respectively. The general article on Atari environments outlines different ways 
 via `gymnasium.make`.
 
 ### Rewards
+
 You receive points for destroying enemies.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=859&itemTypeID=HTMLMANUAL).
 
 ## Arguments
 
-```
+```python
 env = gymnasium.make("ALE/BattleZone-v5")
 ```
 
 The various ways to configure the environment are described in detail in the article on Atari environments.
-It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`. 
+It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`.
 A flavor is a combination of a game mode and a difficulty setting.
 
 | Environment | Valid Modes | Valid Difficulties | Default Mode |
 |-------------|-------------|--------------------|--------------|
 | BattleZone  | `[1, 2, 3]` | `[0]`              | `1`          |
 
-You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "NoFrameskip" 
-are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in 
+You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "NoFrameskip"
+are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in
 the general article on Atari environments.
 The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("BattleZone-v0")`.
 
 ## Version History
+
 A thorough discussion of the intricate differences between the versions and configurations can be found in the
-general article on Atari environments. 
+general article on Atari environments.
 
 * v5: Stickiness was added back and stochastic frameskipping was removed. The entire action space is used by default. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed

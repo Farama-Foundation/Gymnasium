@@ -5,6 +5,7 @@ from gymnasium.error import InvalidProbability
 from gymnasium.experimental.wrappers import StickyActionV0
 from tests.testing_env import GenericTestEnv
 
+
 SEED = 42
 
 DELAY = 3

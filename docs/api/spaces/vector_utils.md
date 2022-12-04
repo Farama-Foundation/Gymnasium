@@ -8,7 +8,7 @@ title: Vector Utils
 .. autofunction:: gymnasium.vector.utils.batch_space
 .. autofunction:: gymnasium.vector.utils.concatenate
 .. autofunction:: gymnasium.vector.utils.iterate
-``` 
+```
 
 ## Shared Memory Utils
 

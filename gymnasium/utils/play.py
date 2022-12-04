@@ -10,6 +10,7 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.logger import deprecation
 
+
 try:
     import pygame
     from pygame import Surface
