@@ -17,10 +17,6 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: detect-private-key
       - id: debug-statements
-  - repo: https://github.com/python/black
-    rev: 22.3.0
-    hooks:
-      - id: black
   - repo: https://github.com/codespell-project/codespell
     rev: v2.1.0
     hooks:
@@ -38,10 +34,19 @@ repos:
           - --max-line-length=456
           - --show-source
           - --statistics
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.32.0
+    hooks:
+      - id: pyupgrade
+        args: ["--py37-plus"]
   - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
     hooks:
       - id: isort
+  - repo: https://github.com/python/black
+    rev: 22.3.0
+    hooks:
+      - id: black
   - repo: https://github.com/pycqa/pydocstyle
     rev: 6.1.1
     hooks:
@@ -52,11 +57,6 @@ repos:
           - --explain
           - --convention=google
         additional_dependencies: ["toml"]
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v2.32.0
-    hooks:
-      - id: pyupgrade
-        args: ["--py37-plus"]
   - repo: local
     hooks:
       - id: pyright
