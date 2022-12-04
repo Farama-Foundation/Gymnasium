@@ -14,7 +14,7 @@ experimental/vector_wrappers
 
 ## Functional Environments
 
-The gymnasium ``Env`` provides high flexibility for the implementation of individual environments however this can complicate parallelism of environments. Therefore, we propose the :class:`gymnasium.experimental.FuncEnv` where each part of environment has its own function related to it. 
+The gymnasium ``Env`` provides high flexibility for the implementation of individual environments however this can complicate parallelism of environments. Therefore, we propose the :class:`gymnasium.experimental.FuncEnv` where each part of environment has its own function related to it.
 
 ## Wrappers
 
@@ -28,12 +28,13 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
  * In v28, we aim to rewrite the VectorEnv to not inherit from Env, as a result new vectorised versions of the wrappers will be provided.
 
 ### Lambda Observation Wrappers
+
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
       - Vector version
@@ -71,11 +72,11 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorDtypeObservation (*)
       - Yes
     * - :class:`wrappers.PixelObservationWrapper`
-      - PixelObservation 
+      - PixelObservation
       - VectorPixelObservation
       - No
     * - :class:`NormalizeObservation`
-      - NormalizeObservation 
+      - NormalizeObservation
       - VectorNormalizeObservation
       - No
     * - :class:`TimeAwareObservation`
@@ -97,12 +98,13 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```
 
 ### Lambda Action Wrappers
+
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
       - Vector version
@@ -130,12 +132,13 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```
 
 ### Lambda Reward Wrappers
+
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
       - Vector version
@@ -154,12 +157,13 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```
 
 ### Common Wrappers
+
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
       - Vector version
@@ -171,7 +175,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorPassiveEnvChecker
     * - :class:`wrappers.OrderEnforcing`
       - OrderEnforcing
-      - VectorOrderEnforcing (*)  
+      - VectorOrderEnforcing (*)
     * - :class:`wrappers.EnvCompatibility`
       - Moved to `shimmy <https://github.com/Farama-Foundation/Shimmy/blob/main/shimmy/openai_gym_compatibility.py>`_
       - Not Implemented
@@ -193,12 +197,13 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```
 
 ### Vector Only Wrappers
+
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
     * - :class:`wrappers.VectorListInfo`

@@ -755,7 +755,7 @@ def pprint_registry(
             )  # Print column with justification.
             # Once all rows printed, switch to new column.
             if count % num_cols == 0 or count == len(envs):
-                return_str += "\n"
+                return_str = return_str.rstrip(" ") + "\n"
         return_str += "\n"
 
     if disable_print:
