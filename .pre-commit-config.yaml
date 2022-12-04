@@ -42,7 +42,6 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
-        args: ["--profile", "black"]
   - repo: https://github.com/pycqa/pydocstyle
     rev: 6.1.1
     hooks:
