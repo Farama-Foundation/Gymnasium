@@ -11,5 +11,5 @@ box2d-py==2.3.5
 pygame==2.1.3.dev8
 ale-py~=0.8.0
 mujoco>=2.3.0
-mujoco_py<2.2,>=2.1
+mujoco-py>=2.1,<2.2
 imageio>=2.14.1

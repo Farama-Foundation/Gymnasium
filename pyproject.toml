@@ -28,8 +28,8 @@ dependencies = [
     "numpy >=1.21.0",
     "jax-jumpy >=0.2.0",
     "cloudpickle >=1.2.0",
-    "importlib_metadata >=4.8.0; python_version < '3.10'",
-    "gymnasium_notices >=0.0.1",
+    "importlib-metadata >=4.8.0; python_version < '3.10'",
+    "gymnasium-notices >=0.0.1",
     "shimmy >=0.1.0,<1.0",
 ]
 dynamic = ["version"]
@@ -39,10 +39,13 @@ dynamic = ["version"]
 atari = ["shimmy[atari] >=0.1.0,<1.0"]
 accept-rom-license = ["autorom[accept-rom-license] ~=0.4.2"]
 box2d = ["box2d-py ==2.3.5", "pygame ==2.1.0", "swig ==4.*"]
-classic_control = ["pygame ==2.1.0"]
-mujoco_py = ["mujoco_py >=2.1,<2.2"]
+classic-control = ["pygame ==2.1.0"]
+classic_control = ["pygame ==2.1.0"]  # kept for backward compatibility
+mujoco-py = ["mujoco-py >=2.1,<2.2"]
+mujoco_py = ["mujoco-py >=2.1,<2.2"]  # kept for backward compatibility
 mujoco = ["mujoco >=2.3.0", "imageio >=2.14.1"]
-toy_text = ["pygame ==2.1.0"]
+toy-text = ["pygame ==2.1.0"]
+toy_text = ["pygame ==2.1.0"]         # kept for backward compatibility
 jax = ["jax ==0.3.20", "jaxlib ==0.3.20"]
 other = [
     "lz4 >=3.1.0",
@@ -61,14 +64,14 @@ all = [
     "box2d-py ==2.3.5",
     "pygame ==2.1.0",
     "swig ==4.*",
-    # classic_control
+    # classic-control
     "pygame ==2.1.0",
-    # mujoco_py
-    "mujoco_py >=2.1,<2.2",
+    # mujoco-py
+    "mujoco-py >=2.1,<2.2",
     # mujoco
     "mujoco >=2.3.0",
     "imageio >=2.14.1",
-    # toy_text
+    # toy-text
     "pygame ==2.1.0",
     # jax
     "jax ==0.3.20",
