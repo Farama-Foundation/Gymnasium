@@ -27,7 +27,7 @@ __all__ = [
     "register",
     "registry",
     "pprint_registry",
-    # root files
+    # module folders
     "envs",
     "spaces",
     "utils",
