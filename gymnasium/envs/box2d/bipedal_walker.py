@@ -10,6 +10,7 @@ from gymnasium import error, spaces
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle
 
+
 try:
     import Box2D
     from Box2D.b2 import (

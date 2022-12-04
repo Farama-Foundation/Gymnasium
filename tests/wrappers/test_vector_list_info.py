@@ -4,6 +4,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.wrappers import RecordEpisodeStatistics, VectorListInfo
 
+
 ENV_ID = "CartPole-v1"
 NUM_ENVS = 3
 ENV_STEPS = 50

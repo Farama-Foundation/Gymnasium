@@ -6,6 +6,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.experimental.wrappers import RescaleActionV0
 
+
 SEED = 42
 
 

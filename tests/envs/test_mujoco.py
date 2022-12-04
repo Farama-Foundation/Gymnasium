@@ -6,6 +6,7 @@ from gymnasium import envs
 from gymnasium.envs.registration import EnvSpec
 from tests.envs.utils import mujoco_testing_env_specs
 
+
 EPS = 1e-6
 
 
