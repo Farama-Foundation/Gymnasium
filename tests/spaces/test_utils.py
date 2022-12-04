@@ -9,6 +9,7 @@ from gymnasium.spaces import Box, Graph, utils
 from gymnasium.utils.env_checker import data_equivalence
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 
+
 TESTING_SPACES_EXPECTED_FLATDIMS = [
     # Discrete
     3,

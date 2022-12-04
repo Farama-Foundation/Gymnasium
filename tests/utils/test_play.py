@@ -12,6 +12,7 @@ import gymnasium as gym
 from gymnasium.utils.play import MissingKeysToAction, PlayableGame, play
 from tests.testing_env import GenericTestEnv
 
+
 RELEVANT_KEY_1 = ord("a")  # 97
 RELEVANT_KEY_2 = ord("d")  # 100
 IRRELEVANT_KEY = 1

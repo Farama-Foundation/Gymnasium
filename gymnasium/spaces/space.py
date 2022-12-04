@@ -8,6 +8,7 @@ import numpy.typing as npt
 
 from gymnasium.utils import seeding
 
+
 T_cov = TypeVar("T_cov", covariant=True)
 
 

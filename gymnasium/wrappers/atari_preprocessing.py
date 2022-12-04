@@ -4,6 +4,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium.spaces import Box
 
+
 try:
     import cv2
 except ImportError:

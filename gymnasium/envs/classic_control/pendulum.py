@@ -10,6 +10,7 @@ from gymnasium import spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
+
 DEFAULT_X = np.pi
 DEFAULT_Y = 1.0
 

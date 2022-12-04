@@ -9,6 +9,7 @@ from gymnasium.utils.step_api_compatibility import (
     convert_to_terminated_truncated_step_api,
 )
 
+
 if sys.version_info >= (3, 8):
     from typing import Protocol, runtime_checkable
 else:

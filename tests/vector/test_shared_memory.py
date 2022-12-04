@@ -16,6 +16,7 @@ from gymnasium.vector.utils.shared_memory import (
 from gymnasium.vector.utils.spaces import BaseGymSpaces
 from tests.vector.utils import custom_spaces, spaces
 
+
 expected_types = [
     Array("d", 1),
     Array("f", 1),

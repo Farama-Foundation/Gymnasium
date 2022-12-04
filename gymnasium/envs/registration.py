@@ -33,6 +33,7 @@ from gymnasium.wrappers import (
 from gymnasium.wrappers.compatibility import EnvCompatibility
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 
+
 if sys.version_info < (3, 10):
     import importlib_metadata as metadata  # type: ignore
 else:
@@ -44,6 +45,7 @@ else:
     from typing_extensions import Literal
 
 from gymnasium import Env, error, logger
+
 
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
@@ -755,7 +757,7 @@ def pprint_registry(
             )  # Print column with justification.
             # Once all rows printed, switch to new column.
             if count % num_cols == 0 or count == len(envs):
-                return_str += "\n"
+                return_str = return_str.rstrip(" ") + "\n"
         return_str += "\n"
 
     if disable_print:

@@ -1,18 +1,20 @@
+# Linters and Test tools #######################################################
+
+[tool.black]
+safe = true
+
+[tool.isort]
+atomic = true
+profile = "black"
+src_paths = ["gymnasium", "tests", "docs/scripts"]
+indent = 4
+lines_after_imports = 2
+multi_line_output = 3
+
 [tool.pyright]
-
-include = [
-    "gymnasium/**",
-    "tests/**"
-]
-
-exclude = [
-    "**/node_modules",
-    "**/__pycache__",
-]
-
-strict = [
-
-]
+include = ["gymnasium/**", "tests/**"]
+exclude = ["**/node_modules", "**/__pycache__"]
+strict = []
 
 typeCheckingMode = "basic"
 pythonVersion = "3.7"

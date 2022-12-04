@@ -6,6 +6,7 @@ from gymnasium import envs
 from gymnasium.envs.registration import EnvSpec
 from tests.envs.utils import mujoco_testing_env_specs
 
+
 EPS = 1e-6
 
 
@@ -64,13 +65,13 @@ def test_obs_space_mujoco_environments(env_spec: EnvSpec):
     reset_obs, info = env.reset()
     assert env.observation_space.contains(
         reset_obs
-    ), f"Obseravtion returned by reset() of {env_spec.id} is not contained in the default observation space {env.observation_space}."
+    ), f"Observation returned by reset() of {env_spec.id} is not contained in the default observation space {env.observation_space}."
 
     action = env.action_space.sample()
     step_obs, _, _, _, _ = env.step(action)
     assert env.observation_space.contains(
         step_obs
-    ), f"Obseravtion returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space}."
+    ), f"Observation returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space}."
 
     if env_spec.name in EXCLUDE_POS_FROM_OBS and (
         env_spec.version == 4 or env_spec.version == 3
@@ -81,12 +82,12 @@ def test_obs_space_mujoco_environments(env_spec: EnvSpec):
         reset_obs, info = env.reset()
         assert env.observation_space.contains(
             reset_obs
-        ), f"Obseravtion of {env_spec.id} is not contained in the default observation space {env.observation_space} when excluding current position from observation."
+        ), f"Observation of {env_spec.id} is not contained in the default observation space {env.observation_space} when excluding current position from observation."
 
         step_obs, _, _, _, _ = env.step(action)
         assert env.observation_space.contains(
             step_obs
-        ), f"Obseravtion returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space} when excluding current position from observation."
+        ), f"Observation returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space} when excluding current position from observation."
 
     # Ant-v4 has the option of including contact forces in the observation space with the use_contact_forces argument
     if env_spec.name == "Ant" and env_spec.version == 4:
@@ -94,12 +95,12 @@ def test_obs_space_mujoco_environments(env_spec: EnvSpec):
         reset_obs, info = env.reset()
         assert env.observation_space.contains(
             reset_obs
-        ), f"Obseravtion of {env_spec.id} is not contained in the default observation space {env.observation_space} when using contact forces."
+        ), f"Observation of {env_spec.id} is not contained in the default observation space {env.observation_space} when using contact forces."
 
         step_obs, _, _, _, _ = env.step(action)
         assert env.observation_space.contains(
             step_obs
-        ), f"Obseravtion returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space} when using contact forces."
+        ), f"Observation returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space} when using contact forces."
 
 
 MUJOCO_V2_V3_ENVS = [

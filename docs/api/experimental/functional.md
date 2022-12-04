@@ -34,5 +34,4 @@ title: Functional
 ... autofunction:: gymasnium.experimental.func2env.FunctionalJaxCompatibilityEnv.reset
 ... autofunction:: gymasnium.experimental.func2env.FunctionalJaxCompatibilityEnv.step
 ... autofunction:: gymasnium.experimental.func2env.FunctionalJaxCompatibilityEnv.render
-
 ```

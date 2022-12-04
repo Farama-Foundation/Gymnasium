@@ -11,6 +11,7 @@ from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import seeding
 
+
 LEFT = 0
 DOWN = 1
 RIGHT = 2

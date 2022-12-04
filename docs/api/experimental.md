@@ -14,7 +14,7 @@ experimental/vector_wrappers
 
 ## Functional Environments
 
-The gymnasium ``Env`` provides high flexibility for the implementation of individual environments however this can complicate parallelism of environments. Therefore, we propose the :class:`gymnasium.experimental.FuncEnv` where each part of environment has its own function related to it. 
+The gymnasium ``Env`` provides high flexibility for the implementation of individual environments however this can complicate parallelism of environments. Therefore, we propose the :class:`gymnasium.experimental.FuncEnv` where each part of environment has its own function related to it.
 
 ## Wrappers
 
@@ -31,9 +31,9 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
       - Vector version
@@ -71,7 +71,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorDtypeObservation (*)
       - Yes
     * - :class:`wrappers.PixelObservationWrapper`
-      - PixelObservation 
+      - PixelObservation
       - VectorPixelObservation
       - No
     * - :class:`wrappers.NormalizeObservation`
@@ -100,9 +100,9 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
       - Vector version
@@ -133,9 +133,9 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
       - Vector version
@@ -154,12 +154,13 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```
 
 ### Common Wrappers
+
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
       - Vector version
@@ -193,12 +194,13 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 ```
 
 ### Vector Only Wrappers
+
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-.. list-table:: 
+.. list-table::
     :header-rows: 1
-    
+
     * - Old name
       - New name
     * - :class:`wrappers.VectorListInfo`
