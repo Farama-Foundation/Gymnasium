@@ -15,7 +15,6 @@ from typing import Any, Callable, Sequence
 
 import jumpy as jp
 import numpy as np
-import numpy.typing as npt
 from typing_extensions import Final
 
 import gymnasium as gym
@@ -369,7 +368,7 @@ class RescaleObservationV0(LambdaObservationV0):
 class DtypeObservationV0(LambdaObservationV0):
     """Observation wrapper for transforming the dtype of an observation."""
 
-    def __init__(self, env: gym.Env, dtype: npt.DTypeLike):
+    def __init__(self, env: gym.Env, dtype: Any):
         """Constructor for Dtype, this is only valid with :class:`Box`, :class:`Discrete`, :class:`MultiDiscrete` and :class:`MultiBinary` observation spaces."""
         assert isinstance(
             env.observation_space,
@@ -403,6 +402,8 @@ class DtypeObservationV0(LambdaObservationV0):
                 dtype=self.dtype,
             )
         else:
-            raise TypeError("DtypeObservation is only compatible with value / array-based observations.")
+            raise TypeError(
+                "DtypeObservation is only compatible with value / array-based observations."
+            )
 
         super().__init__(env, lambda obs: dtype(obs), new_observation_space)

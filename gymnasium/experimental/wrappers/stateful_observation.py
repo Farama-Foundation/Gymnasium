@@ -116,7 +116,9 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         elif env.spec is not None and env.spec.max_episode_steps is not None:
             self.max_timesteps = env.spec.max_episode_steps
         else:
-            raise ValueError(f"The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`.")
+            raise ValueError(
+                "The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`."
+            )
 
         self.timesteps: int = 0
 

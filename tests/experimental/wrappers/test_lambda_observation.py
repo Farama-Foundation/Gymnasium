@@ -1,5 +1,4 @@
 """Test suite for lambda observation wrappers: """
-from typing import Optional
 
 import numpy as np
 
@@ -31,7 +30,7 @@ def _record_random_obs_step(self: gym.Env, action):
     return obs, 0, False, False, {"obs": obs}
 
 
-def _record_action_obs_reset(self: gym.Env, seed=None, options: Optional[dict] = None):
+def _record_action_obs_reset(self: gym.Env, seed=None, options: dict = {}):
     return options["obs"], {"obs": options["obs"]}
 
 
@@ -194,14 +193,20 @@ def test_reshape_observation_wrapper():
 def test_rescale_observation():
     """Test the ``RescaleObservation`` wrapper"""
     env = GenericTestEnv(
-        observation_space=Box(np.array([0, 1], dtype=np.float32), np.array([1, 3], dtype=np.float32)),
+        observation_space=Box(
+            np.array([0, 1], dtype=np.float32), np.array([1, 3], dtype=np.float32)
+        ),
         reset_func=_record_action_obs_reset,
         step_func=_record_action_obs_step,
     )
     wrapped_env = RescaleObservationV0(
-        env, min_obs=np.array([-5, 0], dtype=np.float32), max_obs=np.array([5, 1], dtype=np.float32)
+        env,
+        min_obs=np.array([-5, 0], dtype=np.float32),
+        max_obs=np.array([5, 1], dtype=np.float32),
     )
-    assert wrapped_env.observation_space == Box(np.array([-5, 0], dtype=np.float32), np.array([5, 1], dtype=np.float32))
+    assert wrapped_env.observation_space == Box(
+        np.array([-5, 0], dtype=np.float32), np.array([5, 1], dtype=np.float32)
+    )
 
     for sample_obs, expected_obs in (
         (

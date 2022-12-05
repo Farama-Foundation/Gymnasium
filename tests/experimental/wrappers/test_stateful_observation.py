@@ -7,6 +7,7 @@ from gymnasium.experimental.wrappers import DelayObservationV0, TimeAwareObserva
 from gymnasium.spaces import Box, Dict, Tuple
 from tests.testing_env import GenericTestEnv
 
+
 NUM_STEPS = 20
 SEED = 0
 
@@ -21,7 +22,7 @@ def test_time_aware_observation_wrapper():
     assert isinstance(wrapped_env.observation_space, Dict)
     reset_obs, _ = wrapped_env.reset()
     step_obs, _, _, _, _ = wrapped_env.step(None)
-    assert "time" in reset_obs and "time" in step_obs, f'{reset_obs}, {step_obs}'
+    assert "time" in reset_obs and "time" in step_obs, f"{reset_obs}, {step_obs}"
 
     env = GenericTestEnv(observation_space=Tuple((Box(0, 1), Box(2, 3))))
     wrapped_env = TimeAwareObservationV0(env)
@@ -85,6 +86,4 @@ def test_delay_observation_wrapper():
     undelayed_observations = np.array(undelayed_observations)
     delayed_observations = np.array(delayed_observations)
 
-    assert np.all(
-        delayed_observations[DELAY:] == undelayed_observations[:-DELAY]
-    )
+    assert np.all(delayed_observations[DELAY:] == undelayed_observations[:-DELAY])
