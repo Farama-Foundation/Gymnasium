@@ -8,7 +8,7 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
 
 
-def basic_reset_fn(
+def basic_reset_func(
     self,
     *,
     seed: Optional[int] = None,
@@ -20,17 +20,17 @@ def basic_reset_fn(
     return self.observation_space.sample(), {"options": options}
 
 
-def new_step_fn(self, action: ActType) -> Tuple[ObsType, float, bool, bool, dict]:
+def new_step_func(self, action: ActType) -> Tuple[ObsType, float, bool, bool, dict]:
     """A step function that follows the new step api that will pass the environment check using random actions from the observation space."""
     return self.observation_space.sample(), 0, False, False, {}
 
 
-def old_step_fn(self, action: ActType) -> Tuple[ObsType, float, bool, dict]:
+def old_step_func(self, action: ActType) -> Tuple[ObsType, float, bool, dict]:
     """A step function that follows the old step api that will pass the environment check using random actions from the observation space."""
     return self.observation_space.sample(), 0, False, {}
 
 
-def basic_render_fn(self):
+def basic_render_func(self):
     """Basic render fn that does nothing."""
     pass
 
@@ -43,12 +43,14 @@ class GenericTestEnv(gym.Env):
         self,
         action_space: spaces.Space = spaces.Box(0, 1, (1,)),
         observation_space: spaces.Space = spaces.Box(0, 1, (1,)),
-        reset_fn: callable = basic_reset_fn,
-        step_fn: callable = new_step_fn,
-        render_fn: callable = basic_render_fn,
+        reset_func: callable = basic_reset_func,
+        step_func: callable = new_step_func,
+        render_func: callable = basic_render_func,
         metadata: Dict[str, Any] = {"render_modes": []},
         render_mode: Optional[str] = None,
-        spec: EnvSpec = EnvSpec("TestingEnv-v0", "testing-env-no-entry-point"),
+        spec: EnvSpec = EnvSpec(
+            "TestingEnv-v0", "testing-env-no-entry-point", max_episode_steps=100
+        ),
     ):
         self.metadata = metadata
         self.render_mode = render_mode
@@ -59,12 +61,12 @@ class GenericTestEnv(gym.Env):
         if action_space is not None:
             self.action_space = action_space
 
-        if reset_fn is not None:
-            self.reset = types.MethodType(reset_fn, self)
-        if step_fn is not None:
-            self.step = types.MethodType(step_fn, self)
-        if render_fn is not None:
-            self.render = types.MethodType(render_fn, self)
+        if reset_func is not None:
+            self.reset = types.MethodType(reset_func, self)
+        if step_func is not None:
+            self.step = types.MethodType(step_func, self)
+        if render_func is not None:
+            self.render = types.MethodType(render_func, self)
 
     def reset(
         self,

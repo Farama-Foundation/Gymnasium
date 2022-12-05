@@ -10,31 +10,59 @@ from gymnasium.experimental.wrappers.lambda_action import (
     ClipActionV0,
     RescaleActionV0,
 )
-from gymnasium.experimental.wrappers.lambda_observations import LambdaObservationV0
+from gymnasium.experimental.wrappers.lambda_observations import (
+    LambdaObservationV0,
+    FilterObservationV0,
+    FlattenObservationV0,
+    GrayscaleObservationV0,
+    ResizeObservationV0,
+    ReshapeObservationV0,
+    RescaleObservationV0,
+    DtypeObservationV0,
+)
 from gymnasium.experimental.wrappers.lambda_reward import ClipRewardV0, LambdaRewardV0
 from gymnasium.experimental.wrappers.numpy_to_jax import JaxToNumpyV0
 from gymnasium.experimental.wrappers.torch_to_jax import JaxToTorchV0
-from gymnasium.experimental.wrappers.sticky_action import StickyActionV0
-from gymnasium.experimental.wrappers.time_aware_observation import (
+from gymnasium.experimental.wrappers.stateful_action import StickyActionV0
+from gymnasium.experimental.wrappers.stateful_observation import (
     TimeAwareObservationV0,
+    DelayObservationV0,
 )
-from gymnasium.experimental.wrappers.delay_observation import DelayObservationV0
 
 __all__ = [
-    "ArgType",
-    # Lambda Action
+    # --- Observation wrappers ---
+    "LambdaObservationV0",
+    "FilterObservationV0",
+    "FlattenObservationV0",
+    "GrayscaleObservationV0",
+    "ResizeObservationV0",
+    "ReshapeObservationV0",
+    "RescaleObservationV0",
+    "DtypeObservationV0",
+    # "PixelObservationV0",
+    # "NormalizeObservationV0",
+    "TimeAwareObservationV0",
+    # "FrameStackV0",
+    "DelayObservationV0",
+    # "AtariPreprocessingV0"
+    # --- Action Wrappers ---
     "LambdaActionV0",
-    "StickyActionV0",
     "ClipActionV0",
     "RescaleActionV0",
-    # Lambda Observation
-    "LambdaObservationV0",
-    "DelayObservationV0",
-    "TimeAwareObservationV0",
-    # Lambda Reward
+    # "NanAction",
+    "StickyActionV0",
+    # --- Reward wrappers ---
     "LambdaRewardV0",
     "ClipRewardV0",
-    # Jax conversion wrappers
+    # "RescaleRewardV0",
+    # "NormalizeRewardV0",
+    # --- Common ---
+    # "AutoReset",
+    # "PassiveEnvChecker",
+    # "OrderEnforcing",
+    # "RecordEpisodeStatistics",
+    # "RenderCollection",
+    # "HumanRendering",
     "JaxToNumpyV0",
     "JaxToTorchV0",
 ]

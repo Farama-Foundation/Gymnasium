@@ -303,11 +303,11 @@ def test_passive_env_reset_checker(test, func: callable, message: str, kwargs: D
         with pytest.warns(
             UserWarning, match=f"^\\x1b\\[33mWARN: {re.escape(message)}\\x1b\\[0m$"
         ):
-            env_reset_passive_checker(GenericTestEnv(reset_fn=func), **kwargs)
+            env_reset_passive_checker(GenericTestEnv(reset_func=func), **kwargs)
     else:
         with warnings.catch_warnings(record=True) as caught_warnings:
             with pytest.raises(test, match=f"^{re.escape(message)}$"):
-                env_reset_passive_checker(GenericTestEnv(reset_fn=func), **kwargs)
+                env_reset_passive_checker(GenericTestEnv(reset_func=func), **kwargs)
         assert len(caught_warnings) == 0
 
 
@@ -383,11 +383,11 @@ def test_passive_env_step_checker(
         with pytest.warns(
             UserWarning, match=f"^\\x1b\\[33mWARN: {re.escape(message)}\\x1b\\[0m$"
         ):
-            env_step_passive_checker(GenericTestEnv(step_fn=func), 0)
+            env_step_passive_checker(GenericTestEnv(step_func=func), 0)
     else:
         with warnings.catch_warnings(record=True) as caught_warnings:
             with pytest.raises(test, match=f"^{re.escape(message)}$"):
-                env_step_passive_checker(GenericTestEnv(step_fn=func), 0)
+                env_step_passive_checker(GenericTestEnv(step_func=func), 0)
         assert len(caught_warnings) == 0, caught_warnings
 
 
@@ -416,7 +416,7 @@ def test_passive_env_step_checker(
             GenericTestEnv(
                 metadata={"render_modes": ["Testing mode"], "render_fps": None},
                 render_mode="Testing mode",
-                render_fn=lambda self: 0,
+                render_func=lambda self: 0,
             ),
             "No render fps was declared in the environment (env.metadata['render_fps'] is None or not defined), rendering may occur at inconsistent fps.",
         ],

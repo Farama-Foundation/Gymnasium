@@ -278,7 +278,7 @@ def test_wrapper_types():
     obs, _, _, _, _ = observation_env.step(0)
     assert obs == np.array([1])
 
-    env = GenericTestEnv(step_fn=lambda self, action: (action, 0, False, False, {}))
+    env = GenericTestEnv(step_func=lambda self, action: (action, 0, False, False, {}))
     action_env = ExampleActionWrapper(env)
     obs, _, _, _, _ = action_env.step(0)
     assert obs == np.array([1])
