@@ -253,6 +253,7 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Experimental</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Functional Environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wrappers/#reward-wrappers">Reward Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/">Vectorizing Environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector_wrappers/">Vector Environment Wrappers</a></li>
 </ul>
@@ -462,18 +463,6 @@ we intend to flesh it out and officially expose it to end users.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">initial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StateType</span></span></span><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
-<dd><p>Initial state.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ObsType</span></span></span><a class="headerlink" href="#id1" title="Permalink to this definition">#</a></dt>
-<dd><p>Observation.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.reward">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RewardType</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.reward" title="Permalink to this definition">#</a></dt>
 <dd><p>Reward.</p>
@@ -525,6 +514,9 @@ we intend to flesh it out and officially expose it to end users.</p>
 <section id="gymnasium-experimental-func2env-functionaljaxcompatibilityenv">
 <h2>gymnasium.experimental.func2env.FunctionalJaxCompatibilityEnv<a class="headerlink" href="#gymnasium-experimental-func2env-functionaljaxcompatibilityenv" title="Permalink to this heading">#</a></h2>
 <p>… autoclass:: gymasnium.experimental.func2env.FunctionalJaxCompatibilityEnv</p>
+<p>… autofunction:: gymasnium.experimental.func2env.FunctionalJaxCompatibilityEnv.reset
+… autofunction:: gymasnium.experimental.func2env.FunctionalJaxCompatibilityEnv.step
+… autofunction:: gymasnium.experimental.func2env.FunctionalJaxCompatibilityEnv.render</p>
 </section>
 </section>
 
@@ -592,8 +584,6 @@ we intend to flesh it out and officially expose it to end users.</p>
 <li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.initial"><code class="docutils literal notranslate"><span class="pre">initial()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.transition"><code class="docutils literal notranslate"><span class="pre">transition()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.observation"><code class="docutils literal notranslate"><span class="pre">observation()</span></code></a></li>
-<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">initial()</span></code></a></li>
-<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">observation()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.reward"><code class="docutils literal notranslate"><span class="pre">reward()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.terminal"><code class="docutils literal notranslate"><span class="pre">terminal()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.state_info"><code class="docutils literal notranslate"><span class="pre">state_info()</span></code></a></li>
