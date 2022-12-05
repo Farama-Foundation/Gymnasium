@@ -1,13 +1,19 @@
-"""Lambda action wrapper which apply a function to the provided action."""
-from typing import Any, Callable, Union
+"""A collection of wrappers that all use the LambdaAction class.
+
+* ``LambdaAction`` - Transforms the actions based on a function
+* ``ClipAction`` - Clips the action within a bounds
+* ``RescaleAction`` - Rescales the action within a minimum and maximum actions
+"""
+from __future__ import annotations
+
+from typing import Callable
 
 import jumpy as jp
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import spaces
-from gymnasium.core import ActType
-from gymnasium.experimental.wrappers import ArgType
+from gymnasium.core import ActType, WrapperActType
+from gymnasium.spaces import Box, Space
 
 
 class LambdaActionV0(gym.ActionWrapper):
@@ -16,19 +22,23 @@ class LambdaActionV0(gym.ActionWrapper):
     def __init__(
         self,
         env: gym.Env,
-        func: Callable[[ArgType], Any],
+        func: Callable[[WrapperActType], ActType],
+        action_space: Space | None,
     ):
         """Initialize LambdaAction.
 
         Args:
-            env (Env): The gymnasium environment
-            func (Callable): function to apply to action
+            env: The gymnasium environment
+            func: Function to apply to ``step`` ``action``
+            action_space: The updated action space of the wrapper given the function.
         """
         super().__init__(env)
+        if action_space is not None:
+            self.action_space = action_space
 
         self.func = func
 
-    def action(self, action: ActType) -> Any:
+    def action(self, action: WrapperActType) -> ActType:
         """Apply function to action."""
         return self.func(action)
 
@@ -53,13 +63,18 @@ class ClipActionV0(LambdaActionV0):
         Args:
             env: The environment to apply the wrapper
         """
-        assert isinstance(env.action_space, spaces.Box)
+        assert isinstance(env.action_space, Box)
+
         super().__init__(
             env,
             lambda action: jp.clip(action, env.action_space.low, env.action_space.high),
+            Box(
+                -np.inf,
+                np.inf,
+                shape=env.action_space.shape,
+                dtype=env.action_space.dtype,
+            ),
         )
-
-        self.action_space = spaces.Box(-np.inf, np.inf, env.action_space.shape)
 
 
 class RescaleActionV0(LambdaActionV0):
@@ -86,8 +101,8 @@ class RescaleActionV0(LambdaActionV0):
     def __init__(
         self,
         env: gym.Env,
-        min_action: Union[float, int, np.ndarray],
-        max_action: Union[float, int, np.ndarray],
+        min_action: float | int | np.ndarray,
+        max_action: float | int | np.ndarray,
     ):
         """Initializes the :class:`RescaleAction` wrapper.
 
@@ -96,28 +111,44 @@ class RescaleActionV0(LambdaActionV0):
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
-        assert isinstance(
-            env.action_space, spaces.Box
-        ), f"expected Box action space, got {type(env.action_space)}"
-        assert np.less_equal(min_action, max_action).all(), (min_action, max_action)
-
-        low = env.action_space.low
-        high = env.action_space.high
-
-        self.min_action = np.full(
-            env.action_space.shape, min_action, dtype=env.action_space.dtype
+        assert isinstance(env.action_space, Box)
+        assert not np.any(env.action_space.low == np.inf) and not np.any(
+            env.action_space.high == np.inf
         )
-        self.max_action = np.full(
-            env.action_space.shape, max_action, dtype=env.action_space.dtype
+
+        if not isinstance(min_action, np.ndarray):
+            assert np.issubdtype(type(min_action), np.integer) or np.issubdtype(
+                type(max_action), np.floating
+            )
+            min_action = np.full(env.action_space.shape, min_action)
+
+        assert min_action.shape == env.action_space.shape
+        assert not np.any(min_action == np.inf)
+
+        if not isinstance(max_action, np.ndarray):
+            assert np.issubdtype(type(max_action), np.integer) or np.issubdtype(
+                type(max_action), np.floating
+            )
+            max_action = np.full(env.action_space.shape, max_action)
+        assert max_action.shape == env.action_space.shape
+        assert not np.any(max_action == np.inf)
+
+        assert isinstance(env.action_space, Box)
+        assert np.all(np.less_equal(min_action, max_action))
+
+        # Imagine the x-axis between the old Box and the y-axis being the new Box
+        gradient = (env.action_space.high - env.action_space.low) / (
+            max_action - min_action
         )
+        intercept = gradient * -min_action + env.action_space.low
 
         super().__init__(
             env,
-            lambda action: jp.clip(
-                low
-                + (high - low)
-                * ((action - self.min_action) / (self.max_action - self.min_action)),
-                low,
-                high,
+            lambda action: gradient * action + intercept,
+            Box(
+                low=min_action,
+                high=max_action,
+                shape=env.action_space.shape,
+                dtype=env.action_space.dtype,
             ),
         )

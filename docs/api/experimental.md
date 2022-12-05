@@ -75,7 +75,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorPixelObservation
       - No
     * - :class:`wrappers.NormalizeObservation`
-      - NormalizeObservation 
+      - NormalizeObservation
       - VectorNormalizeObservation
       - No
     * - :class:`wrappers.TimeAwareObservation`
@@ -118,10 +118,6 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
     * - :class:`wrappers.RescaleAction`
       - :class:`experimental.wrappers.RescaleActionV0`
       - VectorRescaleAction (*)
-      - Yes
-    * - Not Implemented
-      - NanAction
-      - VectorNanAction (*)
       - Yes
     * - Not Implemented
       - :class:`experimental.wrappers.StickyActionV0`

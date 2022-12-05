@@ -19,7 +19,7 @@ from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_env_specs
 from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv
-from tests.testing_env import GenericTestEnv, old_step_fn
+from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
 
 
@@ -155,7 +155,7 @@ def test_make_disable_env_checker():
 def test_apply_api_compatibility():
     gym.register(
         "testing-old-env",
-        lambda: GenericTestEnv(step_fn=old_step_fn),
+        lambda: GenericTestEnv(step_func=old_step_func),
         apply_api_compatibility=True,
         max_episode_steps=3,
     )

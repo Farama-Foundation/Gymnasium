@@ -1,4 +1,14 @@
-"""Lambda observation wrappers which apply a function to the observation."""
+"""A collection of observation wrappers using a lambda function.
+
+* ``LambdaObservation`` - Transforms the observation with a function
+* ``FilterObservation`` - Filters a ``Tuple`` or ``Dict`` to only include certain keys
+* ``FlattenObservation`` - Flattens the observations
+* ``GrayscaleObservation`` - Converts a RGB observation to a grayscale observation
+* ``ResizeObservation`` - Resizes an array-based observation (normally a RGB observation)
+* ``ReshapeObservation`` - Reshapes an array-based observation
+* ``RescaleObservation`` - Rescales an observation to between a minimum and maximum value
+* ``DtypeObservation`` - Convert a observation dtype
+"""
 from __future__ import annotations
 
 from typing import Any, Callable, Sequence
@@ -6,12 +16,13 @@ from typing import Any, Callable, Sequence
 import jumpy as jp
 import numpy as np
 import numpy.typing as npt
+from typing_extensions import Final
 
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.core import ObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.spaces import utils
+from gymnasium.spaces import Box, utils
 
 
 class LambdaObservationV0(gym.ObservationWrapper):
@@ -71,32 +82,82 @@ class FilterObservationV0(LambdaObservationV0):
         ({'obs': array([ 0.04649447, -0.14996664, -0.03329664,  0.25847703], dtype=float32)}, 1.0, False, {})
     """
 
-    def __init__(self, env: gym.Env, filter_keys: Sequence[str]):
+    def __init__(self, env: gym.Env, filter_keys: Sequence[str | int]):
         """Constructor for an environment with a dictionary observation space where all :attr:`filter_keys` are in the observation space keys."""
-        if not isinstance(env.observation_space, spaces.Dict):
+        assert isinstance(filter_keys, Sequence)
+
+        # Filters for dictionary space
+        if isinstance(env.observation_space, spaces.Dict):
+            assert all(isinstance(key, str) for key in filter_keys)
+
+            if any(
+                key not in env.observation_space.spaces.keys() for key in filter_keys
+            ):
+                missing_keys = [
+                    key
+                    for key in filter_keys
+                    if key not in env.observation_space.spaces.keys()
+                ]
+                raise ValueError(
+                    "All the `filter_keys` must be included in the observation space.\n"
+                    f"Filter keys: {filter_keys}\n"
+                    f"Observation keys: {list(env.observation_space.spaces.keys())}\n"
+                    f"Missing keys: {missing_keys}"
+                )
+
+            new_observation_space = spaces.Dict(
+                {key: env.observation_space[key] for key in filter_keys}
+            )
+            if len(new_observation_space) == 0:
+                raise ValueError(
+                    "The observation space is empty due to filtering all keys."
+                )
+
+            super().__init__(
+                env,
+                lambda obs: {key: obs[key] for key in filter_keys},
+                new_observation_space,
+            )
+            # Filter for tuple observation
+        elif isinstance(env.observation_space, spaces.Tuple):
+            assert all(isinstance(key, int) for key in filter_keys)
+            assert len(set(filter_keys)) == len(
+                filter_keys
+            ), f"Duplicate keys exist, filter_keys: {filter_keys}"
+
+            if any(
+                0 < key and key >= len(env.observation_space) for key in filter_keys
+            ):
+                missing_index = [
+                    key
+                    for key in filter_keys
+                    if 0 < key and key >= len(env.observation_space)
+                ]
+                raise ValueError(
+                    "All the `filter_keys` must be included in the length of the observation space.\n"
+                    f"Filter keys: {filter_keys}, length of observation: {len(env.observation_space)}, "
+                    f"missing indexes: {missing_index}"
+                )
+
+            new_observation_spaces = spaces.Tuple(
+                env.observation_space[key] for key in filter_keys
+            )
+            if len(new_observation_spaces) == 0:
+                raise ValueError(
+                    "The observation space is empty due to filtering all keys."
+                )
+
+            super().__init__(
+                env,
+                lambda obs: tuple(obs[key] for key in filter_keys),
+                new_observation_spaces,
+            )
+        else:
             raise ValueError(
-                f"FilterObservation wrapper is only usable with dict observations, actual type: {type(env.observation_space)}"
+                f"FilterObservation wrapper is only usable with ``Dict`` and ``Tuple`` observations, actual type: {type(env.observation_space)}"
             )
 
-        if any(key not in env.observation_space.keys() for key in filter_keys):
-            missing_keys = [
-                key for key in filter_keys if key not in env.observation_space.keys()
-            ]
-            raise ValueError(
-                "All the filter_keys must be included in the original observation space.\n"
-                f"Filter keys: {filter_keys}\n"
-                f"Observation keys: {list(env.observation_space.keys())}\n"
-                f"Missing keys: {missing_keys}"
-            )
-
-        new_observation_space = spaces.Dict(
-            {key: env.observation_space[key] for key in filter_keys}
-        )
-        super().__init__(
-            env,
-            lambda obs: {key: obs[key] for key in filter_keys},
-            new_observation_space,
-        )
+        self.filter_keys: Final[Sequence[str | int]] = filter_keys
 
 
 class FlattenObservationV0(LambdaObservationV0):
@@ -117,9 +178,10 @@ class FlattenObservationV0(LambdaObservationV0):
 
     def __init__(self, env: gym.Env):
         """Constructor for any environment's observation space that implements ``spaces.utils.flatten_space`` and ``spaces.utils.flatten``."""
-        flattened_space = utils.flatten_space(env.observation_space)
         super().__init__(
-            env, lambda obs: utils.flatten(flattened_space, obs), flattened_space
+            env,
+            lambda obs: utils.flatten(env.observation_space, obs),
+            utils.flatten_space(env.observation_space),
         )
 
 
@@ -154,7 +216,7 @@ class GrayscaleObservationV0(LambdaObservationV0):
             and env.observation_space.dtype == np.uint8
         )
 
-        self.keep_dim = keep_dim
+        self.keep_dim: Final[bool] = keep_dim
         if keep_dim:
             new_observation_space = spaces.Box(
                 low=0,
@@ -167,7 +229,8 @@ class GrayscaleObservationV0(LambdaObservationV0):
                 lambda obs: jp.expand_dims(
                     jp.sum(
                         jp.multiply(obs, jp.array([0.2125, 0.7154, 0.0721])), axis=-1
-                    )
+                    ).astype(np.uint8),
+                    axis=-1,
                 ),
                 new_observation_space,
             )
@@ -179,7 +242,7 @@ class GrayscaleObservationV0(LambdaObservationV0):
                 env,
                 lambda obs: jp.sum(
                     jp.multiply(obs, jp.array([0.2125, 0.7154, 0.0721])), axis=-1
-                ),
+                ).astype(np.uint8),
                 new_observation_space,
             )
 
@@ -215,7 +278,7 @@ class ResizeObservationV0(LambdaObservationV0):
                 "opencv is not install, run `pip install gymnasium[other]`"
             )
 
-        self.shape = tuple(shape)
+        self.shape: Final[tuple[int, ...]] = tuple(shape)
 
         new_observation_space = spaces.Box(
             low=0, high=255, shape=self.shape + env.observation_space.shape[2:]
@@ -237,7 +300,7 @@ class ReshapeObservationV0(LambdaObservationV0):
 
         assert isinstance(shape, tuple)
         assert all(np.issubdtype(type(elem), np.integer) for elem in shape)
-        assert all(x > 0 for x in shape)
+        assert all(x > 0 or x == -1 for x in shape)
 
         new_observation_space = spaces.Box(
             low=np.reshape(np.ravel(env.observation_space.low), shape),
@@ -245,9 +308,8 @@ class ReshapeObservationV0(LambdaObservationV0):
             shape=shape,
             dtype=env.observation_space.dtype,
         )
-        super().__init__(
-            env, lambda obs: jp.reshape(obs, self.shape), new_observation_space
-        )
+        self.shape = shape
+        super().__init__(env, lambda obs: jp.reshape(obs, shape), new_observation_space)
 
 
 class RescaleObservationV0(LambdaObservationV0):
@@ -256,18 +318,23 @@ class RescaleObservationV0(LambdaObservationV0):
     def __init__(
         self,
         env: gym.Env,
-        min_obs: tuple[np.floating, np.integer, np.ndarray],
-        max_obs: tuple[np.floating, np.integer, np.ndarray],
+        min_obs: np.floating | np.integer | np.ndarray,
+        max_obs: np.floating | np.integer | np.ndarray,
     ):
         """Constructor that requires the env observation spaces to be a :class:`Box`."""
         assert isinstance(env.observation_space, spaces.Box)
+        assert not np.any(env.observation_space.low == np.inf) and not np.any(
+            env.observation_space.high == np.inf
+        )
 
         if not isinstance(min_obs, np.ndarray):
             assert np.issubdtype(type(min_obs), np.integer) or np.issubdtype(
                 type(max_obs), np.floating
             )
             min_obs = np.full(env.observation_space.shape, min_obs)
-        assert min_obs.shape == env.observation_space.shape
+        assert (
+            min_obs.shape == env.observation_space.shape
+        ), f"{min_obs.shape}, {env.observation_space.shape}, {min_obs}, {env.observation_space.low}"
         assert not np.any(min_obs == np.inf)
 
         if not isinstance(max_obs, np.ndarray):
@@ -278,15 +345,24 @@ class RescaleObservationV0(LambdaObservationV0):
         assert max_obs.shape == env.observation_space.shape
         assert not np.any(max_obs == np.inf)
 
-        env_low = env.observation_space.low
-        env_high = env.observation_space.high
+        self.min_obs = min_obs
+        self.max_obs = max_obs
 
-        new_observation_space = spaces.Box(low=min_obs, high=max_obs)
+        # Imagine the x-axis between the old Box and the y-axis being the new Box
+        gradient = (max_obs - min_obs) / (
+            env.observation_space.high - env.observation_space.low
+        )
+        intercept = gradient * -env.observation_space.low + min_obs
+
         super().__init__(
             env,
-            lambda obs: env_low
-            + (env_high - env_low) * ((obs - min_obs) / (max_obs - min_obs)),
-            new_observation_space,
+            lambda obs: gradient * obs + intercept,
+            Box(
+                low=min_obs,
+                high=max_obs,
+                shape=env.observation_space.shape,
+                dtype=env.observation_space.dtype,
+            ),
         )
 
 
@@ -300,30 +376,33 @@ class DtypeObservationV0(LambdaObservationV0):
             (spaces.Box, spaces.Discrete, spaces.MultiDiscrete, spaces.MultiBinary),
         )
 
-        dtype = np.dtype(dtype)
+        self.dtype = dtype
         if isinstance(env.observation_space, spaces.Box):
             new_observation_space = spaces.Box(
                 low=env.observation_space.low,
                 high=env.observation_space.high,
                 shape=env.observation_space.shape,
-                dtype=dtype.__name__,
+                dtype=self.dtype,
             )
         elif isinstance(env.observation_space, spaces.Discrete):
             new_observation_space = spaces.Box(
                 low=env.observation_space.start,
                 high=env.observation_space.start + env.observation_space.n,
                 shape=(),
-                dtype=dtype.__name__,
+                dtype=self.dtype,
             )
         elif isinstance(env.observation_space, spaces.MultiDiscrete):
             new_observation_space = spaces.MultiDiscrete(
-                env.observation_space.nvec, dtype=dtype.__name__
+                env.observation_space.nvec, dtype=dtype
             )
         elif isinstance(env.observation_space, spaces.MultiBinary):
             new_observation_space = spaces.Box(
-                low=0, high=1, shape=env.observation_space.shape, dtype=dtype.__name__
+                low=0,
+                high=1,
+                shape=env.observation_space.shape,
+                dtype=self.dtype,
             )
         else:
-            raise TypeError
+            raise TypeError("DtypeObservation is only compatible with value / array-based observations.")
 
         super().__init__(env, lambda obs: dtype(obs), new_observation_space)

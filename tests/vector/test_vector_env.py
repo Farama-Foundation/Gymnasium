@@ -82,8 +82,8 @@ def test_final_obs_info(vectoriser):
         return GenericTestEnv(
             action_space=Discrete(4),
             observation_space=Discrete(4),
-            reset_fn=reset_fn,
-            step_fn=lambda self, action: (
+            reset_func=reset_fn,
+            step_func=lambda self, action: (
                 action if action < 3 else 0,
                 0,
                 action >= 3,

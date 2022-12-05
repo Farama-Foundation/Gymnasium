@@ -55,7 +55,7 @@ def jax_step_func(self, action):
 
 
 def test_jax_to_numpy():
-    jax_env = GenericTestEnv(reset_fn=jax_reset_func, step_fn=jax_step_func)
+    jax_env = GenericTestEnv(reset_func=jax_reset_func, step_func=jax_step_func)
 
     # Check that the reset and step for jax environment are as expected
     obs, info = jax_env.reset()

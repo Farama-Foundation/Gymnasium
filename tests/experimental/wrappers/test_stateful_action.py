@@ -17,7 +17,9 @@ def step_fn(self, action):
 
 
 def test_sticky_action():
-    env = StickyActionV0(GenericTestEnv(step_fn=step_fn), repeat_action_probability=0.5)
+    env = StickyActionV0(
+        GenericTestEnv(step_func=step_fn), repeat_action_probability=0.5
+    )
     env.reset(seed=SEED)
     env.action_space.seed(SEED)
 
@@ -34,7 +36,7 @@ def test_sticky_action():
         previous_action = input_action
 
 
-@pytest.mark.parametrize(("repeat_action_probability"), [-1, 1, 1.5])
+@pytest.mark.parametrize("repeat_action_probability", [-1, 1, 1.5])
 def test_sticky_action_raise(repeat_action_probability):
     with pytest.raises(InvalidProbability):
         StickyActionV0(

@@ -1,7 +1,7 @@
 """A collection of stateful observation wrappers.
 
 * DelayObservation - A wrapper for delaying the returned observation
-* TimeAwareObsrvation - A wrapper for adding time aware observations to environment observation
+* TimeAwareObservation - A wrapper for adding time aware observations to environment observation
 """
 from __future__ import annotations
 
@@ -91,7 +91,12 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
     """
 
     def __init__(
-        self, env: gym.Env, flatten: bool = False, normalize_time: bool = True
+        self,
+        env: gym.Env,
+        flatten: bool = False,
+        normalize_time: bool = True,
+        *,
+        dict_time_key: str = "time",
     ):
         """Initialize :class:`TimeAwareObservationV0`.
 
@@ -100,12 +105,18 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
             flatten: Flatten the observation to a `Box` of a single dimension
             normalize_time: if `True` return time in the range [0,1]
                 otherwise return time as remaining timesteps before truncation
+            dict_time_key: For environment with a ``Dict`` observation space, the key for the time space. By default, `"time"`.
         """
         super().__init__(env)
         self.flatten: Final[bool] = flatten
         self.normalize_time: Final[bool] = normalize_time
-        assert env.spec is not None and env.spec.max_episode_steps is not None
-        self.max_timesteps: Final[int] = env.spec.max_episode_steps
+
+        if hasattr(env, "_max_episode_steps"):
+            self.max_timesteps = getattr(env, "_max_episode_steps")
+        elif env.spec is not None and env.spec.max_episode_steps is not None:
+            self.max_timesteps = env.spec.max_episode_steps
+        else:
+            raise ValueError(f"The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`.")
 
         self.timesteps: int = 0
 
@@ -119,9 +130,11 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
 
         # Find the observation space
         if isinstance(env.observation_space, Dict):
-            assert "time" not in env.observation_space.keys()
-            observation_space = Dict(**env.observation_space.spaces, time=time_space)
-            self._append_data_func = lambda obs, time: obs.update({"time": time})
+            assert dict_time_key not in env.observation_space.keys()
+            observation_space = Dict(
+                {dict_time_key: time_space}, **env.observation_space.spaces
+            )
+            self._append_data_func = lambda obs, time: {**obs, dict_time_key: time}
         elif isinstance(env.observation_space, Tuple):
             observation_space = Tuple(env.observation_space.spaces + (time_space,))
             self._append_data_func = lambda obs, time: obs + (time,)
@@ -133,10 +146,10 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         if self.flatten:
             self.observation_space = spaces.flatten_space(observation_space)
             self._obs_postprocess_func = lambda obs: spaces.flatten(
-                self.observation_space, obs
+                observation_space, obs
             )
         else:
-            self.observation_space = self.observation_space
+            self.observation_space = observation_space
             self._obs_postprocess_func = lambda obs: obs
 
     def observation(self, observation: ObsType) -> WrapperObsType:
