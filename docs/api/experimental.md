@@ -27,8 +27,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 
  * In v28, we aim to rewrite the VectorEnv to not inherit from Env, as a result new vectorised versions of the wrappers will be provided.
 
-### Lambda Observation Wrappers
-
+### Observation Wrappers
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
@@ -44,61 +43,60 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorLambdaObservation
       - No
     * - :class:`wrappers.FilterObservation`
-      - :class:`experimental.wrappers.FilterObservation`
+      - :class:`experimental.wrappers.FilterObservationV0`
       - VectorFilterObservation (*)
       - Yes
     * - :class:`wrappers.FlattenObservation`
-      - `:class:`experimental.wrappers.FlattenObservation`
+      - :class:`experimental.wrappers.FlattenObservationV0`
       - VectorFlattenObservation (*)
       - No
     * - :class:`wrappers.GrayScaleObservation`
-      - `:class:`experimental.wrappers.GrayscaleObservation`
+      - :class:`experimental.wrappers.GrayscaleObservationV0`
       - VectorGrayscaleObservation (*)
       - Yes
     * - :class:`wrappers.ResizeObservation`
-      - :class:`experimental.wrappers.ResizeObservation`
+      - :class:`experimental.wrappers.ResizeObservationV0`
       - VectorResizeObservation (*)
       - Yes
     * - Not Implemented
-      - :class:`experimental.wrappers.ReshapeObservation`
+      - :class:`experimental.wrappers.ReshapeObservationV0`
       - VectorReshapeObservation (*)
       - Yes
     * - Not Implemented
-      - :class:`experimental.wrappers.RescaleObservation`
+      - :class:`experimental.wrappers.RescaleObservationV0`
       - VectorRescaleObservation (*)
       - Yes
     * - Not Implemented
-      - :class:`experimental.wrappers.DtypeObservation`
+      - :class:`experimental.wrappers.DtypeObservationV0`
       - VectorDtypeObservation (*)
       - Yes
     * - :class:`wrappers.PixelObservationWrapper`
       - PixelObservation
       - VectorPixelObservation
       - No
-    * - :class:`NormalizeObservation`
+    * - :class:`wrappers.NormalizeObservation`
       - NormalizeObservation
       - VectorNormalizeObservation
       - No
-    * - :class:`TimeAwareObservation`
-      - TimeAwareObservation
+    * - :class:`wrappers.TimeAwareObservation`
+      - :class:`experimental.wrappers.TimeAwareObservationV0`
       - VectorTimeAwareObservation
       - No
-    * - :class:`FrameStack`
+    * - :class:`wrappers.FrameStack`
       - FrameStackObservation
       - VectorFrameStackObservation
       - No
     * - Not Implemented
-      - DelayObservation
+      - :class:`experimental.wrappers.DelayObservationV0`
       - VectorDelayObservation
       - No
-    * - :class:`AtariPreprocessing`
+    * - :class:`wrappers.AtariPreprocessing`
       - AtariPreprocessing
       - Not Implemented
       - No
 ```
 
-### Lambda Action Wrappers
-
+### Action Wrappers
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
@@ -114,25 +112,20 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorLambdaAction
       - No
     * - :class:`wrappers.ClipAction`
-      - ClipAction
+      - :class:`experimental.wrappers.ClipActionV0`
       - VectorClipAction (*)
       - Yes
     * - :class:`wrappers.RescaleAction`
-      - RescaleAction
+      - :class:`experimental.wrappers.RescaleActionV0`
       - VectorRescaleAction (*)
       - Yes
     * - Not Implemented
-      - NanAction
-      - VectorNanAction (*)
-      - Yes
-    * - Not Implemented
-      - StickyAction
+      - :class:`experimental.wrappers.StickyActionV0`
       - VectorStickyAction
       - No
 ```
 
-### Lambda Reward Wrappers
-
+### Reward Wrappers
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
@@ -175,7 +168,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorPassiveEnvChecker
     * - :class:`wrappers.OrderEnforcing`
       - OrderEnforcing
-      - VectorOrderEnforcing (*)
+      - VectorOrderEnforcing
     * - :class:`wrappers.EnvCompatibility`
       - Moved to `shimmy <https://github.com/Farama-Foundation/Shimmy/blob/main/shimmy/openai_gym_compatibility.py>`_
       - Not Implemented
@@ -189,10 +182,10 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - HumanRendering
       - Not Implemented
     * - Not Implemented
-      - :class:`experimental.wrappers.JaxToNumpy`
+      - :class:`experimental.wrappers.JaxToNumpyV0`
       - VectorJaxToNumpy (*)
     * - Not Implemented
-      - :class:`experimental.wrappers.JaxToTorch`
+      - :class:`experimental.wrappers.JaxToTorchV0`
       - VectorJaxToTorch (*)
 ```
 

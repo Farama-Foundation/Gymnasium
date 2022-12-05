@@ -1,12 +1,17 @@
-"""Lambda reward wrappers which apply a function to the reward."""
+"""A collection of wrappers for modifying the reward.
 
-from typing import Any, Callable, Optional, Union
+* ``LambdaReward`` - Transforms the reward by a function
+* ``ClipReward`` - Clips the reward between a minimum and maximum value
+"""
+
+from __future__ import annotations
+
+from typing import Callable, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium.error import InvalidBound
-from gymnasium.experimental.wrappers import ArgType
 
 
 class LambdaRewardV0(gym.RewardWrapper):
@@ -26,7 +31,7 @@ class LambdaRewardV0(gym.RewardWrapper):
     def __init__(
         self,
         env: gym.Env,
-        func: Callable[[ArgType], Any],
+        func: Callable[[SupportsFloat], SupportsFloat],
     ):
         """Initialize LambdaRewardV0 wrapper.
 
@@ -38,7 +43,7 @@ class LambdaRewardV0(gym.RewardWrapper):
 
         self.func = func
 
-    def reward(self, reward: Union[float, int, np.ndarray]) -> Any:
+    def reward(self, reward: SupportsFloat) -> SupportsFloat:
         """Apply function to reward.
 
         Args:
@@ -64,8 +69,8 @@ class ClipRewardV0(LambdaRewardV0):
     def __init__(
         self,
         env: gym.Env,
-        min_reward: Optional[Union[float, np.ndarray]] = None,
-        max_reward: Optional[Union[float, np.ndarray]] = None,
+        min_reward: float | np.ndarray | None = None,
+        max_reward: float | np.ndarray | None = None,
     ):
         """Initialize ClipRewardsV0 wrapper.
 

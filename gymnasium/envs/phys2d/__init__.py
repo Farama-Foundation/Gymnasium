@@ -1,2 +1,2 @@
-from gymnasium.envs.phys2d.cartpole import CartPoleFunctional
-from gymnasium.envs.phys2d.pendulum import PendulumFunctional
+from gymnasium.envs.phys2d.cartpole import CartPoleFunctional, CartPoleJaxEnv
+from gymnasium.envs.phys2d.pendulum import PendulumFunctional, PendulumJaxEnv

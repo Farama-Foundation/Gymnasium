@@ -76,6 +76,7 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
                 * ``None`` The length will be randomly drawn from a geometric distribution
                 * ``np.ndarray`` of integers, in which case the length of the sampled sequence is randomly drawn from this array.
                 * ``int`` for a fixed length sample
+
                 The second element of the mask tuple `sample` mask specifies a mask that is applied when
                 sampling elements from the base space. The mask is applied for each feature space sample.
 

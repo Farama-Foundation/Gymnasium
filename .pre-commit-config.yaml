@@ -22,9 +22,9 @@ repos:
     hooks:
       - id: codespell
         args:
-          - --ignore-words-list=nd,reacher,thist,ths, ure, referenc,wile
+          - --ignore-words-list=nd,reacher,thist,ths,ure,referenc,wile
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 5.0.4
     hooks:
       - id: flake8
         args:

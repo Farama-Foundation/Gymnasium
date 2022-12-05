@@ -9,6 +9,7 @@ from tests.testing_env import GenericTestEnv
 
 
 def torch_data_equivalence(data_1, data_2) -> bool:
+    """Return if two variables are equivalent that might contain ``torch.Tensor``."""
     if type(data_1) == type(data_2):
         if isinstance(data_1, dict):
             return data_1.keys() == data_2.keys() and all(
@@ -56,14 +57,15 @@ def torch_data_equivalence(data_1, data_2) -> bool:
 )
 def test_roundtripping(value, expected_value):
     """We test numpy -> jax -> numpy as this is direction in the NumpyToJax wrapper."""
-    assert torch_data_equivalence(jax_to_torch(torch_to_jax(value)), expected_value)
+    roundtripped_value = jax_to_torch(torch_to_jax(value))
+    assert torch_data_equivalence(roundtripped_value, expected_value)
 
 
-def jax_reset_func(self, seed=None, options=None):
+def _jax_reset_func(self, seed=None, options=None):
     return jnp.array([1.0, 2.0, 3.0]), {"data": jnp.array([1, 2, 3])}
 
 
-def jax_step_func(self, action):
+def _jax_step_func(self, action):
     assert isinstance(action, jnp.DeviceArray), type(action)
     return (
         jnp.array([1, 2, 3]),
@@ -75,7 +77,7 @@ def jax_step_func(self, action):
 
 
 def test_jax_to_torch():
-    env = GenericTestEnv(reset_fn=jax_reset_func, step_fn=jax_step_func)
+    env = GenericTestEnv(reset_func=_jax_reset_func, step_func=_jax_step_func)
 
     # Check that the reset and step for jax environment are as expected
     obs, info = env.reset()
