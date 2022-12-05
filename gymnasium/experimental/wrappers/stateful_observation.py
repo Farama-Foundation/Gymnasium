@@ -7,10 +7,10 @@ from __future__ import annotations
 
 from collections import deque
 from typing import Any, SupportsFloat
+from typing_extensions import Final
 
 import jumpy as jp
 import numpy as np
-from typing_extensions import Final
 
 import gymnasium as gym
 import gymnasium.spaces as spaces

@@ -12,10 +12,10 @@
 from __future__ import annotations
 
 from typing import Any, Callable, Sequence
+from typing_extensions import Final
 
 import jumpy as jp
 import numpy as np
-from typing_extensions import Final
 
 import gymnasium as gym
 from gymnasium import spaces
