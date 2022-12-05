@@ -21,7 +21,7 @@ IRRELEVANT_KEY = 1
 PlayableEnv = partial(
     GenericTestEnv,
     metadata={"render_modes": ["rgb_array"]},
-    render_fn=lambda self: np.ones((10, 10, 3)),
+    render_func=lambda self: np.ones((10, 10, 3)),
 )
 
 
