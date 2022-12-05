@@ -39,15 +39,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
     - name: Install dependencies
-      run: python -m pip install --upgrade setuptools wheel
-    - name: Build wheels
-      run: python setup.py sdist bdist_wheel
+      run: python -m pip install --upgrade pip setuptools build
+    - name: Build sdist and wheels
+      run: python -m build
     - name: Store wheels
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: dist
 
@@ -58,7 +58,7 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
     - name: Download dists
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: artifact
         path: dist
