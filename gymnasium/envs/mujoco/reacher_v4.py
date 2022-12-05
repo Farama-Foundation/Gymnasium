@@ -115,8 +115,8 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     ## Version History
 
-    * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
-    * v2: All continuous control environments now use mujoco_py >= 1.50
+    * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
+    * v2: All continuous control environments now use mujoco-py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks (not including reacher, which has a max_time_steps of 50). Added reward_threshold to environments.
     * v0: Initial versions release (1.0.0)
     """

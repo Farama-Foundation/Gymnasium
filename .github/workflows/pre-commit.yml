@@ -13,9 +13,9 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - run: pip install pre-commit
-      - run: pre-commit --version
-      - run: pre-commit install
-      - run: pre-commit run --all-files
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - run: python -m pip install pre-commit
+      - run: python -m pre_commit --version
+      - run: python -m pre_commit install
+      - run: python -m pre_commit run --all-files
