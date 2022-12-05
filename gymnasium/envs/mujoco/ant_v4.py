@@ -84,7 +84,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 26  |angular velocity of the angle between back right links        | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angle (rad)              |
 
 
-    The remaining 14*6 = 84 elements of the observation are contact forces
+    If `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
     (external forces - force x, y, z and torque x, y, z) applied to the
     center of mass of each of the links. The 14 links are: the ground link,
     the torso link, and 3 links for each leg (1 + 1 + 12) with the 6 external forces.
@@ -159,6 +159,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     |-------------------------|------------|--------------|-------------------------------|
     | `xml_file`              | **str**    | `"ant.xml"`  | Path to a MuJoCo model |
     | `ctrl_cost_weight`      | **float**  | `0.5`        | Weight for *ctrl_cost* term (see section on reward) |
+    | `use_contact_forces`    | **bool**  | `False`      | If true, it extends the observation space by adding contact forces (see `Observation Space` section)
     | `contact_cost_weight`   | **float**  | `5e-4`       | Weight for *contact_cost* term (see section on reward) |
     | `healthy_reward`        | **float**  | `1`          | Constant reward given if the ant is "healthy" after timestep |
     | `terminate_when_unhealthy` | **bool**| `True`       | If true, issue a done signal if the z-coordinate of the torso is no longer in the `healthy_z_range` |
