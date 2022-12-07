@@ -8,6 +8,11 @@ Solving Blackjack with Q-Learning
 # .. image:: /_static/img/tutorials/blackjack_AE_loop.jpg
 #   :width: 650
 #   :alt: agent-environment-diagram
+#   :class: only-light
+# .. image::  /_static/img/tutorials/blackjack_AE_loop_dark.png
+#   :width: 650
+#   :alt: agent-environment-diagram
+#   :class: only-dark
 #
 # In this tutorial, we’ll explore and solve the *Blackjack-v1*
 # environment.
