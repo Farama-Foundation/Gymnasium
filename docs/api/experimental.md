@@ -58,7 +58,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - :class:`experimental.wrappers.ResizeObservationV0`
       - VectorResizeObservation (*)
       - Yes
-    * - Not Implemented
+    * - `supersuit.reshape_v0`
       - :class:`experimental.wrappers.ReshapeObservationV0`
       - VectorReshapeObservation (*)
       - Yes
@@ -86,7 +86,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - FrameStackObservation
       - VectorFrameStackObservation
       - No
-    * - Not Implemented
+    * - `supersuit.dtype_v0`
       - :class:`experimental.wrappers.DelayObservationV0`
       - VectorDelayObservation
       - No
@@ -119,7 +119,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - :class:`experimental.wrappers.RescaleActionV0`
       - VectorRescaleAction (*)
       - Yes
-    * - Not Implemented
+    * - `supersuit.sticky_actions_v0`
       - :class:`experimental.wrappers.StickyActionV0`
       - VectorStickyAction
       - No
@@ -138,7 +138,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
     * - :class:`wrappers.TransformReward`
       - :class:`experimental.wrappers.LambdaRewardV0`
       - VectorLambdaReward
-    * - Not Implemented
+    * - `supersuit.clip_reward_v0`
       - :class:`experimental.wrappers.ClipRewardV0`
       - VectorClipReward (*)
     * - Not Implemented
@@ -149,7 +149,7 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - VectorNormalizeReward
 ```
 
-### Common Wrappers
+### Other Wrappers
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
