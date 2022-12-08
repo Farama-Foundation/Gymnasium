@@ -9,7 +9,7 @@ class EzPickle:
         >>> class Dog(Animal, EzPickle):
         ...    def __init__(self, furcolor, tailkind="bushy"):
         ...        Animal.__init__()
-        ...        EzPickle.__init__(furcolor, tailkind)
+        ...        EzPickle.__init__(self, furcolor, tailkind)
 
     When this object is unpickled, a new ``Dog`` will be constructed by passing the provided furcolor and tailkind into the constructor.
     However, philosophers are still not sure whether it is still the same dog.
