@@ -15,7 +15,6 @@ try:
     import pygame
     from pygame import Surface
     from pygame.event import Event
-    from pygame.locals import VIDEORESIZE
 except ImportError:
     raise gym.error.DependencyNotInstalled(
         "Pygame is not installed, run `pip install gymnasium[classic_control]`"
@@ -115,13 +114,12 @@ class PlayableGame:
                 self.pressed_keys.remove(event.key)
         elif event.type == pygame.QUIT:
             self.running = False
-        elif event.type == VIDEORESIZE:
+        elif event.type == pygame.WINDOWRESIZED:
             # Compute the maximum video size that fits into the new window
-            scale_width = event.w / self.video_size[0]
-            scale_height = event.h / self.video_size[1]
+            scale_width = event.x / self.video_size[0]
+            scale_height = event.y / self.video_size[1]
             scale = min(scale_height, scale_width)
             self.video_size = (scale * self.video_size[0], scale * self.video_size[1])
-            self.screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
 
 
 def display_arr(
