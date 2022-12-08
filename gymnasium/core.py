@@ -223,7 +223,7 @@ class Env(Generic[ObsType, ActType]):
         """Support with-statement for the environment."""
         return self
 
-    def __exit__(self, *args: Any):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> bool:
         """Support with-statement for the environment and closes the environment."""
         self.close()
         # propagate exception
@@ -262,7 +262,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
         self._metadata: dict[str, Any] | None = None
 
-    def __getattr__(self, name: str):
+    def __getattr__(self, name: str) -> Any:
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
         if name == "_np_random":
             raise AttributeError(

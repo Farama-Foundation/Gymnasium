@@ -1,4 +1,4 @@
-"""Root __init__ of the gym experimental wrappers."""
+"""Root `__init__` of the gym experimental module."""
 
 
 from gymnasium.experimental import functional, wrappers
