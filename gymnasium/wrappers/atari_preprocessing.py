@@ -11,7 +11,7 @@ except ImportError:
     cv2 = None
 
 
-class AtariPreprocessing(gym.Wrapper):
+class AtariPreprocessing(gym.Wrapper, gym.utils.EzPickle):
     """Atari 2600 preprocessing wrapper.
 
     This class follows the guidelines in Machado et al. (2018),
@@ -113,6 +113,9 @@ class AtariPreprocessing(gym.Wrapper):
         self.observation_space = Box(
             low=_low, high=_high, shape=_shape, dtype=_obs_dtype
         )
+
+        gym.utils.EzPickle.__init__(self, noop_max, frame_skip, screen_size, terminal_on_life_loss,
+                                    grayscale_obs, grayscale_newaxis, scale_obs)
 
     @property
     def ale(self):

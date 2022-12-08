@@ -5,7 +5,7 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-class GrayScaleObservation(gym.ObservationWrapper):
+class GrayScaleObservation(gym.ObservationWrapper, gym.utils.EzPickle):
     """Convert the image observation from RGB to gray scale.
 
     Example:
@@ -46,6 +46,8 @@ class GrayScaleObservation(gym.ObservationWrapper):
             self.observation_space = Box(
                 low=0, high=255, shape=obs_shape, dtype=np.uint8
             )
+
+        gym.utils.EzPickle.__init__(self, keep_dim)
 
     def observation(self, observation):
         """Converts the colour observation to greyscale.

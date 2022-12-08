@@ -4,7 +4,7 @@ import copy
 import gymnasium as gym
 
 
-class RenderCollection(gym.Wrapper):
+class RenderCollection(gym.Wrapper, gym.utils.EzPickle):
     """Save collection of render frames."""
 
     def __init__(self, env: gym.Env, pop_frames: bool = True, reset_clean: bool = True):
@@ -27,6 +27,8 @@ class RenderCollection(gym.Wrapper):
         self.metadata = copy.deepcopy(self.env.metadata)
         if f"{self.env.render_mode}_list" not in self.metadata["render_modes"]:
             self.metadata["render_modes"].append(f"{self.env.render_mode}_list")
+
+        gym.utils.EzPickle.__init__(self, pop_frames, reset_clean)
 
     @property
     def render_mode(self):

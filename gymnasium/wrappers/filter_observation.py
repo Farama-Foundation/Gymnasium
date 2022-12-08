@@ -6,7 +6,7 @@ import gymnasium as gym
 from gymnasium import spaces
 
 
-class FilterObservation(gym.ObservationWrapper):
+class FilterObservation(gym.ObservationWrapper, gym.utils.EzPickle):
     """Filter Dict observation space by the keys.
 
     Example:
@@ -67,6 +67,8 @@ class FilterObservation(gym.ObservationWrapper):
 
         self._env = env
         self._filter_keys = tuple(filter_keys)
+
+        gym.utils.EzPickle.__init__(self, filter_keys)
 
     def observation(self, observation):
         """Filters the observations.

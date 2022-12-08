@@ -7,7 +7,7 @@ import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
 
 
-class HumanRendering(gym.Wrapper):
+class HumanRendering(gym.Wrapper, gym.utils.EzPickle):
     """Performs human rendering for an environment that only supports "rgb_array"rendering.
 
     This wrapper is particularly useful when you have implemented an environment that can produce
@@ -63,6 +63,8 @@ class HumanRendering(gym.Wrapper):
         self.metadata = copy.deepcopy(self.env.metadata)
         if "human" not in self.metadata["render_modes"]:
             self.metadata["render_modes"].append("human")
+
+        gym.utils.EzPickle.__init__(self)
 
     @property
     def render_mode(self):

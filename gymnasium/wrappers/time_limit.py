@@ -4,7 +4,7 @@ from typing import Optional
 import gymnasium as gym
 
 
-class TimeLimit(gym.Wrapper):
+class TimeLimit(gym.Wrapper, gym.utils.EzPickle):
     """This wrapper will issue a `truncated` signal if a maximum number of timesteps is exceeded.
 
     If a truncation is not defined inside the environment itself, this is the only place that the truncation signal is issued.
@@ -36,6 +36,8 @@ class TimeLimit(gym.Wrapper):
             self.env.spec.max_episode_steps = max_episode_steps
         self._max_episode_steps = max_episode_steps
         self._elapsed_steps = None
+
+        gym.utils.EzPickle.__init__(self, max_episode_steps)
 
     def step(self, action):
         """Steps through the environment and if the number of steps elapsed exceeds ``max_episode_steps`` then truncate.

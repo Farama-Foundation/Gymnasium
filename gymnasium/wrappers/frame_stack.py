@@ -97,7 +97,7 @@ class LazyFrames:
         return frame
 
 
-class FrameStack(gym.ObservationWrapper):
+class FrameStack(gym.ObservationWrapper, gym.utils.EzPickle):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
@@ -149,6 +149,8 @@ class FrameStack(gym.ObservationWrapper):
         self.observation_space = Box(
             low=low, high=high, dtype=self.observation_space.dtype
         )
+
+        gym.utils.EzPickle.__init__(self, num_stack, lz4_compress)
 
     def observation(self, observation):
         """Converts the wrappers current frames to lazy frames.

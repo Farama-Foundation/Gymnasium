@@ -8,7 +8,7 @@ import numpy as np
 import gymnasium as gym
 
 
-class RecordEpisodeStatistics(gym.Wrapper):
+class RecordEpisodeStatistics(gym.Wrapper, gym.utils.EzPickle):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of an episode, the statistics of the episode will be added to ``info``
@@ -63,6 +63,8 @@ class RecordEpisodeStatistics(gym.Wrapper):
         self.return_queue = deque(maxlen=deque_size)
         self.length_queue = deque(maxlen=deque_size)
         self.is_vector_env = getattr(env, "is_vector_env", False)
+
+        gym.utils.EzPickle.__init__(self, deque_size)
 
     def reset(self, **kwargs):
         """Resets the environment using kwargs and resets the episode returns and lengths."""

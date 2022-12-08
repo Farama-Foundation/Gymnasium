@@ -45,7 +45,7 @@ def update_mean_var_count_from_moments(
     return new_mean, new_var, new_count
 
 
-class NormalizeObservation(gym.Wrapper):
+class NormalizeObservation(gym.Wrapper, gym.utils.EzPickle):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
     Note:
@@ -68,6 +68,8 @@ class NormalizeObservation(gym.Wrapper):
         else:
             self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
         self.epsilon = epsilon
+
+        gym.utils.EzPickle.__init__(self, epsilon)
 
     def step(self, action):
         """Steps through the environment and normalizes the observation."""

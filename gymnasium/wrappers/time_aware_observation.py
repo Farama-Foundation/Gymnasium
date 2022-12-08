@@ -5,7 +5,7 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-class TimeAwareObservation(gym.ObservationWrapper):
+class TimeAwareObservation(gym.ObservationWrapper, gym.utils.EzPickle):
     """Augment the observation with the current time step in the episode.
 
     The observation space of the wrapped environment is assumed to be a flat :class:`Box`.
@@ -34,6 +34,8 @@ class TimeAwareObservation(gym.ObservationWrapper):
         high = np.append(self.observation_space.high, np.inf)
         self.observation_space = Box(low, high, dtype=np.float32)
         self.is_vector_env = getattr(env, "is_vector_env", False)
+
+        gym.utils.EzPickle.__init__(self)
 
     def observation(self, observation):
         """Adds to the observation with the current time step.

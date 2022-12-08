@@ -5,7 +5,7 @@ import gymnasium as gym
 from gymnasium import RewardWrapper
 
 
-class TransformReward(RewardWrapper):
+class TransformReward(RewardWrapper, gym.utils.EzPickle):
     """Transform the reward via an arbitrary function.
 
     Warning:
@@ -31,6 +31,8 @@ class TransformReward(RewardWrapper):
         super().__init__(env)
         assert callable(f)
         self.f = f
+
+        gym.utils.EzPickle.__init__(self, f)
 
     def reward(self, reward):
         """Transforms the reward using callable :attr:`f`.

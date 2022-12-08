@@ -2,7 +2,7 @@
 import gymnasium as gym
 
 
-class AutoResetWrapper(gym.Wrapper):
+class AutoResetWrapper(gym.Wrapper, gym.utils.EzPickle):
     """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.
 
     When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,
@@ -32,6 +32,8 @@ class AutoResetWrapper(gym.Wrapper):
             env (gym.Env): The environment to apply the wrapper
         """
         super().__init__(env)
+
+        gym.utils.EzPickle.__init__(self)
 
     def step(self, action):
         """Steps through the environment with action and resets the environment if a terminated or truncated signal is encountered.

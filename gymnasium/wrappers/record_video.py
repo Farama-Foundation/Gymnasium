@@ -24,7 +24,7 @@ def capped_cubic_video_schedule(episode_id: int) -> bool:
         return episode_id % 1000 == 0
 
 
-class RecordVideo(gym.Wrapper):
+class RecordVideo(gym.Wrapper, gym.utils.EzPickle):
     """This wrapper records videos of rollouts.
 
     Usually, you only want to record episodes intermittently, say every hundredth episode.
@@ -92,6 +92,8 @@ class RecordVideo(gym.Wrapper):
         self.recorded_frames = 0
         self.is_vector_env = getattr(env, "is_vector_env", False)
         self.episode_id = 0
+
+        gym.utils.EzPickle.__init__(self, video_folder, episode_trigger, step_trigger, video_length, name_prefix)
 
     def reset(self, **kwargs):
         """Reset the environment using kwargs and then starts recording if video enabled."""

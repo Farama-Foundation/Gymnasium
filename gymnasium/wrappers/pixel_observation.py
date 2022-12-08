@@ -13,7 +13,7 @@ from gymnasium import spaces
 STATE_KEY = "state"
 
 
-class PixelObservationWrapper(gym.ObservationWrapper):
+class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
     """Augment observations by pixel values.
 
     Observations of this wrapper will be dictionaries of images.
@@ -162,6 +162,8 @@ class PixelObservationWrapper(gym.ObservationWrapper):
         self._pixels_only = pixels_only
         self._render_kwargs = render_kwargs
         self._pixel_keys = pixel_keys
+
+        gym.utils.EzPickle.__init__(self, pixels_only, render_kwargs, pixel_keys)
 
     def observation(self, observation):
         """Updates the observations with the pixel observations.

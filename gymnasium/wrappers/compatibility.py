@@ -44,7 +44,7 @@ class LegacyEnv(Protocol):
         ...
 
 
-class EnvCompatibility(gym.Env):
+class EnvCompatibility(gym.Env, gym.utils.EzPickle):
     r"""A wrapper which can transform an environment from the old API to the new API.
 
     Old step API refers to step() method returning (observation, reward, done, info), and reset() only retuning the observation.
@@ -76,6 +76,8 @@ class EnvCompatibility(gym.Env):
 
         self.observation_space = old_env.observation_space
         self.action_space = old_env.action_space
+
+        gym.utils.EzPickle.__init__(self, old_env, render_mode)
 
     def reset(
         self, seed: Optional[int] = None, options: Optional[dict] = None
