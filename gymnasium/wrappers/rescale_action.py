@@ -7,7 +7,7 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-class RescaleAction(gym.ActionWrapper):
+class RescaleAction(gym.ActionWrapper, gym.utils.EzPickle):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
@@ -52,6 +52,7 @@ class RescaleAction(gym.ActionWrapper):
         self.max_action = (
             np.zeros(env.action_space.shape, dtype=env.action_space.dtype) + max_action
         )
+        gym.utils.EzPickle.__init__(self, min_action, max_action)
 
     def action(self, action):
         """Rescales the action affinely from  [:attr:`min_action`, :attr:`max_action`] to the action space of the base environment, :attr:`env`.
