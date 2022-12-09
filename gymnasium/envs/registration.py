@@ -526,6 +526,7 @@ def make(
     autoreset: bool = False,
     apply_api_compatibility: Optional[bool] = None,
     disable_env_checker: Optional[bool] = None,
+    allow_default_wrappers: Optional[bool] = True,
     **kwargs,
 ) -> Env:
     """Create an environment according to the given ID.
@@ -544,6 +545,8 @@ def make(
         disable_env_checker: If to run the env checker, None will default to the environment specification `disable_env_checker`
             (which is by default False, running the environment checker),
             otherwise will run according to this parameter (`True` = not run, `False` = run)
+        allow_default_wrappers: If set to False, the environment is returned without any wrappers applied.
+            This is used when reconstructing environments from spec stacks.
         kwargs: Additional arguments to pass to the environment constructor.
 
     Returns:
@@ -656,37 +659,38 @@ def make(
     spec_.kwargs = _kwargs
     env.unwrapped.spec = spec_
 
-    # Add step API wrapper
-    if apply_api_compatibility is True or (
-        apply_api_compatibility is None and spec_.apply_api_compatibility is True
-    ):
-        env = EnvCompatibility(env, render_mode)
+    if allow_default_wrappers:
+        # Add step API wrapper
+        if apply_api_compatibility is True or (
+            apply_api_compatibility is None and spec_.apply_api_compatibility is True
+        ):
+            env = EnvCompatibility(env, render_mode)
 
-    # Run the environment checker as the lowest level wrapper
-    if disable_env_checker is False or (
-        disable_env_checker is None and spec_.disable_env_checker is False
-    ):
-        env = PassiveEnvChecker(env)
+        # Run the environment checker as the lowest level wrapper
+        if disable_env_checker is False or (
+            disable_env_checker is None and spec_.disable_env_checker is False
+        ):
+            env = PassiveEnvChecker(env)
 
-    # Add the order enforcing wrapper
-    if spec_.order_enforce:
-        env = OrderEnforcing(env)
+        # Add the order enforcing wrapper
+        if spec_.order_enforce:
+            env = OrderEnforcing(env)
 
-    # Add the time limit wrapper
-    if max_episode_steps is not None:
-        env = TimeLimit(env, max_episode_steps)
-    elif spec_.max_episode_steps is not None:
-        env = TimeLimit(env, spec_.max_episode_steps)
+        # Add the time limit wrapper
+        if max_episode_steps is not None:
+            env = TimeLimit(env, max_episode_steps)
+        elif spec_.max_episode_steps is not None:
+            env = TimeLimit(env, spec_.max_episode_steps)
 
-    # Add the autoreset wrapper
-    if autoreset:
-        env = AutoResetWrapper(env)
+        # Add the autoreset wrapper
+        if autoreset:
+            env = AutoResetWrapper(env)
 
-    # Add human rendering wrapper
-    if apply_human_rendering:
-        env = HumanRendering(env)
-    elif apply_render_collection:
-        env = RenderCollection(env)
+        # Add human rendering wrapper
+        if apply_human_rendering:
+            env = HumanRendering(env)
+        elif apply_render_collection:
+            env = RenderCollection(env)
 
     return env
 
