@@ -132,6 +132,7 @@ assert deserialised_stack == stack
 reconstructed_env = reconstruct_env(deserialised_stack)
 assert spec_stack(reconstructed_env) == spec_stack(env)
 
+# pretty print the spec stack
 pprint_spec_stack(stack)
 
 print("Done")
