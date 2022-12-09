@@ -1,7 +1,9 @@
 """A collection of stateful observation wrappers.
 
-* DelayObservation - A wrapper for delaying the returned observation
-* TimeAwareObservation - A wrapper for adding time aware observations to environment observation
+* ``DelayObservationV0`` - A wrapper for delaying the returned observation
+* ``TimeAwareObservationV0`` - A wrapper for adding time aware observations to environment observation
+* ``FrameStackObservationV0`` - Frame stack the observations
+* ``AtariPreprocessingV0`` - Preprocessing wrapper for atari environments
 """
 from __future__ import annotations
 
@@ -14,8 +16,10 @@ import numpy as np
 
 import gymnasium as gym
 import gymnasium.spaces as spaces
-from gymnasium.core import ActType, ObsType, WrapperObsType
+from gymnasium import Env
+from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.spaces import Box, Dict, MultiBinary, MultiDiscrete, Tuple
+from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
 class DelayObservationV0(gym.ObservationWrapper):
@@ -134,9 +138,9 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         if isinstance(env.observation_space, Dict):
             assert dict_time_key not in env.observation_space.keys()
             observation_space = Dict(
-                {dict_time_key: time_space}, **env.observation_space.spaces
+                {dict_time_key: time_space, **env.observation_space.spaces}
             )
-            self._append_data_func = lambda obs, time: {**obs, dict_time_key: time}
+            self._append_data_func = lambda obs, time: {dict_time_key: time, **obs}
         elif isinstance(env.observation_space, Tuple):
             observation_space = Tuple(env.observation_space.spaces + (time_space,))
             self._append_data_func = lambda obs, time: obs + (time,)
@@ -198,3 +202,107 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         self.timesteps = 0
 
         return super().reset(seed=seed, options=options)
+
+
+class FrameStackObservationV0(gym.Wrapper):
+    """Observation wrapper that stacks the observations in a rolling manner.
+
+    For example, if the number of stacks is 4, then the returned observation contains
+    the most recent 4 observations. For environment 'Pendulum-v1', the original observation
+    is an array with shape [3], so if we stack 4 observations, the processed observation
+    has shape [4, 3].
+
+    Note:
+        - After :meth:`reset` is called, the frame buffer will be filled with the initial observation.
+          I.e. the observation returned by :meth:`reset` will consist of `num_stack` many identical frames.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make('CarRacing-v1')
+        >>> env = FrameStack(env, 4)
+        >>> env.observation_space
+        Box(4, 96, 96, 3)
+        >>> obs = env.reset()
+        >>> obs.shape
+        (4, 96, 96, 3)
+    """
+
+    def __init__(self, env: Env[ObsType, ActType], stack_size: int):
+        """Observation wrapper that stacks the observations in a rolling manner.
+
+        Args:
+            env: The environment to apply the wrapper
+            stack_size: The number of frames to stack
+        """
+        assert np.issubdtype(type(stack_size), np.integer)
+        assert stack_size > 0
+
+        super().__init__(env)
+
+        self.observation_space = batch_space(env.observation_space, n=stack_size)
+        self.stack_size = stack_size
+
+        self.stacked_obs_array = create_empty_array(env.observation_space, n=stack_size)
+        self.stacked_obs = self._init_stacked_obs()
+
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        """Steps through the environment, appending the observation to the frame buffer.
+
+        Args:
+            action: The action to step through the environment with
+
+        Returns:
+            Stacked observations, reward, terminated, truncated, and info from the environment
+        """
+        obs, reward, terminated, truncated, info = super().step(action)
+        self.stacked_obs.rotate(1)
+        self.stacked_obs[0] = obs
+
+        return (
+            concatenate(
+                self.observation_space, self.stacked_obs, self.stacked_obs_array
+            ),
+            reward,
+            terminated,
+            truncated,
+            info,
+        )
+
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
+        """Reset the environment, returning the stacked observation and info.
+
+        Args:
+            seed: The environment seed
+            options: The reset options
+
+        Returns:
+            The stacked observations and info
+        """
+        obs, info = super().reset(seed=seed, options=options)
+        self.stacked_obs = self._init_stacked_obs()
+        self.stacked_obs[0] = obs
+
+        return (
+            concatenate(
+                self.observation_space, self.stacked_obs, self.stacked_obs_array
+            ),
+            info,
+        )
+
+    def _init_stacked_obs(self) -> deque:
+        return deque(
+            iterate(
+                self.observation_space,
+                create_empty_array(self.env.observation_space, n=self.stack_size),
+            )
+        )
+
+
+class AtariPreprocessingV0(gym.Wrapper):
+    """Preprocessing wrapper for atari environments."""
+
+    pass
