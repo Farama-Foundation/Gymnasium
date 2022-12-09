@@ -71,7 +71,8 @@ def deserialise_spec_stack(stack_json: str) -> tuple[Union[WrapperSpec, EnvSpec]
 
 
 def load(name: str) -> callable:
-    """Loads an environment with name and returns an environment creation function
+    """COPIED FROM registration.py
+    Loads an environment with name and returns an environment creation function
 
     Args:
         name: The environment name
