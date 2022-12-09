@@ -69,6 +69,16 @@ def deserialise_spec_stack(stack_json: str) -> tuple[Union[WrapperSpec, EnvSpec]
     return tuple(stack)
     #WrapperSpec(*list(json.loads(stack_json['wrapper_4'].replace("\'", "\"")).values()))
 
+def pprint_spec_stack(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> None:
+    print(f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}")
+    print("-"*100)
+    for i in range(len(stack)):
+        spec = stack[-1 - i]
+        if type(spec) == WrapperSpec:
+            print(f"Wrapper {i-1}:{'' :<6} |  {spec.name :<25} |  {spec.kwargs}")
+        else:
+            print(f"Raw Environment: |  {spec.id :<25} |  {spec.kwargs}")
+
 
 def load(name: str) -> callable:
     """COPIED FROM registration.py
@@ -121,6 +131,8 @@ assert deserialised_stack == stack
 # reconstruct the environment
 reconstructed_env = reconstruct_env(deserialised_stack)
 assert spec_stack(reconstructed_env) == spec_stack(env)
+
+pprint_spec_stack(stack)
 
 print("Done")
 
