@@ -80,9 +80,11 @@ __all__ = [
     "PassiveEnvCheckerV0",
     "OrderEnforcingV0",
     "RecordEpisodeStatisticsV0",
+    # --- Rendering ---
     "RenderCollectionV0",
     "RecordVideoV0",
     "HumanRenderingV0",
+    # --- Data Conversion ---
     "JaxToNumpyV0",
     "JaxToTorchV0",
     "NumpyToTorchV0",
