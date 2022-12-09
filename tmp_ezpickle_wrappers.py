@@ -1,7 +1,7 @@
 import dataclasses
 import importlib
 import json
-from typing import Any
+from typing import Any, Union
 
 import gymnasium as gym
 from gymnasium import Wrapper
@@ -16,7 +16,7 @@ class WrapperSpec:
     kwargs: list[Any]
 
 
-def spec_stack(self):
+def spec_stack(self) -> tuple[Union[WrapperSpec, EnvSpec]]:
     wrapper_spec = WrapperSpec(type(self).__name__, self.__module__ + ":" + type(self).__name__, self._ezpickle_args, self._ezpickle_kwargs)
     if isinstance(self.env, Wrapper):
          return (wrapper_spec,) + spec_stack(self.env)
@@ -24,7 +24,7 @@ def spec_stack(self):
          return (wrapper_spec,) + (self.env.spec,)
 
 
-def serialise_spec_stack(stack):
+def serialise_spec_stack(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> str:
     num_layers = len(stack)
     stack_json = {}
     for i, spec in enumerate(stack):
@@ -37,7 +37,7 @@ def serialise_spec_stack(stack):
     return stack_json
 
 
-def deserialise_spec_stack(stack_json):
+def deserialise_spec_stack(stack_json: str) -> tuple[Union[WrapperSpec, EnvSpec]]:
     stack = []
     for name, spec_json in stack_json.items():
         spec = json.loads(spec_json)
@@ -85,7 +85,7 @@ def load(name: str) -> callable:
     return fn
 
 
-def reconstruct_env(stack):
+def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> gym.Env:
     env = gym.make(id=stack[-1], allow_default_wrappers=False)
     for i in range(len(stack) - 1):
         ws = stack[-2 - i]
