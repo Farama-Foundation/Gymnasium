@@ -114,8 +114,9 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.EzPickle):
             low=_low, high=_high, shape=_shape, dtype=_obs_dtype
         )
 
-        gym.utils.EzPickle.__init__(self, noop_max, frame_skip, screen_size, terminal_on_life_loss,
-                                    grayscale_obs, grayscale_newaxis, scale_obs)
+        gym.utils.EzPickle.__init__(self, noop_max=noop_max, frame_skip=frame_skip, screen_size=screen_size,
+                                    terminal_on_life_loss=terminal_on_life_loss, grayscale_obs=grayscale_obs,
+                                    grayscale_newaxis=grayscale_newaxis, scale_obs=scale_obs)
 
     @property
     def ale(self):

@@ -150,7 +150,7 @@ class FrameStack(gym.ObservationWrapper, gym.utils.EzPickle):
             low=low, high=high, dtype=self.observation_space.dtype
         )
 
-        gym.utils.EzPickle.__init__(self, num_stack, lz4_compress)
+        gym.utils.EzPickle.__init__(self, num_stack=num_stack, lz4_compress=lz4_compress)
 
     def observation(self, observation):
         """Converts the wrappers current frames to lazy frames.

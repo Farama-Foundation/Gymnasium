@@ -69,7 +69,7 @@ class NormalizeObservation(gym.Wrapper, gym.utils.EzPickle):
             self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
         self.epsilon = epsilon
 
-        gym.utils.EzPickle.__init__(self, epsilon)
+        gym.utils.EzPickle.__init__(self, epsilon=epsilon)
 
     def step(self, action):
         """Steps through the environment and normalizes the observation."""

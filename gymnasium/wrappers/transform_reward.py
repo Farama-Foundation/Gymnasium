@@ -32,7 +32,7 @@ class TransformReward(RewardWrapper, gym.utils.EzPickle):
         assert callable(f)
         self.f = f
 
-        gym.utils.EzPickle.__init__(self, f)
+        gym.utils.EzPickle.__init__(self, f=f)
 
     def reward(self, reward):
         """Transforms the reward using callable :attr:`f`.

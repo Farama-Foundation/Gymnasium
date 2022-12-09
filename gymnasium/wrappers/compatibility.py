@@ -77,7 +77,7 @@ class EnvCompatibility(gym.Env, gym.utils.EzPickle):
         self.observation_space = old_env.observation_space
         self.action_space = old_env.action_space
 
-        gym.utils.EzPickle.__init__(self, old_env, render_mode)
+        gym.utils.EzPickle.__init__(self, old_env=old_env, render_mode=render_mode)
 
     def reset(
         self, seed: Optional[int] = None, options: Optional[dict] = None

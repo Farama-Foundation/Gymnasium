@@ -31,7 +31,7 @@ class TransformObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         assert callable(f)
         self.f = f
 
-        gym.utils.EzPickle.__init__(self, f)
+        gym.utils.EzPickle.__init__(self, f=f)
 
     def observation(self, observation):
         """Transforms the observations with callable :attr:`f`.

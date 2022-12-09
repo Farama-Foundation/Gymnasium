@@ -47,7 +47,7 @@ class GrayScaleObservation(gym.ObservationWrapper, gym.utils.EzPickle):
                 low=0, high=255, shape=obs_shape, dtype=np.uint8
             )
 
-        gym.utils.EzPickle.__init__(self, keep_dim)
+        gym.utils.EzPickle.__init__(self, keep_dim=keep_dim)
 
     def observation(self, observation):
         """Converts the colour observation to greyscale.

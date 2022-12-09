@@ -93,7 +93,9 @@ class RecordVideo(gym.Wrapper, gym.utils.EzPickle):
         self.is_vector_env = getattr(env, "is_vector_env", False)
         self.episode_id = 0
 
-        gym.utils.EzPickle.__init__(self, video_folder, episode_trigger, step_trigger, video_length, name_prefix)
+        gym.utils.EzPickle.__init__(self, video_folder=video_folder, episode_trigger=episode_trigger,
+                                    step_trigger=step_trigger, video_length=video_length, name_prefix=name_prefix,
+                                    disable_logger=disable_logger)
 
     def reset(self, **kwargs):
         """Reset the environment using kwargs and then starts recording if video enabled."""

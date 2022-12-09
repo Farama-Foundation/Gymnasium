@@ -30,7 +30,7 @@ class OrderEnforcing(gym.Wrapper, gym.utils.EzPickle):
         self._has_reset: bool = False
         self._disable_render_order_enforcing: bool = disable_render_order_enforcing
 
-        gym.utils.EzPickle.__init__(self, disable_render_order_enforcing)
+        gym.utils.EzPickle.__init__(self, disable_render_order_enforcing=disable_render_order_enforcing)
 
     def step(self, action):
         """Steps through the environment with `kwargs`."""
