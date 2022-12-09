@@ -154,6 +154,7 @@ def play(
     keys_to_action: Optional[Dict[Union[Tuple[Union[str, int]], str], ActType]] = None,
     seed: Optional[int] = None,
     noop: ActType = 0,
+    cleanup_callback: Optional[Callable] = None,
 ):
     """Allows one to play the game using keyboard.
 
@@ -232,6 +233,7 @@ def play(
             If ``None``, default ``key_to_action`` mapping for that environment is used, if provided.
         seed: Random seed used when resetting the environment. If None, no seed is used.
         noop: The action used when no key input has been entered, or the entered key combination is unknown.
+        cleanup_callback: Callback that should be called right before this function returns. This callback may perform some cleanup operations.
     """
     env.reset(seed=seed)
 
@@ -290,6 +292,55 @@ def play(
         pygame.display.flip()
         clock.tick(fps)
     pygame.quit()
+    if cleanup_callback is not None:
+        cleanup_callback()
+
+
+class PlayMinariCollector:
+    """Saves transitions collected via :func:`play` to a Minari dataset."""
+
+    def __init__(self, **minari_dataset_kwargs):
+        """Constructor of :class:`PlayMinariCollector`."""
+        self.minari_dataset_kwargs = minari_dataset_kwargs
+        self.replay_buffer = {
+            "episode": [],
+            "observation": [],
+            "action": [],
+            "reward": [],
+            "terminated": [],
+            "truncated": [],
+        }
+
+    def callback(
+        self,
+        obs_t: ObsType,
+        obs_tp1: ObsType,
+        action: ActType,
+        rew: float,
+        terminated: bool,
+        truncated: bool,
+        info: dict,
+    ):
+        """Callback that collects transitions from :func:`play`."""
+        self.replay_buffer["observation"].append(obs_tp1)
+        self.replay_buffer["action"].append(action)
+        self.replay_buffer["reward"].append(rew)
+        self.replay_buffer["terminated"].append(terminated)
+        self.replay_buffer["truncated"].append(truncated)
+
+    def cleanup_callback(self):
+        """Callback that is called when :func:`play` returns."""
+        from minari.dataset import MinariDataset
+
+        dataset = MinariDataset(
+            **self.minari_dataset_kwargs,
+            observations=np.stack(self.replay_buffer["observation"]).astype(np.float32),
+            actions=np.stack(self.replay_buffer["action"]),
+            rewards=np.array(self.replay_buffer["reward"]),
+            terminations=np.array(self.replay_buffer["terminated"]),
+            truncations=np.array(self.replay_buffer["truncated"]),
+        )
+        dataset.save()
 
 
 class PlayPlot:
