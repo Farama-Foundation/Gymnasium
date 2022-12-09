@@ -268,8 +268,8 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
             raise AttributeError(
                 "Can't access `_np_random` of a wrapper, use `self.unwrapped._np_random` or `self.np_random`."
             )
-        # elif name.startswith("_"):
-        #     raise AttributeError(f"accessing private attribute '{name}' is prohibited")
+        elif name.startswith("_"):
+            raise AttributeError(f"accessing private attribute '{name}' is prohibited")
         return getattr(self.env, name)
 
     @property
