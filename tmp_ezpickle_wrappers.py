@@ -39,3 +39,7 @@ for i, spec in enumerate(stack):
     spec_json = json.dumps(dataclasses.asdict(spec))
     stack_json[layer] = spec_json
 print(stack_json)
+
+# todo: when calling gym.make from a stack, turn all default wrappers off
+
+# todo: make ezpickle calls into kwargs not args
