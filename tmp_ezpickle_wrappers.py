@@ -98,7 +98,6 @@ def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> gym.Env:
             env_creator = load(ws.entry_point)
         env = env_creator(env, *ws.args, **ws.kwargs)
 
-        print(f"Creating wrapper {ws.name} with args {ws.args} and kwargs {ws.kwargs}")
     return env
 
 
