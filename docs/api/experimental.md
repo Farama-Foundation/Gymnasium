@@ -36,64 +36,34 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 
     * - Old name
       - New name
-      - Vector version
-      - Tree structure
     * - :class:`wrappers.TransformObservation`
       - :class:`experimental.wrappers.LambdaObservationV0`
-      - VectorLambdaObservation
-      - No
     * - :class:`wrappers.FilterObservation`
       - :class:`experimental.wrappers.FilterObservationV0`
-      - VectorFilterObservation (*)
-      - Yes
     * - :class:`wrappers.FlattenObservation`
       - :class:`experimental.wrappers.FlattenObservationV0`
-      - VectorFlattenObservation (*)
-      - No
     * - :class:`wrappers.GrayScaleObservation`
       - :class:`experimental.wrappers.GrayscaleObservationV0`
-      - VectorGrayscaleObservation (*)
-      - Yes
     * - :class:`wrappers.ResizeObservation`
       - :class:`experimental.wrappers.ResizeObservationV0`
-      - VectorResizeObservation (*)
-      - Yes
     * - `supersuit.reshape_v0`
       - :class:`experimental.wrappers.ReshapeObservationV0`
-      - VectorReshapeObservation (*)
-      - Yes
     * - Not Implemented
       - :class:`experimental.wrappers.RescaleObservationV0`
-      - VectorRescaleObservation (*)
-      - Yes
     * - Not Implemented
       - :class:`experimental.wrappers.DtypeObservationV0`
-      - VectorDtypeObservation (*)
-      - Yes
     * - :class:`wrappers.PixelObservationWrapper`
       - PixelObservation
-      - VectorPixelObservation
-      - No
     * - :class:`wrappers.NormalizeObservation`
       - NormalizeObservation
-      - VectorNormalizeObservation
-      - No
     * - :class:`wrappers.TimeAwareObservation`
       - :class:`experimental.wrappers.TimeAwareObservationV0`
-      - VectorTimeAwareObservation
-      - No
     * - :class:`wrappers.FrameStack`
       - FrameStackObservation
-      - VectorFrameStackObservation
-      - No
     * - `supersuit.dtype_v0`
       - :class:`experimental.wrappers.DelayObservationV0`
-      - VectorDelayObservation
-      - No
     * - :class:`wrappers.AtariPreprocessing`
       - AtariPreprocessing
-      - Not Implemented
-      - No
 ```
 
 ### Action Wrappers
@@ -105,24 +75,14 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 
     * - Old name
       - New name
-      - Vector version
-      - Tree structure
     * - Not Implemented
       - :class:`experimental.wrappers.LambdaActionV0`
-      - VectorLambdaAction
-      - No
     * - :class:`wrappers.ClipAction`
       - :class:`experimental.wrappers.ClipActionV0`
-      - VectorClipAction (*)
-      - Yes
     * - :class:`wrappers.RescaleAction`
       - :class:`experimental.wrappers.RescaleActionV0`
-      - VectorRescaleAction (*)
-      - Yes
     * - `supersuit.sticky_actions_v0`
       - :class:`experimental.wrappers.StickyActionV0`
-      - VectorStickyAction
-      - No
 ```
 
 ### Reward Wrappers
@@ -134,19 +94,14 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 
     * - Old name
       - New name
-      - Vector version
     * - :class:`wrappers.TransformReward`
       - :class:`experimental.wrappers.LambdaRewardV0`
-      - VectorLambdaReward
     * - `supersuit.clip_reward_v0`
       - :class:`experimental.wrappers.ClipRewardV0`
-      - VectorClipReward (*)
     * - Not Implemented
       - RescaleReward
-      - VectorRescaleReward (*)
     * - :class:`wrappers.NormalizeReward`
       - NormalizeReward
-      - VectorNormalizeReward
 ```
 
 ### Other Wrappers
@@ -159,34 +114,24 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
 
     * - Old name
       - New name
-      - Vector version
     * - :class:`wrappers.AutoResetWrapper`
       - AutoReset
-      - VectorAutoReset
     * - :class:`wrappers.PassiveEnvChecker`
       - PassiveEnvChecker
-      - VectorPassiveEnvChecker
     * - :class:`wrappers.OrderEnforcing`
       - OrderEnforcing
-      - VectorOrderEnforcing
     * - :class:`wrappers.EnvCompatibility`
       - Moved to `shimmy <https://github.com/Farama-Foundation/Shimmy/blob/main/shimmy/openai_gym_compatibility.py>`_
-      - Not Implemented
     * - :class:`wrappers.RecordEpisodeStatistics`
       - RecordEpisodeStatistics
-      - VectorRecordEpisodeStatistics
     * - :class:`wrappers.RenderCollection`
       - RenderCollection
-      - VectorRenderCollection
     * - :class:`wrappers.HumanRendering`
       - HumanRendering
-      - Not Implemented
     * - Not Implemented
       - :class:`experimental.wrappers.JaxToNumpyV0`
-      - VectorJaxToNumpy (*)
     * - Not Implemented
       - :class:`experimental.wrappers.JaxToTorchV0`
-      - VectorJaxToTorch (*)
 ```
 
 ### Vector Only Wrappers

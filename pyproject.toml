@@ -53,7 +53,6 @@ other = [
     "opencv-python >=3.0",
     "matplotlib >=3.0",
     "moviepy >=1.0.0",
-    "tensorflow >=2.1.0",
     "torch >=1.0.0",
 ]
 all = [
@@ -82,7 +81,6 @@ all = [
     "opencv-python >=3.0",
     "matplotlib >=3.0",
     "moviepy >=1.0.0",
-    "tensorflow >=2.1.0",
     "torch >=1.0.0",
 ]
 testing = ["pytest ==7.1.3"]
