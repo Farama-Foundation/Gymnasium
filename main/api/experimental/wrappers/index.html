@@ -253,7 +253,6 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Experimental</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functional/">Functional Environment</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#reward-wrappers">Reward Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/">Vectorizing Environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector_wrappers/">Vector Environment Wrappers</a></li>
 </ul>
@@ -550,6 +549,53 @@ If the observations from <code class="xref py py-attr docutils literal notransla
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.PixelObservationV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">PixelObservationV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pixels'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'state'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.PixelObservationV0" title="Permalink to this definition">#</a></dt>
+<dd><p>Augment observations by pixel values.</p>
+<p>Observations of this wrapper will be dictionaries of images.
+You can also choose to add the observation of the base environment to this dictionary.
+In that case, if the base environment has an observation space of type <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, the dictionary
+of rendered images will be updated with the base environment’s observation. If, however, the observation
+space is of type <code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code>, the base environment’s observation (which will be an element of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code>
+space) will be added to the dictionary under the key “state”.</p>
+<p>Initializes a new pixel Wrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap.</p></li>
+<li><p><strong>pixels_only</strong> (<em>bool</em>) – If <cite>True</cite> (default), the original observation returned
+by the wrapped environment will be discarded, and a dictionary
+observation will only include pixels. If <cite>False</cite>, the
+observation dictionary will contain both the original
+observations and the pixel observations.</p></li>
+<li><p><strong>pixels_key</strong> – Optional custom string specifying the pixel key. Defaults to “pixels”</p></li>
+<li><p><strong>obs_key</strong> – Optional custom string specifying the obs key. Defaults to “state”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.NormalizeObservationV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeObservationV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.NormalizeObservationV0" title="Permalink to this definition">#</a></dt>
+<dd><p>This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
+newly instantiated or the policy was changed recently.</p>
+</div>
+<p>This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the wrapper</p></li>
+<li><p><strong>epsilon</strong> – A stability parameter that is used when scaling the observations.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.TimeAwareObservationV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">TimeAwareObservationV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_time_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.TimeAwareObservationV0" title="Permalink to this definition">#</a></dt>
 <dd><p>Augment the observation with time information of the episode.</p>
@@ -599,6 +645,43 @@ otherwise return time as remaining timesteps before truncation</p></li>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.FrameStackObservationV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">FrameStackObservationV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.FrameStackObservationV0" title="Permalink to this definition">#</a></dt>
+<dd><p>Observation wrapper that stacks the observations in a rolling manner.</p>
+<p>For example, if the number of stacks is 4, then the returned observation contains
+the most recent 4 observations. For environment ‘Pendulum-v1’, the original observation
+is an array with shape [3], so if we stack 4 observations, the processed observation
+has shape [4, 3].</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>After <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> is called, the frame buffer will be filled with the initial observation.
+I.e. the observation returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> will consist of <cite>num_stack</cite> many identical frames.</p></li>
+</ul>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CarRacing-v1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">FrameStack</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box(4, 96, 96, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(4, 96, 96, 3)</span>
+</pre></div>
+</div>
+<p>Observation wrapper that stacks the observations in a rolling manner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to apply the wrapper</p></li>
+<li><p><strong>stack_size</strong> – The number of frames to stack</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.DelayObservationV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">DelayObservationV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.DelayObservationV0" title="Permalink to this definition">#</a></dt>
 <dd><p>Wrapper which adds a delay to the returned observation.</p>
@@ -611,6 +694,53 @@ otherwise return time as remaining timesteps before truncation</p></li>
 Before reaching the <cite>delay</cite> number of timesteps,
 returned observation is an array of zeros with the
 same shape of the observation space.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.AtariPreprocessingV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">AtariPreprocessingV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">noop_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">84</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminal_on_life_loss</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale_newaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.AtariPreprocessingV0" title="Permalink to this definition">#</a></dt>
+<dd><p>Atari 2600 preprocessing wrapper.</p>
+<p>This class follows the guidelines in Machado et al. (2018),
+“Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents”.</p>
+<p>Specifically, the following preprocess stages applies to the atari environment:</p>
+<ul class="simple">
+<li><p>Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.</p></li>
+<li><p>Frame skipping: The number of frames skipped between steps, 4 by default</p></li>
+<li><p>Max-pooling: Pools over the most recent two observations from the frame skips</p></li>
+<li><dl class="simple">
+<dt>Termination signal when a life is lost: When the agent losses a life during the environment, then the environment is terminated.</dt><dd><p>Turned off by default. Not recommended by Machado et al. (2018).</p>
+</dd>
+</dl>
+</li>
+<li><p>Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default</p></li>
+<li><p>Grayscale observation: If the observation is colour or greyscale, by default, greyscale.</p></li>
+<li><p>Scale observation: If to scale the observation between [0, 1) or [0, 255), by default, not scaled.</p></li>
+</ul>
+<p>Wrapper for Atari 2600 preprocessing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the preprocessing</p></li>
+<li><p><strong>noop_max</strong> (<em>int</em>) – For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.</p></li>
+<li><p><strong>frame_skip</strong> (<em>int</em>) – The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.</p></li>
+<li><p><strong>screen_size</strong> (<em>int</em>) – resize Atari frame</p></li>
+<li><p><strong>terminal_on_life_loss</strong> (<em>bool</em>) – <cite>if True</cite>, then <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> returns <cite>terminated=True</cite> whenever a
+life is lost.</p></li>
+<li><p><strong>grayscale_obs</strong> (<em>bool</em>) – if True, then gray scale observation is returned, otherwise, RGB observation
+is returned.</p></li>
+<li><p><strong>grayscale_newaxis</strong> (<em>bool</em>) – <cite>if True and grayscale_obs=True</cite>, then a channel axis is added to
+grayscale observations to make them 3-dimensional.</p></li>
+<li><p><strong>scale_obs</strong> (<em>bool</em>) – if True, then observation normalized in range [0,1) is returned. It also limits memory
+optimization benefits of FrameStack Wrapper.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>DependencyNotInstalled</strong> – opencv-python package not installed</p></li>
+<li><p><strong>ValueError</strong> – Disable frame-skipping in the original env</p></li>
 </ul>
 </dd>
 </dl>
@@ -709,9 +839,8 @@ in Section 5.2 on page 12.</p>
 </dd></dl>
 
 </section>
-</section>
 <section id="reward-wrappers">
-<h1>Reward Wrappers<a class="headerlink" href="#reward-wrappers" title="Permalink to this heading">#</a></h1>
+<h2>Reward Wrappers<a class="headerlink" href="#reward-wrappers" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.LambdaRewardV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">LambdaRewardV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.LambdaRewardV0" title="Permalink to this definition">#</a></dt>
@@ -767,8 +896,207 @@ in Section 5.2 on page 12.</p>
 </dl>
 </dd></dl>
 
-<section id="common-wrappers">
-<h2>Common Wrappers<a class="headerlink" href="#common-wrappers" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.NormalizeRewardV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeRewardV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.NormalizeRewardV0" title="Permalink to this definition">#</a></dt>
+<dd><p>This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.</p>
+<p>The exponential moving average will have variance <span class="math notranslate nohighlight">\((1 - \gamma)^2\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
+instantiated or the policy was changed recently.</p>
+</div>
+<p>This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>env</em>) – The environment to apply the wrapper</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>) – A stability parameter</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – The discount factor that is used in the exponential moving average.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="other-wrappers">
+<h2>Other Wrappers<a class="headerlink" href="#other-wrappers" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.AutoresetV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">AutoresetV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.AutoresetV0" title="Permalink to this definition">#</a></dt>
+<dd><p>A class for providing an automatic reset functionality for gymnasium environments when calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.step()</span></code>.</p>
+<p>A class for providing an automatic reset functionality for gymnasium environments when calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.step()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<em>gym.Env</em>) – The environment to apply the wrapper</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.PassiveEnvCheckerV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">PassiveEnvCheckerV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.PassiveEnvCheckerV0" title="Permalink to this definition">#</a></dt>
+<dd><p>A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API.</p>
+<p>Initialises the wrapper with the environments, run the observation and action space tests.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.OrderEnforcingV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">OrderEnforcingV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_render_order_enforcing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.OrderEnforcingV0" title="Permalink to this definition">#</a></dt>
+<dd><p>A wrapper that will produce an error if <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> is called before an initial <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.envs.classic_control</span> <span class="kn">import</span> <span class="n">CartPoleEnv</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">CartPoleEnv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">OrderEnforcingV0</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">ResetNeeded: Cannot call env.step() before calling env.reset()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="go">ResetNeeded: Cannot call env.render() before calling env.reset()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A wrapper that will produce an error if <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> is called before an initial <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>disable_render_order_enforcing</strong> – If to disable render order enforcing</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordEpisodeStatisticsV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'episode'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0" title="Permalink to this definition">#</a></dt>
+<dd><p>This wrapper will keep track of cumulative rewards and episode lengths.</p>
+<p>At the end of an episode, the statistics of the episode will be added to <code class="docutils literal notranslate"><span class="pre">info</span></code>
+using the key <code class="docutils literal notranslate"><span class="pre">episode</span></code>. If using a vectorized environment also the key
+<code class="docutils literal notranslate"><span class="pre">_episode</span></code> is used which indicates whether the env at the respective index has
+the episode statistics.</p>
+<p>After the completion of an episode, <code class="docutils literal notranslate"><span class="pre">info</span></code> will look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="o">...</span>
+<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;cumulative reward&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;episode length&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>For a vectorized environments the output will be in the form of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="o">...</span>
+<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of cumulative reward&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of episode length&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of elapsed time since beginning of episode&gt;&quot;</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;_episode&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>episode_reward_buffer</strong> – The cumulative rewards of the last <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>-many episodes</p></li>
+<li><p><strong>episode_length_buffer</strong> – The lengths of the last <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>-many episodes</p></li>
+</ul>
+</dd>
+</dl>
+<p>This wrapper will keep track of cumulative rewards and episode lengths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the wrapper</p></li>
+<li><p><strong>buffer_length</strong> – The size of the buffers <code class="xref py py-attr docutils literal notranslate"><span class="pre">return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">length_queue</span></code></p></li>
+<li><p><strong>stats_key</strong> – The info key for the episode statistics</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="rendering-wrappers">
+<h2>Rendering Wrappers<a class="headerlink" href="#rendering-wrappers" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.RecordVideoV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordVideoV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.RecordVideoV0" title="Permalink to this definition">#</a></dt>
+<dd><p>Record a video of an environment.</p>
+<p>Wraps an environment to allow a modular transformation of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – The environment to wrap</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.HumanRenderingV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">HumanRenderingV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.HumanRenderingV0" title="Permalink to this definition">#</a></dt>
+<dd><p>Performs human rendering for an environment that only supports “rgb_array”rendering.</p>
+<p>This wrapper is particularly useful when you have implemented an environment that can produce
+RGB images but haven’t implemented any code to render the images to the screen.
+If you want to use this wrapper with your environments, remember to specify <code class="docutils literal notranslate"><span class="pre">&quot;render_fps&quot;</span></code>
+in the metadata of your environment.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> of the wrapped environment must be either <code class="docutils literal notranslate"><span class="pre">'rgb_array'</span></code> or <code class="docutils literal notranslate"><span class="pre">'rgb_array_list'</span></code>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped</span> <span class="o">=</span> <span class="n">HumanRenderingV0</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>     <span class="c1"># This will start rendering to the screen</span>
+</pre></div>
+</div>
+<p>The wrapper can also be applied directly when the environment is instantiated, simply by passing
+<code class="docutils literal notranslate"><span class="pre">render_mode=&quot;human&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">make</span></code>. The wrapper will only be applied if the environment does not
+implement human-rendering natively (i.e. <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> does not contain <code class="docutils literal notranslate"><span class="pre">&quot;human&quot;</span></code>).</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;NoNativeRendering-v2&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>      <span class="c1"># NoNativeRendering-v0 doesn&#39;t implement human-rendering natively</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>     <span class="c1"># This will start rendering to the screen</span>
+</pre></div>
+</div>
+<dl>
+<dt>Warning: If the base environment uses <code class="docutils literal notranslate"><span class="pre">render_mode=&quot;rgb_array_list&quot;</span></code>, its (i.e. the <em>base environment’s</em>) render method</dt><dd><p>will always return an empty list:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array_list&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped</span> <span class="o">=</span> <span class="n">HumanRenderingV0</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="go">[]          # env.render() will always return an empty list!</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Initialize a <code class="xref py py-class docutils literal notranslate"><span class="pre">HumanRendering</span></code> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – The environment that is being wrapped</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.RenderCollectionV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">RenderCollectionV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_clean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.RenderCollectionV0" title="Permalink to this definition">#</a></dt>
+<dd><p>Collect rendered frames of an environment such <code class="docutils literal notranslate"><span class="pre">render</span></code> returns a <code class="docutils literal notranslate"><span class="pre">list[RenderedFrame]</span></code>.</p>
+<p>Initialize a <code class="xref py py-class docutils literal notranslate"><span class="pre">RenderCollection</span></code> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment that is being wrapped</p></li>
+<li><p><strong>pop_frames</strong> (<em>bool</em>) – If true, clear the collection frames after <code class="docutils literal notranslate"><span class="pre">meth:render</span></code> is called. Default value is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>reset_clean</strong> (<em>bool</em>) – If true, clear the collection frames when <code class="docutils literal notranslate"><span class="pre">meth:reset</span></code> is called. Default value is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="environment-data-conversion">
+<h2>Environment data conversion<a class="headerlink" href="#environment-data-conversion" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.JaxToNumpyV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToNumpyV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.JaxToNumpyV0" title="Permalink to this definition">#</a></dt>
@@ -789,6 +1117,26 @@ The reason for this is jax does not support non-array values, therefore numpy <c
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.JaxToTorchV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToTorchV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.JaxToTorchV0" title="Permalink to this definition">#</a></dt>
 <dd><p>Wraps a jax-based environment so that it can be interacted with through PyTorch Tensors.</p>
+<p>Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">rendered</span></code> this is returned as a NumPy array not a pytorch Tensor.</p>
+</div>
+<p>Wrapper class to change inputs and outputs of environment to PyTorch tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The Jax-based environment to wrap</p></li>
+<li><p><strong>device</strong> – The device the torch Tensors should be moved to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.NumpyToTorchV0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">NumpyToTorchV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.NumpyToTorchV0" title="Permalink to this definition">#</a></dt>
+<dd><p>Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors.</p>
 <p>Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -876,8 +1224,12 @@ The reason for this is jax does not support non-array values, therefore numpy <c
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.ReshapeObservationV0"><code class="docutils literal notranslate"><span class="pre">ReshapeObservationV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.RescaleObservationV0"><code class="docutils literal notranslate"><span class="pre">RescaleObservationV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.DtypeObservationV0"><code class="docutils literal notranslate"><span class="pre">DtypeObservationV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.PixelObservationV0"><code class="docutils literal notranslate"><span class="pre">PixelObservationV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.NormalizeObservationV0"><code class="docutils literal notranslate"><span class="pre">NormalizeObservationV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.TimeAwareObservationV0"><code class="docutils literal notranslate"><span class="pre">TimeAwareObservationV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.FrameStackObservationV0"><code class="docutils literal notranslate"><span class="pre">FrameStackObservationV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.DelayObservationV0"><code class="docutils literal notranslate"><span class="pre">DelayObservationV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.AtariPreprocessingV0"><code class="docutils literal notranslate"><span class="pre">AtariPreprocessingV0</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#action-wrappers">Action Wrappers</a><ul>
@@ -887,14 +1239,29 @@ The reason for this is jax does not support non-array values, therefore numpy <c
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.StickyActionV0"><code class="docutils literal notranslate"><span class="pre">StickyActionV0</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
 <li><a class="reference internal" href="#reward-wrappers">Reward Wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.LambdaRewardV0"><code class="docutils literal notranslate"><span class="pre">LambdaRewardV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.ClipRewardV0"><code class="docutils literal notranslate"><span class="pre">ClipRewardV0</span></code></a></li>
-<li><a class="reference internal" href="#common-wrappers">Common Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.NormalizeRewardV0"><code class="docutils literal notranslate"><span class="pre">NormalizeRewardV0</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-wrappers">Other Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.AutoresetV0"><code class="docutils literal notranslate"><span class="pre">AutoresetV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.PassiveEnvCheckerV0"><code class="docutils literal notranslate"><span class="pre">PassiveEnvCheckerV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.OrderEnforcingV0"><code class="docutils literal notranslate"><span class="pre">OrderEnforcingV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0"><code class="docutils literal notranslate"><span class="pre">RecordEpisodeStatisticsV0</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rendering-wrappers">Rendering Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.RecordVideoV0"><code class="docutils literal notranslate"><span class="pre">RecordVideoV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.HumanRenderingV0"><code class="docutils literal notranslate"><span class="pre">HumanRenderingV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.RenderCollectionV0"><code class="docutils literal notranslate"><span class="pre">RenderCollectionV0</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#environment-data-conversion">Environment data conversion</a><ul>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.JaxToNumpyV0"><code class="docutils literal notranslate"><span class="pre">JaxToNumpyV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.JaxToTorchV0"><code class="docutils literal notranslate"><span class="pre">JaxToTorchV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.NumpyToTorchV0"><code class="docutils literal notranslate"><span class="pre">NumpyToTorchV0</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -969,6 +1336,7 @@ The reason for this is jax does not support non-array values, therefore numpy <c
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
       const createCORSRequest = (method, url) => {
