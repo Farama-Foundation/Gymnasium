@@ -15,10 +15,10 @@ try:
     import pygame
     from pygame import Surface
     from pygame.event import Event
-except ImportError:
+except ImportError as e:
     raise gym.error.DependencyNotInstalled(
         "Pygame is not installed, run `pip install gymnasium[classic_control]`"
-    )
+    ) from e
 
 try:
     import matplotlib

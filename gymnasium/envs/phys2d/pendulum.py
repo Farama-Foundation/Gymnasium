@@ -90,10 +90,10 @@ class PendulumFunctional(
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
         screen, clock, last_u = render_state
 
         surf = pygame.Surface((self.screen_dim, self.screen_dim))
@@ -161,10 +161,10 @@ class PendulumFunctional(
     ) -> RenderStateType:
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
 
         pygame.init()
         screen = pygame.Surface((screen_width, screen_height))
@@ -175,10 +175,10 @@ class PendulumFunctional(
     def render_close(self, render_state: RenderStateType) -> None:
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
         pygame.display.quit()
         pygame.quit()
 

@@ -158,12 +158,12 @@ class OffScreenViewer(BaseRender):
         if self.backend is not None:
             try:
                 self.opengl_context = _ALL_RENDERERS[self.backend](width, height)
-            except KeyError:
+            except KeyError as e:
                 raise RuntimeError(
                     "Environment variable {} must be one of {!r}: got {!r}.".format(
                         "MUJOCO_GL", _ALL_RENDERERS.keys(), self.backend
                     )
-                )
+                ) from e
 
         else:
             for name, _ in _ALL_RENDERERS.items():

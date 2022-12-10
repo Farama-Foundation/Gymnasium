@@ -141,10 +141,10 @@ class CartPoleFunctional(
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
         screen, clock = render_state
 
         world_width = self.x_threshold * 2
@@ -212,10 +212,10 @@ class CartPoleFunctional(
     ) -> RenderStateType:
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
 
         pygame.init()
         screen = pygame.Surface((screen_width, screen_height))
@@ -226,10 +226,10 @@ class CartPoleFunctional(
     def render_close(self, render_state: RenderStateType) -> None:
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
         pygame.display.quit()
         pygame.quit()
 
