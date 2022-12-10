@@ -17,7 +17,7 @@ from typing import Any, Iterable, Mapping, SupportsFloat, Union
 from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.wrappers.numpy_to_jax import jax_to_numpy
+from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
 
 
 try:

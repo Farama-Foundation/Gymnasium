@@ -1,17 +1,14 @@
-"""A collection of stateful action wrappers.
-
-* StickyAction - There is a probability that the action is taken again
-"""
+"""``StickyAction`` wrapper - There is a probability that the action is taken again."""
 from __future__ import annotations
 
-from typing import Any, SupportsFloat
+from typing import Any
 
 import gymnasium as gym
-from gymnasium.core import WrapperActType, WrapperObsType
+from gymnasium.core import ActionWrapper, ActType, WrapperActType, WrapperObsType
 from gymnasium.error import InvalidProbability
 
 
-class StickyActionV0(gym.Wrapper):
+class StickyActionV0(ActionWrapper):
     """Wrapper which adds a probability of repeating the previous action.
 
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_
@@ -42,9 +39,7 @@ class StickyActionV0(gym.Wrapper):
 
         return super().reset(seed=seed, options=options)
 
-    def step(
-        self, action: WrapperActType
-    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict]:
+    def action(self, action: WrapperActType) -> ActType:
         """Execute the action."""
         if (
             self.last_action is not None

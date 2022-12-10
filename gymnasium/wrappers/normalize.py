@@ -93,7 +93,7 @@ class NormalizeObservation(gym.Wrapper):
         return (obs - self.obs_rms.mean) / np.sqrt(self.obs_rms.var + self.epsilon)
 
 
-class NormalizeReward(gym.Wrapper):
+class NormalizeReward(gym.core.Wrapper):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
@@ -129,10 +129,8 @@ class NormalizeReward(gym.Wrapper):
         obs, rews, terminateds, truncateds, infos = self.env.step(action)
         if not self.is_vector_env:
             rews = np.array([rews])
-        self.returns = self.returns * self.gamma + rews
+        self.returns = self.returns * self.gamma * (1 - terminateds) + rews
         rews = self.normalize(rews)
-        dones = np.logical_or(terminateds, truncateds)
-        self.returns[dones] = 0.0
         if not self.is_vector_env:
             rews = rews[0]
         return obs, rews, terminateds, truncateds, infos

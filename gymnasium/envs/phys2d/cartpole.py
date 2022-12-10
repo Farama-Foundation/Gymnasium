@@ -1,8 +1,7 @@
-"""
-Implementation of a Jax-accelerated cartpole environment.
-"""
+"""Implementation of a Jax-accelerated cartpole environment."""
+from __future__ import annotations
 
-from typing import Optional, Tuple, Union
+from typing import Any, Tuple
 
 import jax
 import jax.numpy as jnp
@@ -74,7 +73,7 @@ class CartPoleFunctional(
         )
 
     def transition(
-        self, state: jnp.ndarray, action: Union[int, jnp.ndarray], rng: None = None
+        self, state: jnp.ndarray, action: int | jnp.ndarray, rng: None = None
     ) -> StateType:
         """Cartpole transition."""
         x, x_dot, theta, theta_dot = state
@@ -106,6 +105,7 @@ class CartPoleFunctional(
         return state
 
     def terminal(self, state: jnp.ndarray) -> jnp.ndarray:
+        """Checks if the state is terminal."""
         x, _, theta, _ = state
 
         terminated = (
@@ -120,6 +120,7 @@ class CartPoleFunctional(
     def reward(
         self, state: StateType, action: ActType, next_state: StateType
     ) -> jnp.ndarray:
+        """Computes the reward for the state transition using the action."""
         x, _, theta, _ = state
 
         terminated = (
@@ -136,8 +137,8 @@ class CartPoleFunctional(
         self,
         state: StateType,
         render_state: RenderStateType,
-    ) -> Tuple[RenderStateType, np.ndarray]:
-
+    ) -> tuple[RenderStateType, np.ndarray]:
+        """Renders an image of the state using the render state."""
         try:
             import pygame
             from pygame import gfxdraw
@@ -210,6 +211,7 @@ class CartPoleFunctional(
     def render_init(
         self, screen_width: int = 600, screen_height: int = 400
     ) -> RenderStateType:
+        """Initialises the render state for a screen width and height."""
         try:
             import pygame
         except ImportError as e:
@@ -224,6 +226,7 @@ class CartPoleFunctional(
         return screen, clock
 
     def render_close(self, render_state: RenderStateType) -> None:
+        """Closes the render state."""
         try:
             import pygame
         except ImportError as e:
@@ -235,20 +238,24 @@ class CartPoleFunctional(
 
 
 class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
+    """Jax-based implementation of the CartPole environment."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
-    def __init__(self, render_mode: Optional[str] = None, **kwargs):
+    def __init__(self, render_mode: str | None = None, **kwargs: Any):
+        """Constructor for the CartPole where the kwargs are applied to the functional environment."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
+
         env = CartPoleFunctional(**kwargs)
         env.transform(jax.jit)
+
         action_space = env.action_space
         observation_space = env.observation_space
-        metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+
         super().__init__(
             env,
             observation_space=observation_space,
             action_space=action_space,
-            metadata=metadata,
+            metadata=self.metadata,
             render_mode=render_mode,
         )
