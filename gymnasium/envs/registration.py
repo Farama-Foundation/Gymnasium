@@ -1,8 +1,11 @@
 import contextlib
 import copy
+import dataclasses
 import difflib
 import importlib
 import importlib.util
+import inspect
+import json
 import re
 import sys
 import warnings
@@ -18,7 +21,7 @@ from typing import (
     SupportsFloat,
     Tuple,
     Union,
-    overload,
+    overload, Any,
 )
 
 import numpy as np
@@ -44,7 +47,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-from gymnasium import Env, error, logger
+from gymnasium import Env, Wrapper, error, logger
 
 
 ENV_ID_RE = re.compile(
@@ -162,6 +165,102 @@ class EnvSpec:
     def make(self, **kwargs) -> Env:
         # For compatibility purposes
         return make(self, **kwargs)
+
+
+@dataclass
+class WrapperSpec:
+    name: str
+    entry_point: str
+    args: list[Any]
+    kwargs: list[Any]
+
+
+class SpecStack:
+    def __init__(self, env, eval_ok: bool = True):
+        if type(env) == dict:
+            self.stack = self.deserialise_spec_stack(env, eval_ok=eval_ok)
+            self.stack_json = env
+        elif isinstance(env, Wrapper) or isinstance(env, Env):
+            self.stack = self.spec_stack(env)
+            self.stack_json = self.serialise_spec_stack()
+
+    def spec_stack(self, outer_wrapper) -> tuple[Union[WrapperSpec, EnvSpec]]:
+        wrapper_spec = WrapperSpec(type(outer_wrapper).__name__, outer_wrapper.__module__ + ":" + type(outer_wrapper).__name__, outer_wrapper._ezpickle_args, outer_wrapper._ezpickle_kwargs)
+        if isinstance(outer_wrapper.env, Wrapper):
+             return (wrapper_spec,) + self.spec_stack(outer_wrapper.env)
+        else:
+             return (wrapper_spec,) + (outer_wrapper.env.spec,)
+
+
+    def serialise_spec_stack(self) -> str:
+        num_layers = len(self.stack)
+        stack_json = {}
+        for i, spec in enumerate(self.stack):
+            spec = copy.deepcopy(spec)  # we need to make a copy so we don't modify the original spec in case of callables
+            for k, v in spec.kwargs.items():
+                if callable(v):
+                    str_repr = str(inspect.getsourcelines(v)[0]).strip("['\\n']").split(" = ")[1]  # https://stackoverflow.com/a/30984012
+                    str_repr = re.search(r", (.*)\)$", str_repr).group(1)
+                    spec.kwargs[k] = str_repr
+            if i == num_layers - 1:
+                layer = "raw_env"
+            else:
+                layer = f"wrapper_{num_layers - i - 2}"
+            spec_json = json.dumps(dataclasses.asdict(spec))
+            stack_json[layer] = spec_json
+        return stack_json
+
+
+    def deserialise_spec_stack(self, stack_json: str, eval_ok: bool = False) -> tuple[Union[WrapperSpec, EnvSpec]]:
+        stack = []
+        for name, spec_json in stack_json.items():
+            spec = json.loads(spec_json)
+
+            if name != "raw_env":  # EnvSpecs do not have args, o   nly kwargs
+                for k, v in enumerate(spec['args']):  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
+                    if type(v) == list:
+                        for i, x in enumerate(v):
+                            if type(x) == list:
+                                spec['args'][k][i] = tuple(x)
+                        spec['args'][k] = tuple(v)
+                spec['args'] = tuple(spec['args'])
+
+            for k, v in spec['kwargs'].items():  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
+                if type(v) == list:
+                    for i, x in enumerate(v):
+                        if type(x) == list:
+                            spec['kwargs'][k][i] = tuple(x)
+                    spec['kwargs'][k] = tuple(v)
+
+            for k, v in spec['kwargs'].items():
+                if type(v) == str and v[:7] == 'lambda ':
+                    if eval_ok:
+                        spec['kwargs'][k] = eval(v)
+                    else:
+                        raise error.Error("Cannot eval lambda functions. Set eval_ok=True to allow this.")
+
+            if name == "raw_env":
+                for key in ['namespace', 'name', 'version']:  # remove args where init is set to False
+                    spec.pop(key)
+                spec = EnvSpec(**spec)
+            else:
+                spec = WrapperSpec(**spec)
+            stack.append(spec)
+
+        return tuple(stack)
+        #WrapperSpec(*list(json.loads(stack_json['wrapper_4'].replace("\'", "\"")).values()))
+
+    def __str__(self) -> None:
+        table = '\n'
+        table += f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}\n"
+        table += "-"*100 + "\n"
+        for i in range(len(self.stack)):
+            spec = self.stack[-1 - i]
+            if type(spec) == WrapperSpec:
+                table += f"Wrapper {i-1}:{'' :<6} |  {spec.name :<25} |  {spec.kwargs}\n"
+            else:
+                table += f"Raw Environment: |  {spec.id :<25} |  {spec.kwargs}\n"
+        return table
 
 
 def _check_namespace_exists(ns: Optional[str]):
@@ -521,12 +620,11 @@ def register(
 
 
 def make(
-    id: Union[str, EnvSpec],
+    id: Union[str, EnvSpec, SpecStack],
     max_episode_steps: Optional[int] = None,
     autoreset: bool = False,
     apply_api_compatibility: Optional[bool] = None,
     disable_env_checker: Optional[bool] = None,
-    allow_default_wrappers: Optional[bool] = True,
     **kwargs,
 ) -> Env:
     """Create an environment according to the given ID.
@@ -555,9 +653,14 @@ def make(
     Raises:
         Error: If the ``id`` doesn't exist then an error is raised
     """
+    if type(id) == SpecStack:
+        spec_stack = id
+        id = spec_stack.stack[-1]  # if a SpecStack is passed, use the EnvSpec in the stack
     if isinstance(id, EnvSpec):
+        spec_stack = None
         spec_ = id
     else:
+        spec_stack = None
         module, id = (None, id) if ":" not in id else id.split(":")
         if module is not None:
             try:
@@ -659,7 +762,20 @@ def make(
     spec_.kwargs = _kwargs
     env.unwrapped.spec = spec_
 
-    if allow_default_wrappers:
+    if type(spec_stack) == SpecStack:
+        for i in range(len(spec_stack) - 1):
+            ws = spec_stack[-2 - i]
+            if ws.entry_point is None:
+                raise error.Error(f"{ws.id} registered but entry_point is not specified")
+            elif callable(ws.entry_point):
+                env_creator = ws.entry_point
+            else:
+                # Assume it's a string
+                env_creator = load(ws.entry_point)
+
+            env = env_creator(env, *ws.args, **ws.kwargs)
+
+    else:
         # Add step API wrapper
         if apply_api_compatibility is True or (
             apply_api_compatibility is None and spec_.apply_api_compatibility is True
