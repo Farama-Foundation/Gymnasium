@@ -235,10 +235,10 @@ class BlackjackEnv(gym.Env):
 
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[toy_text]`"
-            )
+            ) from e
 
         player_sum, dealer_card_value, usable_ace = self._get_obs()
         screen_width, screen_height = 600, 500

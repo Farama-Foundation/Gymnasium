@@ -123,7 +123,7 @@ class AsyncVectorEnv(VectorEnv):
                 self.observations = read_from_shared_memory(
                     self.single_observation_space, _obs_buffer, n=self.num_envs
                 )
-            except CustomSpaceError:
+            except CustomSpaceError as e:
                 raise ValueError(
                     "Using `shared_memory=True` in `AsyncVectorEnv` "
                     "is incompatible with non-standard Gymnasium observation spaces "
@@ -131,7 +131,7 @@ class AsyncVectorEnv(VectorEnv):
                     "only compatible with default Gymnasium spaces (e.g. `Box`, "
                     "`Tuple`, `Dict`) for batching. Set `shared_memory=False` "
                     "if you use custom observation spaces."
-                )
+                ) from e
         else:
             _obs_buffer = None
             self.observations = create_empty_array(
