@@ -180,10 +180,10 @@ class MountainCarEnv(gym.Env):
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
 
         if self.screen is None:
             pygame.init()

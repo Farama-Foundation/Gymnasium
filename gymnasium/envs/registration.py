@@ -563,7 +563,7 @@ def make(
                 raise ModuleNotFoundError(
                     f"{e}. Environment registration via importing a module failed. "
                     f"Check whether '{module}' contains env registration and can be imported."
-                )
+                ) from e
         spec_ = registry.get(id)
 
         ns, name, version = parse_env_id(id)
@@ -647,7 +647,7 @@ def make(
                 f"You passed render_mode='human' although {id} doesn't implement human-rendering natively. "
                 "Gym tried to apply the HumanRendering wrapper but it looks like your environment is using the old "
                 "rendering API, which is not supported by the HumanRendering wrapper."
-            )
+            ) from e
         else:
             raise e
 

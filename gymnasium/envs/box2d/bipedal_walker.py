@@ -21,10 +21,10 @@ try:
         polygonShape,
         revoluteJointDef,
     )
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         "box2D is not installed, run `pip install gymnasium[box2d]`"
-    )
+    ) from e
 
 
 if TYPE_CHECKING:
@@ -621,10 +621,10 @@ class BipedalWalker(gym.Env, EzPickle):
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[box2d]`"
-            )
+            ) from e
 
         if self.screen is None and self.render_mode == "human":
             pygame.init()

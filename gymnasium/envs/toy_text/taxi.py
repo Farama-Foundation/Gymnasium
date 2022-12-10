@@ -325,10 +325,10 @@ class TaxiEnv(Env):
     def _render_gui(self, mode):
         try:
             import pygame  # dependency to pygame only if rendering with human
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[toy_text]`"
-            )
+            ) from e
 
         if self.window is None:
             pygame.init()

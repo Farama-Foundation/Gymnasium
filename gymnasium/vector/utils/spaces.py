@@ -180,8 +180,9 @@ def _iterate_discrete(space, items):
 def _iterate_base(space, items):
     try:
         return iter(items)
-    except TypeError:
-        raise TypeError(f"Unable to iterate over the following elements: {items}")
+    except TypeError as e:
+        raise TypeError(f"Unable to iterate over the following elements: "
+                        f"{items}") from e
 
 
 @iterate.register(Tuple)
