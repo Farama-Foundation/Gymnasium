@@ -257,6 +257,19 @@ class SpecStack:
         for i in range(len(self)):
             spec = self.stack[-1 - i]
             if type(spec) == WrapperSpec:
+
+                spec = copy.deepcopy(
+                    spec)  # we need to make a copy so we don't modify the original spec in case of callables
+                for k, v in spec.kwargs.items():
+                    if callable(v):
+                        try:
+                            str_repr = str(inspect.getsourcelines(v)[0]).strip("['\\n']").split(" = ")[
+                                1]  # https://stackoverflow.com/a/30984012
+                            str_repr = re.search(r", (.*)\)$", str_repr).group(1)
+                            spec.kwargs[k] = str_repr
+                        except OSError:
+                            spec.kwargs[k] = "lambda function (source code not available)"
+
                 table += f"Wrapper {i-1}:{'' :<6} |  {spec.name :<25} |  {spec.kwargs}\n"
             else:
                 table += f"Raw Environment: |  {spec.id :<25} |  {spec.kwargs}\n"
