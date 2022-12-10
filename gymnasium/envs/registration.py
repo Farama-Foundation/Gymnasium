@@ -193,7 +193,7 @@ class SpecStack:
 
 
     def serialise_spec_stack(self) -> str:
-        num_layers = len(self.stack)
+        num_layers = len(self)
         stack_json = {}
         for i, spec in enumerate(self.stack):
             spec = copy.deepcopy(spec)  # we need to make a copy so we don't modify the original spec in case of callables
@@ -254,13 +254,16 @@ class SpecStack:
         table = '\n'
         table += f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}\n"
         table += "-"*100 + "\n"
-        for i in range(len(self.stack)):
+        for i in range(len(self)):
             spec = self.stack[-1 - i]
             if type(spec) == WrapperSpec:
                 table += f"Wrapper {i-1}:{'' :<6} |  {spec.name :<25} |  {spec.kwargs}\n"
             else:
                 table += f"Raw Environment: |  {spec.id :<25} |  {spec.kwargs}\n"
         return table
+
+    def __len__(self):
+        return len(self.stack)
 
 
 def _check_namespace_exists(ns: Optional[str]):
@@ -656,7 +659,8 @@ def make(
     if type(id) == SpecStack:
         spec_stack = id
         id = spec_stack.stack[-1]  # if a SpecStack is passed, use the EnvSpec in the stack
-    if isinstance(id, EnvSpec):
+        spec_ = id
+    elif isinstance(id, EnvSpec):
         spec_stack = None
         spec_ = id
     else:
@@ -763,8 +767,8 @@ def make(
     env.unwrapped.spec = spec_
 
     if type(spec_stack) == SpecStack:
-        for i in range(len(spec_stack) - 1):
-            ws = spec_stack[-2 - i]
+        for i in range(len(spec_stack.stack) - 1):
+            ws = spec_stack.stack[-2 - i]
             if ws.entry_point is None:
                 raise error.Error(f"{ws.id} registered but entry_point is not specified")
             elif callable(ws.entry_point):

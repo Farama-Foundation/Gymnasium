@@ -36,21 +36,17 @@ env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
 env = gym.wrappers.ResizeObservation(env, (84, 84))
 
 # Example 1: Generate a spec stack from a [wrapped] environment
-stack = SpecStack(env)             # generation is an easy one-liner
-print(stack)                       # string representation is a nice table    todo: make callables readable
-readable_stack = stack.stack_json  # serialise the stack to a readable json string
-gym.make(stack)
+stack_from_env = SpecStack(env)             # generation is an easy one-liner
+print(stack_from_env)                       # string representation is a nice table    todo: make callables readable
+readable_stack = stack_from_env.stack_json  # serialise the stack to a readable json string
+gym.make(stack_from_env)
 
 # Example 2: Generate a spec stack from a dict representation
-stack = SpecStack(stack.stack_json)
-print(stack)
-readable_stack = stack.stack_json
-gym.make(stack)
+stack_from_dict = SpecStack(stack_from_env.stack_json)
+print(stack_from_dict)
+readable_stack = stack_from_dict.stack_json
+gym.make(stack_from_dict)
 
-# reconstruct the environment
-#reconstructed_env = reconstruct_env(deserialised_stack)
-#assert spec_stack(reconstructed_env) == spec_stack(env)
+print(SpecStack(gym.make(SpecStack(env))))
 
 print("Done")
-
-# todo: make ezpickle calls into kwargs not args
