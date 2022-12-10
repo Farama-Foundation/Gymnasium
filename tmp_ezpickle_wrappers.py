@@ -1,6 +1,9 @@
+import copy
 import dataclasses
 import importlib
+import inspect
 import json
+import re
 from typing import Any, Union
 
 import gymnasium as gym
@@ -27,7 +30,12 @@ def spec_stack(self) -> tuple[Union[WrapperSpec, EnvSpec]]:
 def serialise_spec_stack(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> str:
     num_layers = len(stack)
     stack_json = {}
-    for i, spec in enumerate(stack):
+    for i, spec in enumerate(stack): # we need to make a copy so we don't modify the original spec in case of callables
+        for k, v in spec.kwargs.items():
+            if callable(v):
+                str_repr = str(inspect.getsourcelines(v)[0]).strip("['\\n']").split(" = ")[1]  # https://stackoverflow.com/a/30984012
+                str_repr = re.search(r", (.*)\)$", str_repr).group(1)
+                spec.kwargs[k] = str_repr
         if i == num_layers - 1:
             layer = "raw_env"
         else:
@@ -96,7 +104,7 @@ def load(name: str) -> callable:
     return fn
 
 
-def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> gym.Env:
+def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]], eval_ok: bool = False) -> gym.Env:
     env = gym.make(id=stack[-1], allow_default_wrappers=False)
     for i in range(len(stack) - 1):
         ws = stack[-2 - i]
@@ -107,6 +115,14 @@ def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> gym.Env:
         else:
             # Assume it's a string
             env_creator = load(ws.entry_point)
+
+        for k, v in ws.kwargs.items():
+            if type(v) == str and v[:7] == 'lambda ':
+                if eval_ok:
+                    ws.kwargs[k] = eval(v)
+                else:
+                    raise gym.error.Error("Cannot eval lambda functions. Set eval_ok=True to allow this.")
+
         env = env_creator(env, *ws.args, **ws.kwargs)
 
     return env
@@ -115,7 +131,7 @@ def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> gym.Env:
 # construct the environment
 env = gym.make("CartPole-v1")
 env = gym.wrappers.TimeAwareObservation(env)
-#env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
+env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
 env = gym.wrappers.ResizeObservation(env, (84, 84))
 
 # get the spec stack
@@ -129,7 +145,7 @@ deserialised_stack = deserialise_spec_stack(serialised_stack)
 assert deserialised_stack == stack
 
 # reconstruct the environment
-reconstructed_env = reconstruct_env(deserialised_stack)
+reconstructed_env = reconstruct_env(deserialised_stack, eval_ok=True)
 assert spec_stack(reconstructed_env) == spec_stack(env)
 
 # pretty print the spec stack
