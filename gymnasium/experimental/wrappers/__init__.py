@@ -34,9 +34,9 @@ from gymnasium.experimental.wrappers.stateful_action import StickyActionV0
 from gymnasium.experimental.wrappers.stateful_observation import (
     TimeAwareObservationV0,
     DelayObservationV0,
-    AtariPreprocessingV0,
     FrameStackObservationV0,
 )
+from gymnasium.experimental.wrappers.atari_preprocessing import AtariPreprocessingV0
 from gymnasium.experimental.wrappers.common import (
     PassiveEnvCheckerV0,
     OrderEnforcingV0,

@@ -64,8 +64,6 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - :class:`experimental.wrappers.FrameStackObservationV0`
     * - ``supersuit.delay_observations_v0``
       - :class:`experimental.wrappers.DelayObservationV0`
-    * - :class:`wrappers.AtariPreprocessing`
-      - :class:`experimental.wrappers.AtariPreprocessingV0`
 ```
 
 ### Action Wrappers
@@ -124,6 +122,8 @@ Gymnasium already contains a large collection of wrappers, but we believe that t
       - Moved to `shimmy <https://github.com/Farama-Foundation/Shimmy/blob/main/shimmy/openai_gym_compatibility.py>`_
     * - :class:`wrappers.RecordEpisodeStatistics`
       - :class:`experimental.wrappers.RecordEpisodeStatisticsV0`
+    * - :class:`wrappers.AtariPreprocessing`
+      - :class:`experimental.wrappers.AtariPreprocessingV0`
 ```
 
 ### Rendering Wrappers

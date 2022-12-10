@@ -1,3 +1,5 @@
+"""Test suite for JaxToNumpyV0."""
+
 import jax.numpy as jnp
 import numpy as np
 import pytest
@@ -40,10 +42,12 @@ def test_roundtripping(value, expected_value):
 
 
 def jax_reset_func(self, seed=None, options=None):
+    """A jax-based reset function."""
     return jnp.array([1.0, 2.0, 3.0]), {"data": jnp.array([1, 2, 3])}
 
 
 def jax_step_func(self, action):
+    """A jax-based step function."""
     assert isinstance(action, jnp.DeviceArray), type(action)
     return (
         jnp.array([1, 2, 3]),
@@ -54,7 +58,8 @@ def jax_step_func(self, action):
     )
 
 
-def test_jax_to_numpy():
+def test_jax_to_numpy_wrapper():
+    """Tests the ``JaxToNumpyV0`` wrapper."""
     jax_env = GenericTestEnv(reset_func=jax_reset_func, step_func=jax_step_func)
 
     # Check that the reset and step for jax environment are as expected

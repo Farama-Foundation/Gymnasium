@@ -1,3 +1,6 @@
+"""Functions for registering environments within gymnasium using public functions ``make``, ``register`` and ``spec``."""
+from __future__ import annotations
+
 import contextlib
 import copy
 import difflib
@@ -8,18 +11,7 @@ import sys
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import (
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Sequence,
-    SupportsFloat,
-    Tuple,
-    Union,
-    overload,
-)
+from typing import Any, Callable, Iterable, Sequence, SupportsFloat, overload
 
 import numpy as np
 
@@ -53,7 +45,7 @@ ENV_ID_RE = re.compile(
 
 
 def load(name: str) -> callable:
-    """Loads an environment with name and returns an environment creation function
+    """Loads an environment with name and returns an environment creation function.
 
     Args:
         name: The environment name
@@ -67,7 +59,7 @@ def load(name: str) -> callable:
     return fn
 
 
-def parse_env_id(id: str) -> Tuple[Optional[str], str, Optional[int]]:
+def parse_env_id(id: str) -> tuple[str | None, str, int | None]:
     """Parse environment ID string format.
 
     This format is true today, but it's *not* an official spec.
@@ -98,7 +90,7 @@ def parse_env_id(id: str) -> Tuple[Optional[str], str, Optional[int]]:
     return namespace, name, version
 
 
-def get_env_id(ns: Optional[str], name: str, version: Optional[int]) -> str:
+def get_env_id(ns: str | None, name: str, version: int | None) -> str:
     """Get the full env ID given a name and (optional) version and namespace. Inverse of :meth:`parse_env_id`.
 
     Args:
@@ -109,7 +101,6 @@ def get_env_id(ns: Optional[str], name: str, version: Optional[int]) -> str:
     Returns:
         The environment id
     """
-
     full_name = name
     if version is not None:
         full_name += f"-v{version}"
@@ -134,14 +125,14 @@ class EnvSpec:
     """
 
     id: str
-    entry_point: Union[Callable, str]
+    entry_point: Callable | str
 
     # Environment attributes
-    reward_threshold: Optional[float] = field(default=None)
+    reward_threshold: float | None = field(default=None)
     nondeterministic: bool = field(default=False)
 
     # Wrappers
-    max_episode_steps: Optional[int] = field(default=None)
+    max_episode_steps: int | None = field(default=None)
     order_enforce: bool = field(default=True)
     autoreset: bool = field(default=False)
     disable_env_checker: bool = field(default=False)
@@ -151,20 +142,22 @@ class EnvSpec:
     kwargs: dict = field(default_factory=dict)
 
     # post-init attributes
-    namespace: Optional[str] = field(init=False)
+    namespace: str | None = field(init=False)
     name: str = field(init=False)
-    version: Optional[int] = field(init=False)
+    version: int | None = field(init=False)
 
     def __post_init__(self):
+        """Calls after the spec is created to extract the namespace, name and version from the id."""
         # Initialize namespace, name, version
         self.namespace, self.name, self.version = parse_env_id(self.id)
 
-    def make(self, **kwargs) -> Env:
+    def make(self, **kwargs: Any) -> Env:
+        """Calls ``make`` using the environment spec and any keyword arguments."""
         # For compatibility purposes
         return make(self, **kwargs)
 
 
-def _check_namespace_exists(ns: Optional[str]):
+def _check_namespace_exists(ns: str | None):
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
     if ns is None:
         return
@@ -186,7 +179,7 @@ def _check_namespace_exists(ns: Optional[str]):
     raise error.NamespaceNotFound(f"Namespace {ns} not found. {suggestion_msg}")
 
 
-def _check_name_exists(ns: Optional[str], name: str):
+def _check_name_exists(ns: str | None, name: str):
     """Check if an env exists in a namespace. If it doesn't, print a helpful error message."""
     _check_namespace_exists(ns)
     names = {spec_.name for spec_ in registry.values() if spec_.namespace == ns}
@@ -203,8 +196,9 @@ def _check_name_exists(ns: Optional[str], name: str):
     )
 
 
-def _check_version_exists(ns: Optional[str], name: str, version: Optional[int]):
+def _check_version_exists(ns: str | None, name: str, version: int | None):
     """Check if an env version exists in a namespace. If it doesn't, print a helpful error message.
+
     This is a complete test whether an environment identifier is valid, and will provide the best available hints.
 
     Args:
@@ -258,8 +252,9 @@ def _check_version_exists(ns: Optional[str], name: str, version: Optional[int]):
         )
 
 
-def find_highest_version(ns: Optional[str], name: str) -> Optional[int]:
-    version: List[int] = [
+def find_highest_version(ns: str | None, name: str) -> int | None:
+    """Finds the highest registered version of the environment in the registry."""
+    version: list[int] = [
         spec_.version
         for spec_ in registry.values()
         if spec_.namespace == ns and spec_.name == name and spec_.version is not None
@@ -268,6 +263,11 @@ def find_highest_version(ns: Optional[str], name: str) -> Optional[int]:
 
 
 def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
+    """Load modules (plugins) using the gymnasium entry points == to `entry_points`.
+
+    Args:
+        entry_point: The string for the entry point.
+    """
     # Load third-party environments
     for plugin in metadata.entry_points(group=entry_point):
         # Python 3.8 doesn't support plugin.module, plugin.attr
@@ -323,37 +323,37 @@ def make(id: EnvSpec, **kwargs) -> Env: ...
 # Classic control
 # ----------------------------------------
 @overload
-def make(id: Literal["CartPole-v0", "CartPole-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["CartPole-v0", "CartPole-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["MountainCar-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["MountainCar-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["Pendulum-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["Pendulum-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 
 
 # Box2d
 # ----------------------------------------
 @overload
-def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 
 
 # Toy Text
 # ----------------------------------------
 @overload
-def make(id: Literal["Blackjack-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Blackjack-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["FrozenLake-v1", "FrozenLake8x8-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["FrozenLake-v1", "FrozenLake8x8-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["CliffWalking-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["CliffWalking-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["Taxi-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Taxi-v3"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 
 
 # Mujoco
@@ -376,8 +376,8 @@ def make(id: Literal[
 
 
 # Global registry of environments. Meant to be accessed through `register` and `make`
-registry: Dict[str, EnvSpec] = {}
-current_namespace: Optional[str] = None
+registry: dict[str, EnvSpec] = {}
+current_namespace: str | None = None
 
 
 def _check_spec_register(spec: EnvSpec):
@@ -445,6 +445,7 @@ def _check_metadata(metadata_: dict):
 
 @contextlib.contextmanager
 def namespace(ns: str):
+    """Context manager for modifying the current namespace."""
     global current_namespace
     old_namespace = current_namespace
     current_namespace = ns
@@ -454,10 +455,10 @@ def namespace(ns: str):
 
 def register(
     id: str,
-    entry_point: Union[Callable, str],
-    reward_threshold: Optional[float] = None,
+    entry_point: Callable | str,
+    reward_threshold: float | None = None,
     nondeterministic: bool = False,
-    max_episode_steps: Optional[int] = None,
+    max_episode_steps: int | None = None,
     order_enforce: bool = True,
     autoreset: bool = False,
     disable_env_checker: bool = False,
@@ -521,11 +522,11 @@ def register(
 
 
 def make(
-    id: Union[str, EnvSpec],
-    max_episode_steps: Optional[int] = None,
+    id: str | EnvSpec,
+    max_episode_steps: int | None = None,
     autoreset: bool = False,
-    apply_api_compatibility: Optional[bool] = None,
-    disable_env_checker: Optional[bool] = None,
+    apply_api_compatibility: bool | None = None,
+    disable_env_checker: bool | None = None,
     **kwargs,
 ) -> Env:
     """Create an environment according to the given ID.
@@ -706,9 +707,9 @@ def spec(env_id: str) -> EnvSpec:
 def pprint_registry(
     _registry: dict = registry,
     num_cols: int = 3,
-    exclude_namespaces: Optional[List[str]] = None,
+    exclude_namespaces: list[str] | None = None,
     disable_print: bool = False,
-) -> Optional[str]:
+) -> str | None:
     """Pretty print the environments in the registry.
 
     Args:
@@ -718,7 +719,6 @@ def pprint_registry(
         disable_print: Whether to return a string of all the namespaces and environment IDs
             instead of printing it to console.
     """
-
     # Defaultdict to store environment names according to namespace.
     namespace_envs = defaultdict(lambda: [])
     max_justify = float("-inf")

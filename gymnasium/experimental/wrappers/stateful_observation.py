@@ -35,7 +35,9 @@ class DelayObservationV0(gym.ObservationWrapper):
                          returned observation is an array of zeros with the
                          same shape of the observation space.
         """
-        assert isinstance(env.observation_space, (Box, MultiBinary, MultiDiscrete))
+        assert isinstance(
+            env.observation_space, (Box, MultiBinary, MultiDiscrete)
+        ), type(env.observation_space)
         assert 0 < delay
 
         self.delay: Final[int] = delay
@@ -300,9 +302,3 @@ class FrameStackObservationV0(gym.Wrapper):
                 create_empty_array(self.env.observation_space, n=self.stack_size),
             )
         )
-
-
-class AtariPreprocessingV0(gym.Wrapper):
-    """Preprocessing wrapper for atari environments."""
-
-    pass
