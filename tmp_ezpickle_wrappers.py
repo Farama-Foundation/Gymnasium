@@ -30,7 +30,8 @@ def spec_stack(self) -> tuple[Union[WrapperSpec, EnvSpec]]:
 def serialise_spec_stack(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> str:
     num_layers = len(stack)
     stack_json = {}
-    for i, spec in enumerate(stack): # we need to make a copy so we don't modify the original spec in case of callables
+    for i, spec in enumerate(stack):
+        spec = copy.deepcopy(spec)  # we need to make a copy so we don't modify the original spec in case of callables
         for k, v in spec.kwargs.items():
             if callable(v):
                 str_repr = str(inspect.getsourcelines(v)[0]).strip("['\\n']").split(" = ")[1]  # https://stackoverflow.com/a/30984012
@@ -45,7 +46,7 @@ def serialise_spec_stack(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> str:
     return stack_json
 
 
-def deserialise_spec_stack(stack_json: str) -> tuple[Union[WrapperSpec, EnvSpec]]:
+def deserialise_spec_stack(stack_json: str, eval_ok: bool = False) -> tuple[Union[WrapperSpec, EnvSpec]]:
     stack = []
     for name, spec_json in stack_json.items():
         spec = json.loads(spec_json)
@@ -65,6 +66,13 @@ def deserialise_spec_stack(stack_json: str) -> tuple[Union[WrapperSpec, EnvSpec]
                     if type(x) == list:
                         spec['kwargs'][k][i] = tuple(x)
                 spec['kwargs'][k] = tuple(v)
+
+        for k, v in spec['kwargs'].items():
+            if type(v) == str and v[:7] == 'lambda ':
+                if eval_ok:
+                    spec['kwargs'][k] = eval(v)
+                else:
+                    raise gym.error.Error("Cannot eval lambda functions. Set eval_ok=True to allow this.")
 
         if name == "raw_env":
             for key in ['namespace', 'name', 'version']:  # remove args where init is set to False
@@ -104,7 +112,7 @@ def load(name: str) -> callable:
     return fn
 
 
-def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]], eval_ok: bool = False) -> gym.Env:
+def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> gym.Env:
     env = gym.make(id=stack[-1], allow_default_wrappers=False)
     for i in range(len(stack) - 1):
         ws = stack[-2 - i]
@@ -116,13 +124,6 @@ def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]], eval_ok: bool = F
             # Assume it's a string
             env_creator = load(ws.entry_point)
 
-        for k, v in ws.kwargs.items():
-            if type(v) == str and v[:7] == 'lambda ':
-                if eval_ok:
-                    ws.kwargs[k] = eval(v)
-                else:
-                    raise gym.error.Error("Cannot eval lambda functions. Set eval_ok=True to allow this.")
-
         env = env_creator(env, *ws.args, **ws.kwargs)
 
     return env
@@ -131,7 +132,7 @@ def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]], eval_ok: bool = F
 # construct the environment
 env = gym.make("CartPole-v1")
 env = gym.wrappers.TimeAwareObservation(env)
-env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
+#env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
 env = gym.wrappers.ResizeObservation(env, (84, 84))
 
 # get the spec stack
@@ -141,11 +142,11 @@ stack = spec_stack(env)
 serialised_stack = serialise_spec_stack(stack)
 
 # deserialise the spec stack
-deserialised_stack = deserialise_spec_stack(serialised_stack)
+deserialised_stack = deserialise_spec_stack(serialised_stack, eval_ok=True)
 assert deserialised_stack == stack
 
 # reconstruct the environment
-reconstructed_env = reconstruct_env(deserialised_stack, eval_ok=True)
+reconstructed_env = reconstruct_env(deserialised_stack)
 assert spec_stack(reconstructed_env) == spec_stack(env)
 
 # pretty print the spec stack
