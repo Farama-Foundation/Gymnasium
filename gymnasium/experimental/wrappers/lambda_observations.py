@@ -445,7 +445,7 @@ class PixelObservationV0(LambdaObservationV0):
         assert env.render_mode is not None and env.render_mode != "human"
         env.reset()
         pixels = env.render()
-        assert isinstance(pixels, np.ndarray)
+        assert pixels is not None and isinstance(pixels, np.ndarray)
         pixel_space = Box(low=0, high=255, shape=pixels.shape, dtype=np.uint8)
 
         if pixels_only:
