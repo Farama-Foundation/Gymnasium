@@ -21,19 +21,19 @@ class WrapperSpec:
 
 class SpecStack:
     def __init__(self, env):
-        if type(env) == str:
+        if type(env) == dict:
             self.stack = self.deserialise_spec_stack(env)
             self.stack_json = env
-        else:
+        elif isinstance(env, Wrapper) or isinstance(env, gym.Env):
             self.stack = self.spec_stack(env)
             self.stack_json = self.serialise_spec_stack()
 
-    def spec_stack(self, env) -> tuple[Union[WrapperSpec, EnvSpec]]:
-        wrapper_spec = WrapperSpec(type(env).__name__, env.__module__ + ":" + type(env).__name__, env._ezpickle_args, env._ezpickle_kwargs)
-        if isinstance(env.env, Wrapper):
-             return (wrapper_spec,) + self.spec_stack(env.env)
+    def spec_stack(self, outer_wrapper) -> tuple[Union[WrapperSpec, EnvSpec]]:
+        wrapper_spec = WrapperSpec(type(outer_wrapper).__name__, outer_wrapper.__module__ + ":" + type(outer_wrapper).__name__, outer_wrapper._ezpickle_args, outer_wrapper._ezpickle_kwargs)
+        if isinstance(outer_wrapper.env, Wrapper):
+             return (wrapper_spec,) + self.spec_stack(outer_wrapper.env)
         else:
-             return (wrapper_spec,) + (env.env.spec,)
+             return (wrapper_spec,) + (outer_wrapper.env.spec,)
 
 
     def serialise_spec_stack(self) -> str:
@@ -126,20 +126,18 @@ def reconstruct_env(stack) -> gym.Env:
 # construct the environment
 env = gym.make("CartPole-v1")
 env = gym.wrappers.TimeAwareObservation(env)
-#env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
+env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
 env = gym.wrappers.ResizeObservation(env, (84, 84))
 
-# get the spec stack
-stack = SpecStack(env)
+# Example 1: Generate a spec stack from a [wrapped] environment
+stack = SpecStack(env)             # generation is an easy one-liner
+print(stack)                       # string representation is a nice table    todo: make callables readable
+readable_stack = stack.stack_json  # serialise the stack to a readable json string
 
-# jsonise the spec stack
-serialised_stack = stack.stack_json
-
+# Example 2: Generate a spec stack from a dict representation
+stack = SpecStack(stack.stack_json)
 print(stack)
-
-# deserialise the spec stack
-#deserialised_stack = deserialise_spec_stack(serialised_stack, eval_ok=True)
-#assert deserialised_stack == stack
+readable_stack = stack.stack_json
 
 # reconstruct the environment
 #reconstructed_env = reconstruct_env(deserialised_stack)
