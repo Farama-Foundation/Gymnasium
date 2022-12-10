@@ -1,33 +1,5 @@
-import copy
-import dataclasses
-import importlib
-import inspect
-import json
-import re
-from typing import Any, Union
-
 import gymnasium as gym
-from gymnasium import Wrapper
-from gymnasium.envs.registration import EnvSpec, load, SpecStack
-
-
-
-def reconstruct_env(stack) -> gym.Env:
-    env = gym.make(id=stack[-1], allow_default_wrappers=False)
-    for i in range(len(stack) - 1):
-        ws = stack[-2 - i]
-        if ws.entry_point is None:
-            raise gym.error.Error(f"{ws.id} registered but entry_point is not specified")
-        elif callable(ws.entry_point):
-            env_creator = ws.entry_point
-        else:
-            # Assume it's a string
-            env_creator = load(ws.entry_point)
-
-        env = env_creator(env, *ws.args, **ws.kwargs)
-
-    return env
-
+from gymnasium.envs.registration import SpecStack
 
 # construct the environment
 env = gym.make("CartPole-v1")
