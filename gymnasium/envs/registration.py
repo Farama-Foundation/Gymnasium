@@ -183,6 +183,10 @@ class SpecStack:
         elif isinstance(env, Wrapper) or isinstance(env, Env):
             self.stack = self.spec_stack(env)
             self.stack_json = self.serialise_spec_stack()
+        else:
+            raise TypeError(
+                f"Expected a dict or an instance of `gym.Env` or `gym.Wrapper`, got {type(env)}"
+            )
 
     def spec_stack(self, outer_wrapper) -> tuple[Union[WrapperSpec, EnvSpec]]:
         wrapper_spec = WrapperSpec(type(outer_wrapper).__name__, outer_wrapper.__module__ + ":" + type(outer_wrapper).__name__, outer_wrapper._ezpickle_args, outer_wrapper._ezpickle_kwargs)
