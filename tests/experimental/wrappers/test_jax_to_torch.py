@@ -1,10 +1,12 @@
+"""Test suite for TorchToJaxV0."""
+
 import jax.numpy as jnp
 import numpy as np
 import pytest
 import torch
 
 from gymnasium.experimental.wrappers import JaxToTorchV0
-from gymnasium.experimental.wrappers.torch_to_jax import jax_to_torch, torch_to_jax
+from gymnasium.experimental.wrappers.jax_to_torch import jax_to_torch, torch_to_jax
 from tests.testing_env import GenericTestEnv
 
 
@@ -76,7 +78,8 @@ def _jax_step_func(self, action):
     )
 
 
-def test_jax_to_torch():
+def test_jax_to_torch_wrapper():
+    """Tests the `JaxToTorchV0` wrapper."""
     env = GenericTestEnv(reset_func=_jax_reset_func, step_func=_jax_step_func)
 
     # Check that the reset and step for jax environment are as expected
