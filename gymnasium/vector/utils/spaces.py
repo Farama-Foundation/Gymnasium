@@ -182,7 +182,7 @@ def _iterate_base(space, items):
         return iter(items)
     except TypeError as e:
         raise TypeError(
-            f"Unable to iterate over the following elements: " f"{items}"
+            f"Unable to iterate over the following elements: {items}"
         ) from e
 
 
