@@ -113,7 +113,7 @@ def check_reset_seed(env: gym.Env):
             raise AssertionError(
                 "The environment cannot be reset with a random seed, even though `seed` or `kwargs` appear in the signature. "
                 f"This should never happen, please report this issue. The error was: {e}"
-            )
+            ) from e
 
         seed_param = signature.parameters.get("seed")
         # Check the default value is None
@@ -149,7 +149,7 @@ def check_reset_options(env: gym.Env):
             raise AssertionError(
                 "The environment cannot be reset with options, even though `options` or `**kwargs` appear in the signature. "
                 f"This should never happen, please report this issue. The error was: {e}"
-            )
+            ) from e
     else:
         raise gym.error.Error(
             "The `reset` method does not provide an `options` or `**kwargs` keyword argument."

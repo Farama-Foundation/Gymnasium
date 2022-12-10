@@ -89,10 +89,10 @@ class HumanRendering(gym.Wrapper):
         """Fetch the last frame from the base environment and render it to the screen."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[box2d]`"
-            )
+            ) from e
         if self.env.render_mode == "rgb_array_list":
             last_rgb_array = self.env.render()
             assert isinstance(last_rgb_array, list)
