@@ -8,7 +8,7 @@ from typing import Any, Union
 
 import gymnasium as gym
 from gymnasium import Wrapper
-from gymnasium.envs.registration import EnvSpec
+from gymnasium.envs.registration import EnvSpec, load
 
 
 @dataclasses.dataclass
@@ -94,23 +94,6 @@ def pprint_spec_stack(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> None:
             print(f"Wrapper {i-1}:{'' :<6} |  {spec.name :<25} |  {spec.kwargs}")
         else:
             print(f"Raw Environment: |  {spec.id :<25} |  {spec.kwargs}")
-
-
-def load(name: str) -> callable:
-    """COPIED FROM registration.py
-    Loads an environment with name and returns an environment creation function
-
-    Args:
-        name: The environment name
-
-    Returns:
-        Calls the environment constructor
-    """
-    mod_name, attr_name = name.split(":")
-    mod = importlib.import_module(mod_name)
-    fn = getattr(mod, attr_name)
-    return fn
-
 
 def reconstruct_env(stack: tuple[Union[WrapperSpec, EnvSpec]]) -> gym.Env:
     env = gym.make(id=stack[-1], allow_default_wrappers=False)
