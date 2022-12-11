@@ -37,7 +37,7 @@ __all__ = [
     "logger",
     "experimental",
 ]
-__version__ = "0.27.0"
+__version__ = "0.26.3"
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
 # SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using
