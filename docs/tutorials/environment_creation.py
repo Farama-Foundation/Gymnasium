@@ -508,3 +508,26 @@ class GridWorldEnv(gym.Env):
 #    env = gymnasium.make('gym_examples/GridWorld-v0')
 #    wrapped_env = RelativePosition(env)
 #    print(wrapped_env.reset())     # E.g.  [-3  3], {}
+#
+# Saving your environment for reproducibility
+# --------------
+#
+# It is important to keep a complete record of the environment you use, including wrappers, so that you can reproduce your results.
+# To do this, you can use ``spec_stack = gymnasium.SpecStack(env)`` which automatically records the environment and all wrappers.
+# This record can be saved to a file via ``json.dump(spec_stack, open("my_environment_config.json", "w"))``.
+# To remake the environment, you can use ``gymnasium.make(SpecStack(json.load(open("my_environment_config.json", "r"))))``.
+#
+# .. code:: python
+#
+#    import gym_examples
+#    from gym_examples.wrappers import RelativePosition
+#
+#    env = gymnasium.make('gym_examples/GridWorld-v0')
+#    wrapped_env = RelativePosition(env)
+#    spec_stack = gymnasium.SpecStack(wrapped_env)
+#
+#    json.dump(spec_stack, open("my_environment_config.json", "w"))
+#    stack_from_json = SpecStack(json.load(open("my_environment_config.json", "r")))
+#    print(stack_from_json)     # Visually inspect the stack
+#    gym.make(stack_from_json)
+#
