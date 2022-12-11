@@ -199,7 +199,8 @@ class SpecStack:
                 f"Expected a dict or an instance of `gym.Env` or `gym.Wrapper`, got {type(env)}"
             )
 
-    def spec_stack(self, outer_wrapper: Union[Wrapper, Env]) -> tuple[Union[WrapperSpec, EnvSpec]]:
+    def spec_stack(self, outer_wrapper: Union[Wrapper, Env]) -> Union[
+        tuple[WrapperSpec, ...], tuple[WrapperSpec, Optional[EnvSpec]]]:
         """Generates the specification stack for a given [wrapped] environment.
 
         Args:
