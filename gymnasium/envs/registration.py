@@ -256,9 +256,9 @@ class SpecStack:
         for name, spec_json in stack_json.items():
             spec = json.loads(spec_json)
 
-            if name != "raw_env":  # EnvSpecs do not have args, o   nly kwargs
+            if name != "raw_env":  # EnvSpecs do not have args, only kwargs
                 for k, v in enumerate(spec[
-                                          'args']):  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
+                                          'args']):  # json saves tuples as lists, so we need to convert them back (assumes depth <2)
                     if type(v) == list:
                         for i, x in enumerate(v):
                             if type(x) == list:
@@ -292,6 +292,7 @@ class SpecStack:
         return tuple(stack)
 
     def __str__(self) -> None:
+        """Pretty prints the specification stack."""
         table = '\n'
         table += f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}\n"
         table += "-" * 100 + "\n"
