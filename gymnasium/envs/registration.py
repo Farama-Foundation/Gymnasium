@@ -36,7 +36,6 @@ from gymnasium.wrappers import (
 from gymnasium.wrappers.compatibility import EnvCompatibility
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 
-
 if sys.version_info < (3, 10):
     import importlib_metadata as metadata  # type: ignore
 else:
@@ -48,7 +47,6 @@ else:
     from typing_extensions import Literal
 
 from gymnasium import Env, Wrapper, error, logger
-
 
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
@@ -169,6 +167,12 @@ class EnvSpec:
 
 @dataclass
 class WrapperSpec:
+    """A specification for recording wrapper configs.
+
+    * name: The name of the wrapper.
+    * entry_point: The location of the wrapper to create from.
+    * kwargs: Additional keyword arguments passed to the wrapper.
+    """
     name: str
     entry_point: str
     args: list[Any]
@@ -176,7 +180,14 @@ class WrapperSpec:
 
 
 class SpecStack:
-    def __init__(self, env, eval_ok: bool = True):
+
+    def __init__(self, env: Union[dict, Env, Wrapper], eval_ok: bool = True):
+        """
+
+        Args:
+            env: Either a dictionary of environment specifications or an environment.
+            eval_ok: Flag to allow evaluation of callables (potentially arbitrary code).
+        """
         if type(env) == dict:
             self.stack = self.deserialise_spec_stack(env, eval_ok=eval_ok)
             self.stack_json = env
@@ -188,22 +199,33 @@ class SpecStack:
                 f"Expected a dict or an instance of `gym.Env` or `gym.Wrapper`, got {type(env)}"
             )
 
-    def spec_stack(self, outer_wrapper) -> tuple[Union[WrapperSpec, EnvSpec]]:
-        wrapper_spec = WrapperSpec(type(outer_wrapper).__name__, outer_wrapper.__module__ + ":" + type(outer_wrapper).__name__, outer_wrapper._ezpickle_args, outer_wrapper._ezpickle_kwargs)
-        if isinstance(outer_wrapper.env, Wrapper):
-             return (wrapper_spec,) + self.spec_stack(outer_wrapper.env)
-        else:
-             return (wrapper_spec,) + (outer_wrapper.env.spec,)
+    def spec_stack(self, outer_wrapper: Union[Wrapper, Env]) -> tuple[Union[WrapperSpec, EnvSpec]]:
+        """Generates the specification stack for a given [wrapped] environment.
 
+        Args:
+            outer_wrapper: The outermost wrapper of the environment (if any).
+
+        Returns:
+            A tuple of environment and wrapper specifications, known as the specification stack.
+        """
+        wrapper_spec = WrapperSpec(type(outer_wrapper).__name__,
+                                   outer_wrapper.__module__ + ":" + type(outer_wrapper).__name__,
+                                   outer_wrapper._ezpickle_args, outer_wrapper._ezpickle_kwargs)
+        if isinstance(outer_wrapper.env, Wrapper):
+            return (wrapper_spec,) + self.spec_stack(outer_wrapper.env)
+        else:
+            return (wrapper_spec,) + (outer_wrapper.env.spec,)
 
     def serialise_spec_stack(self) -> str:
         num_layers = len(self)
         stack_json = {}
         for i, spec in enumerate(self.stack):
-            spec = copy.deepcopy(spec)  # we need to make a copy so we don't modify the original spec in case of callables
+            spec = copy.deepcopy(
+                spec)  # we need to make a copy so we don't modify the original spec in case of callables
             for k, v in spec.kwargs.items():
                 if callable(v):
-                    str_repr = str(inspect.getsourcelines(v)[0]).strip("['\\n']").split(" = ")[1]  # https://stackoverflow.com/a/30984012
+                    str_repr = str(inspect.getsourcelines(v)[0]).strip("['\\n']").split(" = ")[
+                        1]  # https://stackoverflow.com/a/30984012
                     str_repr = re.search(r", (.*)\)$", str_repr).group(1)
                     spec.kwargs[k] = str_repr
             if i == num_layers - 1:
@@ -214,14 +236,14 @@ class SpecStack:
             stack_json[layer] = spec_json
         return stack_json
 
-
     def deserialise_spec_stack(self, stack_json: str, eval_ok: bool = False) -> tuple[Union[WrapperSpec, EnvSpec]]:
         stack = []
         for name, spec_json in stack_json.items():
             spec = json.loads(spec_json)
 
             if name != "raw_env":  # EnvSpecs do not have args, o   nly kwargs
-                for k, v in enumerate(spec['args']):  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
+                for k, v in enumerate(spec[
+                                          'args']):  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
                     if type(v) == list:
                         for i, x in enumerate(v):
                             if type(x) == list:
@@ -229,7 +251,8 @@ class SpecStack:
                         spec['args'][k] = tuple(v)
                 spec['args'] = tuple(spec['args'])
 
-            for k, v in spec['kwargs'].items():  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
+            for k, v in spec[
+                'kwargs'].items():  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
                 if type(v) == list:
                     for i, x in enumerate(v):
                         if type(x) == list:
@@ -252,12 +275,12 @@ class SpecStack:
             stack.append(spec)
 
         return tuple(stack)
-        #WrapperSpec(*list(json.loads(stack_json['wrapper_4'].replace("\'", "\"")).values()))
+        # WrapperSpec(*list(json.loads(stack_json['wrapper_4'].replace("\'", "\"")).values()))
 
     def __str__(self) -> None:
         table = '\n'
         table += f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}\n"
-        table += "-"*100 + "\n"
+        table += "-" * 100 + "\n"
         for layer, spec in reversed(self.stack_json.items()):
             spec = json.loads(spec)
             if layer == 'raw_env':
@@ -425,6 +448,8 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
 # fmt: off
 @overload
 def make(id: str, **kwargs) -> Env: ...
+
+
 @overload
 def make(id: EnvSpec, **kwargs) -> Env: ...
 
@@ -433,12 +458,21 @@ def make(id: EnvSpec, **kwargs) -> Env: ...
 # ----------------------------------------
 @overload
 def make(id: Literal["CartPole-v0", "CartPole-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+
+
 @overload
 def make(id: Literal["MountainCar-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+
+
 @overload
-def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[
+    np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+
+
 @overload
 def make(id: Literal["Pendulum-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+
+
 @overload
 def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
 
@@ -446,9 +480,15 @@ def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarra
 # Box2d
 # ----------------------------------------
 @overload
-def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[
+    np.ndarray, Union[np.ndarray, int]]: ...
+
+
 @overload
-def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[
+    np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+
+
 @overload
 def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
 
@@ -457,10 +497,16 @@ def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndar
 # ----------------------------------------
 @overload
 def make(id: Literal["Blackjack-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+
+
 @overload
 def make(id: Literal["FrozenLake-v1", "FrozenLake8x8-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+
+
 @overload
 def make(id: Literal["CliffWalking-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+
+
 @overload
 def make(id: Literal["Taxi-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
 
@@ -481,6 +527,8 @@ def make(id: Literal[
     "HumanoidStandup-v2", "HumanoidStandup-v4",
     "Humanoid-v2", "Humanoid-v3", "Humanoid-v4",
 ], **kwargs) -> Env[np.ndarray, np.ndarray]: ...
+
+
 # fmt: on
 
 
@@ -497,8 +545,8 @@ def _check_spec_register(spec: EnvSpec):
             spec_
             for spec_ in registry.values()
             if spec_.namespace == spec.namespace
-            and spec_.name == spec.name
-            and spec_.version is not None
+               and spec_.name == spec.name
+               and spec_.version is not None
         ),
         key=lambda spec_: int(spec_.version),  # type: ignore
         default=None,
@@ -509,8 +557,8 @@ def _check_spec_register(spec: EnvSpec):
             spec_
             for spec_ in registry.values()
             if spec_.namespace == spec.namespace
-            and spec_.name == spec.name
-            and spec_.version is None
+               and spec_.name == spec.name
+               and spec_.version is None
         ),
         None,
     )
@@ -562,16 +610,16 @@ def namespace(ns: str):
 
 
 def register(
-    id: str,
-    entry_point: Union[Callable, str],
-    reward_threshold: Optional[float] = None,
-    nondeterministic: bool = False,
-    max_episode_steps: Optional[int] = None,
-    order_enforce: bool = True,
-    autoreset: bool = False,
-    disable_env_checker: bool = False,
-    apply_api_compatibility: bool = False,
-    **kwargs,
+        id: str,
+        entry_point: Union[Callable, str],
+        reward_threshold: Optional[float] = None,
+        nondeterministic: bool = False,
+        max_episode_steps: Optional[int] = None,
+        order_enforce: bool = True,
+        autoreset: bool = False,
+        disable_env_checker: bool = False,
+        apply_api_compatibility: bool = False,
+        **kwargs,
 ):
     """Register an environment with gymnasium.
 
@@ -597,8 +645,8 @@ def register(
 
     if current_namespace is not None:
         if (
-            kwargs.get("namespace") is not None
-            and kwargs.get("namespace") != current_namespace
+                kwargs.get("namespace") is not None
+                and kwargs.get("namespace") != current_namespace
         ):
             logger.warn(
                 f"Custom namespace `{kwargs.get('namespace')}` is being overridden by namespace `{current_namespace}`. "
@@ -630,12 +678,12 @@ def register(
 
 
 def make(
-    id: Union[str, EnvSpec, SpecStack],
-    max_episode_steps: Optional[int] = None,
-    autoreset: bool = False,
-    apply_api_compatibility: Optional[bool] = None,
-    disable_env_checker: Optional[bool] = None,
-    **kwargs,
+        id: Union[str, EnvSpec, SpecStack],
+        max_episode_steps: Optional[int] = None,
+        autoreset: bool = False,
+        apply_api_compatibility: Optional[bool] = None,
+        disable_env_checker: Optional[bool] = None,
+        **kwargs,
 ) -> Env:
     """Create an environment according to the given ID.
 
@@ -686,9 +734,9 @@ def make(
         ns, name, version = parse_env_id(id)
         latest_version = find_highest_version(ns, name)
         if (
-            version is not None
-            and latest_version is not None
-            and latest_version > version
+                version is not None
+                and latest_version is not None
+                and latest_version > version
         ):
             logger.warn(
                 f"The environment {id} is out of date. You should consider "
@@ -746,7 +794,7 @@ def make(
             )
 
     if apply_api_compatibility is True or (
-        apply_api_compatibility is None and spec_.apply_api_compatibility is True
+            apply_api_compatibility is None and spec_.apply_api_compatibility is True
     ):
         # If we use the compatibility layer, we treat the render mode explicitly and don't pass it to the env creator
         render_mode = _kwargs.pop("render_mode", None)
@@ -757,8 +805,8 @@ def make(
         env = env_creator(**_kwargs)
     except TypeError as e:
         if (
-            str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
-            and apply_human_rendering
+                str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
+                and apply_human_rendering
         ):
             raise error.Error(
                 f"You passed render_mode='human' although {id} doesn't implement human-rendering natively. "
@@ -789,13 +837,13 @@ def make(
     else:
         # Add step API wrapper
         if apply_api_compatibility is True or (
-            apply_api_compatibility is None and spec_.apply_api_compatibility is True
+                apply_api_compatibility is None and spec_.apply_api_compatibility is True
         ):
             env = EnvCompatibility(env, render_mode)
 
         # Run the environment checker as the lowest level wrapper
         if disable_env_checker is False or (
-            disable_env_checker is None and spec_.disable_env_checker is False
+                disable_env_checker is None and spec_.disable_env_checker is False
         ):
             env = PassiveEnvChecker(env)
 
@@ -835,10 +883,10 @@ def spec(env_id: str) -> EnvSpec:
 
 
 def pprint_registry(
-    _registry: dict = registry,
-    num_cols: int = 3,
-    exclude_namespaces: Optional[List[str]] = None,
-    disable_print: bool = False,
+        _registry: dict = registry,
+        num_cols: int = 3,
+        exclude_namespaces: Optional[List[str]] = None,
+        disable_print: bool = False,
 ) -> Optional[str]:
     """Pretty print the environments in the registry.
 
@@ -884,7 +932,7 @@ def pprint_registry(
         # Reference: https://stackoverflow.com/a/33464001
         for count, item in enumerate(sorted(envs), 1):
             return_str += (
-                item.ljust(max_justify) + " "
+                    item.ljust(max_justify) + " "
             )  # Print column with justification.
             # Once all rows printed, switch to new column.
             if count % num_cols == 0 or count == len(envs):
