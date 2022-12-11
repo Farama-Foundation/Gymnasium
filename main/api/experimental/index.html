@@ -430,12 +430,13 @@
 <h2>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this heading">#</a></h2>
 <p>Gymnasium already contains a large collection of wrappers, but we believe that the wrappers can be improved to</p>
 <ul class="simple">
-<li><p>Support arbitrarily complex observation / action spaces. As RL has advanced, action and observation spaces are becoming more complex and the current wrappers were not implemented with these spaces in mind.</p></li>
-<li><p>Support for numpy, jax and pytorch data. With hardware accelerated environments, i.e. Brax, written in Jax and similar pytorch based programs, numpy is not the only game in town anymore. Therefore, these upgrades will use Jumpy for calling numpy, jax and torch depending on the data.</p></li>
-<li><p>More wrappers. Projects like Supersuit aimed to bring more wrappers for RL however wrappers can be moved into Gymnasium.</p></li>
-<li><p>Versioning. Like environments, the implementation details of wrapper can cause changes agent performance. Therefore, we propose adding version numbers with all wrappers.</p></li>
-<li><p>In v28, we aim to rewrite the VectorEnv to not inherit from Env, as a result new vectorised versions of the wrappers will be provided.</p></li>
+<li><p>(Work in progress) Support arbitrarily complex observation / action spaces. As RL has advanced, action and observation spaces are becoming more complex and the current wrappers were not implemented with this mind.</p></li>
+<li><p>Support for Jax-based environments. With hardware accelerated environments, i.e. Brax, written in Jax and similar PyTorch based programs, NumPy is not the only game in town anymore. Therefore, these upgrades will use <a class="reference external" href="https://github.com/farama-Foundation/jumpy">Jumpy</a>, a project developed by Farama Foundation to provide automatic compatibility for NumPy, Jax and in the future PyTorch data for a large subset of the NumPy functions.</p></li>
+<li><p>More wrappers. Projects like <a class="reference external" href="https://github.com/farama-Foundation/supersuit">Supersuit</a> aimed to bring more wrappers for RL, however, many users were not aware of the wrappers, so we plan to move the wrappers into Gymnasium. If we are missing common wrappers from the list provided above, please create an issue.</p></li>
+<li><p>Versioning. Like environments, the implementation details of wrappers can cause changes in agent performance. Therefore, we propose adding version numbers to all wrappers, i.e., <code class="docutils literal notranslate"><span class="pre">LambaActionV0</span></code>. We don’t expect these version numbers to change regularly similar to environment version numbers and should ensure that all users know when significant changes could affect your agent’s performance. Additionally, we hope that this will improve reproducibility of RL in the future, this is critical for academia.</p></li>
+<li><p>In v28, we aim to rewrite the VectorEnv to not inherit from Env, as a result new vectorized versions of the wrappers will be provided.</p></li>
 </ul>
+<p>We aimed to replace the wrappers in gymnasium v0.30.0 with these experimental wrappers.</p>
 <section id="observation-wrappers">
 <h3>Observation Wrappers<a class="headerlink" href="#observation-wrappers" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper docutils container">
@@ -461,13 +462,13 @@
 <tr class="row-even"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.ResizeObservation" title="gymnasium.wrappers.ResizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.ResizeObservation</span></code></a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.ResizeObservationV0" title="gymnasium.experimental.wrappers.ResizeObservationV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.ResizeObservationV0</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">supersuit.reshape_v0</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/SuperSuit/blob/314831a7d18e7254f455b181694c049908f95155/supersuit/generic_wrappers/basic_wrappers.py#L40">supersuit.reshape_v0</a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.ReshapeObservationV0" title="gymnasium.experimental.wrappers.ReshapeObservationV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.ReshapeObservationV0</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p>Not Implemented</p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.RescaleObservationV0" title="gymnasium.experimental.wrappers.RescaleObservationV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.RescaleObservationV0</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">supersuit.dtype_v0</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/SuperSuit/blob/314831a7d18e7254f455b181694c049908f95155/supersuit/generic_wrappers/basic_wrappers.py#L32">supersuit.dtype_v0</a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.DtypeObservationV0" title="gymnasium.experimental.wrappers.DtypeObservationV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.DtypeObservationV0</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.PixelObservationWrapper" title="gymnasium.wrappers.PixelObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.PixelObservationWrapper</span></code></a></p></td>
@@ -482,7 +483,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/observation_wrappers/#gymnasium.wrappers.FrameStack" title="gymnasium.wrappers.FrameStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.FrameStack</span></code></a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.FrameStackObservationV0" title="gymnasium.experimental.wrappers.FrameStackObservationV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.FrameStackObservationV0</span></code></a></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">supersuit.delay_observations_v0</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/SuperSuit/blob/314831a7d18e7254f455b181694c049908f95155/supersuit/generic_wrappers/delay_observations.py#L6">supersuit.delay_observations_v0</a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.DelayObservationV0" title="gymnasium.experimental.wrappers.DelayObservationV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.DelayObservationV0</span></code></a></p></td>
 </tr>
 </tbody>
@@ -499,7 +500,7 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">supersuit.action_lambda_v1</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/SuperSuit/blob/314831a7d18e7254f455b181694c049908f95155/supersuit/lambda_wrappers/action_lambda.py#L73">supersuit.action_lambda_v1</a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.LambdaActionV0" title="gymnasium.experimental.wrappers.LambdaActionV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.LambdaActionV0</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/action_wrappers/#gymnasium.wrappers.ClipAction" title="gymnasium.wrappers.ClipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.ClipAction</span></code></a></p></td>
@@ -508,7 +509,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="../wrappers/action_wrappers/#gymnasium.wrappers.RescaleAction" title="gymnasium.wrappers.RescaleAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.RescaleAction</span></code></a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.RescaleActionV0" title="gymnasium.experimental.wrappers.RescaleActionV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.RescaleActionV0</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">supersuit.sticky_actions_v0</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/SuperSuit/blob/314831a7d18e7254f455b181694c049908f95155/supersuit/generic_wrappers/sticky_actions.py#L6">supersuit.sticky_actions_v0</a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.StickyActionV0" title="gymnasium.experimental.wrappers.StickyActionV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.StickyActionV0</span></code></a></p></td>
 </tr>
 </tbody>
@@ -528,7 +529,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="../wrappers/reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.TransformReward</span></code></a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.LambdaRewardV0" title="gymnasium.experimental.wrappers.LambdaRewardV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.LambdaRewardV0</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">supersuit.clip_reward_v0</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/SuperSuit/blob/314831a7d18e7254f455b181694c049908f95155/supersuit/generic_wrappers/basic_wrappers.py#L74">supersuit.clip_reward_v0</a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.ClipRewardV0" title="gymnasium.experimental.wrappers.ClipRewardV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.ClipRewardV0</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../wrappers/reward_wrappers/#gymnasium.wrappers.NormalizeReward" title="gymnasium.wrappers.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.NormalizeReward</span></code></a></p></td>
@@ -580,7 +581,7 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">wrapper.RecordVideo</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.RecordVideo</span></code></a></p></td>
 <td><p><a class="reference internal" href="wrappers/#gymnasium.experimental.wrappers.RecordVideoV0" title="gymnasium.experimental.wrappers.RecordVideoV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.RecordVideoV0</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.HumanRendering" title="gymnasium.wrappers.HumanRendering"><code class="xref py py-class docutils literal notranslate"><span class="pre">wrappers.HumanRendering</span></code></a></p></td>
