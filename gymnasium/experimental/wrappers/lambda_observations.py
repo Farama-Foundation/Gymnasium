@@ -250,11 +250,13 @@ class GrayscaleObservationV0(LambdaObservationV0):
 
 
 class ResizeObservationV0(LambdaObservationV0):
-    """Observation wrapper for resize image observations using opencv.
+    """Resizes image observations using OpenCV to shape.
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make("CarRacing-v1")
+        >>> env = gym.make("CarRacing-v2")
+        >>> env.observation_space.shape
+        (96, 96, 3)
         >>> resized_env = ResizeObservationV0(env, (32, 32))
         >>> resized_env.observation_space.shape
         (32, 32, 3)
@@ -293,7 +295,17 @@ class ResizeObservationV0(LambdaObservationV0):
 
 
 class ReshapeObservationV0(LambdaObservationV0):
-    """Observation wrapper for reshaping the observation."""
+    """Reshapes array based observations to shapes.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CarRacing-v1")
+        >>> env.observation_space.shape
+        (96, 96, 3)
+        >>> reshape_env = ReshapeObservationV0(env, (24, 4, 96, 1, 3))
+        >>> reshape_env.observation_space.shape
+        (24, 4, 96, 1, 3)
+    """
 
     def __init__(self, env: gym.Env, shape: int | tuple[int, ...]):
         """Constructor for env with Box observation space that has a shape product equal to the new shape product."""
@@ -315,7 +327,16 @@ class ReshapeObservationV0(LambdaObservationV0):
 
 
 class RescaleObservationV0(LambdaObservationV0):
-    """Observation wrapper for rescaling the observations between a minimum and maximum value."""
+    """Linearly rescales observation to between a minimum and maximum value.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("Pendulum-v1")
+        >>> env.observation_space
+        Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)
+        >>> env = RescaleObservationV0(env, np.array([-2, -1, -10]), np.array([1, 0, 1]))
+        Box([-2. -1. -10.], [1. 0. 1.], (3,), float32)
+    """
 
     def __init__(
         self,
