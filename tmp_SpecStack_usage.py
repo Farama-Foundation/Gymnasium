@@ -1,3 +1,5 @@
+import json
+
 import gymnasium as gym
 from gymnasium.envs.registration import SpecStack
 
@@ -23,3 +25,10 @@ gym.make(stack_from_dict)
 print(SpecStack(gym.make(SpecStack(env))) == stack_from_env)  # True
 env = gym.wrappers.TransformObservation(env, lambda r: 0.01 * r)
 print(SpecStack(gym.make(SpecStack(env))) == stack_from_env)  # False
+
+# Example 3: Generate a spec stack from a json string
+json.dump(readable_stack, open("tmp_SpecStack_usage.json", "w"))
+stack_from_json = SpecStack(json.load(open("tmp_SpecStack_usage.json", "r")))
+gym.make(stack_from_json)
+print(stack_from_json)
+print(stack_from_json == stack_from_dict)  # True
