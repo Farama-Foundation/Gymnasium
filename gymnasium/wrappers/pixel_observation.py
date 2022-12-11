@@ -163,7 +163,12 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
         self._render_kwargs = render_kwargs
         self._pixel_keys = pixel_keys
 
-        gym.utils.EzPickle.__init__(self, pixels_only=pixels_only, render_kwargs=render_kwargs, pixel_keys=pixel_keys)
+        gym.utils.EzPickle.__init__(
+            self,
+            pixels_only=pixels_only,
+            render_kwargs=render_kwargs,
+            pixel_keys=pixel_keys,
+        )
 
     def observation(self, observation):
         """Updates the observations with the pixel observations.
