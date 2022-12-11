@@ -217,6 +217,11 @@ class SpecStack:
             return (wrapper_spec,) + (outer_wrapper.env.spec,)
 
     def serialise_spec_stack(self) -> str:
+        """Serialises the specification stack into a JSON string.
+
+        Returns:
+            A JSON string representing the specification stack.
+        """
         num_layers = len(self)
         stack_json = {}
         for i, spec in enumerate(self.stack):
@@ -236,7 +241,17 @@ class SpecStack:
             stack_json[layer] = spec_json
         return stack_json
 
-    def deserialise_spec_stack(self, stack_json: str, eval_ok: bool = False) -> tuple[Union[WrapperSpec, EnvSpec]]:
+    @staticmethod
+    def deserialise_spec_stack(stack_json: str, eval_ok: bool = False) -> tuple[Union[WrapperSpec, EnvSpec]]:
+        """Converts a JSON string into a specification stack.
+
+        Args:
+            stack_json: The JSON string representing the specification stack.
+            eval_ok: Whether to allow evaluation of callables (potentially arbitrary code).
+
+        Returns:
+            A tuple of environment and wrapper specifications, known as the specification stack.
+        """
         stack = []
         for name, spec_json in stack_json.items():
             spec = json.loads(spec_json)
@@ -275,7 +290,6 @@ class SpecStack:
             stack.append(spec)
 
         return tuple(stack)
-        # WrapperSpec(*list(json.loads(stack_json['wrapper_4'].replace("\'", "\"")).values()))
 
     def __str__(self) -> None:
         table = '\n'
