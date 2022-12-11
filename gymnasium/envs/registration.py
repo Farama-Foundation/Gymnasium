@@ -259,7 +259,7 @@ class SpecStack:
 
             if name != "raw_env":  # EnvSpecs do not have args, only kwargs
                 for k, v in enumerate(spec[
-                                          'args']):  # json saves tuples as lists, so we need to convert them back (assumes depth <2)
+                                          'args']):  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
                     if type(v) == list:
                         for i, x in enumerate(v):
                             if type(x) == list:
