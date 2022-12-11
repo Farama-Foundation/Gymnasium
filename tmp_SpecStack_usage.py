@@ -19,6 +19,7 @@ print(stack_from_dict)
 readable_stack = stack_from_dict.stack_json
 gym.make(stack_from_dict)
 
-print(SpecStack(gym.make(SpecStack(env))))
-
-print("Done")
+# Show equality
+print(SpecStack(gym.make(SpecStack(env))) == stack_from_env)  # True
+env = gym.wrappers.TransformObservation(env, lambda r: 0.01 * r)
+print(SpecStack(gym.make(SpecStack(env))) == stack_from_env)  # False

@@ -269,6 +269,9 @@ class SpecStack:
     def __len__(self):
         return len(self.stack)
 
+    def __eq__(self, other):
+        return self.stack_json == other.stack_json
+
 
 def _check_namespace_exists(ns: Optional[str]):
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
