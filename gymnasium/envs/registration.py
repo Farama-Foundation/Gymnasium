@@ -738,8 +738,6 @@ def make(
         disable_env_checker: If to run the env checker, None will default to the environment specification `disable_env_checker`
             (which is by default False, running the environment checker),
             otherwise will run according to this parameter (`True` = not run, `False` = run)
-        allow_default_wrappers: If set to False, the environment is returned without any wrappers applied.
-            This is used when reconstructing environments from spec stacks.
         kwargs: Additional arguments to pass to the environment constructor.
 
     Returns:
@@ -861,52 +859,84 @@ def make(
     env.unwrapped.spec = spec_
 
     if type(spec_stack) == SpecStack:
-        for i in range(len(spec_stack.stack) - 1):
-            ws = spec_stack.stack[-2 - i]
-            if ws.entry_point is None:
-                raise error.Error(
-                    f"{ws.id} registered but entry_point is not specified"
-                )
-            elif callable(ws.entry_point):
-                env_creator = ws.entry_point
-            else:
-                # Assume it's a string
-                env_creator = load(ws.entry_point)
-
-            env = env_creator(env, *ws.args, **ws.kwargs)
-
+        return _apply_wrappers_from_stack(env, spec_stack)
     else:
-        # Add step API wrapper
-        if apply_api_compatibility is True or (
+        return _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
+
+
+def _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection):
+    """Applies the default wrappers to the environment.
+
+    Args:
+        spec_:
+        render_mode:
+        apply_api_compatibility:
+        disable_env_checker:
+        max_episode_steps:
+        autoreset:
+        apply_human_rendering:
+        apply_render_collection:
+        env (gym.Env): The environment to wrap.
+
+    Returns:
+        gym.Env: The wrapped environment.
+    """
+    # Add step API wrapper
+    if apply_api_compatibility is True or (
             apply_api_compatibility is None and spec_.apply_api_compatibility is True
-        ):
-            env = EnvCompatibility(env, render_mode)
+    ):
+        env = EnvCompatibility(env, render_mode)
 
-        # Run the environment checker as the lowest level wrapper
-        if disable_env_checker is False or (
+    # Run the environment checker as the lowest level wrapper
+    if disable_env_checker is False or (
             disable_env_checker is None and spec_.disable_env_checker is False
-        ):
-            env = PassiveEnvChecker(env)
+    ):
+        env = PassiveEnvChecker(env)
 
-        # Add the order enforcing wrapper
-        if spec_.order_enforce:
-            env = OrderEnforcing(env)
+    # Add the order enforcing wrapper
+    if spec_.order_enforce:
+        env = OrderEnforcing(env)
 
-        # Add the time limit wrapper
-        if max_episode_steps is not None:
-            env = TimeLimit(env, max_episode_steps)
-        elif spec_.max_episode_steps is not None:
-            env = TimeLimit(env, spec_.max_episode_steps)
+    # Add the time limit wrapper
+    if max_episode_steps is not None:
+        env = TimeLimit(env, max_episode_steps)
+    elif spec_.max_episode_steps is not None:
+        env = TimeLimit(env, spec_.max_episode_steps)
 
-        # Add the autoreset wrapper
-        if autoreset:
-            env = AutoResetWrapper(env)
+    # Add the autoreset wrapper
+    if autoreset:
+        env = AutoResetWrapper(env)
 
-        # Add human rendering wrapper
-        if apply_human_rendering:
-            env = HumanRendering(env)
-        elif apply_render_collection:
-            env = RenderCollection(env)
+    # Add human rendering wrapper
+    if apply_human_rendering:
+        env = HumanRendering(env)
+    elif apply_render_collection:
+        env = RenderCollection(env)
+
+    return env
+
+
+def _apply_wrappers_from_stack(env, spec_stack):
+    """Applies the wrappers from the spec stack to the environment.
+
+    Args:
+        env (gym.Env): The environment to wrap.
+        spec_stack (SpecStack): The spec stack.
+
+    Returns:
+        gym.Env: The wrapped environment.
+    """
+    for i in range(len(spec_stack.stack) - 1):
+        ws = spec_stack.stack[-2 - i]
+        if ws.entry_point is None:
+            raise error.Error(f"{ws.id} registered but entry_point is not specified")
+        elif callable(ws.entry_point):
+            env_creator = ws.entry_point
+        else:
+            # Assume it's a string
+            env_creator = load(ws.entry_point)
+
+        env = env_creator(env, *ws.args, **ws.kwargs)
 
     return env
 
