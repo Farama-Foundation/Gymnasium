@@ -10,7 +10,7 @@ from gymnasium.utils import seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec
+    from gymnasium.envs.registration import EnvSpec, SpecStack
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -51,7 +51,7 @@ class Env(Generic[ObsType, ActType]):
     # define render_mode if your environment supports rendering
     render_mode: str | None = None
     reward_range = (-float("inf"), float("inf"))
-    spec: EnvSpec | None = None
+    spec: EnvSpec | SpecStack | None = None
 
     # Set these in ALL subclasses
     action_space: spaces.Space[ActType]
@@ -273,7 +273,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return getattr(self.env, name)
 
     @property
-    def spec(self) -> EnvSpec | None:
+    def spec(self) -> EnvSpec | SpecStack | None:
         """Returns the :attr:`Env` :attr:`spec` attribute."""
         return self.env.spec
 
