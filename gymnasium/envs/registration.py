@@ -191,7 +191,7 @@ class SpecStack:
             env: Either a dictionary of environment specifications or an environment.
             eval_ok: Flag to allow evaluation of callables (potentially arbitrary code).
         """
-        if type(env) == dict:
+        if isinstance(env, dict):
             self.stack = self.deserialise_spec_stack(env, eval_ok=eval_ok)
             self.stack_json = env
         elif isinstance(env, Wrapper) or isinstance(env, Env):
@@ -746,7 +746,7 @@ def make(
     Raises:
         Error: If the ``id`` doesn't exist then an error is raised
     """
-    if type(id) == SpecStack:
+    if isinstance(id, SpecStack):
         spec_stack = id
         id = spec_stack.stack[
             -1
@@ -858,7 +858,7 @@ def make(
     spec_.kwargs = _kwargs
     env.unwrapped.spec = spec_
 
-    if type(spec_stack) == SpecStack:
+    if isinstance(spec_stack, SpecStack):
         env = _apply_wrappers_from_stack(env, spec_stack)
         env.spec_stack = spec_stack
     else:
