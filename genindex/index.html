@@ -12,8 +12,8 @@
 
     <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/><title>Index - Gymnasium Documentation</title>
 <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=3cf7b839e8c50b5f3a39bb99d90baa7b845de926" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=91b9f2a71a58ed2481980f1e5725e16457fde93d" />
     
     
 
@@ -40,199 +40,70 @@
   }
 </style></head>
   <body>
-    <header class="farama-header">
+    <header class="farama-header" aria-label="Farama header">
       <div class="farama-header__container">
-        <div class="farama-header__left">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+            <!-- <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <line x1="0.5" y1="4.5" x2="23.5" y2="4.5" style="fill: none; "></line>
+              <line x1="0.5" y1="12" x2="14" y2="12" ></line>
+              <line x1="0.5" y1="19.5" x2="23.5" y2="19.5"></line>
+              <polyline style="stroke-width: 0px;" points="17 7 22 12 17 17"></polyline>
+            </svg> -->
+            <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px">
+              <defs></defs>
+              <rect y="1" width="22" height="22" rx="2" ry="2" style="fill: none;" x="1"></rect>
+              <line x1="8" y1="1" x2="8" y2="23"></line>
+              <polyline style="stroke-linecap: round; fill: none; stroke-linejoin: round;" points="13 7 17 12 13 17"></polyline>
+            </svg> -->
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
           <a href="../">
               <img class="farama-header__logo only-light" src="../_static/img/gymnasium_black.svg" alt="Light Logo"/>
               <img class="farama-header__logo only-dark" src="../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
-            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+            <span class="farama-header__title">Gymnasium Documentation</span>
           </a>
         </div>
         <div class="farama-header__right">
           <div class="farama-header-menu">
-            <div class="farama-header-menu__btn">
-              <span class="farama-header-menu__btn-name">
-                Farama Foundation
-              </span>
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
-                  <defs></defs>
-                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
-                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
-                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-white-logo-invert" src="../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
               </svg>
-            </div>
-            <div class="farama-header-menu-container">
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
               <div class="farama-header-menu__header">
                 <a href="https://farama.org">
-                  <img class="farama-header-menu__logo" src="../_static/img/farama_solid_white.svg" alt="Farama Foundation">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
                   <span>Farama Foundation</span>
                 </a>
-                <button id="farama-close-menu">
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
-                    <line x1="3" y1="21" x2="21" y2="3"></line>
-                    <line x1="3" y1="3" x2="21" y2="21"></line>
-                  </svg>
-                </button>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div class="farama-header-menu__body">
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Documentation</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://gymnasium.farama.org">
-                        
-                        <img src="../_static/img/gymnasium-white.svg">
-                        
-                        Gymnasium
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://pettingzoo.farama.org">
-                        
-                        <img src="../_static/img/pettingzoo-white.svg">
-                        
-                        PettingZoo
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://minigrid.farama.org">
-                        
-                        <img src="../_static/img/minigrid-white.svg">
-                        
-                        MiniGrid
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://robotics.farama.org">
-                        
-                        <img src="../_static/img/gymrobotics-white.svg">
-                        
-                        Gymnasium-Robotics
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Mature Projects</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/SuperSuit">
-                        
-                        <img src="../_static/img/supersuit-white.svg">
-                        
-                        SuperSuit
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/tinyscaler">
-                        
-                        <img src="../_static/img/tinyscaler-white.svg">
-                        
-                        Tinyscaler
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/AutoROM">
-                        
-                        <img src="../_static/img/autorom-white.svg">
-                        
-                        AutoROM
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/Jumpy">
-                        
-                        <img src="../_static/img/jumpy-white.svg">
-                        
-                        JumPy
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Incubating Projects</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/MAgent2">
-                        
-                        <img src="../_static/img/MAgent2-white.svg">
-                        
-                        MAgent2
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/procgen2">
-                        
-                        <img src="../_static/img/procgen2-white.svg">
-                        
-                        Procgen2
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/MiniWorld">
-                        
-                        <img src="../_static/img/miniworld-white.svg">
-                        
-                        Miniworld
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/D4RL">
-                        
-                        <img src="../_static/img/d4rl-white.svg">
-                        
-                        D4RL
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/Kabuki">
-                        
-                        <img src="../_static/img/kabuki-white.svg">
-                        
-                        Kabuki
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Foundation</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://farama.org/about">
-                        
-                        About
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://farama.org/project_standards">
-                        
-                        Standards
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://farama.org/donations">
-                        
-                        Donate
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                
-
+                <!-- Response from farama.org/api/projects.json -->
               </div>
             </div>
           </div>
         </div>
       </div>
     </header>
-
-    <div class="farama-header-menu__overlay"></div>
 
     
     <script>
@@ -313,7 +184,7 @@
 
 
 <div class="page">
-  <header class="mobile-header">
+   <!--<header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
         <div class="visually-hidden">Toggle site navigation sidebar</div>
@@ -337,11 +208,15 @@
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
     </div>
-  </header>
+  </header>-->
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../search/" role="search">
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../">
+      <img class="farama-header__logo only-light" src="../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Gymnasium Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../search/" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
@@ -373,10 +248,17 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/vector/">Vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils/">Utils</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/experimental/functional/">Functional Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/experimental/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/experimental/vector/">Vectorizing Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../environments/classic_control/acrobot/">Acrobot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/classic_control/cart_pole/">Cart Pole</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
@@ -384,20 +266,20 @@
 <li class="toctree-l2"><a class="reference internal" href="../environments/classic_control/pendulum/">Pendulum</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/box2d/car_racing/">Car Racing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/box2d/lunar_lander/">Lunar Lander</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../environments/toy_text/blackjack/">Blackjack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/toy_text/taxi/">Taxi</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../environments/mujoco/ant/">Ant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/mujoco/hopper/">Hopper</a></li>
@@ -411,7 +293,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../environments/mujoco/walker2d/">Walker2D</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../environments/atari/adventure/">Adventure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/atari/air_raid/">Air Raid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../environments/atari/alien/">Alien</a></li>
@@ -475,13 +357,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../environments/third_party_environments/">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments/third_party_environments/">Third-party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -524,12 +408,14 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
 </section>
 <section id="A" class="genindex-section">
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/wrappers/action_wrappers/#gymnasium.ActionWrapper.action">action() (gymnasium.ActionWrapper method)</a>
+</li>
         <li><a href="../api/vector/#action_space">action_space</a>
 
         <ul>
@@ -542,11 +428,13 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/wrappers/action_wrappers/#gymnasium.ActionWrapper.ActionWrapper.action">ActionWrapper.action() (in module gymnasium.ActionWrapper)</a>
-</li>
         <li><a href="../api/vector/#gymnasium.vector.AsyncVectorEnv">AsyncVectorEnv (class in gymnasium.vector)</a>
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.AtariPreprocessing">AtariPreprocessing (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.AtariPreprocessingV0">AtariPreprocessingV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.AutoresetV0">AutoresetV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.AutoResetWrapper">AutoResetWrapper (class in gymnasium.wrappers)</a>
 </li>
@@ -580,6 +468,10 @@
 </li>
         <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.ClipAction">ClipAction (class in gymnasium.wrappers)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.ClipActionV0">ClipActionV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.ClipRewardV0">ClipRewardV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/vector/#gymnasium.vector.VectorEnv.close">close() (gymnasium.vector.VectorEnv method)</a>
 
         <ul>
@@ -610,13 +502,17 @@
   <h2>D</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.DelayObservationV0">DelayObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/spaces/composite/#gymnasium.spaces.Dict">Dict (class in gymnasium.spaces)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/spaces/fundamental/#gymnasium.spaces.Discrete">Discrete (class in gymnasium.spaces)</a>
 </li>
-        <li><a href="../api/spaces/#Space.dtype">dtype (Space property)</a>
+        <li><a href="../api/spaces/#gymnasium.spaces.Space.dtype">dtype (gymnasium.spaces.Space property)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.DtypeObservationV0">DtypeObservationV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -630,6 +526,8 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/wrappers/#gymnasium.wrappers.gymnasium.Wrapper.env">env (gymnasium.wrappers.gymnasium.Wrapper attribute)</a>
+</li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.EnvCompatibility">EnvCompatibility (class in gymnasium.wrappers)</a>
 </li>
     </ul></td>
@@ -642,19 +540,27 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.FilterObservation">FilterObservation (class in gymnasium.wrappers)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.FilterObservationV0">FilterObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/spaces/utils/#gymnasium.spaces.utils.flatdim">flatdim() (in module gymnasium.spaces.utils)</a>
 </li>
         <li><a href="../api/spaces/utils/#gymnasium.spaces.utils.flatten">flatten() (in module gymnasium.spaces.utils)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/spaces/utils/#gymnasium.spaces.utils.flatten_space">flatten_space() (in module gymnasium.spaces.utils)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation">FlattenObservation (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.FlattenObservationV0">FlattenObservationV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.FrameStack">FrameStack (class in gymnasium.wrappers)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.FrameStackObservationV0">FrameStackObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/spaces/#gymnasium.spaces.space.Space.from_jsonable">from_jsonable() (in module gymnasium.spaces.space.Space)</a>
+</li>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv">FuncEnv (class in gymnasium.experimental)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -666,10 +572,26 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/spaces/composite/#gymnasium.spaces.Graph">Graph (class in gymnasium.spaces)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.GrayScaleObservation">GrayScaleObservation (class in gymnasium.wrappers)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.GrayscaleObservationV0">GrayscaleObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    gymnasium.spaces
+
+        <ul>
+          <li><a href="../api/spaces/#module-gymnasium.spaces">module</a>
+</li>
+        </ul></li>
+        <li>
+    gymnasium.wrappers
+
+        <ul>
+          <li><a href="../api/wrappers/#module-gymnasium.wrappers">module</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -681,6 +603,10 @@
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.HumanRendering">HumanRendering (class in gymnasium.wrappers)</a>
 </li>
     </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.HumanRenderingV0">HumanRenderingV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+    </ul></td>
   </tr></table>
 </section>
 
@@ -688,11 +614,45 @@
   <h2>I</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.initial">initial() (in module gymnasium.experimental.FuncEnv)</a>
+</li>
         <li><a href="../api/spaces/fundamental/#gymnasium.spaces.Box.is_bounded">is_bounded() (gymnasium.spaces.Box method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/spaces/#gymnasium.spaces.space.Space.is_np_flattenable">is_np_flattenable (gymnasium.spaces.space.Space property)</a>
+</li>
         <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.iterate">iterate() (in module gymnasium.vector.utils)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="J" class="genindex-section">
+  <h2>J</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.JaxToNumpyV0">JaxToNumpyV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.JaxToTorchV0">JaxToTorchV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.LambdaActionV0">LambdaActionV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.LambdaObservationV0">LambdaObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.LambdaRewardV0">LambdaRewardV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -716,6 +676,15 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    module
+
+        <ul>
+          <li><a href="../api/spaces/#module-gymnasium.spaces">gymnasium.spaces</a>
+</li>
+          <li><a href="../api/wrappers/#module-gymnasium.wrappers">gymnasium.wrappers</a>
+</li>
+        </ul></li>
         <li><a href="../api/spaces/fundamental/#gymnasium.spaces.MultiBinary">MultiBinary (class in gymnasium.spaces)</a>
 </li>
         <li><a href="../api/spaces/fundamental/#gymnasium.spaces.MultiDiscrete">MultiDiscrete (class in gymnasium.spaces)</a>
@@ -730,7 +699,11 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.NormalizeObservation">NormalizeObservation (class in gymnasium.wrappers)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.NormalizeObservationV0">NormalizeObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/wrappers/reward_wrappers/#gymnasium.wrappers.NormalizeReward">NormalizeReward (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.NormalizeRewardV0">NormalizeRewardV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -742,6 +715,8 @@
         </ul></li>
         <li><a href="../api/utils/#gymnasium.utils.seeding.np_random">np_random() (in module gymnasium.utils.seeding)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.NumpyToTorchV0">NumpyToTorchV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -750,8 +725,12 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper.observation">observation() (in module gymnasium.ObservationWrapper)</a>
+        <li><a href="../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper.observation">observation() (gymnasium.ObservationWrapper method)</a>
+
+        <ul>
+          <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.observation">(in module gymnasium.experimental.FuncEnv)</a>
 </li>
+        </ul></li>
         <li><a href="../api/vector/#observation_space">observation_space</a>
 
         <ul>
@@ -766,6 +745,8 @@
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.OrderEnforcing">OrderEnforcing (class in gymnasium.wrappers)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.OrderEnforcingV0">OrderEnforcingV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -776,15 +757,21 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.PassiveEnvChecker">PassiveEnvChecker (class in gymnasium.wrappers)</a>
 </li>
-        <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.PixelObservationWrapper">PixelObservationWrapper (class in gymnasium.wrappers)</a>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.PassiveEnvCheckerV0">PassiveEnvCheckerV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
-        <li><a href="../api/utils/#gymnasium.utils.play.play">play() (in module gymnasium.utils.play)</a>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.PixelObservationV0">PixelObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.PixelObservationWrapper">PixelObservationWrapper (class in gymnasium.wrappers)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/utils/#gymnasium.utils.play.play">play() (in module gymnasium.utils.play)</a>
+</li>
         <li><a href="../api/utils/#gymnasium.utils.play.PlayableGame">PlayableGame (class in gymnasium.utils.play)</a>
 </li>
         <li><a href="../api/utils/#gymnasium.utils.play.PlayPlot">PlayPlot (class in gymnasium.utils.play)</a>
+</li>
+        <li><a href="../api/registry/#gymnasium.pprint_registry">pprint_registry() (in module gymnasium)</a>
 </li>
         <li><a href="../api/utils/#gymnasium.utils.play.PlayableGame.process_event">process_event() (gymnasium.utils.play.PlayableGame method)</a>
 </li>
@@ -800,20 +787,36 @@
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics">RecordEpisodeStatistics (class in gymnasium.wrappers)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0">RecordEpisodeStatisticsV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo">RecordVideo (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RecordVideoV0">RecordVideoV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
         <li><a href="../api/registry/#gymnasium.register">register() (in module gymnasium)</a>
 </li>
         <li><a href="../api/env/#gymnasium.Env.render">render() (in module gymnasium.Env)</a>
 </li>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.render_close">render_close() (in module gymnasium.experimental.FuncEnv)</a>
+</li>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.render_image">render_image() (in module gymnasium.experimental.FuncEnv)</a>
+</li>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.render_init">render_init() (in module gymnasium.experimental.FuncEnv)</a>
+</li>
         <li><a href="../api/env/#gymnasium.Env.render_mode">render_mode (gymnasium.Env attribute)</a>
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.RenderCollection">RenderCollection (class in gymnasium.wrappers)</a>
 </li>
-        <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.RescaleAction">RescaleAction (class in gymnasium.wrappers)</a>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RenderCollectionV0">RenderCollectionV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.RescaleAction">RescaleAction (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RescaleActionV0">RescaleActionV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RescaleObservationV0">RescaleObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/vector/#gymnasium.vector.VectorEnv.reset">reset() (gymnasium.vector.VectorEnv method)</a>
 
         <ul>
@@ -822,8 +825,18 @@
           <li><a href="../api/wrappers/#gymnasium.Wrapper.reset">(in module gymnasium.Wrapper)</a>
 </li>
         </ul></li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.ReshapeObservationV0">ReshapeObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.ResizeObservation">ResizeObservation (class in gymnasium.wrappers)</a>
 </li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.ResizeObservationV0">ResizeObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper.reward">reward() (gymnasium.RewardWrapper method)</a>
+
+        <ul>
+          <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.reward">(in module gymnasium.experimental.FuncEnv)</a>
+</li>
+        </ul></li>
         <li><a href="../api/env/#gymnasium.Env.reward_range">reward_range (gymnasium.Env attribute)</a>
 
         <ul>
@@ -831,8 +844,6 @@
 </li>
         </ul></li>
         <li><a href="../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper">RewardWrapper (class in gymnasium)</a>
-</li>
-        <li><a href="../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper.RewardWrapper.reward">RewardWrapper.reward() (in module gymnasium.RewardWrapper)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -908,6 +919,8 @@
         </ul></li>
         <li><a href="../api/registry/#gymnasium.spec">spec() (in module gymnasium)</a>
 </li>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.state_info">state_info() (in module gymnasium.experimental.FuncEnv)</a>
+</li>
         <li><a href="../api/vector/#gymnasium.vector.VectorEnv.step">step() (gymnasium.vector.VectorEnv method)</a>
 
         <ul>
@@ -918,7 +931,11 @@
         </ul></li>
         <li><a href="../api/utils/#gymnasium.utils.step_api_compatibility.step_api_compatibility">step_api_compatibility() (in module gymnasium.utils.step_api_compatibility)</a>
 </li>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.step_info">step_info() (in module gymnasium.experimental.FuncEnv)</a>
+</li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.StepAPICompatibility">StepAPICompatibility (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.StickyActionV0">StickyActionV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
         <li><a href="../api/vector/#gymnasium.vector.SyncVectorEnv">SyncVectorEnv (class in gymnasium.vector)</a>
 </li>
@@ -930,9 +947,13 @@
   <h2>T</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.terminal">terminal() (in module gymnasium.experimental.FuncEnv)</a>
+</li>
         <li><a href="../api/spaces/fundamental/#gymnasium.spaces.Text">Text (class in gymnasium.spaces)</a>
 </li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.TimeAwareObservation">TimeAwareObservation (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.TimeAwareObservationV0">TimeAwareObservationV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.TimeLimit">TimeLimit (class in gymnasium.wrappers)</a>
 </li>
@@ -940,9 +961,13 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/spaces/#gymnasium.spaces.space.Space.to_jsonable">to_jsonable() (in module gymnasium.spaces.space.Space)</a>
 </li>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.transform">transform() (in module gymnasium.experimental.FuncEnv)</a>
+</li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.TransformObservation">TransformObservation (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/wrappers/reward_wrappers/#gymnasium.wrappers.TransformReward">TransformReward (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/experimental/functional/#gymnasium.experimental.FuncEnv.transition">transition() (in module gymnasium.experimental.FuncEnv)</a>
 </li>
         <li><a href="../api/spaces/composite/#gymnasium.spaces.Tuple">Tuple (class in gymnasium.spaces)</a>
 </li>
@@ -1033,24 +1058,21 @@
   </div>
 </div>
     <script>
-      let toggleMenu = () => {
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.ariaExpanded = "false";
+          menuContainer.ariaHidden = "true";
+        } else {
+          menuBtn.ariaExpanded = "true";
+          menuContainer.ariaHidden = "false";
+        }
         document.querySelector(".farama-header-menu").classList.toggle("active");
-        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
       }
 
       document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
       document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
-      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
-
-      window.onclick = function(event) {
-        if (!event.target.matches('.farama-header-menu__btn')) {
-          const dropdown = document.querySelector(".farama-header-menu-container");
-          if (dropdown.classList.contains('active')) {
-            dropdown.classList.remove('active');
-            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
-          }
-        }
-      }
     </script>
 
     
@@ -1095,6 +1117,119 @@
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
+    
+    <script>
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Documentation": [],
+          "Mature Projects": [],
+          "Incubating Projects": [],
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+            sections["Documentation"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            projectJson.link = projectJson.github;
+            sections["Mature Projects"].push(projectJson)
+          } else {
+            projectJson.link = projectJson.github;
+            sections["Incubating Projects"].push(projectJson)
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          projects = sections[key];
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+              style: "padding-left: 24px"
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          const ulElem = Object.assign(document.createElement('ul'),
+            {
+              className:'farama-header-menu-list',
+            }
+          )
+          for (let project of projects) {
+            const liElem = document.createElement("li");
+            const aElem = Object.assign(document.createElement("a"),
+              {
+                href: project.link
+              }
+            );
+            liElem.appendChild(aElem);
+            if (key !== "Foundation") {
+              const imgElem = Object.assign(document.createElement("img"),
+                {
+                  src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                  alt: `${project.name} logo`,
+                  className: "farama-black-logo-invert"
+                }
+              );
+              aElem.appendChild(imgElem);
+            }
+            aElem.appendChild(document.createTextNode(project.name));
+            ulElem.appendChild(liElem);
+          }
+          sectionElem.appendChild(ulElem);
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
     
     <script>
       const versioningConfig = {
