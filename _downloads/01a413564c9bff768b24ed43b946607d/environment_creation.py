@@ -1,3 +1,4 @@
+# fmt: off
 """
 Make your own custom environment
 ================================
@@ -142,23 +143,23 @@ class GridWorldEnv(gym.Env):
         self.window = None
         self.clock = None
 
-    # %%
-    # Constructing Observations From Environment States
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #
-    # Since we will need to compute observations both in ``reset`` and
-    # ``step``, it is often convenient to have a (private) method ``_get_obs``
-    # that translates the environment’s state into an observation. However,
-    # this is not mandatory and you may as well compute observations in
-    # ``reset`` and ``step`` separately:
+# %%
+# Constructing Observations From Environment States
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# Since we will need to compute observations both in ``reset`` and
+# ``step``, it is often convenient to have a (private) method ``_get_obs``
+# that translates the environment’s state into an observation. However,
+# this is not mandatory and you may as well compute observations in
+# ``reset`` and ``step`` separately:
 
     def _get_obs(self):
         return {"agent": self._agent_location, "target": self._target_location}
 
-    # %%
-    # We can also implement a similar method for the auxiliary information
-    # that is returned by ``step`` and ``reset``. In our case, we would like
-    # to provide the manhattan distance between the agent and the target:
+# %%
+# We can also implement a similar method for the auxiliary information
+# that is returned by ``step`` and ``reset``. In our case, we would like
+# to provide the manhattan distance between the agent and the target:
 
     def _get_info(self):
         return {
@@ -167,34 +168,34 @@ class GridWorldEnv(gym.Env):
             )
         }
 
-    # %%
-    # Oftentimes, info will also contain some data that is only available
-    # inside the ``step`` method (e.g. individual reward terms). In that case,
-    # we would have to update the dictionary that is returned by ``_get_info``
-    # in ``step``.
+# %%
+# Oftentimes, info will also contain some data that is only available
+# inside the ``step`` method (e.g. individual reward terms). In that case,
+# we would have to update the dictionary that is returned by ``_get_info``
+# in ``step``.
 
-    # %%
-    # Reset
-    # ~~~~~
-    #
-    # The ``reset`` method will be called to initiate a new episode. You may
-    # assume that the ``step`` method will not be called before ``reset`` has
-    # been called. Moreover, ``reset`` should be called whenever a done signal
-    # has been issued. Users may pass the ``seed`` keyword to ``reset`` to
-    # initialize any random number generator that is used by the environment
-    # to a deterministic state. It is recommended to use the random number
-    # generator ``self.np_random`` that is provided by the environment’s base
-    # class, ``gymnasium.Env``. If you only use this RNG, you do not need to
-    # worry much about seeding, *but you need to remember to call
-    # ``super().reset(seed=seed)``* to make sure that ``gymnasium.Env``
-    # correctly seeds the RNG. Once this is done, we can randomly set the
-    # state of our environment. In our case, we randomly choose the agent’s
-    # location and the random sample target positions, until it does not
-    # coincide with the agent’s position.
-    #
-    # The ``reset`` method should return a tuple of the initial observation
-    # and some auxiliary information. We can use the methods ``_get_obs`` and
-    # ``_get_info`` that we implemented earlier for that:
+# %%
+# Reset
+# ~~~~~
+#
+# The ``reset`` method will be called to initiate a new episode. You may
+# assume that the ``step`` method will not be called before ``reset`` has
+# been called. Moreover, ``reset`` should be called whenever a done signal
+# has been issued. Users may pass the ``seed`` keyword to ``reset`` to
+# initialize any random number generator that is used by the environment
+# to a deterministic state. It is recommended to use the random number
+# generator ``self.np_random`` that is provided by the environment’s base
+# class, ``gymnasium.Env``. If you only use this RNG, you do not need to
+# worry much about seeding, *but you need to remember to call
+# ``super().reset(seed=seed)``* to make sure that ``gymnasium.Env``
+# correctly seeds the RNG. Once this is done, we can randomly set the
+# state of our environment. In our case, we randomly choose the agent’s
+# location and the random sample target positions, until it does not
+# coincide with the agent’s position.
+#
+# The ``reset`` method should return a tuple of the initial observation
+# and some auxiliary information. We can use the methods ``_get_obs`` and
+# ``_get_info`` that we implemented earlier for that:
 
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
@@ -218,19 +219,19 @@ class GridWorldEnv(gym.Env):
 
         return observation, info
 
-    # %%
-    # Step
-    # ~~~~
-    #
-    # The ``step`` method usually contains most of the logic of your
-    # environment. It accepts an ``action``, computes the state of the
-    # environment after applying that action and returns the 4-tuple
-    # ``(observation, reward, done, info)``. Once the new state of the
-    # environment has been computed, we can check whether it is a terminal
-    # state and we set ``done`` accordingly. Since we are using sparse binary
-    # rewards in ``GridWorldEnv``, computing ``reward`` is trivial once we
-    # know ``done``. To gather ``observation`` and ``info``, we can again make
-    # use of ``_get_obs`` and ``_get_info``:
+# %%
+# Step
+# ~~~~
+#
+# The ``step`` method usually contains most of the logic of your
+# environment. It accepts an ``action``, computes the state of the
+# environment after applying that action and returns the 4-tuple
+# ``(observation, reward, done, info)``. Once the new state of the
+# environment has been computed, we can check whether it is a terminal
+# state and we set ``done`` accordingly. Since we are using sparse binary
+# rewards in ``GridWorldEnv``, computing ``reward`` is trivial once we
+# know ``done``. To gather ``observation`` and ``info``, we can again make
+# use of ``_get_obs`` and ``_get_info``:
 
     def step(self, action):
         # Map the action (element of {0,1,2,3}) to the direction we walk in
@@ -250,90 +251,90 @@ class GridWorldEnv(gym.Env):
 
         return observation, reward, terminated, False, info
 
-    # %%
-    # Rendering
-    # ~~~~~~~~~
-    #
-    # Here, we are using PyGame for rendering. A similar approach to rendering
-    # is used in many environments that are included with Gymnasium and you
-    # can use it as a skeleton for your own environments:
+# %%
+# Rendering
+# ~~~~~~~~~
+#
+# Here, we are using PyGame for rendering. A similar approach to rendering
+# is used in many environments that are included with Gymnasium and you
+# can use it as a skeleton for your own environments:
 
     def render(self):
         if self.render_mode == "rgb_array":
             return self._render_frame()
 
-        def _render_frame(self):
-            if self.window is None and self.render_mode == "human":
-                pygame.init()
-                pygame.display.init()
-                self.window = pygame.display.set_mode(
-                    (self.window_size, self.window_size)
-                )
-            if self.clock is None and self.render_mode == "human":
-                self.clock = pygame.time.Clock()
-
-            canvas = pygame.Surface((self.window_size, self.window_size))
-            canvas.fill((255, 255, 255))
-            pix_square_size = (
-                self.window_size / self.size
-            )  # The size of a single grid square in pixels
-
-            # First we draw the target
-            pygame.draw.rect(
-                canvas,
-                (255, 0, 0),
-                pygame.Rect(
-                    pix_square_size * self._target_location,
-                    (pix_square_size, pix_square_size),
-                ),
+    def _render_frame(self):
+        if self.window is None and self.render_mode == "human":
+            pygame.init()
+            pygame.display.init()
+            self.window = pygame.display.set_mode(
+                (self.window_size, self.window_size)
             )
-            # Now we draw the agent
-            pygame.draw.circle(
+        if self.clock is None and self.render_mode == "human":
+            self.clock = pygame.time.Clock()
+
+        canvas = pygame.Surface((self.window_size, self.window_size))
+        canvas.fill((255, 255, 255))
+        pix_square_size = (
+            self.window_size / self.size
+        )  # The size of a single grid square in pixels
+
+        # First we draw the target
+        pygame.draw.rect(
+            canvas,
+            (255, 0, 0),
+            pygame.Rect(
+                pix_square_size * self._target_location,
+                (pix_square_size, pix_square_size),
+            ),
+        )
+        # Now we draw the agent
+        pygame.draw.circle(
+            canvas,
+            (0, 0, 255),
+            (self._agent_location + 0.5) * pix_square_size,
+            pix_square_size / 3,
+        )
+
+        # Finally, add some gridlines
+        for x in range(self.size + 1):
+            pygame.draw.line(
                 canvas,
-                (0, 0, 255),
-                (self._agent_location + 0.5) * pix_square_size,
-                pix_square_size / 3,
+                0,
+                (0, pix_square_size * x),
+                (self.window_size, pix_square_size * x),
+                width=3,
+            )
+            pygame.draw.line(
+                canvas,
+                0,
+                (pix_square_size * x, 0),
+                (pix_square_size * x, self.window_size),
+                width=3,
             )
 
-            # Finally, add some gridlines
-            for x in range(self.size + 1):
-                pygame.draw.line(
-                    canvas,
-                    0,
-                    (0, pix_square_size * x),
-                    (self.window_size, pix_square_size * x),
-                    width=3,
-                )
-                pygame.draw.line(
-                    canvas,
-                    0,
-                    (pix_square_size * x, 0),
-                    (pix_square_size * x, self.window_size),
-                    width=3,
-                )
+        if self.render_mode == "human":
+            # The following line copies our drawings from `canvas` to the visible window
+            self.window.blit(canvas, canvas.get_rect())
+            pygame.event.pump()
+            pygame.display.update()
 
-            if self.render_mode == "human":
-                # The following line copies our drawings from `canvas` to the visible window
-                self.window.blit(canvas, canvas.get_rect())
-                pygame.event.pump()
-                pygame.display.update()
+            # We need to ensure that human-rendering occurs at the predefined framerate.
+            # The following line will automatically add a delay to keep the framerate stable.
+            self.clock.tick(self.metadata["render_fps"])
+        else:  # rgb_array
+            return np.transpose(
+                np.array(pygame.surfarray.pixels3d(canvas)), axes=(1, 0, 2)
+            )
 
-                # We need to ensure that human-rendering occurs at the predefined framerate.
-                # The following line will automatically add a delay to keep the framerate stable.
-                self.clock.tick(self.metadata["render_fps"])
-            else:  # rgb_array
-                return np.transpose(
-                    np.array(pygame.surfarray.pixels3d(canvas)), axes=(1, 0, 2)
-                )
-
-    # %%
-    # Close
-    # ~~~~~
-    #
-    # The ``close`` method should close any open resources that were used by
-    # the environment. In many cases, you don’t actually have to bother to
-    # implement this method. However, in our example ``render_mode`` may be
-    # ``"human"`` and we might need to close the window that has been opened:
+# %%
+# Close
+# ~~~~~
+#
+# The ``close`` method should close any open resources that were used by
+# the environment. In many cases, you don’t actually have to bother to
+# implement this method. However, in our example ``render_mode`` may be
+# ``"human"`` and we might need to close the window that has been opened:
 
     def close(self):
         if self.window is not None:

@@ -14,8 +14,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
         <title>Composite Spaces - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=3cf7b839e8c50b5f3a39bb99d90baa7b845de926" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=91b9f2a71a58ed2481980f1e5725e16457fde93d" />
     
     
 
@@ -42,199 +42,70 @@
   }
 </style></head>
   <body>
-    <header class="farama-header">
+    <header class="farama-header" aria-label="Farama header">
       <div class="farama-header__container">
-        <div class="farama-header__left">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+            <!-- <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <line x1="0.5" y1="4.5" x2="23.5" y2="4.5" style="fill: none; "></line>
+              <line x1="0.5" y1="12" x2="14" y2="12" ></line>
+              <line x1="0.5" y1="19.5" x2="23.5" y2="19.5"></line>
+              <polyline style="stroke-width: 0px;" points="17 7 22 12 17 17"></polyline>
+            </svg> -->
+            <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px">
+              <defs></defs>
+              <rect y="1" width="22" height="22" rx="2" ry="2" style="fill: none;" x="1"></rect>
+              <line x1="8" y1="1" x2="8" y2="23"></line>
+              <polyline style="stroke-linecap: round; fill: none; stroke-linejoin: round;" points="13 7 17 12 13 17"></polyline>
+            </svg> -->
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
           <a href="../../../">
               <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
               <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
-            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+            <span class="farama-header__title">Gymnasium Documentation</span>
           </a>
         </div>
         <div class="farama-header__right">
           <div class="farama-header-menu">
-            <div class="farama-header-menu__btn">
-              <span class="farama-header-menu__btn-name">
-                Farama Foundation
-              </span>
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
-                  <defs></defs>
-                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
-                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
-                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-white-logo-invert" src="../../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
               </svg>
-            </div>
-            <div class="farama-header-menu-container">
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
               <div class="farama-header-menu__header">
                 <a href="https://farama.org">
-                  <img class="farama-header-menu__logo" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
                   <span>Farama Foundation</span>
                 </a>
-                <button id="farama-close-menu">
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
-                    <line x1="3" y1="21" x2="21" y2="3"></line>
-                    <line x1="3" y1="3" x2="21" y2="21"></line>
-                  </svg>
-                </button>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div class="farama-header-menu__body">
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Documentation</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://gymnasium.farama.org">
-                        
-                        <img src="../../../_static/img/gymnasium-white.svg">
-                        
-                        Gymnasium
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://pettingzoo.farama.org">
-                        
-                        <img src="../../../_static/img/pettingzoo-white.svg">
-                        
-                        PettingZoo
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://minigrid.farama.org">
-                        
-                        <img src="../../../_static/img/minigrid-white.svg">
-                        
-                        MiniGrid
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://robotics.farama.org">
-                        
-                        <img src="../../../_static/img/gymrobotics-white.svg">
-                        
-                        Gymnasium-Robotics
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Mature Projects</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/SuperSuit">
-                        
-                        <img src="../../../_static/img/supersuit-white.svg">
-                        
-                        SuperSuit
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/tinyscaler">
-                        
-                        <img src="../../../_static/img/tinyscaler-white.svg">
-                        
-                        Tinyscaler
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/AutoROM">
-                        
-                        <img src="../../../_static/img/autorom-white.svg">
-                        
-                        AutoROM
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/Jumpy">
-                        
-                        <img src="../../../_static/img/jumpy-white.svg">
-                        
-                        JumPy
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Incubating Projects</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/MAgent2">
-                        
-                        <img src="../../../_static/img/MAgent2-white.svg">
-                        
-                        MAgent2
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/procgen2">
-                        
-                        <img src="../../../_static/img/procgen2-white.svg">
-                        
-                        Procgen2
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/MiniWorld">
-                        
-                        <img src="../../../_static/img/miniworld-white.svg">
-                        
-                        Miniworld
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/D4RL">
-                        
-                        <img src="../../../_static/img/d4rl-white.svg">
-                        
-                        D4RL
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/Kabuki">
-                        
-                        <img src="../../../_static/img/kabuki-white.svg">
-                        
-                        Kabuki
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Foundation</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://farama.org/about">
-                        
-                        About
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://farama.org/project_standards">
-                        
-                        Standards
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://farama.org/donations">
-                        
-                        Donate
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                
-
+                <!-- Response from farama.org/api/projects.json -->
               </div>
             </div>
           </div>
         </div>
       </div>
     </header>
-
-    <div class="farama-header-menu__overlay"></div>
 
     
     <script>
@@ -315,7 +186,7 @@
 
 
 <div class="page">
-  <header class="mobile-header">
+   <!--<header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
         <div class="visually-hidden">Toggle site navigation sidebar</div>
@@ -339,11 +210,15 @@
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
     </div>
-  </header>
+  </header>-->
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../../">
+      <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Gymnasium Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
@@ -375,10 +250,17 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../vector/">Vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../experimental/functional/">Functional Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../experimental/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector/">Vectorizing Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/acrobot/">Acrobot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/cart_pole/">Cart Pole</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
@@ -386,20 +268,20 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/pendulum/">Pendulum</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/car_racing/">Car Racing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/blackjack/">Blackjack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/taxi/">Taxi</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/ant/">Ant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/hopper/">Hopper</a></li>
@@ -413,7 +295,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/walker2d/">Walker2D</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/adventure/">Adventure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/air_raid/">Air Raid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/alien/">Alien</a></li>
@@ -477,13 +359,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/">Third-party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -540,7 +424,7 @@
 <h2>Dict<a class="headerlink" href="#dict" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Dict">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Generator</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">spaces_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">spaces_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Dict" title="Permalink to this definition">#</a></dt>
 <dd><p>A dictionary of <a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a> instances.</p>
 <p>Elements of this space are (ordered) dictionaries of elements from the constituent spaces.</p>
 <p>Example usage:</p>
@@ -573,8 +457,8 @@
 </div>
 <p>It can be convenient to use <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> spaces if you want to make complex observations or actions more human-readable.
 Usually, it will not be possible to use elements of this space directly in learning code. However, you can easily
-convert <cite>Dict</cite> observations to flat arrays by using a <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.wrappers.FlattenObservation</span></code> wrapper. Similar wrappers can be
-implemented to deal with <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> actions.</p>
+convert <cite>Dict</cite> observations to flat arrays by using a <a class="reference internal" href="../../wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.FlattenObservation</span></code></a> wrapper.
+Similar wrappers can be implemented to deal with <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> actions.</p>
 <p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> space.</p>
 <p>This space can be instantiated in one of two ways: Either you pass a dictionary
 of spaces to <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> via the <code class="docutils literal notranslate"><span class="pre">spaces</span></code> argument, or you pass the spaces as separate
@@ -600,7 +484,7 @@ keyword arguments (where you will need to avoid the keys <code class="docutils l
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Dict.sample">
-<span class="sig-prename descclassname"><span class="pre">Dict.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#gymnasium.spaces.Dict.sample" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Dict.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Dict.sample" title="Permalink to this definition">#</a></dt>
 <dd><p>Generates a single random sample from this space.</p>
 <p>The sample is an ordered dictionary of independent samples from the constituent spaces.</p>
 <dl class="field-list simple">
@@ -615,12 +499,14 @@ keyword arguments (where you will need to avoid the keys <code class="docutils l
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Dict.seed">
-<span class="sig-prename descclassname"><span class="pre">Dict.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#gymnasium.spaces.Dict.seed" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Dict.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Dict.seed" title="Permalink to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and all subspaces.</p>
-<p>Depending on the type of seed, the subspaces will be seeded differently
-* None - All the subspaces will use a random initial seed
-* Int - The integer is used to seed the <cite>Dict</cite> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
-* Dict - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (<cite>Dict[“space”: Dict[…], …]</cite> with <cite>{“space”: {…}, …}</cite>).</p>
+<p>Depending on the type of seed, the subspaces will be seeded differently</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> - All the subspaces will use a random initial seed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Int</span></code> - The integer is used to seed the <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Dict</span></code> - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (<code class="docutils literal notranslate"><span class="pre">Dict[&quot;space&quot;:</span> <span class="pre">Dict[...],</span> <span class="pre">...]</span></code> with <code class="docutils literal notranslate"><span class="pre">{&quot;space&quot;:</span> <span class="pre">{...},</span> <span class="pre">...}</span></code>).</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – An optional list of ints or int to seed the (sub-)spaces.</p>
@@ -633,7 +519,7 @@ keyword arguments (where you will need to avoid the keys <code class="docutils l
 <h2>Tuple<a class="headerlink" href="#tuple" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Tuple">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Generator</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Tuple" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Tuple" title="Permalink to this definition">#</a></dt>
 <dd><p>A tuple (more precisely: the cartesian product) of <a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a> instances.</p>
 <p>Elements of this space are tuples of elements of the constituent spaces.</p>
 <p>Example usage:</p>
@@ -657,7 +543,7 @@ keyword arguments (where you will need to avoid the keys <code class="docutils l
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Tuple.sample">
-<span class="sig-prename descclassname"><span class="pre">Tuple.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#gymnasium.spaces.Tuple.sample" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Tuple.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Tuple.sample" title="Permalink to this definition">#</a></dt>
 <dd><p>Generates a single random sample inside this space.</p>
 <p>This method draws independent samples from the subspaces.</p>
 <dl class="field-list simple">
@@ -673,12 +559,14 @@ expects the same number of masks as spaces</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Tuple.seed">
-<span class="sig-prename descclassname"><span class="pre">Tuple.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Tuple.seed" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Tuple.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Tuple.seed" title="Permalink to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and all subspaces.</p>
-<p>Depending on the type of seed, the subspaces will be seeded differently
-* None - All the subspaces will use a random initial seed
-* Int - The integer is used to seed the <cite>Tuple</cite> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
-* List - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces (<cite>List(42, 54, …)</cite>).</p>
+<p>Depending on the type of seed, the subspaces will be seeded differently</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> - All the subspaces will use a random initial seed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Int</span></code> - The integer is used to seed the <cite>Tuple</cite> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">List</span></code> - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces (<code class="docutils literal notranslate"><span class="pre">List(42,</span> <span class="pre">54,</span> <span class="pre">...</span></code>).</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – An optional list of ints or int to seed the (sub-)spaces.</p>
@@ -691,12 +579,13 @@ expects the same number of masks as spaces</p>
 <h2>Sequence<a class="headerlink" href="#sequence" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Sequence">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Generator</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Sequence" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Sequence" title="Permalink to this definition">#</a></dt>
 <dd><p>This space represent sets of finite-length sequences.</p>
 <p>This space represents the set of tuples of the form <span class="math notranslate nohighlight">\((a_0, \dots, a_n)\)</span> where the <span class="math notranslate nohighlight">\(a_i\)</span> belong
 to some space that is specified during initialization and the integer <span class="math notranslate nohighlight">\(n\)</span> is not fixed</p>
 <dl>
-<dt>Example::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">(</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<dt>Example::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">(</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="go">(array([0.0259352], dtype=float32),)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
@@ -718,18 +607,21 @@ to some space that is specified during initialization and the integer <span clas
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Sequence.sample">
-<span class="sig-prename descclassname"><span class="pre">Sequence.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Sequence.sample" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Sequence.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.integer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">npt.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Sequence.sample" title="Permalink to this definition">#</a></dt>
 <dd><p>Generates a single random sample from this space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mask</strong> – An optional mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
+<dd class="field-odd"><p><strong>mask</strong> – <p>An optional mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
 If you specify <cite>mask</cite>, it is expected to be a tuple of the form <cite>(length_mask, sample_mask)</cite> where <cite>length_mask</cite>
-is
-- <cite>None</cite> The length will be randomly drawn from a geometric distribution
-- <cite>np.ndarray</cite> of integers, in which case the length of the sampled sequence is randomly drawn from this array.
-- <cite>int</cite> for a fixed length sample
-The second element of the mask tuple <cite>sample</cite> mask specifies a mask that is applied when
+is</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> The length will be randomly drawn from a geometric distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> of integers, in which case the length of the sampled sequence is randomly drawn from this array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code> for a fixed length sample</p></li>
+</ul>
+<p>The second element of the mask tuple <cite>sample</cite> mask specifies a mask that is applied when
 sampling elements from the base space. The mask is applied for each feature space sample.</p>
+</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>A tuple of random length with random samples of elements from the :attr:`feature_space`.</strong></p>
@@ -739,7 +631,7 @@ sampling elements from the base space. The mask is applied for each feature spac
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Sequence.seed">
-<span class="sig-prename descclassname"><span class="pre">Sequence.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#gymnasium.spaces.Sequence.seed" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Sequence.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Sequence.seed" title="Permalink to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and the feature space.</p>
 </dd></dl>
 
@@ -748,11 +640,10 @@ sampling elements from the base space. The mask is applied for each feature spac
 <h2>Graph<a class="headerlink" href="#graph" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Graph">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.box.Box"><span class="pre">Box</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.discrete.Discrete"><span class="pre">Discrete</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.box.Box"><span class="pre">Box</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.discrete.Discrete"><span class="pre">Discrete</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Generator</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Graph" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><span class="pre">Box</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><span class="pre">Discrete</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><span class="pre">Box</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><span class="pre">Discrete</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Graph" title="Permalink to this definition">#</a></dt>
 <dd><p>A space representing graph information as a series of <cite>nodes</cite> connected with <cite>edges</cite> according to an adjacency matrix represented as a series of <cite>edge_links</cite>.</p>
 <p>Example usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Graph</span><span class="p">(</span><span class="n">node_space</span><span class="o">=</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)),</span> <span class="n">edge_space</span><span class="o">=</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">node_space</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)),</span> <span class="n">edge_space</span><span class="o">=</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Graph" title="gymnasium.spaces.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>.</p>
@@ -773,7 +664,7 @@ This argument must be either a None, Box or Discrete instance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Graph.sample">
-<span class="sig-prename descclassname"><span class="pre">Graph.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GraphInstance</span></span></span><a class="headerlink" href="#gymnasium.spaces.Graph.sample" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Graph.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GraphInstance</span></span></span><a class="headerlink" href="#gymnasium.spaces.Graph.sample" title="Permalink to this definition">#</a></dt>
 <dd><p>Generates a single sample graph with num_nodes between 1 and 10 sampled from the Graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -793,7 +684,7 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Graph.seed">
-<span class="sig-prename descclassname"><span class="pre">Graph.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#gymnasium.spaces.Graph.seed" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Graph.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Graph.seed" title="Permalink to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
 </dd></dl>
 
@@ -904,24 +795,21 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
   </div>
 </div>
     <script>
-      let toggleMenu = () => {
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.ariaExpanded = "false";
+          menuContainer.ariaHidden = "true";
+        } else {
+          menuBtn.ariaExpanded = "true";
+          menuContainer.ariaHidden = "false";
+        }
         document.querySelector(".farama-header-menu").classList.toggle("active");
-        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
       }
 
       document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
       document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
-      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
-
-      window.onclick = function(event) {
-        if (!event.target.matches('.farama-header-menu__btn')) {
-          const dropdown = document.querySelector(".farama-header-menu-container");
-          if (dropdown.classList.contains('active')) {
-            dropdown.classList.remove('active');
-            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
-          }
-        }
-      }
     </script>
 
     
@@ -967,6 +855,119 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script>
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Documentation": [],
+          "Mature Projects": [],
+          "Incubating Projects": [],
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+            sections["Documentation"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            projectJson.link = projectJson.github;
+            sections["Mature Projects"].push(projectJson)
+          } else {
+            projectJson.link = projectJson.github;
+            sections["Incubating Projects"].push(projectJson)
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          projects = sections[key];
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+              style: "padding-left: 24px"
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          const ulElem = Object.assign(document.createElement('ul'),
+            {
+              className:'farama-header-menu-list',
+            }
+          )
+          for (let project of projects) {
+            const liElem = document.createElement("li");
+            const aElem = Object.assign(document.createElement("a"),
+              {
+                href: project.link
+              }
+            );
+            liElem.appendChild(aElem);
+            if (key !== "Foundation") {
+              const imgElem = Object.assign(document.createElement("img"),
+                {
+                  src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                  alt: `${project.name} logo`,
+                  className: "farama-black-logo-invert"
+                }
+              );
+              aElem.appendChild(imgElem);
+            }
+            aElem.appendChild(document.createTextNode(project.name));
+            ulElem.appendChild(liElem);
+          }
+          sectionElem.appendChild(ulElem);
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
     
     <script>
       const versioningConfig = {

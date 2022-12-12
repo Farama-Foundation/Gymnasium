@@ -8,6 +8,11 @@ Solving Blackjack with Q-Learning
 # .. image:: /_static/img/tutorials/blackjack_AE_loop.jpg
 #   :width: 650
 #   :alt: agent-environment-diagram
+#   :class: only-light
+# .. image::  /_static/img/tutorials/blackjack_AE_loop_dark.png
+#   :width: 650
+#   :alt: agent-environment-diagram
+#   :class: only-dark
 #
 # In this tutorial, we’ll explore and solve the *Blackjack-v1*
 # environment.
@@ -50,6 +55,7 @@ from matplotlib.patches import Patch
 from tqdm import tqdm
 
 import gymnasium as gym
+
 
 # Let's start by creating the blackjack environment.
 # Note: We are going to follow the rules from Sutton & Barto.

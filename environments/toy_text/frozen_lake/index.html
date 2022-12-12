@@ -14,8 +14,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
         <title>Frozen Lake - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=3cf7b839e8c50b5f3a39bb99d90baa7b845de926" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=91b9f2a71a58ed2481980f1e5725e16457fde93d" />
     
     
 
@@ -42,199 +42,70 @@
   }
 </style></head>
   <body>
-    <header class="farama-header">
+    <header class="farama-header" aria-label="Farama header">
       <div class="farama-header__container">
-        <div class="farama-header__left">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+            <!-- <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <line x1="0.5" y1="4.5" x2="23.5" y2="4.5" style="fill: none; "></line>
+              <line x1="0.5" y1="12" x2="14" y2="12" ></line>
+              <line x1="0.5" y1="19.5" x2="23.5" y2="19.5"></line>
+              <polyline style="stroke-width: 0px;" points="17 7 22 12 17 17"></polyline>
+            </svg> -->
+            <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px">
+              <defs></defs>
+              <rect y="1" width="22" height="22" rx="2" ry="2" style="fill: none;" x="1"></rect>
+              <line x1="8" y1="1" x2="8" y2="23"></line>
+              <polyline style="stroke-linecap: round; fill: none; stroke-linejoin: round;" points="13 7 17 12 13 17"></polyline>
+            </svg> -->
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
           <a href="../../../">
               <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
               <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
-            <h1 class="farama-header__title">Gymnasium Documentation</h1>
+            <span class="farama-header__title">Gymnasium Documentation</span>
           </a>
         </div>
         <div class="farama-header__right">
           <div class="farama-header-menu">
-            <div class="farama-header-menu__btn">
-              <span class="farama-header-menu__btn-name">
-                Farama Foundation
-              </span>
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
-                  <defs></defs>
-                  <path d="M 3 4.677 C 3 3.751 3.659 3 4.474 3 L 27.526 3 C 28.341 3 29 3.751 29 4.677 C 29 5.603 28.341 6.354 27.526 6.354 L 4.474 6.354 C 3.659 6.354 3 5.603 3 4.677 Z" bx:origin="0.622825 3.875593"></path>
-                  <path d="M 3 16 C 3 15.074 3.659 14.323 4.474 14.323 L 27.526 14.323 C 28.341 14.323 29 15.074 29 16 C 29 16.926 28.341 17.677 27.526 17.677 L 4.474 17.677 C 3.659 17.677 3 16.926 3 16 Z" bx:origin="0.622825 0.5"></path>
-                  <path d="M 3 27.323 C 3 26.397 3.659 25.646 4.474 25.646 L 27.526 25.646 C 28.341 25.646 29 26.397 29 27.323 C 29 28.249 28.341 29 27.526 29 L 4.474 29 C 3.659 29 3 28.249 3 27.323 Z" bx:origin="0.622825 -2.875591"></path>
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-white-logo-invert" src="../../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
               </svg>
-            </div>
-            <div class="farama-header-menu-container">
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
               <div class="farama-header-menu__header">
                 <a href="https://farama.org">
-                  <img class="farama-header-menu__logo" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
                   <span>Farama Foundation</span>
                 </a>
-                <button id="farama-close-menu">
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
-                    <line x1="3" y1="21" x2="21" y2="3"></line>
-                    <line x1="3" y1="3" x2="21" y2="21"></line>
-                  </svg>
-                </button>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div class="farama-header-menu__body">
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Documentation</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://gymnasium.farama.org">
-                        
-                        <img src="../../../_static/img/gymnasium-white.svg">
-                        
-                        Gymnasium
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://pettingzoo.farama.org">
-                        
-                        <img src="../../../_static/img/pettingzoo-white.svg">
-                        
-                        PettingZoo
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://minigrid.farama.org">
-                        
-                        <img src="../../../_static/img/minigrid-white.svg">
-                        
-                        MiniGrid
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://robotics.farama.org">
-                        
-                        <img src="../../../_static/img/gymrobotics-white.svg">
-                        
-                        Gymnasium-Robotics
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Mature Projects</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/SuperSuit">
-                        
-                        <img src="../../../_static/img/supersuit-white.svg">
-                        
-                        SuperSuit
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/tinyscaler">
-                        
-                        <img src="../../../_static/img/tinyscaler-white.svg">
-                        
-                        Tinyscaler
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/AutoROM">
-                        
-                        <img src="../../../_static/img/autorom-white.svg">
-                        
-                        AutoROM
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/Jumpy">
-                        
-                        <img src="../../../_static/img/jumpy-white.svg">
-                        
-                        JumPy
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Incubating Projects</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/MAgent2">
-                        
-                        <img src="../../../_static/img/MAgent2-white.svg">
-                        
-                        MAgent2
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/procgen2">
-                        
-                        <img src="../../../_static/img/procgen2-white.svg">
-                        
-                        Procgen2
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/MiniWorld">
-                        
-                        <img src="../../../_static/img/miniworld-white.svg">
-                        
-                        Miniworld
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/D4RL">
-                        
-                        <img src="../../../_static/img/d4rl-white.svg">
-                        
-                        D4RL
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://github.com/Farama-Foundation/Kabuki">
-                        
-                        <img src="../../../_static/img/kabuki-white.svg">
-                        
-                        Kabuki
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                <div class="farama-header-menu__section"  style="padding-left: 24px;" >
-                  <span class="farama-header-menu__section-title">Foundation</span>
-                  <ul class="farama-header-menu-list">
-                    <li>
-                      <a href="https://farama.org/about">
-                        
-                        About
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://farama.org/project_standards">
-                        
-                        Standards
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://farama.org/donations">
-                        
-                        Donate
-                      </a>
-                    </li>
-                    
-                  </ul>
-                </div>
-                
-
+                <!-- Response from farama.org/api/projects.json -->
               </div>
             </div>
           </div>
         </div>
       </div>
     </header>
-
-    <div class="farama-header-menu__overlay"></div>
 
     
     <script>
@@ -315,7 +186,7 @@
 
 
 <div class="page">
-  <header class="mobile-header">
+   <!--<header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
         <div class="visually-hidden">Toggle site navigation sidebar</div>
@@ -339,11 +210,15 @@
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
     </div>
-  </header>
+  </header>-->
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../../">
+      <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Gymnasium Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
@@ -375,10 +250,17 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/vector/">Vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils/">Utils</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/experimental/functional/">Functional Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/experimental/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/experimental/vector/">Vectorizing Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul class="current">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../classic_control/acrobot/">Acrobot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../classic_control/cart_pole/">Cart Pole</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
@@ -386,20 +268,20 @@
 <li class="toctree-l2"><a class="reference internal" href="../../classic_control/pendulum/">Pendulum</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../box2d/bipedal_walker/">Bipedal Walker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../box2d/car_racing/">Car Racing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../box2d/lunar_lander/">Lunar Lander</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Toy Text</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Toy Text</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../blackjack/">Blackjack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../taxi/">Taxi</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../cliff_walking/">Cliff Walking</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Frozen Lake</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../mujoco/ant/">Ant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../mujoco/half_cheetah/">Half Cheetah</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../mujoco/hopper/">Hopper</a></li>
@@ -413,7 +295,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../mujoco/walker2d/">Walker2D</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../atari/adventure/">Adventure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../atari/air_raid/">Air Raid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../atari/alien/">Alien</a></li>
@@ -477,13 +359,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../../atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../third_party_environments/">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../third_party_environments/">Third-party Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -549,36 +433,78 @@
 </tbody>
 </table>
 </div>
-<p>Frozen lake involves crossing a frozen lake from Start(S) to Goal(G) without falling into any Holes(H)
-by walking over the Frozen(F) lake.
-The agent may not always move in the intended direction due to the slippery nature of the frozen lake.</p>
+<p>Frozen lake involves crossing a frozen lake from start to goal without falling into any holes
+by walking over the frozen lake.
+The player may not always move in the intended direction due to the slippery nature of the frozen lake.</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
+<p>The game starts with the player at location [0,0] of the frozen lake grid world with the
+goal located at far extent of the world e.g. [3,3] for the 4x4 environment.</p>
+<p>Holes in the ice are distributed in set locations when using a pre-determined map
+or in random locations when a random map is generated.</p>
+<p>The player makes moves until they reach the goal or fall in a hole.</p>
+<p>The lake is slippery (unless disabled) so the player may move perpendicular
+to the intended direction sometimes (see <a href="#is_slippy"><code class="docutils literal notranslate"><span class="pre">is_slippery</span></code></a>).</p>
+<p>Randomly generated worlds will always have a path to the goal.</p>
+<p>Elf and stool from <a class="reference external" href="https://franuka.itch.io/rpg-snow-tileset">https://franuka.itch.io/rpg-snow-tileset</a>.
+All other assets by Mel Tillery <a class="reference external" href="http://www.cyaneus.com/">http://www.cyaneus.com/</a>.</p>
+</section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
-<p>The agent takes a 1-element vector for actions.
-The action space is <code class="docutils literal notranslate"><span class="pre">(dir)</span></code>, where <code class="docutils literal notranslate"><span class="pre">dir</span></code> decides direction to move in which can be:</p>
+<p>The action shape is <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> in the range <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">3}</span></code> indicating
+which direction to move the player.</p>
 <ul class="simple">
-<li><p>0: LEFT</p></li>
-<li><p>1: DOWN</p></li>
-<li><p>2: RIGHT</p></li>
-<li><p>3: UP</p></li>
+<li><p>0: Move left</p></li>
+<li><p>1: Move down</p></li>
+<li><p>2: Move right</p></li>
+<li><p>3: Move up</p></li>
 </ul>
 </section>
 <section id="observation-space">
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
-<p>The observation is a value representing the agent’s current position as
-current_row * nrows + current_col (where both the row and col start at 0).
-For example, the goal position in the 4x4 map can be calculated as follows: 3 * 4 + 3 = 15.
-The number of possible observations is dependent on the size of the map.
-For example, the 4x4 map has 16 possible observations.</p>
+<p>The observation is a value representing the player’s current position as
+current_row * nrows + current_col (where both the row and col start at 0).</p>
+<p>For example, the goal position in the 4x4 map can be calculated as follows: 3 * 4 + 3 = 15.
+The number of possible observations is dependent on the size of the map.</p>
+<p>The observation is returned as an <code class="docutils literal notranslate"><span class="pre">int()</span></code>.</p>
+</section>
+<section id="starting-state">
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<p>The episode starts with the player in state <code class="docutils literal notranslate"><span class="pre">[0]</span></code> (location [0, 0]).</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
 <p>Reward schedule:</p>
 <ul class="simple">
-<li><p>Reach goal(G): +1</p></li>
-<li><p>Reach hole(H): 0</p></li>
-<li><p>Reach frozen(F): 0</p></li>
+<li><p>Reach goal: +1</p></li>
+<li><p>Reach hole: 0</p></li>
+<li><p>Reach frozen: 0</p></li>
 </ul>
+</section>
+<section id="episode-end">
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
+<p>The episode ends if the following happens:</p>
+<ul class="simple">
+<li><p>Termination:</p>
+<ol class="arabic simple">
+<li><p>The player moves into a hole.</p></li>
+<li><p>The player reaches the goal at <code class="docutils literal notranslate"><span class="pre">max(nrow)</span> <span class="pre">*</span> <span class="pre">max(ncol)</span> <span class="pre">-</span> <span class="pre">1</span></code> (location <code class="docutils literal notranslate"><span class="pre">[max(nrow)-1,</span> <span class="pre">max(ncol)-1]</span></code>).</p></li>
+</ol>
+</li>
+<li><p>Truncation (when using the time_limit wrapper):</p>
+<ol class="arabic simple">
+<li><p>The length of the episode is 100 for 4x4 environment, 200 for 8x8 environment.</p></li>
+</ol>
+</li>
+</ul>
+</section>
+<section id="information">
+<h2>Information<a class="headerlink" href="#information" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">step()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> return a dict with the following keys:</p>
+<ul class="simple">
+<li><p>p - transition probability for the state.</p></li>
+</ul>
+<p>See <a href="#is_slippy"><code class="docutils literal notranslate"><span class="pre">is_slippery</span></code></a> for transition probability information.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
@@ -586,53 +512,54 @@ For example, the 4x4 map has 16 possible observations.</p>
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;FrozenLake-v1&#39;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;4x4&quot;</span><span class="p">,</span> <span class="n">is_slippery</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">desc</span></code>: Used to specify custom map for frozen lake. For example,</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>desc=[&quot;SFFF&quot;, &quot;FHFH&quot;, &quot;FFFH&quot;, &quot;HFFG&quot;].
-
-A random generated map can be specified by calling the function `generate_random_map`. For example,
-
-```
-from gymnasium.envs.toy_text.frozen_lake import generate_random_map
-
-gym.make(&#39;FrozenLake-v1&#39;, desc=generate_random_map(size=8))
-```
+<p><code class="docutils literal notranslate"><span class="pre">desc=None</span></code>: Used to specify maps non-preloaded maps.</p>
+<p>Specify a custom map.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">desc</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SFFF&quot;</span><span class="p">,</span> <span class="s2">&quot;FHFH&quot;</span><span class="p">,</span> <span class="s2">&quot;FFFH&quot;</span><span class="p">,</span> <span class="s2">&quot;HFFG&quot;</span><span class="p">]</span><span class="o">.</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">map_name</span></code>: ID to use any of the preloaded maps.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;4x4&quot;:[
-    &quot;SFFF&quot;,
-    &quot;FHFH&quot;,
-    &quot;FFFH&quot;,
-    &quot;HFFG&quot;
-    ]
+<p>A random generated map can be specified by calling the function <code class="docutils literal notranslate"><span class="pre">generate_random_map</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gymnasium.envs.toy_text.frozen_lake</span> <span class="kn">import</span> <span class="n">generate_random_map</span>
 
-&quot;8x8&quot;: [
-    &quot;SFFFFFFF&quot;,
-    &quot;FFFFFFFF&quot;,
-    &quot;FFFHFFFF&quot;,
-    &quot;FFFFFHFF&quot;,
-    &quot;FFFHFFFF&quot;,
-    &quot;FHHFFFHF&quot;,
-    &quot;FHFFHFHF&quot;,
-    &quot;FFFHFFFG&quot;,
-]
+<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;FrozenLake-v1&#39;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">generate_random_map</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">is_slippery</span></code>: True/False. If True will move in intended direction with
+<p><code class="docutils literal notranslate"><span class="pre">map_name=&quot;4x4&quot;</span></code>: ID to use any of the preloaded maps.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="s2">&quot;4x4&quot;</span><span class="p">:[</span>
+        <span class="s2">&quot;SFFF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FHFH&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FFFH&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HFFG&quot;</span>
+        <span class="p">]</span>
+
+    <span class="s2">&quot;8x8&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;SFFFFFFF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FFFFFFFF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FFFHFFFF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FFFFFHFF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FFFHFFFF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FHHFFFHF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FHFFHFHF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FFFHFFFG&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">desc=None</span></code> then <code class="docutils literal notranslate"><span class="pre">map_name</span></code> will be used. If both <code class="docutils literal notranslate"><span class="pre">desc</span></code> and <code class="docutils literal notranslate"><span class="pre">map_name</span></code> are
+<code class="docutils literal notranslate"><span class="pre">None</span></code> a random 8x8 map with 80% of locations frozen will be generated.</p>
+<p><a id="is_slippy"></a><code class="docutils literal notranslate"><span class="pre">is_slippery=True</span></code>: If true the player will move in intended direction with
 probability of 1/3 else will move in either perpendicular direction with
 equal probability of 1/3 in both directions.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>For example, if action is left and is_slippery is True, then:
-- P(move left)=1/3
-- P(move up)=1/3
-- P(move down)=1/3
-</pre></div>
-</div>
+<p>For example, if action is left and is_slippery is True, then:</p>
+<ul class="simple">
+<li><p>P(move left)=1/3</p></li>
+<li><p>P(move up)=1/3</p></li>
+<li><p>P(move down)=1/3</p></li>
+</ul>
 </section>
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v1: Bug fixes to rewards</p></li>
-<li><p>v0: Initial versions release (1.0.0)</p></li>
+<li><p>v0: Initial version release</p></li>
 </ul>
 </section>
 </section>
@@ -696,9 +623,13 @@ equal probability of 1/3 in both directions.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Frozen Lake</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#action-space">Action Space</a></li>
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
+<li><a class="reference internal" href="#starting-state">Starting State</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a></li>
+<li><a class="reference internal" href="#information">Information</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>
 </ul>
@@ -714,24 +645,21 @@ equal probability of 1/3 in both directions.</p>
   </div>
 </div>
     <script>
-      let toggleMenu = () => {
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.ariaExpanded = "false";
+          menuContainer.ariaHidden = "true";
+        } else {
+          menuBtn.ariaExpanded = "true";
+          menuContainer.ariaHidden = "false";
+        }
         document.querySelector(".farama-header-menu").classList.toggle("active");
-        document.querySelector(".farama-header-menu__overlay").classList.toggle("active");
       }
 
       document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
       document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
-      document.querySelector(".farama-header-menu__overlay").addEventListener("click", toggleMenu);
-
-      window.onclick = function(event) {
-        if (!event.target.matches('.farama-header-menu__btn')) {
-          const dropdown = document.querySelector(".farama-header-menu-container");
-          if (dropdown.classList.contains('active')) {
-            dropdown.classList.remove('active');
-            document.querySelector(".farama-header-menu__overlay").classList.remove("active");
-          }
-        }
-      }
     </script>
 
     
@@ -776,6 +704,119 @@ equal probability of 1/3 in both directions.</p>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
+    
+    <script>
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Documentation": [],
+          "Mature Projects": [],
+          "Incubating Projects": [],
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+            sections["Documentation"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            projectJson.link = projectJson.github;
+            sections["Mature Projects"].push(projectJson)
+          } else {
+            projectJson.link = projectJson.github;
+            sections["Incubating Projects"].push(projectJson)
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          projects = sections[key];
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+              style: "padding-left: 24px"
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          const ulElem = Object.assign(document.createElement('ul'),
+            {
+              className:'farama-header-menu-list',
+            }
+          )
+          for (let project of projects) {
+            const liElem = document.createElement("li");
+            const aElem = Object.assign(document.createElement("a"),
+              {
+                href: project.link
+              }
+            );
+            liElem.appendChild(aElem);
+            if (key !== "Foundation") {
+              const imgElem = Object.assign(document.createElement("img"),
+                {
+                  src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                  alt: `${project.name} logo`,
+                  className: "farama-black-logo-invert"
+                }
+              );
+              aElem.appendChild(imgElem);
+            }
+            aElem.appendChild(document.createTextNode(project.name));
+            ulElem.appendChild(liElem);
+          }
+          sectionElem.appendChild(ulElem);
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
     
     <script>
       const versioningConfig = {
