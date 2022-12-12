@@ -307,9 +307,13 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
         if env.render_mode is not None:
             env_render_passive_checker(env)
 
-        for render_mode in env.metadata["render_modes"]:
-            assert env.spec is not None
-            new_env = env.spec.make(render_mode=render_mode)
-            new_env.reset()
-            env_render_passive_checker(new_env)
-            new_env.close()
+        if env.spec is not None:
+            for render_mode in env.metadata["render_modes"]:
+                new_env = env.spec.make(render_mode=render_mode)
+                new_env.reset()
+                env_render_passive_checker(new_env)
+                new_env.close()
+        else:
+            logger.warn(
+                "Not able to test alternative render modes due to the environment not having a spec. Try instantialising the environment through gymnasium.make"
+            )
