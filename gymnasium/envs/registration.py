@@ -202,7 +202,7 @@ class SpecStack:
                 f"Expected a dict or an instance of `gym.Env` or `gym.Wrapper`, got {type(env)}"
             )
 
-    def spec_stack(
+    def spec_stack(  # todo: handle raw envs
         self, outer_wrapper: Union[Wrapper, Env]
     ) -> "tuple[WrapperSpec, Optional[EnvSpec]]":
         """Generates the specification stack for a given [wrapped] environment.
@@ -859,9 +859,13 @@ def make(
     env.unwrapped.spec = spec_
 
     if type(spec_stack) == SpecStack:
-        return _apply_wrappers_from_stack(env, spec_stack)
+        env = _apply_wrappers_from_stack(env, spec_stack)
     else:
-        return _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
+        env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
+
+    if type(spec_stack) != SpecStack:
+        env.spec_stack = SpecStack(env)
+    return env
 
 
 def _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection):

@@ -51,7 +51,8 @@ class Env(Generic[ObsType, ActType]):
     # define render_mode if your environment supports rendering
     render_mode: str | None = None
     reward_range = (-float("inf"), float("inf"))
-    spec: EnvSpec | SpecStack | None = None
+    spec: EnvSpec | None = None
+    spec_stack: SpecStack | None = None
 
     # Set these in ALL subclasses
     action_space: spaces.Space[ActType]
@@ -273,7 +274,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return getattr(self.env, name)
 
     @property
-    def spec(self) -> EnvSpec | SpecStack | None:
+    def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute."""
         return self.env.spec
 

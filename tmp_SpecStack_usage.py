@@ -5,7 +5,8 @@ from gymnasium.envs.registration import SpecStack
 
 
 # construct the environment
-env = gym.make("CartPole-v1")
+env = gym.make("LunarLander-v2")
+print(env.spec)
 env = gym.wrappers.TimeAwareObservation(env)
 env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
 env = gym.wrappers.ResizeObservation(env, (84, 84))
