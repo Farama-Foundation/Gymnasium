@@ -38,3 +38,4 @@ stack_from_json = SpecStack(json.load(open("tmp_SpecStack_usage.json")))
 gym.make(stack_from_json)
 print(stack_from_json)
 print(stack_from_json == stack_from_dict)  # True
+print(env.spec_stack)
