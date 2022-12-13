@@ -625,7 +625,7 @@ def make(
             apply_render_collection = True
         else:
             logger.warn(
-                f"The environment is being initialised with render_mode={mode} "
+                f"The environment is being initialised with render_mode={mode!r} "
                 f"that is not in the possible render_modes ({render_modes})."
             )
 

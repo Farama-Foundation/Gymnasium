@@ -33,16 +33,11 @@ def register_make_testing_envs():
 
     gym.register(
         id="test.ArgumentEnv-v0",
-        entry_point="tests.envs.util_envs:ArgumentEnv",
+        entry_point="tests.envs.utils_envs:ArgumentEnv",
         kwargs={
             "arg1": "arg1",
             "arg2": "arg2",
         },
-    )
-
-    gym.register(
-        id="test/NoRenderModesMetadata-v0",
-        entry_point="tests.envs.util_envs:NoRenderModesMetadata",
     )
 
     gym.register(
@@ -57,6 +52,11 @@ def register_make_testing_envs():
     gym.register(
         id="test/NoHumanNoRGB-v0",
         entry_point="tests.envs.utils_envs:NoHumanNoRGB",
+    )
+
+    gym.register(
+        id="test/NoRenderModesMetadata-v0",
+        entry_point="tests.envs.utils_envs:NoRenderModesMetadata",
     )
 
     yield
@@ -313,7 +313,7 @@ def test_make_render_mode(register_make_testing_envs):
     # This test checks that a user can create an environment without the metadata including the render mode
     with pytest.warns(
         UserWarning,
-        match="The environment is being initialised with render_mode='rgb_list' that is not in the possible render_modes ([]).",
+        match=re.escape("\x1b[33mWARN: The environment is being initialised with render_mode=rgb_array that is not in the possible render_modes ([]).\x1b[0m"),
     ):
         gym.make("test/NoRenderModesMetadata-v0", render_mode="rgb_array")
 
