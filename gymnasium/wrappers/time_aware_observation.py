@@ -36,6 +36,7 @@ class TimeAwareObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         self.is_vector_env = getattr(env, "is_vector_env", False)
 
         gym.utils.EzPickle.__init__(self)
+        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def observation(self, observation):
         """Adds to the observation with the current time step.

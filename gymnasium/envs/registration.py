@@ -224,6 +224,21 @@ class SpecStack:
         else:
             return (wrapper_spec,) + (outer_wrapper.env.spec,)
 
+    def append_wrapper(self, wrapper: Wrapper):
+        """Appends a wrapper to the specification stack.
+
+        Args:
+            wrapper: The wrapper to append.
+        """
+        self.stack = (WrapperSpec(
+            type(wrapper).__name__,
+            wrapper.__module__ + ":" + type(wrapper).__name__,
+            wrapper._ezpickle_args,
+            wrapper._ezpickle_kwargs,
+        ),) + self.stack[:]
+        self.stack_json = self.serialise_spec_stack()
+        return self
+
     def serialise_spec_stack(self) -> str:
         """Serialises the specification stack into a JSON string.
 
