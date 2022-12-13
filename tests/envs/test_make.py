@@ -313,7 +313,9 @@ def test_make_render_mode(register_make_testing_envs):
     # This test checks that a user can create an environment without the metadata including the render mode
     with pytest.warns(
         UserWarning,
-        match=re.escape("\x1b[33mWARN: The environment is being initialised with render_mode=rgb_array that is not in the possible render_modes ([]).\x1b[0m"),
+        match=re.escape(
+            "\x1b[33mWARN: The environment is being initialised with render_mode='rgb_array' that is not in the possible render_modes ([]).\x1b[0m"
+        ),
     ):
         gym.make("test/NoRenderModesMetadata-v0", render_mode="rgb_array")
 
