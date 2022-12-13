@@ -33,12 +33,15 @@ def register_make_testing_envs():
 
     gym.register(
         id="test.ArgumentEnv-v0",
-        entry_point="tests.envs.utils_envs:ArgumentEnv",
+        entry_point="tests.envs.util_envs:ArgumentEnv",
         kwargs={
             "arg1": "arg1",
             "arg2": "arg2",
         },
     )
+
+    gym.register(id="test/NoRenderModesMetadata-v0",
+                 entry_point="tests.envs.util_envs:NoRenderModesMetadata")
 
     gym.register(
         id="test/NoHuman-v0",
@@ -58,6 +61,7 @@ def register_make_testing_envs():
 
     del gym.envs.registration.registry["RegisterDuringMakeEnv-v0"]
     del gym.envs.registration.registry["test.ArgumentEnv-v0"]
+    del gym.envs.registration.registry["test/NoRenderModesMetadata-v0"]
     del gym.envs.registration.registry["test/NoHuman-v0"]
     del gym.envs.registration.registry["test/NoHumanOldAPI-v0"]
     del gym.envs.registration.registry["test/NoHumanNoRGB-v0"]
@@ -303,6 +307,10 @@ def test_make_render_mode(register_make_testing_envs):
         match=re.escape("got an unexpected keyword argument 'render'"),
     ):
         gym.make("CarRacing-v2", render="human")
+
+    # This test checks that a user can create an environment without the metadata including the render mode
+    with pytest.warns(UserWarning, match="The environment is being initialised with render_mode='rgb_list' that is not in the possible render_modes ([])."):
+        gym.make("test/NoRenderModesMetadata-v0", render_mode="rgb_array")
 
 
 def test_make_kwargs(register_make_testing_envs):
