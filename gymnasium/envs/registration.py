@@ -878,12 +878,11 @@ def make(
     env.unwrapped.spec = spec_
 
     if isinstance(spec_stack, SpecStack):
+        env.spec_stack = SpecStack(env)
         env = _apply_wrappers_from_stack(env, spec_stack)
-        env.spec_stack = spec_stack
     else:
         env.spec_stack = SpecStack(env)
         env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
-        #env.spec_stack = SpecStack(env)
 
     return env
 
