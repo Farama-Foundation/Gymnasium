@@ -43,6 +43,7 @@ class StepAPICompatibility(gym.Wrapper, gym.utils.EzPickle):
             )
 
         gym.utils.EzPickle.__init__(self, output_truncation_bool=output_truncation_bool)
+        self.spec_stack = env.spec_stack.spec_stack(self)
 
     def step(self, action):
         """Steps through the environment, returning 5 or 4 items depending on `output_truncation_bool`.

@@ -40,6 +40,7 @@ class VectorListInfo(gym.Wrapper, gym.utils.EzPickle):
         super().__init__(env)
 
         gym.utils.EzPickle.__init__(self)
+        self.spec_stack = env.spec_stack.spec_stack(self)
 
     def step(self, action):
         """Steps through the environment, convert dict info to list."""

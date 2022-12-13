@@ -65,6 +65,7 @@ class HumanRendering(gym.Wrapper, gym.utils.EzPickle):
             self.metadata["render_modes"].append("human")
 
         gym.utils.EzPickle.__init__(self)
+        self.spec_stack = env.spec_stack.spec_stack(self)
 
     @property
     def render_mode(self):

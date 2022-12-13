@@ -46,7 +46,6 @@ If you need a wrapper to do more complicated tasks, you can inherit from the :cl
 
 If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/implementing_custom_wrappers>`_.
 """
-from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
 from gymnasium.wrappers.clip_action import ClipAction
 from gymnasium.wrappers.compatibility import EnvCompatibility

@@ -195,7 +195,7 @@ class SpecStack:
             self.stack = self.deserialise_spec_stack(env, eval_ok=eval_ok)
             self.stack_json = env
         elif isinstance(env, Wrapper) or isinstance(env, Env):
-            self.stack = self.spec_stack(env)
+            self.spec_stack(env)
             self.stack_json = self.serialise_spec_stack()
         else:
             raise TypeError(
@@ -213,6 +213,10 @@ class SpecStack:
         Returns:
             A tuple of environment and wrapper specifications, known as the specification stack.
         """
+        if not isinstance(outer_wrapper, Wrapper):
+            self.stack = (outer_wrapper.spec,)
+            return
+
         wrapper_spec = WrapperSpec(
             type(outer_wrapper).__name__,
             outer_wrapper.__module__ + ":" + type(outer_wrapper).__name__,
@@ -220,9 +224,9 @@ class SpecStack:
             outer_wrapper._ezpickle_kwargs,
         )
         if isinstance(outer_wrapper.env, Wrapper):
-            return (wrapper_spec,) + self.spec_stack(outer_wrapper.env)
+            self.stack = (wrapper_spec,) + self.spec_stack(outer_wrapper.env)
         else:
-            return (wrapper_spec,) + (outer_wrapper.env.spec,)
+            self.stack = (wrapper_spec,) + (outer_wrapper.env.spec,)
 
     def serialise_spec_stack(self) -> str:
         """Serialises the specification stack into a JSON string.
@@ -859,11 +863,11 @@ def make(
     env.unwrapped.spec = spec_
 
     if isinstance(spec_stack, SpecStack):
-        env = _apply_wrappers_from_stack(env, spec_stack)
         env.spec_stack = spec_stack
+        env = _apply_wrappers_from_stack(env, spec_stack)
     else:
-        env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
         env.spec_stack = SpecStack(env)
+        env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
 
     return env
 
