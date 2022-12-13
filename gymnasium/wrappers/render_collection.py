@@ -31,7 +31,6 @@ class RenderCollection(gym.Wrapper, gym.utils.EzPickle):
         gym.utils.EzPickle.__init__(
             self, pop_frames=pop_frames, reset_clean=reset_clean
         )
-        self.spec_stack = env.spec_stack.spec_stack(self)
 
     @property
     def render_mode(self):

@@ -29,7 +29,6 @@ class FlattenObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         self.observation_space = spaces.flatten_space(env.observation_space)
 
         gym.utils.EzPickle.__init__(self)
-        self.spec_stack = env.spec_stack.spec_stack(self)
 
     def observation(self, observation):
         """Flattens an observation.

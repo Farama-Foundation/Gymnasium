@@ -38,7 +38,6 @@ class TimeLimit(gym.Wrapper, gym.utils.EzPickle):
         self._elapsed_steps = None
 
         gym.utils.EzPickle.__init__(self, max_episode_steps=max_episode_steps)
-        self.spec_stack = env.spec_stack.spec_stack(self)
 
     def step(self, action):
         """Steps through the environment and if the number of steps elapsed exceeds ``max_episode_steps`` then truncate.

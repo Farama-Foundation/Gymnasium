@@ -69,7 +69,6 @@ class FilterObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         self._filter_keys = tuple(filter_keys)
 
         gym.utils.EzPickle.__init__(self, filter_keys=filter_keys)
-        self.spec_stack = env.spec_stack.spec_stack(self)
 
     def observation(self, observation):
         """Filters the observations.

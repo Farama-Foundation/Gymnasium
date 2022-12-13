@@ -31,7 +31,6 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.EzPickle):
         self.checked_render = False
 
         gym.utils.EzPickle.__init__(self)
-        self.spec_stack = env.spec_stack.spec_stack(self)
 
     def step(self, action: ActType):
         """Steps through the environment that on the first call will run the `passive_env_step_check`."""

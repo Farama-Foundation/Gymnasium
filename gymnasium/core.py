@@ -7,7 +7,6 @@ import numpy as np
 
 from gymnasium import spaces
 from gymnasium.utils import seeding
-from gymnasium.envs.registration import SpecStack
 
 
 if TYPE_CHECKING:
@@ -258,7 +257,6 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
             env: The environment to wrap
         """
         self.env = env
-        self.spec_stack = SpecStack(env.spec)
 
         self._action_space: spaces.Space[WrapperActType] | None = None
         self._observation_space: spaces.Space[WrapperObsType] | None = None

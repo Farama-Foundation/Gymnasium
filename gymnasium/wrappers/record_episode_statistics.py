@@ -65,7 +65,6 @@ class RecordEpisodeStatistics(gym.Wrapper, gym.utils.EzPickle):
         self.is_vector_env = getattr(env, "is_vector_env", False)
 
         gym.utils.EzPickle.__init__(self, deque_size=deque_size)
-        self.spec_stack = env.spec_stack.spec_stack(self)
 
     def reset(self, **kwargs):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
