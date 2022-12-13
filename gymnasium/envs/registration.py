@@ -219,10 +219,14 @@ class SpecStack:
             outer_wrapper._ezpickle_args,
             outer_wrapper._ezpickle_kwargs,
         )
+        if isinstance(outer_wrapper.spec, EnvSpec):
+            return (outer_wrapper.spec,)
         if isinstance(outer_wrapper.env, Wrapper):
             return (wrapper_spec,) + self.spec_stack(outer_wrapper.env)
         else:
-            return (wrapper_spec,) + (outer_wrapper.env.spec,)
+            raise TypeError(
+                f"Expected a `gym.Wrapper` or `gym.Env`, got {type(outer_wrapper.env)}"
+            )
 
     def append_wrapper(self, wrapper: Wrapper):
         """Appends a wrapper to the specification stack.
@@ -877,8 +881,9 @@ def make(
         env = _apply_wrappers_from_stack(env, spec_stack)
         env.spec_stack = spec_stack
     else:
-        env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
         env.spec_stack = SpecStack(env)
+        env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
+        #env.spec_stack = SpecStack(env)
 
     return env
 
