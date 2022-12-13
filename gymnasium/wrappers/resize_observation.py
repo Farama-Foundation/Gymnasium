@@ -46,6 +46,7 @@ class ResizeObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         self.observation_space = Box(low=0, high=255, shape=obs_shape, dtype=np.uint8)
 
         gym.utils.EzPickle.__init__(self, shape=shape)
+        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def observation(self, observation):
         """Updates the observations by resizing the observation to shape given by :attr:`shape`.

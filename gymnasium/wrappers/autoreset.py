@@ -34,6 +34,7 @@ class AutoResetWrapper(gym.Wrapper, gym.utils.EzPickle):
         super().__init__(env)
 
         gym.utils.EzPickle.__init__(self)
+        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def step(self, action):
         """Steps through the environment with action and resets the environment if a terminated or truncated signal is encountered.

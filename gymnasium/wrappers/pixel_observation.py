@@ -169,6 +169,7 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
             render_kwargs=render_kwargs,
             pixel_keys=pixel_keys,
         )
+        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def observation(self, observation):
         """Updates the observations with the pixel observations.

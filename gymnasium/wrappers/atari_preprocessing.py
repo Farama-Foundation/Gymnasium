@@ -124,6 +124,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.EzPickle):
             grayscale_newaxis=grayscale_newaxis,
             scale_obs=scale_obs,
         )
+        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     @property
     def ale(self):
