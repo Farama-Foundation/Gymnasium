@@ -10,27 +10,17 @@ env = gym.wrappers.TimeAwareObservation(env)
 env = gym.wrappers.TransformReward(env, lambda r: 0.01 * r)
 env = gym.wrappers.ResizeObservation(env, (84, 84))
 
-# Example 1: Generate a spec stack from a [wrapped] environment
-#stack_from_env = SpecStack(env)  # generation is an easy one-liner
-print(env.spec_stack)  # string representation is a nice table
-json_representation = env.spec_stack.stack_json  # serialise the stack to a readable json string
-gym.make(env.spec_stack)
+# Printing the spec stack
+env_spec_stack = env.spec_stack
+print(env_spec_stack)
 
-# Example 2: Generate a spec stack from a dict representation
-stack_from_dict = SpecStack(json_representation)
-print(stack_from_dict)
-envtwo = gym.make(stack_from_dict)
-print(envtwo.spec_stack)
+# Reconstructing the environment from the spec stack
+reconstructed_env = gym.make(env_spec_stack)
 
-# # Show equality
-# print(SpecStack(gym.make(SpecStack(env))) == stack_from_env)  # True
-# env = gym.wrappers.TransformObservation(env, lambda r: 0.01 * r)
-# print(SpecStack(gym.make(SpecStack(env))) == stack_from_env)  # False
-#
-# # Example 3: Generate a spec stack from a json string
-# json.dump(readable_stack, open("tmp_SpecStack_usage.json", "w"))
-# stack_from_json = SpecStack(json.load(open("tmp_SpecStack_usage.json")))
-# gym.make(stack_from_json)
-# print(stack_from_json)
-# print(stack_from_json == stack_from_dict)  # True
-# print(env.spec_stack)
+# spec stack as JSON
+json_representation = reconstructed_env.spec_stack.stack_json
+reconstructed_env_from_json = gym.make(SpecStack(json_representation))      # spec_stack can be used to construct the environment
+
+# The two spec stacks should be identical
+print(reconstructed_env_from_json.spec_stack)
+print(reconstructed_env_from_json.spec_stack == env_spec_stack)
