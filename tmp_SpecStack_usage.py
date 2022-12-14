@@ -18,7 +18,7 @@ print(env_spec_stack)
 reconstructed_env = gym.make(env_spec_stack)
 
 # spec stack as JSON
-json_representation = reconstructed_env.spec_stack.stack_json
+json_representation = reconstructed_env.spec_stack.json
 reconstructed_env_from_json = gym.make(SpecStack(json_representation))      # spec_stack can be used to construct the environment
 
 # The two spec stacks should be identical

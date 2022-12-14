@@ -194,10 +194,10 @@ class SpecStack:
         self.rebuild_stack_json = rebuild_stack_json
         if isinstance(env, dict):
             self.stack = self.deserialise_spec_stack(env, eval_ok=eval_ok)
-            self.stack_json = env
+            self.json = env
         elif isinstance(env, Wrapper) or isinstance(env, Env):
             self.stack = self.spec_stack(env)
-            self.stack_json = self.serialise_spec_stack()
+            self.json = self.serialise_spec_stack()
         else:
             raise TypeError(
                 f"Expected a dict or an instance of `gym.Env` or `gym.Wrapper`, got {type(env)}"
@@ -242,7 +242,7 @@ class SpecStack:
             wrapper._ezpickle_kwargs,
         ),) + self.stack[:]
         if self.rebuild_stack_json:
-            self.stack_json = self.serialise_spec_stack()
+            self.json = self.serialise_spec_stack()
         return self
 
     def serialise_spec_stack(self) -> str:
@@ -339,7 +339,7 @@ class SpecStack:
         table = "\n"
         table += f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}\n"
         table += "-" * 100 + "\n"
-        for layer, spec in reversed(self.stack_json.items()):
+        for layer, spec in reversed(self.json.items()):
             spec = json.loads(spec)
             if layer == "raw_env":
                 table += f"{layer :<16} |  {spec['id'] :<25} |  {spec['kwargs']}\n"
@@ -351,7 +351,7 @@ class SpecStack:
         return len(self.stack)
 
     def __eq__(self, other):
-        return self.stack_json == other.stack_json
+        return self.json == other.json
 
 
 def _check_namespace_exists(ns: Optional[str]):
@@ -881,7 +881,7 @@ def make(
 
     if isinstance(spec_stack, SpecStack):
         env.spec_stack = SpecStack(env)
-        env.spec_stack.stack_json = spec_stack.stack_json
+        env.spec_stack.json = spec_stack.json
         env = _apply_wrappers_from_stack(env, spec_stack)
     else:
         env.spec_stack = SpecStack(env)
