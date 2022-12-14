@@ -19,7 +19,8 @@ gym.make(env.spec_stack)
 # Example 2: Generate a spec stack from a dict representation
 stack_from_dict = SpecStack(json_representation)
 print(stack_from_dict)
-gym.make(stack_from_dict)
+envtwo = gym.make(stack_from_dict)
+print(envtwo.spec_stack)
 
 # # Show equality
 # print(SpecStack(gym.make(SpecStack(env))) == stack_from_env)  # True

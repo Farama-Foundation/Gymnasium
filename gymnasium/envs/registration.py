@@ -184,13 +184,14 @@ class WrapperSpec:
 
 
 class SpecStack:
-    def __init__(self, env: Union[dict, Env, Wrapper], eval_ok: bool = True):
+    def __init__(self, env: Union[dict, Env, Wrapper], eval_ok: bool = True, rebuild_stack_json: bool = True):
         """
 
         Args:
             env: Either a dictionary of environment specifications or an environment.
             eval_ok: Flag to allow evaluation of callables (potentially arbitrary code).
         """
+        self.rebuild_stack_json = rebuild_stack_json
         if isinstance(env, dict):
             self.stack = self.deserialise_spec_stack(env, eval_ok=eval_ok)
             self.stack_json = env
@@ -240,7 +241,8 @@ class SpecStack:
             wrapper._ezpickle_args,
             wrapper._ezpickle_kwargs,
         ),) + self.stack[:]
-        self.stack_json = self.serialise_spec_stack()
+        if self.rebuild_stack_json:
+            self.stack_json = self.serialise_spec_stack()
         return self
 
     def serialise_spec_stack(self) -> str:
@@ -879,6 +881,7 @@ def make(
 
     if isinstance(spec_stack, SpecStack):
         env.spec_stack = SpecStack(env)
+        env.spec_stack.stack_json = spec_stack.stack_json
         env = _apply_wrappers_from_stack(env, spec_stack)
     else:
         env.spec_stack = SpecStack(env)
@@ -959,6 +962,7 @@ def _apply_wrappers_from_stack(env, spec_stack):
             # Assume it's a string
             env_creator = load(ws.entry_point)
 
+        env.spec_stack.rebuild_stack_json = False
         env = env_creator(env, *ws.args, **ws.kwargs)
 
     return env

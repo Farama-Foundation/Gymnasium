@@ -53,6 +53,7 @@ class Env(Generic[ObsType, ActType]):
     reward_range = (-float("inf"), float("inf"))
     spec: EnvSpec | None = None
     spec_stack: SpecStack | None = None
+    rebuild_stack_json: bool = True
 
     # Set these in ALL subclasses
     action_space: spaces.Space[ActType]
