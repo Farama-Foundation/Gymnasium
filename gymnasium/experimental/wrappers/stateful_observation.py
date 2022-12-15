@@ -9,41 +9,60 @@ from __future__ import annotations
 
 from collections import deque
 from typing import Any, SupportsFloat
-from typing_extensions import Final
 
-import jumpy as jp
 import numpy as np
+from gymnasium.logger import warn
+from typing_extensions import Final
 
 import gymnasium as gym
 import gymnasium.spaces as spaces
 from gymnasium import Env
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
-from gymnasium.spaces import Box, Dict, MultiBinary, MultiDiscrete, Tuple
+from gymnasium.spaces import Box, Dict, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
-class DelayObservationV0(gym.ObservationWrapper):
-    """Wrapper which adds a delay to the returned observation."""
+class DelayObservationV0(gym.ObservationWrapper[ObsType, ActType]):
+    """Wrapper which adds a delay to the returned observation.
 
-    def __init__(self, env: gym.Env, delay: int):
-        """Initialize the DelayObservation wrapper.
+    Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
+    the same shape as the observation space.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1")
+        >>> env.reset(seed=123)
+        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
+
+        >>> env = DelayObservationV0(env, delay=2)
+        >>> env.reset(seed=123)
+        (array([0., 0., 0., 0.], dtype=float32), {})
+        >>> env.step(env.action_space.sample())
+        (array([0., 0., 0., 0.], dtype=float32), 1.0, False, False, {})
+        >>> env.step(env.action_space.sample())
+        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 1.0, False, False, {})
+    """
+
+    def __init__(self, env: gym.Env[ObsType, ActType], delay: int):
+        """Initialises the DelayObservation wrapper with an integer
 
         Args:
-            env (Env): the wrapped environment
-            delay (int): number of timesteps for delaying the observation.
-                         Before reaching the `delay` number of timesteps,
-                         returned observation is an array of zeros with the
-                         same shape of the observation space.
+            env: The environment to wrap
+            delay: The number of timesteps to delay observations
         """
-        assert isinstance(
-            env.observation_space, (Box, MultiBinary, MultiDiscrete)
-        ), type(env.observation_space)
-        assert 0 < delay
+        super().__init__(env)
 
-        self.delay: Final[int] = delay
+        if not np.issubdtype(type(delay), np.integer):
+            raise TypeError(f"The delay is expected to be an integer, actual type: {type(delay)}")
+        if not 0 <= delay:
+            raise ValueError(f"The delay needs to be greater than zero, actual value: {delay}")
+
+        self.delay: Final[int] = int(delay)
         self.observation_queue: Final[deque] = deque()
 
-        super().__init__(env)
+        zero_obs = create_empty_array(self.observation_space)
+        if zero_obs not in self.observation_space:
+            warn(f"The zero observation is not contained within the observation space. Please report this on github. Zero obs: {zero_obs}")
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -59,8 +78,8 @@ class DelayObservationV0(gym.ObservationWrapper):
 
         if len(self.observation_queue) > self.delay:
             return self.observation_queue.popleft()
-
-        return jp.zeros_like(observation)
+        else:
+            return create_empty_array(self.observation_space)
 
 
 class TimeAwareObservationV0(gym.ObservationWrapper):

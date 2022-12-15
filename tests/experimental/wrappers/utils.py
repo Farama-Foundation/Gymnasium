@@ -1,13 +1,14 @@
 """Utility functions for testing the experimental wrappers."""
-import gymnasium as gym
+from gymnasium import spaces
 
+import gymnasium as gym
+from tests.testing_env import GenericTestEnv
 
 SEED = 42
 ENV_ID = "CartPole-v1"
 DISCRETE_ACTION = 0
 NUM_ENVS = 3
 NUM_STEPS = 20
-DELAY = 3
 
 
 def record_obs_reset(self: gym.Env, seed=None, options: dict = None):
@@ -67,3 +68,43 @@ def check_obs(
         assert (
             original_obs not in wrapped_env.observation_space
         ), f"{original_obs}, {wrapped_env.observation_space}"
+
+
+testing_spaces = [
+    spaces.Box(low=0, high=1),
+    spaces.Discrete(4),
+    spaces.Discrete(4, start=3),
+    spaces.MultiDiscrete([3, 2]),
+    spaces.MultiDiscrete([[2, 3], [4, 3]]),
+    spaces.MultiBinary([3, 2]),
+    spaces.Text(4),
+    spaces.Dict({"a": spaces.Box(low=0, high=1), "b": spaces.Discrete(3)}),
+    spaces.Tuple((spaces.Box(low=0, high=1), spaces.Discrete(3))),
+    spaces.Dict({"a": spaces.Tuple((spaces.Box(low=0, high=1), spaces.Discrete(4))), "b": spaces.Discrete(2)}),
+    spaces.Graph(node_space=spaces.Box(low=0, high=1), edge_space=spaces.Discrete(2)),
+    spaces.Graph(node_space=spaces.Discrete(3), edge_space=None),
+    spaces.Sequence(spaces.Box(low=0, high=1)),
+]
+complex_testing_env_ids = [
+    "Box",
+    "Discrete",
+    "Discrete-start",
+    "MultiDiscrete",
+    "MultiDiscrete-multiaxis",
+    "MultiBinary",
+    "Text",
+    "Dict",
+    "Tuple",
+    "Dict-Tuple",
+    "Graph",
+    "Graph-no-edge",
+    "Sequence"
+]
+complex_testing_obs_envs = [
+    GenericTestEnv(observation_space=space)
+    for space in testing_spaces
+]
+complex_testing_action_envs = [
+    GenericTestEnv(action_space=space)
+    for space in testing_spaces
+]
