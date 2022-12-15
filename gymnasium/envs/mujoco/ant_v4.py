@@ -45,12 +45,12 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     By default, observations do not include the x- and y-coordinates of the ant's torso. These may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will have 113 dimensions where the first two dimensions
+    In that case, the observation space will have 29 dimensions where the first two dimensions
     represent the x- and y- coordinates of the ant's torso.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x- and y-coordinates
     of the torso will be returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
-    However, by default, an observation is a `ndarray` with shape `(111,)`
+    However, by default, an observation is a `ndarray` with shape `(27,)`
     where the elements correspond to the following:
 
     | Num | Observation                                                  | Min    | Max    | Name (in corresponding XML file)       | Joint | Unit                     |
@@ -114,7 +114,12 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     force is too large. It is calculated *`contact_cost_weight` * sum(clip(external contact
     force to `contact_force_range`)<sup>2</sup>)*.
 
-    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost* and `info` will also contain the individual reward terms.
+    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*.
+    
+    But if `use_contact_forces=True`
+    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
+
+    In either case `info` will also contain the individual reward terms.
 
     ## Starting State
     All observations start in state
