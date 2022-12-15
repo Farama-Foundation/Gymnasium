@@ -47,3 +47,15 @@ class NoHumanNoRGB(gym.Env):
     def __init__(self, render_mode=None):
         assert render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
+
+
+class NoRenderModesMetadata(gym.Env):
+    """An environment that has rendering but has not updated the metadata."""
+
+    # metadata: dict[str, Any] = {"render_modes": []}
+
+    def __init__(self, render_mode):
+        self.render_mode = render_mode
+
+        self.observation_space = gym.spaces.Box(low=0, high=1)
+        self.action_space = gym.spaces.Box(low=0, high=1)

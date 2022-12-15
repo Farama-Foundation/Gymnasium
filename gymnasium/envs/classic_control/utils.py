@@ -10,8 +10,7 @@ def verify_number_and_cast(x: SupportsFloat) -> float:
     try:
         x = float(x)
     except (ValueError, TypeError) as e:
-        raise ValueError(f"An option ({x}) could not be converted to a "
-                         f"float.") from e
+        raise ValueError(f"An option ({x}) could not be converted to a float.") from e
     return x
 
 
