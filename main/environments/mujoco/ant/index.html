@@ -541,11 +541,11 @@ followed by the velocities of those individual parts (their derivatives) with al
 the positions ordered before all the velocities.</p>
 <p>By default, observations do not include the x- and y-coordinates of the ant’s torso. These may
 be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-In that case, the observation space will have 113 dimensions where the first two dimensions
+In that case, the observation space will have 29 dimensions where the first two dimensions
 represent the x- and y- coordinates of the ant’s torso.
 Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x- and y-coordinates
 of the torso will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
-<p>However, by default, an observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(111,)</span></code>
+<p>However, by default, an observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(27,)</span></code>
 where the elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -808,7 +808,10 @@ where <em><code class="docutils literal notranslate"><span class="pre">ctr_cost_
 force is too large. It is calculated <em><code class="docutils literal notranslate"><span class="pre">contact_cost_weight</span></code> * sum(clip(external contact
 force to <code class="docutils literal notranslate"><span class="pre">contact_force_range</span></code>)<sup>2</sup>)</em>.</p></li>
 </ul>
-<p>The total reward returned is <em><strong>reward</strong></em> <em>=</em> <em>healthy_reward + forward_reward - ctrl_cost - contact_cost</em> and <code class="docutils literal notranslate"><span class="pre">info</span></code> will also contain the individual reward terms.</p>
+<p>The total reward returned is <em><strong>reward</strong></em> <em>=</em> <em>healthy_reward + forward_reward - ctrl_cost</em>.</p>
+<p>But if <code class="docutils literal notranslate"><span class="pre">use_contact_forces=True</span></code>
+The total reward returned is <em><strong>reward</strong></em> <em>=</em> <em>healthy_reward + forward_reward - ctrl_cost - contact_cost</em>.</p>
+<p>In either case <code class="docutils literal notranslate"><span class="pre">info</span></code> will also contain the individual reward terms.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
@@ -870,7 +873,7 @@ the episode ends when any of the following happens:</p>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-<td><p>If true, it extends the observation space by adding contact forces (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section)</p></td>
+<td><p>If true, it extends the observation space by adding contact forces (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section) and includes contact_cost to the reward function (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">contact_cost_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
