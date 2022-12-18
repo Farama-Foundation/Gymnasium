@@ -14,15 +14,14 @@ import numpy as np
 from gymnasium.logger import warn
 from typing_extensions import Final
 
-import gymnasium as gym
 import gymnasium.spaces as spaces
-from gymnasium import Env
+from gymnasium import Env, ObservationWrapper, Wrapper, Space
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.spaces import Box, Dict, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
-class DelayObservationV0(gym.ObservationWrapper[ObsType, ActType]):
+class DelayObservationV0(ObservationWrapper[ObsType, ActType]):
     """Wrapper which adds a delay to the returned observation.
 
     Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
@@ -43,7 +42,7 @@ class DelayObservationV0(gym.ObservationWrapper[ObsType, ActType]):
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 1.0, False, False, {})
     """
 
-    def __init__(self, env: gym.Env[ObsType, ActType], delay: int):
+    def __init__(self, env: Env[ObsType, ActType], delay: int):
         """Initialises the DelayObservation wrapper with an integer
 
         Args:
@@ -82,15 +81,20 @@ class DelayObservationV0(gym.ObservationWrapper[ObsType, ActType]):
             return create_empty_array(self.observation_space)
 
 
-class TimeAwareObservationV0(gym.ObservationWrapper):
+class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType]):
     """Augment the observation with time information of the episode.
 
-    Time can be represented as a normalized value between [0,1]
-    or by the number of timesteps remaining before truncation occurs.
+    The :attr:`normalize_time` if ``True`` represents time as a normalized value between [0,1]
+    otherwise if ``False``, the number of timesteps remaining before truncation occurs is an integer.
 
-    For environments with ``Dict`` or ``Tuple`` observation spaces, by default,
-    the time information is automatically added in the key `"time"` and
-    as the final element in the tuple.
+    For environments with ``Dict`` observation spaces, the time information is automatically
+    added in the key `"time"` (can be changed through :attr:`dict_time_key`) and for environments with ``Tuple``
+    observation space, the time information is added as the final element in the tuple.
+    Otherwise, the observation space is transformed into a ``Dict`` observation space with two keys,
+    `"obs"` for the base environment's observation and `"time"` for the time information.
+
+    To flatten the observation, use the :attr:`flatten` parameter which will use the
+    :func:`gymnasium.spaces.utils.flatten` function.
 
     Example:
         >>> import gymnasium as gym
@@ -98,26 +102,36 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservationV0(env)
         >>> env.observation_space
-        Dict(obs: Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), time: Box(0.0, 500, (1,), float32))
-        >>> _ = env.reset()
+        Dict('obs': Box([-4.8000002e+00 ...], [4.8000002e+00 ...], (4,), float32), 'time': Box(0.0, 1.0, (1,), float32))
+        >>> env.reset()[0]
+        {'obs': array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 'time': 0.0}
         >>> env.step(env.action_space.sample())[0]
-        OrderedDict([('obs',
-        ...       array([ 0.02866629,  0.2310988 , -0.02614601, -0.2600732 ], dtype=float32)),
-        ...      ('time', array([0.002]))])
+        {'obs': array([ 0.01734283, -0.23932791, -0.02859527,  0.25216764], dtype=float32), 'time': 0.002}
+
+    Unnormalize time observation space example:
+        >>> env = gym.make('CartPole-v1')
+        >>> env = TimeAwareObservationV0(env, normalize_time=False)
+        >>> env.observation_space
+        Dict('obs': Box([-4.8000002e+00 ...], [4.8000002e+00 ...], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        >>> env.reset()[0]
+        {'obs': array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 'time': 500}
+        >>> env.step(env.action_space.sample())[0]
+        {'obs': array([ 0.01734283,  0.15089367, -0.02859527, -0.33293587], dtype=float32), 'time': 499}
 
     Flatten observation space example:
         >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservationV0(env, flatten=True)
         >>> env.observation_space
-        Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38  0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 500], (5,), float32)
+        Box([-4.8000002e+00 ... 0.0000000e+00], [4.8000002e+00 ... 1.0000000e+00], (5,), float32)
         >>> _ = env.reset()
+        array([-0.00746845, -0.00803149,  0.01018551,  0.00115262,  0.        ], dtype=float32)
         >>> env.step(env.action_space.sample())[0]
-        array([-0.01232257,  0.19335455, -0.02244143, -0.32388705,  0.002 ], dtype=float32)
+        array([-0.00762907,  0.18694292,  0.01020856, -0.28829932,  0.002     ], dtype=float32)
     """
 
     def __init__(
         self,
-        env: gym.Env,
+        env: Env[ObsType, ActType],
         flatten: bool = False,
         normalize_time: bool = True,
         *,
@@ -133,6 +147,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
             dict_time_key: For environment with a ``Dict`` observation space, the key for the time space. By default, `"time"`.
         """
         super().__init__(env)
+
         self.flatten: Final[bool] = flatten
         self.normalize_time: Final[bool] = normalize_time
 
@@ -145,7 +160,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
                 "The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`."
             )
 
-        self.timesteps: int = 0
+        self._timesteps: int = 0
 
         # Find the normalized time space
         if self.normalize_time:
@@ -171,12 +186,12 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
 
         # If to flatten the observation space
         if self.flatten:
-            self.observation_space = spaces.flatten_space(observation_space)
+            self.observation_space: Space[WrapperObsType] = spaces.flatten_space(observation_space)
             self._obs_postprocess_func = lambda obs: spaces.flatten(
                 observation_space, obs
             )
         else:
-            self.observation_space = observation_space
+            self.observation_space: Space[WrapperObsType] = observation_space
             self._obs_postprocess_func = lambda obs: obs
 
     def observation(self, observation: ObsType) -> WrapperObsType:
@@ -186,11 +201,11 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
             observation: The observation to add the time step to
 
         Returns:
-            The observation with the time information appended to
+            The observation with the time information appended to it
         """
         return self._obs_postprocess_func(
             self._append_data_func(
-                observation, self._time_preprocess_func(self.timesteps)
+                observation, self._time_preprocess_func(self._timesteps)
             )
         )
 
@@ -203,9 +218,10 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
             action: The action to take
 
         Returns:
-            The environment's step using the action.
+            The environment's step using the action with the next observation containing the timestep info
         """
-        self.timesteps += 1
+        self._timesteps += 1
+
         return super().step(action)
 
     def reset(
@@ -218,15 +234,15 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
             options: The options used to reset the environment
 
         Returns:
-            The reset environment
+            Resets the environment with the initial timestep info added the observation
         """
-        self.timesteps = 0
+        self._timesteps = 0
 
         return super().reset(seed=seed, options=options)
 
 
-class FrameStackObservationV0(gym.Wrapper):
-    """Observation wrapper that stacks the observations in a rolling manner.
+class FrameStackObservationV0(Wrapper):
+    """Stacks environment observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
     the most recent 4 observations. For environment 'Pendulum-v1', the original observation
@@ -240,10 +256,10 @@ class FrameStackObservationV0(gym.Wrapper):
     Example:
         >>> import gymnasium as gym
         >>> env = gym.make('CarRacing-v1')
-        >>> env = FrameStack(env, 4)
+        >>> env = FrameStackObservationV0(env, 4)
         >>> env.observation_space
         Box(4, 96, 96, 3)
-        >>> obs = env.reset()
+        >>> obs, _ = env.reset()
         >>> obs.shape
         (4, 96, 96, 3)
     """
@@ -255,16 +271,17 @@ class FrameStackObservationV0(gym.Wrapper):
             env: The environment to apply the wrapper
             stack_size: The number of frames to stack
         """
-        assert np.issubdtype(type(stack_size), np.integer)
-        assert stack_size > 0
-
         super().__init__(env)
 
-        self.observation_space = batch_space(env.observation_space, n=stack_size)
-        self.stack_size = stack_size
+        if not np.issubdtype(type(stack_size), np.integer):
+            raise TypeError(f"The stack_size is expected to be an integer, actual type: {type(stack_size)}")
+        if not 1 < stack_size:
+            raise ValueError(f"The stack_size needs to be greater than one, actual value: {stack_size}")
 
-        self.stacked_obs_array = create_empty_array(env.observation_space, n=stack_size)
-        self.stacked_obs = self._init_stacked_obs()
+        self.observation_space = batch_space(env.observation_space, n=stack_size)
+        self.stack_size: Final[int] = stack_size
+
+        self._stacked_obs = self._init_stacked_obs()
 
     def step(
         self, action: WrapperActType
@@ -278,12 +295,12 @@ class FrameStackObservationV0(gym.Wrapper):
             Stacked observations, reward, terminated, truncated, and info from the environment
         """
         obs, reward, terminated, truncated, info = super().step(action)
-        self.stacked_obs.rotate(1)
-        self.stacked_obs[0] = obs
+        self._stacked_obs.append(obs)
 
+        obs_array = create_empty_array(self.env.observation_space, n=self.stack_size)
         return (
             concatenate(
-                self.observation_space, self.stacked_obs, self.stacked_obs_array
+                self.observation_space, self._stacked_obs, obs_array
             ),
             reward,
             terminated,
@@ -304,12 +321,13 @@ class FrameStackObservationV0(gym.Wrapper):
             The stacked observations and info
         """
         obs, info = super().reset(seed=seed, options=options)
-        self.stacked_obs = self._init_stacked_obs()
-        self.stacked_obs[0] = obs
+        self._stacked_obs = self._init_stacked_obs()
+        self._stacked_obs.append(obs)
 
+        obs_array = create_empty_array(self.env.observation_space, n=self.stack_size)
         return (
             concatenate(
-                self.observation_space, self.stacked_obs, self.stacked_obs_array
+                self.observation_space, self._stacked_obs, obs_array
             ),
             info,
         )
@@ -319,5 +337,6 @@ class FrameStackObservationV0(gym.Wrapper):
             iterate(
                 self.observation_space,
                 create_empty_array(self.env.observation_space, n=self.stack_size),
-            )
+            ),
+            maxlen=self.stack_size
         )
