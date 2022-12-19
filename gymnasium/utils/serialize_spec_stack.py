@@ -9,8 +9,11 @@ from gymnasium.dataclasses import WrapperSpec
 from gymnasium.envs.registration import EnvSpec
 
 
-def serialise_spec_stack(stack) -> str:
+def serialise_spec_stack(stack: tuple) -> str:
     """Serialises the specification stack into a JSON string.
+
+    Args:
+        stack: Tuple of environment and wrapper specifications, known as the specification stack. Generated via `env.spec_stack`.
 
     Returns:
         A JSON string representing the specification stack.
@@ -28,7 +31,15 @@ def serialise_spec_stack(stack) -> str:
     return stack_json
 
 
-def _serialise_callable(spec):
+def _serialise_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
+    """Modifies an Env WrapperSpec
+
+    Args:
+        spec:
+
+    Returns:
+
+    """
     for k, v in spec.kwargs.items():
         if callable(v):
             str_repr = (
@@ -92,8 +103,12 @@ def deserialise_spec_stack(
     return tuple(stack)
 
 
-def pprint_stack(spec_json) -> None:
-    """Pretty prints the specification stack."""
+def pprint_stack(spec_json: dict) -> None:
+    """Pretty prints the specification stack.
+
+    Args:
+        spec_json: The JSON string representing the specification stack. Generated via `serialise_spec_stack(env.spec_stack)`.
+    """
     table = "\n"
     table += f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}\n"
     table += "-" * 100 + "\n"
