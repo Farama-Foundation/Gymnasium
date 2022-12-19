@@ -10,33 +10,6 @@ from gymnasium.dataclasses import WrapperSpec
 from gymnasium.envs.registration import EnvSpec
 
 
-class SpecStack:
-    def __init__(self, env: Union[dict, Env, Wrapper], eval_ok: bool = True, rebuild_stack_json: bool = True):
-        """
-
-        Args:
-            env: Either a dictionary of environment specifications or an environment.
-            eval_ok: Flag to allow evaluation of callables (potentially arbitrary code).
-        """
-        self.rebuild_stack_json = rebuild_stack_json
-        if isinstance(env, dict):
-            self.stack = self.deserialise_spec_stack(env, eval_ok=eval_ok)
-            self.json = env
-        elif isinstance(env, Wrapper) or isinstance(env, Env):
-            self.stack = self.spec_stack(env)
-            self.json = self.serialise_spec_stack()
-        else:
-            raise TypeError(
-                f"Expected a dict or an instance of `gym.Env` or `gym.Wrapper`, got {type(env)}"
-            )
-
-    def __len__(self):
-        return len(self.stack)
-
-    def __eq__(self, other):
-        return self.json == other.json
-
-
 def serialise_spec_stack(stack) -> str:
     """Serialises the specification stack into a JSON string.
 
