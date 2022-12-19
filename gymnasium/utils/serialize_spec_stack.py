@@ -58,6 +58,7 @@ def deserialise_spec_stack(
     for name, spec_json in stack_json.items():
         spec = json.loads(spec_json)
 
+        # convert lists back into tuples (args)
         if name != "raw_env":  # EnvSpecs do not have args, only kwargs
             for k, v in enumerate(
                 spec["args"]
@@ -69,6 +70,7 @@ def deserialise_spec_stack(
                     spec["args"][k] = tuple(v)
             spec["args"] = tuple(spec["args"])
 
+        # convert lists back into tuples (kwargs)
         for k, v in spec[
             "kwargs"
         ].items():  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
@@ -78,6 +80,7 @@ def deserialise_spec_stack(
                         spec["kwargs"][k][i] = tuple(x)
                 spec["kwargs"][k] = tuple(v)
 
+        # search for lambda functions (as strings) and convert them back to callables
         for k, v in spec["kwargs"].items():
             if type(v) == str and v[:7] == "lambda ":
                 if eval_ok:
