@@ -50,6 +50,8 @@ else:
 
 from gymnasium import Env, Wrapper, error, logger
 
+from gymnasium.dataclasses import WrapperSpec
+
 
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
@@ -166,21 +168,6 @@ class EnvSpec:
     def make(self, **kwargs) -> Env:
         # For compatibility purposes
         return make(self, **kwargs)
-
-
-@dataclass
-class WrapperSpec:
-    """A specification for recording wrapper configs.
-
-    * name: The name of the wrapper.
-    * entry_point: The location of the wrapper to create from.
-    * kwargs: Additional keyword arguments passed to the wrapper.
-    """
-
-    name: str
-    entry_point: str
-    args: "list[Any]"
-    kwargs: "list[Any]"
 
 
 class SpecStack:

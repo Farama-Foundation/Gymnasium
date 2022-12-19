@@ -1,6 +1,7 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar, Union
 
 import numpy as np
@@ -10,7 +11,9 @@ from gymnasium.utils import seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec, SpecStack, WrapperSpec
+    from gymnasium.envs.registration import EnvSpec, SpecStack
+
+from gymnasium.dataclasses import WrapperSpec
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -285,8 +288,8 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
     @property
     def spec_stack(self) -> tuple[Union[EnvSpec, WrapperSpec]]:
         assert hasattr(self, "_ezpickle_kwargs") and hasattr(self, "_ezpickle_args")
-        wrapper_spec = WrapperSpec(self.__name__, self.__module__ + "." + self.__name__, self._ezpickle_args,
-                                   self.ezpickle_kwargs)
+        wrapper_spec = WrapperSpec(type(self).__name__, self.__module__ + ":" + type(self).__name__, self._ezpickle_args,
+                                   self._ezpickle_kwargs)
         return (wrapper_spec,) + self.env.spec_stack
 
     @classmethod
