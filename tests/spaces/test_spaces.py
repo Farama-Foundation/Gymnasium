@@ -449,7 +449,9 @@ def test_sample_contains(space):
     for other_space in TESTING_SPACES:
         sample = other_space.sample()
         space_contains = other_space.contains(sample)
-        assert isinstance(space_contains, bool), f'{space_contains}, {type(space_contains)}, {space}, {other_space}, {sample}'
+        assert isinstance(
+            space_contains, bool
+        ), f"{space_contains}, {type(space_contains)}, {space}, {other_space}, {sample}"
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
