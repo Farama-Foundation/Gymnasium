@@ -582,13 +582,11 @@ def make(
     Raises:
         Error: If the ``id`` doesn't exist then an error is raised
     """
-    # if isinstance(id, SpecStack):
-    #     spec_stack = id
-    #     id = spec_stack.stack[
-    #         -1
-    #     ]  # if a SpecStack is passed, use the EnvSpec in the stack
-    #     spec_ = id
-    if isinstance(id, EnvSpec):
+    if isinstance(id, tuple):
+        spec_stack = id
+        id = id[-1]  # if a spec_stack is passed, use the EnvSpec in the stack
+        spec_ = id
+    elif isinstance(id, EnvSpec):
         spec_stack = None
         spec_ = id
     else:
@@ -694,13 +692,10 @@ def make(
     spec_.kwargs = _kwargs
     env.unwrapped.spec = spec_
 
-    # if isinstance(spec_stack, SpecStack):
-    #     env.spec_stack = SpecStack(env)
-    #     #env.spec_stack.json = spec_stack.json
-    #     env = _apply_wrappers_from_stack(env, spec_stack)
-    # else:
-        #env.spec_stack = SpecStack(env)
-    env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
+    if isinstance(spec_stack, tuple):
+        env = _apply_wrappers_from_stack(env, spec_stack)
+    else:
+        env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
 
     return env
 
@@ -767,8 +762,8 @@ def _apply_wrappers_from_stack(env, spec_stack):
     Returns:
         gym.Env: The wrapped environment.
     """
-    for i in range(len(spec_stack.stack) - 1):
-        ws = spec_stack.stack[-2 - i]
+    for i in range(len(spec_stack) - 1):
+        ws = spec_stack[-2 - i]
         if ws.entry_point is None:
             raise error.Error(f"{ws.id} registered but entry_point is not specified")
         elif callable(ws.entry_point):
@@ -777,8 +772,7 @@ def _apply_wrappers_from_stack(env, spec_stack):
             # Assume it's a string
             env_creator = load(ws.entry_point)
 
-        env.spec_stack.rebuild_stack_json = False
-        env = env_creator(env, *ws.args, **ws.kwargs)
+        env = env_creator(env, **ws.kwargs)
 
     return env
 
