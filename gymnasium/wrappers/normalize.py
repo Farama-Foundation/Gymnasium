@@ -70,7 +70,6 @@ class NormalizeObservation(gym.Wrapper, gym.utils.EzPickle):
         self.epsilon = epsilon
 
         gym.utils.EzPickle.__init__(self, epsilon=epsilon)
-        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def step(self, action):
         """Steps through the environment and normalizes the observation."""

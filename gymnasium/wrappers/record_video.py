@@ -102,7 +102,6 @@ class RecordVideo(gym.Wrapper, gym.utils.EzPickle):
             name_prefix=name_prefix,
             disable_logger=disable_logger,
         )
-        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def reset(self, **kwargs):
         """Reset the environment using kwargs and then starts recording if video enabled."""
