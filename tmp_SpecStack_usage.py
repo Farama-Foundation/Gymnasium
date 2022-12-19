@@ -1,6 +1,7 @@
 import json
 
 import gymnasium as gym
+from gymnasium.utils.serialize_spec_stack import serialise_spec_stack, deserialise_spec_stack
 
 
 # construct the environment
@@ -11,6 +12,11 @@ env = gym.wrappers.ResizeObservation(env, (84, 84))
 
 
 print(env.spec_stack)
+as_json = serialise_spec_stack(env.spec_stack)
+print(as_json)
+reconstructed = deserialise_spec_stack(as_json, eval_ok=True)
+print(reconstructed)
+
 # # Printing the spec stack
 # env_spec_stack = env.spec_stack
 # print(env_spec_stack)
