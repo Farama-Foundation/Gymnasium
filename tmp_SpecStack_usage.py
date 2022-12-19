@@ -1,7 +1,6 @@
 import json
 
 import gymnasium as gym
-from gymnasium.envs.registration import SpecStack
 
 
 # construct the environment
