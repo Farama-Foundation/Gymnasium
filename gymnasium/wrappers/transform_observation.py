@@ -32,7 +32,6 @@ class TransformObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         self.f = f
 
         gym.utils.EzPickle.__init__(self, f=f)
-        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def observation(self, observation):
         """Transforms the observations with callable :attr:`f`.

@@ -9,7 +9,7 @@ from gymnasium.core import (
     RewardWrapper,
 )
 from gymnasium.spaces.space import Space
-from gymnasium.envs.registration import make, spec, register, registry, pprint_registry, SpecStack
+from gymnasium.envs.registration import make, spec, register, registry, pprint_registry
 from gymnasium import envs, spaces, utils, vector, wrappers, error, logger, experimental
 
 

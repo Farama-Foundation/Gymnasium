@@ -29,7 +29,6 @@ class ClipAction(ActionWrapper, gym.utils.EzPickle):
         super().__init__(env)
 
         gym.utils.EzPickle.__init__(self)
-        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def action(self, action):
         """Clips the action within the valid bounds.
