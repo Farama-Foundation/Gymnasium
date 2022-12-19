@@ -30,48 +30,6 @@ class SpecStack:
                 f"Expected a dict or an instance of `gym.Env` or `gym.Wrapper`, got {type(env)}"
             )
 
-    def serialise_spec_stack(self) -> str:
-        """Serialises the specification stack into a JSON string.
-
-        Returns:
-            A JSON string representing the specification stack.
-        """
-        num_layers = len(self)
-        stack_json = {}
-        for i, spec in enumerate(self.stack):
-            spec = copy.deepcopy(
-                spec
-            )  # we need to make a copy so we don't modify the original spec in case of callables
-            for k, v in spec.kwargs.items():
-                if callable(v):
-                    str_repr = (
-                        str(inspect.getsourcelines(v)[0])
-                        .strip("['\\n']")
-                        .split(" = ")[1]
-                    )  # https://stackoverflow.com/a/30984012
-                    str_repr = re.search(r", (.*)\)$", str_repr).group(1)
-                    spec.kwargs[k] = str_repr
-            if i == num_layers - 1:
-                layer = "raw_env"
-            else:
-                layer = f"wrapper_{num_layers - i - 2}"
-            spec_json = json.dumps(dataclasses.asdict(spec))
-            stack_json[layer] = spec_json
-        return stack_json
-
-    def __str__(self) -> None:
-        """Pretty prints the specification stack."""
-        table = "\n"
-        table += f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}\n"
-        table += "-" * 100 + "\n"
-        for layer, spec in reversed(self.json.items()):
-            spec = json.loads(spec)
-            if layer == "raw_env":
-                table += f"{layer :<16} |  {spec['id'] :<25} |  {spec['kwargs']}\n"
-            else:
-                table += f"{layer :<16} |  {spec['name'] :<25} |  {spec['kwargs']}\n"
-        return table
-
     def __len__(self):
         return len(self.stack)
 
@@ -170,3 +128,16 @@ def deserialise_spec_stack(
 
     return tuple(stack)
 
+
+def pprint_stack(spec_json) -> None:
+    """Pretty prints the specification stack."""
+    table = "\n"
+    table += f"{'' :<16} | {' Name' :<26} | {' Parameters' :<50}\n"
+    table += "-" * 100 + "\n"
+    for layer, spec in reversed(spec_json.items()):
+        spec = json.loads(spec)
+        if layer == "raw_env":
+            table += f"{layer :<16} |  {spec['id'] :<25} |  {spec['kwargs']}\n"
+        else:
+            table += f"{layer :<16} |  {spec['name'] :<25} |  {spec['kwargs']}\n"
+    print(table)
