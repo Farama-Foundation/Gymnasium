@@ -33,7 +33,7 @@ class TransformReward(RewardWrapper, gym.utils.EzPickle):
         self.f = f
 
         gym.utils.EzPickle.__init__(self, f=f)
-        self.spec_stack = env.spec_stack.append_wrapper(self)
+#        self.spec_stack = env.spec_stack.append_wrapper(self)
 
     def reward(self, reward):
         """Transforms the reward using callable :attr:`f`.

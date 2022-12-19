@@ -879,13 +879,13 @@ def make(
     spec_.kwargs = _kwargs
     env.unwrapped.spec = spec_
 
-    if isinstance(spec_stack, SpecStack):
-        env.spec_stack = SpecStack(env)
-        env.spec_stack.json = spec_stack.json
-        env = _apply_wrappers_from_stack(env, spec_stack)
-    else:
-        env.spec_stack = SpecStack(env)
-        env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
+    # if isinstance(spec_stack, SpecStack):
+    #     env.spec_stack = SpecStack(env)
+    #     #env.spec_stack.json = spec_stack.json
+    #     env = _apply_wrappers_from_stack(env, spec_stack)
+    # else:
+        #env.spec_stack = SpecStack(env)
+    env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
 
     return env
 

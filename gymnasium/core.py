@@ -1,7 +1,7 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar, Union
 
 import numpy as np
 
@@ -10,7 +10,7 @@ from gymnasium.utils import seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec, SpecStack
+    from gymnasium.envs.registration import EnvSpec, SpecStack, WrapperSpec
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -52,8 +52,6 @@ class Env(Generic[ObsType, ActType]):
     render_mode: str | None = None
     reward_range = (-float("inf"), float("inf"))
     spec: EnvSpec | None = None
-    spec_stack: SpecStack | None = None
-    rebuild_stack_json: bool = True
 
     # Set these in ALL subclasses
     action_space: spaces.Space[ActType]
@@ -206,6 +204,11 @@ class Env(Generic[ObsType, ActType]):
             self._np_random, seed = seeding.np_random()
         return self._np_random
 
+    @property
+    def spec_stack(self) -> tuple[Union[EnvSpec, WrapperSpec]]:
+        assert self.spec is not None
+        return (self.spec,)
+
     @np_random.setter
     def np_random(self, value: np.random.Generator):
         self._np_random = value
@@ -278,6 +281,13 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
     def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute."""
         return self.env.spec
+
+    @property
+    def spec_stack(self) -> tuple[Union[EnvSpec, WrapperSpec]]:
+        assert hasattr(self, "_ezpickle_kwargs") and hasattr(self, "_ezpickle_args")
+        wrapper_spec = WrapperSpec(self.__name__, self.__module__ + "." + self.__name__, self._ezpickle_args,
+                                   self.ezpickle_kwargs)
+        return (wrapper_spec,) + self.env.spec_stack
 
     @classmethod
     def class_name(cls) -> str:
