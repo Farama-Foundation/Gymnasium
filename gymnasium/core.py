@@ -287,9 +287,8 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
 
     @property
     def spec_stack(self) -> tuple[Union[EnvSpec, WrapperSpec]]:
-        assert hasattr(self, "_ezpickle_kwargs") and hasattr(self, "_ezpickle_args")
-        wrapper_spec = WrapperSpec(type(self).__name__, self.__module__ + ":" + type(self).__name__, self._ezpickle_args,
-                                   self._ezpickle_kwargs)
+        assert hasattr(self, "_ezpickle_kwargs")
+        wrapper_spec = WrapperSpec(type(self).__name__, self.__module__ + ":" + type(self).__name__, self._ezpickle_kwargs)
         return (wrapper_spec,) + self.env.spec_stack
 
     @classmethod
