@@ -57,22 +57,10 @@ def deserialise_spec_stack(
     for name, spec_json in stack_json.items():
         spec = json.loads(spec_json)
 
-        # convert lists back into tuples (args)
-        if name != "raw_env":  # EnvSpecs do not have args, only kwargs
-            for k, v in enumerate(
-                spec["args"]
-            ):  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
-                if type(v) == list:
-                    for i, x in enumerate(v):
-                        if type(x) == list:
-                            spec["args"][k][i] = tuple(x)
-                    spec["args"][k] = tuple(v)
-            spec["args"] = tuple(spec["args"])
-
-        # convert lists back into tuples (kwargs)
+        # convert lists back into tuples - json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
         for k, v in spec[
             "kwargs"
-        ].items():  # json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
+        ].items():
             if type(v) == list:
                 for i, x in enumerate(v):
                     if type(x) == list:

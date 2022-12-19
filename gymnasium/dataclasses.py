@@ -13,5 +13,4 @@ class WrapperSpec:
 
     name: str
     entry_point: str
-    args: "list[Any]"
     kwargs: "list[Any]"
