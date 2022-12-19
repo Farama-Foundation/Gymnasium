@@ -190,32 +190,6 @@ class SpecStack:
                 f"Expected a dict or an instance of `gym.Env` or `gym.Wrapper`, got {type(env)}"
             )
 
-    def spec_stack(  # todo: handle raw envs
-        self, outer_wrapper: Union[Wrapper, Env]
-    ) -> "tuple[WrapperSpec, Optional[EnvSpec]]":
-        """Generates the specification stack for a given [wrapped] environment.
-
-        Args:
-            outer_wrapper: The outermost wrapper of the environment (if any).
-
-        Returns:
-            A tuple of environment and wrapper specifications, known as the specification stack.
-        """
-        wrapper_spec = WrapperSpec(
-            type(outer_wrapper).__name__,
-            outer_wrapper.__module__ + ":" + type(outer_wrapper).__name__,
-            outer_wrapper._ezpickle_args,
-            outer_wrapper._ezpickle_kwargs,
-        )
-        if isinstance(outer_wrapper.spec, EnvSpec):
-            return (outer_wrapper.spec,)
-        if isinstance(outer_wrapper.env, Wrapper):
-            return (wrapper_spec,) + self.spec_stack(outer_wrapper.env)
-        else:
-            raise TypeError(
-                f"Expected a `gym.Wrapper` or `gym.Env`, got {type(outer_wrapper.env)}"
-            )
-
     def serialise_spec_stack(self) -> str:
         """Serialises the specification stack into a JSON string.
 
