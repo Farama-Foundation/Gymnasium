@@ -51,7 +51,7 @@ def test_shape_inference(box, expected_shape):
         (np.inf, True),
         (np.nan, True),  # This is a weird case that we allow
         (True, False),
-        (np.bool8(True), False),
+        (np.bool_(True), False),
         (1 + 1j, False),
         (np.complex128(1 + 1j), False),
         ("string", False),
