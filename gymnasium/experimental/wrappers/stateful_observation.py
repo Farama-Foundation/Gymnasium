@@ -3,7 +3,6 @@
 * ``DelayObservationV0`` - A wrapper for delaying the returned observation
 * ``TimeAwareObservationV0`` - A wrapper for adding time aware observations to environment observation
 * ``FrameStackObservationV0`` - Frame stack the observations
-* ``AtariPreprocessingV0`` - Preprocessing wrapper for atari environments
 """
 from __future__ import annotations
 
