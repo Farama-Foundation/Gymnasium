@@ -1,8 +1,8 @@
 """Utility functions for testing the experimental wrappers."""
-from gymnasium import spaces
-
 import gymnasium as gym
+from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 from tests.testing_env import GenericTestEnv
+
 
 SEED = 42
 ENV_ID = "CartPole-v1"
@@ -70,41 +70,8 @@ def check_obs(
         ), f"{original_obs}, {wrapped_env.observation_space}"
 
 
-testing_spaces = [
-    spaces.Box(low=0, high=1),
-    spaces.Discrete(4),
-    spaces.Discrete(4, start=3),
-    spaces.MultiDiscrete([3, 2]),
-    spaces.MultiDiscrete([[2, 3], [4, 3]]),
-    spaces.MultiBinary([3, 2]),
-    spaces.Text(4),
-    spaces.Dict({"a": spaces.Box(low=0, high=1), "b": spaces.Discrete(3)}),
-    spaces.Tuple((spaces.Box(low=0, high=1), spaces.Discrete(3))),
-    spaces.Dict({"a": spaces.Tuple((spaces.Box(low=0, high=1), spaces.Discrete(4))), "b": spaces.Discrete(2)}),
-    spaces.Graph(node_space=spaces.Box(low=0, high=1), edge_space=spaces.Discrete(2)),
-    spaces.Graph(node_space=spaces.Discrete(3), edge_space=None),
-    spaces.Sequence(spaces.Box(low=0, high=1)),
-]
-complex_testing_env_ids = [
-    "Box",
-    "Discrete",
-    "Discrete-start",
-    "MultiDiscrete",
-    "MultiDiscrete-multiaxis",
-    "MultiBinary",
-    "Text",
-    "Dict",
-    "Tuple",
-    "Dict-Tuple",
-    "Graph",
-    "Graph-no-edge",
-    "Sequence"
-]
-complex_testing_obs_envs = [
-    GenericTestEnv(observation_space=space)
-    for space in testing_spaces
-]
-complex_testing_action_envs = [
-    GenericTestEnv(action_space=space)
-    for space in testing_spaces
-]
+TESTING_OBS_ENVS = [GenericTestEnv(observation_space=space) for space in TESTING_SPACES]
+TESTING_OBS_ENVS_IDS = TESTING_SPACES_IDS
+
+TESTING_ACTION_ENVS = [GenericTestEnv(action_space=space) for space in TESTING_SPACES]
+TESTING_ACTION_ENVS_IDS = TESTING_SPACES_IDS

@@ -6,6 +6,7 @@ from tests.testing_env import GenericTestEnv
 
 
 def test_env_obs_space():
+    """Test the TimeAwareObservation wrapper for three type of observation spaces."""
     env = GenericTestEnv(observation_space=Dict(arm_1=Box(0, 1), arm_2=Box(2, 3)))
     wrapped_env = TimeAwareObservationV0(env)
     assert isinstance(wrapped_env.observation_space, Dict)
@@ -40,6 +41,7 @@ def test_env_obs_space():
 
 
 def test_flatten_parameter():
+    """Test the flatten parameter for the TimeAwareObservation wrapper."""
     env = GenericTestEnv(observation_space=Box(0, 1))
     wrapped_env = TimeAwareObservationV0(env, flatten=True)
     assert isinstance(wrapped_env.observation_space, Box)
@@ -52,6 +54,7 @@ def test_flatten_parameter():
 
 
 def test_normalize_time_parameter():
+    """Test the normalize time parameter for DelayObservation wrappers."""
     # Tests the normalize_time parameter
     env = GenericTestEnv(observation_space=Box(0, 1))
     wrapped_env = TimeAwareObservationV0(env, normalize_time=False)

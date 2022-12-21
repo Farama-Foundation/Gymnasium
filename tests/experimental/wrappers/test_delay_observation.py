@@ -4,13 +4,17 @@ import re
 import pytest
 
 import gymnasium as gym
+from gymnasium.experimental.vector.utils import create_empty_array
 from gymnasium.experimental.wrappers import DelayObservationV0
 from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.vector.utils import create_empty_array
-from tests.experimental.wrappers.utils import SEED, complex_testing_env_ids, complex_testing_obs_envs
+from tests.experimental.wrappers.utils import (
+    SEED,
+    TESTING_OBS_ENVS,
+    TESTING_OBS_ENVS_IDS,
+)
 
 
-@pytest.mark.parametrize("env", complex_testing_obs_envs, ids=complex_testing_env_ids)
+@pytest.mark.parametrize("env", TESTING_OBS_ENVS, ids=TESTING_OBS_ENVS_IDS)
 def test_env_obs(env, delay=3):
     """Tests the delay observation wrapper."""
     env.action_space.seed(SEED)
@@ -38,6 +42,7 @@ def test_env_obs(env, delay=3):
 
 @pytest.mark.parametrize("delay", [1, 2, 3, 4])
 def test_delay_values(delay):
+    """Test the possible delay values for the DelayObservation wrapper."""
     env = gym.make("CartPole-v1")
     first_obs, _ = env.reset(seed=123)
 
@@ -54,10 +59,19 @@ def test_delay_values(delay):
 
 
 def test_delay_failures():
+    """Test errors raised by DelayObservation wrapper."""
     env = gym.make("CartPole-v1")
 
-    with pytest.raises(TypeError, match=re.escape("The delay is expected to be an integer, actual type: <class 'float'>")):
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            "The delay is expected to be an integer, actual type: <class 'float'>"
+        ),
+    ):
         DelayObservationV0(env, delay=1.0)
 
-    with pytest.raises(ValueError, match=re.escape("The delay needs to be greater than zero, actual value: -1")):
+    with pytest.raises(
+        ValueError,
+        match=re.escape("The delay needs to be greater than zero, actual value: -1"),
+    ):
         DelayObservationV0(env, delay=-1)

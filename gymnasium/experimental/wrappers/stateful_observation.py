@@ -9,16 +9,21 @@ from __future__ import annotations
 
 from collections import deque
 from typing import Any, SupportsFloat
-
-import numpy as np
-from gymnasium.logger import warn
 from typing_extensions import Final
 
+import numpy as np
+
 import gymnasium.spaces as spaces
-from gymnasium import Env, ObservationWrapper, Wrapper, Space
+from gymnasium import Env, ObservationWrapper, Space, Wrapper
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
+from gymnasium.experimental.vector.utils import (
+    batch_space,
+    concatenate,
+    create_empty_array,
+    iterate,
+)
+from gymnasium.logger import warn
 from gymnasium.spaces import Box, Dict, Tuple
-from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
 class DelayObservationV0(ObservationWrapper[ObsType, ActType]):
@@ -43,7 +48,7 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType]):
     """
 
     def __init__(self, env: Env[ObsType, ActType], delay: int):
-        """Initialises the DelayObservation wrapper with an integer
+        """Initialises the DelayObservation wrapper with an integer.
 
         Args:
             env: The environment to wrap
@@ -52,16 +57,22 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType]):
         super().__init__(env)
 
         if not np.issubdtype(type(delay), np.integer):
-            raise TypeError(f"The delay is expected to be an integer, actual type: {type(delay)}")
+            raise TypeError(
+                f"The delay is expected to be an integer, actual type: {type(delay)}"
+            )
         if not 0 <= delay:
-            raise ValueError(f"The delay needs to be greater than zero, actual value: {delay}")
+            raise ValueError(
+                f"The delay needs to be greater than zero, actual value: {delay}"
+            )
 
         self.delay: Final[int] = int(delay)
         self.observation_queue: Final[deque] = deque()
 
         zero_obs = create_empty_array(self.observation_space)
         if zero_obs not in self.observation_space:
-            warn(f"The zero observation is not contained within the observation space. Please report this on github. Zero obs: {zero_obs}")
+            warn(
+                f"The zero observation is not contained within the observation space. Please report this on github. Zero obs: {zero_obs}"
+            )
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -164,10 +175,14 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType]):
 
         # Find the normalized time space
         if self.normalize_time:
-            self._time_preprocess_func = lambda time: time / self.max_timesteps
+            self._time_preprocess_func = lambda time: np.array(
+                [time / self.max_timesteps], dtype=np.float32
+            )
             time_space = Box(0.0, 1.0)
         else:
-            self._time_preprocess_func = lambda time: self.max_timesteps - time
+            self._time_preprocess_func = lambda time: np.array(
+                [self.max_timesteps - time], dtype=np.int32
+            )
             time_space = Box(0, self.max_timesteps, dtype=np.int32)
 
         # Find the observation space
@@ -186,7 +201,9 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType]):
 
         # If to flatten the observation space
         if self.flatten:
-            self.observation_space: Space[WrapperObsType] = spaces.flatten_space(observation_space)
+            self.observation_space: Space[WrapperObsType] = spaces.flatten_space(
+                observation_space
+            )
             self._obs_postprocess_func = lambda obs: spaces.flatten(
                 observation_space, obs
             )
@@ -274,9 +291,13 @@ class FrameStackObservationV0(Wrapper):
         super().__init__(env)
 
         if not np.issubdtype(type(stack_size), np.integer):
-            raise TypeError(f"The stack_size is expected to be an integer, actual type: {type(stack_size)}")
+            raise TypeError(
+                f"The stack_size is expected to be an integer, actual type: {type(stack_size)}"
+            )
         if not 1 < stack_size:
-            raise ValueError(f"The stack_size needs to be greater than one, actual value: {stack_size}")
+            raise ValueError(
+                f"The stack_size needs to be greater than one, actual value: {stack_size}"
+            )
 
         self.observation_space = batch_space(env.observation_space, n=stack_size)
         self.stack_size: Final[int] = stack_size
@@ -299,9 +320,7 @@ class FrameStackObservationV0(Wrapper):
 
         obs_array = create_empty_array(self.env.observation_space, n=self.stack_size)
         return (
-            concatenate(
-                self.observation_space, self._stacked_obs, obs_array
-            ),
+            concatenate(self.observation_space, self._stacked_obs, obs_array),
             reward,
             terminated,
             truncated,
@@ -326,9 +345,7 @@ class FrameStackObservationV0(Wrapper):
 
         obs_array = create_empty_array(self.env.observation_space, n=self.stack_size)
         return (
-            concatenate(
-                self.observation_space, self._stacked_obs, obs_array
-            ),
+            concatenate(self.observation_space, self._stacked_obs, obs_array),
             info,
         )
 
@@ -338,5 +355,5 @@ class FrameStackObservationV0(Wrapper):
                 self.observation_space,
                 create_empty_array(self.env.observation_space, n=self.stack_size),
             ),
-            maxlen=self.stack_size
+            maxlen=self.stack_size,
         )

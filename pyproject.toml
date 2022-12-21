@@ -121,7 +121,7 @@ lines_after_imports = 2
 multi_line_output = 3
 
 [tool.pyright]
-include = ["gymnasium/spaces/**", "gymnasium/experimental/**", "gymnasium/utils/**"]  # , "tests/**"]
+include = ["gymnasium/**", "tests/**"]
 exclude = ["**/node_modules", "**/__pycache__"]
 strict = []
 
@@ -140,10 +140,10 @@ reportMissingTypeStubs = false
 reportInvalidTypeVarUse = "none"
 
 # reportUnknownMemberType = "warning"  # -> raises 6035 warnings
- reportUnknownParameterType = "warning"  # -> raises 1327 warnings
- reportUnknownVariableType = "warning"  # -> raises 2585 warnings
- reportUnknownArgumentType = "warning"  # -> raises 2104 warnings
-#reportGeneralTypeIssues = "none"  # -> commented out raises 489 errors
+# reportUnknownParameterType = "warning"  # -> raises 1327 warnings
+# reportUnknownVariableType = "warning"  # -> raises 2585 warnings
+# reportUnknownArgumentType = "warning"  # -> raises 2104 warnings
+reportGeneralTypeIssues = "none"  # -> commented out raises 489 errors
 reportUntypedFunctionDecorator = "none"  # -> pytest.mark.parameterize issues
 
 reportPrivateUsage = "warning"

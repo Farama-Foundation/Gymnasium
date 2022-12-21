@@ -3,7 +3,6 @@
 * ``LambdaReward`` - Transforms the reward by a function
 * ``ClipReward`` - Clips the reward between a minimum and maximum value
 """
-
 from __future__ import annotations
 
 from typing import Any, Callable, SupportsFloat
