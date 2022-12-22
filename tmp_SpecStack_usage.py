@@ -1,3 +1,4 @@
+"""Example file showing usage of env.specstack."""
 import json
 
 import gymnasium as gym

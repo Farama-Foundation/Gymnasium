@@ -209,6 +209,11 @@ class Env(Generic[ObsType, ActType]):
 
     @property
     def spec_stack(self) -> tuple[EnvSpec | WrapperSpec]:
+        """Returns the specification stack of the environment.
+
+        Returns:
+           Tuple of environment and wrapper specifications, known as the specification stack.
+        """
         assert self.spec is not None
         return (self.spec,)
 
@@ -287,6 +292,11 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
 
     @property
     def spec_stack(self) -> tuple[EnvSpec | WrapperSpec]:
+        """Returns the specification stack of the wrapped environment.
+
+        Returns:
+           Tuple of environment and wrapper specifications, known as the specification stack.
+        """
         assert hasattr(self, "_ezpickle_kwargs")
         wrapper_spec = WrapperSpec(
             type(self).__name__,

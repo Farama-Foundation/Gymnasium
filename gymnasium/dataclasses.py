@@ -1,3 +1,4 @@
+"""Contains the WrapperSpec dataclass, used in both core.py and registration.py."""
 from dataclasses import dataclass
 from typing import Any
 
