@@ -1,18 +1,14 @@
 import contextlib
 import copy
-import dataclasses
 import difflib
 import importlib
 import importlib.util
-import inspect
-import json
 import re
 import sys
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import (
-    Any,
     Callable,
     Dict,
     Iterable,
@@ -48,8 +44,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-from gymnasium import Env, Wrapper, error, logger
-from gymnasium.dataclasses import WrapperSpec
+from gymnasium import Env, error, logger
 
 
 ENV_ID_RE = re.compile(

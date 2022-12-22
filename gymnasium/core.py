@@ -1,8 +1,7 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
@@ -11,7 +10,7 @@ from gymnasium.utils import seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec, SpecStack
+    from gymnasium.envs.registration import EnvSpec
 
 from gymnasium.dataclasses import WrapperSpec
 

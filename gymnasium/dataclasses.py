@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 
 # todo: move this elsewhere
