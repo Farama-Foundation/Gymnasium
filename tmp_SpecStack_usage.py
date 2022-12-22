@@ -23,7 +23,7 @@ env_r = gym.make(stack_r)                                  # reconstruct the env
 
 # visualise the spec stack of the reconstructed environment
 pprint_stack(as_json_r)
-pprint_stack(serialise_spec_stack(env_r.spec_stack))  # NB: This fails, reserialisation of callable is not supported. (env_r.spec_stack is called twice, once in gym.make() and once here)
+# pprint_stack(serialise_spec_stack(env_r.spec_stack))  # NB: This fails, reserialisation of callable is not supported. (env_r.spec_stack is called twice, once in gym.make() and once here)
                                                         # To fix this, env_r.spec_stack needs to be overwritten with stack_r.
                                                         # I don't know how to do this whilst keeping spec_stack as a property.
                                                         # I don't think this would be an issue in practice, as there is no need to call env.spec_stack twice - users can save the output of env.spec_stack as a variable.
