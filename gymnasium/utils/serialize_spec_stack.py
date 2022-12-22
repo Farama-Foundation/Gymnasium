@@ -44,12 +44,12 @@ def _serialise_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
         if callable(v):
             try:
                 str_repr = (
-                    str(inspect.getsourcelines(v)[0])
-                    .strip("['\\n']")
-                    .split(" = ")[1]
+                    str(inspect.getsourcelines(v)[0]).strip("['\\n']").split(" = ")[1]
                 )  # https://stackoverflow.com/a/30984012
             except OSError:
-                raise error.Error("The attempted seialisation of a callable failed. This is likely due to env.spec_stack being called twice, which for technical reasons doesn't work. Please modify your code to only call env.spec_stack once (you can save that to a variable and repeatedly use that).")
+                raise error.Error(
+                    "The attempted seialisation of a callable failed. This is likely due to env.spec_stack being called twice, which for technical reasons doesn't work. Please modify your code to only call env.spec_stack once (you can save that to a variable and repeatedly use that)."
+                )
             str_repr = re.search(r", (.*)\)$", str_repr).group(1)
             spec.kwargs[k] = str_repr
     return spec
@@ -72,9 +72,7 @@ def deserialise_spec_stack(
         spec = json.loads(spec_json)
 
         # convert lists back into tuples - json saves tuples as lists, so we need to convert them back (assumes depth <2, todo: recursify this)
-        for k, v in spec[
-            "kwargs"
-        ].items():
+        for k, v in spec["kwargs"].items():
             if type(v) == list:
                 for i, x in enumerate(v):
                     if type(x) == list:

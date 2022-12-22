@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 from gymnasium.dataclasses import WrapperSpec
 
+
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
 RenderFrame = TypeVar("RenderFrame")
@@ -208,7 +209,7 @@ class Env(Generic[ObsType, ActType]):
         return self._np_random
 
     @property
-    def spec_stack(self) -> tuple[Union[EnvSpec, WrapperSpec]]:
+    def spec_stack(self) -> tuple[EnvSpec | WrapperSpec]:
         assert self.spec is not None
         return (self.spec,)
 
@@ -286,9 +287,13 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self.env.spec
 
     @property
-    def spec_stack(self) -> tuple[Union[EnvSpec, WrapperSpec]]:
+    def spec_stack(self) -> tuple[EnvSpec | WrapperSpec]:
         assert hasattr(self, "_ezpickle_kwargs")
-        wrapper_spec = WrapperSpec(type(self).__name__, self.__module__ + ":" + type(self).__name__, self._ezpickle_kwargs)
+        wrapper_spec = WrapperSpec(
+            type(self).__name__,
+            self.__module__ + ":" + type(self).__name__,
+            self._ezpickle_kwargs,
+        )
         return (wrapper_spec,) + self.env.spec_stack
 
     @classmethod

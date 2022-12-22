@@ -49,7 +49,6 @@ else:
     from typing_extensions import Literal
 
 from gymnasium import Env, Wrapper, error, logger
-
 from gymnasium.dataclasses import WrapperSpec
 
 
@@ -168,6 +167,7 @@ class EnvSpec:
     def make(self, **kwargs) -> Env:
         # For compatibility purposes
         return make(self, **kwargs)
+
 
 def _check_namespace_exists(ns: Optional[str]):
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
@@ -695,12 +695,32 @@ def make(
     if isinstance(spec_stack, tuple):
         env = _apply_wrappers_from_stack(env, spec_stack)
     else:
-        env = _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection)
+        env = _apply_default_wrappers(
+            env,
+            spec_,
+            render_mode,
+            apply_api_compatibility,
+            disable_env_checker,
+            max_episode_steps,
+            autoreset,
+            apply_human_rendering,
+            apply_render_collection,
+        )
 
     return env
 
 
-def _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, disable_env_checker, max_episode_steps, autoreset, apply_human_rendering, apply_render_collection):
+def _apply_default_wrappers(
+    env,
+    spec_,
+    render_mode,
+    apply_api_compatibility,
+    disable_env_checker,
+    max_episode_steps,
+    autoreset,
+    apply_human_rendering,
+    apply_render_collection,
+):
     """Applies the default wrappers to the environment.
 
     Args:
@@ -719,13 +739,13 @@ def _apply_default_wrappers(env, spec_, render_mode, apply_api_compatibility, di
     """
     # Add step API wrapper
     if apply_api_compatibility is True or (
-            apply_api_compatibility is None and spec_.apply_api_compatibility is True
+        apply_api_compatibility is None and spec_.apply_api_compatibility is True
     ):
         env = EnvCompatibility(env, render_mode)
 
     # Run the environment checker as the lowest level wrapper
     if disable_env_checker is False or (
-            disable_env_checker is None and spec_.disable_env_checker is False
+        disable_env_checker is None and spec_.disable_env_checker is False
     ):
         env = PassiveEnvChecker(env)
 
