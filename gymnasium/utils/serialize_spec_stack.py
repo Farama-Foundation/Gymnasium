@@ -42,11 +42,14 @@ def _serialise_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
     """
     for k, v in spec.kwargs.items():
         if callable(v):
-            str_repr = (
-                str(inspect.getsourcelines(v)[0])
-                .strip("['\\n']")
-                .split(" = ")[1]
-            )  # https://stackoverflow.com/a/30984012
+            try:
+                str_repr = (
+                    str(inspect.getsourcelines(v)[0])
+                    .strip("['\\n']")
+                    .split(" = ")[1]
+                )  # https://stackoverflow.com/a/30984012
+            except OSError:
+                raise error.Error("The attempted seialisation of a callable failed. This is likely due to env.spec_stack being called twice, which for technical reasons doesn't work. Please modify your code to only call env.spec_stack once (you can save that to a variable and repeatedly use that).")
             str_repr = re.search(r", (.*)\)$", str_repr).group(1)
             spec.kwargs[k] = str_repr
     return spec
