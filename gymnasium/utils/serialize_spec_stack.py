@@ -1,3 +1,4 @@
+"""Functions that use/modify specification stacks."""
 import dataclasses
 import inspect
 import json
@@ -32,12 +33,12 @@ def serialise_spec_stack(stack: tuple) -> str:
 
 
 def _serialise_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
-    """Modifies an Env WrapperSpec
+    """Converts a spec's lambda functions to a string representation.
 
     Args:
-        spec:
+        spec: An environment or wrapper specification.
 
-    Returns:
+    Returns: The specification with lambda functions converted to strings.
 
     """
     for k, v in spec.kwargs.items():
