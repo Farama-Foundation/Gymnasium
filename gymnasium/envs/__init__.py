@@ -154,6 +154,16 @@ register(
     max_episode_steps=200,
 )
 
+# Jax Toy Text
+# ----------------------------------------
+
+register(
+    id="Jax-BlackJack-v0",
+    entry_point="gymnasium.envs.jax_toy_text.blackjack:BlackJackJaxEnv",
+    kwargs={"sutton_and_barto": True, "natural": False},
+)
+
+
 # Mujoco
 # ----------------------------------------
 
