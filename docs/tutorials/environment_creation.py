@@ -509,25 +509,30 @@ class GridWorldEnv(gym.Env):
 #    wrapped_env = RelativePosition(env)
 #    print(wrapped_env.reset())     # E.g.  [-3  3], {}
 #
-# Saving your environment for reproducibility
+# Saving your environment for reproducibility with the specification stack
 # --------------
 #
 # It is important to keep a complete record of the environment you use, including wrappers, so that you can reproduce your results.
-# To do this, you can use ``spec_stack = gymnasium.SpecStack(env)`` which automatically records the environment and all wrappers.
-# This record can be saved to a file via ``json.dump(spec_stack, open("my_environment_config.json", "w"))``.
+# This process is automatic and the "specification stack" can be accessed via `env.spec_stack`.
+# The specification stack can be saved to a file via ``json.dump(serialise_spec_stack(env.spec_stack), open("my_environment_config.json", "w"))``.
 # To remake the environment, you can use ``gymnasium.make(SpecStack(json.load(open("my_environment_config.json", "r"))))``.
 #
 # .. code:: python
 #
 #    import gym_examples
 #    from gym_examples.wrappers import RelativePosition
+#    from gymnasium.utils.serialize_spec_stack import (
+#        deserialise_spec_stack,
+#        pprint_stack,
+#        serialise_spec_stack,
+#    )
 #
 #    env = gymnasium.make('gym_examples/GridWorld-v0')
 #    wrapped_env = RelativePosition(env)
-#    spec_stack = gymnasium.SpecStack(wrapped_env)
+#    spec_stack = wrapped_env.spec_stack
 #
-#    json.dump(spec_stack, open("my_environment_config.json", "w"))
-#    stack_from_json = SpecStack(json.load(open("my_environment_config.json", "r")))
-#    print(stack_from_json)     # Visually inspect the stack
+#    json.dump(serialise_spec_stack(spec_stack), open("my_environment_config.json", "w"))
+#    stack_from_json = deserialise_spec_stack(json.load(open("my_environment_config.json", "r")), eval_ok=True)
+#    pprint_stack(stack_from_json)     # Visually inspect the stack
 #    gym.make(stack_from_json)
 #
