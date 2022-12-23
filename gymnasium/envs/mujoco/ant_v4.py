@@ -28,14 +28,14 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     | Num | Action                                                            | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
     | --- | ----------------------------------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
-    | 0   | Torque applied on the rotor between the torso and front left hip  | -1          | 1           | hip_1 (front_left_leg)           | hinge | torque (N m) |
-    | 1   | Torque applied on the rotor between the front left two links      | -1          | 1           | angle_1 (front_left_leg)         | hinge | torque (N m) |
-    | 2   | Torque applied on the rotor between the torso and front right hip | -1          | 1           | hip_2 (front_right_leg)          | hinge | torque (N m) |
-    | 3   | Torque applied on the rotor between the front right two links     | -1          | 1           | angle_2 (front_right_leg)        | hinge | torque (N m) |
-    | 4   | Torque applied on the rotor between the torso and back left hip   | -1          | 1           | hip_3 (back_leg)                 | hinge | torque (N m) |
-    | 5   | Torque applied on the rotor between the back left two links       | -1          | 1           | angle_3 (back_leg)               | hinge | torque (N m) |
-    | 6   | Torque applied on the rotor between the torso and back right hip  | -1          | 1           | hip_4 (right_back_leg)           | hinge | torque (N m) |
-    | 7   | Torque applied on the rotor between the back right two links      | -1          | 1           | angle_4 (right_back_leg)         | hinge | torque (N m) |
+    | 0   | Torque applied on the rotor between the torso and back right hip  | -1          | 1           | hip_4 (right_back_leg)           | hinge | torque (N m) |
+    | 1   | Torque applied on the rotor between the back right two links      | -1          | 1           | angle_4 (right_back_leg)         | hinge | torque (N m) |
+    | 2   | Torque applied on the rotor between the torso and front left hip  | -1          | 1           | hip_1 (front_left_leg)           | hinge | torque (N m) |
+    | 3   | Torque applied on the rotor between the front left two links      | -1          | 1           | angle_1 (front_left_leg)         | hinge | torque (N m) |
+    | 4   | Torque applied on the rotor between the torso and front right hip | -1          | 1           | hip_2 (front_right_leg)          | hinge | torque (N m) |
+    | 5   | Torque applied on the rotor between the front right two links     | -1          | 1           | angle_2 (front_right_leg)        | hinge | torque (N m) |
+    | 6   | Torque applied on the rotor between the torso and back left hip   | -1          | 1           | hip_3 (back_leg)                 | hinge | torque (N m) |
+    | 7   | Torque applied on the rotor between the back left two links       | -1          | 1           | angle_3 (back_leg)               | hinge | torque (N m) |
 
     ## Observation Space
 
@@ -45,12 +45,12 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     By default, observations do not include the x- and y-coordinates of the ant's torso. These may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will have 113 dimensions where the first two dimensions
+    In that case, the observation space will have 29 dimensions where the first two dimensions
     represent the x- and y- coordinates of the ant's torso.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x- and y-coordinates
     of the torso will be returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
-    However, by default, an observation is a `ndarray` with shape `(111,)`
+    However, by default, an observation is a `ndarray` with shape `(27,)`
     where the elements correspond to the following:
 
     | Num | Observation                                                  | Min    | Max    | Name (in corresponding XML file)       | Joint | Unit                     |
@@ -114,7 +114,12 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     force is too large. It is calculated *`contact_cost_weight` * sum(clip(external contact
     force to `contact_force_range`)<sup>2</sup>)*.
 
-    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost* and `info` will also contain the individual reward terms.
+    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*.
+
+    But if `use_contact_forces=True`
+    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
+
+    In either case `info` will also contain the individual reward terms.
 
     ## Starting State
     All observations start in state
@@ -159,7 +164,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     |-------------------------|------------|--------------|-------------------------------|
     | `xml_file`              | **str**    | `"ant.xml"`  | Path to a MuJoCo model |
     | `ctrl_cost_weight`      | **float**  | `0.5`        | Weight for *ctrl_cost* term (see section on reward) |
-    | `use_contact_forces`    | **bool**  | `False`      | If true, it extends the observation space by adding contact forces (see `Observation Space` section)
+    | `use_contact_forces`    | **bool**  | `False`      | If true, it extends the observation space by adding contact forces (see `Observation Space` section) and includes contact_cost to the reward function (see `Rewards` section) |
     | `contact_cost_weight`   | **float**  | `5e-4`       | Weight for *contact_cost* term (see section on reward) |
     | `healthy_reward`        | **float**  | `1`          | Constant reward given if the ant is "healthy" after timestep |
     | `terminate_when_unhealthy` | **bool**| `True`       | If true, issue a done signal if the z-coordinate of the torso is no longer in the `healthy_z_range` |

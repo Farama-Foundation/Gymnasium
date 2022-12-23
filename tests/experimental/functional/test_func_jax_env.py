@@ -1,7 +1,8 @@
+"""Test the functional jax environment."""
+
 import jax
 import jax.numpy as jnp
 import jax.random as jrng
-import numpy as np
 import pytest
 
 from gymnasium.envs.phys2d.cartpole import CartPoleFunctional
@@ -9,7 +10,8 @@ from gymnasium.envs.phys2d.pendulum import PendulumFunctional
 
 
 @pytest.mark.parametrize("env_class", [CartPoleFunctional, PendulumFunctional])
-def test_normal(env_class):
+def test_without_transform(env_class):
+    """Tests the environment without transforming the environment."""
     env = env_class()
     rng = jrng.PRNGKey(0)
 
@@ -42,6 +44,7 @@ def test_normal(env_class):
 
 @pytest.mark.parametrize("env_class", [CartPoleFunctional, PendulumFunctional])
 def test_jit(env_class):
+    """Tests jitting the functional instance functions."""
     env = env_class()
     rng = jrng.PRNGKey(0)
 
@@ -75,6 +78,7 @@ def test_jit(env_class):
 
 @pytest.mark.parametrize("env_class", [CartPoleFunctional, PendulumFunctional])
 def test_vmap(env_class):
+    """Tests vmap of functional instance functions with transform."""
     env = env_class()
     num_envs = 10
     rng = jrng.split(jrng.PRNGKey(0), num_envs)
@@ -98,7 +102,7 @@ def test_vmap(env_class):
         assert reward.shape == (num_envs,)
         assert reward.dtype == jnp.float32
         assert terminal.shape == (num_envs,)
-        assert terminal.dtype == np.bool
+        assert terminal.dtype == bool
         assert isinstance(obs, jnp.ndarray)
         assert obs.dtype == jnp.float32
 

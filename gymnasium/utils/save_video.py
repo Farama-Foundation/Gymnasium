@@ -8,10 +8,10 @@ from gymnasium import logger
 
 try:
     from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
-except ImportError:
+except ImportError as e:
     raise gym.error.DependencyNotInstalled(
         "MoviePy is not installed, run `pip install moviepy`"
-    )
+    ) from e
 
 
 def capped_cubic_video_schedule(episode_id: int) -> bool:

@@ -1,13 +1,15 @@
 """A collection of observation wrappers using a lambda function.
 
-* ``LambdaObservation`` - Transforms the observation with a function
-* ``FilterObservation`` - Filters a ``Tuple`` or ``Dict`` to only include certain keys
-* ``FlattenObservation`` - Flattens the observations
-* ``GrayscaleObservation`` - Converts a RGB observation to a grayscale observation
-* ``ResizeObservation`` - Resizes an array-based observation (normally a RGB observation)
-* ``ReshapeObservation`` - Reshapes an array-based observation
-* ``RescaleObservation`` - Rescales an observation to between a minimum and maximum value
-* ``DtypeObservation`` - Convert a observation dtype
+* ``LambdaObservationV0`` - Transforms the observation with a function
+* ``FilterObservationV0`` - Filters a ``Tuple`` or ``Dict`` to only include certain keys
+* ``FlattenObservationV0`` - Flattens the observations
+* ``GrayscaleObservationV0`` - Converts a RGB observation to a grayscale observation
+* ``ResizeObservationV0`` - Resizes an array-based observation (normally a RGB observation)
+* ``ReshapeObservationV0`` - Reshapes an array-based observation
+* ``RescaleObservationV0`` - Rescales an observation to between a minimum and maximum value
+* ``DtypeObservationV0`` - Convert an observation to a dtype
+* ``PixelObservationV0`` - Allows the observation to the rendered frame
+* ``NormalizeObservationV0`` - Normalized the observations to a mean and
 """
 from __future__ import annotations
 
@@ -18,10 +20,11 @@ import jumpy as jp
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import spaces
-from gymnasium.core import ObsType
+from gymnasium import Env, spaces
+from gymnasium.core import ActType, ObservationWrapper, ObsType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.spaces import Box, utils
+from gymnasium.experimental.wrappers.utils import RunningMeanStd
+from gymnasium.spaces import Box, Dict, utils
 
 
 class LambdaObservationV0(gym.ObservationWrapper):
@@ -247,11 +250,13 @@ class GrayscaleObservationV0(LambdaObservationV0):
 
 
 class ResizeObservationV0(LambdaObservationV0):
-    """Observation wrapper for resize image observations using opencv.
+    """Resizes image observations using OpenCV to shape.
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make("CarRacing-v1")
+        >>> env = gym.make("CarRacing-v2")
+        >>> env.observation_space.shape
+        (96, 96, 3)
         >>> resized_env = ResizeObservationV0(env, (32, 32))
         >>> resized_env.observation_space.shape
         (32, 32, 3)
@@ -272,10 +277,10 @@ class ResizeObservationV0(LambdaObservationV0):
 
         try:
             import cv2
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
-                "opencv is not install, run `pip install gymnasium[other]`"
-            )
+                "opencv is not installed, run `pip install gymnasium[other]`"
+            ) from e
 
         self.shape: Final[tuple[int, ...]] = tuple(shape)
 
@@ -290,7 +295,17 @@ class ResizeObservationV0(LambdaObservationV0):
 
 
 class ReshapeObservationV0(LambdaObservationV0):
-    """Observation wrapper for reshaping the observation."""
+    """Reshapes array based observations to shapes.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CarRacing-v1")
+        >>> env.observation_space.shape
+        (96, 96, 3)
+        >>> reshape_env = ReshapeObservationV0(env, (24, 4, 96, 1, 3))
+        >>> reshape_env.observation_space.shape
+        (24, 4, 96, 1, 3)
+    """
 
     def __init__(self, env: gym.Env, shape: int | tuple[int, ...]):
         """Constructor for env with Box observation space that has a shape product equal to the new shape product."""
@@ -312,7 +327,16 @@ class ReshapeObservationV0(LambdaObservationV0):
 
 
 class RescaleObservationV0(LambdaObservationV0):
-    """Observation wrapper for rescaling the observations between a minimum and maximum value."""
+    """Linearly rescales observation to between a minimum and maximum value.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("Pendulum-v1")
+        >>> env.observation_space
+        Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)
+        >>> env = RescaleObservationV0(env, np.array([-2, -1, -10]), np.array([1, 0, 1]))
+        Box([-2. -1. -10.], [1. 0. 1.], (3,), float32)
+    """
 
     def __init__(
         self,
@@ -407,3 +431,83 @@ class DtypeObservationV0(LambdaObservationV0):
             )
 
         super().__init__(env, lambda obs: dtype(obs), new_observation_space)
+
+
+class PixelObservationV0(LambdaObservationV0):
+    """Augment observations by pixel values.
+
+    Observations of this wrapper will be dictionaries of images.
+    You can also choose to add the observation of the base environment to this dictionary.
+    In that case, if the base environment has an observation space of type :class:`Dict`, the dictionary
+    of rendered images will be updated with the base environment's observation. If, however, the observation
+    space is of type :class:`Box`, the base environment's observation (which will be an element of the :class:`Box`
+    space) will be added to the dictionary under the key "state".
+    """
+
+    def __init__(
+        self,
+        env: Env[ObsType, ActType],
+        pixels_only: bool = True,
+        pixels_key: str = "pixels",
+        obs_key: str = "state",
+    ):
+        """Initializes a new pixel Wrapper.
+
+        Args:
+            env: The environment to wrap.
+            pixels_only (bool): If `True` (default), the original observation returned
+                by the wrapped environment will be discarded, and a dictionary
+                observation will only include pixels. If `False`, the
+                observation dictionary will contain both the original
+                observations and the pixel observations.
+            pixels_key: Optional custom string specifying the pixel key. Defaults to "pixels"
+            obs_key: Optional custom string specifying the obs key. Defaults to "state"
+        """
+        assert env.render_mode is not None and env.render_mode != "human"
+        env.reset()
+        pixels = env.render()
+        assert pixels is not None and isinstance(pixels, np.ndarray)
+        pixel_space = Box(low=0, high=255, shape=pixels.shape, dtype=np.uint8)
+
+        if pixels_only:
+            obs_space = pixel_space
+            super().__init__(env, lambda _: self.render(), obs_space)
+        elif isinstance(env.observation_space, Dict):
+            assert pixels_key not in env.observation_space.spaces.keys()
+
+            obs_space = Dict({pixels_key: pixel_space, **env.observation_space.spaces})
+            super().__init__(
+                env, lambda obs: {pixels_key: self.render(), **obs_space}, obs_space
+            )
+        else:
+            obs_space = Dict({obs_key: env.observation_space, pixels_key: pixel_space})
+            super().__init__(
+                env, lambda obs: {obs_key: obs, pixels_key: self.render()}, obs_space
+            )
+
+
+class NormalizeObservationV0(ObservationWrapper):
+    """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
+
+    Note:
+        The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
+        newly instantiated or the policy was changed recently.
+    """
+
+    def __init__(self, env: gym.Env, epsilon: float = 1e-8):
+        """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
+
+        Args:
+            env (Env): The environment to apply the wrapper
+            epsilon: A stability parameter that is used when scaling the observations.
+        """
+        super().__init__(env)
+        self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
+        self.epsilon = epsilon
+
+    def observation(self, observation: ObsType) -> WrapperObsType:
+        """Normalises the observation using the running mean and variance of the observations."""
+        self.obs_rms.update(observation)
+        return (observation - self.obs_rms.mean) / np.sqrt(
+            self.obs_rms.var + self.epsilon
+        )
