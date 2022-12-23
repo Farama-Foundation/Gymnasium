@@ -16,7 +16,7 @@ from gymnasium.error import InvalidBound
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
-class LambdaRewardV0(gym.RewardWrapper):
+class LambdaRewardV0(gym.RewardWrapper, gym.utils.EzPickle):
     """A reward wrapper that allows a custom function to modify the step reward.
 
     Example:
@@ -44,6 +44,7 @@ class LambdaRewardV0(gym.RewardWrapper):
         super().__init__(env)
 
         self.func = func
+        gym.utils.EzPickle.__init__(self, func=func)
 
     def reward(self, reward: SupportsFloat) -> SupportsFloat:
         """Apply function to reward.
@@ -54,7 +55,7 @@ class LambdaRewardV0(gym.RewardWrapper):
         return self.func(reward)
 
 
-class ClipRewardV0(LambdaRewardV0):
+class ClipRewardV0(LambdaRewardV0, gym.utils.EzPickle):
     """A wrapper that clips the rewards for an environment between an upper and lower bound.
 
     Example with an upper and lower bound:
@@ -91,9 +92,10 @@ class ClipRewardV0(LambdaRewardV0):
                 )
 
         super().__init__(env, lambda x: np.clip(x, a_min=min_reward, a_max=max_reward))
+        gym.utils.EzPickle.__init__(self, min_reward=min_reward, max_reward=max_reward)
 
 
-class NormalizeRewardV0(gym.Wrapper):
+class NormalizeRewardV0(gym.Wrapper, gym.utils.EzPickle):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
@@ -121,6 +123,7 @@ class NormalizeRewardV0(gym.Wrapper):
         self.discounted_reward: float = 0.0
         self.gamma = gamma
         self.epsilon = epsilon
+        gym.utils.EzPickle.__init__(self, gamma=gamma, epsilon=epsilon)
 
     def step(
         self, action: WrapperActType
