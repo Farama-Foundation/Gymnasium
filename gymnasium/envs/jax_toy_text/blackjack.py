@@ -1,24 +1,16 @@
-
-from functools import partial
 import math
 import os
-import time
 from typing import Optional, Tuple, Union
-
 
 import jax
 import jax.numpy as jnp
 import jax.random as jrng
-from jax.random import PRNGKey
-from jax import random, jit, pmap, vmap
 import numpy as np
+from jax import random
+from jax.random import PRNGKey
 
-
-import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.jax_toy_text.conversion import JaxEnv
-
-
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
@@ -30,50 +22,62 @@ RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F82
 deck = jnp.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10])
 
 
-#converts a tuple of device arrays into a tutple of ints
+# converts a tuple of device arrays into a tutple of ints
 def obs_from_device(obs):
     return tuple([int(jax.device_get(obs[i])) for i in range(len(obs))])
-
 
 
 def cmp(a, b):
     return (a > b).astype(int) - (a < b).astype(int)
 
-#gets a random card(with replacement)
+
+# gets a random card(with replacement)
 def random_card(key):
     key = random.split(key)[0]
-    choice = random.choice(key,deck,shape=(1,))
-    
+    choice = random.choice(key, deck, shape=(1,))
+
     return choice[0].astype(int), key
 
+
 # draws a starting hand of two cards
-def draw_hand(key,hand):
+def draw_hand(key, hand):
     new_card, key = random_card(key)
     hand = hand.at[0].set(new_card)
     new_card, key = random_card(key)
-    hand =  hand.at[1].set(new_card)
+    hand = hand.at[1].set(new_card)
     return hand, key
 
-#draws a single card
+
+# draws a single card
 def draw_card(key, hand, index):
     new_card, key = random_card(key)
     hand = hand.at[index].set(new_card)
-    return key, hand, index+1
+    return key, hand, index + 1
 
 
 def usable_ace(hand):  # Does this hand have a usable ace?
-    return  jnp.logical_and((jnp.count_nonzero(hand==1) > 0 ) , (sum(hand) + 10 <= 21))
+    return jnp.logical_and((jnp.count_nonzero(hand == 1) > 0), (sum(hand) + 10 <= 21))
+
 
 # the player has decided to take a card
 def take(env_state):
     state, key = env_state
     dealer_hand = state[0]
     player_hand = state[1]
-    dealer_cards = state[2] 
+    dealer_cards = state[2]
     player_cards = state[3]
-    key, new_player_hand, _ = draw_card(key, player_hand,player_cards)
-    
-    return (dealer_hand,new_player_hand, dealer_cards,player_cards + 1 ),  key
+    key, new_player_hand, _ = draw_card(key, player_hand, player_cards)
+
+    return (dealer_hand, new_player_hand, dealer_cards, player_cards + 1), key
+
+
+def dealer_stop(val):
+    return sum_hand(val[1]) < 17
+
+
+def draw_card_wrapper(val):
+    return draw_card(*val)
+
 
 # the player has decided to not take a card, ending the active portion
 # of the game and turning control over to the dealer
@@ -81,20 +85,24 @@ def notake(env_state):
     state, key = env_state
     dealer_hand = state[0]
     player_hand = state[1]
-    dealer_cards = state[2] 
+    dealer_cards = state[2]
     player_cards = state[3]
 
-    draw_card_wrapper = lambda val : draw_card(*val) 
-
-    key,dealer_hand, dealer_cards = jax.lax.while_loop(lambda val: sum_hand(val[1])<17, draw_card_wrapper, (key, dealer_hand, dealer_cards))
+    key, dealer_hand, dealer_cards = jax.lax.while_loop(
+        dealer_stop,
+        draw_card_wrapper,
+        (key, dealer_hand, dealer_cards),
+    )
 
     return (dealer_hand, player_hand, dealer_cards, player_cards), key
+
 
 # gets an observation from env state
 def _get_obsv(env_state):
     return (sum_hand(env_state[0][1]), env_state[0][0][0], usable_ace(env_state[0][1]))
 
-def sum_hand(hand):  # Return current hand total 
+
+def sum_hand(hand):  # Return current hand total
     return sum(hand) + (10 * usable_ace(hand))
 
 
@@ -107,12 +115,17 @@ def score(hand):  # What is the score of this hand (0 if bust)
 
 
 def is_natural(hand):  # Is this hand a natural blackjack?
-    return jnp.logical_and(jnp.logical_and(jnp.count_nonzero(hand) == 2 , (jnp.count_nonzero(hand==1) > 0 )) , (jnp.count_nonzero(hand==10) > 0 ))
+    return jnp.logical_and(
+        jnp.logical_and(
+            jnp.count_nonzero(hand) == 2, (jnp.count_nonzero(hand == 1) > 0)
+        ),
+        (jnp.count_nonzero(hand == 10) > 0),
+    )
 
 
-
-
-class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]):
+class BlackjackFunctional(
+    FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
+):
     """
     Blackjack is a card game where the goal is to beat the dealer by obtaining cards
     that sum to closer to 21 (without going over 21) than the dealers cards.
@@ -176,8 +189,6 @@ class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderState
     * v1: Initial versions release (1.0.0)
     """
 
-
-  
     action_space = spaces.Discrete(2)
     observation_space = spaces.Tuple(
         (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
@@ -192,56 +203,48 @@ class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderState
 
     # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 
-
-
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 4,
     }
 
+    def transition(
+        self, state: jnp.ndarray, action: Union[int, jnp.ndarray], key: PRNGKey
+    ):
 
-    def transition(self, state: jnp.ndarray, action: Union[int, jnp.ndarray], key: PRNGKey):
-        
-
-        env_state = jax.lax.cond(action, take, notake, (state,key))
-        
+        env_state = jax.lax.cond(action, take, notake, (state, key))
 
         hand_state, key = env_state
         dealer_hand = hand_state[0]
         player_hand = hand_state[1]
-        dealer_cards = hand_state[2] 
+        dealer_cards = hand_state[2]
         player_cards = hand_state[3]
-        
+
         # note that only a bust or player action ends the round, the player
         # can still request another card with 21 cards
         done = (is_bust(player_hand) * action) + ((jnp.logical_not(action)) * 1)
 
-        
-
         new_state = (dealer_hand, player_hand, dealer_cards, player_cards, done), key
 
-  
         return new_state
-        
 
-    def initial(self, rng:PRNGKey):
-      #env_state = self._reset(key)
+    def initial(self, rng: PRNGKey):
+        # env_state = self._reset(key)
 
-      player_hand = jnp.zeros(21)
-      dealer_hand =  jnp.zeros(21)
-      player_hand, rng = draw_hand(rng, player_hand)
-      dealer_hand, rng  = draw_hand(rng, dealer_hand)
-      dealer_cards = 2
-      player_cards = 2
+        player_hand = jnp.zeros(21)
+        dealer_hand = jnp.zeros(21)
+        player_hand, rng = draw_hand(rng, player_hand)
+        dealer_hand, rng = draw_hand(rng, dealer_hand)
+        dealer_cards = 2
+        player_cards = 2
 
-      state = (dealer_hand, player_hand, dealer_cards, player_cards,0)
-  
-      rng = random.split(rng)[0]
-      
-      env_state = (state,rng)
+        state = (dealer_hand, player_hand, dealer_cards, player_cards, 0)
 
-      return env_state
+        rng = random.split(rng)[0]
 
+        env_state = (state, rng)
+
+        return env_state
 
     def observation(self, state: jnp.ndarray) -> jnp.ndarray:
         """BlackJack observation."""
@@ -250,37 +253,39 @@ class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderState
     def terminal(self, state: jnp.ndarray) -> jnp.ndarray:
         return (state[4]) > 0
 
-
     def reward(
-            self, state: StateType, action: ActType, next_state: StateType
-        ) -> jnp.ndarray:
+        self, state: StateType, action: ActType, next_state: StateType
+    ) -> jnp.ndarray:
 
         state = next_state
 
         dealer_hand = state[0]
         player_hand = state[1]
-        dealer_cards = state[2] 
-        player_cards = state[3]
 
-        # -1 reward if the player busts, otherwise +1 if better than dealer, 0 if tie, -1 if loss. 
-        reward = 0.0 + (is_bust(player_hand) * -1  * action) + ((jnp.logical_not(action)) * cmp(score(player_hand), score(dealer_hand)))
-        
-        #in the natural setting, if the player wins with a natural blackjack, then reward is 1.5
+        # -1 reward if the player busts, otherwise +1 if better than dealer, 0 if tie, -1 if loss.
+        reward = (
+            0.0
+            + (is_bust(player_hand) * -1 * action)
+            + ((jnp.logical_not(action)) * cmp(score(player_hand), score(dealer_hand)))
+        )
+
+        # in the natural setting, if the player wins with a natural blackjack, then reward is 1.5
         if self.natural and not self.sutton_and_barto:
-            condition = jnp.logical_and(is_natural(player_hand) , (reward == 1))
-            reward = reward * jnp.logical_not(condition) + 1.5 * condition 
+            condition = jnp.logical_and(is_natural(player_hand), (reward == 1))
+            reward = reward * jnp.logical_not(condition) + 1.5 * condition
 
         # in the sutton and barto setting, if the player gets a natural blackjack and the dealer gets
         # a non-natural blackjack, the player wins. A dealer natural blackjack and a player
         # non-natural blackjack should result in a tie.
         if self.sutton_and_barto:
-            condition = jnp.logical_and(is_natural(player_hand) , jnp.logical_not(is_natural(dealer_hand)))
-            reward = reward * jnp.logical_not(condition) + 1 * condition 
+            condition = jnp.logical_and(
+                is_natural(player_hand), jnp.logical_not(is_natural(dealer_hand))
+            )
+            reward = reward * jnp.logical_not(condition) + 1 * condition
         return reward
 
-
     def render_init(
-        self, key:int, screen_width: int = 600, screen_height: int = 500
+        self, key: int, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
         try:
             import pygame
@@ -289,22 +294,17 @@ class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderState
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
             )
 
-
         rng = seeding.np_random(key)[0]
-
 
         suits = ["C", "D", "H", "S"]
         dealer_top_card_suit = rng.choice(suits)
         dealer_top_card_value_str = rng.choice(["J", "Q", "K"])
 
-
         pygame.init()
         screen = pygame.display.set_mode((screen_width, screen_height))
-        clock = pygame.time.Clock()
 
         return screen, dealer_top_card_value_str, dealer_top_card_suit
 
-    
     def render_image(
         self,
         state: StateType,
@@ -319,7 +319,6 @@ class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderState
             )
         screen, dealer_top_card_value_str, dealer_top_card_suit = render_state
 
-
         player_sum, dealer_card_value, usable_ace = self.observation(state)
         screen_width, screen_height = 600, 500
         card_img_height = screen_height // 3
@@ -329,14 +328,12 @@ class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderState
         bg_color = (7, 99, 36)
         white = (255, 255, 255)
 
-
         if dealer_card_value == 1:
             display_card_value = "A"
         elif dealer_card_value == 10:
             display_card_value = dealer_top_card_value_str
         else:
             display_card_value = str(math.floor(dealer_card_value))
-
 
         screen.fill(bg_color)
 
@@ -418,8 +415,6 @@ class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderState
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
         )
 
-
-
     def render_close(self, render_state: RenderStateType) -> None:
         """Closes the render state."""
         try:
@@ -430,15 +425,16 @@ class BlackJackF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderState
             ) from e
         pygame.display.quit()
         pygame.quit()
-    
+
+
 class BlackJackJaxEnv(JaxEnv, EzPickle):
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-        env = BlackJackF()
+        env = BlackjackFunctional()
         env.transform(jax.jit)
         action_space = env.action_space
         observation_space = env.observation_space
-        metadata = {"render_modes": ["rgb_array","human"], "render_fps": 50}
+        metadata = {"render_modes": ["rgb_array", "human"], "render_fps": 50}
         super().__init__(
             env,
             observation_space=observation_space,
@@ -454,13 +450,12 @@ class BlackJackJaxEnv(JaxEnv, EzPickle):
 
 
 if __name__ == "__main__":
-    
-    env = BlackJackJaxEnv(render_mode = "human")
-    
+
+    env = BlackJackJaxEnv(render_mode="human")
+
     obs, info = env.reset()
-    print(obs,info)
+    print(obs, info)
     env.render()
-    
 
     terminal = False
     while not terminal:
@@ -468,13 +463,13 @@ if __name__ == "__main__":
         obs, reward, terminal, truncated, info = env.step(action)
         print(obs, reward, terminal, truncated, info)
         env.render()
-    
+
     exit()
 
     rng = jrng.PRNGKey(4)
 
-    #env.transform(jax.jit)
-    state , rng = env.initial(rng)
+    # env.transform(jax.jit)
+    state, rng = env.initial(rng)
     print(state)
     exit()
     render_state = env.render_init(0)
@@ -482,16 +477,13 @@ if __name__ == "__main__":
     env.action_space.seed(0)
 
     for t in range(10):
-        obs  = env.observation(state)
-        render_state , _  = env.render_image(state, render_state)
+        obs = env.observation(state)
+        render_state, _ = env.render_image(state, render_state)
         action = int(input("Please input an action"))
-        #action = env.action_space.sample()
+        # action = env.action_space.sample()
         next_state, frng = env.transition(state, action, rng)
         reward = env.reward(state, action, next_state)
         terminal = env.terminal(next_state)
         state = next_state
         print(obs)
         input()
-    
-    
-  
