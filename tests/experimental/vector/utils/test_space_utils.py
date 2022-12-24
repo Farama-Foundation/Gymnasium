@@ -23,6 +23,7 @@ def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int
     """Test all space_utils functions using them together."""
     # Batch the space and create a sample
     batched_space = batch_space(space, n)
+    assert isinstance(batched_space, Space)
     batched_sample = batched_space.sample()
     assert batched_sample in batched_space
 
@@ -33,11 +34,19 @@ def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int
     assert len(unbatched_samples) == n
     assert all(item in space for item in unbatched_samples)
 
-    # Generate samples from the original space and concatenate using create_empty_array into a single object
+    # Create an empty array and check that space is within the batch space
+    array = create_empty_array(space, n)
+    # We do not generate that the generated array is within the batched_space.
+    # assert array in batched_space
+    unbatched_array = list(iterate(batched_space, array))
+    assert len(unbatched_array) == n
+    assert all(item in space for item in unbatched_array)
+
+    # Generate samples from the original space and concatenate using array into a single object
     space_samples = [space.sample() for _ in range(n)]
     assert all(item in space for item in space_samples)
-    out = create_empty_array(space, n)
-    concatenated_samples_array = concatenate(space, space_samples, out)
+    concatenated_samples_array = concatenate(space, space_samples, array)
+    # `concatenate` does not necessarily use the out object as the returned object
     # assert out is concatenated_samples_array
 
     # Iterate over the samples and check that the concatenated samples == original samples

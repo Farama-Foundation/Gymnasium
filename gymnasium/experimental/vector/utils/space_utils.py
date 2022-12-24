@@ -356,14 +356,23 @@ def create_empty_array(
 
 
 @create_empty_array.register(Box)
+def _create_empty_array_box(space: Box, n: int = 1, fn=np.zeros) -> np.ndarray:
+    return fn((n,) + space.shape, dtype=space.dtype)
+
+
 @create_empty_array.register(Discrete)
+def _create_empty_array_discrete(
+    space: Discrete, n: int = 1, fn=np.zeros
+) -> np.ndarray:
+    return fn((n,), dtype=space.dtype)
+
+
 @create_empty_array.register(MultiDiscrete)
 @create_empty_array.register(MultiBinary)
-def _create_empty_array_base(
-    space: Box | Discrete | MultiDiscrete | MultiBinary, n: int = 1, fn=np.zeros
+def _create_empty_array_multi(
+    space: MultiDiscrete | MultiBinary, n: int = 1, fn=np.zeros
 ) -> np.ndarray:
-    shape = space.shape if (n is None) else (n,) + space.shape
-    return fn(shape, dtype=space.dtype)
+    return fn((n,) + space.shape, dtype=space.dtype)
 
 
 @create_empty_array.register(Tuple)
@@ -388,16 +397,16 @@ def _create_empty_array_graph(
     if space.edge_space is not None:
         return tuple(
             GraphInstance(
-                nodes=create_empty_array(space.node_space, fn=fn),
-                edges=create_empty_array(space.edge_space, fn=fn),
-                edge_links=create_empty_array(space.edge_space, fn=fn),
+                nodes=fn((1,) + space.node_space.shape, dtype=space.node_space.dtype),
+                edges=fn((1,) + space.edge_space.shape, dtype=space.edge_space.dtype),
+                edge_links=fn((1, 2), dtype=np.int64),
             )
             for _ in range(n)
         )
     else:
         return tuple(
             GraphInstance(
-                nodes=create_empty_array(space.node_space, fn=fn),
+                nodes=fn((1,) + space.node_space.shape, dtype=space.node_space.dtype),
                 edges=None,
                 edge_links=None,
             )
@@ -407,7 +416,7 @@ def _create_empty_array_graph(
 
 @create_empty_array.register(Text)
 def _create_empty_array_text(space: Text, n: int = 1, fn=np.zeros) -> tuple[str, ...]:
-    return tuple(" " * space.min_length for _ in range(n))
+    return tuple(space.characters[0] * space.min_length for _ in range(n))
 
 
 @create_empty_array.register(Sequence)
