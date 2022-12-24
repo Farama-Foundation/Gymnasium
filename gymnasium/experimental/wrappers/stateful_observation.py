@@ -7,10 +7,11 @@
 from __future__ import annotations
 
 from collections import deque
+from copy import deepcopy
 from typing import Any, SupportsFloat
-from typing_extensions import Final
 
 import numpy as np
+from typing_extensions import Final
 
 import gymnasium.spaces as spaces
 from gymnasium import Env, ObservationWrapper, Space, Wrapper
@@ -19,7 +20,6 @@ from gymnasium.experimental.vector.utils import (
     batch_space,
     concatenate,
     create_empty_array,
-    iterate,
 )
 from gymnasium.logger import warn
 from gymnasium.spaces import Box, Dict, Tuple
@@ -280,12 +280,19 @@ class FrameStackObservationV0(Wrapper):
         (4, 96, 96, 3)
     """
 
-    def __init__(self, env: Env[ObsType, ActType], stack_size: int):
+    def __init__(
+        self,
+        env: Env[ObsType, ActType],
+        stack_size: int,
+        *,
+        zeros_obs: ObsType | None = None,
+    ):
         """Observation wrapper that stacks the observations in a rolling manner.
 
         Args:
             env: The environment to apply the wrapper
-            stack_size: The number of frames to stack
+            stack_size: The number of frames to stack with zero_obs being used originally.
+            zeros_obs: Keyword only parameter that allows a custom padding observation at :meth:`reset`
         """
         super().__init__(env)
 
@@ -301,7 +308,25 @@ class FrameStackObservationV0(Wrapper):
         self.observation_space = batch_space(env.observation_space, n=stack_size)
         self.stack_size: Final[int] = stack_size
 
-        self._stacked_obs = self._init_stacked_obs()
+        if zeros_obs is not None:
+            zeros_obs = create_empty_array(env.observation_space)
+            if zeros_obs not in env.observation_space:
+                warn(
+                    f"Zero observation created by `create_empty_array` is not contained within the environment's observation space. {zeros_obs}"
+                )
+        else:
+            if zeros_obs not in env.observation_space:
+                warn(
+                    f"`zero_obs` parameter is not contained within the environment's observation space. {zeros_obs}"
+                )
+
+        self.zero_obs: Final[ObsType] = zeros_obs
+        self._stacked_obs = deque(
+            [self.zero_obs for _ in range(self.stack_size)], maxlen=self.stack_size
+        )
+        self._stacked_array = create_empty_array(
+            env.observation_space, n=self.stack_size
+        )
 
     def step(
         self, action: WrapperActType
@@ -317,9 +342,12 @@ class FrameStackObservationV0(Wrapper):
         obs, reward, terminated, truncated, info = super().step(action)
         self._stacked_obs.append(obs)
 
-        obs_array = create_empty_array(self.env.observation_space, n=self.stack_size)
         return (
-            concatenate(self.observation_space, self._stacked_obs, obs_array),
+            deepcopy(
+                concatenate(
+                    self.observation_space, self._stacked_obs, self._stacked_array
+                )
+            ),
             reward,
             terminated,
             truncated,
@@ -339,20 +367,15 @@ class FrameStackObservationV0(Wrapper):
             The stacked observations and info
         """
         obs, info = super().reset(seed=seed, options=options)
-        self._stacked_obs = self._init_stacked_obs()
+        for _ in range(self.stack_size - 1):
+            self._stacked_obs.append(self.zero_obs)
         self._stacked_obs.append(obs)
 
-        obs_array = create_empty_array(self.env.observation_space, n=self.stack_size)
         return (
-            concatenate(self.observation_space, self._stacked_obs, obs_array),
-            info,
-        )
-
-    def _init_stacked_obs(self) -> deque:
-        return deque(
-            iterate(
-                self.observation_space,
-                create_empty_array(self.env.observation_space, n=self.stack_size),
+            deepcopy(
+                concatenate(
+                    self.observation_space, self._stacked_obs, self._stacked_array
+                )
             ),
-            maxlen=self.stack_size,
+            info,
         )
