@@ -1,9 +1,8 @@
 import pytest
 
 import gymnasium as gym
-from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.experimental import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
-from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.wrappers.utils import has_wrapper
 
 

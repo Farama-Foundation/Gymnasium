@@ -4,8 +4,8 @@ import shutil
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.experimental import AsyncVectorEnv
 from gymnasium.utils.save_video import capped_cubic_video_schedule, save_video
-from gymnasium.vector import AsyncVectorEnv
 
 
 def test_record_video_using_default_trigger():

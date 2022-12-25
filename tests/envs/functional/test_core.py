@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional
 
 import numpy as np
 
-from gymnasium.functional import FuncEnv
+from gymnasium.experimental.functional import FuncEnv
 
 
 class TestEnv(FuncEnv):

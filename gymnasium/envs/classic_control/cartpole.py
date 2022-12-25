@@ -315,7 +315,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.isopen = False
 
 
-class CartPoleVectorEnv(gym.VectorEnv):
+class CartPoleVectorEnv(gym.experimental.VectorEnv):
     metadata = {
         "render_modes": ["human", "rgb_array"],
         "render_fps": 50,

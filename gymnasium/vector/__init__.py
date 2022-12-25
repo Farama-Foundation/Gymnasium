@@ -4,7 +4,7 @@ from typing import Iterable, List, Optional, Union
 import gymnasium as gym
 from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
-from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import VectorEnv, VectorEnvWrapper
 
 
 __all__ = ["AsyncVectorEnv", "SyncVectorEnv", "VectorEnv", "VectorEnvWrapper", "make"]
@@ -18,9 +18,7 @@ def make(
     disable_env_checker: Optional[bool] = None,
     **kwargs,
 ) -> VectorEnv:
-    """DEPRECATED. Please use `gym.make_vec()` instead.
-
-    Create a vectorized environment from multiple copies of an environment, from its id.
+    """Create a vectorized environment from multiple copies of an environment, from its id.
 
     Example::
 

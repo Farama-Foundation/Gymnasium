@@ -15,7 +15,6 @@ from typing import Any, Callable, Iterable, Sequence, SupportsFloat, overload
 
 import numpy as np
 
-from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv, VectorEnv
 from gymnasium.wrappers import (
     AutoResetWrapper,
     HumanRendering,
@@ -37,6 +36,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
+import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
 
 
@@ -460,7 +460,7 @@ def find_spec(id: str):
         raise error.Error(f"No registered env with id: {id}")
 
     return spec_
-    
+
 
 def _check_metadata(metadata_: dict):
     if not isinstance(metadata_, dict):
@@ -706,13 +706,13 @@ def make(
 
 
 def make_vec(
-    id: Union[str, EnvSpec],
+    id: str | EnvSpec,
     num_envs: int = 1,
     vectorization_mode: str = "async",
-    vector_kwargs: Optional[Dict[str, Any]] = None,
-    wrappers: Optional[Sequence[Callable[[Env], Wrapper]]] = None,
+    vector_kwargs: dict[str, Any] | None = None,
+    wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
-) -> VectorEnv:
+) -> gym.experimental.VectorEnv:
     """Create an environment according to the given ID.
 
     To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
@@ -792,12 +792,12 @@ def make_vec(
         return _env
 
     if vectorization_mode == "sync":
-        env = SyncVectorEnv(
+        env = gym.experimental.SyncVectorEnv(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )
     elif vectorization_mode == "async":
-        env = AsyncVectorEnv(
+        env = gym.experimental.AsyncVectorEnv(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )

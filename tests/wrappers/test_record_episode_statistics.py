@@ -2,7 +2,11 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import RecordEpisodeStatistics, VectorListInfo
+from gymnasium.experimental.wrappers.record_episode_statistics import (
+    VectorRecordEpisodeStatistics,
+)
+from gymnasium.experimental.wrappers.vector_list_info import VectorListInfo
+from gymnasium.wrappers import RecordEpisodeStatistics
 
 
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1"])
@@ -46,7 +50,9 @@ def test_record_episode_statistics_with_vectorenv(num_envs, asynchronous):
         num_envs=num_envs,
         vectorization_mode="async" if asynchronous else "sync",
     )
-    envs = RecordEpisodeStatistics(envs)  # TODO: update this to use a vector wrapper
+    envs = VectorRecordEpisodeStatistics(
+        envs
+    )  # TODO: update this to use a vector wrapper
     max_episode_step = (
         envs.env_fns[0]().spec.max_episode_steps
         if asynchronous
@@ -67,8 +73,8 @@ def test_record_episode_statistics_with_vectorenv(num_envs, asynchronous):
 
 
 def test_wrong_wrapping_order():
-    envs = gym.make_vec("CartPole-v1", num_envs=3)
-    wrapped_env = RecordEpisodeStatistics(VectorListInfo(envs))
+    envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+    wrapped_env = VectorRecordEpisodeStatistics(VectorListInfo(envs))
     wrapped_env.reset()
 
     with pytest.raises(AssertionError):

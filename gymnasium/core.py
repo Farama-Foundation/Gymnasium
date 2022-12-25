@@ -60,10 +60,6 @@ class Env(Generic[ObsType, ActType]):
     # Created
     _np_random: np.random.Generator | None = None
 
-    # Environments are not vectorized by default.
-    # This would ideally be set in __init__, but we'd need people to call super()
-    is_vector_env = False
-
     def step(
         self, action: ActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
@@ -265,9 +261,6 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         self._observation_space: spaces.Space[WrapperObsType] | None = None
         self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
         self._metadata: dict[str, Any] | None = None
-
-        # Default - each wrapper must set this to True if it supports vectorized environments
-        self._supports_vector: bool = False
 
     def __getattr__(self, name: str):
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""

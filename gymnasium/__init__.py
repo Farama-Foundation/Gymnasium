@@ -9,14 +9,20 @@ from gymnasium.core import (
     RewardWrapper,
 )
 from gymnasium.spaces.space import Space
-from gymnasium.envs.registration import make, spec, register, registry, pprint_registry
+from gymnasium.envs.registration import (
+    make,
+    spec,
+    register,
+    registry,
+    pprint_registry,
+    make_vec,
+)
 from gymnasium import envs, spaces, utils, vector, wrappers, error, logger, experimental
 
 
 __all__ = [
     # core classes
     "Env",
-    "VectorEnv",
     "Wrapper",
     "ObservationWrapper",
     "ActionWrapper",
@@ -24,11 +30,11 @@ __all__ = [
     "Space",
     # registration
     "make",
-    "make_vec",
     "spec",
     "register",
     "registry",
     "pprint_registry",
+    "make_vec",
     # module folders
     "envs",
     "spaces",

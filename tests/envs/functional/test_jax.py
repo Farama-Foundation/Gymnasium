@@ -4,11 +4,11 @@ import jax.random as jrng
 import numpy as np
 import pytest
 
-from gymnasium.envs.phys2d.cartpole import CartPoleF  # noqa: E402
-from gymnasium.envs.phys2d.pendulum import PendulumF  # noqa: E402
+from gymnasium.envs.phys2d.cartpole import CartPoleFunctional
+from gymnasium.envs.phys2d.pendulum import PendulumFunctional
 
 
-@pytest.mark.parametrize("env_class", [CartPoleF, PendulumF])
+@pytest.mark.parametrize("env_class", [CartPoleFunctional, PendulumFunctional])
 def test_normal(env_class):
     env = env_class()
     rng = jrng.PRNGKey(0)
@@ -40,7 +40,7 @@ def test_normal(env_class):
         state = next_state
 
 
-@pytest.mark.parametrize("env_class", [CartPoleF, PendulumF])
+@pytest.mark.parametrize("env_class", [CartPoleFunctional, PendulumFunctional])
 def test_jit(env_class):
     env = env_class()
     rng = jrng.PRNGKey(0)
@@ -73,7 +73,7 @@ def test_jit(env_class):
         state = next_state
 
 
-@pytest.mark.parametrize("env_class", [CartPoleF, PendulumF])
+@pytest.mark.parametrize("env_class", [CartPoleFunctional, PendulumFunctional])
 def test_vmap(env_class):
     env = env_class()
     num_envs = 10
@@ -98,7 +98,7 @@ def test_vmap(env_class):
         assert reward.shape == (num_envs,)
         assert reward.dtype == jnp.float32
         assert terminal.shape == (num_envs,)
-        assert terminal.dtype == np.bool
+        assert terminal.dtype == np.bool_
         assert isinstance(obs, jnp.ndarray)
         assert obs.dtype == jnp.float32
 
