@@ -1,22 +1,16 @@
 # Action Wrappers
 
-## Action Wrapper
+## Base Class
 
 ```{eval-rst}
 .. autoclass:: gymnasium.ActionWrapper
 
-    ..  autofunction:: gymnasium.ActionWrapper.action
+    ..  automethod:: gymnasium.ActionWrapper.action
 ```
 
-## Clip Action
+## Available Action Wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.ClipAction
-```
-
-## Rescale Action
-
-```{eval-rst}
 .. autoclass:: gymnasium.wrappers.RescaleAction
 ```
-

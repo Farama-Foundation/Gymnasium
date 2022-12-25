@@ -9,19 +9,9 @@ from gymnasium.core import (
     RewardWrapper,
 )
 from gymnasium.spaces.space import Space
-from gymnasium.envs.registration import (
-    make,
-    spec,
-    register,
-    registry,
-    make_vec,
-    pprint_registry,
-)
-from gymnasium.vector import VectorEnv
-from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
+from gymnasium.envs.registration import make, spec, register, registry, pprint_registry
+from gymnasium import envs, spaces, utils, vector, wrappers, error, logger, experimental
 
-import os
-import sys
 
 __all__ = [
     # core classes
@@ -39,7 +29,7 @@ __all__ = [
     "register",
     "registry",
     "pprint_registry",
-    # root files
+    # module folders
     "envs",
     "spaces",
     "utils",
@@ -47,13 +37,17 @@ __all__ = [
     "wrappers",
     "error",
     "logger",
+    "experimental",
 ]
-__version__ = "0.26.3"
+__version__ = "0.27.0"
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
 # SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using
 #   pygame
 # DSP is far more benign (and should probably be the default in SDL anyways)
+
+import os
+import sys
 
 if sys.platform.startswith("linux"):
     os.environ["SDL_AUDIODRIVER"] = "dsp"

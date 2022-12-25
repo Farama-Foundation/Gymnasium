@@ -32,8 +32,9 @@ Ensure the environment is in Gymnasium (or your fork). Ensure that the environme
 Install the required packages and Gymnasium (or your fork):
 
 ```
-pip install -r requirements.txt
 pip install gymnasium
+cd docs
+pip install -r requirements.txt  # To install document builder requirements.
 ```
 
 To build the documentation once:
@@ -54,6 +55,6 @@ sphinx-autobuild -b dirhtml . _build
 
 We use Sphinx-Gallery to build the tutorials inside the `docs/tutorials` directory. Check `docs/tutorials/demo.py` to see an example of a tutorial and [Sphinx-Gallery documentation](https://sphinx-gallery.github.io/stable/syntax.html) for more information.
 
-To convert Jupyer Notebooks to the python tutorials you can use [this script](https://gist.github.com/mgoulao/f07f5f79f6cd9a721db8a34bba0a19a7).
+To convert Jupyter Notebooks to the python tutorials you can use [this script](https://gist.github.com/mgoulao/f07f5f79f6cd9a721db8a34bba0a19a7).
 
 If you want Sphinx-Gallery to execute the tutorial (which adds outputs and plots) then the file name should start with `run_`. Note that this adds to the build time so make sure the script doesn't take more than a few seconds to execute.

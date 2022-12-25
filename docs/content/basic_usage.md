@@ -6,20 +6,20 @@ firstpage:
 
 # Basic Usage
 
-Gymnasium is a project that provide an API for all single agent reinforcement learning environments that include implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more. 
+Gymnasium is a project that provide an API for all single agent reinforcement learning environments that include implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.
 
-The API contains four key functions: ``make``, ``reset``, ``step`` and ``render`` that this basic usage will introduce you to. At the core of Gymnasium is ``Env`` which is a high level python class representing a markov decision process from reinforcement learning theory (this is not a perfect reconstruction missing several components of MDPs). Within gymnasium, environments (MDPs) are implements as ``Env`` along with ``Wrappers`` that can change the results passed to the user. 
+The API contains four key functions: ``make``, ``reset``, ``step`` and ``render`` that this basic usage will introduce you to. At the core of Gymnasium is ``Env`` which is a high level python class representing a markov decision process from reinforcement learning theory (this is not a perfect reconstruction missing several components of MDPs). Within gymnasium, environments (MDPs) are implements as ``Env`` along with ``Wrappers`` that can change the results passed to the user.
 
 ## Initializing Environments
 
-Initializing environments is very easy in Gymnasium and can be done via the ``make`` function: 
+Initializing environments is very easy in Gymnasium and can be done via the ``make`` function:
 
 ```python
 import gymnasium as gym
 env = gym.make('CartPole-v1')
 ```
 
-This will return an ``Env`` for users to interact with. To see all environments you can create, use ``gymnasium.envs.registry.keys()``.``make`` includes a number of additional parameters to adding wrappers, specifying keywords to the environment and more. 
+This will return an ``Env`` for users to interact with. To see all environments you can create, use ``gymnasium.envs.registry.keys()``.``make`` includes a number of additional parameters to adding wrappers, specifying keywords to the environment and more.
 
 ## Interacting with the Environment
 
@@ -63,9 +63,9 @@ The output should look something like this:
 
 ### Explaining the code
 
-First, an environment is created using ``make`` with an additional keyword `"render_mode"` that specifies how the environment should be visualised. See ``render`` for details on the default meaning of different render modes. In this example, we use the ``"LunarLander"`` environment where the agent controls a spaceship that needs to land safely. 
+First, an environment is created using ``make`` with an additional keyword `"render_mode"` that specifies how the environment should be visualised. See ``render`` for details on the default meaning of different render modes. In this example, we use the ``"LunarLander"`` environment where the agent controls a spaceship that needs to land safely.
 
-After initializing the environment, we ``reset`` the environment to get the first observation of the environment. For initializing the environment with a particular random seed or options (see environment documentation for possible values) use the ``seed`` or ``options`` parameters with ``reset``. 
+After initializing the environment, we ``reset`` the environment to get the first observation of the environment. For initializing the environment with a particular random seed or options (see environment documentation for possible values) use the ``seed`` or ``options`` parameters with ``reset``.
 
 Next, the agent performs an action in the environment, ``step``, this can be imagined as moving a robot or pressing a button on a games' controller that causes a change within the environment. As a result, the agent receives a new observation from the updated environment along with a reward for taking the action. This reward could be for instance positive for destroying an enemy or a negative reward for moving into lava. One such action-observation exchange is referred to as a *timestep*.
 
@@ -79,7 +79,7 @@ In the example, we sampled random actions via ``env.action_space.sample()`` inst
 
 Every environment should have the attributes ``action_space`` and ``observation_space``, both of which should be instances of classes that inherit from ``Space``. Gymnasium has support for a major of possible spaces are users need:
 
-- ``Box``: describes an n-dimensional continuous space. It's a bounded space where we can define the upper and lower 
+- ``Box``: describes an n-dimensional continuous space. It's a bounded space where we can define the upper and lower
   limits which describe the valid values our observations can take.
 - ``Discrete``: describes a discrete space where {0, 1, ..., n-1} are the possible values our observation or action can take.
   Values can be shifted to {a, a+1, ..., a+n-1} using an optional argument.
@@ -88,7 +88,7 @@ Every environment should have the attributes ``action_space`` and ``observation_
 - ``MultiBinary``: creates an n-shape binary space. Argument n can be a number or a list of numbers.
 - ``MultiDiscrete``: consists of a series of ``Discrete`` action spaces with a different number of actions in each element.
 
-For example usage of spaces, see their [documentation](/api/spaces) along with [utility functions](/api/spaces/utils). There are a couple of more niche spaces ``Graph``, ``Sequence`` and ``Text``. 
+For example usage of spaces, see their [documentation](/api/spaces) along with [utility functions](/api/spaces/utils). There are a couple of more niche spaces ``Graph``, ``Sequence`` and ``Text``.
 
 ## Modifying the environment
 

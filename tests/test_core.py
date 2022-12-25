@@ -18,40 +18,49 @@ from gymnasium.utils import seeding
 from gymnasium.wrappers import OrderEnforcing, TimeLimit
 from tests.testing_env import GenericTestEnv
 
+
 # ==== Old testing code
 
 
 class ArgumentEnv(Env):
+    """Testing environment that records the number of times the environment is created."""
+
     observation_space = spaces.Box(low=0, high=1, shape=(1,))
     action_space = spaces.Box(low=0, high=1, shape=(1,))
     calls = 0
 
-    def __init__(self, arg):
+    def __init__(self, arg: Any):
+        """Constructor."""
         self.calls += 1
         self.arg = arg
 
 
 class UnittestEnv(Env):
+    """Example testing environment."""
+
     observation_space = spaces.Box(low=0, high=255, shape=(64, 64, 3), dtype=np.uint8)
     action_space = spaces.Discrete(3)
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+        """Resets the environment."""
         super().reset(seed=seed)
         return self.observation_space.sample(), {"info": "dummy"}
 
     def step(self, action):
+        """Steps through the environment."""
         observation = self.observation_space.sample()  # Dummy observation
-        return (observation, 0.0, False, {})
+        return observation, 0.0, False, {}
 
 
 class UnknownSpacesEnv(Env):
-    """This environment defines its observation & action spaces only
-    after the first call to reset. Although this pattern is sometimes
-    necessary when implementing a new environment (e.g. if it depends
+    """This environment defines its observation & action spaces only after the first call to reset.
+
+    Although this pattern is sometimes necessary when implementing a new environment (e.g. if it depends
     on external resources), it is not encouraged.
     """
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+        """Resets the environment."""
         super().reset(seed=seed)
         self.observation_space = spaces.Box(
             low=0, high=255, shape=(64, 64, 3), dtype=np.uint8
@@ -60,25 +69,27 @@ class UnknownSpacesEnv(Env):
         return self.observation_space.sample(), {}  # Dummy observation with info
 
     def step(self, action):
+        """Steps through the environment."""
         observation = self.observation_space.sample()  # Dummy observation
-        return (observation, 0.0, False, {})
+        return observation, 0.0, False, {}
 
 
 class OldStyleEnv(Env):
-    """This environment doesn't accept any arguments in reset, ideally we want to support this too (for now)"""
-
-    def __init__(self):
-        pass
+    """This environment doesn't accept any arguments in reset, ideally we want to support this too (for now)."""
 
     def reset(self):
+        """Resets the environment."""
         super().reset()
         return 0
 
     def step(self, action):
+        """Steps through the environment."""
         return 0, 0, False, {}
 
 
 class NewPropertyWrapper(Wrapper):
+    """Wrapper that tests setting a property."""
+
     def __init__(
         self,
         env,
@@ -87,6 +98,15 @@ class NewPropertyWrapper(Wrapper):
         reward_range=None,
         metadata=None,
     ):
+        """New property wrapper.
+
+        Args:
+            env: The environment to wrap
+            observation_space: The observation space
+            action_space: The action space
+            reward_range: The reward range
+            metadata: The environment metadata
+        """
         super().__init__(env)
         if observation_space is not None:
             # Only set the observation space if not None to test property forwarding
@@ -100,6 +120,7 @@ class NewPropertyWrapper(Wrapper):
 
 
 def test_env_instantiation():
+    """Tests the environment instantiation using ArgumentEnv."""
     # This looks like a pretty trivial, but given our usage of
     # __new__, it's worth having.
     env = ArgumentEnv("arg")
@@ -128,6 +149,7 @@ properties = [
 @pytest.mark.parametrize("class_", [UnittestEnv, UnknownSpacesEnv])
 @pytest.mark.parametrize("props", properties)
 def test_wrapper_property_forwarding(class_, props):
+    """Tests wrapper property forwarding."""
     env = class_()
     env = NewPropertyWrapper(env, **props)
 
@@ -146,6 +168,7 @@ def test_wrapper_property_forwarding(class_, props):
 
 
 def test_compatibility_with_old_style_env():
+    """Test compatibility with old style environment."""
     env = OldStyleEnv()
     env = OrderEnforcing(env)
     env = TimeLimit(env)
@@ -157,13 +180,17 @@ def test_compatibility_with_old_style_env():
 
 
 class ExampleEnv(Env):
+    """Example testing environment."""
+
     def __init__(self):
+        """Constructor for example environment."""
         self.observation_space = Box(0, 1)
         self.action_space = Box(0, 1)
 
     def step(
         self, action: ActType
     ) -> Tuple[ObsType, float, bool, bool, Dict[str, Any]]:
+        """Steps through the environment."""
         return 0, 0, False, False, {}
 
     def reset(
@@ -172,10 +199,12 @@ class ExampleEnv(Env):
         seed: Optional[int] = None,
         options: Optional[dict] = None,
     ) -> Tuple[ObsType, dict]:
+        """Resets the environment."""
         return 0, {}
 
 
 def test_gymnasium_env():
+    """Tests a gymnasium environment."""
     env = ExampleEnv()
 
     assert env.metadata == {"render_modes": []}
@@ -186,7 +215,10 @@ def test_gymnasium_env():
 
 
 class ExampleWrapper(Wrapper):
+    """An example testing wrapper."""
+
     def __init__(self, env: Env[ObsType, ActType]):
+        """Constructor that sets the reward."""
         super().__init__(env)
 
         self.new_reward = 3
@@ -194,11 +226,13 @@ class ExampleWrapper(Wrapper):
     def reset(
         self, *, seed: Optional[int] = None, options: Optional[Dict[str, Any]] = None
     ) -> Tuple[WrapperObsType, Dict[str, Any]]:
+        """Resets the environment ."""
         return super().reset(seed=seed, options=options)
 
     def step(
         self, action: WrapperActType
     ) -> Tuple[WrapperObsType, float, bool, bool, Dict[str, Any]]:
+        """Steps through the environment."""
         obs, reward, termination, truncation, info = self.env.step(action)
         return obs, self.new_reward, termination, truncation, info
 
@@ -208,6 +242,7 @@ class ExampleWrapper(Wrapper):
 
 
 def test_gymnasium_wrapper():
+    """Tests the gymnasium wrapper works as expected."""
     env = ExampleEnv()
     wrapper_env = ExampleWrapper(env)
 
@@ -249,21 +284,31 @@ def test_gymnasium_wrapper():
 
 
 class ExampleRewardWrapper(RewardWrapper):
+    """Example reward wrapper for testing."""
+
     def reward(self, reward: SupportsFloat) -> SupportsFloat:
+        """Reward function."""
         return 1
 
 
 class ExampleObservationWrapper(ObservationWrapper):
+    """Example observation wrapper for testing."""
+
     def observation(self, observation: ObsType) -> ObsType:
+        """Observation function."""
         return np.array([1])
 
 
 class ExampleActionWrapper(ActionWrapper):
+    """Example action wrapper for testing."""
+
     def action(self, action: ActType) -> ActType:
+        """Action function."""
         return np.array([1])
 
 
 def test_wrapper_types():
+    """Tests the observation, action and reward wrapper examples."""
     env = GenericTestEnv()
 
     reward_env = ExampleRewardWrapper(env)
@@ -277,7 +322,7 @@ def test_wrapper_types():
     obs, _, _, _, _ = observation_env.step(0)
     assert obs == np.array([1])
 
-    env = GenericTestEnv(step_fn=lambda self, action: (action, 0, False, False, {}))
+    env = GenericTestEnv(step_func=lambda self, action: (action, 0, False, False, {}))
     action_env = ExampleActionWrapper(env)
     obs, _, _, _, _ = action_env.step(0)
     assert obs == np.array([1])

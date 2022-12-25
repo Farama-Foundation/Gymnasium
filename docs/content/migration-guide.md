@@ -15,6 +15,7 @@ For more information, see the `guide </content/gym_compatibility>`_
 ```
 
 ### Example code for v21
+
 ```python
 import gym
 env = gym.make("LunarLander-v2", options={})
@@ -32,6 +33,7 @@ env.close()
 ```
 
 ### Example code for v26
+
 ```python
 import gym
 env = gym.make("LunarLander-v2", render_mode="human")
@@ -106,8 +108,8 @@ For a more complete explanation of the changes, please refer to this `summary <h
 .. py:currentmodule:: gymnasium.wrappers
 
 * GoalEnv - This was removed, users needing it should reimplement the environment or use Gymnasium Robotics which contains an implementation of this environment.
-* ``from gym.envs.classic_control import rendering`` - This was removed in favour of users implementing their own rendering systems.
-Gymnasium environments are coded using pygame.
+* ``from gym.envs.classic_control import rendering`` - This was removed in favour of users implementing their own rendering systems. Gymnasium environments are coded using pygame.
 * Robotics environments - The robotics environments have been moved to the `Gymnasium Robotics <https://robotics.farama.org/>`_ project.
 * Monitor wrapper - This wrapper was replaced with two separate wrapper, :class:`RecordVideo` and :class:`RecordEpisodeStatistics`
+
 ```

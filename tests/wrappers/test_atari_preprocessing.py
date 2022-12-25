@@ -3,7 +3,7 @@ import pytest
 
 from gymnasium.spaces import Box, Discrete
 from gymnasium.wrappers import AtariPreprocessing, StepAPICompatibility
-from tests.testing_env import GenericTestEnv, old_step_fn
+from tests.testing_env import GenericTestEnv, old_step_func
 
 
 class AleTesting:
@@ -34,7 +34,7 @@ class AtariTestingEnv(GenericTestEnv):
                 low=0, high=255, shape=(210, 160, 3), dtype=np.uint8, seed=1
             ),
             action_space=Discrete(3, seed=1),
-            step_fn=old_step_fn,
+            step_func=old_step_func,
         )
         self.ale = AleTesting()
 

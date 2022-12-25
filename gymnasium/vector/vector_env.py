@@ -10,6 +10,7 @@ from gymnasium.utils import seeding
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
 
+
 __all__ = ["VectorEnv"]
 
 ArrayType = TypeVar("ArrayType")

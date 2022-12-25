@@ -19,36 +19,54 @@ from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_env_specs
 from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv
-from tests.testing_env import GenericTestEnv, old_step_fn
+from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
 
-gym.register(
-    "RegisterDuringMakeEnv-v0",
-    entry_point="tests.envs.utils_envs:RegisterDuringMakeEnv",
-)
 
-gym.register(
-    id="test.ArgumentEnv-v0",
-    entry_point="tests.envs.utils_envs:ArgumentEnv",
-    kwargs={
-        "arg1": "arg1",
-        "arg2": "arg2",
-    },
-)
+@pytest.fixture(scope="function")
+def register_make_testing_envs():
+    """Registers testing envs for `gym.make`"""
+    gym.register(
+        "RegisterDuringMakeEnv-v0",
+        entry_point="tests.envs.utils_envs:RegisterDuringMakeEnv",
+    )
 
-gym.register(
-    id="test/NoHuman-v0",
-    entry_point="tests.envs.utils_envs:NoHuman",
-)
-gym.register(
-    id="test/NoHumanOldAPI-v0",
-    entry_point="tests.envs.utils_envs:NoHumanOldAPI",
-)
+    gym.register(
+        id="test.ArgumentEnv-v0",
+        entry_point="tests.envs.utils_envs:ArgumentEnv",
+        kwargs={
+            "arg1": "arg1",
+            "arg2": "arg2",
+        },
+    )
 
-gym.register(
-    id="test/NoHumanNoRGB-v0",
-    entry_point="tests.envs.utils_envs:NoHumanNoRGB",
-)
+    gym.register(
+        id="test/NoHuman-v0",
+        entry_point="tests.envs.utils_envs:NoHuman",
+    )
+    gym.register(
+        id="test/NoHumanOldAPI-v0",
+        entry_point="tests.envs.utils_envs:NoHumanOldAPI",
+    )
+
+    gym.register(
+        id="test/NoHumanNoRGB-v0",
+        entry_point="tests.envs.utils_envs:NoHumanNoRGB",
+    )
+
+    gym.register(
+        id="test/NoRenderModesMetadata-v0",
+        entry_point="tests.envs.utils_envs:NoRenderModesMetadata",
+    )
+
+    yield
+
+    del gym.envs.registration.registry["RegisterDuringMakeEnv-v0"]
+    del gym.envs.registration.registry["test.ArgumentEnv-v0"]
+    del gym.envs.registration.registry["test/NoRenderModesMetadata-v0"]
+    del gym.envs.registration.registry["test/NoHuman-v0"]
+    del gym.envs.registration.registry["test/NoHumanOldAPI-v0"]
+    del gym.envs.registration.registry["test/NoHumanNoRGB-v0"]
 
 
 def test_make():
@@ -70,7 +88,7 @@ def test_make_deprecated():
             gym.make("Humanoid-v0", disable_env_checker=True)
 
 
-def test_make_max_episode_steps():
+def test_make_max_episode_steps(register_make_testing_envs):
     # Default, uses the spec's
     env = gym.make("CartPole-v1", disable_env_checker=True)
     assert has_wrapper(env, TimeLimit)
@@ -143,7 +161,7 @@ def test_make_disable_env_checker():
 def test_apply_api_compatibility():
     gym.register(
         "testing-old-env",
-        lambda: GenericTestEnv(step_fn=old_step_fn),
+        lambda: GenericTestEnv(step_func=old_step_func),
         apply_api_compatibility=True,
         max_episode_steps=3,
     )
@@ -208,7 +226,7 @@ def test_make_order_enforcing():
     env.close()
 
 
-def test_make_render_mode():
+def test_make_render_mode(register_make_testing_envs):
     env = gym.make("CartPole-v1", disable_env_checker=True)
     assert env.render_mode is None
     env.close()
@@ -292,8 +310,17 @@ def test_make_render_mode():
     ):
         gym.make("CarRacing-v2", render="human")
 
+    # This test checks that a user can create an environment without the metadata including the render mode
+    with pytest.warns(
+        UserWarning,
+        match=re.escape(
+            "\x1b[33mWARN: The environment is being initialised with render_mode='rgb_array' that is not in the possible render_modes ([]).\x1b[0m"
+        ),
+    ):
+        gym.make("test/NoRenderModesMetadata-v0", render_mode="rgb_array")
 
-def test_make_kwargs():
+
+def test_make_kwargs(register_make_testing_envs):
     env = gym.make(
         "test.ArgumentEnv-v0",
         arg2="override_arg2",
@@ -309,7 +336,7 @@ def test_make_kwargs():
     env.close()
 
 
-def test_import_module_during_make():
+def test_import_module_during_make(register_make_testing_envs):
     # Test custom environment which is registered at make
     env = gym.make(
         "tests.envs.utils:RegisterDuringMakeEnv-v0",

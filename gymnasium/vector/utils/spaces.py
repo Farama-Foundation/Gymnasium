@@ -17,6 +17,7 @@ from gymnasium.spaces import (
     Tuple,
 )
 
+
 BaseGymSpaces = (Box, Discrete, MultiDiscrete, MultiBinary)
 _BaseGymSpaces = BaseGymSpaces
 __all__ = ["BaseGymSpaces", "_BaseGymSpaces", "batch_space", "iterate"]
@@ -179,8 +180,10 @@ def _iterate_discrete(space, items):
 def _iterate_base(space, items):
     try:
         return iter(items)
-    except TypeError:
-        raise TypeError(f"Unable to iterate over the following elements: {items}")
+    except TypeError as e:
+        raise TypeError(
+            f"Unable to iterate over the following elements: {items}"
+        ) from e
 
 
 @iterate.register(Tuple)

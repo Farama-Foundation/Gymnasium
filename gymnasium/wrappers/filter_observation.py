@@ -17,7 +17,7 @@ class FilterObservation(gym.ObservationWrapper):
         >>> env.observation_space = gym.spaces.Dict(obs=env.observation_space, time=gym.spaces.Discrete(1))
         >>> env.reset()
         {'obs': array([-0.00067088, -0.01860439,  0.04772898, -0.01911527], dtype=float32), 'time': 0}
-        >>> env = FilterObservation(env, filter_keys=['time'])
+        >>> env = FilterObservation(env, filter_keys=['obs'])
         >>> env.reset()
         {'obs': array([ 0.04560107,  0.04466959, -0.0328232 , -0.02367178], dtype=float32)}
         >>> env.step(0)

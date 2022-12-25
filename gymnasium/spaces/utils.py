@@ -47,8 +47,8 @@ def flatdim(space: Space[Any]) -> int:
         The number of dimensions for the flattened spaces
 
     Raises:
-         NotImplementedError: if the space is not defined in ``gym.spaces``.
-         ValueError: if the space cannot be flattened into a :class:`Box`
+         NotImplementedError: if the space is not defined in :mod:`gym.spaces`.
+         ValueError: if the space cannot be flattened into a :class:`gymnasium.spaces.Box`
     """
     if space.is_np_flattenable is False:
         raise ValueError(
@@ -135,20 +135,22 @@ def flatten(space: Space[T], x: T) -> FlatType:
         x: The value to flatten
 
     Returns:
-        - For ``Box`` and ``MultiBinary``, this is a flattened array
-        - For ``Discrete`` and ``MultiDiscrete``, this is a flattened one-hot array of the sample
-        - For ``Tuple`` and ``Dict``, this is a concatenated array the subspaces (does not support graph subspaces)
-        - For graph spaces, returns `GraphInstance` where:
-            - `nodes` are n x k arrays
-            - `edges` are either:
-                - m x k arrays
-                - None
-            - `edge_links` are either:
-                - m x 2 arrays
-                - None
+        The flattened datapoint
+
+            - For :class:`gymnasium.spaces.Box` and :class:`gymnasium.spaces.MultiBinary`, this is a flattened array
+            - For :class:`gymnasium.spaces.Discrete` and :class:`gymnasium.spaces.MultiDiscrete`, this is a flattened one-hot array of the sample
+            - For :class:`gymnasium.spaces.Tuple` and :class:`gymnasium.spaces.Dict`, this is a concatenated array the subspaces (does not support graph subspaces)
+            - For graph spaces, returns :class:`GraphInstance` where:
+                - :attr:`GraphInstance.nodes` are n x k arrays
+                - :attr:`GraphInstance.edges` are either:
+                    - m x k arrays
+                    - None
+                - :attr:`GraphInstance.edge_links` are either:
+                    - m x 2 arrays
+                    - None
 
     Raises:
-        NotImplementedError: If the space is not defined in ``gymnasium.spaces``.
+        NotImplementedError: If the space is not defined in :mod:`gymnasium.spaces`.
     """
     raise NotImplementedError(f"Unknown space: `{space}`")
 
@@ -160,7 +162,7 @@ def _flatten_box_multibinary(space: Box | MultiBinary, x: NDArray[Any]) -> NDArr
 
 
 @flatten.register(Discrete)
-def _flatten_discrete(space: Discrete, x: int) -> NDArray[np.int64]:
+def _flatten_discrete(space: Discrete, x: np.int64) -> NDArray[np.int64]:
     onehot = np.zeros(space.n, dtype=space.dtype)
     onehot[x - space.start] = 1
     return onehot
@@ -196,7 +198,7 @@ def _flatten_dict(space: Dict, x: dict[str, Any]) -> dict[str, Any] | NDArray[An
 
 @flatten.register(Graph)
 def _flatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
-    """We're not using `.unflatten() for :class:`Box` and :class:`Discrete` because a graph is not a homogeneous space, see `.flatten` docstring."""
+    """We're not using ``.unflatten()`` for :class:`Box` and :class:`Discrete` because a graph is not a homogeneous space, see `.flatten` docstring."""
 
     def _graph_unflatten(
         unflatten_space: Discrete | Box | None,
@@ -254,7 +256,7 @@ def unflatten(space: Space[T], x: FlatType) -> T:
         A point with a structure that matches the space.
 
     Raises:
-        NotImplementedError: if the space is not defined in ``gymnasium.spaces``.
+        NotImplementedError: if the space is not defined in :mod:`gymnasium.spaces`.
     """
     raise NotImplementedError(f"Unknown space: `{space}`")
 
@@ -268,14 +270,14 @@ def _unflatten_box_multibinary(
 
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> int:
-    return int(space.start + np.nonzero(x)[0][0])
+def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
+    return space.start + np.nonzero(x)[0][0]
 
 
 @unflatten.register(MultiDiscrete)
 def _unflatten_multidiscrete(
-    space: MultiDiscrete, x: NDArray[np.int32]
-) -> NDArray[np.int32]:
+    space: MultiDiscrete, x: NDArray[np.integer[Any]]
+) -> NDArray[np.integer[Any]]:
     offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
     offsets[1:] = np.cumsum(space.nvec.flatten())
 
@@ -359,16 +361,21 @@ def _unflatten_sequence(space: Sequence, x: tuple[Any, ...]) -> tuple[Any, ...]:
 def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
     """Flatten a space into a space that is as flat as possible.
 
-    This function will attempt to flatten `space` into a single :class:`Box` space.
-    However, this might not be possible when `space` is an instance of :class:`Graph`,
-    :class:`Sequence` or a compound space that contains a :class:`Graph` or :class:`Sequence`space.
+    This function will attempt to flatten ``space`` into a single :class:`gymnasium.spaces.Box` space.
+    However, this might not be possible when ``space`` is an instance of :class:`gymnasium.spaces.Graph`,
+    :class:`gymnasium.spaces.Sequence` or a compound space that contains a :class:`gymnasium.spaces.Graph`
+    or :class:`gymnasium.spaces.Sequence` space.
     This is equivalent to :func:`flatten`, but operates on the space itself. The
-    result for non-graph spaces is always a `Box` with flat boundaries. While
-    the result for graph spaces is always a `Graph` with `node_space` being a `Box`
-    with flat boundaries and `edge_space` being a `Box` with flat boundaries or
-    `None`. The box has exactly :func:`flatdim` dimensions. Flattening a sample
-    of the original space has the same effect as taking a sample of the flattenend
-    space.
+    result for non-graph spaces is always a :class:`gymnasium.spaces.Box` with flat boundaries. While
+    the result for graph spaces is always a :class:`gymnasium.spaces.Graph` with
+    :attr:`Graph.node_space` being a ``Box``
+    with flat boundaries and :attr:`Graph.edge_space` being a ``Box`` with flat boundaries or
+    ``None``. The box has exactly :func:`flatdim` dimensions. Flattening a sample
+    of the original space has the same effect as taking a sample of the flattened
+    space. However, sampling from the flattened space is not necessarily reversible.
+    For example, sampling from a flattened Discrete space is the same as sampling from
+    a Box, and the results may not be integers or one-hot encodings. This may result in
+    errors or non-uniform sampling.
 
     Example::
         >>> from gymnasium.spaces import Box
@@ -412,7 +419,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         A flattened Box
 
     Raises:
-        NotImplementedError: if the space is not defined in ``gym.spaces``.
+        NotImplementedError: if the space is not defined in :mod:`gymnasium.spaces`.
     """
     raise NotImplementedError(f"Unknown space: `{space}`")
 

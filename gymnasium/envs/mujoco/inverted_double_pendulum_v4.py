@@ -5,6 +5,13 @@ from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
 
+DEFAULT_CAMERA_CONFIG = {
+    "trackbodyid": 0,
+    "distance": 4.1225,
+    "lookat": np.array((0.0, 0.0, 0.12250000000000005)),
+}
+
+
 class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     """
     ## Description
@@ -110,9 +117,9 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
     ## Version History
 
-    * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
-    * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
-    * v2: All continuous control environments now use mujoco_py >= 1.50
+    * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
+    * v2: All continuous control environments now use mujoco-py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum)
     * v0: Initial versions release (1.0.0)
     """
@@ -133,6 +140,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
             "inverted_double_pendulum.xml",
             5,
             observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs
         )
         utils.EzPickle.__init__(self, **kwargs)
@@ -169,10 +177,3 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
             self.init_qvel + self.np_random.standard_normal(self.model.nv) * 0.1,
         )
         return self._get_obs()
-
-    def viewer_setup(self):
-        assert self.viewer is not None
-        v = self.viewer
-        v.cam.trackbodyid = 0
-        v.cam.distance = self.model.stat.extent * 0.5
-        v.cam.lookat[2] = 0.12250000000000005  # v.model.stat.center[2]

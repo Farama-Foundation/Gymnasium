@@ -12,6 +12,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle, colorize
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
+
 try:
     import Box2D
     from Box2D.b2 import (
@@ -22,10 +23,10 @@ try:
         polygonShape,
         revoluteJointDef,
     )
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         "box2d is not installed, run `pip install gymnasium[box2d]`"
-    )
+    ) from e
 
 
 if TYPE_CHECKING:
@@ -617,10 +618,10 @@ class LunarLander(gym.Env, EzPickle):
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[box2d]`"
-            )
+            ) from e
 
         if self.screen is None and self.render_mode == "human":
             pygame.init()

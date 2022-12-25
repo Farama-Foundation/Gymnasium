@@ -1,6 +1,6 @@
 """A synchronous vector environment."""
 from copy import deepcopy
-from typing import Any, Callable, Iterator, List, Optional, Union
+from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
 
 import numpy as np
 
@@ -8,6 +8,7 @@ from gymnasium import Env
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.utils.spaces import batch_space
 from gymnasium.vector.vector_env import VectorEnv
+
 
 __all__ = ["SyncVectorEnv"]
 
@@ -29,7 +30,9 @@ class SyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Iterator[Callable[[], Env]],
+        env_fns: Iterable[Callable[[], Env]],
+        observation_space: Space = None,
+        action_space: Space = None,
         copy: bool = True,
     ):
         """Vectorized environment that serially runs multiple environments.

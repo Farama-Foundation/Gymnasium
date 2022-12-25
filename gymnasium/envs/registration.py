@@ -1,3 +1,6 @@
+"""Functions for registering environments within gymnasium using public functions ``make``, ``register`` and ``spec``."""
+from __future__ import annotations
+
 import contextlib
 import copy
 import difflib
@@ -8,18 +11,7 @@ import sys
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Sequence,
-    SupportsFloat,
-    Tuple,
-    Union,
-    overload,
-)
+from typing import Any, Callable, Iterable, Sequence, SupportsFloat, overload
 
 import numpy as np
 
@@ -34,6 +26,7 @@ from gymnasium.wrappers import (
 from gymnasium.wrappers.compatibility import EnvCompatibility
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 
+
 if sys.version_info < (3, 10):
     import importlib_metadata as metadata  # type: ignore
 else:
@@ -46,13 +39,14 @@ else:
 
 from gymnasium import Env, Wrapper, error, logger
 
+
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
 )
 
 
 def load(name: str) -> callable:
-    """Loads an environment with name and returns an environment creation function
+    """Loads an environment with name and returns an environment creation function.
 
     Args:
         name: The environment name
@@ -66,7 +60,7 @@ def load(name: str) -> callable:
     return fn
 
 
-def parse_env_id(id: str) -> Tuple[Optional[str], str, Optional[int]]:
+def parse_env_id(id: str) -> tuple[str | None, str, int | None]:
     """Parse environment ID string format.
 
     This format is true today, but it's *not* an official spec.
@@ -97,7 +91,7 @@ def parse_env_id(id: str) -> Tuple[Optional[str], str, Optional[int]]:
     return namespace, name, version
 
 
-def get_env_id(ns: Optional[str], name: str, version: Optional[int]) -> str:
+def get_env_id(ns: str | None, name: str, version: int | None) -> str:
     """Get the full env ID given a name and (optional) version and namespace. Inverse of :meth:`parse_env_id`.
 
     Args:
@@ -108,7 +102,6 @@ def get_env_id(ns: Optional[str], name: str, version: Optional[int]) -> str:
     Returns:
         The environment id
     """
-
     full_name = name
     if version is not None:
         full_name += f"-v{version}"
@@ -134,15 +127,15 @@ class EnvSpec:
     """
 
     id: str
-    entry_point: Union[None, Callable, str] = None
-    vector_entry_point: Union[None, Callable, str] = None
+    entry_point: Callable | str | None = None
+    vector_entry_point: Callable | str | None = None
 
     # Environment attributes
-    reward_threshold: Optional[float] = field(default=None)
+    reward_threshold: float | None = field(default=None)
     nondeterministic: bool = field(default=False)
 
     # Wrappers
-    max_episode_steps: Optional[int] = field(default=None)
+    max_episode_steps: int | None = field(default=None)
     order_enforce: bool = field(default=True)
     autoreset: bool = field(default=False)
     disable_env_checker: bool = field(default=False)
@@ -152,20 +145,22 @@ class EnvSpec:
     kwargs: dict = field(default_factory=dict)
 
     # post-init attributes
-    namespace: Optional[str] = field(init=False)
+    namespace: str | None = field(init=False)
     name: str = field(init=False)
-    version: Optional[int] = field(init=False)
+    version: int | None = field(init=False)
 
     def __post_init__(self):
+        """Calls after the spec is created to extract the namespace, name and version from the id."""
         # Initialize namespace, name, version
         self.namespace, self.name, self.version = parse_env_id(self.id)
 
-    def make(self, **kwargs) -> Env:
+    def make(self, **kwargs: Any) -> Env:
+        """Calls ``make`` using the environment spec and any keyword arguments."""
         # For compatibility purposes
         return make(self, **kwargs)
 
 
-def _check_namespace_exists(ns: Optional[str]):
+def _check_namespace_exists(ns: str | None):
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
     if ns is None:
         return
@@ -187,7 +182,7 @@ def _check_namespace_exists(ns: Optional[str]):
     raise error.NamespaceNotFound(f"Namespace {ns} not found. {suggestion_msg}")
 
 
-def _check_name_exists(ns: Optional[str], name: str):
+def _check_name_exists(ns: str | None, name: str):
     """Check if an env exists in a namespace. If it doesn't, print a helpful error message."""
     _check_namespace_exists(ns)
     names = {spec_.name for spec_ in registry.values() if spec_.namespace == ns}
@@ -204,8 +199,9 @@ def _check_name_exists(ns: Optional[str], name: str):
     )
 
 
-def _check_version_exists(ns: Optional[str], name: str, version: Optional[int]):
+def _check_version_exists(ns: str | None, name: str, version: int | None):
     """Check if an env version exists in a namespace. If it doesn't, print a helpful error message.
+
     This is a complete test whether an environment identifier is valid, and will provide the best available hints.
 
     Args:
@@ -259,8 +255,9 @@ def _check_version_exists(ns: Optional[str], name: str, version: Optional[int]):
         )
 
 
-def find_highest_version(ns: Optional[str], name: str) -> Optional[int]:
-    version: List[int] = [
+def find_highest_version(ns: str | None, name: str) -> int | None:
+    """Finds the highest registered version of the environment in the registry."""
+    version: list[int] = [
         spec_.version
         for spec_ in registry.values()
         if spec_.namespace == ns and spec_.name == name and spec_.version is not None
@@ -269,6 +266,11 @@ def find_highest_version(ns: Optional[str], name: str) -> Optional[int]:
 
 
 def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
+    """Load modules (plugins) using the gymnasium entry points == to `entry_points`.
+
+    Args:
+        entry_point: The string for the entry point.
+    """
     # Load third-party environments
     for plugin in metadata.entry_points(group=entry_point):
         # Python 3.8 doesn't support plugin.module, plugin.attr
@@ -324,37 +326,37 @@ def make(id: EnvSpec, **kwargs) -> Env: ...
 # Classic control
 # ----------------------------------------
 @overload
-def make(id: Literal["CartPole-v0", "CartPole-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["CartPole-v0", "CartPole-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["MountainCar-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["MountainCar-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["Pendulum-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["Pendulum-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 
 
 # Box2d
 # ----------------------------------------
 @overload
-def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 
 
 # Toy Text
 # ----------------------------------------
 @overload
-def make(id: Literal["Blackjack-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Blackjack-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["FrozenLake-v1", "FrozenLake8x8-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["FrozenLake-v1", "FrozenLake8x8-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["CliffWalking-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["CliffWalking-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["Taxi-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Taxi-v3"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 
 
 # Mujoco
@@ -377,8 +379,8 @@ def make(id: Literal[
 
 
 # Global registry of environments. Meant to be accessed through `register` and `make`
-registry: Dict[str, EnvSpec] = {}
-current_namespace: Optional[str] = None
+registry: dict[str, EnvSpec] = {}
+current_namespace: str | None = None
 
 
 def _check_spec_register(spec: EnvSpec):
@@ -458,6 +460,23 @@ def find_spec(id: str):
         raise error.Error(f"No registered env with id: {id}")
 
     return spec_
+    
+
+def _check_metadata(metadata_: dict):
+    if not isinstance(metadata_, dict):
+        raise error.InvalidMetadata(
+            f"Expect the environment metadata to be dict, actual type: {type(metadata)}"
+        )
+
+    render_modes = metadata_.get("render_modes")
+    if render_modes is None:
+        logger.warn(
+            f"The environment creator metadata doesn't include `render_modes`, contains: {list(metadata_.keys())}"
+        )
+    elif not isinstance(render_modes, Iterable):
+        logger.warn(
+            f"Expects the environment metadata render_modes to be a Iterable, actual type: {type(render_modes)}"
+        )
 
 
 # Public API
@@ -465,6 +484,7 @@ def find_spec(id: str):
 
 @contextlib.contextmanager
 def namespace(ns: str):
+    """Context manager for modifying the current namespace."""
     global current_namespace
     old_namespace = current_namespace
     current_namespace = ns
@@ -474,11 +494,11 @@ def namespace(ns: str):
 
 def register(
     id: str,
-    entry_point: Union[None, Callable, str] = None,
-    vector_entry_point: Union[None, Callable, str] = None,
-    reward_threshold: Optional[float] = None,
+    entry_point: Callable | str | None = None,
+    vector_entry_point: Callable | str | None = None,
+    reward_threshold: float | None = None,
     nondeterministic: bool = False,
-    max_episode_steps: Optional[int] = None,
+    max_episode_steps: int | None = None,
     order_enforce: bool = True,
     autoreset: bool = False,
     disable_env_checker: bool = False,
@@ -548,11 +568,11 @@ def register(
 
 
 def make(
-    id: Union[str, EnvSpec],
-    max_episode_steps: Optional[int] = None,
+    id: str | EnvSpec,
+    max_episode_steps: int | None = None,
     autoreset: bool = False,
-    apply_api_compatibility: Optional[bool] = None,
-    disable_env_checker: Optional[bool] = None,
+    apply_api_compatibility: bool | None = None,
+    disable_env_checker: bool | None = None,
     **kwargs,
 ) -> Env:
     """Create an environment according to the given ID.
@@ -595,52 +615,31 @@ def make(
         # Assume it's a string
         env_creator = load(spec_.entry_point)
 
+    render_modes = None
+    if hasattr(env_creator, "metadata"):
+        _check_metadata(env_creator.metadata)
+        render_modes = env_creator.metadata.get("render_modes")
     mode = _kwargs.get("render_mode")
     apply_human_rendering = False
     apply_render_collection = False
 
-    # If we have access to metadata we check that "render_mode" is valid and see if the HumanRendering wrapper needs to be applied
-    if mode is not None and hasattr(env_creator, "metadata"):
-        assert isinstance(
-            env_creator.metadata, dict
-        ), f"Expect the environment creator ({env_creator}) metadata to be dict, actual type: {type(env_creator.metadata)}"
-
-        if "render_modes" in env_creator.metadata:
-            render_modes = env_creator.metadata["render_modes"]
-            if not isinstance(render_modes, Sequence):
-                logger.warn(
-                    f"Expects the environment metadata render_modes to be a Sequence (tuple or list), actual type: {type(render_modes)}"
-                )
-
-            # Apply the `HumanRendering` wrapper, if the mode=="human" but "human" not in render_modes
-            if (
-                mode == "human"
-                and "human" not in render_modes
-                and ("rgb_array" in render_modes or "rgb_array_list" in render_modes)
-            ):
-                logger.warn(
-                    "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
-                    "The HumanRendering wrapper is being applied to your environment."
-                )
-                apply_human_rendering = True
-                if "rgb_array" in render_modes:
-                    _kwargs["render_mode"] = "rgb_array"
-                else:
-                    _kwargs["render_mode"] = "rgb_array_list"
-            elif (
-                mode not in render_modes
-                and mode.endswith("_list")
-                and mode[: -len("_list")] in render_modes
-            ):
-                _kwargs["render_mode"] = mode[: -len("_list")]
-                apply_render_collection = True
-            elif mode not in render_modes:
-                logger.warn(
-                    f"The environment is being initialised with mode ({mode}) that is not in the possible render_modes ({render_modes})."
-                )
+    # If mode is not valid, try applying HumanRendering/RenderCollection wrappers
+    if mode is not None and render_modes is not None and mode not in render_modes:
+        displayable_modes = {"rgb_array", "rgb_array_list"}.intersection(render_modes)
+        if mode == "human" and len(displayable_modes) > 0:
+            logger.warn(
+                "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
+                "The HumanRendering wrapper is being applied to your environment."
+            )
+            _kwargs["render_mode"] = displayable_modes.pop()
+            apply_human_rendering = True
+        elif mode.endswith("_list") and mode[: -len("_list")] in render_modes:
+            _kwargs["render_mode"] = mode[: -len("_list")]
+            apply_render_collection = True
         else:
             logger.warn(
-                f"The environment creator metadata doesn't include `render_modes`, contains: {list(env_creator.metadata.keys())}"
+                f"The environment is being initialised with render_mode={mode!r} "
+                f"that is not in the possible render_modes ({render_modes})."
             )
 
     if apply_api_compatibility is True or (
@@ -662,7 +661,7 @@ def make(
                 f"You passed render_mode='human' although {id} doesn't implement human-rendering natively. "
                 "Gym tried to apply the HumanRendering wrapper but it looks like your environment is using the old "
                 "rendering API, which is not supported by the HumanRendering wrapper."
-            )
+            ) from e
         else:
             raise e
 
@@ -831,20 +830,19 @@ def spec(env_id: str) -> EnvSpec:
 
 def pprint_registry(
     _registry: dict = registry,
-    max_rows: int = 10,
-    exclude_namespaces: Optional[List[str]] = None,
+    num_cols: int = 3,
+    exclude_namespaces: list[str] | None = None,
     disable_print: bool = False,
-) -> Optional[str]:
+) -> str | None:
     """Pretty print the environments in the registry.
 
     Args:
         _registry: Environment registry to be printed.
-        max_rows: Number of rows per column.
+        num_cols: Number of columns to arrange environments in, for display.
         exclude_namespaces: Exclude any namespaces from being printed.
         disable_print: Whether to return a string of all the namespaces and environment IDs
             instead of printing it to console.
     """
-
     # Defaultdict to store environment names according to namespace.
     namespace_envs = defaultdict(lambda: [])
     max_justify = float("-inf")
@@ -876,17 +874,14 @@ def pprint_registry(
         if exclude_namespaces is not None and namespace in exclude_namespaces:
             continue
         return_str += f"{'=' * 5} {namespace} {'=' * 5}\n"  # Print namespace.
-        num_columns = (
-            len(envs) // max_rows
-        ) + 1  # Calculate number of columns required.
         # Reference: https://stackoverflow.com/a/33464001
         for count, item in enumerate(sorted(envs), 1):
             return_str += (
                 item.ljust(max_justify) + " "
             )  # Print column with justification.
             # Once all rows printed, switch to new column.
-            if count % num_columns == 0 or count == len(envs):
-                return_str += "\n"
+            if count % num_cols == 0 or count == len(envs):
+                return_str = return_str.rstrip(" ") + "\n"
         return_str += "\n"
 
     if disable_print:

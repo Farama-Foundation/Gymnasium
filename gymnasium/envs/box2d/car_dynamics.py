@@ -14,12 +14,13 @@ import numpy as np
 
 from gymnasium.error import DependencyNotInstalled
 
+
 try:
     from Box2D.b2 import fixtureDef, polygonShape, revoluteJointDef
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         "box2D is not installed, run `pip install gymnasium[box2d]`"
-    )
+    ) from e
 
 
 SIZE = 0.02

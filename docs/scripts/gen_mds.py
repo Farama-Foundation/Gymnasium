@@ -7,9 +7,10 @@ from functools import reduce
 
 import numpy as np
 from tqdm import tqdm
-from utils import kill_strs, trim
 
 import gymnasium as gym
+from utils import kill_strs, trim
+
 
 LAYOUT = "env"
 

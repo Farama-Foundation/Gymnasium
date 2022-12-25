@@ -72,9 +72,11 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
             mask: An optional mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
                 If you specify `mask`, it is expected to be a tuple of the form `(length_mask, sample_mask)` where `length_mask`
                 is
-                - `None` The length will be randomly drawn from a geometric distribution
-                - `np.ndarray` of integers, in which case the length of the sampled sequence is randomly drawn from this array.
-                - `int` for a fixed length sample
+
+                * ``None`` The length will be randomly drawn from a geometric distribution
+                * ``np.ndarray`` of integers, in which case the length of the sampled sequence is randomly drawn from this array.
+                * ``int`` for a fixed length sample
+
                 The second element of the mask tuple `sample` mask specifies a mask that is applied when
                 sampling elements from the base space. The mask is applied for each feature space sample.
 

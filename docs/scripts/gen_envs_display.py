@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 all_envs = [
     {
         "id": "mujoco",
@@ -12,6 +13,7 @@ all_envs = [
             "humanoid",
             "inverted_double_pendulum",
             "inverted_pendulum",
+            "pusher",
             "reacher",
             "swimmer",
             "walker2d",

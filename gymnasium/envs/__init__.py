@@ -1,15 +1,12 @@
-from gymnasium.envs.registration import load_env_plugins as _load_env_plugins
+"""Registers the internal gym envs then loads the env plugins for module using the entry point."""
 from gymnasium.envs.registration import (
+    load_env_plugins,
     make,
-    make_vec,
     pprint_registry,
     register,
     registry,
     spec,
 )
-
-# Hook to load plugins from entry points
-_load_env_plugins()
 
 
 # Classic
@@ -353,9 +350,5 @@ register(
 )
 
 
-# Gym conversion
-# ----------------------------------------
-register(
-    id="GymV26Environment-v0",
-    entry_point="gymnasium.envs.external.gym_env:GymEnvironment",
-)
+# Hook to load plugins from entry points
+load_env_plugins()

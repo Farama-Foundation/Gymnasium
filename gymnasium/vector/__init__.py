@@ -6,7 +6,8 @@ from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
 
-__all__ = ["AsyncVectorEnv", "SyncVectorEnv", "VectorEnv", "VectorWrapper", "make"]
+
+__all__ = ["AsyncVectorEnv", "SyncVectorEnv", "VectorEnv", "VectorEnvWrapper", "make"]
 
 
 def make(

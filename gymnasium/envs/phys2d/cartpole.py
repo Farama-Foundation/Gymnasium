@@ -1,8 +1,7 @@
-"""
-Implementation of a Jax-accelerated cartpole environment.
-"""
+"""Implementation of a Jax-accelerated cartpole environment."""
+from __future__ import annotations
 
-from typing import Optional, Tuple, Union
+from typing import Any, Tuple
 
 import jax
 import jax.numpy as jnp
@@ -10,41 +9,43 @@ import numpy as np
 from jax.random import PRNGKey
 
 import gymnasium as gym
-from gymnasium.envs.phys2d.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
+from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
+
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
 
-class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]):
+class CartPoleFunctional(
+    FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
+):
     """Cartpole but in jax and functional.
 
     Example usage:
-    ```
-    import jax
-    import jax.numpy as jnp
 
-    key = jax.random.PRNGKey(0)
+        >>> import jax
+        >>> import jax.numpy as jnp
 
-    env = CartPole({"x_init": 0.5})
-    state = env.initial(key)
-    print(state)
-    print(env.step(state, 0))
+        >>> key = jax.random.PRNGKey(0)
 
-    env.transform(jax.jit)
+        >>> env = CartPole({"x_init": 0.5})
+        >>> state = env.initial(key)
+        >>> print(state)
+        >>> print(env.step(state, 0))
 
-    state = env.initial(key)
-    print(state)
-    print(env.step(state, 0))
+        >>> env.transform(jax.jit)
 
-    vkey = jax.random.split(key, 10)
-    env.transform(jax.vmap)
-    vstate = env.initial(vkey)
-    print(vstate)
-    print(env.step(vstate, jnp.array([0 for _ in range(10)])))
-    ```
+        >>> state = env.initial(key)
+        >>> print(state)
+        >>> print(env.step(state, 0))
+
+        >>> vkey = jax.random.split(key, 10)
+        >>> env.transform(jax.vmap)
+        >>> vstate = env.initial(vkey)
+        >>> print(vstate)
+        >>> print(env.step(vstate, jnp.array([0 for _ in range(10)])))
     """
 
     gravity = 9.8
@@ -72,7 +73,7 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
         )
 
     def transition(
-        self, state: jnp.ndarray, action: Union[int, jnp.ndarray], rng: None = None
+        self, state: jnp.ndarray, action: int | jnp.ndarray, rng: None = None
     ) -> StateType:
         """Cartpole transition."""
         x, x_dot, theta, theta_dot = state
@@ -104,6 +105,7 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
         return state
 
     def terminal(self, state: jnp.ndarray) -> jnp.ndarray:
+        """Checks if the state is terminal."""
         x, _, theta, _ = state
 
         terminated = (
@@ -118,6 +120,7 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
     def reward(
         self, state: StateType, action: ActType, next_state: StateType
     ) -> jnp.ndarray:
+        """Computes the reward for the state transition using the action."""
         x, _, theta, _ = state
 
         terminated = (
@@ -134,15 +137,15 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
         self,
         state: StateType,
         render_state: RenderStateType,
-    ) -> Tuple[RenderStateType, np.ndarray]:
-
+    ) -> tuple[RenderStateType, np.ndarray]:
+        """Renders an image of the state using the render state."""
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
         screen, clock = render_state
 
         world_width = self.x_threshold * 2
@@ -208,12 +211,13 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
     def render_init(
         self, screen_width: int = 600, screen_height: int = 400
     ) -> RenderStateType:
+        """Initialises the render state for a screen width and height."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
 
         pygame.init()
         screen = pygame.Surface((screen_width, screen_height))
@@ -222,31 +226,36 @@ class CartPoleF(FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateT
         return screen, clock
 
     def render_close(self, render_state: RenderStateType) -> None:
+        """Closes the render state."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
         pygame.display.quit()
         pygame.quit()
 
 
-class CartPoleJaxEnv(JaxEnv, EzPickle):
+class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
+    """Jax-based implementation of the CartPole environment."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
-    def __init__(self, render_mode: Optional[str] = None, **kwargs):
+    def __init__(self, render_mode: str | None = None, **kwargs: Any):
+        """Constructor for the CartPole where the kwargs are applied to the functional environment."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-        env = CartPoleF(**kwargs)
+
+        env = CartPoleFunctional(**kwargs)
         env.transform(jax.jit)
+
         action_space = env.action_space
         observation_space = env.observation_space
-        metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+
         super().__init__(
             env,
             observation_space=observation_space,
             action_space=action_space,
-            metadata=metadata,
+            metadata=self.metadata,
             render_mode=render_mode,
         )

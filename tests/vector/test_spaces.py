@@ -8,6 +8,7 @@ from gymnasium.spaces import Box, Dict, MultiDiscrete, Space, Tuple
 from gymnasium.vector.utils.spaces import batch_space, iterate
 from tests.vector.utils import CustomSpace, assert_rng_equal, custom_spaces, spaces
 
+
 expected_batch_spaces_4 = [
     Box(low=-1.0, high=1.0, shape=(4,), dtype=np.float64),
     Box(low=0.0, high=10.0, shape=(4, 1), dtype=np.float64),

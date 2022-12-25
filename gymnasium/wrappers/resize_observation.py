@@ -59,10 +59,10 @@ class ResizeObservation(gym.ObservationWrapper):
         """
         try:
             import cv2
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
-                "opencv is not install, run `pip install gymnasium[other]`"
-            )
+                "opencv is not installed, run `pip install gymnasium[other]`"
+            ) from e
 
         observation = cv2.resize(
             observation, self.shape[::-1], interpolation=cv2.INTER_AREA

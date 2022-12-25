@@ -19,8 +19,6 @@ jobs:
       - name: Get tag
         id: tag
         uses: dawidd6/action-get-tag@v1
-        with:
-          strip_v: true
 
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
