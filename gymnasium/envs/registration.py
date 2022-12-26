@@ -311,7 +311,7 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
             try:
                 fn()
             except Exception:
-                logger.warn(f'plugin: {plugin.value} raised {traceback.format_exc()}')
+                logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
 
 
 # fmt: off
