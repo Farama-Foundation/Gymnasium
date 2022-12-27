@@ -322,6 +322,8 @@ def create_empty_array(
 ) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
     """Create an empty (possibly nested) (normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``.
 
+    In most cases, the array will be contained within the batched space, however, this is not guaranteed.
+
     Example::
 
         >>> from gymnasium.spaces import Box, Dict
@@ -356,22 +358,10 @@ def create_empty_array(
 
 
 @create_empty_array.register(Box)
-def _create_empty_array_box(space: Box, n: int = 1, fn=np.zeros) -> np.ndarray:
-    return fn((n,) + space.shape, dtype=space.dtype)
-
-
 @create_empty_array.register(Discrete)
-def _create_empty_array_discrete(
-    space: Discrete, n: int = 1, fn=np.zeros
-) -> np.ndarray:
-    return fn((n,), dtype=space.dtype)
-
-
 @create_empty_array.register(MultiDiscrete)
 @create_empty_array.register(MultiBinary)
-def _create_empty_array_multi(
-    space: MultiDiscrete | MultiBinary, n: int = 1, fn=np.zeros
-) -> np.ndarray:
+def _create_empty_array_multi(space: Box, n: int = 1, fn=np.zeros) -> np.ndarray:
     return fn((n,) + space.shape, dtype=space.dtype)
 
 
