@@ -24,8 +24,16 @@ def serialise_spec_stack(stack: "tuple[Union[WrapperSpec, EnvSpec]]") -> str:
     for i, spec in enumerate(stack):
         spec = _serialise_callable(spec)
         if i == num_layers - 1:
+            if isinstance(spec, WrapperSpec) or not isinstance(spec, EnvSpec):  # NB: WrapperSpec is a subclass of EnvSpec
+                raise error.Error(
+                    f"Expected spec to be an EnvSpec, but got {type(spec)} instead."
+                )
             layer = "raw_env"
         else:
+            if not isinstance(spec, WrapperSpec):
+                raise error.Error(
+                    f"Expected spec to be a WrapperSpec, but got {type(spec)} instead."
+                )
             layer = f"wrapper_{num_layers - i - 2}"
         spec_json = json.dumps(dataclasses.asdict(spec))
         stack_json[layer] = spec_json
