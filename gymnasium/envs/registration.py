@@ -625,8 +625,8 @@ def make(
             _kwargs["render_mode"] = mode[: -len("_list")]
             apply_render_collection = True
         else:
-            raise error.UnsupportedMode(
-                f"The environment is being initialised with render_mode={mode} "
+            logger.warn(
+                f"The environment is being initialised with render_mode={mode!r} "
                 f"that is not in the possible render_modes ({render_modes})."
             )
 
