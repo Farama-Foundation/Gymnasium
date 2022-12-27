@@ -129,7 +129,6 @@ def _batch_space_dict(space: Dict, n: int = 1):
     )
 
 
-@batch_space.register(Space)
 @batch_space.register(Graph)
 @batch_space.register(Text)
 @batch_space.register(Sequence)
@@ -215,7 +214,6 @@ def _concatenate_dict(
     )
 
 
-@concatenate.register(Space)
 @concatenate.register(Graph)
 @concatenate.register(Text)
 @concatenate.register(Sequence)

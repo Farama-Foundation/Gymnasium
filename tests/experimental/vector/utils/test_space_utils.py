@@ -1,6 +1,7 @@
 """Testing suite for the experimental vector utility functions for spaces."""
 
 import copy
+import re
 from typing import Iterable
 
 import pytest
@@ -14,7 +15,7 @@ from gymnasium.experimental.vector.utils import (
 )
 from gymnasium.utils.env_checker import data_equivalence
 from tests.experimental.vector.utils.utils import is_rng_equal
-from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
+from tests.spaces.utils import TESTING_BASE_SPACE, TESTING_SPACES, TESTING_SPACES_IDS
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
@@ -111,3 +112,28 @@ def test_batch_space_different_samples(space: Space, n: int, base_seed: int):
     assert not all(
         data_equivalence(element, unbatched_samples[0]) for element in unbatched_samples
     ), unbatched_samples
+
+
+@pytest.mark.parametrize(
+    "func, n_args",
+    [(batch_space, 1), (concatenate, 2), (iterate, 1), (create_empty_array, 2)],
+)
+def test_unknown_spaces(func, n_args):
+    """Test spaces for vector utility functions on the error produced with unknown spaces."""
+    args = [None for _ in range(n_args)]
+    func_name = func.__name__
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            f"The space provided to `{func_name}` is not a gymnasium Space instance, type: <class 'str'>, space"
+        ),
+    ):
+        func("space", *args)
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            f"Space of type `<class 'gymnasium.spaces.space.Space'>` doesn't have an registered `{func_name}` function."
+        ),
+    ):
+        func(TESTING_BASE_SPACE, *args)
