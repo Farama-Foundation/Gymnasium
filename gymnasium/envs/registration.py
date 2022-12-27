@@ -765,7 +765,10 @@ def _apply_wrappers_from_stack(env, spec_stack):
             env_creator = ws.entry_point
         else:
             # Assume it's a string
-            env_creator = load(ws.entry_point)
+            try:
+                env_creator = load(ws.entry_point)
+            except ValueError:
+                raise error.Error(f"Couldn't find class {ws.entry_point} for wrapper {ws.id}")
 
         env = env_creator(env, **ws.kwargs)
 
