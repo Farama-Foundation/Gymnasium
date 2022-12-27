@@ -51,7 +51,13 @@ def _serialise_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
                 raise error.Error(
                     "The attempted seialisation of a callable failed. This is likely due to env.spec_stack being called twice, which for technical reasons doesn't work. Please modify your code to only call env.spec_stack once (you can save that to a variable and repeatedly use that)."
                 )
-            str_repr = re.search(r", (.*)\)$", str_repr).group(1)
+            found_callable = re.search(r", (.*)\)$", str_repr)
+            if found_callable is not None:
+                str_repr = found_callable.group(1)
+            else:
+                raise error.Error(
+                    "The attempted seialisation of a callable failed. This is likely due to env.spec_stack being called twice, which for technical reasons doesn't work. Please modify your code to only call env.spec_stack once (you can save that to a variable and repeatedly use that)."
+                )
             spec.kwargs[k] = str_repr
     return spec
 
