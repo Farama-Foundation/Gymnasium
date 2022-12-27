@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 import numpy as np
 
 from gymnasium import spaces
-from gymnasium.utils import seeding
+from gymnasium.utils import seeding, EzPickle
 
 
 if TYPE_CHECKING:
@@ -297,7 +297,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         Returns:
            Tuple of environment and wrapper specifications, known as the specification stack.
         """
-        assert hasattr(self, "_ezpickle_kwargs")
+        assert issubclass(type(self), EzPickle)
         wrapper_spec = WrapperSpec(
             type(self).__name__,
             self.__module__ + ":" + type(self).__name__,
