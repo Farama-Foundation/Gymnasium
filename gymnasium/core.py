@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 import numpy as np
 
 from gymnasium import spaces
-from gymnasium.utils import seeding, EzPickle
 from gymnasium.error import Error
+from gymnasium.utils import EzPickle, seeding
 
 
 if TYPE_CHECKING:
@@ -302,7 +302,9 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         if not issubclass(type(self), EzPickle):
             raise Error(f"Wrapper/environment {type(self)} must inherit from EzPickle.")
         if len(self._ezpickle_args):
-            warnings.warn(f"Wrapper/environment {type(self)} has EzPickle args, which is unsupported by env.spec_stack. Related functions such as serialise_spec_stack will not work.")
+            warnings.warn(
+                f"Wrapper/environment {type(self)} has EzPickle args, which is unsupported by env.spec_stack. Related functions such as serialise_spec_stack will not work."
+            )
             return (WrapperSpec("Unsupported", None, None),)
         wrapper_spec = WrapperSpec(
             type(self).__name__,

@@ -6,8 +6,8 @@ import re
 from typing import Union
 
 from gymnasium import error
-from gymnasium.wrapperspec import WrapperSpec
 from gymnasium.envs.registration import EnvSpec
+from gymnasium.wrapperspec import WrapperSpec
 
 
 def serialise_spec_stack(stack: "tuple[Union[WrapperSpec, EnvSpec]]") -> str:
@@ -24,7 +24,9 @@ def serialise_spec_stack(stack: "tuple[Union[WrapperSpec, EnvSpec]]") -> str:
     for i, spec in enumerate(stack):
         spec = _serialise_callable(spec)
         if i == num_layers - 1:
-            if isinstance(spec, WrapperSpec) or not isinstance(spec, EnvSpec):  # NB: WrapperSpec is a subclass of EnvSpec
+            if isinstance(spec, WrapperSpec) or not isinstance(
+                spec, EnvSpec
+            ):  # NB: WrapperSpec is a subclass of EnvSpec
                 raise error.Error(
                     f"Expected spec to be an EnvSpec, but got {type(spec)} instead."
                 )

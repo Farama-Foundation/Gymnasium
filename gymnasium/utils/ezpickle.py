@@ -31,5 +31,5 @@ class EzPickle:
 
     def __setstate__(self, d):
         """Sets the object pickle state using d."""
-        out = type(self)(*d['_ezpickle_args'], **d["_ezpickle_kwargs"])
+        out = type(self)(*d["_ezpickle_args"], **d["_ezpickle_kwargs"])
         self.__dict__.update(out.__dict__)
