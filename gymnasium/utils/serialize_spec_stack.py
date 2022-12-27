@@ -10,7 +10,7 @@ from gymnasium.wrapperspec import WrapperSpec
 from gymnasium.envs.registration import EnvSpec
 
 
-def serialise_spec_stack(stack: tuple) -> str:
+def serialise_spec_stack(stack: "tuple[Union[WrapperSpec, EnvSpec]]") -> str:
     """Serialises the specification stack into a JSON string.
 
     Args:
