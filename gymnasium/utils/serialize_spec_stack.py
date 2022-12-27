@@ -6,7 +6,7 @@ import re
 from typing import Union
 
 from gymnasium import error
-from gymnasium.dataclasses import WrapperSpec
+from gymnasium.wrapperspec import WrapperSpec
 from gymnasium.envs.registration import EnvSpec
 
 

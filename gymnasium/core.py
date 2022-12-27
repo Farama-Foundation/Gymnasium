@@ -13,7 +13,7 @@ from gymnasium.error import Error
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
 
-from gymnasium.dataclasses import WrapperSpec
+from gymnasium.wrapperspec import WrapperSpec
 
 
 ObsType = TypeVar("ObsType")
