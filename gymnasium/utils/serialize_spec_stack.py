@@ -63,7 +63,7 @@ def _serialise_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
 
 
 def deserialise_spec_stack(
-    stack_json: str, eval_ok: bool = False
+    stack_json: dict, eval_ok: bool = False
 ) -> "tuple[Union[WrapperSpec, EnvSpec]]":
     """Converts a JSON string into a specification stack.
 
