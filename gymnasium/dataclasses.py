@@ -1,4 +1,5 @@
 """Contains the WrapperSpec dataclass, used in both core.py and registration.py."""
+from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
@@ -15,4 +16,4 @@ class WrapperSpec:
 
     name: str
     entry_point: str
-    kwargs: "list[Any]"
+    kwargs: list[Any]
