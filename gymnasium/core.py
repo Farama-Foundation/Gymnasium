@@ -7,6 +7,7 @@ import numpy as np
 
 from gymnasium import spaces
 from gymnasium.utils import seeding, EzPickle
+from gymnasium.error import Error
 
 
 if TYPE_CHECKING:
@@ -297,7 +298,8 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         Returns:
            Tuple of environment and wrapper specifications, known as the specification stack.
         """
-        assert issubclass(type(self), EzPickle)
+        if not issubclass(type(self), EzPickle):
+            raise Error(f"Wrapper/environment {type(self)} must inherit from EzPickle.")
         wrapper_spec = WrapperSpec(
             type(self).__name__,
             self.__module__ + ":" + type(self).__name__,
