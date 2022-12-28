@@ -11,6 +11,7 @@ import numpy as np
 from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
+import gymnasium as gym
 
 
 try:
@@ -92,7 +93,7 @@ if jnp is not None:
         return type(value)(jax_to_numpy(v) for v in value)
 
 
-class JaxToNumpyV0(Wrapper):
+class JaxToNumpyV0(Wrapper, gym.utils.EzPickle):
     """Wraps a jax environment so that it can be interacted with through numpy arrays.
 
     Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
@@ -113,6 +114,8 @@ class JaxToNumpyV0(Wrapper):
                 "Jax is not installed, run `pip install gymnasium[jax]`"
             )
         super().__init__(env)
+
+        gym.utils.EzPickle.__init__(self)
 
     def step(
         self, action: WrapperActType

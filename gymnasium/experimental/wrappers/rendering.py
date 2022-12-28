@@ -16,7 +16,7 @@ from gymnasium.core import ActType, ObsType, RenderFrame, WrapperActType, Wrappe
 from gymnasium.error import DependencyNotInstalled
 
 
-class RenderCollectionV0(gym.Wrapper):
+class RenderCollectionV0(gym.Wrapper, gym.utils.EzPickle):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``."""
 
     def __init__(
@@ -43,6 +43,8 @@ class RenderCollectionV0(gym.Wrapper):
         self.metadata = deepcopy(self.env.metadata)
         if f"{self.env.render_mode}_list" not in self.metadata["render_modes"]:
             self.metadata["render_modes"].append(f"{self.env.render_mode}_list")
+
+        gym.utils.EzPickle.__init__(self, pop_frames=pop_frames, reset_clean=reset_clean)
 
     @property
     def render_mode(self):
@@ -78,13 +80,13 @@ class RenderCollectionV0(gym.Wrapper):
         return frames
 
 
-class RecordVideoV0(gym.Wrapper):
+class RecordVideoV0(gym.Wrapper, gym.utils.EzPickle):
     """Record a video of an environment."""
 
     pass
 
 
-class HumanRenderingV0(gym.Wrapper):
+class HumanRenderingV0(gym.Wrapper, gym.utils.EzPickle):
     """Performs human rendering for an environment that only supports "rgb_array"rendering.
 
     This wrapper is particularly useful when you have implemented an environment that can produce
@@ -140,6 +142,8 @@ class HumanRenderingV0(gym.Wrapper):
         if "human" not in self.metadata["render_modes"]:
             self.metadata = deepcopy(self.env.metadata)
             self.metadata["render_modes"].append("human")
+
+        gym.utils.EzPickle.__init__(self)
 
     @property
     def render_mode(self):

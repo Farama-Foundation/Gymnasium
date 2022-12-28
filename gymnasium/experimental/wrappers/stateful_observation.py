@@ -22,7 +22,7 @@ from gymnasium.spaces import Box, Dict, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
-class DelayObservationV0(gym.ObservationWrapper):
+class DelayObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
     """Wrapper which adds a delay to the returned observation."""
 
     def __init__(self, env: gym.Env, delay: int):
@@ -44,6 +44,7 @@ class DelayObservationV0(gym.ObservationWrapper):
         self.observation_queue: Final[deque] = deque()
 
         super().__init__(env)
+        gym.utils.EzPickle.__init__(self, delay=delay)
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -63,7 +64,7 @@ class DelayObservationV0(gym.ObservationWrapper):
         return jp.zeros_like(observation)
 
 
-class TimeAwareObservationV0(gym.ObservationWrapper):
+class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
     """Augment the observation with time information of the episode.
 
     Time can be represented as a normalized value between [0,1]
@@ -160,6 +161,8 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
             self.observation_space = observation_space
             self._obs_postprocess_func = lambda obs: obs
 
+        gym.utils.EzPickle.__init__(self, flatten=flatten, normalize_time=normalize_time, dict_time_key=dict_time_key)
+
     def observation(self, observation: ObsType) -> WrapperObsType:
         """Adds to the observation with the current time information.
 
@@ -206,7 +209,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         return super().reset(seed=seed, options=options)
 
 
-class FrameStackObservationV0(gym.Wrapper):
+class FrameStackObservationV0(gym.Wrapper, gym.utils.EzPickle):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
@@ -246,6 +249,8 @@ class FrameStackObservationV0(gym.Wrapper):
 
         self.stacked_obs_array = create_empty_array(env.observation_space, n=stack_size)
         self.stacked_obs = self._init_stacked_obs()
+
+        gym.utils.EzPickle.__init__(self, stack_size=stack_size)
 
     def step(
         self, action: WrapperActType

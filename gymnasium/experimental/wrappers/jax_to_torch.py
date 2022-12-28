@@ -18,6 +18,7 @@ from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
+import gymnasium as gym
 
 
 try:
@@ -131,7 +132,7 @@ if torch is not None and jnp is not None:
         return type(value)(jax_to_torch(v, device) for v in value)
 
 
-class JaxToTorchV0(Wrapper):
+class JaxToTorchV0(Wrapper, gym.utils.EzPickle):
     """Wraps a jax-based environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
@@ -158,6 +159,8 @@ class JaxToTorchV0(Wrapper):
 
         super().__init__(env)
         self.device: Device | None = device
+
+        gym.utils.EzPickle.__init__(self, env, device=device)
 
     def step(
         self, action: WrapperActType

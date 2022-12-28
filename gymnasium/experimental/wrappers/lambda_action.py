@@ -16,7 +16,7 @@ from gymnasium.core import ActType, WrapperActType
 from gymnasium.spaces import Box, Space
 
 
-class LambdaActionV0(gym.ActionWrapper):
+class LambdaActionV0(gym.ActionWrapper, gym.utils.EzPickle):
     """A wrapper that provides a function to modify the action passed to :meth:`step`."""
 
     def __init__(
@@ -38,12 +38,14 @@ class LambdaActionV0(gym.ActionWrapper):
 
         self.func = func
 
+        gym.utils.EzPickle.__init__(self, func=func, action_space=action_space)
+
     def action(self, action: WrapperActType) -> ActType:
         """Apply function to action."""
         return self.func(action)
 
 
-class ClipActionV0(LambdaActionV0):
+class ClipActionV0(LambdaActionV0, gym.utils.EzPickle):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -76,8 +78,10 @@ class ClipActionV0(LambdaActionV0):
             ),
         )
 
+        gym.utils.EzPickle.__init__(self)
 
-class RescaleActionV0(LambdaActionV0):
+
+class RescaleActionV0(LambdaActionV0, gym.utils.EzPickle):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
@@ -152,3 +156,5 @@ class RescaleActionV0(LambdaActionV0):
                 dtype=env.action_space.dtype,
             ),
         )
+
+        gym.utils.EzPickle.__init__(self, min_action=min_action, max_action=max_action)
