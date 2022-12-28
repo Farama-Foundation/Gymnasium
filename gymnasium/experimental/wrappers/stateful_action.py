@@ -31,7 +31,9 @@ class StickyActionV0(ActionWrapper, gym.utils.EzPickle):
         self.repeat_action_probability = repeat_action_probability
         self.last_action: WrapperActType | None = None
 
-        gym.utils.EzPickle.__init__(self, repeat_action_probability=repeat_action_probability)
+        gym.utils.EzPickle.__init__(
+            self, repeat_action_probability=repeat_action_probability
+        )
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None

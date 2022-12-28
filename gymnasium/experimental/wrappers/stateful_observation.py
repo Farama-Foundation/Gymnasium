@@ -161,7 +161,12 @@ class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
             self.observation_space = observation_space
             self._obs_postprocess_func = lambda obs: obs
 
-        gym.utils.EzPickle.__init__(self, flatten=flatten, normalize_time=normalize_time, dict_time_key=dict_time_key)
+        gym.utils.EzPickle.__init__(
+            self,
+            flatten=flatten,
+            normalize_time=normalize_time,
+            dict_time_key=dict_time_key,
+        )
 
     def observation(self, observation: ObsType) -> WrapperObsType:
         """Adds to the observation with the current time information.

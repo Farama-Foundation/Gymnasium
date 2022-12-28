@@ -44,7 +44,9 @@ class RenderCollectionV0(gym.Wrapper, gym.utils.EzPickle):
         if f"{self.env.render_mode}_list" not in self.metadata["render_modes"]:
             self.metadata["render_modes"].append(f"{self.env.render_mode}_list")
 
-        gym.utils.EzPickle.__init__(self, pop_frames=pop_frames, reset_clean=reset_clean)
+        gym.utils.EzPickle.__init__(
+            self, pop_frames=pop_frames, reset_clean=reset_clean
+        )
 
     @property
     def render_mode(self):

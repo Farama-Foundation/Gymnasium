@@ -61,7 +61,9 @@ class LambdaObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
 
         self.func = func
 
-        gym.utils.EzPickle.__init__(self, func=func, observation_space=observation_space)
+        gym.utils.EzPickle.__init__(
+            self, func=func, observation_space=observation_space
+        )
 
     def observation(self, observation: ObsType) -> Any:
         """Apply function to the observation."""
@@ -501,7 +503,9 @@ class PixelObservationV0(LambdaObservationV0, gym.utils.EzPickle):
                 env, lambda obs: {obs_key: obs, pixels_key: self.render()}, obs_space
             )
 
-        gym.utils.EzPickle.__init__(self, pixels_only=pixels_only, pixels_key=pixels_key, obs_key=obs_key)
+        gym.utils.EzPickle.__init__(
+            self, pixels_only=pixels_only, pixels_key=pixels_key, obs_key=obs_key
+        )
 
 
 class NormalizeObservationV0(ObservationWrapper, gym.utils.EzPickle):

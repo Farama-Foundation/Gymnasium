@@ -14,11 +14,11 @@ import numbers
 from collections import abc
 from typing import Any, Iterable, Mapping, SupportsFloat, Union
 
+import gymnasium as gym
 from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
-import gymnasium as gym
 
 
 try:

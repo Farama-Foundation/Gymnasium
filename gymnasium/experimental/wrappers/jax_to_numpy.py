@@ -8,10 +8,10 @@ from typing import Any, Iterable, Mapping, SupportsFloat
 
 import numpy as np
 
+import gymnasium as gym
 from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
-import gymnasium as gym
 
 
 try:
