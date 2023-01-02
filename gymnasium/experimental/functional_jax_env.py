@@ -199,7 +199,6 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         rng = jrng.split(rng, self.num_envs)
 
         next_state = self.func_env.transition(self.state, action, rng)
-        observation = self.func_env.observation(next_state)
         reward = self.func_env.reward(self.state, action, next_state)
         terminated = self.func_env.terminal(next_state)
 
@@ -211,6 +210,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
 
         done = jnp.logical_or(terminated, truncated)
         if jnp.any(done):
+            # TODO: record the final observations and return them in the info, check the format
             to_reset = jnp.where(done)[0]
             reset_count = to_reset.shape[0]
             rng, self.rng = jrng.split(self.rng)
@@ -219,6 +219,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
             self.state = self.state.at[to_reset].set(new_initials)
             self.steps = self.steps.at[to_reset].set(0)
 
+        observation = self.func_env.observation(next_state)
         observation = _convert_jax_to_numpy(observation)
 
         return observation, reward, terminated, truncated, info
