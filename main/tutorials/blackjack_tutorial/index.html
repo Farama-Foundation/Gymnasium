@@ -562,7 +562,7 @@ valued as the best) <code class="docutils literal notranslate"><span class="pre"
         <span class="n">final_epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize a Reinforcement Learning agent with an empty dictionary</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Reinforcement Learning agent with an empty dictionary</span>
 <span class="sd">        of state-action values (q_values), a learning rate and an epsilon.</span>
 
 <span class="sd">        Args:</span>
@@ -584,7 +584,7 @@ valued as the best) <code class="docutils literal notranslate"><span class="pre"
         <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the best action with probability (1 - epsilon)</span>
 <span class="sd">        otherwise a random action with probability epsilon to ensure exploration.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -604,7 +604,7 @@ valued as the best) <code class="docutils literal notranslate"><span class="pre"
         <span class="n">terminated</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">next_obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Updates the Q-value of an action.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the Q-value of an action.&quot;&quot;&quot;</span>
         <span class="n">future_q_value</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
         <span class="n">temporal_difference</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">future_q_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
@@ -699,7 +699,7 @@ the n_episodes by 10x and lower the learning_rate (e.g. to 0.001).</p>
 <section id="visualising-the-policy">
 <h2>Visualising the policy<a class="headerlink" href="#visualising-the-policy" title="Permalink to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_grids</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">usable_ace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create value and policy grid given an agent.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create value and policy grid given an agent.&quot;&quot;&quot;</span>
     <span class="c1"># convert our state-action values to state values</span>
     <span class="c1"># and build a policy dictionary that maps observations to actions</span>
     <span class="n">state_value</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
@@ -732,7 +732,7 @@ the n_episodes by 10x and lower the learning_rate (e.g. to 0.001).</p>
 
 
 <span class="k">def</span> <span class="nf">create_plots</span><span class="p">(</span><span class="n">value_grid</span><span class="p">,</span> <span class="n">policy_grid</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Creates a plot using a value and policy grid.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a plot using a value and policy grid.&quot;&quot;&quot;</span>
     <span class="c1"># create a new figure with 2 subplots (left: state values, right: policy)</span>
     <span class="n">player_count</span><span class="p">,</span> <span class="n">dealer_count</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">value_grid</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figaspect</span><span class="p">(</span><span class="mf">0.4</span><span class="p">))</span>

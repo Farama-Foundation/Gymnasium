@@ -436,19 +436,19 @@ with the code that is presented here. We recommend that you use a virtual enviro
 <a class="reference external" href="/api/core">the documentation of Gymnasium’s API</a>.</p>
 <p>We will be concerned with a subset of gym-examples that looks like this:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gym-examples/
-  README.md
-  setup.py
-  gym_examples/
-    __init__.py
-    envs/
-      __init__.py
-      grid_world.py
-    wrappers/
-      __init__.py
-      relative_position.py
-      reacher_weighted_reward.py
-      discrete_action.py
-      clip_reward.py
+<span class="w">  </span>README.md
+<span class="w">  </span>setup.py
+<span class="w">  </span>gym_examples/
+<span class="w">    </span>__init__.py
+<span class="w">    </span>envs/
+<span class="w">      </span>__init__.py
+<span class="w">      </span>grid_world.py
+<span class="w">    </span>wrappers/
+<span class="w">      </span>__init__.py
+<span class="w">      </span>relative_position.py
+<span class="w">      </span>reacher_weighted_reward.py
+<span class="w">      </span>discrete_action.py
+<span class="w">      </span>clip_reward.py
 </pre></div>
 </div>
 <p>To illustrate the process of subclassing <code class="docutils literal notranslate"><span class="pre">gymnasium.Env</span></code>, we will
@@ -520,7 +520,7 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
         <span class="c1"># We have 4 actions, corresponding to &quot;right&quot;, &quot;up&quot;, &quot;left&quot;, &quot;down&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The following dictionary maps abstract actions from `self.action_space` to</span>
 <span class="sd">        the direction we will walk in if that action is taken.</span>
 <span class="sd">        I.e. 0 corresponds to &quot;right&quot;, 1 to &quot;up&quot; etc.</span>
@@ -535,7 +535,7 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
         <span class="k">assert</span> <span class="n">render_mode</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">render_mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">=</span> <span class="n">render_mode</span>
 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If human-rendering is used, `self.window` will be a reference</span>
 <span class="sd">        to the window that we draw to. `self.clock` will be a clock that is used</span>
 <span class="sd">        to ensure that the environment is rendered at the correct framerate in</span>
