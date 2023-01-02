@@ -10,8 +10,10 @@ from jax import random
 from jax.random import PRNGKey
 
 from gymnasium import spaces
-from gymnasium.envs.jax_toy_text.conversion import JaxEnv
+
+# from gymnasium.envs.jax_toy_text.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
+from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
 
@@ -194,19 +196,19 @@ class BlackjackFunctional(
         (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
     )
 
-    # Flag to payout 1.5 on a "natural" blackjack win, like casino rules
-    # Ref: http://www.bicyclecards.com/how-to-play/blackjack/
-    natural = False
-
-    # Flag for full agreement with the (Sutton and Barto, 2018) definition. Overrides self.natural
-    sutton_and_barto = True
-
     # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 4,
     }
+
+    def __init__(self, natural: bool = False, sutton_and_barto: bool = True):
+        # Flag to payout 1.5 on a "natural" blackjack win, like casino rules
+        # Ref: http://www.bicyclecards.com/how-to-play/blackjack/
+        self.natural = natural
+        # Flag for full agreement with the (Sutton and Barto, 2018) definition. Overrides self.natural
+        self.sutton_and_barto = sutton_and_barto
 
     def transition(
         self, state: jnp.ndarray, action: Union[int, jnp.ndarray], key: PRNGKey
@@ -224,7 +226,7 @@ class BlackjackFunctional(
         # can still request another card with 21 cards
         done = (is_bust(player_hand) * action) + ((jnp.logical_not(action)) * 1)
 
-        new_state = (dealer_hand, player_hand, dealer_cards, player_cards, done), key
+        new_state = (dealer_hand, player_hand, dealer_cards, player_cards, done)
 
         return new_state
 
@@ -240,11 +242,7 @@ class BlackjackFunctional(
 
         state = (dealer_hand, player_hand, dealer_cards, player_cards, 0)
 
-        rng = random.split(rng)[0]
-
-        env_state = (state, rng)
-
-        return env_state
+        return state
 
     def observation(self, state: jnp.ndarray) -> jnp.ndarray:
         """BlackJack observation."""
@@ -285,7 +283,7 @@ class BlackjackFunctional(
         return reward
 
     def render_init(
-        self, key: int, screen_width: int = 600, screen_height: int = 500
+        self, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
         try:
             import pygame
@@ -294,12 +292,12 @@ class BlackjackFunctional(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
             )
 
-        rng = seeding.np_random(key)[0]
+        rng = seeding.np_random(0)[0]
 
         suits = ["C", "D", "H", "S"]
         dealer_top_card_suit = rng.choice(suits)
         dealer_top_card_value_str = rng.choice(["J", "Q", "K"])
-
+        print("test")
         pygame.init()
         screen = pygame.display.set_mode((screen_width, screen_height))
 
@@ -427,10 +425,11 @@ class BlackjackFunctional(
         pygame.quit()
 
 
-class BlackJackJaxEnv(JaxEnv, EzPickle):
+class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-        env = BlackjackFunctional()
+        print(kwargs)
+        env = BlackjackFunctional(**kwargs)
         env.transform(jax.jit)
         action_space = env.action_space
         observation_space = env.observation_space

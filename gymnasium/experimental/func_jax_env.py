@@ -10,6 +10,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import Space
 from gymnasium.envs.registration import EnvSpec
+from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
 
@@ -47,7 +48,7 @@ class FunctionalJaxEnv(gym.Env):
 
         self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
-        if self.render_mode == "rgb_array":
+        if self.render_mode == "rgb_array" or self.render_mode == "human":
             self.render_state = self.func_env.render_init()
         else:
             self.render_state = None
@@ -71,6 +72,15 @@ class FunctionalJaxEnv(gym.Env):
 
         obs = _convert_jax_to_numpy(obs)
 
+        # checks for multidiscrete, and applies int cast
+        if isinstance(self.observation_space, gym.spaces.Tuple) and all(
+            [
+                isinstance(space, gym.spaces.Discrete)
+                for space in self.observation_space.spaces
+            ]
+        ):
+            obs = tuple([int(value) for value in obs])
+
         return obs, info
 
     def step(self, action: ActType):
@@ -86,7 +96,7 @@ class FunctionalJaxEnv(gym.Env):
         rng, self.rng = jrng.split(self.rng)
 
         next_state = self.func_env.transition(self.state, action, rng)
-        observation = self.func_env.observation(self.state)
+        observation = self.func_env.observation(next_state)
         reward = self.func_env.reward(self.state, action, next_state)
         terminated = self.func_env.terminal(next_state)
         info = self.func_env.step_info(self.state, action, next_state)
@@ -94,17 +104,32 @@ class FunctionalJaxEnv(gym.Env):
 
         observation = _convert_jax_to_numpy(observation)
 
+        # checks for multidiscrete, and applies int cast
+        if isinstance(self.observation_space, gym.spaces.Tuple) and all(
+            [
+                isinstance(space, gym.spaces.Discrete)
+                for space in self.observation_space.spaces
+            ]
+        ):
+            observation = tuple([int(value) for value in observation])
+
         return observation, float(reward), bool(terminated), False, info
 
     def render(self):
-        """Returns the render state if `render_mode` is "rgb_array"."""
-        if self.render_mode == "rgb_array":
+        try:
+            import pygame
+        except ImportError:
+            raise DependencyNotInstalled(
+                "pygame is not installed, run `pip install gymnasium[toy_text]`"
+            )
+        if self.render_mode is not None:
             self.render_state, image = self.func_env.render_image(
                 self.state, self.render_state
             )
+        if self.render_mode == "rgb_array":
             return image
-        else:
-            raise NotImplementedError
+        elif self.render_mode == "human":
+            pygame.display.flip()
 
     def close(self):
         """Closes the environments and render state if set."""
@@ -119,7 +144,10 @@ def _convert_jax_to_numpy(element: Any):
     Requires as all tests assume that data is in numpy arrays, to be removed soon.
     """
     if isinstance(element, jnp.ndarray):
-        return np.asarray(element)
+        if element.size == 1 and len(element.shape) == 0:
+            return np.asarray(element).item()
+        else:
+            return np.asarray(element)
     elif isinstance(element, tuple):
         return tuple(_convert_jax_to_numpy(e) for e in element)
     elif isinstance(element, list):

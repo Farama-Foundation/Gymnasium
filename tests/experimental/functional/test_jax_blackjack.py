@@ -10,13 +10,18 @@ def test_normal_BlackjackFunctional():
     env = BlackjackFunctional()
     rng = jrng.PRNGKey(0)
 
-    state, rng = env.initial(rng)
+    split_rng, rng = jrng.split(rng)
+
+    state = env.initial(split_rng)
     env.action_space.seed(0)
 
     for t in range(10):
         obs = env.observation(state)
         action = env.action_space.sample()
-        next_state, rng = env.transition(state, action, rng)
+
+        split_rng, rng = jrng.split(rng)
+
+        next_state = env.transition(state, action, split_rng)
         reward = env.reward(state, action, next_state)
         terminal = env.terminal(next_state)
 
@@ -49,15 +54,18 @@ def test_normal_BlackjackFunctional():
 def test_jit_BlackjackFunctional():
     env = BlackjackFunctional()
     rng = jrng.PRNGKey(0)
-
     env.transform(jax.jit)
-    state, rng = env.initial(rng)
+
+    split_rng, rng = jrng.split(rng)
+
+    state = env.initial(split_rng)
     env.action_space.seed(0)
 
     for t in range(10):
         obs = env.observation(state)
         action = env.action_space.sample()
-        next_state, rng = env.transition(state, action, rng)
+        split_rng, rng = jrng.split(rng)
+        next_state = env.transition(state, action, split_rng)
         reward = env.reward(state, action, next_state)
         terminal = env.terminal(next_state)
 
@@ -88,11 +96,14 @@ def test_jit_BlackjackFunctional():
 def test_vmap_BlackJack():
     env = BlackjackFunctional()
     num_envs = 10
-    rng = jrng.split(jrng.PRNGKey(0), num_envs)
+    rng, *split_rng = jrng.split(
+        jrng.PRNGKey(0), num_envs + 1
+    )  # this plus 1 is important because we want
+    # num_envs subkeys and a main entropy source key which necessitates an additional key
 
     env.transform(jax.vmap)
     env.transform(jax.jit)
-    state, rng = env.initial(rng)
+    state = env.initial(jnp.array(split_rng))
     env.action_space.seed(0)
 
     for t in range(10):
@@ -100,7 +111,8 @@ def test_vmap_BlackJack():
         action = jnp.array([env.action_space.sample() for _ in range(num_envs)])
         # if isinstance(env.action_space, Discrete):
         #     action = action.reshape((num_envs, 1))
-        next_state, rng = env.transition(state, action, rng)
+        rng, *split_rng = jrng.split(rng, num_envs + 1)
+        next_state = env.transition(state, action, jnp.array(split_rng))
         terminal = env.terminal(next_state)
         reward = env.reward(state, action, next_state)
 
