@@ -517,7 +517,10 @@ class LunarLander(gym.Env, EzPickle):
                     m_power,
                 )
                 p.ApplyLinearImpulse(
-                    (ox * MAIN_ENGINE_POWER * m_power, oy * MAIN_ENGINE_POWER * m_power),
+                    (
+                        ox * MAIN_ENGINE_POWER * m_power,
+                        oy * MAIN_ENGINE_POWER * m_power,
+                    ),
                     impulse_pos,
                     True,
                 )
