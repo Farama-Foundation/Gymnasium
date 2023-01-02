@@ -11,7 +11,7 @@ from gymnasium.utils import seeding
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
 
-__all__ = ["VectorEnv"]
+__all__ = ["VectorEnv", "VectorWrapper"]
 
 ArrayType = TypeVar("ArrayType")
 
@@ -235,6 +235,7 @@ class VectorWrapper(VectorEnv):
     """
 
     def __init__(self, env: VectorEnv):
+        """Initialize the vectorized environment wrapper."""
         super().__init__()
 
         assert isinstance(env, VectorEnv)
@@ -244,31 +245,39 @@ class VectorWrapper(VectorEnv):
     # to self.env (instead of the base class)
 
     def reset(self, **kwargs):
+        """Reset all environments."""
         return self.env.reset(**kwargs)
 
     def step(self, actions):
+        """Step all environments."""
         return self.env.step(actions)
 
     def close(self, **kwargs):
+        """Close all environments."""
         return self.env.close(**kwargs)
 
     def close_extras(self, **kwargs):
+        """Close all extra resources."""
         return self.env.close_extras(**kwargs)
 
     # implicitly forward all other methods and attributes to self.env
     def __getattr__(self, name):
+        """Forward all other attributes to the base environment."""
         if name.startswith("_"):
             raise AttributeError(f"attempted to get missing private attribute '{name}'")
         return getattr(self.env, name)
 
     @property
     def unwrapped(self):
+        """Return the base non-wrapped environment."""
         return self.env.unwrapped
 
     def __repr__(self):
+        """Return the string representation of the vectorized environment."""
         return f"<{self.__class__.__name__}, {self.env}>"
 
     def __del__(self):
+        """Close the vectorized environment."""
         self.env.__del__()
 
 
