@@ -443,9 +443,6 @@ plt.show()
 #   :alt: training_plots
 #
 
-vector_env_a2c_training_plots.png
-
-
 # %%
 # Saving/ Loading Weights
 # ------------------------------
