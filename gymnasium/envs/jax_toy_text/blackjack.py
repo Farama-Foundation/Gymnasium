@@ -4,7 +4,6 @@ from typing import Optional, Tuple, Union
 
 import jax
 import jax.numpy as jnp
-import jax.random as jrng
 import numpy as np
 from jax import random
 from jax.random import PRNGKey
@@ -199,7 +198,7 @@ class BlackjackFunctional(
     # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 
     metadata = {
-        "render_modes": ["rgb_array"],
+        "render_modes": ["rgb_array", "human"],
         "render_fps": 4,
     }
 
@@ -297,7 +296,6 @@ class BlackjackFunctional(
         suits = ["C", "D", "H", "S"]
         dealer_top_card_suit = rng.choice(suits)
         dealer_top_card_value_str = rng.choice(["J", "Q", "K"])
-        print("test")
         pygame.init()
         screen = pygame.display.set_mode((screen_width, screen_height))
 
@@ -464,25 +462,3 @@ if __name__ == "__main__":
         env.render()
 
     exit()
-
-    rng = jrng.PRNGKey(4)
-
-    # env.transform(jax.jit)
-    state, rng = env.initial(rng)
-    print(state)
-    exit()
-    render_state = env.render_init(0)
-
-    env.action_space.seed(0)
-
-    for t in range(10):
-        obs = env.observation(state)
-        render_state, _ = env.render_image(state, render_state)
-        action = int(input("Please input an action"))
-        # action = env.action_space.sample()
-        next_state, frng = env.transition(state, action, rng)
-        reward = env.reward(state, action, next_state)
-        terminal = env.terminal(next_state)
-        state = next_state
-        print(obs)
-        input()
