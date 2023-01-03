@@ -12,11 +12,21 @@ Training A2C with Vector Envs and Domain Randomization
 # In this tutorial, you'll learn how to use vectorized environments to train an Advantage Actor-Critic agent.
 # We are going to use A2C, which is the synchronous version of the A3C algorithm [1].
 #
-# Vectorized environments [3] can help to achieve quicker and more robust training by allowing multiple instances of the same environment to run in parallel (on multiple CPUs). This can significantly reduce the variance and thus speeds up the training.
+# Vectorized environments [3] can help to achieve quicker and more robust training by allowing multiple instances
+# of the same environment to run in parallel (on multiple CPUs). This can significantly reduce the variance and thus speeds up the training.
 #
-# We will implement an Advantage Actor-Critic from scratch to look at how you can feed batched states into your networks to get a vector of actions (one action per environment) and calculate the losses for actor and critic on minibatches of transitions. Each minibatch contains the transitions of one sampling phase: `n_steps_per_update` steps are executed in `n_envs` environments in parallel (multiply the two to get the number of transitions in a minibatch). After each sampling phase, the losses are calculated and one gradient step is executed. To calculate the advantages, we are going to use the Generalized Advantage Estimation (GAE) method [2], which balances the tradeoff between variance and bias of the advantage estimates.
+# We will implement an Advantage Actor-Critic from scratch to look at how you can feed batched states into your networks to get a vector of actions
+# (one action per environment) and calculate the losses for actor and critic on minibatches of transitions.
+# Each minibatch contains the transitions of one sampling phase: `n_steps_per_update` steps are executed in `n_envs` environments in parallel
+# (multiply the two to get the number of transitions in a minibatch). After each sampling phase,  the losses are calculated and one gradient step is executed.
+# To calculate the advantages, we are going to use the Generalized Advantage Estimation (GAE) method [2], which balances the tradeoff
+# between variance and bias of the advantage estimates.
 #
-# The A2C agent class is initialized with the number of features of the input state, the number of actions the agent can take,the learning rates and the number of environments that run in parallel to collect experiences. The actor and critic networks are defined and their respective optimizers are initialized. The forward pass of the networks takes in a batched vector of states and returns a tensor of state values and a tensor of action logits. The select_action method returns a tuple of the chosen actions, the log-probs of those actions, and the state values for each action. In addition, it also returns the entropy of the policy distribution, which is subtracted from the loss later (with a weighting factor `ent_coef`) to encourage exploration.
+# The A2C agent class is initialized with the number of features of the input state, the number of actions the agent can take,
+# the learning rates and the number of environments that run in parallel to collect experiences. The actor and critic networks are defined
+# and their respective optimizers are initialized. The forward pass of the networks takes in a batched vector of states and returns a tensor of state values
+# and a tensor of action logits. The select_action method returns a tuple of the chosen actions, the log-probs of those actions, and the state values for each action.
+# In addition, it also returns the entropy of the policy distribution, which is subtracted from the loss later (with a weighting factor `ent_coef`) to encourage exploration.
 #
 # The get_losses function calculates the losses for the actor and critic networks (using GAE), which are then updated using the update_parameters function.
 #
@@ -32,28 +42,29 @@ Training A2C with Vector Envs and Domain Randomization
 
 from __future__ import annotations
 
-import gymnasium as gym
-from gymnasium.utils.play import play
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-import os
-
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch import optim
-
 from tqdm import tqdm
-from typing import List, Tuple
+
+import gymnasium as gym
 
 # %%
 # Advantage Actor-Critic (A2C)
 # ------------------------------
 #
-# The Actor-Critic combines elements of value-based and policy-based methods. In A2C, the agent has two separate neural networks: a critic network that estimates the state-value function, and an actor network that outputs logits for a categorical probability distribution over all actions. The critic network is trained to minimize the mean squared error between the predicted state values and the actual returns received by the agent (this is equivalent to minimizing the squared advantages, because the advantage of an action is as the difference between the return and the state-value: A(s,a) = Q(s,a) - V(s). The actor network is trained to maximize the expected return by selecting actions that have high expected values according to the critic network.
+# The Actor-Critic combines elements of value-based and policy-based methods. In A2C, the agent has two separate neural networks:
+# a critic network that estimates the state-value function, and an actor network that outputs logits for a categorical probability distribution over all actions.
+# The critic network is trained to minimize the mean squared error between the predicted state values and the actual returns received by the agent
+# (this is equivalent to minimizing the squared advantages, because the advantage of an action is as the difference between the return and the state-value: A(s,a) = Q(s,a) - V(s).
+# The actor network is trained to maximize the expected return by selecting actions that have high expected values according to the critic network.
 #
-# The focus of this tutorial will not be on the details of A2C itself. Instead, the tutorial will focus on how to use vectorized environments and domain randomization to accelerate the training process for A2C (and other reinforcement learning algorithms).
+# The focus of this tutorial will not be on the details of A2C itself. Instead, the tutorial will focus on how to use vectorized environments
+# and domain randomization to accelerate the training process for A2C (and other reinforcement learning algorithms).
 #
 
 
@@ -87,7 +98,7 @@ class A2C(nn.Module):
         n_envs: int,
     ) -> None:
         """Initializes the actor and critic networks and their respective optimizers."""
-        super(A2C, self).__init__()
+        super().__init__()
         self.device = device
         self.n_envs = n_envs
 
@@ -117,7 +128,7 @@ class A2C(nn.Module):
         self.critic_optim = optim.RMSprop(self.critic.parameters(), lr=critic_lr)
         self.actor_optim = optim.RMSprop(self.actor.parameters(), lr=actor_lr)
 
-    def forward(self, x: np.ndarray) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, x: np.ndarray) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Forward pass of the networks.
 
@@ -135,7 +146,7 @@ class A2C(nn.Module):
 
     def select_action(
         self, x: np.ndarray
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Returns a tuple of the chosen actions and the log-probs of those actions.
 
@@ -167,7 +178,7 @@ class A2C(nn.Module):
         lam: float,
         ent_coef: float,
         device: torch.device,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Computes the loss of a minibatch (transitions collected in one sampling phase) for actor and critic
         using Generalized Advantage Estimation (GAE) to compute the advantages (https://arxiv.org/abs/1506.02438).
@@ -231,9 +242,13 @@ class A2C(nn.Module):
 # Using Vectorized Environments
 # ------------------------------
 #
-# When you calculate the losses for the two Neural Networks over only one epoch, it might have a high variance. With vectorized environements, we can play with `n_envs` in parallel and thus get up to a linear speedup (meaning that in theory, we collect samples `n_envs` times quicker) that we can use to calculate the loss for the current policy and critic network. When we are using more samples to calculate the loss, it will have a lower variance and theirfore leads to quicker learning.
+# When you calculate the losses for the two Neural Networks over only one epoch, it might have a high variance. With vectorized environments,
+# we can play with `n_envs` in parallel and thus get up to a linear speedup (meaning that in theory, we collect samples `n_envs` times quicker)
+# that we can use to calculate the loss for the current policy and critic network. When we are using more samples to calculate the loss,
+# it will have a lower variance and theirfore leads to quicker learning.
 #
-# A2C is a synchronous method, meaning that the parameter updates to Networks take place deterministically (after each sampling phase), but we can still make use of asynchronous vector envs to spawn multiple processes for parallel environment execution.
+# A2C is a synchronous method, meaning that the parameter updates to Networks take place deterministically (after each sampling phase),
+# but we can still make use of asynchronous vector envs to spawn multiple processes for parallel environment execution.
 #
 # The simplest way to create vector environments is by calling `gym.vector.make`, which creates multiple instances of the same environment:
 #
@@ -245,7 +260,8 @@ envs = gym.vector.make("LunarLander-v2", num_envs=3, max_episode_steps=600)
 # Domain Randomization
 # ------------------------------
 #
-# If we want to randomize the environment for training to get more robust agents (that can deal with different parameterizations of an environment and theirfore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.
+# If we want to randomize the environment for training to get more robust agents (that can deal with different parameterizations of an environment
+# and theirfore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.
 #
 # Manually setting up 3 parallel 'LunarLander-v2' envs with different parameters:
 
@@ -308,9 +324,13 @@ envs = gym.vector.AsyncVectorEnv(
 #
 # ------------------------------
 #
-# Here we are using normal distributions with the standard parameterization of the environment as the mean and an arbitrary standard deviation (scale). Depending on the problem, you can experiment with higher variance and use different distributions as well.
+# Here we are using normal distributions with the standard parameterization of the environment as the mean and an arbitrary standard deviation (scale).
+# Depending on the problem, you can experiment with higher variance and use different distributions as well.
 #
-# If you are training on the same `n_envs` environments for the entire training time, and `n_envs` is a relatively low number (in proportion to how complex the environment is), you might still get some overfitting to the specific parameterizations that you picked. To mitigate this, you can either pick a high number of randomly parameterized environments or remake your environments every couple of sampling phases to generate a new set of pseudo-random parameters.
+# If you are training on the same `n_envs` environments for the entire training time, and `n_envs` is a relatively low number
+# (in proportion to how complex the environment is), you might still get some overfitting to the specific parameterizations that you picked.
+# To mitigate this, you can either pick a high number of randomly parameterized environments or remake your environments every couple of sampling phases
+# to generate a new set of pseudo-random parameters.
 #
 
 
@@ -379,12 +399,17 @@ agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr, n_envs)
 # Training the A2C Agent
 # ------------------------------
 #
-# For our training loop, we are using the `RecordEpisodeStatistics` wrapper to record the episode lengths and returns and we are also saving the losses and entropies to plot them after the agent finished training.
+# For our training loop, we are using the `RecordEpisodeStatistics` wrapper to record the episode lengths and returns and we are also saving
+# the losses and entropies to plot them after the agent finished training.
 #
-# You may notice that the don't reset the vectorized envs at the start of each episode like we would usually do. This is because each environment resets automatically once the episode finishes (each environment takes a different number of timesteps to finish an episode because of the random seeds). As a result, we are also not collecting data in `episodes`, but rather just play a certain number of steps (`n_steps_per_update`) in each environement (as an example, this could mean that we play 20 timesteps to finish an episode and then use the rest of the timesteps to begin a new one).
+# You may notice that the don't reset the vectorized envs at the start of each episode like we would usually do.
+# This is because each environment resets automatically once the episode finishes (each environment takes a different number of timesteps to finish
+# an episode because of the random seeds). As a result, we are also not collecting data in `episodes`, but rather just play a certain number of steps
+# (`n_steps_per_update`) in each environment (as an example, this could mean that we play 20 timesteps to finish an episode and then
+# use the rest of the timesteps to begin a new one).
 #
 
-# create a wrapper environment to save episode returns and episode lenghts
+# create a wrapper environment to save episode returns and episode lengths
 envs_wrapper = gym.wrappers.RecordEpisodeStatistics(envs, deque_size=n_envs * n_updates)
 
 critic_losses = []
@@ -667,6 +692,8 @@ env.close()
 # ------------------------------
 #
 
+# from gymnasium.utils.play import play
+#
 # play(gym.make('LunarLander-v2', render_mode='rgb_array'),
 #     keys_to_action={'w': 2, 'a': 1, 'd': 3}, noop=0)
 
