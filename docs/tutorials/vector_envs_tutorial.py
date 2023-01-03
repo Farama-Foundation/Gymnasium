@@ -44,14 +44,13 @@ from __future__ import annotations
 
 import os
 
+import gymnasium as gym
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
 from torch import optim
 from tqdm import tqdm
-
-import gymnasium as gym
 
 # %%
 # Advantage Actor-Critic (A2C)
