@@ -12,14 +12,18 @@ from gymnasium.experimental.vector.vector_env import (
 
 
 __all__ = [
-    # Vector Environments
+    # Core
     "VectorEnv",
-    "SyncVectorEnv",
-    # Core Vector Wrappers
     "VectorWrapper",
+    # Basic wrappers
     "VectorObservationWrapper",
     "VectorActionWrapper",
     "VectorRewardWrapper",
+    # Vector implementations
+    "SyncVectorEnv",
+    # "AsyncVectorEnv",
+    # "FunctionalJaxVectorEnv",
     # Folders
     "wrappers",
+    # "utils",
 ]

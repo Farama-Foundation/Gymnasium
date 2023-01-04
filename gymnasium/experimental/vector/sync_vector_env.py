@@ -1,7 +1,8 @@
-"""A synchronous vector environment."""
+"""A synchronous vector environment implementation, equivalent to for loop through a number of environments."""
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any, Callable, Iterable, Sequence
 
 import numpy as np
@@ -49,7 +50,6 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
         self.metadata = self.envs[0].metadata
         self.render_mode = render_mode
-        # self.spec = ??
 
         assert len(envs) > 0
         self.single_observation_space: Space[ObsType] = self.envs[0].observation_space
@@ -110,7 +110,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
             obs[env_num] = env_obs
             info = self.add_dict_info(info, env_info, env_num)
 
-        obs = concatenate(self.single_observation_space, obs, self._obs_array)
+        obs = deepcopy(concatenate(self.single_observation_space, obs, self._obs_array))
         return obs, info
 
     def step(
@@ -146,7 +146,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
             info = self.add_dict_info(info, env_info, env_num)
 
-        obs = concatenate(self.single_observation_space, obs, self._obs_array)
+        obs = deepcopy(concatenate(self.single_observation_space, obs, self._obs_array))
         assert all(reward is not None for reward in rewards)
         rewards = np.array(rewards)
         self._reset_envs = np.logical_or(terminations, truncations)

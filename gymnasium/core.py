@@ -223,7 +223,7 @@ class Env(Generic[ObsType, ActType]):
         """Support with-statement for the environment."""
         return self
 
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> bool:
+    def __exit__(self, *args: Any):
         """Support with-statement for the environment and closes the environment."""
         self.close()
         # propagate exception
