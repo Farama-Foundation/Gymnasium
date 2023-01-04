@@ -7,6 +7,7 @@ from typing import Union
 
 from gymnasium import error
 from gymnasium.envs.registration import EnvSpec
+from gymnasium.logger import warn
 from gymnasium.wrapperspec import WrapperSpec
 
 
@@ -22,7 +23,7 @@ def serialise_spec_stack(stack: "tuple[Union[WrapperSpec, EnvSpec]]") -> str:
     num_layers = len(stack)
     stack_json = {}
     for i, spec in enumerate(stack):
-        spec = _serialise_callable(spec)
+        spec = _warn_callable(spec)
         if i == num_layers - 1:
             if isinstance(spec, WrapperSpec) or not isinstance(
                 spec, EnvSpec
@@ -42,8 +43,8 @@ def serialise_spec_stack(stack: "tuple[Union[WrapperSpec, EnvSpec]]") -> str:
     return stack_json
 
 
-def _serialise_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
-    """Converts a spec's lambda functions to a string representation.
+def _warn_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
+    """Warns the user about serialisation failing if the spec contains a callable.
 
     Args:
         spec: An environment or wrapper specification.
@@ -53,22 +54,8 @@ def _serialise_callable(spec: Union[WrapperSpec, EnvSpec]) -> dict:
     """
     for k, v in spec.kwargs.items():
         if callable(v):
-            try:
-                str_repr = (
-                    str(inspect.getsourcelines(v)[0]).strip("['\\n']").split(" = ")[1]
-                )  # https://stackoverflow.com/a/30984012
-            except OSError:
-                raise error.Error(
-                    "The attempted seialisation of a callable failed. This is likely due to env.spec_stack being called twice, which for technical reasons doesn't work. Please modify your code to only call env.spec_stack once (you can save that to a variable and repeatedly use that)."
-                )
-            found_callable = re.search(r", (.*)\)$", str_repr)
-            if found_callable is not None:
-                str_repr = found_callable.group(1)
-            else:
-                raise error.Error(
-                    "The attempted seialisation of a callable failed. This is likely due to env.spec_stack being called twice, which for technical reasons doesn't work. Please modify your code to only call env.spec_stack once (you can save that to a variable and repeatedly use that)."
-                )
-            spec.kwargs[k] = str_repr
+            warn("Callable found in environment specification stack. This likely comes from a wrapper that inputs a function. "
+                 "Currently, Gymnasium does not support serialising callables. This will be fixed in a future release.")
     return spec
 
 
@@ -95,16 +82,6 @@ def deserialise_spec_stack(
                     if type(x) == list:
                         spec["kwargs"][k][i] = tuple(x)
                 spec["kwargs"][k] = tuple(v)
-
-        # search for lambda functions (as strings) and convert them back to callables
-        for k, v in spec["kwargs"].items():
-            if type(v) == str and v[:7] == "lambda ":
-                if eval_ok:
-                    spec["kwargs"][k] = eval(v)
-                else:
-                    raise error.Error(
-                        "Cannot eval lambda functions. Set eval_ok=True to allow this."
-                    )
 
         if name == "raw_env":
             for key in [
