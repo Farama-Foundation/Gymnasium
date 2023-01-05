@@ -68,8 +68,8 @@ class SyncVectorEnv(VectorEnv):
             self.single_observation_space, n=self.num_envs, fn=np.zeros
         )
         self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
-        self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
-        self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._terminateds = np.zeros((self.num_envs,), dtype=bool)
+        self._truncateds = np.zeros((self.num_envs,), dtype=bool)
         self._actions = None
 
     def seed(self, seed: Optional[Union[int, Sequence[int]]] = None):

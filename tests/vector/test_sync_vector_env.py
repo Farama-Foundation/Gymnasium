@@ -66,12 +66,12 @@ def test_step_sync_vector_env(use_single_action_space):
     assert rewards.size == 8
 
     assert isinstance(terminateds, np.ndarray)
-    assert terminateds.dtype == np.bool_
+    assert terminateds.dtype == bool
     assert terminateds.ndim == 1
     assert terminateds.size == 8
 
     assert isinstance(truncateds, np.ndarray)
-    assert truncateds.dtype == np.bool_
+    assert truncateds.dtype == bool
     assert truncateds.ndim == 1
     assert truncateds.size == 8
 

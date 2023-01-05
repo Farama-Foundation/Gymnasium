@@ -342,8 +342,8 @@ class AsyncVectorEnv(VectorEnv):
         return (
             deepcopy(self.observations) if self.copy else self.observations,
             np.array(rewards),
-            np.array(terminateds, dtype=np.bool_),
-            np.array(truncateds, dtype=np.bool_),
+            np.array(terminateds, dtype=bool),
+            np.array(truncateds, dtype=bool),
             infos,
         )
 
