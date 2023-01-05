@@ -5,6 +5,12 @@ import pytest
 
 import gymnasium as gym
 
+def test_stacked_box():
+    """Tests that sequence with a feature space of Box allows stacked np arrays."""
+    space = gym.spaces.Sequence(gym.spaces.Box(0, 1))
+    sample = np.random.rand(5, 1)
+    assert space.contains(sample)
+
 
 def test_sample():
     """Tests the sequence sampling works as expects and the errors are correctly raised."""
