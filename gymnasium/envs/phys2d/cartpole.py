@@ -249,13 +249,8 @@ class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
         env = CartPoleFunctional(**kwargs)
         env.transform(jax.jit)
 
-        action_space = env.action_space
-        observation_space = env.observation_space
-
         super().__init__(
             env,
-            observation_space=observation_space,
-            action_space=action_space,
             metadata=self.metadata,
             render_mode=render_mode,
         )
