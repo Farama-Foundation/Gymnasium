@@ -8,6 +8,7 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
+from gymnasium.spaces import Box
 from gymnasium.spaces.space import Space
 
 
@@ -119,9 +120,19 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        return isinstance(x, collections.abc.Sequence) and all(
+        # check for every other feature_space
+        if not isinstance(x, collections.abc.Sequence) and all(
             self.feature_space.contains(item) for item in x
-        )
+        ):
+            return True
+
+        # check specifically for box spaces to allow for stacked np arrays
+        if not isinstance(x, collections.abc.Iterable):
+            return False
+        if not isinstance(self.feature_space, Box):
+            return False
+        if all(self.feature_space.contains(el) for el in x):
+            return True
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
