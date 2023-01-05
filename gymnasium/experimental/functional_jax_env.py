@@ -9,9 +9,9 @@ import jax.random as jrng
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import Space
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
 from gymnasium.utils import seeding
 from gymnasium.vector.utils import batch_space
 
@@ -25,8 +25,6 @@ class FunctionalJaxEnv(gym.Env):
     def __init__(
         self,
         func_env: FuncEnv,
-        observation_space: Space,
-        action_space: Space,
         metadata: dict[str, Any] | None = None,
         render_mode: str | None = None,
         reward_range: tuple[float, float] = (-float("inf"), float("inf")),
@@ -38,8 +36,8 @@ class FunctionalJaxEnv(gym.Env):
 
         self.func_env = func_env
 
-        self.observation_space = observation_space
-        self.action_space = action_space
+        self.observation_space = func_env.observation_space
+        self.action_space = func_env.action_space
 
         self.metadata = metadata
         self.render_mode = render_mode
@@ -71,7 +69,7 @@ class FunctionalJaxEnv(gym.Env):
         obs = self.func_env.observation(self.state)
         info = self.func_env.state_info(self.state)
 
-        obs = _convert_jax_to_numpy(obs)
+        obs = jax_to_numpy(obs)
 
         return obs, info
 
@@ -94,7 +92,7 @@ class FunctionalJaxEnv(gym.Env):
         info = self.func_env.step_info(self.state, action, next_state)
         self.state = next_state
 
-        observation = _convert_jax_to_numpy(observation)
+        observation = jax_to_numpy(observation)
 
         return observation, float(reward), bool(terminated), False, info
 
@@ -125,8 +123,6 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         self,
         func_env: FuncEnv,
         num_envs: int,
-        observation_space: Space,
-        action_space: Space,
         time_limit: int = 0,
         metadata: dict[str, Any] | None = None,
         render_mode: str | None = None,
@@ -139,8 +135,14 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
             metadata = {}
         self.func_env = func_env
         self.num_envs = num_envs
-        self.observation_space = batch_space(observation_space, self.num_envs)
-        self.action_space = batch_space(action_space, self.num_envs)
+        self.single_observation_space = func_env.observation_space
+        self.single_action_space = func_env.action_space
+
+        self.observation_space = batch_space(
+            self.single_observation_space, self.num_envs
+        )
+        self.action_space = batch_space(self.single_action_space, self.num_envs)
+
         self.metadata = metadata
         self.render_mode = render_mode
         self.reward_range = reward_range
@@ -179,7 +181,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
 
-        obs = _convert_jax_to_numpy(obs)
+        obs = jax_to_numpy(obs)
 
         return obs, info
 
@@ -220,7 +222,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
             self.steps = self.steps.at[to_reset].set(0)
 
         observation = self.func_env.observation(next_state)
-        observation = _convert_jax_to_numpy(observation)
+        observation = jax_to_numpy(observation)
 
         return observation, reward, terminated, truncated, info
 
@@ -239,20 +241,3 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         if self.render_state is not None:
             self.func_env.render_close(self.render_state)
             self.render_state = None
-
-
-def _convert_jax_to_numpy(element: Any):
-    """Convert a jax observation/action to a numpy array, or a numpy-based container.
-
-    Required as all tests assume that data is in numpy arrays, to be removed soon.
-    """
-    if isinstance(element, jnp.ndarray):
-        return np.asarray(element)
-    elif isinstance(element, tuple):
-        return tuple(_convert_jax_to_numpy(e) for e in element)
-    elif isinstance(element, list):
-        return [_convert_jax_to_numpy(e) for e in element]
-    elif isinstance(element, dict):
-        return {k: _convert_jax_to_numpy(v) for k, v in element.items()}
-    else:
-        raise TypeError(f"Cannot convert {element} to numpy")
