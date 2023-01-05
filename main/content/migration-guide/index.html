@@ -515,6 +515,11 @@ However, environments that have reasons for episode truncation rather than termi
 For users looping through an environment, they should modify <code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">=</span> <span class="pre">terminated</span> <span class="pre">or</span> <span class="pre">truncated</span></code> as is show in the example code.
 For training libraries, the primary difference is to change <code class="docutils literal notranslate"><span class="pre">done</span></code> to <code class="docutils literal notranslate"><span class="pre">terminated</span></code>, indicating whether bootstrapping should or shouldn’t happen.</p>
 </section>
+<section id="timelimit-wrapper">
+<h2>TimeLimit Wrapper<a class="headerlink" href="#timelimit-wrapper" title="Permalink to this heading">#</a></h2>
+<p>In v21, the <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code> wrapper added an extra key in the <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code> whenever the agent reached the time limit without reaching a terminal state.</p>
+<p>In v26, this information is instead communicated through the <cite>truncated</cite> return value described in the previous section, which is <cite>True</cite> if the agent reaches the time limit, whether or not it reaches a terminal state. The old dictionary entry is equivalent to <code class="docutils literal notranslate"><span class="pre">truncated</span> <span class="pre">and</span> <span class="pre">not</span> <span class="pre">terminated</span></code></p>
+</section>
 <section id="environment-render">
 <h2>Environment Render<a class="headerlink" href="#environment-render" title="Permalink to this heading">#</a></h2>
 <p>In v26, a new render API was introduced such that the render mode is fixed at initialisation as some environments don’t allow on-the-fly render mode changes. Therefore, users should now specify the <a class="reference internal" href="../../api/env/#gymnasium.Env.render_mode" title="gymnasium.Env.render_mode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">render_mode</span></code></a> within <code class="docutils literal notranslate"><span class="pre">gym.make</span></code> as shown in the v26 example code above.</p>
@@ -595,6 +600,7 @@ For training libraries, the primary difference is to change <code class="docutil
 <li><a class="reference internal" href="#seed-and-random-number-generator">Seed and random number generator</a></li>
 <li><a class="reference internal" href="#environment-reset">Environment Reset</a></li>
 <li><a class="reference internal" href="#environment-step">Environment Step</a></li>
+<li><a class="reference internal" href="#timelimit-wrapper">TimeLimit Wrapper</a></li>
 <li><a class="reference internal" href="#environment-render">Environment Render</a></li>
 <li><a class="reference internal" href="#removed-code">Removed code</a></li>
 </ul>
