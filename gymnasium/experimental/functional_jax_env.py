@@ -86,7 +86,7 @@ class FunctionalJaxEnv(gym.Env):
         rng, self.rng = jrng.split(self.rng)
 
         next_state = self.func_env.transition(self.state, action, rng)
-        observation = self.func_env.observation(self.state)
+        observation = self.func_env.observation(next_state)
         reward = self.func_env.reward(self.state, action, next_state)
         terminated = self.func_env.terminal(next_state)
         info = self.func_env.step_info(self.state, action, next_state)
