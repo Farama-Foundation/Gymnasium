@@ -8,7 +8,6 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from gymnasium.spaces import Box
 from gymnasium.spaces.space import Space
 
 
