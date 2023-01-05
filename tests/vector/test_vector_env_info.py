@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental.sync_vector_env import SyncVectorEnv
+from gymnasium.experimental.vector.sync_vector_env import SyncVectorEnv
 from tests.vector.utils import make_env
 
 

@@ -11,8 +11,8 @@ from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle
 
 
@@ -201,13 +201,8 @@ class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
         env = PendulumFunctional(**kwargs)
         env.transform(jax.jit)
 
-        action_space = env.action_space
-        observation_space = env.observation_space
-
         super().__init__(
             env,
-            observation_space=observation_space,
-            action_space=action_space,
             metadata=self.metadata,
             render_mode=render_mode,
         )

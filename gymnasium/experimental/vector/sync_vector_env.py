@@ -5,7 +5,7 @@ from typing import Any, Callable, Iterator, List, Optional, Union
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.experimental.vector_env import VectorEnv
+from gymnasium.experimental.vector.vector_env import VectorEnv
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.utils.spaces import batch_space
 
