@@ -119,7 +119,8 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        return isinstance(x, collections.abc.Sequence) and all(
+        # by definition, any sequence is an iterable
+        return isinstance(x, collections.abc.Iterable) and all(
             self.feature_space.contains(item) for item in x
         )
 
