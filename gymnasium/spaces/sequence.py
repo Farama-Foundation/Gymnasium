@@ -120,12 +120,9 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         # by definition, any sequence is an iterable
-        if not isinstance(x, collections.abc.Iterable):
-            return False
-        if not all(self.feature_space.contains(item) for item in x):
-            return False
-
-        return True
+        return isinstance(x, collections.abc.Iterable) and all(
+            self.feature_space.contains(item) for item in x
+        )
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
