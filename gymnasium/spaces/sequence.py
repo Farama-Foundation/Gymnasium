@@ -120,18 +120,10 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        # check for every other feature_space
-        if isinstance(x, collections.abc.Sequence) and all(
-            self.feature_space.contains(item) for item in x
-        ):
-            return True
-
-        # check specifically for box spaces to allow for stacked np arrays
+        # by definition, any sequence is an iterable
         if not isinstance(x, collections.abc.Iterable):
             return False
-        if not isinstance(self.feature_space, Box):
-            return False
-        if not all(self.feature_space.contains(el) for el in x):
+        if not all(self.feature_space.contains(item) for item in x):
             return False
 
         return True
