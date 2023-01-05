@@ -132,7 +132,6 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
         if not isinstance(self.feature_space, Box):
             return False
         if not all(self.feature_space.contains(el) for el in x):
-            print("here")
             return False
 
         return True
