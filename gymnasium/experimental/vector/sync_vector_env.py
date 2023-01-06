@@ -1,19 +1,20 @@
-"""A synchronous vector environment."""
+"""A synchronous vector environment implementation, equivalent to for loop through a number of environments."""
+
+from __future__ import annotations
+
 from copy import deepcopy
-from typing import Any, Callable, Iterator, List, Optional, Union
+from typing import Any, Callable, Iterable, Sequence
 
 import numpy as np
 
-from gymnasium import Env
-from gymnasium.experimental.vector.vector_env import VectorEnv
-from gymnasium.vector.utils import concatenate, create_empty_array, iterate
-from gymnasium.vector.utils.spaces import batch_space
+from gymnasium import Space
+from gymnasium.core import ActType, Env, ObsType, RenderFrame
+from gymnasium.experimental.vector import VectorEnv
+from gymnasium.experimental.vector.vector_env import VectorActType, VectorObsType
+from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
-__all__ = ["SyncVectorEnv"]
-
-
-class SyncVectorEnv(VectorEnv):
+class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
     """Vectorized environment that serially runs multiple environments.
 
     Example::
@@ -30,157 +31,177 @@ class SyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Iterator[Callable[[], Env]],
-        copy: bool = True,
+        envs: Iterable[Callable[[], Env[ObsType, ActType]]]
+        | Sequence[Env[ObsType, ActType]],
+        render_mode: str | None = None,
     ):
         """Vectorized environment that serially runs multiple environments.
 
         Args:
-            env_fns: iterable of callable functions that create the environments.
-            copy: If ``True``, then the :meth:`reset` and :meth:`step` methods return a copy of the observations.
-
-        Raises:
-            RuntimeError: If the observation space of some sub-environment does not match observation_space
-                (or, by default, the observation space of the first sub-environment).
+            envs: A sequence of environments or functions that generate environments
+            render_mode: The render_mode of the environment
         """
-        super().__init__()
-        self.env_fns = env_fns
-        self.envs = [env_fn() for env_fn in env_fns]
+        envs = tuple(envs)
+        if all(callable(env_fn) for env_fn in envs):
+            envs = [env_fn() for env_fn in envs]
+        assert all(isinstance(env, Env) for env in envs)
+        self.envs: Sequence[Env[ObsType, ActType]] = envs
         self.num_envs = len(self.envs)
-        self.copy = copy
+
         self.metadata = self.envs[0].metadata
+        self.render_mode = render_mode
 
-        self.spec = self.envs[0].spec
-
-        self.single_observation_space = self.envs[0].observation_space
-        self.single_action_space = self.envs[0].action_space
-
+        assert len(envs) > 0
+        self.single_observation_space: Space[ObsType] = self.envs[0].observation_space
+        assert all(
+            env.observation_space == self.single_observation_space for env in self.envs
+        )
+        self.single_action_space: Space[ActType] = self.envs[0].action_space
+        assert all(env.action_space == self.single_action_space for env in self.envs)
         self.observation_space = batch_space(
             self.single_observation_space, self.num_envs
         )
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
-        self._check_spaces()
-        self.observations = create_empty_array(
-            self.single_observation_space, n=self.num_envs, fn=np.zeros
+        assert render_mode != "human"
+        if render_mode is not None and render_mode.startswith("single_"):
+            assert self.envs[0].render_mode == render_mode[len("single_") :] and all(
+                env.render_mode is None for env in self.envs[1:]
+            )
+        else:
+            assert all(env.render_mode == render_mode for env in self.envs)
+
+        self._obs_array = create_empty_array(
+            self.single_observation_space, self.num_envs
         )
-        self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
-        self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
-        self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._reset_options: dict[str, Any] | None = None
+        self._reset_envs: np.ndarray = np.full(self.num_envs, dtype=bool)
 
     def reset(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
-        """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
+        *,
+        seed: int | Sequence[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[VectorObsType, dict[str, Any]]:
+        """Resets all the sub-environments.
 
         Args:
-            seed: The reset environment seed
-            options: Option information for the environment reset
+            seed: Resets the environments with a set seed, if an integer is provided, sub-environments are reset with
+               seeds [seed + 0, seed + 1, ..., seed + i, ..., seed + self.num_envs - 1]
+            options: The options used to reset all the sub-environments with. This option is saved and used on each
+               autoreset.
 
         Returns:
-            The reset observation of the environment and reset information
+            The reset observation and info of the environment
         """
+        self._reset_options = options
+
         if seed is None:
             seed = [None for _ in range(self.num_envs)]
-        if isinstance(seed, int):
+        elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert len(seed) == self.num_envs
+        assert isinstance(seed, Sequence) and len(seed) == self.num_envs
+        assert all(isinstance(sub_seed, int) or sub_seed is None for sub_seed in seed)
 
-        self._terminateds[:] = False
-        self._truncateds[:] = False
-        observations = []
-        infos = {}
-        for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
+        obs, info = [None for _ in range(self.num_envs)], {}
+        for env_num, (env, env_seed) in enumerate(zip(self.envs, seed)):
+            env_obs, env_info = env.reset(seed=env_seed, options=self._reset_options)
 
-            kwargs = {}
-            if single_seed is not None:
-                kwargs["seed"] = single_seed
-            if options is not None:
-                kwargs["options"] = options
+            obs[env_num] = env_obs
+            info = self.add_dict_info(info, env_info, env_num)
 
-            observation, info = env.reset(**kwargs)
-            observations.append(observation)
-            infos = self._add_info(infos, info, i)
+        obs = deepcopy(concatenate(self.single_observation_space, obs, self._obs_array))
+        return obs, info
 
-        self.observations = concatenate(
-            self.single_observation_space, observations, self.observations
-        )
-        return (deepcopy(self.observations) if self.copy else self.observations), infos
-
-    def step(self, actions):
+    def step(
+        self, actions: VectorActType
+    ) -> tuple[VectorObsType, np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
             The batched environment step results
         """
-        actions = iterate(self.action_space, actions)
+        env_actions = iterate(self.action_space, actions)
 
-        observations, infos = [], {}
-        for i, (env, action) in enumerate(zip(self.envs, actions)):
+        obs = [None for _ in range(self.num_envs)]
+        rewards = [0 for _ in range(self.num_envs)]
+        terminations = np.zeros(self.num_envs, dtype=bool)
+        truncations = np.zeros(self.num_envs, dtype=bool)
+        info = {}
 
-            (
-                observation,
-                self._rewards[i],
-                self._terminateds[i],
-                self._truncateds[i],
-                info,
-            ) = env.step(action)
+        for env_num, (env, action) in enumerate(zip(self.envs, env_actions)):
+            if self._reset_envs[env_num]:
+                env_obs, env_info = env.reset(options=self._reset_options)
 
-            if self._terminateds[i] or self._truncateds[i]:
-                old_observation, old_info = observation, info
-                observation, info = env.reset()
-                info["final_observation"] = old_observation
-                info["final_info"] = old_info
-            observations.append(observation)
-            infos = self._add_info(infos, info, i)
-        self.observations = concatenate(
-            self.single_observation_space, observations, self.observations
-        )
-
-        return (
-            deepcopy(self.observations) if self.copy else self.observations,
-            np.copy(self._rewards),
-            np.copy(self._terminateds),
-            np.copy(self._truncateds),
-            infos,
-        )
-
-    def call(self, name, *args, **kwargs) -> tuple:
-        """Calls the method with name and applies args and kwargs.
-
-        Args:
-            name: The method name
-            *args: The method args
-            **kwargs: The method kwargs
-
-        Returns:
-            Tuple of results
-        """
-        results = []
-        for env in self.envs:
-            function = getattr(env, name)
-            if callable(function):
-                results.append(function(*args, **kwargs))
+                rewards[env_num] = 0
+                terminations[env_num], truncations[env_num] = False, False
             else:
-                results.append(function)
+                (
+                    env_obs,
+                    rewards[env_num],
+                    terminations[env_num],
+                    truncations[env_num],
+                    env_info,
+                ) = env.step(action)
+
+            info = self.add_dict_info(info, env_info, env_num)
+
+        obs = deepcopy(concatenate(self.single_observation_space, obs, self._obs_array))
+        assert all(reward is not None for reward in rewards)
+        rewards = np.array(rewards)
+        self._reset_envs = np.logical_or(terminations, truncations)
+
+        return obs, rewards, terminations, truncations, info
+
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
+        """Renders the sub-environments."""
+        assert self.render_mode is not None
+        if self.render_mode.startswith("single_"):
+            return self.envs[0].render()
+        else:
+            return [env.render() for env in self.envs]
+
+    def close(self):
+        """Closes each sub-environments."""
+        for env in self.envs:
+            env.close()
+        super().close()
+
+    def call(
+        self, name: str, *args: list[Any], **kwargs: dict[str, Any]
+    ) -> tuple[Any, ...]:
+        """Calls a function in each sub-environment with name using args and kwargs return a tuple of results."""
+        results = []
+        for i, env in enumerate(self.envs):
+            try:
+                result = getattr(env, name)
+            except AttributeError as e:
+                raise AttributeError(
+                    f"Environment {i} is missing attribute {name}. Full error: {e}"
+                )
+
+            if callable(result):
+                results.append(result(*args, **kwargs))
+            else:
+                results.append(result)
 
         return tuple(results)
 
-    def get_attr(self, name: str):
-        """Get a property from each parallel environment.
+    def get_attr(self, name: str) -> tuple[Any, ...]:
+        """Gets the attribute from each sub-environment."""
+        results = []
+        for i, env in enumerate(self.envs):
+            try:
+                results.append(getattr(env, name))
+            except AttributeError as e:
+                raise AttributeError(
+                    f"Environment {i} is missing attribute {name}. Full error: {e}"
+                )
 
-        Args:
-            name (str): Name of the property to be get from each individual environment.
+        return tuple(results)
 
-        Returns:
-            The property with name
-        """
-        return self.call(name)
-
-    def set_attr(self, name: str, values: Union[list, tuple, Any]):
-        """Sets an attribute of the sub-environments.
+    def set_attr(self, name: str, values: list | tuple | Any):
+        """Sets an attribute of each sub-environments.
 
         Args:
             name: The property name to change
@@ -202,25 +223,3 @@ class SyncVectorEnv(VectorEnv):
 
         for env, value in zip(self.envs, values):
             setattr(env, name, value)
-
-    def close_extras(self, **kwargs):
-        """Close the environments."""
-        [env.close() for env in self.envs]
-
-    def _check_spaces(self) -> bool:
-        for env in self.envs:
-            if not (env.observation_space == self.single_observation_space):
-                raise RuntimeError(
-                    "Some environments have an observation space different from "
-                    f"`{self.single_observation_space}`. In order to batch observations, "
-                    "the observation spaces from all environments must be equal."
-                )
-
-            if not (env.action_space == self.single_action_space):
-                raise RuntimeError(
-                    "Some environments have an action space different from "
-                    f"`{self.single_action_space}`. In order to batch actions, the "
-                    "action spaces from all environments must be equal."
-                )
-
-        return True
