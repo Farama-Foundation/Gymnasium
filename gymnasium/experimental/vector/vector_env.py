@@ -39,7 +39,9 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
 
     - :attr:`num_envs` - The number of sub-environment in the vector environment
     - :attr:`observation_space` - The batched observation space of the vector environment
+    - :attr:`single_observation_space` - The observation space of a single sub-environment
     - :attr:`action_space` - The batched action space of the vector environment
+    - :attr:`single_action_space` - The action space of a single sub-environment
 
     Note:
         The info parameter of :meth:`reset` and :meth:`step` was originally implemented before OpenAI Gym v25 was a list

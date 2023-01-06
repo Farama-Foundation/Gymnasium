@@ -356,7 +356,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
 
     def step(
         self, action: WrapperActType
-    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict]:
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data."""
         return self.env.step(action)
 

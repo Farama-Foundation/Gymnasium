@@ -1,4 +1,7 @@
-from typing import Any, Dict, Optional
+"""Tests the functional api."""
+from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 
@@ -6,29 +9,41 @@ from gymnasium.experimental import FuncEnv
 
 
 class GenericTestFuncEnv(FuncEnv):
-    def __init__(self, options: Optional[Dict[str, Any]] = None):
+    """Generic testing functional environment."""
+
+    def __init__(self, options: dict[str, Any] | None = None):
+        """Constructor that allows generic options to be set on the environment."""
         super().__init__(options)
 
     def initial(self, rng: Any) -> np.ndarray:
+        """Testing initial function."""
         return np.array([0, 0], dtype=np.float32)
 
     def observation(self, state: np.ndarray) -> np.ndarray:
+        """Testing observation function."""
         return state
 
     def transition(self, state: np.ndarray, action: int, rng: None) -> np.ndarray:
+        """Testing transition function."""
         return state + np.array([0, action], dtype=np.float32)
 
     def reward(self, state: np.ndarray, action: int, next_state: np.ndarray) -> float:
+        """Testing reward function."""
         return 1.0 if next_state[1] > 0 else 0.0
 
     def terminal(self, state: np.ndarray) -> bool:
+        """Testing terminal function."""
         return state[1] > 0
 
 
-def test_api():
+def test_functional_api():
+    """Tests the core functional api specification using a generic testing environment."""
     env = GenericTestFuncEnv()
+
     state = env.initial(None)
+
     obs = env.observation(state)
+
     assert state.shape == (2,)
     assert state.dtype == np.float32
     assert obs.shape == (2,)

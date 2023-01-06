@@ -1,8 +1,8 @@
-"""
-Implementation of a Jax-accelerated pendulum environment.
-"""
+"""Implementation of a Jax-accelerated pendulum environment."""
+from __future__ import annotations
+
 from os import path
-from typing import Optional, Tuple, Union
+from typing import Any, Optional, Tuple
 
 import jax
 import jax.numpy as jnp
@@ -11,8 +11,8 @@ from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle
 
 
@@ -22,7 +22,7 @@ RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]] 
 class PendulumFunctional(
     FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
 ):
-    """Pendulum but in jax and functional."""
+    """Pendulum but in jax and functional structure."""
 
     max_speed = 8
     max_torque = 2.0
@@ -44,7 +44,7 @@ class PendulumFunctional(
         return jax.random.uniform(key=rng, minval=-high, maxval=high, shape=high.shape)
 
     def transition(
-        self, state: jnp.ndarray, action: Union[int, jnp.ndarray], rng: None = None
+        self, state: jnp.ndarray, action: int | jnp.ndarray, rng: None = None
     ) -> jnp.ndarray:
         """Pendulum transition."""
         th, thdot = state  # th := theta
@@ -65,10 +65,12 @@ class PendulumFunctional(
         return new_state
 
     def observation(self, state: jnp.ndarray) -> jnp.ndarray:
+        """Generates an observation based on the state."""
         theta, thetadot = state
         return jnp.array([jnp.cos(theta), jnp.sin(theta), thetadot])
 
     def reward(self, state: StateType, action: ActType, next_state: StateType) -> float:
+        """Generates the reward based on the state, action and next state."""
         th, thdot = state  # th := theta
         u = action
 
@@ -80,20 +82,22 @@ class PendulumFunctional(
         return -costs
 
     def terminal(self, state: StateType) -> bool:
+        """Determines if the state is a terminal state."""
         return False
 
     def render_image(
         self,
         state: StateType,
-        render_state: Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]],  # type: ignore  # noqa: F821
-    ) -> Tuple[RenderStateType, np.ndarray]:
+        render_state: tuple[pygame.Surface, pygame.time.Clock, float | None],  # type: ignore  # noqa: F821
+    ) -> tuple[RenderStateType, np.ndarray]:
+        """Renders an RGB image."""
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
         screen, clock, last_u = render_state
 
         surf = pygame.Surface((self.screen_dim, self.screen_dim))
@@ -159,12 +163,13 @@ class PendulumFunctional(
     def render_init(
         self, screen_width: int = 600, screen_height: int = 400
     ) -> RenderStateType:
+        """Initialises the render state."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
 
         pygame.init()
         screen = pygame.Surface((screen_width, screen_height))
@@ -172,33 +177,32 @@ class PendulumFunctional(
 
         return screen, clock, None
 
-    def render_close(self, render_state: RenderStateType) -> None:
+    def render_close(self, render_state: RenderStateType):
+        """Closes the render state."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
         pygame.display.quit()
         pygame.quit()
 
 
 class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
+    """Jax-based pendulum environment using the functional version as base."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 
-    def __init__(self, render_mode: Optional[str] = None, **kwargs):
+    def __init__(self, render_mode: str | None = None, **kwargs: Any):
+        """Constructor where the kwargs are passed to the base environment to modify the parameters."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
+
         env = PendulumFunctional(**kwargs)
         env.transform(jax.jit)
-        action_space = env.action_space
-        observation_space = env.observation_space
-        metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 
         super().__init__(
             env,
-            observation_space=observation_space,
-            action_space=action_space,
-            metadata=metadata,
+            metadata=self.metadata,
             render_mode=render_mode,
         )

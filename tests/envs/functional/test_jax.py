@@ -98,7 +98,7 @@ def test_vmap(env_class):
         assert reward.shape == (num_envs,)
         assert reward.dtype == jnp.float32
         assert terminal.shape == (num_envs,)
-        assert terminal.dtype == np.bool
+        assert terminal.dtype == np.bool_
         assert isinstance(obs, jnp.ndarray)
         assert obs.dtype == jnp.float32
 

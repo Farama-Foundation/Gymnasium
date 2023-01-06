@@ -1,3 +1,6 @@
+"""Functions for registering environments within gymnasium using public functions ``make``, ``register`` and ``spec``."""
+from __future__ import annotations
+
 import contextlib
 import copy
 import difflib
@@ -8,18 +11,7 @@ import sys
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import (
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Sequence,
-    SupportsFloat,
-    Tuple,
-    Union,
-    overload,
-)
+from typing import Any, Callable, Iterable, Sequence, SupportsFloat, overload
 
 import numpy as np
 
@@ -44,7 +36,8 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-from gymnasium import Env, error, logger
+import gymnasium as gym
+from gymnasium import Env, Wrapper, error, logger
 
 
 ENV_ID_RE = re.compile(
@@ -53,7 +46,7 @@ ENV_ID_RE = re.compile(
 
 
 def load(name: str) -> callable:
-    """Loads an environment with name and returns an environment creation function
+    """Loads an environment with name and returns an environment creation function.
 
     Args:
         name: The environment name
@@ -67,7 +60,7 @@ def load(name: str) -> callable:
     return fn
 
 
-def parse_env_id(id: str) -> Tuple[Optional[str], str, Optional[int]]:
+def parse_env_id(id: str) -> tuple[str | None, str, int | None]:
     """Parse environment ID string format.
 
     This format is true today, but it's *not* an official spec.
@@ -98,7 +91,7 @@ def parse_env_id(id: str) -> Tuple[Optional[str], str, Optional[int]]:
     return namespace, name, version
 
 
-def get_env_id(ns: Optional[str], name: str, version: Optional[int]) -> str:
+def get_env_id(ns: str | None, name: str, version: int | None) -> str:
     """Get the full env ID given a name and (optional) version and namespace. Inverse of :meth:`parse_env_id`.
 
     Args:
@@ -109,7 +102,6 @@ def get_env_id(ns: Optional[str], name: str, version: Optional[int]) -> str:
     Returns:
         The environment id
     """
-
     full_name = name
     if version is not None:
         full_name += f"-v{version}"
@@ -124,6 +116,7 @@ class EnvSpec:
 
     * id: The string used to create the environment with `gym.make`
     * entry_point: The location of the environment to create from
+    * vector_entry_point: The location of the vectorized environment to create from
     * reward_threshold: The reward threshold for completing the environment.
     * nondeterministic: If the observation of an environment cannot be repeated with the same initial state, random number generator state and actions.
     * max_episode_steps: The max number of steps that the environment can take before truncation
@@ -134,14 +127,15 @@ class EnvSpec:
     """
 
     id: str
-    entry_point: Union[Callable, str]
+    entry_point: Callable | str | None = None
+    vector_entry_point: Callable | str | None = None
 
     # Environment attributes
-    reward_threshold: Optional[float] = field(default=None)
+    reward_threshold: float | None = field(default=None)
     nondeterministic: bool = field(default=False)
 
     # Wrappers
-    max_episode_steps: Optional[int] = field(default=None)
+    max_episode_steps: int | None = field(default=None)
     order_enforce: bool = field(default=True)
     autoreset: bool = field(default=False)
     disable_env_checker: bool = field(default=False)
@@ -151,20 +145,22 @@ class EnvSpec:
     kwargs: dict = field(default_factory=dict)
 
     # post-init attributes
-    namespace: Optional[str] = field(init=False)
+    namespace: str | None = field(init=False)
     name: str = field(init=False)
-    version: Optional[int] = field(init=False)
+    version: int | None = field(init=False)
 
     def __post_init__(self):
+        """Calls after the spec is created to extract the namespace, name and version from the id."""
         # Initialize namespace, name, version
         self.namespace, self.name, self.version = parse_env_id(self.id)
 
-    def make(self, **kwargs) -> Env:
+    def make(self, **kwargs: Any) -> Env:
+        """Calls ``make`` using the environment spec and any keyword arguments."""
         # For compatibility purposes
         return make(self, **kwargs)
 
 
-def _check_namespace_exists(ns: Optional[str]):
+def _check_namespace_exists(ns: str | None):
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
     if ns is None:
         return
@@ -186,7 +182,7 @@ def _check_namespace_exists(ns: Optional[str]):
     raise error.NamespaceNotFound(f"Namespace {ns} not found. {suggestion_msg}")
 
 
-def _check_name_exists(ns: Optional[str], name: str):
+def _check_name_exists(ns: str | None, name: str):
     """Check if an env exists in a namespace. If it doesn't, print a helpful error message."""
     _check_namespace_exists(ns)
     names = {spec_.name for spec_ in registry.values() if spec_.namespace == ns}
@@ -203,8 +199,9 @@ def _check_name_exists(ns: Optional[str], name: str):
     )
 
 
-def _check_version_exists(ns: Optional[str], name: str, version: Optional[int]):
+def _check_version_exists(ns: str | None, name: str, version: int | None):
     """Check if an env version exists in a namespace. If it doesn't, print a helpful error message.
+
     This is a complete test whether an environment identifier is valid, and will provide the best available hints.
 
     Args:
@@ -258,8 +255,9 @@ def _check_version_exists(ns: Optional[str], name: str, version: Optional[int]):
         )
 
 
-def find_highest_version(ns: Optional[str], name: str) -> Optional[int]:
-    version: List[int] = [
+def find_highest_version(ns: str | None, name: str) -> int | None:
+    """Finds the highest registered version of the environment in the registry."""
+    version: list[int] = [
         spec_.version
         for spec_ in registry.values()
         if spec_.namespace == ns and spec_.name == name and spec_.version is not None
@@ -268,6 +266,11 @@ def find_highest_version(ns: Optional[str], name: str) -> Optional[int]:
 
 
 def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
+    """Load modules (plugins) using the gymnasium entry points == to `entry_points`.
+
+    Args:
+        entry_point: The string for the entry point.
+    """
     # Load third-party environments
     for plugin in metadata.entry_points(group=entry_point):
         # Python 3.8 doesn't support plugin.module, plugin.attr
@@ -323,37 +326,37 @@ def make(id: EnvSpec, **kwargs) -> Env: ...
 # Classic control
 # ----------------------------------------
 @overload
-def make(id: Literal["CartPole-v0", "CartPole-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["CartPole-v0", "CartPole-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["MountainCar-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["MountainCar-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["MountainCarContinuous-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["Pendulum-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["Pendulum-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Acrobot-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 
 
 # Box2d
 # ----------------------------------------
 @overload
-def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["LunarLander-v2", "LunarLanderContinuous-v2"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["BipedalWalker-v3", "BipedalWalkerHardcore-v3"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 @overload
-def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, Sequence[SupportsFloat]]]: ...
+def make(id: Literal["CarRacing-v2"], **kwargs) -> Env[np.ndarray, np.ndarray | Sequence[SupportsFloat]]: ...
 
 
 # Toy Text
 # ----------------------------------------
 @overload
-def make(id: Literal["Blackjack-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Blackjack-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["FrozenLake-v1", "FrozenLake8x8-v1"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["FrozenLake-v1", "FrozenLake8x8-v1"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["CliffWalking-v0"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["CliffWalking-v0"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 @overload
-def make(id: Literal["Taxi-v3"], **kwargs) -> Env[np.ndarray, Union[np.ndarray, int]]: ...
+def make(id: Literal["Taxi-v3"], **kwargs) -> Env[np.ndarray, np.ndarray | int]: ...
 
 
 # Mujoco
@@ -376,8 +379,8 @@ def make(id: Literal[
 
 
 # Global registry of environments. Meant to be accessed through `register` and `make`
-registry: Dict[str, EnvSpec] = {}
-current_namespace: Optional[str] = None
+registry: dict[str, EnvSpec] = {}
+current_namespace: str | None = None
 
 
 def _check_spec_register(spec: EnvSpec):
@@ -423,6 +426,42 @@ def _check_spec_register(spec: EnvSpec):
         )
 
 
+def find_spec(id: str):
+    """Finds the relevant env spec for the given id."""
+    module, id = (None, id) if ":" not in id else id.split(":")
+    if module is not None:
+        try:
+            importlib.import_module(module)
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                f"{e}. Environment registration via importing a module failed. "
+                f"Check whether '{module}' contains env registration and can be imported."
+            )
+    spec_ = registry.get(id)
+
+    ns, name, version = parse_env_id(id)
+    latest_version = find_highest_version(ns, name)
+    if version is not None and latest_version is not None and latest_version > version:
+        logger.warn(
+            f"The environment {id} is out of date. You should consider "
+            f"upgrading to version `v{latest_version}`."
+        )
+    if version is None and latest_version is not None:
+        version = latest_version
+        new_env_id = get_env_id(ns, name, version)
+        spec_ = registry.get(new_env_id)
+        logger.warn(
+            f"Using the latest versioned environment `{new_env_id}` "
+            f"instead of the unversioned environment `{id}`."
+        )
+
+    if spec_ is None:
+        _check_version_exists(ns, name, version)
+        raise error.Error(f"No registered env with id: {id}")
+
+    return spec_
+
+
 def _check_metadata(metadata_: dict):
     if not isinstance(metadata_, dict):
         raise error.InvalidMetadata(
@@ -445,6 +484,7 @@ def _check_metadata(metadata_: dict):
 
 @contextlib.contextmanager
 def namespace(ns: str):
+    """Context manager for modifying the current namespace."""
     global current_namespace
     old_namespace = current_namespace
     current_namespace = ns
@@ -454,10 +494,11 @@ def namespace(ns: str):
 
 def register(
     id: str,
-    entry_point: Union[Callable, str],
-    reward_threshold: Optional[float] = None,
+    entry_point: Callable | str | None = None,
+    vector_entry_point: Callable | str | None = None,
+    reward_threshold: float | None = None,
     nondeterministic: bool = False,
-    max_episode_steps: Optional[int] = None,
+    max_episode_steps: int | None = None,
     order_enforce: bool = True,
     autoreset: bool = False,
     disable_env_checker: bool = False,
@@ -474,6 +515,7 @@ def register(
     Args:
         id: The environment id
         entry_point: The entry point for creating the environment
+        vector_entry_point: The entry point for creating the vectorized environment
         reward_threshold: The reward threshold considered to have learnt an environment
         nondeterministic: If the environment is nondeterministic (even with knowledge of the initial seed and all actions)
         max_episode_steps: The maximum number of episodes steps before truncation. Used by the Time Limit wrapper.
@@ -483,6 +525,10 @@ def register(
         apply_api_compatibility: If to apply the `StepAPICompatibility` wrapper.
         **kwargs: arbitrary keyword arguments which are passed to the environment constructor
     """
+    assert (
+        entry_point is not None or vector_entry_point is not None
+    ), "Either `entry_point` or `vector_entry_point` (or both) must be provided"
+
     global registry, current_namespace
     ns, name, version = parse_env_id(id)
 
@@ -505,6 +551,7 @@ def register(
     new_spec = EnvSpec(
         id=full_id,
         entry_point=entry_point,
+        vector_entry_point=vector_entry_point,
         reward_threshold=reward_threshold,
         nondeterministic=nondeterministic,
         max_episode_steps=max_episode_steps,
@@ -521,11 +568,11 @@ def register(
 
 
 def make(
-    id: Union[str, EnvSpec],
-    max_episode_steps: Optional[int] = None,
+    id: str | EnvSpec,
+    max_episode_steps: int | None = None,
     autoreset: bool = False,
-    apply_api_compatibility: Optional[bool] = None,
-    disable_env_checker: Optional[bool] = None,
+    apply_api_compatibility: bool | None = None,
+    disable_env_checker: bool | None = None,
     **kwargs,
 ) -> Env:
     """Create an environment according to the given ID.
@@ -555,40 +602,7 @@ def make(
     if isinstance(id, EnvSpec):
         spec_ = id
     else:
-        module, id = (None, id) if ":" not in id else id.split(":")
-        if module is not None:
-            try:
-                importlib.import_module(module)
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    f"{e}. Environment registration via importing a module failed. "
-                    f"Check whether '{module}' contains env registration and can be imported."
-                )
-        spec_ = registry.get(id)
-
-        ns, name, version = parse_env_id(id)
-        latest_version = find_highest_version(ns, name)
-        if (
-            version is not None
-            and latest_version is not None
-            and latest_version > version
-        ):
-            logger.warn(
-                f"The environment {id} is out of date. You should consider "
-                f"upgrading to version `v{latest_version}`."
-            )
-        if version is None and latest_version is not None:
-            version = latest_version
-            new_env_id = get_env_id(ns, name, version)
-            spec_ = registry.get(new_env_id)
-            logger.warn(
-                f"Using the latest versioned environment `{new_env_id}` "
-                f"instead of the unversioned environment `{id}`."
-            )
-
-        if spec_ is None:
-            _check_version_exists(ns, name, version)
-            raise error.Error(f"No registered env with id: {id}")
+        spec_ = find_spec(id)
 
     _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
@@ -623,8 +637,8 @@ def make(
             _kwargs["render_mode"] = mode[: -len("_list")]
             apply_render_collection = True
         else:
-            raise error.UnsupportedMode(
-                f"The environment is being initialised with render_mode={mode} "
+            logger.warn(
+                f"The environment is being initialised with render_mode={mode!r} "
                 f"that is not in the possible render_modes ({render_modes})."
             )
 
@@ -647,7 +661,7 @@ def make(
                 f"You passed render_mode='human' although {id} doesn't implement human-rendering natively. "
                 "Gym tried to apply the HumanRendering wrapper but it looks like your environment is using the old "
                 "rendering API, which is not supported by the HumanRendering wrapper."
-            )
+            ) from e
         else:
             raise e
 
@@ -691,6 +705,117 @@ def make(
     return env
 
 
+def make_vec(
+    id: str | EnvSpec,
+    num_envs: int = 1,
+    vectorization_mode: str = "async",
+    vector_kwargs: dict[str, Any] | None = None,
+    wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
+    **kwargs,
+) -> gym.experimental.VectorEnv:
+    """Create an environment according to the given ID.
+
+    To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
+
+    Args:
+        id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
+        num_envs: Number of environments to create
+        vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom"
+        kwargs: Additional arguments to pass to the environment constructor.
+        vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
+        wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
+        **kwargs: Additional arguments to pass to the environment constructor.
+
+    Returns:
+        An instance of the environment.
+
+    Raises:
+        Error: If the ``id`` doesn't exist then an error is raised
+    """
+    if vector_kwargs is None:
+        vector_kwargs = {}
+
+    if wrappers is None:
+        wrappers = []
+
+    if isinstance(id, EnvSpec):
+        spec_ = id
+    else:
+        spec_ = find_spec(id)
+
+    _kwargs = spec_.kwargs.copy()
+    _kwargs.update(kwargs)
+
+    # Check if we have the necessary entry point
+    if vectorization_mode in ("sync", "async"):
+        if spec_.entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id} because it doesn't have an entry point defined."
+            )
+        entry_point = spec_.entry_point
+    elif vectorization_mode in ("custom",):
+        if spec_.vector_entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
+            )
+        entry_point = spec_.vector_entry_point
+    else:
+        raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
+
+    if callable(entry_point):
+        env_creator = entry_point
+    else:
+        # Assume it's a string
+        env_creator = load(entry_point)
+
+    def _create_env():
+        # Env creator for use with sync and async modes
+        render_mode = _kwargs.get("render_mode", None)
+        inner_render_mode = (
+            render_mode[: -len("_list")]
+            if render_mode is not None and render_mode.endswith("_list")
+            else render_mode
+        )
+        _kwargs_copy = _kwargs.copy()
+        _kwargs_copy["render_mode"] = inner_render_mode
+
+        _env = env_creator(**_kwargs_copy)
+        _env.spec = spec_
+        if spec_.max_episode_steps is not None:
+            _env = TimeLimit(_env, spec_.max_episode_steps)
+
+        if render_mode is not None and render_mode.endswith("_list"):
+            _env = RenderCollection(_env)
+
+        for wrapper in wrappers:
+            _env = wrapper(_env)
+        return _env
+
+    if vectorization_mode == "sync":
+        env = gym.experimental.SyncVectorEnv(
+            env_fns=[_create_env for _ in range(num_envs)],
+            **vector_kwargs,
+        )
+    elif vectorization_mode == "async":
+        env = gym.experimental.AsyncVectorEnv(
+            env_fns=[_create_env for _ in range(num_envs)],
+            **vector_kwargs,
+        )
+    elif vectorization_mode == "custom":
+        if len(wrappers) > 0:
+            raise error.Error("Cannot use custom vectorization mode with wrappers.")
+        env = env_creator(num_envs=num_envs, **_kwargs)
+    else:
+        raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
+
+    # Copies the environment creation specification and kwargs to add to the environment specification details
+    spec_ = copy.deepcopy(spec_)
+    spec_.kwargs = _kwargs
+    env.unwrapped.spec = spec_
+
+    return env
+
+
 def spec(env_id: str) -> EnvSpec:
     """Retrieve the spec for the given environment from the global registry."""
     spec_ = registry.get(env_id)
@@ -706,9 +831,9 @@ def spec(env_id: str) -> EnvSpec:
 def pprint_registry(
     _registry: dict = registry,
     num_cols: int = 3,
-    exclude_namespaces: Optional[List[str]] = None,
+    exclude_namespaces: list[str] | None = None,
     disable_print: bool = False,
-) -> Optional[str]:
+) -> str | None:
     """Pretty print the environments in the registry.
 
     Args:
@@ -718,7 +843,6 @@ def pprint_registry(
         disable_print: Whether to return a string of all the namespaces and environment IDs
             instead of printing it to console.
     """
-
     # Defaultdict to store environment names according to namespace.
     namespace_envs = defaultdict(lambda: [])
     max_justify = float("-inf")
