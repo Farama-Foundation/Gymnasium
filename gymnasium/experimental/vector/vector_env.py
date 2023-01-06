@@ -7,7 +7,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium import Space
-from gymnasium.core import RenderFrame
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.utils import seeding
 
 
@@ -67,8 +67,10 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
     closed: bool = False
 
     # The obs and action space, set in all subclasses
-    observation_space: gym.Space[VectorObsType] = None
-    action_space: gym.Space[VectorActType] = None
+    observation_space: gym.Space[VectorObsType]
+    action_space: gym.Space[VectorActType]
+    single_observation_space: gym.Space[ObsType]
+    single_action_space: gym.Space[ActType]
 
     # The number of environments that are vectorised
     num_envs: int
