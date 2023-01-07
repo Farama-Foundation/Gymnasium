@@ -104,9 +104,7 @@ def test_record_video_length():
     env.reset()
     for _ in range(10):
         action = env.action_space.sample()
-        _, _, terminated, truncated, _ = env.step(action)
-        if terminated or truncated:
-            env.reset()
+        env.step(action)
 
     assert env.recording
     action = env.action_space.sample()
