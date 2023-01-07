@@ -94,6 +94,13 @@ For users looping through an environment, they should modify ``done = terminated
 For training libraries, the primary difference is to change ``done`` to ``terminated``, indicating whether bootstrapping should or shouldn't happen.
 ```
 
+## TimeLimit Wrapper
+```{eval-rst}
+In v21, the :class:`TimeLimit` wrapper added an extra key in the ``info`` dictionary ``TimeLimit.truncated`` whenever the agent reached the time limit without reaching a terminal state.
+
+In v26, this information is instead communicated through the `truncated` return value described in the previous section, which is `True` if the agent reaches the time limit, whether or not it reaches a terminal state. The old dictionary entry is equivalent to ``truncated and not terminated``
+```
+
 ## Environment Render
 
 ```{eval-rst}
