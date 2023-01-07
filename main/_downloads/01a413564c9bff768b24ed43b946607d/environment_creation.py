@@ -20,7 +20,7 @@ Subclassing gymnasium.Env
 -------------------------
 
 Before learning how to create your own environment you should check out
-`the documentation of Gymnasium’s API </api/core>`__.
+`the documentation of Gymnasium’s API </api/env>`__.
 
 We will be concerned with a subset of gym-examples that looks like this:
 
