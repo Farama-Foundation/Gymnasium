@@ -1,5 +1,7 @@
 """Utility functions for testing the experimental wrappers."""
 import gymnasium as gym
+from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
+from tests.testing_env import GenericTestEnv
 
 
 SEED = 42
@@ -7,7 +9,6 @@ ENV_ID = "CartPole-v1"
 DISCRETE_ACTION = 0
 NUM_ENVS = 3
 NUM_STEPS = 20
-DELAY = 3
 
 
 def record_obs_reset(self: gym.Env, seed=None, options: dict = None):
@@ -67,3 +68,10 @@ def check_obs(
         assert (
             original_obs not in wrapped_env.observation_space
         ), f"{original_obs}, {wrapped_env.observation_space}"
+
+
+TESTING_OBS_ENVS = [GenericTestEnv(observation_space=space) for space in TESTING_SPACES]
+TESTING_OBS_ENVS_IDS = TESTING_SPACES_IDS
+
+TESTING_ACTION_ENVS = [GenericTestEnv(action_space=space) for space in TESTING_SPACES]
+TESTING_ACTION_ENVS_IDS = TESTING_SPACES_IDS

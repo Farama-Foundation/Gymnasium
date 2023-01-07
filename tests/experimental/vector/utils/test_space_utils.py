@@ -1,0 +1,104 @@
+"""Testing suite for the experimental vector utility functions for spaces."""
+
+import copy
+from typing import Iterable
+
+import pytest
+
+from gymnasium import Space
+from gymnasium.experimental.vector.utils import (
+    batch_space,
+    concatenate,
+    create_empty_array,
+    iterate,
+)
+from gymnasium.utils.env_checker import data_equivalence
+from tests.experimental.vector.utils.utils import is_rng_equal
+from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+@pytest.mark.parametrize("n", [1, 4], ids=[f"n={n}" for n in [1, 4]])
+def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int):
+    """Test all space_utils functions using them together."""
+    # Batch the space and create a sample
+    batched_space = batch_space(space, n)
+    batched_sample = batched_space.sample()
+    assert batched_sample in batched_space
+
+    # Check the batched samples are within the original space
+    iterated_samples = iterate(batched_space, batched_sample)
+    assert isinstance(iterated_samples, Iterable)
+    unbatched_samples = list(iterated_samples)
+    assert len(unbatched_samples) == n
+    assert all(item in space for item in unbatched_samples)
+
+    # Generate samples from the original space and concatenate using create_empty_array into a single object
+    space_samples = [space.sample() for _ in range(n)]
+    assert all(item in space for item in space_samples)
+    out = create_empty_array(space, n)
+    concatenated_samples_array = concatenate(space, space_samples, out)
+    # assert out is concatenated_samples_array
+
+    # Iterate over the samples and check that the concatenated samples == original samples
+    iterated_samples = iterate(batched_space, concatenated_samples_array)
+    assert isinstance(iterated_samples, Iterable)
+    unbatched_samples = list(iterated_samples)
+    assert len(unbatched_samples) == n
+    for unbatched_sample, original_sample in zip(unbatched_samples, space_samples):
+        assert data_equivalence(unbatched_sample, original_sample)
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+@pytest.mark.parametrize("n", [1, 2, 5], ids=[f"n={n}" for n in [1, 2, 5]])
+@pytest.mark.parametrize(
+    "base_seed", [123, 456], ids=[f"seed={base_seed}" for base_seed in [123, 456]]
+)
+def test_batch_space_deterministic(space: Space, n: int, base_seed: int):
+    """Tests the batched spaces are deterministic by using a copied version."""
+    # Copy the spaces and check that the np_random are not reference equal
+    space_a = space
+    space_a.seed(base_seed)
+    space_b = copy.deepcopy(space_a)
+    is_rng_equal(space_a.np_random, space_b.np_random)
+    assert space_a.np_random is not space_b.np_random
+
+    # Batch the spaces and check that the np_random are not reference equal
+    space_a_batched = batch_space(space_a, n)
+    space_b_batched = batch_space(space_b, n)
+    is_rng_equal(space_a_batched.np_random, space_b_batched.np_random)
+    assert space_a_batched.np_random is not space_b_batched.np_random
+    # Create that the batched space is not reference equal to the origin spaces
+    assert space_a.np_random is not space_a_batched.np_random
+
+    # Check that batched space a and b random number generator are not effected by the original space
+    space_a.sample()
+    space_a_batched_sample = space_a_batched.sample()
+    space_b_batched_sample = space_b_batched.sample()
+    for a_sample, b_sample in zip(
+        iterate(space_a_batched, space_a_batched_sample),
+        iterate(space_b_batched, space_b_batched_sample),
+    ):
+        assert data_equivalence(a_sample, b_sample)
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+@pytest.mark.parametrize("n", [4, 5], ids=[f"n={n}" for n in [4, 5]])
+@pytest.mark.parametrize(
+    "base_seed", [123, 456], ids=[f"seed={base_seed}" for base_seed in [123, 456]]
+)
+def test_batch_space_different_samples(space: Space, n: int, base_seed: int):
+    """Tests that the rng values produced at each index are different to prevent if the rng is copied for each subspace."""
+    space.seed(base_seed)
+
+    batched_space = batch_space(space, n)
+    assert space.np_random is not batched_space.np_random
+    is_rng_equal(space.np_random, batched_space.np_random)
+
+    batched_sample = batched_space.sample()
+    unbatched_samples = list(iterate(batched_space, batched_sample))
+    assert len(unbatched_samples) == n
+    assert all(item in space for item in unbatched_samples)
+    assert not all(
+        data_equivalence(element, unbatched_samples[0]) for element in unbatched_samples
+    ), unbatched_samples
