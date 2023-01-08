@@ -95,7 +95,7 @@ def test_api_failures():
 
     with pytest.warns(
         UserWarning,
-        match=r"Expects the render_modes to be a sequence \(i\.e\. list, tuple\), actual type: <class 'str'>",
+        match=r"Expects the render_modes to be a set, list or tuple, actual type: <class 'str'>",
     ):
         env.render()
     assert env.checked_render

@@ -250,11 +250,10 @@ def test_make_render_mode(register_make_testing_envs):
     env.close()
 
     assert len(valid_render_modes) > 0
+    valid_mode = next(iter(valid_render_modes))
     with warnings.catch_warnings(record=True) as caught_warnings:
-        env = gym.make(
-            "CartPole-v1", render_mode=valid_render_modes[0], disable_env_checker=True
-        )
-        assert env.render_mode == valid_render_modes[0]
+        env = gym.make("CartPole-v1", render_mode=valid_mode, disable_env_checker=True)
+        assert env.render_mode == valid_mode
         env.close()
 
     for warning in caught_warnings:
@@ -314,7 +313,7 @@ def test_make_render_mode(register_make_testing_envs):
     with pytest.warns(
         UserWarning,
         match=re.escape(
-            "\x1b[33mWARN: The environment is being initialised with render_mode='rgb_array' that is not in the possible render_modes ([]).\x1b[0m"
+            "\x1b[33mWARN: The environment is being initialised with render_mode='rgb_array' that is not in the possible render_modes ({}).\x1b[0m"
         ),
     ):
         gym.make("test/NoRenderModesMetadata-v0", render_mode="rgb_array")

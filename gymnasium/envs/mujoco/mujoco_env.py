@@ -56,11 +56,11 @@ class BaseMujocoEnv(gym.Env):
 
         self.frame_skip = frame_skip
 
-        assert self.metadata["render_modes"] == [
+        assert self.metadata["render_modes"] == {
             "human",
             "rgb_array",
             "depth_array",
-        ], self.metadata["render_modes"]
+        }, self.metadata["render_modes"]
         assert (
             int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
         ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'

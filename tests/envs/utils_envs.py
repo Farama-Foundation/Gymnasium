@@ -23,7 +23,7 @@ class ArgumentEnv(gym.Env):
 class NoHuman(gym.Env):
     """Environment that does not have human-rendering."""
 
-    metadata = {"render_modes": ["rgb_array_list"], "render_fps": 4}
+    metadata = {"render_modes": {"rgb_array_list"}, "render_fps": 4}
 
     def __init__(self, render_mode=None):
         assert render_mode in self.metadata["render_modes"]
@@ -33,7 +33,7 @@ class NoHuman(gym.Env):
 class NoHumanOldAPI(gym.Env):
     """Environment that does not have human-rendering."""
 
-    metadata = {"render_modes": ["rgb_array_list"], "render_fps": 4}
+    metadata = {"render_modes": {"rgb_array_list"}, "render_fps": 4}
 
     def __init__(self):
         pass
@@ -42,7 +42,7 @@ class NoHumanOldAPI(gym.Env):
 class NoHumanNoRGB(gym.Env):
     """Environment that has neither human- nor rgb-rendering"""
 
-    metadata = {"render_modes": ["ascii"], "render_fps": 4}
+    metadata = {"render_modes": {"ascii"}, "render_fps": 4}
 
     def __init__(self, render_mode=None):
         assert render_mode in self.metadata["render_modes"]

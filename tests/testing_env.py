@@ -48,7 +48,7 @@ class GenericTestEnv(gym.Env):
         reset_func: callable = basic_reset_func,
         step_func: callable = new_step_func,
         render_func: callable = basic_render_func,
-        metadata: dict[str, Any] = {"render_modes": []},
+        metadata: dict[str, Any] = {"render_modes": {}},
         render_mode: str | None = None,
         spec: EnvSpec = EnvSpec(
             "TestingEnv-v0", "testing-env-no-entry-point", max_episode_steps=100

@@ -8,7 +8,7 @@ from gymnasium.wrappers.monitoring.video_recorder import VideoRecorder
 
 
 class BrokenRecordableEnv(gym.Env):
-    metadata = {"render_modes": ["rgb_array_list"]}
+    metadata = {"render_modes": {"rgb_array_list"}}
 
     def __init__(self, render_mode="rgb_array_list"):
         self.render_mode = render_mode
@@ -18,7 +18,7 @@ class BrokenRecordableEnv(gym.Env):
 
 
 class UnrecordableEnv(gym.Env):
-    metadata = {"render_modes": [None]}
+    metadata = {"render_modes": {}}
 
     def __init__(self, render_mode=None):
         self.render_mode = render_mode

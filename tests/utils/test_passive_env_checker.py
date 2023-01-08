@@ -402,7 +402,7 @@ def test_passive_env_step_checker(
         [
             UserWarning,
             GenericTestEnv(metadata={"render_modes": "Testing mode"}),
-            "Expects the render_modes to be a sequence (i.e. list, tuple), actual type: <class 'str'>",
+            "Expects the render_modes to be a set, list or tuple, actual type: <class 'str'>",
         ],
         [
             UserWarning,
@@ -414,7 +414,7 @@ def test_passive_env_step_checker(
         [
             UserWarning,
             GenericTestEnv(
-                metadata={"render_modes": ["Testing mode"], "render_fps": None},
+                metadata={"render_modes": {"Testing mode"}, "render_fps": None},
                 render_mode="Testing mode",
                 render_func=lambda self: 0,
             ),
@@ -423,24 +423,24 @@ def test_passive_env_step_checker(
         [
             UserWarning,
             GenericTestEnv(
-                metadata={"render_modes": ["Testing mode"], "render_fps": "fps"}
+                metadata={"render_modes": {"Testing mode"}, "render_fps": "fps"}
             ),
             "Expects the `env.metadata['render_fps']` to be an integer or a float, actual type: <class 'str'>",
         ],
         [
             AssertionError,
             GenericTestEnv(
-                metadata={"render_modes": [], "render_fps": 30}, render_mode="Test"
+                metadata={"render_modes": set(), "render_fps": 30}, render_mode="Test"
             ),
             "With no render_modes, expects the Env.render_mode to be None, actual value: Test",
         ],
         [
             AssertionError,
             GenericTestEnv(
-                metadata={"render_modes": ["Testing mode"], "render_fps": 30},
+                metadata={"render_modes": {"Testing mode"}, "render_fps": 30},
                 render_mode="Non mode",
             ),
-            "The environment was initialized successfully however with an unsupported render mode. Render mode: Non mode, modes: ['Testing mode']",
+            "The environment was initialized successfully however with an unsupported render mode. Render mode: Non mode, modes: {'Testing mode'}",
         ],
     ],
 )

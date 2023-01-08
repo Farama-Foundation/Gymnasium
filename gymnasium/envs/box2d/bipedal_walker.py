@@ -166,7 +166,7 @@ class BipedalWalker(gym.Env, EzPickle):
     """
 
     metadata = {
-        "render_modes": ["human", "rgb_array"],
+        "render_modes": {"human", "rgb_array"},
         "render_fps": FPS,
     }
 

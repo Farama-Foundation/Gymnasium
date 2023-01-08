@@ -240,7 +240,7 @@ class CartPoleFunctional(
 class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based implementation of the CartPole environment."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": {"rgb_array"}, "render_fps": 50}
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor for the CartPole where the kwargs are applied to the functional environment."""

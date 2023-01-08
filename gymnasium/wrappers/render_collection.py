@@ -26,7 +26,7 @@ class RenderCollection(gym.Wrapper):
 
         self.metadata = copy.deepcopy(self.env.metadata)
         if f"{self.env.render_mode}_list" not in self.metadata["render_modes"]:
-            self.metadata["render_modes"].append(f"{self.env.render_mode}_list")
+            set(self.metadata["render_modes"]).add(f"{self.env.render_mode}_list")
 
     @property
     def render_mode(self):

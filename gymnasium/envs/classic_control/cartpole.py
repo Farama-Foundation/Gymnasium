@@ -82,7 +82,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     """
 
     metadata = {
-        "render_modes": ["human", "rgb_array"],
+        "render_modes": {"human", "rgb_array"},
         "render_fps": 50,
     }
 

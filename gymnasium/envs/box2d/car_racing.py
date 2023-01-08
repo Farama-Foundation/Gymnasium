@@ -193,11 +193,11 @@ class CarRacing(gym.Env, EzPickle):
     """
 
     metadata = {
-        "render_modes": [
+        "render_modes": {
             "human",
             "rgb_array",
             "state_pixels",
-        ],
+        },
         "render_fps": FPS,
     }
 
