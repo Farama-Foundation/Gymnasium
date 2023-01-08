@@ -402,12 +402,12 @@ def test_passive_env_step_checker(
         [
             UserWarning,
             GenericTestEnv(metadata={"render_modes": "Testing mode"}),
-            "Expects the render_modes to be an Iterable, actual type: <class 'str'>",
+            "Expects the render_modes to be a set, list or tuple, actual type: <class 'str'>",
         ],
         [
             UserWarning,
             GenericTestEnv(
-                metadata={"render_modes": {"Testing mode", 1}, "render_fps": 1},
+                metadata={"render_modes": ["Testing mode", 1], "render_fps": 1},
             ),
             "Expects all render modes to be strings, actual types: [<class 'str'>, <class 'int'>]",
         ],
@@ -430,7 +430,7 @@ def test_passive_env_step_checker(
         [
             AssertionError,
             GenericTestEnv(
-                metadata={"render_modes": {}, "render_fps": 30}, render_mode="Test"
+                metadata={"render_modes": set(), "render_fps": 30}, render_mode="Test"
             ),
             "With no render_modes, expects the Env.render_mode to be None, actual value: Test",
         ],
@@ -440,7 +440,7 @@ def test_passive_env_step_checker(
                 metadata={"render_modes": {"Testing mode"}, "render_fps": 30},
                 render_mode="Non mode",
             ),
-            "The environment was initialized successfully however with an unsupported render mode. Render mode: Non mode, modes: ['Testing mode']",
+            "The environment was initialized successfully however with an unsupported render mode. Render mode: Non mode, modes: {'Testing mode'}",
         ],
     ],
 )
