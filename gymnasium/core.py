@@ -47,7 +47,7 @@ class Env(Generic[ObsType, ActType]):
     """
 
     # Set this in SOME subclasses
-    metadata: dict[str, Any] = {"render_modes": []}
+    metadata: dict[str, Any] = {"render_modes": {}}
     # define render_mode if your environment supports rendering
     render_mode: str | None = None
     reward_range = (-float("inf"), float("inf"))

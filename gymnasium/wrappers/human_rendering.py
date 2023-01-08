@@ -62,7 +62,9 @@ class HumanRendering(gym.Wrapper):
 
         self.metadata = copy.deepcopy(self.env.metadata)
         if "human" not in self.metadata["render_modes"]:
-            self.metadata["render_modes"].append("human")
+            self.metadata["render_modes"] = set(self.metadata["render_modes"]).add(
+                "human"
+            )
 
     @property
     def render_mode(self):

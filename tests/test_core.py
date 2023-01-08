@@ -136,7 +136,7 @@ properties = [
     },
     {"action_space": spaces.Discrete(2)},
     {"reward_range": (-1.0, 1.0)},
-    {"metadata": {"render_modes": ["human", "rgb_array_list"]}},
+    {"metadata": {"render_modes": {"human", "rgb_array_list"}}},
     {
         "observation_space": spaces.Box(
             low=0.0, high=1.0, shape=(64, 64, 3), dtype=np.float32
@@ -207,7 +207,7 @@ def test_gymnasium_env():
     """Tests a gymnasium environment."""
     env = ExampleEnv()
 
-    assert env.metadata == {"render_modes": []}
+    assert env.metadata == {"render_modes": {}}
     assert env.render_mode is None
     assert env.reward_range == (-float("inf"), float("inf"))
     assert env.spec is None
@@ -247,7 +247,7 @@ def test_gymnasium_wrapper():
     wrapper_env = ExampleWrapper(env)
 
     assert env.metadata == wrapper_env.metadata
-    wrapper_env.metadata = {"render_modes": ["rgb_array"]}
+    wrapper_env.metadata = {"render_modes": {"rgb_array"}}
     assert env.metadata != wrapper_env.metadata
 
     assert env.render_mode == wrapper_env.render_mode
