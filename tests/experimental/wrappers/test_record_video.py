@@ -1,6 +1,7 @@
 """Test suite for RecordVideoV0."""
 import os
 import shutil
+from typing import List
 
 import gymnasium as gym
 from gymnasium.experimental.wrappers import RecordVideoV0
@@ -96,9 +97,7 @@ def test_record_video_both_trigger():
 
 def test_record_video_length():
     """Test if argument video_length of RecordVideo works properly."""
-    env = gym.make(
-        "CartPole-v1", render_mode="rgb_array_list", disable_env_checker=True
-    )
+    env = gym.make("CartPole-v1", render_mode="rgb_array_list")
     env._max_episode_steps = 20
     env = RecordVideoV0(env, "videos", step_trigger=lambda x: x == 0, video_length=10)
     env.reset()
@@ -110,6 +109,23 @@ def test_record_video_length():
     action = env.action_space.sample()
     env.step(action)
     assert not env.recording
+    env.close()
+
+
+def test_rendering_works():
+    """Test if render output is as expected when the env is wrapped with RecordVideo."""
+    env = gym.make("CartPole-v1", render_mode="rgb_array_list")
+    env._max_episode_steps = 20
+    env = RecordVideoV0(env, "videos")
+    env.reset()
+    n_steps = 10
+    for _ in range(n_steps):
+        action = env.action_space.sample()
+        env.step(action)
+
+    render_out = env.render()
+    assert isinstance(render_out, List)
+    assert len(render_out) == n_steps + 1
     env.close()
 
 
