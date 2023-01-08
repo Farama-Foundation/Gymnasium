@@ -12,6 +12,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle, colorize
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
+
 try:
     import Box2D
     from Box2D.b2 import (
@@ -22,10 +23,10 @@ try:
         polygonShape,
         revoluteJointDef,
     )
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         "box2d is not installed, run `pip install gymnasium[box2d]`"
-    )
+    ) from e
 
 
 if TYPE_CHECKING:
@@ -507,17 +508,22 @@ class LunarLander(gym.Env, EzPickle):
             ox = tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1]
             oy = -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
-            p = self._create_particle(
-                3.5,  # 3.5 is here to make particle speed adequate
-                impulse_pos[0],
-                impulse_pos[1],
-                m_power,
-            )  # particles are just a decoration
-            p.ApplyLinearImpulse(
-                (ox * MAIN_ENGINE_POWER * m_power, oy * MAIN_ENGINE_POWER * m_power),
-                impulse_pos,
-                True,
-            )
+            if self.render_mode is not None:
+                # particles are just a decoration, so don't add them when not rendering
+                p = self._create_particle(
+                    3.5,  # 3.5 is here to make particle speed adequate
+                    impulse_pos[0],
+                    impulse_pos[1],
+                    m_power,
+                )
+                p.ApplyLinearImpulse(
+                    (
+                        ox * MAIN_ENGINE_POWER * m_power,
+                        oy * MAIN_ENGINE_POWER * m_power,
+                    ),
+                    impulse_pos,
+                    True,
+                )
             self.lander.ApplyLinearImpulse(
                 (-ox * MAIN_ENGINE_POWER * m_power, -oy * MAIN_ENGINE_POWER * m_power),
                 impulse_pos,
@@ -617,10 +623,10 @@ class LunarLander(gym.Env, EzPickle):
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[box2d]`"
-            )
+            ) from e
 
         if self.screen is None and self.render_mode == "human":
             pygame.init()

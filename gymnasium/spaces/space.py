@@ -8,6 +8,7 @@ import numpy.typing as npt
 
 from gymnasium.utils import seeding
 
+
 T_cov = TypeVar("T_cov", covariant=True)
 
 
@@ -85,7 +86,7 @@ class Space(Generic[T_cov]):
 
     @property
     def is_np_flattenable(self) -> bool:
-        """Checks whether this space can be flattened to a :class:`spaces.Box`."""
+        """Checks whether this space can be flattened to a :class:`gymnasium.spaces.Box`."""
         raise NotImplementedError
 
     def sample(self, mask: Any | None = None) -> T_cov:

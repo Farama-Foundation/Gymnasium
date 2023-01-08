@@ -29,6 +29,7 @@ from gymnasium.vector.utils import (
 )
 from gymnasium.vector.vector_env import VectorEnv
 
+
 __all__ = ["AsyncVectorEnv"]
 
 
@@ -122,7 +123,7 @@ class AsyncVectorEnv(VectorEnv):
                 self.observations = read_from_shared_memory(
                     self.single_observation_space, _obs_buffer, n=self.num_envs
                 )
-            except CustomSpaceError:
+            except CustomSpaceError as e:
                 raise ValueError(
                     "Using `shared_memory=True` in `AsyncVectorEnv` "
                     "is incompatible with non-standard Gymnasium observation spaces "
@@ -130,7 +131,7 @@ class AsyncVectorEnv(VectorEnv):
                     "only compatible with default Gymnasium spaces (e.g. `Box`, "
                     "`Tuple`, `Dict`) for batching. Set `shared_memory=False` "
                     "if you use custom observation spaces."
-                )
+                ) from e
         else:
             _obs_buffer = None
             self.observations = create_empty_array(
@@ -318,14 +319,15 @@ class AsyncVectorEnv(VectorEnv):
         successes = []
         for i, pipe in enumerate(self.parent_pipes):
             result, success = pipe.recv()
-            obs, rew, terminated, truncated, info = result
-
             successes.append(success)
-            observations_list.append(obs)
-            rewards.append(rew)
-            terminateds.append(terminated)
-            truncateds.append(truncated)
-            infos = self._add_info(infos, info, i)
+            if success:
+                obs, rew, terminated, truncated, info = result
+
+                observations_list.append(obs)
+                rewards.append(rew)
+                terminateds.append(terminated)
+                truncateds.append(truncated)
+                infos = self._add_info(infos, info, i)
 
         self._raise_if_errors(successes)
         self._state = AsyncState.DEFAULT

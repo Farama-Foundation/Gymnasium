@@ -36,10 +36,10 @@ class LazyFrames:
         if lz4_compress:
             try:
                 from lz4.block import compress
-            except ImportError:
+            except ImportError as e:
                 raise DependencyNotInstalled(
                     "lz4 is not installed, run `pip install gymnasium[other]`"
-                )
+                ) from e
 
             frames = [compress(frame) for frame in frames]
         self._frames = frames

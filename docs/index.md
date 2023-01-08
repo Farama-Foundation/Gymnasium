@@ -6,7 +6,6 @@ lastpage:
 
 # Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
 
-
 ```{figure} _static/videos/box2d/lunar_lander_continuous.gif
    :alt: Lunar Lander
    :width: 500
@@ -48,6 +47,7 @@ api/spaces
 api/wrappers
 api/vector
 api/utils
+api/experimental
 ```
 
 ```{toctree}
@@ -75,5 +75,6 @@ tutorials/*
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
+content/release_notes
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```

@@ -51,7 +51,6 @@ gym_testing_env_specs: List[EnvSpec] = [
         for ep in ["box2d", "classic_control", "toy_text"]
     )
 ]
-# TODO, add minimum testing env spec in testing
 
 
 def assert_equals(a, b, prefix=None):

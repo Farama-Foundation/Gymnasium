@@ -10,15 +10,15 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.logger import deprecation
 
+
 try:
     import pygame
     from pygame import Surface
     from pygame.event import Event
-    from pygame.locals import VIDEORESIZE
-except ImportError:
+except ImportError as e:
     raise gym.error.DependencyNotInstalled(
         "Pygame is not installed, run `pip install gymnasium[classic_control]`"
-    )
+    ) from e
 
 try:
     import matplotlib
@@ -58,8 +58,10 @@ class PlayableGame:
 
         self.env = env
         self.relevant_keys = self._get_relevant_keys(keys_to_action)
+        # self.video_size is the size of the video that is being displayed.
+        # The window size may be larger, in that case we will add black bars
         self.video_size = self._get_video_size(zoom)
-        self.screen = pygame.display.set_mode(self.video_size)
+        self.screen = pygame.display.set_mode(self.video_size, pygame.RESIZABLE)
         self.pressed_keys = []
         self.running = True
 
@@ -112,9 +114,12 @@ class PlayableGame:
                 self.pressed_keys.remove(event.key)
         elif event.type == pygame.QUIT:
             self.running = False
-        elif event.type == VIDEORESIZE:
-            self.video_size = event.size
-            self.screen = pygame.display.set_mode(self.video_size)
+        elif event.type == pygame.WINDOWRESIZED:
+            # Compute the maximum video size that fits into the new window
+            scale_width = event.x / self.video_size[0]
+            scale_height = event.y / self.video_size[1]
+            scale = min(scale_height, scale_width)
+            self.video_size = (scale * self.video_size[0], scale * self.video_size[1])
 
 
 def display_arr(
@@ -132,7 +137,12 @@ def display_arr(
     arr = 255.0 * (arr - arr_min) / (arr_max - arr_min)
     pyg_img = pygame.surfarray.make_surface(arr.swapaxes(0, 1) if transpose else arr)
     pyg_img = pygame.transform.scale(pyg_img, video_size)
-    screen.blit(pyg_img, (0, 0))
+    # We might have to add black bars if surface_size is larger than video_size
+    surface_size = screen.get_size()
+    width_offset = (surface_size[0] - video_size[0]) / 2
+    height_offset = (surface_size[1] - video_size[1]) / 2
+    screen.fill((0, 0, 0))
+    screen.blit(pyg_img, (width_offset, height_offset))
 
 
 def play(

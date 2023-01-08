@@ -9,6 +9,7 @@ from gymnasium.spaces import Space
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import VectorEnv
 
+
 __all__ = ["SyncVectorEnv"]
 
 

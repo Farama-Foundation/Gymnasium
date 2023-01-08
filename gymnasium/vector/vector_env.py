@@ -6,6 +6,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium.vector.utils.spaces import batch_space
 
+
 __all__ = ["VectorEnv"]
 
 

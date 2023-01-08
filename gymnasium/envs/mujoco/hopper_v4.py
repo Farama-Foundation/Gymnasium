@@ -4,6 +4,7 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
+
 DEFAULT_CAMERA_CONFIG = {
     "trackbodyid": 2,
     "distance": 3.0,
@@ -133,9 +134,9 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
     ## Version History
 
-    * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
-    * v3: support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
-    * v2: All continuous control environments now use mujoco_py >= 1.50
+    * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
+    * v2: All continuous control environments now use mujoco-py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release (1.0.0)
     """
@@ -203,7 +204,12 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
             )
 
         MujocoEnv.__init__(
-            self, "hopper.xml", 4, observation_space=observation_space, **kwargs
+            self,
+            "hopper.xml",
+            4,
+            observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            **kwargs
         )
 
     @property

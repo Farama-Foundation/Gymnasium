@@ -9,6 +9,7 @@ from gymnasium import Env, spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
+
 __copyright__ = "Copyright 2013, RLPy http://acl.mit.edu/RLPy"
 __credits__ = [
     "Alborz Geramifard",
@@ -293,10 +294,10 @@ class AcrobotEnv(Env):
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
-            )
+            ) from e
 
         if self.screen is None:
             pygame.init()

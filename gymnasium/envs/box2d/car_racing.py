@@ -11,23 +11,24 @@ from gymnasium.envs.box2d.car_dynamics import Car
 from gymnasium.error import DependencyNotInstalled, InvalidAction
 from gymnasium.utils import EzPickle
 
+
 try:
     import Box2D
     from Box2D.b2 import contactListener, fixtureDef, polygonShape
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         "box2D is not installed, run `pip install gymnasium[box2d]`"
-    )
+    ) from e
 
 try:
     # As pygame is necessary for using the environment (reset and step) even without a render mode
     #   therefore, pygame is a necessary import for the environment.
     import pygame
     from pygame import gfxdraw
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         "pygame is not installed, run `pip install gymnasium[box2d]`"
-    )
+    ) from e
 
 
 STATE_W = 96  # less than Atari 160x192

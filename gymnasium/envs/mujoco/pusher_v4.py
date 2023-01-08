@@ -5,6 +5,12 @@ from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
 
+DEFAULT_CAMERA_CONFIG = {
+    "trackbodyid": -1,
+    "distance": 4.0,
+}
+
+
 class PusherEnv(MujocoEnv, utils.EzPickle):
     """
     ## Description
@@ -127,8 +133,8 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
     ## Version History
 
-    * v4: all mujoco environments now use the mujoco bindings in mujoco>=2.1.3
-    * v2: All continuous control environments now use mujoco_py >= 1.50
+    * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
+    * v2: All continuous control environments now use mujoco-py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks (not including reacher, which has a max_time_steps of 50). Added reward_threshold to environments.
     * v0: Initial versions release (1.0.0)
     """
@@ -146,7 +152,12 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self, **kwargs)
         observation_space = Box(low=-np.inf, high=np.inf, shape=(23,), dtype=np.float64)
         MujocoEnv.__init__(
-            self, "pusher.xml", 5, observation_space=observation_space, **kwargs
+            self,
+            "pusher.xml",
+            5,
+            observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            **kwargs
         )
 
     def step(self, a):
@@ -170,11 +181,6 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
             False,
             dict(reward_dist=reward_dist, reward_ctrl=reward_ctrl),
         )
-
-    def viewer_setup(self):
-        assert self.viewer is not None
-        self.viewer.cam.trackbodyid = -1
-        self.viewer.cam.distance = 4.0
 
     def reset_model(self):
         qpos = self.init_qpos
