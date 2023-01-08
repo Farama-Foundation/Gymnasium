@@ -127,6 +127,7 @@ def test_rendering_works():
     assert isinstance(render_out, List)
     assert len(render_out) == n_steps + 1
     env.close()
+    shutil.rmtree("videos")
 
 
 def make_env(gym_id, idx, **kwargs):
