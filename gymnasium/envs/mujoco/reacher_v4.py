@@ -122,11 +122,11 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     """
 
     metadata = {
-        "render_modes": {
+        "render_modes": [
             "human",
             "rgb_array",
             "depth_array",
-        },
+        ],
         "render_fps": 50,
     }
 
