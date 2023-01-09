@@ -34,7 +34,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     |-----|------------------------------------|-------------|-------------|----------------------------------|-------|--------------|
     | 0   | Torque applied on the thigh rotor  | -1          | 1           | thigh_joint                      | hinge | torque (N m) |
     | 1   | Torque applied on the leg rotor    | -1          | 1           | leg_joint                        | hinge | torque (N m) |
-    | 3   | Torque applied on the foot rotor   | -1          | 1           | foot_joint                       | hinge | torque (N m) |
+    | 2   | Torque applied on the foot rotor   | -1          | 1           | foot_joint                       | hinge | torque (N m) |
 
     ## Observation Space
 
@@ -142,11 +142,11 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     """
 
     metadata = {
-        "render_modes": [
+        "render_modes": {
             "human",
             "rgb_array",
             "depth_array",
-        ],
+        },
         "render_fps": 125,
     }
 

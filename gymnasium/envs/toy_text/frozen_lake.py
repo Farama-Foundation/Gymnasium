@@ -211,7 +211,7 @@ class FrozenLakeEnv(Env):
     """
 
     metadata = {
-        "render_modes": ["human", "ansi", "rgb_array"],
+        "render_modes": {"human", "ansi", "rgb_array"},
         "render_fps": 4,
     }
 

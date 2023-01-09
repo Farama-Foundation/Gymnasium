@@ -145,7 +145,7 @@ class BlackjackEnv(gym.Env):
     """
 
     metadata = {
-        "render_modes": ["human", "rgb_array"],
+        "render_modes": {"human", "rgb_array"},
         "render_fps": 4,
     }
 
