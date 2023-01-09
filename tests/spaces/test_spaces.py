@@ -7,6 +7,7 @@ from typing import List, Union
 
 import numpy as np
 import pytest
+from scipy import stats
 
 from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space, Text
 from gymnasium.utils import seeding
@@ -105,8 +106,38 @@ def test_sample(space: Space, n_trials: int = 1_000):
     assert len(samples) == n_trials
 
     if isinstance(space, Box):
-        # TODO: Add KS testing for continuous uniform distribution
-        pass
+        alpha = 0.05
+        if space.dtype.kind == 'f':
+            assert space.shape == space.low.shape == space.high.shape == samples.shape[1:]
+            samples = np.moveaxis(samples, 0, -1) # (n_trials, *space.shape) => (*space.shape, n_trials)
+
+            for index in np.ndindex(space.shape):
+                low = space.low[index]
+                high = space.high[index]
+                sample = samples[index]
+
+                if space.bounded_below[index]:
+                    if space.bounded_above[index]:
+                        # X ~ U(low, high)
+                        _, p_value = stats.kstest(sample, stats.uniform(low, high - low).cdf)
+                        assert p_value >= alpha
+                    else:
+                        # X ~ low + Exp(1.0)
+                        # => X - low ~ Exp(1.0)
+                        _, p_value = stats.kstest(sample - low, stats.expon.cdf)
+                        assert p_value >= alpha
+                else:
+                    if space.bounded_above[index]:
+                        # X ~ high - Exp(1.0)
+                        # => high - X ~ Exp(1.0)
+                        _, p_value = stats.kstest(high - sample, stats.expon.cdf)
+                        assert p_value >= alpha
+                    else:
+                        # X ~ N(0.0, 1.0)
+                        _, p_value = stats.kstest(sample, stats.norm.cdf)
+                        assert p_value >= alpha
+
+        # TODO: add testing for int and bool boxes
     elif isinstance(space, Discrete):
         expected_frequency = np.ones(space.n) * n_trials / space.n
         observed_frequency = np.zeros(space.n)
