@@ -216,7 +216,7 @@ class AsyncVectorEnv(VectorEnv):
         timeout: Optional[Union[int, float]] = None,
         seed: Optional[int] = None,
         options: Optional[dict] = None,
-    ) -> Union[ObsType, Tuple[ObsType, List[dict]]]:
+    ) -> Union[ObsType, Tuple[ObsType, dict]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
