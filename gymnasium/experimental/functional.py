@@ -5,6 +5,8 @@ from typing import Any, Callable, Generic, TypeVar
 
 import numpy as np
 
+from gymnasium import Space
+
 
 StateType = TypeVar("StateType")
 ActType = TypeVar("ActType")
@@ -36,6 +38,9 @@ class FuncEnv(
     For the moment, this is predominantly for internal use. This API is likely to change, but in the future
     we intend to flesh it out and officially expose it to end users.
     """
+
+    observation_space: Space
+    action_space: Space
 
     def __init__(self, options: dict[str, Any] | None = None):
         """Initialize the environment constants."""
