@@ -210,7 +210,7 @@ class CliffWalkingEnv(Env):
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy_text]`"
+                "pygame is not installed, run `pip install gymnasium[toy-text]`"
             ) from e
         if self.window_surface is None:
             pygame.init()

@@ -144,7 +144,7 @@ class CartPoleFunctional(
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
         screen, clock = render_state
 
@@ -216,7 +216,7 @@ class CartPoleFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
 
         pygame.init()
@@ -231,7 +231,7 @@ class CartPoleFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
         pygame.display.quit()
         pygame.quit()
