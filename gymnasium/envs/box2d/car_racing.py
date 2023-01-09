@@ -17,7 +17,7 @@ try:
     from Box2D.b2 import contactListener, fixtureDef, polygonShape
 except ImportError as e:
     raise DependencyNotInstalled(
-        "box2D is not installed, run `pip install gymnasium[box2d]`"
+        "Box2D is not installed, run `pip install gymnasium[box2d]`"
     ) from e
 
 try:

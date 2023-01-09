@@ -17,7 +17,7 @@ try:
     from pygame.event import Event
 except ImportError as e:
     raise gym.error.DependencyNotInstalled(
-        "Pygame is not installed, run `pip install gymnasium[classic_control]`"
+        "pygame is not installed, run `pip install gymnasium[classic-control]`"
     ) from e
 
 try:
@@ -26,7 +26,7 @@ try:
     matplotlib.use("TkAgg")
     import matplotlib.pyplot as plt
 except ImportError:
-    logger.warn("Matplotlib is not installed, run `pip install gymnasium[other]`")
+    logger.warn("matplotlib is not installed, run `pip install gymnasium[other]`")
     matplotlib, plt = None, None
 
 

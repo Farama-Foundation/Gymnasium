@@ -61,7 +61,7 @@ class ResizeObservation(gym.ObservationWrapper):
             import cv2
         except ImportError as e:
             raise DependencyNotInstalled(
-                "opencv is not installed, run `pip install gymnasium[other]`"
+                "opencv (cv2) is not installed, run `pip install gymnasium[other]`"
             ) from e
 
         observation = cv2.resize(
