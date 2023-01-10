@@ -1,7 +1,7 @@
 sphinx
 sphinx-autobuild
 myst-parser
-sphinx_gallery
+git+https://github.com/sphinx-gallery/sphinx-gallery#egg=sphinx_gallery
 git+https://github.com/Farama-Foundation/Celshast#egg=furo
 moviepy
 pygame
