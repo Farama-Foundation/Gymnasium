@@ -1,8 +1,6 @@
 """Wrapper for resizing observations."""
 from __future__ import annotations
 
-from typing import Union
-
 import numpy as np
 
 import gymnasium as gym
@@ -30,7 +28,7 @@ class ResizeObservation(gym.ObservationWrapper):
         (64, 64, 3)
     """
 
-    def __init__(self, env: gym.Env, shape: Union[tuple[int, int], int]) -> None:
+    def __init__(self, env: gym.Env, shape: tuple[int, int] | int) -> None:
         """Resizes image observations to shape given by :attr:`shape`.
 
         Args:
