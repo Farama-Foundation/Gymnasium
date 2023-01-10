@@ -1,4 +1,6 @@
 """Wrapper for resizing observations."""
+from __future__ import annotations
+
 from typing import Union
 
 import numpy as np
@@ -11,9 +13,12 @@ from gymnasium.spaces import Box
 class ResizeObservation(gym.ObservationWrapper):
     """Resize the image observation.
 
-    This wrapper works on environments with image observations (or more generally observations of shape AxBxC) and resizes
-    the observation to the shape given by the 2-tuple :attr:`shape`. The argument :attr:`shape` may also be an integer.
-    In that case, the observation is scaled to a square of side-length :attr:`shape`.
+    This wrapper works on environments with image observations. More generally,
+    the input can either be two-dimensional (AxB, e.g. grayscale images) or
+    three-dimensional (AxBxC, e.g. color images). This resizes the observation
+    to the shape given by the 2-tuple :attr:`shape`.
+    The argument :attr:`shape` may also be an integer, in which case, the
+    observation is scaled to a square of side-length :attr:`shape`.
 
     Example:
         >>> import gymnasium as gym
@@ -32,20 +37,23 @@ class ResizeObservation(gym.ObservationWrapper):
             env: The environment to apply the wrapper
             shape: The shape of the resized observations
         """
-        if not isinstance(env.observation_space, Box):
-            raise ValueError(f"Expected the observation space to be Box, actual type: {type(env.observation_space)}")
-        dims = len(env.observation_space.shape)
-        if not 2 <= dims <= 3:
-            raise ValueError(f"Expected the observation space to have 2 or 3 dimensions, got: {dims}")
-
-        try:
-            shape = tuple(shape)
-        except TypeError:
-            shape = (shape, shape)
-        if len(shape) != 2 or not all(isinstance(x, int) and x > 0 for x in shape):
-            raise ValueError(f"Expected shape to be a 2-tuple of positive integers, got: {shape}")
-
         super().__init__(env)
+        if isinstance(shape, int):
+            shape = (shape, shape)
+        assert len(shape) == 2 and all(
+            x > 0 for x in shape
+        ), f"Expected shape to be a 2-tuple of positive integers, got: {shape}"
+
+        self.shape = tuple(shape)
+
+        assert isinstance(
+            env.observation_space, Box
+        ), f"Expected the observation space to be Box, actual type: {type(env.observation_space)}"
+        dims = len(env.observation_space.shape)
+        assert (
+            2 <= dims <= 3
+        ), f"Expected the observation space to have 2 or 3 dimensions, got: {dims}"
+
         self.shape = tuple(shape)
 
         obs_shape = self.shape + env.observation_space.shape[2:]
