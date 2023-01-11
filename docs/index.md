@@ -67,7 +67,7 @@ environments/third_party_environments
 :glob:
 :caption: Tutorials
 
-tutorials/*
+tutorials/**/index
 ```
 
 ```{toctree}
