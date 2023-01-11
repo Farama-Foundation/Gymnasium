@@ -118,7 +118,9 @@ sphinx_gallery_conf = {
     "show_memory": False,
     "min_reported_time": float("inf"),
     "filename_pattern": f"{re.escape(os.sep)}run_",
-    "default_thumb_file": os.path.join(os.path.dirname(__file__), "_static/img/gymnasium-github.png"),
+    "default_thumb_file": os.path.join(
+        os.path.dirname(__file__), "_static/img/gymnasium-github.png"
+    ),
 }
 
 # -- Generate Changelog -------------------------------------------------
