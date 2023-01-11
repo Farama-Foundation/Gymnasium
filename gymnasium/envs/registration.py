@@ -8,6 +8,7 @@ import importlib
 import importlib.util
 import re
 import sys
+import traceback
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -309,8 +310,8 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
             fn = plugin.load()
             try:
                 fn()
-            except Exception as e:
-                logger.warn(str(e))
+            except Exception:
+                logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
 
 
 # fmt: off
