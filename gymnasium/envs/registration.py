@@ -45,7 +45,7 @@ ENV_ID_RE = re.compile(
 )
 
 
-def load(name: str) -> callable:
+def load(name: str) -> Callable:
     """Loads an environment with name and returns an environment creation function.
 
     Args:
