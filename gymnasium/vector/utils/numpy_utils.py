@@ -1,7 +1,7 @@
 """Numpy utility functions: concatenate space samples and create empty array."""
 from collections import OrderedDict
 from functools import singledispatch
-from typing import Iterable, Union
+from typing import Callable, Iterable, Union
 
 import numpy as np
 
@@ -84,7 +84,7 @@ def _concatenate_custom(space, items, out):
 
 @singledispatch
 def create_empty_array(
-    space: Space, n: int = 1, fn: callable = np.zeros
+    space: Space, n: int = 1, fn: Callable[..., np.ndarray] = np.zeros
 ) -> Union[tuple, dict, np.ndarray]:
     """Create an empty (possibly nested) numpy array.
 
