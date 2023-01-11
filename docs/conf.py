@@ -43,7 +43,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "myst_parser",
     "furo.gen_tutorials",
-    "sphinx_github_changelog"
+    "sphinx_github_changelog",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
