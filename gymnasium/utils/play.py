@@ -321,7 +321,7 @@ class PlayPlot:
     """
 
     def __init__(
-        self, callback: callable, horizon_timesteps: int, plot_names: List[str]
+        self, callback: Callable, horizon_timesteps: int, plot_names: List[str]
     ):
         """Constructor of :class:`PlayPlot`.
 
