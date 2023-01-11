@@ -11,7 +11,11 @@ from collections import deque
 from typing import Any, SupportsFloat
 from typing_extensions import Final
 
-import jumpy as jp
+
+try:
+    import jumpy as jp
+except ImportError as e:
+    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym
