@@ -26,7 +26,7 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-class AutoresetV0(gym.Wrapper):
+class AutoresetV0(gym.Wrapper, gym.utils.EzPickle):
     """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`."""
 
     def __init__(self, env: gym.Env):
@@ -38,6 +38,8 @@ class AutoresetV0(gym.Wrapper):
         super().__init__(env)
         self._episode_ended: bool = False
         self._reset_options: dict[str, Any] | None = None
+
+        gym.utils.EzPickle.__init__(self)
 
     def step(
         self, action: WrapperActType
@@ -68,7 +70,7 @@ class AutoresetV0(gym.Wrapper):
         return super().reset(seed=seed, options=self._reset_options)
 
 
-class PassiveEnvCheckerV0(gym.Wrapper):
+class PassiveEnvCheckerV0(gym.Wrapper, gym.utils.EzPickle):
     """A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API."""
 
     def __init__(self, env: Env[ObsType, ActType]):
@@ -87,6 +89,8 @@ class PassiveEnvCheckerV0(gym.Wrapper):
         self._checked_reset: bool = False
         self._checked_step: bool = False
         self._checked_render: bool = False
+
+        gym.utils.EzPickle.__init__(self)
 
     def step(
         self, action: WrapperActType
@@ -117,7 +121,7 @@ class PassiveEnvCheckerV0(gym.Wrapper):
             return self.env.render()
 
 
-class OrderEnforcingV0(gym.Wrapper):
+class OrderEnforcingV0(gym.Wrapper, gym.utils.EzPickle):
     """A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.
 
     Example:
@@ -143,6 +147,8 @@ class OrderEnforcingV0(gym.Wrapper):
         super().__init__(env)
         self._has_reset: bool = False
         self._disable_render_order_enforcing: bool = disable_render_order_enforcing
+
+        gym.utils.EzPickle.__init__(self)
 
     def step(
         self, action: WrapperActType
@@ -174,7 +180,7 @@ class OrderEnforcingV0(gym.Wrapper):
         return self._has_reset
 
 
-class RecordEpisodeStatisticsV0(gym.Wrapper):
+class RecordEpisodeStatisticsV0(gym.Wrapper, gym.utils.EzPickle):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of an episode, the statistics of the episode will be added to ``info``
@@ -238,6 +244,8 @@ class RecordEpisodeStatisticsV0(gym.Wrapper):
         self.episode_time_length_buffer = deque(maxlen=buffer_length)
         self.episode_reward_buffer = deque(maxlen=buffer_length)
         self.episode_length_buffer = deque(maxlen=buffer_length)
+
+        gym.utils.EzPickle.__init__(self)
 
     def step(
         self, action: WrapperActType

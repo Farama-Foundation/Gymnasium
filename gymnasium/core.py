@@ -1,16 +1,21 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
+import warnings
 from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
 from gymnasium import spaces
-from gymnasium.utils import seeding
+from gymnasium.error import Error
+from gymnasium.utils import EzPickle, seeding
 
 
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
+
+from gymnasium.wrapperspec import WrapperSpec
+
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -204,6 +209,16 @@ class Env(Generic[ObsType, ActType]):
             self._np_random, seed = seeding.np_random()
         return self._np_random
 
+    @property
+    def spec_stack(self) -> tuple[EnvSpec | WrapperSpec]:
+        """Returns the specification stack of the environment.
+
+        Returns:
+           Tuple of environment and wrapper specifications, known as the specification stack.
+        """
+        assert self.spec is not None
+        return (self.spec,)
+
     @np_random.setter
     def np_random(self, value: np.random.Generator):
         self._np_random = value
@@ -276,6 +291,27 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
     def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute."""
         return self.env.spec
+
+    @property
+    def spec_stack(self) -> tuple[EnvSpec | WrapperSpec]:
+        """Returns the specification stack of the wrapped environment.
+
+        Returns:
+           Tuple of environment and wrapper specifications, known as the specification stack.
+        """
+        if not issubclass(type(self), EzPickle):
+            raise Error(f"Wrapper/environment {type(self)} must inherit from EzPickle.")
+        if len(self._ezpickle_args):
+            warnings.warn(
+                f"Wrapper/environment {type(self)} has EzPickle args, which is unsupported by env.spec_stack. Related functions such as serialise_spec_stack will not work."
+            )
+            return (WrapperSpec("Unsupported", None, None),)
+        wrapper_spec = WrapperSpec(
+            type(self).__name__,
+            self.__module__ + ":" + type(self).__name__,
+            self._ezpickle_kwargs,
+        )
+        return (wrapper_spec,) + self.env.spec_stack
 
     @classmethod
     def class_name(cls) -> str:

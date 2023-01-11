@@ -6,7 +6,7 @@ from gymnasium import ActionWrapper
 from gymnasium.spaces import Box
 
 
-class ClipAction(ActionWrapper):
+class ClipAction(ActionWrapper, gym.utils.EzPickle):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -27,6 +27,8 @@ class ClipAction(ActionWrapper):
         """
         assert isinstance(env.action_space, Box)
         super().__init__(env)
+
+        gym.utils.EzPickle.__init__(self)
 
     def action(self, action):
         """Clips the action within the valid bounds.

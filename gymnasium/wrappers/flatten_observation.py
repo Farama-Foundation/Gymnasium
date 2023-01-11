@@ -3,7 +3,7 @@ import gymnasium as gym
 from gymnasium import spaces
 
 
-class FlattenObservation(gym.ObservationWrapper):
+class FlattenObservation(gym.ObservationWrapper, gym.utils.EzPickle):
     """Observation wrapper that flattens the observation.
 
     Example:
@@ -27,6 +27,8 @@ class FlattenObservation(gym.ObservationWrapper):
         """
         super().__init__(env)
         self.observation_space = spaces.flatten_space(env.observation_space)
+
+        gym.utils.EzPickle.__init__(self)
 
     def observation(self, observation):
         """Flattens an observation.

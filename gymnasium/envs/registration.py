@@ -317,6 +317,8 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
 # fmt: off
 @overload
 def make(id: str, **kwargs) -> Env: ...
+
+
 @overload
 def make(id: EnvSpec, **kwargs) -> Env: ...
 
@@ -373,6 +375,8 @@ def make(id: Literal[
     "HumanoidStandup-v2", "HumanoidStandup-v4",
     "Humanoid-v2", "Humanoid-v3", "Humanoid-v4",
 ], **kwargs) -> Env[np.ndarray, np.ndarray]: ...
+
+
 # fmt: on
 
 
@@ -554,9 +558,15 @@ def make(
     Raises:
         Error: If the ``id`` doesn't exist then an error is raised
     """
-    if isinstance(id, EnvSpec):
+    if isinstance(id, tuple):
+        spec_stack = id
+        id = id[-1]  # if a spec_stack is passed, use the EnvSpec in the stack
+        spec_ = id
+    elif isinstance(id, EnvSpec):
+        spec_stack = None
         spec_ = id
     else:
+        spec_stack = None
         module, id = (None, id) if ":" not in id else id.split(":")
         if module is not None:
             try:
@@ -658,6 +668,51 @@ def make(
     spec_.kwargs = _kwargs
     env.unwrapped.spec = spec_
 
+    if isinstance(spec_stack, tuple):
+        env = _apply_wrappers_from_stack(env, spec_stack)
+    else:
+        env = _apply_default_wrappers(
+            env,
+            spec_,
+            render_mode,
+            apply_api_compatibility,
+            disable_env_checker,
+            max_episode_steps,
+            autoreset,
+            apply_human_rendering,
+            apply_render_collection,
+        )
+
+    return env
+
+
+def _apply_default_wrappers(
+    env,
+    spec_,
+    render_mode,
+    apply_api_compatibility,
+    disable_env_checker,
+    max_episode_steps,
+    autoreset,
+    apply_human_rendering,
+    apply_render_collection,
+):
+    """Applies the default wrappers to the environment.
+
+    Args:
+        spec_:
+        render_mode:
+        apply_api_compatibility:
+        disable_env_checker:
+        max_episode_steps:
+        autoreset:
+        apply_human_rendering:
+        apply_render_collection:
+        env (gym.Env): The environment to wrap.
+
+    Returns:
+        gym.Env: The wrapped environment.
+    """
     # Add step API wrapper
     if apply_api_compatibility is True or (
         apply_api_compatibility is None and spec_.apply_api_compatibility is True
@@ -689,6 +744,36 @@ def make(
         env = HumanRendering(env)
     elif apply_render_collection:
         env = RenderCollection(env)
+
+    return env
+
+
+def _apply_wrappers_from_stack(env, spec_stack):
+    """Applies the wrappers from the spec stack to the environment.
+
+    Args:
+        env (gym.Env): The environment to wrap.
+        spec_stack (SpecStack): The spec stack.
+
+    Returns:
+        gym.Env: The wrapped environment.
+    """
+    for i in range(len(spec_stack) - 1):
+        ws = spec_stack[-2 - i]
+        if ws.entry_point is None:
+            raise error.Error(f"{ws.id} registered but entry_point is not specified")
+        elif callable(ws.entry_point):
+            env_creator = ws.entry_point
+        else:
+            # Assume it's a string
+            try:
+                env_creator = load(ws.entry_point)
+            except ValueError:
+                raise error.Error(
+                    f"Couldn't find class {ws.entry_point} for wrapper {ws.id}"
+                )
+
+        env = env_creator(env, **ws.kwargs)
 
     return env
 

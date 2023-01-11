@@ -10,7 +10,7 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-class PassiveEnvChecker(gym.Wrapper):
+class PassiveEnvChecker(gym.Wrapper, gym.utils.EzPickle):
     """A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API."""
 
     def __init__(self, env):
@@ -29,6 +29,8 @@ class PassiveEnvChecker(gym.Wrapper):
         self.checked_reset = False
         self.checked_step = False
         self.checked_render = False
+
+        gym.utils.EzPickle.__init__(self)
 
     def step(self, action: ActType):
         """Steps through the environment that on the first call will run the `passive_env_step_check`."""

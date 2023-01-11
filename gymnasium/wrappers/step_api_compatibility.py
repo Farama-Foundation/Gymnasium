@@ -4,7 +4,7 @@ from gymnasium.logger import deprecation
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
 
-class StepAPICompatibility(gym.Wrapper):
+class StepAPICompatibility(gym.Wrapper, gym.utils.EzPickle):
     r"""A wrapper which can transform an environment from new step API to old and vice-versa.
 
     Old step API refers to step() method returning (observation, reward, done, info)
@@ -39,6 +39,8 @@ class StepAPICompatibility(gym.Wrapper):
             deprecation(
                 "Initializing environment in (old) done step API which returns one bool instead of two."
             )
+
+        gym.utils.EzPickle.__init__(self, output_truncation_bool=output_truncation_bool)
 
     def step(self, action):
         """Steps through the environment, returning 5 or 4 items depending on `output_truncation_bool`.
