@@ -75,6 +75,6 @@ tutorials/*
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
-content/release_notes
+release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```

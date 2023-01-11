@@ -18,6 +18,8 @@ jobs:
   docs:
     name: Generate Website for new version
     runs-on: ubuntu-latest
+    env:
+      SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         if: inputs.commit == ''
