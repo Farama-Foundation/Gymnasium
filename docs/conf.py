@@ -43,6 +43,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "myst_parser",
     "furo.gen_tutorials",
+    "sphinx_github_changelog",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -98,3 +99,7 @@ gen_tutorials.generate(
     os.path.dirname(__file__),
     os.path.join(os.path.dirname(__file__), "tutorials"),
 )
+
+# -- Generate Changelog -------------------------------------------------
+
+sphinx_github_changelog_token = os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")
