@@ -4,13 +4,13 @@ import sys
 import time
 from copy import deepcopy
 from enum import Enum
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import Callable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import logger
-from gymnasium.core import ObsType
+from gymnasium.core import Env, ObsType
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
@@ -59,14 +59,14 @@ class AsyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Sequence[callable],
+        env_fns: Sequence[Callable[[], Env]],
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         shared_memory: bool = True,
         copy: bool = True,
         context: Optional[str] = None,
         daemon: bool = True,
-        worker: Optional[callable] = None,
+        worker: Optional[Callable] = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -216,7 +216,7 @@ class AsyncVectorEnv(VectorEnv):
         timeout: Optional[Union[int, float]] = None,
         seed: Optional[int] = None,
         options: Optional[dict] = None,
-    ) -> Union[ObsType, Tuple[ObsType, List[dict]]]:
+    ) -> Union[ObsType, Tuple[ObsType, dict]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:

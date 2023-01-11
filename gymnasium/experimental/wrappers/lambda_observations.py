@@ -16,7 +16,11 @@ from __future__ import annotations
 from typing import Any, Callable, Sequence
 from typing_extensions import Final
 
-import jumpy as jp
+
+try:
+    import jumpy as jp
+except ImportError as e:
+    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym
@@ -279,7 +283,7 @@ class ResizeObservationV0(LambdaObservationV0):
             import cv2
         except ImportError as e:
             raise DependencyNotInstalled(
-                "opencv is not installed, run `pip install gymnasium[other]`"
+                "opencv (cv2) is not installed, run `pip install gymnasium[other]`"
             ) from e
 
         self.shape: Final[tuple[int, ...]] = tuple(shape)

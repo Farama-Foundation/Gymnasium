@@ -10,7 +10,7 @@ try:
     from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 except ImportError as e:
     raise gym.error.DependencyNotInstalled(
-        "MoviePy is not installed, run `pip install moviepy`"
+        "moviepy is not installed, run `pip install moviepy`"
     ) from e
 
 
