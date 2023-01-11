@@ -16,13 +16,13 @@
 
 # -- Project information -----------------------------------------------------
 import os
-from typing import Any, Dict
 import re
+from typing import Any, Dict
 
-from furo import gen_tutorials
+import sphinx_gallery.gen_rst
 
 import gymnasium
-import sphinx_gallery.gen_rst
+
 
 project = "Gymnasium"
 copyright = "2022 Farama Foundation"
@@ -109,12 +109,12 @@ sphinx_gallery.gen_rst.EXAMPLE_HEADER = """
 """
 
 sphinx_gallery_conf = {
-    'ignore_pattern': r'__init__\.py',
+    "ignore_pattern": r"__init__\.py",
     "examples_dirs": "./tutorials",
     "gallery_dirs": "./tutorials",
     "show_signature": False,
     "show_memory": False,
     "min_reported_time": float("inf"),
-    "filename_pattern":  f"{re.escape(os.sep)}run_",
-    "default_thumb_file": "_static/img/gymnasium-github.png"
+    "filename_pattern": f"{re.escape(os.sep)}run_",
+    "default_thumb_file": "_static/img/gymnasium-github.png",
 }
