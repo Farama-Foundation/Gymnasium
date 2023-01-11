@@ -113,6 +113,10 @@ def test_record_video_length():
     env.step(action)
     assert not env.recording
     env.close()
+    assert os.path.isdir("videos")
+    mp4_files = [file for file in os.listdir("videos") if file.endswith(".mp4")]
+    assert len(mp4_files) == 1
+    shutil.rmtree("videos")
 
 
 def make_env(gym_id, idx, **kwargs):
@@ -137,10 +141,6 @@ def test_record_video_within_vector():
     envs.reset()
     for i in range(199):
         _, _, _, _, infos = envs.step(envs.action_space.sample())
-
-        # break when every env is done
-        if "episode" in infos and all(infos["_episode"]):
-            print(f"episode_reward={infos['episode']['r']}")
 
     assert os.path.isdir("videos")
     mp4_files = [file for file in os.listdir("videos") if file.endswith(".mp4")]

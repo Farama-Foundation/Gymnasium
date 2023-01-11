@@ -87,9 +87,13 @@ class RecordVideoV0(gym.Wrapper):
     To do this, you can specify ``episode_trigger`` or ``step_trigger``.
     They should be functions returning a boolean that indicates whether a recording should be started at the
     current episode or step, respectively.
-    If neither :attr:`episode_trigger` nor ``step_trigger`` is passed, a default ``episode_trigger`` will be employed.
+    If neither :attr:`episode_trigger` nor ``step_trigger`` is passed, a default ``episode_trigger`` will be employed,
+    i.e. capped_cubic_video_schedule. This function starts a video at every episode that is a power of 3 until 1000 and
+    then every 1000 episodes.
     By default, the recording will be stopped once reset is called. However, you can also create recordings of fixed
     length (possibly spanning several episodes) by passing a strictly positive value for ``video_length``.
+    This wrapper uses the value `fps` from metadata as the number of frames per second;
+    if `fps` is not defined in metadata, the default value 30 is used.
     """
 
     def __init__(
@@ -178,12 +182,14 @@ class RecordVideoV0(gym.Wrapper):
             self.stop_recording()
             logger.warn(
                 "Recording stopped: expected type of frame returned by render ",
-                f"to be a numpy array, got instead {__class__.__name__}.",
+                f"to be a numpy array, got instead {type(frame)}.",
             )
 
-    def reset(self, **kwargs):
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Reset the environment and eventually starts a new recording."""
-        observations = super().reset(**kwargs)
+        obs, info = super().reset(seed=seed, options=options)
         self.episode_id += 1
 
         if self.recording and self.video_length == float("inf"):
@@ -196,9 +202,11 @@ class RecordVideoV0(gym.Wrapper):
             if len(self.recorded_frames) > self.video_length:
                 self.stop_recording()
 
-        return observations
+        return obs, info
 
-    def step(self, action):
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment using action, recording observations if :attr:`self.recording`."""
         obs, rew, terminated, truncated, info = self.env.step(action)
         self.step_id += 1
@@ -226,7 +234,7 @@ class RecordVideoV0(gym.Wrapper):
         assert self.recording, "stop_recording was called, but no recording was started"
 
         if len(self.recorded_frames) == 0:
-            logger.warn("Attempt to save an empty video ignored.")
+            logger.warn("Ignored saving a video as there were zero frames to save.")
         else:
             try:
                 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
