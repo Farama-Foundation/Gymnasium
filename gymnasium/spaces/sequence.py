@@ -8,6 +8,7 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
+import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
@@ -30,17 +31,24 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
         self,
         space: Space[Any],
         seed: int | np.random.Generator | None = None,
+        stack: bool = False,
     ):
         """Constructor of the :class:`Sequence` space.
 
         Args:
             space: Elements in the sequences this space represent must belong to this space.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
+            stack: If `True` then the resulting samples would be stacked.
         """
         assert isinstance(
             space, Space
         ), f"Expects the feature space to be instance of a gym Space, actual type: {type(space)}"
         self.feature_space = space
+        self.stack = stack
+        if self.stack:
+            self.batched_feature_space = gym.vector.utils.batch_space(
+                self.feature_space, 1
+            )
 
         # None for shape and dtype, since it'll require special handling
         super().__init__(None, None, seed)
@@ -113,16 +121,31 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
             # The choice of 0.25 is arbitrary
             length = self.np_random.geometric(0.25)
 
-        return tuple(
+        # Generate sample values from feature_space.
+        sampled_values = tuple(
             self.feature_space.sample(mask=feature_mask) for _ in range(length)
         )
+
+        if self.stack:
+            # Concatenate values if stacked.
+            return gym.vector.utils.concatenate(
+                self.feature_space, sampled_values, None
+            )
+
+        return sampled_values
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         # by definition, any sequence is an iterable
-        return isinstance(x, collections.abc.Iterable) and all(
-            self.feature_space.contains(item) for item in x
-        )
+        if self.stack:
+            return all(
+                item in self.feature_space
+                for item in gym.vector.utils.iterate(self.batched_feature_space, x)
+            )
+        else:
+            return isinstance(x, collections.abc.Iterable) and all(
+                self.feature_space.contains(item) for item in x
+            )
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
