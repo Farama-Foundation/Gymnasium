@@ -1,3 +1,6 @@
+"""Tests for Jax Blackjack functional env."""
+
+
 import jax
 import jax.numpy as jnp
 import jax.random as jrng
@@ -7,6 +10,7 @@ from gymnasium.envs.jax_toy_text.blackjack import BlackjackFunctional  # noqa: E
 
 
 def test_normal_BlackjackFunctional():
+    """Tests to ensure that blackjack env step and reset functions return the correct types."""
     env = BlackjackFunctional()
     rng = jrng.PRNGKey(0)
 
@@ -52,6 +56,7 @@ def test_normal_BlackjackFunctional():
 
 
 def test_jit_BlackjackFunctional():
+    """Tests the Jax BlackJack env, but in a jitted context."""
     env = BlackjackFunctional()
     rng = jrng.PRNGKey(0)
     env.transform(jax.jit)
@@ -94,6 +99,7 @@ def test_jit_BlackjackFunctional():
 
 
 def test_vmap_BlackJack():
+    """Tests the Jax Blackjack env with vmap."""
     env = BlackjackFunctional()
     num_envs = 10
     rng, *split_rng = jrng.split(

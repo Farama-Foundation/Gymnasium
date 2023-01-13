@@ -12,8 +12,8 @@ from gymnasium import spaces
 
 # from gymnasium.envs.jax_toy_text.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle, seeding
 
 
@@ -424,19 +424,18 @@ class BlackjackFunctional(
 
 
 class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
+
+    metadata = {"render_modes": ["rgb_array", "human"], "render_fps": 50}
+
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         print(kwargs)
         env = BlackjackFunctional(**kwargs)
         env.transform(jax.jit)
-        action_space = env.action_space
-        observation_space = env.observation_space
-        metadata = {"render_modes": ["rgb_array", "human"], "render_fps": 50}
+
         super().__init__(
             env,
-            observation_space=observation_space,
-            action_space=action_space,
-            metadata=metadata,
+            metadata=self.metadata,
             render_mode=render_mode,
         )
 
