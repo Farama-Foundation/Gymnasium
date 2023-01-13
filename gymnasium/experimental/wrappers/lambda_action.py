@@ -8,7 +8,11 @@ from __future__ import annotations
 
 from typing import Callable
 
-import jumpy as jp
+
+try:
+    import jumpy as jp
+except ImportError as e:
+    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym

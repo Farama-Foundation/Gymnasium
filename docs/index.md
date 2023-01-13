@@ -67,7 +67,7 @@ environments/third_party_environments
 :glob:
 :caption: Tutorials
 
-tutorials/*
+tutorials/**/index
 ```
 
 ```{toctree}
@@ -75,5 +75,6 @@ tutorials/*
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
+release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```
