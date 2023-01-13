@@ -9,8 +9,8 @@ from gymnasium.error import (
     ClosedEnvironmentError,
     NoAsyncCallError,
 )
+from gymnasium.experimental.vector import AsyncVectorEnv
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from tests.vector.utils import (
     CustomSpace,
     make_custom_space_env,
