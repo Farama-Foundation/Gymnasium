@@ -296,6 +296,12 @@ for episode in tqdm(range(n_episodes)):
 # ------------------------------
 #
 
+# Each element of a 1-D convolution output is the dot product
+# between a corresponding portion of the first signal and the
+# entire second signal (array of ones for this context)
+# The size of the corresponding portion of the first signal is
+# the length of the second signal
+
 rolling_length = 500
 fig, axs = plt.subplots(ncols=3, figsize=(12, 5))
 axs[0].set_title("Episode rewards")
