@@ -130,6 +130,9 @@ def test_rendering_works():
     render_out = env.render()
     assert isinstance(render_out, List)
     assert len(render_out) == n_steps + 1
+    render_out = env.render()
+    assert isinstance(render_out, List)
+    assert len(render_out) == 0
     env.close()
     shutil.rmtree("videos")
 
