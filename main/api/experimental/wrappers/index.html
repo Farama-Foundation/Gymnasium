@@ -1059,12 +1059,32 @@ the episode statistics.</p>
 <h2>Rendering Wrappers<a class="headerlink" href="#rendering-wrappers" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.RecordVideoV0">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordVideoV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.RecordVideoV0" title="Permalink to this definition">#</a></dt>
-<dd><p>Record a video of an environment.</p>
-<p>Wraps an environment to allow a modular transformation of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> methods.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordVideoV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rl-video'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.RecordVideoV0" title="Permalink to this definition">#</a></dt>
+<dd><p>This wrapper records videos of rollouts.</p>
+<p>Usually, you only want to record episodes intermittently, say every hundredth episode.
+To do this, you can specify <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code> or <code class="docutils literal notranslate"><span class="pre">step_trigger</span></code>.
+They should be functions returning a boolean that indicates whether a recording should be started at the
+current episode or step, respectively.
+If neither <code class="xref py py-attr docutils literal notranslate"><span class="pre">episode_trigger</span></code> nor <code class="docutils literal notranslate"><span class="pre">step_trigger</span></code> is passed, a default <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code> will be employed,
+i.e. capped_cubic_video_schedule. This function starts a video at every episode that is a power of 3 until 1000 and
+then every 1000 episodes.
+By default, the recording will be stopped once reset is called. However, you can also create recordings of fixed
+length (possibly spanning several episodes) by passing a strictly positive value for <code class="docutils literal notranslate"><span class="pre">video_length</span></code>.
+This wrapper uses the value <cite>fps</cite> from metadata as the number of frames per second;
+if <cite>fps</cite> is not defined in metadata, the default value 30 is used.</p>
+<p>Wrapper records videos of rollouts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env</strong> – The environment to wrap</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment that will be wrapped</p></li>
+<li><p><strong>video_folder</strong> (<em>str</em>) – The folder where the recordings will be stored</p></li>
+<li><p><strong>episode_trigger</strong> – Function that accepts an integer and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff a recording should be started at this episode</p></li>
+<li><p><strong>step_trigger</strong> – Function that accepts an integer and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff a recording should be started at this step</p></li>
+<li><p><strong>video_length</strong> (<em>int</em>) – The length of recorded episodes. If 0, entire episodes are recorded.
+Otherwise, snippets of the specified length are captured</p></li>
+<li><p><strong>name_prefix</strong> (<em>str</em>) – Will be prepended to the filename of the recordings</p></li>
+<li><p><strong>disable_logger</strong> (<em>bool</em>) – Whether to disable moviepy logger or not</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1314,11 +1334,11 @@ The reason for this is jax does not support non-array values, therefore numpy <c
         const menuBtn = document.querySelector(".farama-header-menu__btn");
         const menuContainer = document.querySelector(".farama-header-menu-container");
         if (document.querySelector(".farama-header-menu").classList.contains("active")) {
-          menuBtn.ariaExpanded = "false";
-          menuContainer.ariaHidden = "true";
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuContainer.setAttribute("aria-hidden", "true");
         } else {
-          menuBtn.ariaExpanded = "true";
-          menuContainer.ariaHidden = "false";
+          menuBtn.setAttribute("aria-expanded", "true");
+          menuContainer.setAttribute("aria-hidden", "false");
         }
         document.querySelector(".farama-header-menu").classList.toggle("active");
       }
