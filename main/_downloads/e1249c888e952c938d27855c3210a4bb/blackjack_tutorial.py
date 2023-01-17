@@ -299,6 +299,7 @@ for episode in tqdm(range(n_episodes)):
 rolling_length = 500
 fig, axs = plt.subplots(ncols=3, figsize=(12, 5))
 axs[0].set_title("Episode rewards")
+# compute and assign a rolling average of the data to provide a smoother graph
 reward_moving_average = (
     np.convolve(
         np.array(env.return_queue).flatten(), np.ones(rolling_length), mode="valid"
