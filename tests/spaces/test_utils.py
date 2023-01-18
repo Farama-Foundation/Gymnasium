@@ -140,10 +140,10 @@ def test_flatten_roundtripping(space):
 def test_unflatten_discrete_error():
     value = np.array([0])
     with pytest.raises(ValueError):
-        utils._unflatten_discrete(gym.spaces.Discrete(1), value)
+        utils.unflatten(gym.spaces.Discrete(1), value)
 
 
 def test_unflatten_multidiscrete_error():
     value = np.array([0, 0])
     with pytest.raises(ValueError):
-        utils._unflatten_multidiscrete(gym.spaces.MultiDiscrete([1, 1]), value)
+        utils.unflatten(gym.spaces.MultiDiscrete([1, 1]), value)
