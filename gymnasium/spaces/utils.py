@@ -275,7 +275,7 @@ def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
     if len(nonzero[0]) == 0:
         raise ValueError(
             f"{x} is not a valid one-hot encoded vector and can not be unflattened to space {space}. "
-            f"Not all valid values in a flattened space can be unflattened."
+            "Not all valid samples in a flattened space can be unflattened."
         )
     return space.start + nonzero[0][0]
 
@@ -290,7 +290,7 @@ def _unflatten_multidiscrete(
     if len(nonzero[0]) == 0:
         raise ValueError(
             f"{x} is not a concatenation of one-hot encoded vectors and can not be unflattened to space {space}. "
-            f"Not all valid values in a flattened space can be unflattened."
+            "Not all valid samples in a flattened space can be unflattened."
         )
     (indices,) = cast(type(offsets[:-1]), nonzero)
     return np.asarray(indices - offsets[:-1], dtype=space.dtype).reshape(space.shape)
