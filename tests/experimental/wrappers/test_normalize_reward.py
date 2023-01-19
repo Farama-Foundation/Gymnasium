@@ -1,6 +1,4 @@
 """Test suite for NormalizeRewardV0."""
-import numpy as np
-
 from gymnasium.experimental.wrappers import NormalizeRewardV0
 from tests.testing_env import GenericTestEnv
 
@@ -29,6 +27,6 @@ def test_running_mean_normalize_reward_wrapper():
     assert not wrapped_env.update_running_mean
 
     # Statistics are frozen
-    wrapped_env.step(np.array([1], dtype=np.float32))
+    wrapped_env.step(None)
     assert rms_var_updated == wrapped_env.rewards_running_means.var
     assert rms_mean_updated == wrapped_env.rewards_running_means.mean

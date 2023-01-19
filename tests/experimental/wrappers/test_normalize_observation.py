@@ -1,6 +1,4 @@
 """Test suite for NormalizeObservationV0."""
-import numpy as np
-
 from gymnasium.experimental.wrappers import NormalizeObservationV0
 from tests.testing_env import GenericTestEnv
 
@@ -18,7 +16,7 @@ def test_running_mean_normalize_observation_wrapper():
     rms_mean_init = wrapped_env.obs_rms.mean
 
     # Statistics are updated when env.step()
-    wrapped_env.step(np.array([1], dtype=np.float32))
+    wrapped_env.step(None)
     rms_var_updated = wrapped_env.obs_rms.var
     rms_mean_updated = wrapped_env.obs_rms.mean
     assert rms_var_init != rms_var_updated
@@ -29,6 +27,6 @@ def test_running_mean_normalize_observation_wrapper():
     assert not wrapped_env.update_running_mean
 
     # Statistics are frozen
-    wrapped_env.step(np.array([1], dtype=np.float32))
+    wrapped_env.step(None)
     assert rms_var_updated == wrapped_env.obs_rms.var
     assert rms_mean_updated == wrapped_env.obs_rms.mean
