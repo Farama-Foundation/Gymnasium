@@ -19,14 +19,14 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
     Example usage:
 
         >>> from gymnasium.spaces import Dict, Discrete
-        >>> observation_space = Dict({"position": Discrete(2), "velocity": Discrete(3)})
+        >>> observation_space = Dict({"position": Discrete(2), "velocity": Discrete(3)}, seed=42)
         >>> observation_space.sample()
-        OrderedDict([('position', 1), ('velocity', 2)])
+        OrderedDict([('position', 0), ('velocity', 2)])
 
     Example usage [nested]::
 
         >>> from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete
-        >>> Dict(
+        >>> Dict(  # doctest: +SKIP
         ...     {
         ...         "ext_controller": MultiDiscrete([5, 2, 2]),
         ...         "inner_state": Dict(
@@ -66,9 +66,9 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
 
             >>> from gymnasium.spaces import Box, Discrete
             >>> Dict({"position": Box(-1, 1, shape=(2,)), "color": Discrete(3)})
-            Dict(color:Discrete(3), position:Box(-1.0, 1.0, (2,), float32))
+            Dict('color': Discrete(3), 'position': Box(-1.0, 1.0, (2,), float32))
             >>> Dict(position=Box(-1, 1, shape=(2,)), color=Discrete(3))
-            Dict(color:Discrete(3), position:Box(-1.0, 1.0, (2,), float32))
+            Dict('position': Box(-1.0, 1.0, (2,), float32), 'color': Discrete(3))
 
         Args:
             spaces: A dictionary of spaces. This specifies the structure of the :class:`Dict` space

@@ -19,11 +19,11 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
 
     Example::
         >>> from gymnasium.spaces import Box
-        >>> space = Sequence(Box(0, 1))
-        >>> space.sample()
-        (array([0.0259352], dtype=float32),)
-        >>> space.sample()
-        (array([0.80977976], dtype=float32), array([0.80066574], dtype=float32), array([0.77165383], dtype=float32))
+        >>> space = Sequence(Box(0, 1), seed=42)
+        >>> space.sample()   # doctest: +SKIP
+        (array([0.6369617], dtype=float32),)
+        >>> space.sample()   # doctest: +SKIP
+        (array([0.01652764], dtype=float32), array([0.8132702], dtype=float32),)
     """
 
     def __init__(
