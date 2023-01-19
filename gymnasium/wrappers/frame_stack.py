@@ -114,11 +114,12 @@ class FrameStack(gym.ObservationWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CarRacing-v1')
+        >>> from gymnasium.wrappers import FrameStack
+        >>> env = gym.make("CarRacing-v2")
         >>> env = FrameStack(env, 4)
         >>> env.observation_space
-        Box(4, 96, 96, 3)
-        >>> obs = env.reset()
+        Box(0, 255, (4, 96, 96, 3), uint8)
+        >>> obs, _ = env.reset()
         >>> obs.shape
         (4, 96, 96, 3)
     """
