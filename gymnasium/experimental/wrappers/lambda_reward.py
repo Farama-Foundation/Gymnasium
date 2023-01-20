@@ -98,6 +98,10 @@ class NormalizeRewardV0(gym.Wrapper):
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
 
+    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
+    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.
+    If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
         instantiated or the policy was changed recently.
@@ -117,6 +121,7 @@ class NormalizeRewardV0(gym.Wrapper):
             gamma (float): The discount factor that is used in the exponential moving average.
         """
         super().__init__(env)
+        self.is_vector_env = getattr(env, "is_vector_env", False)
         self.rewards_running_means = RunningMeanStd(shape=())
         self.discounted_reward: float = 0.0
         self.gamma = gamma
@@ -127,10 +132,14 @@ class NormalizeRewardV0(gym.Wrapper):
     ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment, normalizing the reward returned."""
         obs, reward, terminated, truncated, info = super().step(action)
-        self.discounted_reward = self.discounted_reward * self.gamma * (
-            1 - terminated
-        ) + float(reward)
-        return obs, self.normalize(float(reward)), terminated, truncated, info
+        if not self.is_vector_env:
+            reward = np.array([float(reward)])
+        self.discounted_reward = (
+            self.discounted_reward * self.gamma * (1 - terminated) + reward
+        )
+        if not self.is_vector_env:
+            reward = float(reward[0])
+        return obs, self.normalize(reward), terminated, truncated, info
 
     def normalize(self, reward):
         """Normalizes the rewards with the running mean rewards and their variance."""
