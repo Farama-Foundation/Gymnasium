@@ -12,9 +12,13 @@ from gymnasium.wrappers.compatibility import EnvCompatibility, LegacyEnv
 
 try:
     import gym
-    import shimmy
 except ImportError:
     gym = None
+
+
+try:
+    import shimmy
+except ImportError:
     shimmy = None
 
 
