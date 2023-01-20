@@ -20,11 +20,13 @@ class Text(Space[str]):
     Example::
         >>> # {"", "B5", "hello", ...}
         >>> Text(5)
+        Text(1, 5, characters=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)
         >>> # {"0", "42", "0123456789", ...}
         >>> import string
         >>> Text(min_length = 1,
         ...      max_length = 10,
         ...      charset = string.digits)
+        Text(1, 10, characters=0123456789)
     """
 
     def __init__(

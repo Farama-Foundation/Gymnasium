@@ -161,7 +161,7 @@ def play(
 
         >>> import gymnasium as gym
         >>> from gymnasium.utils.play import play
-        >>> play(gym.make("CarRacing-v1", render_mode="rgb_array"), keys_to_action={
+        >>> play(gym.make("CarRacing-v2", render_mode="rgb_array"), keys_to_action={  # doctest: +SKIP
         ...                                                "w": np.array([0, 0.7, 0]),
         ...                                                "a": np.array([-1, 0, 0]),
         ...                                                "s": np.array([0, 0, 1]),
@@ -181,10 +181,11 @@ def play(
     for last 150 steps.
 
         >>> import gymnasium as gym
+        >>> from gymnasium.utils.play import PlayPlot, play
         >>> def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
         ...        return [rew,]
-        >>> plotter = PlayPlot(callback, 150, ["reward"])
-        >>> play(gym.make("CartPole-v1"), callback=plotter.callback)
+        >>> plotter = PlayPlot(callback, 150, ["reward"])             # doctest: +SKIP
+        >>> play(gym.make("CartPole-v1"), callback=plotter.callback)  # doctest: +SKIP
 
     Args:
         env: Environment to use for playing.
@@ -207,7 +208,7 @@ def play(
             For example if pressing 'w' and space at the same time is supposed
             to trigger action number 2 then ``key_to_action`` dict could look like this:
 
-                >>> {
+                >>> key_to_action = {
                 ...    # ...
                 ...    (ord('w'), ord(' ')): 2
                 ...    # ...
@@ -215,7 +216,7 @@ def play(
 
             or like this:
 
-                >>> {
+                >>> key_to_action = {
                 ...    # ...
                 ...    ("w", " "): 2
                 ...    # ...
@@ -223,7 +224,7 @@ def play(
 
             or like this:
 
-                >>> {
+                >>> key_to_action = {
                 ...    # ...
                 ...    "w ": 2
                 ...    # ...
@@ -315,9 +316,9 @@ class PlayPlot:
 
     Typically, this :meth:`callback` will be used in conjunction with :func:`play` to see how the metrics evolve as you play::
 
-        >>> plotter = PlayPlot(compute_metrics, horizon_timesteps=200,
+        >>> plotter = PlayPlot(compute_metrics, horizon_timesteps=200,                               # doctest: +SKIP
         ...                    plot_names=["Immediate Rew.", "Cumulative Rew.", "Action Magnitude"])
-        >>> play(your_env, callback=plotter.callback)
+        >>> play(your_env, callback=plotter.callback)                                                # doctest: +SKIP
     """
 
     def __init__(

@@ -25,22 +25,23 @@ class PixelObservationWrapper(gym.ObservationWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = PixelObservationWrapper(gym.make('CarRacing-v1', render_mode="rgb_array"))
-        >>> obs = env.reset()
+        >>> from gymnasium.wrappers import PixelObservationWrapper
+        >>> env = PixelObservationWrapper(gym.make("CarRacing-v2", render_mode="rgb_array"))
+        >>> obs, _ = env.reset()
         >>> obs.keys()
         odict_keys(['pixels'])
         >>> obs['pixels'].shape
         (400, 600, 3)
-        >>> env = PixelObservationWrapper(gym.make('CarRacing-v1', render_mode="rgb_array"), pixels_only=False)
-        >>> obs = env.reset()
+        >>> env = PixelObservationWrapper(gym.make("CarRacing-v2", render_mode="rgb_array"), pixels_only=False)
+        >>> obs, _ = env.reset()
         >>> obs.keys()
         odict_keys(['state', 'pixels'])
         >>> obs['state'].shape
         (96, 96, 3)
         >>> obs['pixels'].shape
         (400, 600, 3)
-        >>> env = PixelObservationWrapper(gym.make('CarRacing-v1', render_mode="rgb_array"), pixel_keys=('obs',))
-        >>> obs = env.reset()
+        >>> env = PixelObservationWrapper(gym.make("CarRacing-v2", render_mode="rgb_array"), pixel_keys=('obs',))
+        >>> obs, _ = env.reset()
         >>> obs.keys()
         odict_keys(['obs'])
         >>> obs['obs'].shape

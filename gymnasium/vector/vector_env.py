@@ -129,11 +129,12 @@ class VectorEnv(gym.Env):
 
             >>> import gymnasium as gym
             >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
-            >>> envs.reset()
-            (array([[-0.02240574, -0.03439831, -0.03904812,  0.02810693],
-                   [ 0.01586068,  0.01929009,  0.02394426,  0.04016077],
-                   [-0.01314174,  0.03893502, -0.02400815,  0.0038326 ]],
+            >>> envs.reset(seed=42)
+            (array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
+                   [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
+                   [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
                   dtype=float32), {})
+
         """
         self.reset_async(seed=seed, options=options)
         return self.reset_wait(seed=seed, options=options)
@@ -176,15 +177,14 @@ class VectorEnv(gym.Env):
         An example::
 
             >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
-            >>> envs.reset()
+            >>> _ = envs.reset(seed=42)
             >>> actions = np.array([1, 0, 1])
             >>> observations, rewards, termination, truncation, infos = envs.step(actions)
-
             >>> observations
-            array([[ 0.00122802,  0.16228443,  0.02521779, -0.23700266],
-                    [ 0.00788269, -0.17490888,  0.03393489,  0.31735462],
-                    [ 0.04918966,  0.19421194,  0.02938497, -0.29495203]],
-                    dtype=float32)
+            array([[ 0.02727336,  0.18847767,  0.03625453, -0.26141977],
+                   [ 0.01431748, -0.24002443, -0.04731862,  0.3110827 ],
+                   [-0.03822722,  0.1710671 , -0.00848456, -0.2487226 ]],
+                  dtype=float32)
             >>> rewards
             array([1., 1., 1.])
             >>> termination

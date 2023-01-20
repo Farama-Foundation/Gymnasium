@@ -63,10 +63,10 @@ def save_video(
         >>> import gymnasium as gym
         >>> from gymnasium.utils.save_video import save_video
         >>> env = gym.make("FrozenLake-v1", render_mode="rgb_array_list")
-        >>> env.reset()
+        >>> _ = env.reset()
         >>> step_starting_index = 0
         >>> episode_index = 0
-        >>> for step_index in range(199):
+        >>> for step_index in range(199): # doctest: +SKIP
         ...    action = env.action_space.sample()
         ...    _, _, terminated, truncated, _ = env.step(action)
         ...

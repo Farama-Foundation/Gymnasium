@@ -52,13 +52,15 @@ class ClipActionV0(LambdaActionV0):
 
     Example:
         >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import ClipActionV0
         >>> import numpy as np
-        >>> env = gym.make('BipedalWalker-v3', disable_env_checker=True)
+        >>> env = gym.make("Hopper-v4", disable_env_checker=True)
         >>> env = ClipActionV0(env)
         >>> env.action_space
-        Box(-1.0, 1.0, (4,), float32)
-        >>> env.step(np.array([5.0, 2.0, -10.0, 0.0]))
-        # Executes the action np.array([1.0, 1.0, -1.0, 0]) in the base environment
+        Box(-inf, inf, (3,), float32)
+        >>> _ = env.reset(seed=42)
+        >>> _ = env.step(np.array([5.0, -2.0, 0.0]))
+        ... # Executes the action np.array([1.0, -1.0, 0]) in the base environment
     """
 
     def __init__(self, env: gym.Env):
@@ -89,13 +91,14 @@ class RescaleActionV0(LambdaActionV0):
 
     Example:
         >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import RescaleActionV0
         >>> import numpy as np
-        >>> env = gym.make('BipedalWalker-v3', disable_env_checker=True)
+        >>> env = gym.make("Hopper-v4", disable_env_checker=True)
         >>> _ = env.reset(seed=42)
-        >>> obs, _, _, _, _ = env.step(np.array([1,1,1,1]))
+        >>> obs, _, _, _, _ = env.step(np.array([1,1,1]))
         >>> _ = env.reset(seed=42)
         >>> min_action = -0.5
-        >>> max_action = np.array([0.0, 0.5, 1.0, 0.75])
+        >>> max_action = np.array([0.0, 0.5, 0.75])
         >>> wrapped_env = RescaleActionV0(env, min_action=min_action, max_action=max_action)
         >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
         >>> np.alltrue(obs == wrapped_env_obs)
@@ -122,7 +125,7 @@ class RescaleActionV0(LambdaActionV0):
 
         if not isinstance(min_action, np.ndarray):
             assert np.issubdtype(type(min_action), np.integer) or np.issubdtype(
-                type(max_action), np.floating
+                type(min_action), np.floating
             )
             min_action = np.full(env.action_space.shape, min_action)
 

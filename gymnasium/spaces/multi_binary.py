@@ -16,14 +16,14 @@ class MultiBinary(Space[npt.NDArray[np.int8]]):
 
     Example Usage::
 
-        >>> observation_space = MultiBinary(5)
+        >>> observation_space = MultiBinary(5, seed=42)
         >>> observation_space.sample()
-            array([0, 1, 0, 1, 0], dtype=int8)
-        >>> observation_space = MultiBinary([3, 2])
+        array([1, 0, 1, 0, 1], dtype=int8)
+        >>> observation_space = MultiBinary([3, 2], seed=42)
         >>> observation_space.sample()
-            array([[0, 0],
-                [0, 1],
-                [1, 1]], dtype=int8)
+        array([[1, 0],
+               [1, 0],
+               [1, 1]], dtype=int8)
     """
 
     def __init__(

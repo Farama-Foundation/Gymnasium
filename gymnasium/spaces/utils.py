@@ -392,9 +392,9 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> from gymnasium.spaces import Box
         >>> box = Box(0.0, 1.0, shape=(3, 4, 5))
         >>> box
-        Box(3, 4, 5)
+        Box(0.0, 1.0, (3, 4, 5), float32)
         >>> flatten_space(box)
-        Box(60,)
+        Box(0.0, 1.0, (60,), float32)
         >>> flatten(box, box.sample()) in flatten_space(box)
         True
 
@@ -402,7 +402,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> from gymnasium.spaces import Discrete
         >>> discrete = Discrete(5)
         >>> flatten_space(discrete)
-        Box(5,)
+        Box(0, 1, (5,), int64)
         >>> flatten(box, box.sample()) in flatten_space(box)
         True
 
@@ -410,7 +410,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> from gymnasium.spaces import Dict, Discrete, Box
         >>> space = Dict({"position": Discrete(2), "velocity": Box(0, 1, shape=(2, 2))})
         >>> flatten_space(space)
-        Box(6,)
+        Box(0.0, 1.0, (6,), float64)
         >>> flatten(space, space.sample()) in flatten_space(space)
         True
 
