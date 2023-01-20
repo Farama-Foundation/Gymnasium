@@ -22,6 +22,7 @@ from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv
 from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
 
+
 try:
     import shimmy
 except ImportError:
@@ -349,20 +350,3 @@ def test_import_module_during_make(register_make_testing_envs):
     )
     assert isinstance(env.unwrapped, RegisterDuringMakeEnv)
     env.close()
-
-
-def test_shimmy_gym_compatibility():
-    assert gym.spec("GymV22Compatibility-v0") is not None
-    assert gym.spec("GymV26Compatibility-v0") is not None
-
-    if shimmy is None:
-        with pytest.raises(ImportError, match="ABC"):
-            gym.make("GymV22Compatibility-v0")
-        with pytest.raises(ImportError, match="ABC"):
-            gym.make("GymV26Compatibility-v0")
-    else:
-        with warnings.catch_warnings(record=True) as caught_warnings:
-            gym.make("GymV22Compatibility-v0", env_name="CartPole-v1")
-            gym.make("GymV26Compatibility-v0", env_name="CartPole-v1")
-
-        assert len(caught_warnings) == 0

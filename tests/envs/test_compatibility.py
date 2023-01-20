@@ -1,10 +1,19 @@
+import re
+import warnings
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
+import pytest
 
 import gymnasium
 from gymnasium.spaces import Discrete
 from gymnasium.wrappers.compatibility import EnvCompatibility, LegacyEnv
+
+
+try:
+    import shimmy
+except ImportError:
+    shimmy = None
 
 
 class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
@@ -125,3 +134,30 @@ def test_make_compatibility_in_make():
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
     del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
+
+
+def test_shimmy_gym_compatibility():
+    assert gymnasium.spec("GymV22Environment-v0") is not None
+    assert gymnasium.spec("GymV26Environment-v0") is not None
+
+    if shimmy is None:
+        with pytest.raises(
+            ImportError,
+            match=re.escape(
+                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+            ),
+        ):
+            gymnasium.make("GymV22Environment-v0")
+        with pytest.raises(
+            ImportError,
+            match=re.escape(
+                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+            ),
+        ):
+            gymnasium.make("GymV26Environment-v0")
+    else:
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
+            gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
+
+        assert len(caught_warnings) == 0
