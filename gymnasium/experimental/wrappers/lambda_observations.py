@@ -39,11 +39,13 @@ class LambdaObservationV0(gym.ObservationWrapper):
 
     Example:
         >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import LambdaObservationV0
         >>> import numpy as np
-        >>> env = gym.make('CartPole-v1')
-        >>> env = LambdaObservationV0(env, lambda obs: obs + 0.1 * np.random.random(obs.shape))
-        >>> env.reset()
-        array([-0.08319338,  0.04635121, -0.07394746,  0.20877492])
+        >>> np.random.seed(0)
+        >>> env = gym.make("CartPole-v1")
+        >>> env = LambdaObservationV0(env, lambda obs: obs + 0.1 * np.random.random(obs.shape), env.observation_space)
+        >>> env.reset(seed=42)  # doctest: +SKIP
+        (array([ 0.06199517,  0.0511615 , -0.04432538,  0.02694618]), {})
     """
 
     def __init__(
@@ -75,17 +77,18 @@ class FilterObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.wrappers.TransformObservation(
-        ...     gym.make('CartPole-v1'), lambda obs: {'obs': obs, 'time': 0}
-        ... )
+        >>> from gymnasium.wrappers import TransformObservation
+        >>> from gymnasium.experimental.wrappers import FilterObservationV0
+        >>> env = gym.make("CartPole-v1")
+        >>> env = gym.wrappers.TransformObservation(env, lambda obs: {'obs': obs, 'time': 0})
         >>> env.observation_space = gym.spaces.Dict(obs=env.observation_space, time=gym.spaces.Discrete(1))
-        >>> env.reset()
-        {'obs': array([-0.00067088, -0.01860439,  0.04772898, -0.01911527], dtype=float32), 'time': 0}
+        >>> env.reset(seed=42)
+        ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': 0}, {})
         >>> env = FilterObservationV0(env, filter_keys=['time'])
-        >>> env.reset()
-        {'obs': array([ 0.04560107,  0.04466959, -0.0328232 , -0.02367178], dtype=float32)}
+        >>> env.reset(seed=42)
+        ({'time': 0}, {})
         >>> env.step(0)
-        ({'obs': array([ 0.04649447, -0.14996664, -0.03329664,  0.25847703], dtype=float32)}, 1.0, False, {})
+        ({'time': 0}, 1.0, False, False, {})
     """
 
     def __init__(self, env: gym.Env, filter_keys: Sequence[str | int]):
@@ -171,13 +174,14 @@ class FlattenObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CarRacing-v1')
+        >>> from gymnasium.experimental.wrappers import FlattenObservationV0
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> env = FlattenObservationV0(env)
         >>> env.observation_space.shape
         (27648,)
-        >>> obs, info = env.reset()
+        >>> obs, _ = env.reset()
         >>> obs.shape
         (27648,)
     """
@@ -198,7 +202,8 @@ class GrayscaleObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make("CarRacing-v1")
+        >>> from gymnasium.experimental.wrappers import GrayscaleObservationV0
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> grayscale_env = GrayscaleObservationV0(env)
@@ -258,6 +263,7 @@ class ResizeObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import ResizeObservationV0
         >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
@@ -303,7 +309,8 @@ class ReshapeObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make("CarRacing-v1")
+        >>> from gymnasium.experimental.wrappers import ReshapeObservationV0
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> reshape_env = ReshapeObservationV0(env, (24, 4, 96, 1, 3))
@@ -335,11 +342,14 @@ class RescaleObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import RescaleObservationV0
         >>> env = gym.make("Pendulum-v1")
         >>> env.observation_space
         Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)
         >>> env = RescaleObservationV0(env, np.array([-2, -1, -10]), np.array([1, 0, 1]))
-        Box([-2. -1. -10.], [1. 0. 1.], (3,), float32)
+        >>> env.observation_space
+        Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32)
+
     """
 
     def __init__(

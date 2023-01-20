@@ -32,7 +32,7 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
 
     Example::
 
-        >> d = MultiDiscrete(np.array([[1, 2], [3, 4]]))
+        >> d = MultiDiscrete(np.array([[1, 2], [3, 4]]), seed=42)
         >> d.sample()
         array([[0, 0],
                [2, 3]])

@@ -19,7 +19,6 @@ class RecordEpisodeStatistics(gym.Wrapper):
     After the completion of an episode, ``info`` will look like this::
 
         >>> info = {
-        ...     ...
         ...     "episode": {
         ...         "r": "<cumulative reward>",
         ...         "l": "<episode length>",
@@ -30,7 +29,10 @@ class RecordEpisodeStatistics(gym.Wrapper):
     For a vectorized environments the output will be in the form of::
 
         >>> infos = {
-        ...     ...
+        ...     "final_observation": "<array of length num-envs>",
+        ...     "_final_observation": "<boolean array of length num-envs>",
+        ...     "final_info": "<array of length num-envs>",
+        ...     "_final_info": "<boolean array of length num-envs>",
         ...     "episode": {
         ...         "r": "<array of cumulative reward>",
         ...         "l": "<array of episode length>",

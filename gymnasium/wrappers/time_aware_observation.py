@@ -13,12 +13,14 @@ class TimeAwareObservation(gym.ObservationWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CartPole-v1')
+        >>> from gymnasium.wrappers import TimeAwareObservation
+        >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservation(env)
-        >>> env.reset()
-        array([ 0.03810719,  0.03522411,  0.02231044, -0.01088205,  0.        ])
+        >>> env.reset(seed=42)
+        (array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ]), {})
+        >>> _ = env.action_space.seed(42)
         >>> env.step(env.action_space.sample())[0]
-        array([ 0.03881167, -0.16021058,  0.0220928 ,  0.28875574,  1.        ])
+        array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  1.        ])
     """
 
     def __init__(self, env: gym.Env):

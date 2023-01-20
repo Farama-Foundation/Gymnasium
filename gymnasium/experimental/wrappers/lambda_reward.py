@@ -62,7 +62,7 @@ class ClipRewardV0(LambdaRewardV0):
         >>> from gymnasium.experimental.wrappers import ClipRewardV0
         >>> env = gym.make("CartPole-v1")
         >>> env = ClipRewardV0(env, 0, 0.5)
-        >>> env.reset()
+        >>> _ = env.reset()
         >>> _, rew, _, _, _ = env.step(1)
         >>> rew
         0.5

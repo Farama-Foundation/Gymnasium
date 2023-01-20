@@ -7,16 +7,17 @@ class OrderEnforcing(gym.Wrapper):
     """A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.
 
     Example:
-        >>> from gymnasium.envs.classic_control import CartPoleEnv
-        >>> env = CartPoleEnv()
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import OrderEnforcing
+        >>> env = gym.make("CartPole-v1", render_mode="human")
         >>> env = OrderEnforcing(env)
-        >>> env.step(0)
-        ResetNeeded: Cannot call env.step() before calling env.reset()
+        >>> env.step(0) # doctest: +SKIP
+        gymnasium.error.ResetNeeded: Cannot call env.step() before calling env.reset()
+        >>> env.render() # doctest: +SKIP
+        gymnasium.error.ResetNeeded('Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.')
+        >>> _ = env.reset()
         >>> env.render()
-        ResetNeeded: Cannot call env.render() before calling env.reset()
-        >>> env.reset()
-        >>> env.render()
-        >>> env.step(0)
+        >>> _ = env.step(0)
     """
 
     def __init__(self, env: gym.Env, disable_render_order_enforcing: bool = False):

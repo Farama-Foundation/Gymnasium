@@ -9,13 +9,15 @@ class GrayScaleObservation(gym.ObservationWrapper):
     """Convert the image observation from RGB to gray scale.
 
     Example:
-        >>> env = gym.make('CarRacing-v1')
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import GrayScaleObservation
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space
         Box(0, 255, (96, 96, 3), uint8)
-        >>> env = GrayScaleObservation(gym.make('CarRacing-v1'))
+        >>> env = GrayScaleObservation(gym.make("CarRacing-v2"))
         >>> env.observation_space
         Box(0, 255, (96, 96), uint8)
-        >>> env = GrayScaleObservation(gym.make('CarRacing-v1'), keep_dim=True)
+        >>> env = GrayScaleObservation(gym.make("CarRacing-v2"), keep_dim=True)
         >>> env.observation_space
         Box(0, 255, (96, 96, 1), uint8)
     """

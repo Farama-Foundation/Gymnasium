@@ -16,7 +16,9 @@ class Discrete(Space[np.int64]):
     Example::
 
         >>> Discrete(2)            # {0, 1}
+        Discrete(2)
         >>> Discrete(3, start=-1)  # {-1, 0, 1}
+        Discrete(3, start=-1)
     """
 
     def __init__(

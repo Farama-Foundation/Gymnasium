@@ -20,7 +20,8 @@ class ResizeObservation(gym.ObservationWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CarRacing-v1')
+        >>> from gymnasium.wrappers import ResizeObservation
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> env = ResizeObservation(env, 64)

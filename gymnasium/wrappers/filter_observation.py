@@ -11,17 +11,17 @@ class FilterObservation(gym.ObservationWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.wrappers.TransformObservation(
-        ...     gym.make('CartPole-v1'), lambda obs: {'obs': obs, 'time': 0}
-        ... )
+        >>> from gymnasium.wrappers import TransformObservation
+        >>> env = gym.make("CartPole-v1")
+        >>> env = TransformObservation(env, lambda obs: {'obs': obs, 'time': 0})
         >>> env.observation_space = gym.spaces.Dict(obs=env.observation_space, time=gym.spaces.Discrete(1))
-        >>> env.reset()
-        {'obs': array([-0.00067088, -0.01860439,  0.04772898, -0.01911527], dtype=float32), 'time': 0}
+        >>> env.reset(seed=42)
+        ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': 0}, {})
         >>> env = FilterObservation(env, filter_keys=['obs'])
-        >>> env.reset()
-        {'obs': array([ 0.04560107,  0.04466959, -0.0328232 , -0.02367178], dtype=float32)}
+        >>> env.reset(seed=42)
+        ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32)}, {})
         >>> env.step(0)
-        ({'obs': array([ 0.04649447, -0.14996664, -0.03329664,  0.25847703], dtype=float32)}, 1.0, False, {})
+        ({'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32)}, 1.0, False, False, {})
     """
 
     def __init__(self, env: gym.Env, filter_keys: Sequence[str] = None):
