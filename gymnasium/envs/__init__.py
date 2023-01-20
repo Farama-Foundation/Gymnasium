@@ -348,5 +348,17 @@ register(
 )
 
 
+# --- For shimmy compatibility
+def _raise_shimmy_error():
+    raise ImportError(
+        "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+    )
+
+
+# When installed, shimmy will re-register these environments with the correct entry_point
+register(id="GymV22Environment-v0", entry_point=_raise_shimmy_error)
+register(id="GymV26Environment-v0", entry_point=_raise_shimmy_error)
+
+
 # Hook to load plugins from entry points
 load_env_plugins()

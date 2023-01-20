@@ -31,7 +31,6 @@ dependencies = [
     "importlib-metadata >=4.8.0; python_version < '3.10'",
     "typing-extensions >=4.3.0",
     "gymnasium-notices >=0.0.1",
-    "shimmy >=0.1.0,<1.0",
 ]
 dynamic = ["version"]
 
