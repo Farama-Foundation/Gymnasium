@@ -1,18 +1,20 @@
 import re
-import warnings
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 import pytest
 
 import gymnasium
+from gymnasium.error import DependencyNotInstalled
 from gymnasium.spaces import Discrete
 from gymnasium.wrappers.compatibility import EnvCompatibility, LegacyEnv
 
 
 try:
+    import gym
     import shimmy
 except ImportError:
+    gym = None
     shimmy = None
 
 
@@ -155,9 +157,21 @@ def test_shimmy_gym_compatibility():
             ),
         ):
             gymnasium.make("GymV26Environment-v0")
-    else:
-        with warnings.catch_warnings(record=True) as caught_warnings:
+    elif gym is None:
+        with pytest.raises(
+            DependencyNotInstalled,
+            match=re.escape(
+                "No module named 'gym' (Hint: You need to install gym with `pip install gym` to use gym environments"
+            ),
+        ):
             gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
+        with pytest.raises(
+            DependencyNotInstalled,
+            match=re.escape(
+                "No module named 'gym' (Hint: You need to install gym with `pip install gym` to use gym environments"
+            ),
+        ):
             gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
-
-        assert len(caught_warnings) == 0
+    else:
+        gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
+        gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
