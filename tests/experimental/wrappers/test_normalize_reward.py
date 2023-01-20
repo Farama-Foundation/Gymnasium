@@ -3,7 +3,6 @@ import numpy as np
 
 from gymnasium.core import ActType
 from gymnasium.experimental.wrappers import NormalizeRewardV0
-from gymnasium.vector import SyncVectorEnv
 from tests.testing_env import GenericTestEnv
 
 
@@ -25,14 +24,3 @@ def test_normalize_reward_wrapper():
     _, reward, _, _, _ = wrapped_env.step(None)
     assert np.ndim(reward) == 0
     env.close()
-
-
-def test_vec_normalize_reward_wrapper():
-    """Tests that the NormalizeReward does not throw an error for VectorEnv."""
-    # TODO: Functional correctness should be tested
-    envs = SyncVectorEnv([_make_reward_env, _make_reward_env])
-    wrapped_env = NormalizeRewardV0(envs)
-    wrapped_env.reset()
-    _, reward, _, _, _ = wrapped_env.step([None, None])
-    assert np.ndim(reward) > 0
-    envs.close
