@@ -17,7 +17,8 @@ alphanumeric: frozenset[str] = frozenset(
 class Text(Space[str]):
     r"""A space representing a string comprised of characters from a given charset.
 
-    Example::
+    Example:
+        >>> from gymnasium.spaces import Text
         >>> # {"", "B5", "hello", ...}
         >>> Text(5)
         Text(1, 5, characters=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)

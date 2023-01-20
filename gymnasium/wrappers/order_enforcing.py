@@ -11,10 +11,14 @@ class OrderEnforcing(gym.Wrapper):
         >>> from gymnasium.wrappers import OrderEnforcing
         >>> env = gym.make("CartPole-v1", render_mode="human")
         >>> env = OrderEnforcing(env)
-        >>> env.step(0) # doctest: +SKIP
+        >>> env.step(0)
+        Traceback (most recent call last):
+            ...
         gymnasium.error.ResetNeeded: Cannot call env.step() before calling env.reset()
-        >>> env.render() # doctest: +SKIP
-        gymnasium.error.ResetNeeded('Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.')
+        >>> env.render()
+        Traceback (most recent call last):
+            ...
+        gymnasium.error.ResetNeeded: Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.
         >>> _ = env.reset()
         >>> env.render()
         >>> _ = env.step(0)
