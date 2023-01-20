@@ -21,10 +21,7 @@ class StepAPICompatibility(gym.Wrapper):
         >>> env = gym.make("CartPole-v1")
         >>> env # wrapper not applied by default, set to new API
         <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
-        >>> env = gym.make("CartPole-v1", apply_api_compatibility=True) # set to old API
-        >>> env
-        <TimeLimit<OrderEnforcing<PassiveEnvChecker<EnvCompatibility<CartPoleEnv<CartPole-v1>>>>>>
-        >>> env = StepAPICompatibility(gym.make("CartPole-v1"), output_truncation_bool=False) # manually using wrapper
+        >>> env = StepAPICompatibility(gym.make("CartPole-v1"))
         >>> env
         <StepAPICompatibility<TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>>
 
