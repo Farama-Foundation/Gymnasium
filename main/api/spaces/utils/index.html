@@ -473,9 +473,9 @@ errors or non-uniform sampling.</p>
 <dt>Example::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">box</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">box</span>
-<span class="go">Box(3, 4, 5)</span>
+<span class="go">Box(0.0, 1.0, (3, 4, 5), float32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-<span class="go">Box(60,)</span>
+<span class="go">Box(0.0, 1.0, (60,), float32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span> <span class="ow">in</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
@@ -484,7 +484,7 @@ errors or non-uniform sampling.</p>
 <dt>Example that flattens a discrete space::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Discrete</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">discrete</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">discrete</span><span class="p">)</span>
-<span class="go">Box(5,)</span>
+<span class="go">Box(0, 1, (5,), int64)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span> <span class="ow">in</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
@@ -493,7 +493,7 @@ errors or non-uniform sampling.</p>
 <dt>Example that recursively flattens a dict::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Box</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
-<span class="go">Box(6,)</span>
+<span class="go">Box(0.0, 1.0, (6,), float64)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span> <span class="ow">in</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
