@@ -53,8 +53,8 @@ Gymnasium has a number of fundamental spaces that are used as building boxes for
 
 * :py:class:`Box` - Supports continuous (and discrete) vectors or matrices, used for vector observations, images, etc
 * :py:class:`Discrete` - Supports a single discrete number of values with an optional start for the values
-* :py:class:`MultiDiscrete` - Supports single or matrices of binary values, used for holding down a button or if an agent has an object
-* :py:class:`MultiBinary` - Supports multiple discrete values with multiple axes, used for controller actions
+* :py:class:`MultiBinary` - Supports single or matrices of binary values, used for holding down a button or if an agent has an object
+* :py:class:`MultiDiscrete` - Supports multiple discrete values with multiple axes, used for controller actions
 * :py:class:`Text` - Supports strings, used for passing agent messages, mission details, etc
 ```
 
