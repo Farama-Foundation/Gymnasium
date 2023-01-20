@@ -113,6 +113,15 @@
             menuElem.classList.remove("active");
         });
 
+        const sortVersions = (a, b) => {
+            if (a.replace("v", "") > b.replace("v", ""))
+                return -1
+            else if (a.replace("v", "") < b.replace("v", ""))
+                return 1
+            else
+                return 0
+        }
+
         if (githubUser !== null || repo !== null) {
             const basePath = "";
             const mainBranchName = "main"
@@ -125,7 +134,7 @@
                 }
                 response.json().then(json => {
                     const versions = json.tree.filter(v => versionRegex.test(v.path)).map(v => v.path);
-                    versions.reverse();
+                    versions.sort(sortVersions);
                     // verify if exists a directory with main version
                     if (json.tree.filter(v => v.path == mainBranchName).length > 0) {
                         versions.unshift(mainBranchName);
