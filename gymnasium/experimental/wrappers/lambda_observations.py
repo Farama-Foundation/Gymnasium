@@ -503,6 +503,10 @@ class PixelObservationV0(LambdaObservationV0):
 class NormalizeObservationV0(ObservationWrapper):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
+    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
+    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.observation()` is called.
+    If `False`, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+
     Note:
         The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
         newly instantiated or the policy was changed recently.
@@ -518,10 +522,22 @@ class NormalizeObservationV0(ObservationWrapper):
         super().__init__(env)
         self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
         self.epsilon = epsilon
+        self._update_running_mean = True
+
+    @property
+    def update_running_mean(self) -> bool:
+        """Property to freeze/continue the running mean calculation of the observation statistics."""
+        return self._update_running_mean
+
+    @update_running_mean.setter
+    def update_running_mean(self, setting: bool):
+        """Sets the property to freeze/continue the running mean calculation of the observation statistics."""
+        self._update_running_mean = setting
 
     def observation(self, observation: ObsType) -> WrapperObsType:
         """Normalises the observation using the running mean and variance of the observations."""
-        self.obs_rms.update(observation)
+        if self._update_running_mean:
+            self.obs_rms.update(observation)
         return (observation - self.obs_rms.mean) / np.sqrt(
             self.obs_rms.var + self.epsilon
         )

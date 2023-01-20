@@ -125,6 +125,17 @@ class NormalizeRewardV0(gym.Wrapper):
         self.discounted_reward: np.array = np.array([0.0])
         self.gamma = gamma
         self.epsilon = epsilon
+        self._update_running_mean = True
+
+    @property
+    def update_running_mean(self) -> bool:
+        """Property to freeze/continue the running mean calculation of the reward statistics."""
+        return self._update_running_mean
+
+    @update_running_mean.setter
+    def update_running_mean(self, setting: bool):
+        """Sets the property to freeze/continue the running mean calculation of the reward statistics."""
+        self._update_running_mean = setting
 
     def step(
         self, action: WrapperActType
@@ -138,5 +149,6 @@ class NormalizeRewardV0(gym.Wrapper):
 
     def normalize(self, reward):
         """Normalizes the rewards with the running mean rewards and their variance."""
-        self.rewards_running_means.update(self.discounted_reward)
+        if self._update_running_mean:
+            self.rewards_running_means.update(self.discounted_reward)
         return reward / np.sqrt(self.rewards_running_means.var + self.epsilon)
