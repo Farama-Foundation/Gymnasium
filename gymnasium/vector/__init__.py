@@ -25,11 +25,11 @@ def make(
 
         >>> import gymnasium as gym
         >>> env = gym.vector.make('CartPole-v1', num_envs=3)
-        >>> env.reset()
-        array([[-0.04456399,  0.04653909,  0.01326909, -0.02099827],
-               [ 0.03073904,  0.00145001, -0.03088818, -0.03131252],
-               [ 0.03468829,  0.01500225,  0.01230312,  0.01825218]],
-              dtype=float32)
+        >>> env.reset(seed=42)
+        (array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
+               [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
+               [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
+              dtype=float32), {})
 
     Args:
         id: The environment ID. This must be a valid ID from the registry.

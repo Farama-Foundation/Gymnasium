@@ -62,7 +62,7 @@ class ClipRewardV0(LambdaRewardV0):
         >>> from gymnasium.experimental.wrappers import ClipRewardV0
         >>> env = gym.make("CartPole-v1")
         >>> env = ClipRewardV0(env, 0, 0.5)
-        >>> env.reset()
+        >>> _ = env.reset()
         >>> _, rew, _, _, _ = env.step(1)
         >>> rew
         0.5
@@ -122,7 +122,7 @@ class NormalizeRewardV0(gym.Wrapper):
         """
         super().__init__(env)
         self.rewards_running_means = RunningMeanStd(shape=())
-        self.discounted_reward: float = 0.0
+        self.discounted_reward: np.array = np.array([0.0])
         self.gamma = gamma
         self.epsilon = epsilon
         self._update_running_mean = True

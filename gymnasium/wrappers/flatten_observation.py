@@ -8,13 +8,14 @@ class FlattenObservation(gym.ObservationWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CarRacing-v1')
+        >>> from gymnasium.wrappers import FlattenObservation
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> env = FlattenObservation(env)
         >>> env.observation_space.shape
         (27648,)
-        >>> obs, info = env.reset()
+        >>> obs, _ = env.reset()
         >>> obs.shape
         (27648,)
     """
