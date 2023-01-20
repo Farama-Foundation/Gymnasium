@@ -8,7 +8,7 @@ from tests.testing_env import GenericTestEnv
 
 
 def _make_reward_env():
-    """Functions that returns an `GenericTestEnv` with reward=1."""
+    """Function that returns a `GenericTestEnv` with reward=1."""
 
     def step_func(self, action: ActType):
         return self.observation_space.sample(), 1.0, False, False, {}
