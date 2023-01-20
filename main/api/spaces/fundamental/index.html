@@ -445,13 +445,13 @@ Each interval has the form of one of <span class="math notranslate nohighlight">
 <ul>
 <li><p>Identical bound for each dimension:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<span class="go">Box(3, 4)</span>
+<span class="go">Box(-1.0, 2.0, (3, 4), float32)</span>
 </pre></div>
 </div>
 </li>
 <li><p>Independent bound for each dimension:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">]),</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<span class="go">Box(2,)</span>
+<span class="go">Box([-1. -2.], [2. 4.], (2,), float32)</span>
 </pre></div>
 </div>
 </li>
@@ -534,7 +534,9 @@ that is chosen according to the form of the interval:</p>
 <p>This class represents a finite subset of integers, more specifically a set of the form <span class="math notranslate nohighlight">\(\{ a, a+1, \dots, a+n-1 \}\)</span>.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>            <span class="c1"># {0, 1}</span>
+<span class="go">Discrete(2)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">start</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># {-1, 0, 1}</span>
+<span class="go">Discrete(3, start=-1)</span>
 </pre></div>
 </div>
 <p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code></a> space.</p>
@@ -582,14 +584,14 @@ If there are no possible actions (i.e. <cite>np.all(mask == 0)</cite>) then <cit
 <dd><p>An n-shape binary space.</p>
 <p>Elements of this space are binary arrays of a shape that is fixed during construction.</p>
 <p>Example Usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">MultiBinary</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">MultiBinary</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-<span class="go">    array([0, 1, 0, 1, 0], dtype=int8)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">MultiBinary</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="go">array([1, 0, 1, 0, 1], dtype=int8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">MultiBinary</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-<span class="go">    array([[0, 0],</span>
-<span class="go">        [0, 1],</span>
-<span class="go">        [1, 1]], dtype=int8)</span>
+<span class="go">array([[1, 0],</span>
+<span class="go">       [1, 0],</span>
+<span class="go">       [1, 1]], dtype=int8)</span>
 </pre></div>
 </div>
 <p>Constructor of <a class="reference internal" href="#gymnasium.spaces.MultiBinary" title="gymnasium.spaces.MultiBinary"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiBinary</span></code></a> space.</p>
@@ -649,7 +651,7 @@ The expected mask shape is the space shape and mask dtype is <cite>np.int8</cite
 <p>Although this feature is rarely used, <a class="reference internal" href="#gymnasium.spaces.MultiDiscrete" title="gymnasium.spaces.MultiDiscrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiDiscrete</span></code></a> spaces may also have several axes
 if <code class="docutils literal notranslate"><span class="pre">nvec</span></code> has several axes:</p>
 <p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="n">MultiDiscrete</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="n">MultiDiscrete</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="o">&gt;&gt;</span> <span class="n">d</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
        <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
@@ -701,11 +703,13 @@ Only mask values == 1 are possible to sample unless all mask values for an actio
 <dl>
 <dt>Example::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># {&quot;&quot;, &quot;B5&quot;, &quot;hello&quot;, ...}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Text</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">Text(1, 5, characters=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># {&quot;0&quot;, &quot;42&quot;, &quot;0123456789&quot;, ...}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">string</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Text</span><span class="p">(</span><span class="n">min_length</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 <span class="gp">... </span>     <span class="n">max_length</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
 <span class="gp">... </span>     <span class="n">charset</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span>
+<span class="go">Text(1, 10, characters=0123456789)</span>
 </pre></div>
 </div>
 </dd>

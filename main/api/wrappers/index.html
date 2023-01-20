@@ -443,29 +443,29 @@ Most environments that are generated via <a class="reference internal" href="../
 with (possibly optional) parameters to the wrapper’s constructor.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RescaleAction</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;BipedalWalker-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Hopper-v4&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span><span class="o">.</span><span class="n">action_space</span>
-<span class="go">Box([-1. -1. -1. -1.], [1. 1. 1. 1.], (4,), float32)</span>
+<span class="go">Box(-1.0, 1.0, (3,), float32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RescaleAction</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">min_action</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_action</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span>
-<span class="go">Box([0. 0. 0. 0.], [1. 1. 1. 1.], (4,), float32)</span>
+<span class="go">Box(-1.0, 1.0, (3,), float32)</span>
 </pre></div>
 </div>
 <p>You can access the environment underneath the <strong>first</strong> wrapper by using the <a class="reference internal" href="#gymnasium.wrappers.gymnasium.Wrapper.env" title="gymnasium.wrappers.gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.env</span></code></a> attribute.
 As the <a class="reference internal" href="#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a> class inherits from <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code></a> then <a class="reference internal" href="#gymnasium.wrappers.gymnasium.Wrapper.env" title="gymnasium.wrappers.gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.env</span></code></a> can be another wrapper.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
-<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;&gt;</span>
+<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;HopperEnv&lt;Hopper-v4&gt;&gt;&gt;&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">env</span>
-<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;HopperEnv&lt;Hopper-v4&gt;&gt;&gt;&gt;&gt;</span>
 </pre></div>
 </div>
 <p>If you want to get to the environment underneath <strong>all</strong> of the layers of wrappers, you can use the
 <a class="reference internal" href="#gymnasium.Wrapper.unwrapped" title="gymnasium.Wrapper.unwrapped"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.unwrapped</span></code></a> attribute.
 If the environment is already a bare environment, the <a class="reference internal" href="#gymnasium.Wrapper.unwrapped" title="gymnasium.Wrapper.unwrapped"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.unwrapped</span></code></a> attribute will just return itself.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
-<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">unwrapped</span>
-<span class="go">&lt;gymnasium.envs.box2d.bipedal_walker.BipedalWalker object at 0x7f87d70712d0&gt;</span>
+<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;HopperEnv&lt;Hopper-v4&gt;&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">unwrapped</span> 
+<span class="go">&lt;gymnasium.envs.mujoco.hopper_v4.HopperEnv object at 0x7fbb5efd0490&gt;</span>
 </pre></div>
 </div>
 <p>There are three common things you might want a wrapper to do:</p>
