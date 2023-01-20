@@ -621,6 +621,9 @@ observations and the pixel observations.</p></li>
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.NormalizeObservationV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeObservationV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.NormalizeObservationV0" title="Permalink to this definition">#</a></dt>
 <dd><p>This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</p>
+<p>The property <cite>_update_running_mean</cite> allows to freeze/continue the running mean calculation of the observation
+statistics. If <cite>True</cite> (default), the <cite>RunningMeanStd</cite> will get updated every time <cite>self.observation()</cite> is called.
+If <cite>False</cite>, the calculated statistics are used but not updated anymore; this may be used during evaluation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
