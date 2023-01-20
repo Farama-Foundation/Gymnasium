@@ -98,6 +98,10 @@ class NormalizeRewardV0(gym.Wrapper):
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
 
+    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
+    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.
+    If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
         instantiated or the policy was changed recently.
@@ -118,7 +122,7 @@ class NormalizeRewardV0(gym.Wrapper):
         """
         super().__init__(env)
         self.rewards_running_means = RunningMeanStd(shape=())
-        self.discounted_reward: float = 0.0
+        self.discounted_reward: np.array = np.array([0.0])
         self.gamma = gamma
         self.epsilon = epsilon
 
