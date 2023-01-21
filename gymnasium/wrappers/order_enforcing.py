@@ -22,6 +22,7 @@ class OrderEnforcing(gym.Wrapper):
         >>> _ = env.reset()
         >>> env.render()
         >>> _ = env.step(0)
+        >>> env.close()
     """
 
     def __init__(self, env: gym.Env, disable_render_order_enforcing: bool = False):
