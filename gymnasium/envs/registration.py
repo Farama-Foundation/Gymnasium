@@ -158,6 +158,11 @@ class EnvSpec:
         return make(self, **kwargs)
 
 
+# Global registry of environments. Meant to be accessed through `register` and `make`
+registry: dict[str, EnvSpec] = {}
+current_namespace: str | None = None
+
+
 def _check_namespace_exists(ns: str | None):
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
     if ns is None:
@@ -374,11 +379,6 @@ def make(id: Literal[
     "Humanoid-v2", "Humanoid-v3", "Humanoid-v4",
 ], **kwargs) -> Env[np.ndarray, np.ndarray]: ...
 # fmt: on
-
-
-# Global registry of environments. Meant to be accessed through `register` and `make`
-registry: dict[str, EnvSpec] = {}
-current_namespace: str | None = None
 
 
 def _check_spec_register(spec: EnvSpec):
