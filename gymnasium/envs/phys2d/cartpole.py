@@ -23,29 +23,23 @@ class CartPoleFunctional(
 ):
     """Cartpole but in jax and functional.
 
-    Example usage:
-
+    Example:
         >>> import jax
         >>> import jax.numpy as jnp
         >>> from gymnasium.envs.phys2d.cartpole import CartPoleFunctional
-
         >>> key = jax.random.PRNGKey(0)
-
         >>> env = CartPoleFunctional({"x_init": 0.5})
         >>> state = env.initial(key)
         >>> print(state)
         [ 0.46532142 -0.27484107  0.13302994 -0.20361817]
         >>> print(env.transition(state, 0))
         [ 0.4598246  -0.6357784   0.12895757  0.1278053 ]
-
         >>> env.transform(jax.jit)
-
         >>> state = env.initial(key)
         >>> print(state)
         [ 0.46532142 -0.27484107  0.13302994 -0.20361817]
         >>> print(env.transition(state, 0))
         [ 0.4598246  -0.6357784   0.12895757  0.12780523]
-
         >>> vkey = jax.random.split(key, 10)
         >>> env.transform(jax.vmap)
         >>> vstate = env.initial(vkey)

@@ -16,8 +16,7 @@ __all__ = ["SyncVectorEnv"]
 class SyncVectorEnv(VectorEnv):
     """Vectorized environment that serially runs multiple environments.
 
-    Example::
-
+    Example:
         >>> import gymnasium as gym
         >>> env = gym.vector.SyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),

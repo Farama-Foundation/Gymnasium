@@ -148,7 +148,7 @@ def step_api_compatibility(
     Returns:
         step_returns (tuple): Depending on `output_truncation_bool` bool, it can return `(obs, rew, done, info)` or `(obs, rew, terminated, truncated, info)`
 
-    Examples:
+    Example:
         This function can be used to ensure compatibility in step interfaces with conflicting API. Eg. if env is written in old API,
          wrapper is written in new API, and the final step output is desired to be in old API.
 
@@ -162,8 +162,6 @@ def step_api_compatibility(
         >>> _ = vec_env.reset()
         >>> obs, rewards, dones, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=False)
         >>> obs, rewards, terminated, truncated, info = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)
-
-
     """
     if output_truncation_bool:
         return convert_to_terminated_truncated_step_api(step_returns, is_vector_env)

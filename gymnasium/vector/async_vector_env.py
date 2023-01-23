@@ -45,8 +45,7 @@ class AsyncVectorEnv(VectorEnv):
 
     It uses ``multiprocessing`` processes, and pipes for communication.
 
-    Example::
-
+    Example:
         >>> import gymnasium as gym
         >>> env = gym.vector.AsyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),

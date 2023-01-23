@@ -21,16 +21,6 @@ def make(
 ) -> VectorEnv:
     """Create a vectorized environment from multiple copies of an environment, from its id.
 
-    Example::
-
-        >>> import gymnasium as gym
-        >>> env = gym.vector.make('CartPole-v1', num_envs=3)
-        >>> env.reset(seed=42)
-        (array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
-               [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
-               [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
-              dtype=float32), {})
-
     Args:
         id: The environment ID. This must be a valid ID from the registry.
         num_envs: Number of copies of the environment.
@@ -42,6 +32,15 @@ def make(
 
     Returns:
         The vectorized environment.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.vector.make('CartPole-v1', num_envs=3)
+        >>> env.reset(seed=42)
+        (array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
+               [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
+               [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
+              dtype=float32), {})
     """
 
     def create_env(env_num: int) -> Callable[[], Env]:
