@@ -60,6 +60,6 @@ Gymnasium keeps strict versioning for reproducibility reasons. All environments 
 
 We have a roadmap for future development work for Gymnasium available here: https://github.com/Farama-Foundation/Gymnasium/issues/12
 
-## Support
+## Support Gymnasium's Development
 
 If you are financially able to do so and would like to support the development of Gymnasium, please join others in the community in [donating to us](https://github.com/sponsors/Farama-Foundation).
