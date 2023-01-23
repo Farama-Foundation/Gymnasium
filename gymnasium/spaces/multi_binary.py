@@ -14,8 +14,8 @@ class MultiBinary(Space[npt.NDArray[np.int8]]):
 
     Elements of this space are binary arrays of a shape that is fixed during construction.
 
-    Example Usage::
-
+    Example:
+        >>> from gymnasium.spaces import MultiBinary
         >>> observation_space = MultiBinary(5, seed=42)
         >>> observation_space.sample()
         array([1, 0, 1, 0, 1], dtype=int8)
