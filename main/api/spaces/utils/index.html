@@ -469,45 +469,6 @@ space. However, sampling from the flattened space is not necessarily reversible.
 For example, sampling from a flattened Discrete space is the same as sampling from
 a Box, and the results may not be integers or one-hot encodings. This may result in
 errors or non-uniform sampling.</p>
-<dl>
-<dt>Example::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">box</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">box</span>
-<span class="go">Box(0.0, 1.0, (3, 4, 5), float32)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-<span class="go">Box(0.0, 1.0, (60,), float32)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span> <span class="ow">in</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd>
-<dt>Example that flattens a discrete space::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Discrete</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">discrete</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">discrete</span><span class="p">)</span>
-<span class="go">Box(0, 1, (5,), int64)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span> <span class="ow">in</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd>
-<dt>Example that recursively flattens a dict::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Box</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
-<span class="go">Box(0.0, 1.0, (6,), float64)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span> <span class="ow">in</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-<p>Example that flattens a graph:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">node_space</span><span class="o">=</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span> <span class="n">edge_space</span><span class="o">=</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
-<span class="go">Graph(Box(-100.0, 100.0, (12,), float32), Box(0, 1, (5,), int64))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span> <span class="ow">in</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>space</strong> – The space to flatten</p>
@@ -519,6 +480,37 @@ errors or non-uniform sampling.</p>
 <dd class="field-odd"><p><strong>NotImplementedError</strong> – if the space is not defined in <a class="reference internal" href="../#module-gymnasium.spaces" title="gymnasium.spaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gymnasium.spaces</span></code></a>.</p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<p>Flatten spaces.Box:
+&gt;&gt;&gt; from gymnasium.spaces import Box
+&gt;&gt;&gt; box = Box(0.0, 1.0, shape=(3, 4, 5))
+&gt;&gt;&gt; box
+Box(0.0, 1.0, (3, 4, 5), float32)
+&gt;&gt;&gt; flatten_space(box)
+Box(0.0, 1.0, (60,), float32)
+&gt;&gt;&gt; flatten(box, box.sample()) in flatten_space(box)
+True</p>
+<p>Flatten spaces.Discrete:
+&gt;&gt;&gt; from gymnasium.spaces import Discrete
+&gt;&gt;&gt; discrete = Discrete(5)
+&gt;&gt;&gt; flatten_space(discrete)
+Box(0, 1, (5,), int64)
+&gt;&gt;&gt; flatten(discrete, discrete.sample()) in flatten_space(discrete)
+True</p>
+<p>Flatten spaces.Dict:
+&gt;&gt;&gt; from gymnasium.spaces import Dict, Discrete, Box
+&gt;&gt;&gt; space = Dict({“position”: Discrete(2), “velocity”: Box(0, 1, shape=(2, 2))})
+&gt;&gt;&gt; flatten_space(space)
+Box(0.0, 1.0, (6,), float64)
+&gt;&gt;&gt; flatten(space, space.sample()) in flatten_space(space)
+True</p>
+<p>Flatten spaces.Graph:
+&gt;&gt;&gt; from gymnasium.spaces import Graph, Discrete, Box
+&gt;&gt;&gt; space = Graph(node_space=Box(low=-100, high=100, shape=(3, 4)), edge_space=Discrete(5))
+&gt;&gt;&gt; flatten_space(space)
+Graph(Box(-100.0, 100.0, (12,), float32), Box(0, 1, (5,), int64))
+&gt;&gt;&gt; flatten(space, space.sample()) in flatten_space(space)
+True</p>
 </dd></dl>
 
 <dl class="py function">
@@ -545,22 +537,6 @@ errors or non-uniform sampling.</p>
 <dd><p>Flatten a data point from a space.</p>
 <p>This is useful when e.g. points from spaces must be passed to a neural
 network, which only understands flat arrays of floats.</p>
-<dl>
-<dt>Example usage::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(15,)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="go">array([0, 0, 1, 0])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">((</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)),</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span> <span class="o">=</span> <span class="p">((</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">.2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">example</span><span class="p">)</span>
-<span class="go">array([0.5 , 0.25, 1.  , 0.  , 0.2 , 0.  , 1.  , 0.  ])</span>
-</pre></div>
-</div>
-</dd>
-</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -603,6 +579,20 @@ network, which only understands flat arrays of floats.</p>
 <dd class="field-odd"><p><strong>NotImplementedError</strong> – If the space is not defined in <a class="reference internal" href="../#module-gymnasium.spaces" title="gymnasium.spaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gymnasium.spaces</span></code></a>.</p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(15,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">array([0, 0, 1, 0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">((</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)),</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span> <span class="o">=</span> <span class="p">((</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">.2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">example</span><span class="p">)</span>
+<span class="go">array([0.5 , 0.25, 1.  , 0.  , 0.2 , 0.  , 1.  , 0.  ])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -625,13 +615,6 @@ network, which only understands flat arrays of floats.</p>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.utils.</span></span><span class="sig-name descname"><span class="pre">flatdim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../fundamental/#gymnasium.spaces.Text" title="gymnasium.spaces.text.Text"><span class="pre">Text</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span></dt>
 <dd><p>Return the number of dimensions a flattened equivalent of this space would have.</p>
-<p>Example usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Dict</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flatdim</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
-<span class="go">5</span>
-</pre></div>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>space</strong> – The space to return the number of dimensions of the flattened spaces</p>
@@ -646,6 +629,13 @@ network, which only understands flat arrays of floats.</p>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flatdim</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
+<span class="go">5</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
