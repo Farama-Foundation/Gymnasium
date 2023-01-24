@@ -6,7 +6,7 @@ from typing import Any, Generic, Iterable, Mapping, Sequence, TypeVar
 import numpy as np
 import numpy.typing as npt
 
-from gymnasium import seeding
+from gymnasium.core import make_np_random_generator
 
 
 T_cov = TypeVar("T_cov", covariant=True)
@@ -75,7 +75,7 @@ class Space(Generic[T_cov]):
 
         # As `seed` is not guaranteed (in particular for composite spaces) to set the `_np_random` then we set it randomly.
         if self._np_random is None:
-            self._np_random, _ = seeding.np_random()
+            self._np_random, _ = make_np_random_generator()
 
         return self._np_random
 
@@ -104,7 +104,7 @@ class Space(Generic[T_cov]):
 
     def seed(self, seed: int | None = None) -> list[int]:
         """Seed the PRNG of this space and possibly the PRNGs of subspaces."""
-        self._np_random, seed = seeding.np_random(seed)
+        self._np_random, seed = make_np_random_generator()
         return [seed]
 
     def contains(self, x: Any) -> bool:
