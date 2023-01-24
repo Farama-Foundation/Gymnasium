@@ -11,7 +11,7 @@ import sys
 import traceback
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Protocol
+from typing import Any, Iterable
 
 from gymnasium import Env, error, logger
 from gymnasium.wrappers import (
@@ -29,6 +29,12 @@ if sys.version_info < (3, 10):
     import importlib_metadata as metadata  # type: ignore
 else:
     import importlib.metadata as metadata
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Protocol
+else:
+    from typing import Protocol
+
 
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
