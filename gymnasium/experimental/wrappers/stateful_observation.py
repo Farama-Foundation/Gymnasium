@@ -11,6 +11,8 @@ from collections import deque
 from typing import Any, SupportsFloat
 from typing_extensions import Final
 
+from gymnasium import spaces
+
 
 try:
     import jumpy as jp
@@ -19,8 +21,6 @@ except ImportError as e:
 import numpy as np
 
 import gymnasium as gym
-import gymnasium.spaces as spaces
-from gymnasium import Env
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.spaces import Box, Dict, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
@@ -47,8 +47,8 @@ class DelayObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         self.delay: Final[int] = delay
         self.observation_queue: Final[deque] = deque()
 
-        super().__init__(env)
         gym.utils.EzPickle.__init__(self, delay=delay)
+        gym.ObservationWrapper.__init__(self, env)
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -121,7 +121,14 @@ class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
                 otherwise return time as remaining timesteps before truncation
             dict_time_key: For environment with a ``Dict`` observation space, the key for the time space. By default, `"time"`.
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(
+            self,
+            flatten=flatten,
+            normalize_time=normalize_time,
+            dict_time_key=dict_time_key,
+        )
+        gym.ObservationWrapper.__init__(self, env)
+
         self.flatten: Final[bool] = flatten
         self.normalize_time: Final[bool] = normalize_time
 
@@ -167,13 +174,6 @@ class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         else:
             self.observation_space = observation_space
             self._obs_postprocess_func = lambda obs: obs
-
-        gym.utils.EzPickle.__init__(
-            self,
-            flatten=flatten,
-            normalize_time=normalize_time,
-            dict_time_key=dict_time_key,
-        )
 
     def observation(self, observation: ObsType) -> WrapperObsType:
         """Adds to the observation with the current time information.
@@ -245,7 +245,7 @@ class FrameStackObservationV0(gym.Wrapper, gym.utils.EzPickle):
         (4, 96, 96, 3)
     """
 
-    def __init__(self, env: Env[ObsType, ActType], stack_size: int):
+    def __init__(self, env: gym.Env[ObsType, ActType], stack_size: int):
         """Observation wrapper that stacks the observations in a rolling manner.
 
         Args:
@@ -255,15 +255,14 @@ class FrameStackObservationV0(gym.Wrapper, gym.utils.EzPickle):
         assert np.issubdtype(type(stack_size), np.integer)
         assert stack_size > 0
 
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, stack_size=stack_size)
+        gym.Wrapper.__init__(self, env)
 
         self.observation_space = batch_space(env.observation_space, n=stack_size)
         self.stack_size = stack_size
 
         self.stacked_obs_array = create_empty_array(env.observation_space, n=stack_size)
         self.stacked_obs = self._init_stacked_obs()
-
-        gym.utils.EzPickle.__init__(self, stack_size=stack_size)
 
     def step(
         self, action: WrapperActType

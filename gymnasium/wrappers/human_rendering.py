@@ -49,7 +49,9 @@ class HumanRendering(gym.Wrapper, gym.utils.EzPickle):
         Args:
             env: The environment that is being wrapped
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self)
+        gym.Wrapper.__init__(self, env)
+
         assert env.render_mode in [
             "rgb_array",
             "rgb_array_list",

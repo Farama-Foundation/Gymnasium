@@ -9,7 +9,6 @@ from typing import Any, Iterable, Mapping, SupportsFloat, Union
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import Env, Wrapper
 from gymnasium.core import WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
@@ -95,7 +94,7 @@ if torch is not None:
         return type(value)(numpy_to_torch(v, device) for v in value)
 
 
-class NumpyToTorchV0(Wrapper, gym.utils.EzPickle):
+class NumpyToTorchV0(gym.Wrapper, gym.utils.EzPickle):
     """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
@@ -104,7 +103,7 @@ class NumpyToTorchV0(Wrapper, gym.utils.EzPickle):
         For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
     """
 
-    def __init__(self, env: Env, device: Device | None = None):
+    def __init__(self, env: gym.Env, device: Device | None = None):
         """Wrapper class to change inputs and outputs of environment to PyTorch tensors.
 
         Args:
@@ -116,10 +115,10 @@ class NumpyToTorchV0(Wrapper, gym.utils.EzPickle):
                 "torch is not installed, run `pip install torch`"
             )
 
-        super().__init__(env)
-        self.device: Device | None = device
-
         gym.utils.EzPickle.__init__(self, device=device)
+        gym.Wrapper.__init__(self, env)
+
+        self.device: Device | None = device
 
     def step(
         self, action: WrapperActType

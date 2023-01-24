@@ -47,14 +47,15 @@ class RescaleAction(gym.ActionWrapper, gym.utils.EzPickle):
         ), f"expected Box action space, got {type(env.action_space)}"
         assert np.less_equal(min_action, max_action).all(), (min_action, max_action)
 
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, min_action=min_action, max_action=max_action)
+        gym.ActionWrapper.__init__(self, env)
+
         self.min_action = (
             np.zeros(env.action_space.shape, dtype=env.action_space.dtype) + min_action
         )
         self.max_action = (
             np.zeros(env.action_space.shape, dtype=env.action_space.dtype) + max_action
         )
-        gym.utils.EzPickle.__init__(self, min_action=min_action, max_action=max_action)
 
     def action(self, action):
         """Rescales the action affinely from  [:attr:`min_action`, :attr:`max_action`] to the action space of the base environment, :attr:`env`.

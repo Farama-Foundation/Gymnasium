@@ -36,7 +36,9 @@ class ResizeObservation(gym.ObservationWrapper, gym.utils.EzPickle):
             env: The environment to apply the wrapper
             shape: The shape of the resized observations
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, shape=shape)
+        gym.ObservationWrapper.__init__(self, env)
+
         if isinstance(shape, int):
             shape = (shape, shape)
         assert len(shape) == 2 and all(
@@ -55,8 +57,6 @@ class ResizeObservation(gym.ObservationWrapper, gym.utils.EzPickle):
 
         obs_shape = self.shape + env.observation_space.shape[2:]
         self.observation_space = Box(low=0, high=255, shape=obs_shape, dtype=np.uint8)
-
-        gym.utils.EzPickle.__init__(self, shape=shape)
 
     def observation(self, observation):
         """Updates the observations by resizing the observation to shape given by :attr:`shape`.

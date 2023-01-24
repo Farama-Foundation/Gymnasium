@@ -12,7 +12,16 @@ import traceback
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterable, Sequence, SupportsFloat, overload
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Sequence,
+    SupportsFloat,
+    Tuple,
+    Union,
+    overload,
+)
 
 import numpy as np
 
@@ -43,6 +52,27 @@ from gymnasium import Env, error, logger
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
 )
+
+
+__all__ = [
+    # classes / variables
+    "EnvSpec",
+    "WrapperSpec",
+    "registry",
+    "ENV_ID_RE",
+    # core functions
+    "make",
+    "register",
+    "pprint_registry",
+    "spec",
+    # additional functions
+    "namespace",
+    "load_env_plugins",
+    "find_highest_version",
+    "parse_env_id",
+    "load",
+    "get_env_id",
+]
 
 
 def load(name: str) -> Callable:
@@ -111,6 +141,20 @@ def get_env_id(ns: str | None, name: str, version: int | None) -> str:
 
 
 @dataclass
+class WrapperSpec:
+    """A specification for recording wrapper configs.
+
+    * name: The name of the wrapper.
+    * entry_point: The location of the wrapper to create from.
+    * kwargs: Additional keyword arguments passed to the wrapper.
+    """
+
+    name: str
+    entry_point: str
+    kwargs: dict[str, Any]
+
+
+@dataclass
 class EnvSpec:
     """A specification for creating environments with `gym.make`.
 
@@ -128,6 +172,9 @@ class EnvSpec:
     id: str
     entry_point: Callable | str
 
+    # Environment arguments
+    kwargs: dict[str, Any] = field(default_factory=dict)
+
     # Environment attributes
     reward_threshold: float | None = field(default=None)
     nondeterministic: bool = field(default=False)
@@ -138,9 +185,6 @@ class EnvSpec:
     autoreset: bool = field(default=False)
     disable_env_checker: bool = field(default=False)
     apply_api_compatibility: bool = field(default=False)
-
-    # Environment arguments
-    kwargs: dict = field(default_factory=dict)
 
     # post-init attributes
     namespace: str | None = field(init=False)
@@ -156,6 +200,9 @@ class EnvSpec:
         """Calls ``make`` using the environment spec and any keyword arguments."""
         # For compatibility purposes
         return make(self, **kwargs)
+
+
+SpecStack = Tuple[Union[WrapperSpec, EnvSpec], ...]
 
 
 def _check_namespace_exists(ns: str | None):
@@ -263,7 +310,7 @@ def find_highest_version(ns: str | None, name: str) -> int | None:
     return max(version, default=None)
 
 
-def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
+def load_env_plugins(entry_point: str = "gymnasium.envs"):
     """Load modules (plugins) using the gymnasium entry points == to `entry_points`.
 
     Args:
@@ -317,8 +364,6 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
 # fmt: off
 @overload
 def make(id: str, **kwargs) -> Env: ...
-
-
 @overload
 def make(id: EnvSpec, **kwargs) -> Env: ...
 
@@ -375,8 +420,6 @@ def make(id: Literal[
     "HumanoidStandup-v2", "HumanoidStandup-v4",
     "Humanoid-v2", "Humanoid-v3", "Humanoid-v4",
 ], **kwargs) -> Env[np.ndarray, np.ndarray]: ...
-
-
 # fmt: on
 
 
@@ -468,7 +511,7 @@ def register(
     autoreset: bool = False,
     disable_env_checker: bool = False,
     apply_api_compatibility: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ):
     """Register an environment with gymnasium.
 
@@ -559,14 +602,14 @@ def make(
         Error: If the ``id`` doesn't exist then an error is raised
     """
     if isinstance(id, tuple):
-        spec_stack = id
-        id = id[-1]  # if a spec_stack is passed, use the EnvSpec in the stack
-        spec_ = id
+        assert all(isinstance(spec, WrapperSpec) for spec in id[:-1])
+        assert isinstance(id[-1], EnvSpec)
+
     elif isinstance(id, EnvSpec):
-        spec_stack = None
         spec_ = id
     else:
-        spec_stack = None
+        assert isinstance(id, str)
+
         module, id = (None, id) if ":" not in id else id.split(":")
         if module is not None:
             try:
@@ -668,51 +711,6 @@ def make(
     spec_.kwargs = _kwargs
     env.unwrapped.spec = spec_
 
-    if isinstance(spec_stack, tuple):
-        env = _apply_wrappers_from_stack(env, spec_stack)
-    else:
-        env = _apply_default_wrappers(
-            env,
-            spec_,
-            render_mode,
-            apply_api_compatibility,
-            disable_env_checker,
-            max_episode_steps,
-            autoreset,
-            apply_human_rendering,
-            apply_render_collection,
-        )
-
-    return env
-
-
-def _apply_default_wrappers(
-    env,
-    spec_,
-    render_mode,
-    apply_api_compatibility,
-    disable_env_checker,
-    max_episode_steps,
-    autoreset,
-    apply_human_rendering,
-    apply_render_collection,
-):
-    """Applies the default wrappers to the environment.
-
-    Args:
-        spec_:
-        render_mode:
-        apply_api_compatibility:
-        disable_env_checker:
-        max_episode_steps:
-        autoreset:
-        apply_human_rendering:
-        apply_render_collection:
-        env (gym.Env): The environment to wrap.
-
-    Returns:
-        gym.Env: The wrapped environment.
-    """
     # Add step API wrapper
     if apply_api_compatibility is True or (
         apply_api_compatibility is None and spec_.apply_api_compatibility is True
@@ -748,34 +746,8 @@ def _apply_default_wrappers(
     return env
 
 
-def _apply_wrappers_from_stack(env, spec_stack):
-    """Applies the wrappers from the spec stack to the environment.
-
-    Args:
-        env (gym.Env): The environment to wrap.
-        spec_stack (SpecStack): The spec stack.
-
-    Returns:
-        gym.Env: The wrapped environment.
-    """
-    for i in range(len(spec_stack) - 1):
-        ws = spec_stack[-2 - i]
-        if ws.entry_point is None:
-            raise error.Error(f"{ws.id} registered but entry_point is not specified")
-        elif callable(ws.entry_point):
-            env_creator = ws.entry_point
-        else:
-            # Assume it's a string
-            try:
-                env_creator = load(ws.entry_point)
-            except ValueError:
-                raise error.Error(
-                    f"Couldn't find class {ws.entry_point} for wrapper {ws.id}"
-                )
-
-        env = env_creator(env, **ws.kwargs)
-
-    return env
+def _load_env():
+    pass
 
 
 def spec(env_id: str) -> EnvSpec:

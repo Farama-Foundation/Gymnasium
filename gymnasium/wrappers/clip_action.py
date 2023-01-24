@@ -28,9 +28,9 @@ class ClipAction(ActionWrapper, gym.utils.EzPickle):
             env: The environment to apply the wrapper
         """
         assert isinstance(env.action_space, Box)
-        super().__init__(env)
 
         gym.utils.EzPickle.__init__(self)
+        gym.ActionWrapper.__init__(self, env)
 
     def action(self, action):
         """Clips the action within the valid bounds.

@@ -30,7 +30,9 @@ class GrayScaleObservation(gym.ObservationWrapper, gym.utils.EzPickle):
             keep_dim (bool): If `True`, a singleton dimension will be added, i.e. observations are of the shape AxBx1.
                 Otherwise, they are of shape AxB.
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, keep_dim=keep_dim)
+        gym.ObservationWrapper.__init__(self, env)
+
         self.keep_dim = keep_dim
 
         assert (
@@ -48,8 +50,6 @@ class GrayScaleObservation(gym.ObservationWrapper, gym.utils.EzPickle):
             self.observation_space = Box(
                 low=0, high=255, shape=obs_shape, dtype=np.uint8
             )
-
-        gym.utils.EzPickle.__init__(self, keep_dim=keep_dim)
 
     def observation(self, observation):
         """Converts the colour observation to greyscale.

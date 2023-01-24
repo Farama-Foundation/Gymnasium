@@ -58,9 +58,17 @@ class RecordVideo(gym.Wrapper, gym.utils.EzPickle):
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
             disable_logger (bool): Whether to disable moviepy logger or not.
-
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(
+            self,
+            video_folder=video_folder,
+            episode_trigger=episode_trigger,
+            step_trigger=step_trigger,
+            video_length=video_length,
+            name_prefix=name_prefix,
+            disable_logger=disable_logger,
+        )
+        gym.Wrapper.__init__(self, env)
 
         if episode_trigger is None and step_trigger is None:
             episode_trigger = capped_cubic_video_schedule
@@ -92,16 +100,6 @@ class RecordVideo(gym.Wrapper, gym.utils.EzPickle):
         self.recorded_frames = 0
         self.is_vector_env = getattr(env, "is_vector_env", False)
         self.episode_id = 0
-
-        gym.utils.EzPickle.__init__(
-            self,
-            video_folder=video_folder,
-            episode_trigger=episode_trigger,
-            step_trigger=step_trigger,
-            video_length=video_length,
-            name_prefix=name_prefix,
-            disable_logger=disable_logger,
-        )
 
     def reset(self, **kwargs):
         """Reset the environment using kwargs and then starts recording if video enabled."""

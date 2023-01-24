@@ -29,15 +29,15 @@ class TimeAwareObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         Args:
             env: The environment to apply the wrapper
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self)
+        gym.ObservationWrapper.__init__(self, env)
+
         assert isinstance(env.observation_space, Box)
         assert env.observation_space.dtype == np.float32
         low = np.append(self.observation_space.low, 0.0)
         high = np.append(self.observation_space.high, np.inf)
         self.observation_space = Box(low, high, dtype=np.float32)
         self.is_vector_env = getattr(env, "is_vector_env", False)
-
-        gym.utils.EzPickle.__init__(self)
 
     def observation(self, observation):
         """Adds to the observation with the current time step.

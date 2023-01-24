@@ -15,7 +15,8 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.EzPickle):
 
     def __init__(self, env):
         """Initialises the wrapper with the environments, run the observation and action space tests."""
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
         assert hasattr(
             env, "action_space"
@@ -29,8 +30,6 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.EzPickle):
         self.checked_reset = False
         self.checked_step = False
         self.checked_render = False
-
-        gym.utils.EzPickle.__init__(self)
 
     def step(self, action: ActType):
         """Steps through the environment that on the first call will run the `passive_env_step_check`."""

@@ -41,10 +41,10 @@ class LambdaRewardV0(gym.RewardWrapper, gym.utils.EzPickle):
             env (Env): The environment to apply the wrapper
             func: (Callable): The function to apply to reward
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, func=func)
+        gym.RewardWrapper.__init__(self, env)
 
         self.func = func
-        gym.utils.EzPickle.__init__(self, func=func)
 
     def reward(self, reward: SupportsFloat) -> SupportsFloat:
         """Apply function to reward.
@@ -91,8 +91,10 @@ class ClipRewardV0(LambdaRewardV0, gym.utils.EzPickle):
                     f"Min reward ({min_reward}) must be smaller than max reward ({max_reward})"
                 )
 
-        super().__init__(env, lambda x: np.clip(x, a_min=min_reward, a_max=max_reward))
         gym.utils.EzPickle.__init__(self, min_reward=min_reward, max_reward=max_reward)
+        LambdaRewardV0.__init__(
+            self, env=env, func=lambda x: np.clip(x, a_min=min_reward, a_max=max_reward)
+        )
 
 
 class NormalizeRewardV0(gym.Wrapper, gym.utils.EzPickle):
@@ -123,7 +125,8 @@ class NormalizeRewardV0(gym.Wrapper, gym.utils.EzPickle):
             gamma (float): The discount factor that is used in the exponential moving average.
         """
         gym.utils.EzPickle.__init__(self, gamma=gamma, epsilon=epsilon)
-        super().__init__(env)
+        gym.Wrapper.__init__(self, env)
+
         self.rewards_running_means = RunningMeanStd(shape=())
         self.discounted_reward: np.array = np.array([0.0])
         self.gamma = gamma

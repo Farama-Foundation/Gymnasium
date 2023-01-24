@@ -137,7 +137,11 @@ class FrameStack(gym.ObservationWrapper, gym.utils.EzPickle):
             num_stack (int): The number of frames to stack
             lz4_compress (bool): Use lz4 to compress the frames internally
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(
+            self, num_stack=num_stack, lz4_compress=lz4_compress
+        )
+        gym.ObservationWrapper.__init__(self, env)
+
         self.num_stack = num_stack
         self.lz4_compress = lz4_compress
 
@@ -149,10 +153,6 @@ class FrameStack(gym.ObservationWrapper, gym.utils.EzPickle):
         )
         self.observation_space = Box(
             low=low, high=high, dtype=self.observation_space.dtype
-        )
-
-        gym.utils.EzPickle.__init__(
-            self, num_stack=num_stack, lz4_compress=lz4_compress
         )
 
     def observation(self, observation):

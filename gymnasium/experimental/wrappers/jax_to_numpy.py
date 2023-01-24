@@ -9,7 +9,6 @@ from typing import Any, Iterable, Mapping, SupportsFloat
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
@@ -93,7 +92,7 @@ if jnp is not None:
         return type(value)(jax_to_numpy(v) for v in value)
 
 
-class JaxToNumpyV0(Wrapper, gym.utils.EzPickle):
+class JaxToNumpyV0(gym.Wrapper, gym.utils.EzPickle):
     """Wraps a jax environment so that it can be interacted with through numpy arrays.
 
     Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
@@ -103,7 +102,7 @@ class JaxToNumpyV0(Wrapper, gym.utils.EzPickle):
         The reason for this is jax does not support non-array values, therefore numpy ``int_32(5) -> DeviceArray([5], dtype=jnp.int23)``
     """
 
-    def __init__(self, env: Env):
+    def __init__(self, env: gym.Env):
         """Wraps an environment such that the input and outputs are numpy arrays.
 
         Args:
@@ -113,9 +112,8 @@ class JaxToNumpyV0(Wrapper, gym.utils.EzPickle):
             raise DependencyNotInstalled(
                 "jax is not installed, run `pip install gymnasium[jax]`"
             )
-        super().__init__(env)
-
         gym.utils.EzPickle.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
     def step(
         self, action: WrapperActType

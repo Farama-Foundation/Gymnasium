@@ -29,11 +29,11 @@ class TransformObservation(gym.ObservationWrapper, gym.utils.EzPickle):
             env: The environment to apply the wrapper
             f: A function that transforms the observation
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, f=f)
+        gym.ObservationWrapper.__init__(self, env)
+
         assert callable(f)
         self.f = f
-
-        gym.utils.EzPickle.__init__(self, f=f)
 
     def observation(self, observation):
         """Transforms the observations with callable :attr:`f`.

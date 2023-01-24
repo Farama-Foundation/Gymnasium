@@ -56,7 +56,9 @@ class RecordEpisodeStatistics(gym.Wrapper, gym.utils.EzPickle):
             env (Env): The environment to apply the wrapper
             deque_size: The size of the buffers :attr:`return_queue` and :attr:`length_queue`
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, deque_size=deque_size)
+        gym.Wrapper.__init__(self, env)
+
         self.num_envs = getattr(env, "num_envs", 1)
         self.episode_count = 0
         self.episode_start_times: np.ndarray = None
@@ -65,8 +67,6 @@ class RecordEpisodeStatistics(gym.Wrapper, gym.utils.EzPickle):
         self.return_queue = deque(maxlen=deque_size)
         self.length_queue = deque(maxlen=deque_size)
         self.is_vector_env = getattr(env, "is_vector_env", False)
-
-        gym.utils.EzPickle.__init__(self, deque_size=deque_size)
 
     def reset(self, **kwargs):
         """Resets the environment using kwargs and resets the episode returns and lengths."""

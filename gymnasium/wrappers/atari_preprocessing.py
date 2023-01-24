@@ -60,7 +60,18 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.EzPickle):
             DependencyNotInstalled: opencv-python package not installed
             ValueError: Disable frame-skipping in the original env
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(
+            self,
+            noop_max=noop_max,
+            frame_skip=frame_skip,
+            screen_size=screen_size,
+            terminal_on_life_loss=terminal_on_life_loss,
+            grayscale_obs=grayscale_obs,
+            grayscale_newaxis=grayscale_newaxis,
+            scale_obs=scale_obs,
+        )
+        gym.Wrapper.__init__(self, env)
+
         if cv2 is None:
             raise gym.error.DependencyNotInstalled(
                 "opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari"
@@ -112,17 +123,6 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.EzPickle):
             _shape = _shape[:-1]  # Remove channel axis
         self.observation_space = Box(
             low=_low, high=_high, shape=_shape, dtype=_obs_dtype
-        )
-
-        gym.utils.EzPickle.__init__(
-            self,
-            noop_max=noop_max,
-            frame_skip=frame_skip,
-            screen_size=screen_size,
-            terminal_on_life_loss=terminal_on_life_loss,
-            grayscale_obs=grayscale_obs,
-            grayscale_newaxis=grayscale_newaxis,
-            scale_obs=scale_obs,
         )
 
     @property

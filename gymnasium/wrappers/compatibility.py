@@ -68,16 +68,16 @@ class EnvCompatibility(gym.Env, gym.utils.EzPickle):
             "The `gymnasium.make(..., apply_api_compatibility=...)` parameter is deprecated and will be removed in v0.28. "
             "Instead use `gym.make('GymV22Environment-v0', env_name=...)` or `from shimmy import GymV22CompatibilityV0`"
         )
+        gym.utils.EzPickle.__init__(self, old_env=old_env, render_mode=render_mode)
+
+        self.env = old_env
         self.metadata = getattr(old_env, "metadata", {"render_modes": []})
         self.render_mode = render_mode
         self.reward_range = getattr(old_env, "reward_range", None)
         self.spec = getattr(old_env, "spec", None)
-        self.env = old_env
 
         self.observation_space = old_env.observation_space
         self.action_space = old_env.action_space
-
-        gym.utils.EzPickle.__init__(self, old_env=old_env, render_mode=render_mode)
 
     def reset(
         self, seed: Optional[int] = None, options: Optional[dict] = None

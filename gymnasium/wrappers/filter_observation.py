@@ -35,7 +35,8 @@ class FilterObservation(gym.ObservationWrapper, gym.utils.EzPickle):
             ValueError: If the environment's observation space is not :class:`spaces.Dict`
             ValueError: If any of the `filter_keys` are not included in the original `env`'s observation space
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, filter_keys=filter_keys)
+        gym.ObservationWrapper.__init__(self, env)
 
         wrapped_observation_space = env.observation_space
         if not isinstance(wrapped_observation_space, spaces.Dict):
@@ -67,8 +68,6 @@ class FilterObservation(gym.ObservationWrapper, gym.utils.EzPickle):
 
         self._env = env
         self._filter_keys = tuple(filter_keys)
-
-        gym.utils.EzPickle.__init__(self, filter_keys=filter_keys)
 
     def observation(self, observation):
         """Filters the observations.

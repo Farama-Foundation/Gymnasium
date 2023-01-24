@@ -26,10 +26,10 @@ class FlattenObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         Args:
             env: The environment to apply the wrapper
         """
-        super().__init__(env)
-        self.observation_space = spaces.flatten_space(env.observation_space)
-
         gym.utils.EzPickle.__init__(self)
+        gym.ObservationWrapper.__init__(self, env)
+
+        self.observation_space = spaces.flatten_space(env.observation_space)
 
     def observation(self, observation):
         """Flattens an observation.

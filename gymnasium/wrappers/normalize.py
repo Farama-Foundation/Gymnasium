@@ -60,7 +60,9 @@ class NormalizeObservation(gym.Wrapper, gym.utils.EzPickle):
             env (Env): The environment to apply the wrapper
             epsilon: A stability parameter that is used when scaling the observations.
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, epsilon=epsilon)
+        gym.Wrapper.__init__(self, env)
+
         self.num_envs = getattr(env, "num_envs", 1)
         self.is_vector_env = getattr(env, "is_vector_env", False)
         if self.is_vector_env:
@@ -68,8 +70,6 @@ class NormalizeObservation(gym.Wrapper, gym.utils.EzPickle):
         else:
             self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
         self.epsilon = epsilon
-
-        gym.utils.EzPickle.__init__(self, epsilon=epsilon)
 
     def step(self, action):
         """Steps through the environment and normalizes the observation."""
@@ -95,7 +95,7 @@ class NormalizeObservation(gym.Wrapper, gym.utils.EzPickle):
         return (obs - self.obs_rms.mean) / np.sqrt(self.obs_rms.var + self.epsilon)
 
 
-class NormalizeReward(gym.core.Wrapper):
+class NormalizeReward(gym.core.Wrapper, gym.utils.EzPickle):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
@@ -118,7 +118,9 @@ class NormalizeReward(gym.core.Wrapper):
             epsilon (float): A stability parameter
             gamma (float): The discount factor that is used in the exponential moving average.
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, gamma=gamma, epsilon=epsilon)
+        gym.Wrapper.__init__(self, env)
+
         self.num_envs = getattr(env, "num_envs", 1)
         self.is_vector_env = getattr(env, "is_vector_env", False)
         self.return_rms = RunningMeanStd(shape=())

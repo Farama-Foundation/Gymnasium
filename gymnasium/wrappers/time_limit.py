@@ -28,7 +28,9 @@ class TimeLimit(gym.Wrapper, gym.utils.EzPickle):
             env: The environment to apply the wrapper
             max_episode_steps: An optional max episode steps (if ``Ǹone``, ``env.spec.max_episode_steps`` is used)
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, max_episode_steps=max_episode_steps)
+        gym.Wrapper.__init__(self, env)
+
         if max_episode_steps is None and self.env.spec is not None:
             assert env.spec is not None
             max_episode_steps = env.spec.max_episode_steps
@@ -36,8 +38,6 @@ class TimeLimit(gym.Wrapper, gym.utils.EzPickle):
             self.env.spec.max_episode_steps = max_episode_steps
         self._max_episode_steps = max_episode_steps
         self._elapsed_steps = None
-
-        gym.utils.EzPickle.__init__(self, max_episode_steps=max_episode_steps)
 
     def step(self, action):
         """Steps through the environment and if the number of steps elapsed exceeds ``max_episode_steps`` then truncate.

@@ -51,9 +51,9 @@ class VectorListInfo(gym.Wrapper, gym.utils.EzPickle):
         assert getattr(
             env, "is_vector_env", False
         ), "This wrapper can only be used in vectorized environments."
-        super().__init__(env)
 
         gym.utils.EzPickle.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
     def step(self, action):
         """Steps through the environment, convert dict info to list."""

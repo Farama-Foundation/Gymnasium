@@ -29,11 +29,11 @@ class TransformReward(RewardWrapper, gym.utils.EzPickle):
             env: The environment to apply the wrapper
             f: A function that transforms the reward
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, f=f)
+        gym.RewardWrapper.__init__(self, env)
+
         assert callable(f)
         self.f = f
-
-        gym.utils.EzPickle.__init__(self, f=f)
 
     def reward(self, reward):
         """Transforms the reward using callable :attr:`f`.

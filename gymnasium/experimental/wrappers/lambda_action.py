@@ -36,13 +36,13 @@ class LambdaActionV0(gym.ActionWrapper, gym.utils.EzPickle):
             func: Function to apply to ``step`` ``action``
             action_space: The updated action space of the wrapper given the function.
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, func=func, action_space=action_space)
+        gym.Wrapper.__init__(self, env)
+
         if action_space is not None:
             self.action_space = action_space
 
         self.func = func
-
-        gym.utils.EzPickle.__init__(self, func=func, action_space=action_space)
 
     def action(self, action: WrapperActType) -> ActType:
         """Apply function to action."""
@@ -73,18 +73,20 @@ class ClipActionV0(LambdaActionV0, gym.utils.EzPickle):
         """
         assert isinstance(env.action_space, Box)
 
-        super().__init__(
-            env,
-            lambda action: jp.clip(action, env.action_space.low, env.action_space.high),
-            Box(
+        gym.utils.EzPickle.__init__(self)
+        LambdaActionV0.__init__(
+            self,
+            env=env,
+            func=lambda action: jp.clip(
+                action, env.action_space.low, env.action_space.high
+            ),
+            action_space=Box(
                 -np.inf,
                 np.inf,
                 shape=env.action_space.shape,
                 dtype=env.action_space.dtype,
             ),
         )
-
-        gym.utils.EzPickle.__init__(self)
 
 
 class RescaleActionV0(LambdaActionV0, gym.utils.EzPickle):
@@ -122,6 +124,8 @@ class RescaleActionV0(LambdaActionV0, gym.utils.EzPickle):
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
+        gym.utils.EzPickle.__init__(self, min_action=min_action, max_action=max_action)
+
         assert isinstance(env.action_space, Box)
         assert not np.any(env.action_space.low == np.inf) and not np.any(
             env.action_space.high == np.inf
@@ -153,15 +157,14 @@ class RescaleActionV0(LambdaActionV0, gym.utils.EzPickle):
         )
         intercept = gradient * -min_action + env.action_space.low
 
-        super().__init__(
-            env,
-            lambda action: gradient * action + intercept,
-            Box(
+        LambdaActionV0.__init__(
+            self,
+            env=env,
+            func=lambda action: gradient * action + intercept,
+            action_space=Box(
                 low=min_action,
                 high=max_action,
                 shape=env.action_space.shape,
                 dtype=env.action_space.dtype,
             ),
         )
-
-        gym.utils.EzPickle.__init__(self, min_action=min_action, max_action=max_action)

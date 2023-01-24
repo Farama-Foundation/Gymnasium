@@ -1,21 +1,17 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
-import warnings
 from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
 from gymnasium import spaces
-from gymnasium.error import Error
+from gymnasium.logger import warn
 from gymnasium.utils import EzPickle, seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec
-
-from gymnasium.wrapperspec import WrapperSpec
-
+    from gymnasium.envs.registration import EnvSpec, SpecStack, WrapperSpec
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -210,13 +206,16 @@ class Env(Generic[ObsType, ActType]):
         return self._np_random
 
     @property
-    def spec_stack(self) -> tuple[EnvSpec | WrapperSpec]:
+    def spec_stack(self) -> SpecStack:
         """Returns the specification stack of the environment.
 
         Returns:
            Tuple of environment and wrapper specifications, known as the specification stack.
         """
-        assert self.spec is not None
+        if self.spec is None:
+            raise ValueError(
+                "A spec stack cannot be created if the environment does not have a specification. Use `gym.make` to create the environment or assign the environment a specification to recreate it, `env.spec = EnvSpec(...)`"
+            )
         return (self.spec,)
 
     @np_random.setter
@@ -293,22 +292,28 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self.env.spec
 
     @property
-    def spec_stack(self) -> tuple[EnvSpec | WrapperSpec]:
+    def spec_stack(self) -> SpecStack:
         """Returns the specification stack of the wrapped environment.
 
         Returns:
            Tuple of environment and wrapper specifications, known as the specification stack.
         """
         if not issubclass(type(self), EzPickle):
-            raise Error(f"Wrapper/environment {type(self)} must inherit from EzPickle.")
-        if len(self._ezpickle_args):
-            warnings.warn(
-                f"Wrapper/environment {type(self)} has EzPickle args, which is unsupported by env.spec_stack. Related functions such as serialise_spec_stack will not work."
+            raise TypeError(
+                f"{self.class_name()} must inherit from `gym.utils.EzPickle` for a spec stack to be created."
             )
-            return (WrapperSpec("Unsupported", None, None),)
+
+        assert hasattr(self, "_ezpickle_args")
+        if len(self._ezpickle_args):
+            warn(
+                f"{self.class_name()} EzPickle has position arguments rather than keyword arguments ({self._ezpickle_args}). This is unsupported by `serialise_spec_stack`."
+            )
+
+        assert hasattr(self, "_ezpickle_kwargs")
+        from gymnasium.envs.registration import WrapperSpec
         wrapper_spec = WrapperSpec(
             type(self).__name__,
-            self.__module__ + ":" + type(self).__name__,
+            f"{self.__module__}:{type(self).__name__}",
             self._ezpickle_kwargs,
         )
         return (wrapper_spec,) + self.env.spec_stack

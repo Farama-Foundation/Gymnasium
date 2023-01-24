@@ -34,15 +34,15 @@ class StepAPICompatibility(gym.Wrapper, gym.utils.EzPickle):
             env (gym.Env): the env to wrap. Can be in old or new API
             output_truncation_bool (bool): Whether the wrapper's step method outputs two booleans (new API) or one boolean (old API)
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(self, output_truncation_bool=output_truncation_bool)
+        gym.Wrapper.__init__(self, env)
+
         self.is_vector_env = isinstance(env.unwrapped, gym.vector.VectorEnv)
         self.output_truncation_bool = output_truncation_bool
         if not self.output_truncation_bool:
             deprecation(
                 "Initializing environment in (old) done step API which returns one bool instead of two."
             )
-
-        gym.utils.EzPickle.__init__(self, output_truncation_bool=output_truncation_bool)
 
     def step(self, action):
         """Steps through the environment, returning 5 or 4 items depending on `output_truncation_bool`.

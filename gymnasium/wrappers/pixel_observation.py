@@ -79,7 +79,13 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
                 specified ``pixel_keys``.
             TypeError: When an unexpected pixel type is used
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(
+            self,
+            pixels_only=pixels_only,
+            render_kwargs=render_kwargs,
+            pixel_keys=pixel_keys,
+        )
+        gym.ObservationWrapper.__init__(self, env)
 
         # Avoid side-effects that occur when render_kwargs is manipulated
         render_kwargs = copy.deepcopy(render_kwargs)
@@ -163,13 +169,6 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
         self._pixels_only = pixels_only
         self._render_kwargs = render_kwargs
         self._pixel_keys = pixel_keys
-
-        gym.utils.EzPickle.__init__(
-            self,
-            pixels_only=pixels_only,
-            render_kwargs=render_kwargs,
-            pixel_keys=pixel_keys,
-        )
 
     def observation(self, observation):
         """Updates the observations with the pixel observations.

@@ -17,7 +17,11 @@ class RenderCollection(gym.Wrapper, gym.utils.EzPickle):
             reset_clean (bool): If true, clear the collection frames when .reset() is called.
             Default value is True.
         """
-        super().__init__(env)
+        gym.utils.EzPickle.__init__(
+            self, pop_frames=pop_frames, reset_clean=reset_clean
+        )
+        gym.Wrapper.__init__(self, env)
+
         assert env.render_mode is not None
         assert not env.render_mode.endswith("_list")
         self.frame_list = []
@@ -27,10 +31,6 @@ class RenderCollection(gym.Wrapper, gym.utils.EzPickle):
         self.metadata = copy.deepcopy(self.env.metadata)
         if f"{self.env.render_mode}_list" not in self.metadata["render_modes"]:
             self.metadata["render_modes"].append(f"{self.env.render_mode}_list")
-
-        gym.utils.EzPickle.__init__(
-            self, pop_frames=pop_frames, reset_clean=reset_clean
-        )
 
     @property
     def render_mode(self):
