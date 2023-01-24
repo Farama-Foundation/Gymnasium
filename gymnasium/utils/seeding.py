@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from gymnasium.core import make_np_random_generator as np_random
+from gymnasium._random import np_random
 
 
 RNG = RandomNumberGenerator = np.random.Generator
