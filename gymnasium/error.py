@@ -43,42 +43,52 @@ class RegistrationError(Error):
 
 class UnseedableEnv(Error):
     """Raised when the user tries to seed an env that does not support seeding."""
+import warnings
 
+class Error(Exception):
+    """Error superclass."""
+
+class RegistryError(Error):
+    """Raised when the user requests an item from the registry that does not exist."""
+
+class UnregisteredEnv(RegistryError):
+    """Raised when the user requests an env from the registry that does not exist."""
+
+class DeprecatedEnv(Error):
+    """Raised when the user requests an env from the registry with an older version number than the latest env with the same name."""
+
+class RegistrationError(Error):
+    """Raised when the user attempts to register an invalid env. For example, an unversioned env when a versioned env exists."""
+
+class UnseedableEnv(Error):
+    """Raised when the user tries to seed an env that does not support seeding."""
 
 class DependencyNotInstalled(Error):
     """Raised when the user has not installed a dependency."""
 
-
 class UnsupportedMode(Error):
     """Raised when the user requests a rendering mode not supported by the environment."""
-
-
-class InvalidMetadata(Error):
-    """Raised when the metadata of an environment is not valid."""
-
 
 class ResetNeeded(Error):
     """When the order enforcing is violated, i.e. step or render is called before reset."""
 
-
 class ResetNotAllowed(Error):
     """When the monitor is active, raised when the user tries to step an environment that's not yet terminated or truncated."""
-
 
 class InvalidAction(Error):
     """Raised when the user performs an action not contained within the action space."""
 
+class InvalidEnvRequest(RegistryError):
+    """Raised when user requests an env from the registry where the namespace, name or version doesn't exist."""
 
-class MissingArgument(Error):
-    """Raised when a required argument in the initializer is missing."""
+    def __init__(self, message):
+        self.message = message
 
+    def __str__(self):
+        return self.message
 
-class InvalidProbability(Error):
-    """Raised when given an invalid value for a probability."""
-
-
-class InvalidBound(Error):
-    """Raised when the clipping an array with invalid upper and/or lower bound."""
+class UnregisteredBenchmark(RegistryError):
+    """Raised when the user requests an benchmark from the registry that does not actually exist."""
 
 
 # API errors
