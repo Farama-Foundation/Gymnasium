@@ -3,7 +3,8 @@
 These are not intended as API functions, and will not remain stable over time.
 """
 
-from gymnasium.utils import colorize, seeding
+from gymnasium.utils import seeding
+from gymnasium.utils.colorize import colorize
 from gymnasium.utils.env_checker import check_env
 from gymnasium.utils.ezpickle import EzPickle
 from gymnasium.utils.play import play
