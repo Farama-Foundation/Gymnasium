@@ -1,7 +1,8 @@
 """Module for vector environments."""
-from typing import Iterable, List, Optional, Union
+from typing import Callable, Iterable, List, Optional, Union
 
 import gymnasium as gym
+from gymnasium.core import Env
 from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from gymnasium.vector.vector_env import VectorEnv, VectorEnvWrapper
@@ -14,7 +15,7 @@ def make(
     id: str,
     num_envs: int = 1,
     asynchronous: bool = True,
-    wrappers: Optional[Union[callable, List[callable]]] = None,
+    wrappers: Optional[Union[Callable[[Env], Env], List[Callable[[Env], Env]]]] = None,
     disable_env_checker: Optional[bool] = None,
     **kwargs,
 ) -> VectorEnv:
@@ -24,11 +25,11 @@ def make(
 
         >>> import gymnasium as gym
         >>> env = gym.vector.make('CartPole-v1', num_envs=3)
-        >>> env.reset()
-        array([[-0.04456399,  0.04653909,  0.01326909, -0.02099827],
-               [ 0.03073904,  0.00145001, -0.03088818, -0.03131252],
-               [ 0.03468829,  0.01500225,  0.01230312,  0.01825218]],
-              dtype=float32)
+        >>> env.reset(seed=42)
+        (array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
+               [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
+               [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
+              dtype=float32), {})
 
     Args:
         id: The environment ID. This must be a valid ID from the registry.
@@ -43,12 +44,12 @@ def make(
         The vectorized environment.
     """
 
-    def create_env(env_num: int):
+    def create_env(env_num: int) -> Callable[[], Env]:
         """Creates an environment that can enable or disable the environment checker."""
         # If the env_num > 0 then disable the environment checker otherwise use the parameter
         _disable_env_checker = True if env_num > 0 else disable_env_checker
 
-        def _make_env():
+        def _make_env() -> Env:
             env = gym.envs.registration.make(
                 id,
                 disable_env_checker=_disable_env_checker,

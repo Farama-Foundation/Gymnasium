@@ -1,10 +1,25 @@
+import re
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
+import pytest
 
 import gymnasium
+from gymnasium.error import DependencyNotInstalled
 from gymnasium.spaces import Discrete
 from gymnasium.wrappers.compatibility import EnvCompatibility, LegacyEnv
+
+
+try:
+    import gym
+except ImportError:
+    gym = None
+
+
+try:
+    import shimmy
+except ImportError:
+    shimmy = None
 
 
 class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
@@ -125,3 +140,42 @@ def test_make_compatibility_in_make():
     assert img.shape == (1, 1, 3)  # type: ignore
     env.close()
     del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
+
+
+def test_shimmy_gym_compatibility():
+    assert gymnasium.spec("GymV22Environment-v0") is not None
+    assert gymnasium.spec("GymV26Environment-v0") is not None
+
+    if shimmy is None:
+        with pytest.raises(
+            ImportError,
+            match=re.escape(
+                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+            ),
+        ):
+            gymnasium.make("GymV22Environment-v0")
+        with pytest.raises(
+            ImportError,
+            match=re.escape(
+                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+            ),
+        ):
+            gymnasium.make("GymV26Environment-v0")
+    elif gym is None:
+        with pytest.raises(
+            DependencyNotInstalled,
+            match=re.escape(
+                "No module named 'gym' (Hint: You need to install gym with `pip install gym` to use gym environments"
+            ),
+        ):
+            gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
+        with pytest.raises(
+            DependencyNotInstalled,
+            match=re.escape(
+                "No module named 'gym' (Hint: You need to install gym with `pip install gym` to use gym environments"
+            ),
+        ):
+            gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
+    else:
+        gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
+        gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")

@@ -11,7 +11,11 @@ from collections import deque
 from typing import Any, SupportsFloat
 from typing_extensions import Final
 
-import jumpy as jp
+
+try:
+    import jumpy as jp
+except ImportError as e:
+    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym
@@ -77,24 +81,27 @@ class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.experimental.wrappers import TimeAwareObservationV0
-        >>> env = gym.make('CartPole-v1')
+        >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservationV0(env)
         >>> env.observation_space
-        Dict(obs: Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), time: Box(0.0, 500, (1,), float32))
-        >>> _ = env.reset()
+        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0.0, 1.0, (1,), float32))
+        >>> _ = env.reset(seed=42)
+        >>> _ = env.action_space.seed(42)
         >>> env.step(env.action_space.sample())[0]
-        OrderedDict([('obs',
-        ...       array([ 0.02866629,  0.2310988 , -0.02614601, -0.2600732 ], dtype=float32)),
-        ...      ('time', array([0.002]))])
+        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': 0.002}
 
     Flatten observation space example:
-        >>> env = gym.make('CartPole-v1')
+        >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservationV0(env, flatten=True)
         >>> env.observation_space
-        Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38  0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 500], (5,), float32)
-        >>> _ = env.reset()
+        Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38
+          0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 1.0000000e+00], (5,), float32)
+        >>> _ = env.reset(seed=42)
+        >>> _ = env.action_space.seed(42)
         >>> env.step(env.action_space.sample())[0]
-        array([-0.01232257,  0.19335455, -0.02244143, -0.32388705,  0.002 ], dtype=float32)
+        array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  0.002     ],
+              dtype=float32)
+
     """
 
     def __init__(
@@ -228,11 +235,12 @@ class FrameStackObservationV0(gym.Wrapper, gym.utils.EzPickle):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CarRacing-v1')
-        >>> env = FrameStack(env, 4)
+        >>> from gymnasium.experimental.wrappers import FrameStackObservationV0
+        >>> env = gym.make("CarRacing-v2")
+        >>> env = FrameStackObservationV0(env, 4)
         >>> env.observation_space
-        Box(4, 96, 96, 3)
-        >>> obs = env.reset()
+        Box(0, 255, (4, 96, 96, 3), uint8)
+        >>> obs, _ = env.reset()
         >>> obs.shape
         (4, 96, 96, 3)
     """

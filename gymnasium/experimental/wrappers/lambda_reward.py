@@ -63,7 +63,7 @@ class ClipRewardV0(LambdaRewardV0, gym.utils.EzPickle):
         >>> from gymnasium.experimental.wrappers import ClipRewardV0
         >>> env = gym.make("CartPole-v1")
         >>> env = ClipRewardV0(env, 0, 0.5)
-        >>> env.reset()
+        >>> _ = env.reset()
         >>> _, rew, _, _, _ = env.step(1)
         >>> rew
         0.5
@@ -100,6 +100,10 @@ class NormalizeRewardV0(gym.Wrapper, gym.utils.EzPickle):
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
 
+    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
+    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.
+    If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
         instantiated or the policy was changed recently.
@@ -118,12 +122,23 @@ class NormalizeRewardV0(gym.Wrapper, gym.utils.EzPickle):
             epsilon (float): A stability parameter
             gamma (float): The discount factor that is used in the exponential moving average.
         """
+        gym.utils.EzPickle.__init__(self, gamma=gamma, epsilon=epsilon)
         super().__init__(env)
         self.rewards_running_means = RunningMeanStd(shape=())
-        self.discounted_reward: float = 0.0
+        self.discounted_reward: np.array = np.array([0.0])
         self.gamma = gamma
         self.epsilon = epsilon
-        gym.utils.EzPickle.__init__(self, gamma=gamma, epsilon=epsilon)
+        self._update_running_mean = True
+
+    @property
+    def update_running_mean(self) -> bool:
+        """Property to freeze/continue the running mean calculation of the reward statistics."""
+        return self._update_running_mean
+
+    @update_running_mean.setter
+    def update_running_mean(self, setting: bool):
+        """Sets the property to freeze/continue the running mean calculation of the reward statistics."""
+        self._update_running_mean = setting
 
     def step(
         self, action: WrapperActType
@@ -137,5 +152,6 @@ class NormalizeRewardV0(gym.Wrapper, gym.utils.EzPickle):
 
     def normalize(self, reward):
         """Normalizes the rewards with the running mean rewards and their variance."""
-        self.rewards_running_means.update(self.discounted_reward)
+        if self._update_running_mean:
+            self.rewards_running_means.update(self.discounted_reward)
         return reward / np.sqrt(self.rewards_running_means.var + self.epsilon)

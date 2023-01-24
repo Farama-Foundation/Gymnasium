@@ -277,7 +277,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
         self._metadata: dict[str, Any] | None = None
 
-    def __getattr__(self, name: str):
+    def __getattr__(self, name: str) -> Any:
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
         if name == "_np_random":
             raise AttributeError(

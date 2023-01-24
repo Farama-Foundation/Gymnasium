@@ -14,7 +14,10 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
     Warning the environments have no wrappers, including time limit and order enforcing.
     """
     # To avoid issues with registered environments during testing, we check that the spec entry points are from gymnasium.envs.
-    if "gymnasium.envs." in env_spec.entry_point:
+    if (
+        isinstance(env_spec.entry_point, str)
+        and "gymnasium.envs." in env_spec.entry_point
+    ):
         try:
             return env_spec.make(disable_env_checker=True).unwrapped
         except (

@@ -150,11 +150,11 @@ class JaxToTorchV0(Wrapper, gym.utils.EzPickle):
         """
         if torch is None:
             raise DependencyNotInstalled(
-                "Torch is not installed, run `pip install torch`"
+                "torch is not installed, run `pip install torch`"
             )
         elif jnp is None:
             raise DependencyNotInstalled(
-                "Jax is not installed, run `pip install gymnasium[jax]`"
+                "jax is not installed, run `pip install gymnasium[jax]`"
             )
 
         super().__init__(env)

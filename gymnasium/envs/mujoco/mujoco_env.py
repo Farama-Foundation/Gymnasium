@@ -177,7 +177,9 @@ class MuJocoPyEnv(BaseMujocoEnv):
     ):
         if MUJOCO_PY_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
-                f"{MUJOCO_PY_IMPORT_ERROR}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)"
+                f"{MUJOCO_PY_IMPORT_ERROR}. "
+                "(HINT: you need to install mujoco-py, and also perform the setup instructions "
+                "here: https://github.com/openai/mujoco-py.)"
             )
 
         logger.warn(
@@ -324,7 +326,8 @@ class MujocoEnv(BaseMujocoEnv):
     ):
         if MUJOCO_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
-                f"{MUJOCO_IMPORT_ERROR}. (HINT: you need to install mujoco)"
+                f"{MUJOCO_IMPORT_ERROR}. "
+                "(HINT: you need to install mujoco, run `pip install gymnasium[mujoco]`.)"
             )
 
         super().__init__(

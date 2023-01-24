@@ -111,7 +111,7 @@ class JaxToNumpyV0(Wrapper, gym.utils.EzPickle):
         """
         if jnp is None:
             raise DependencyNotInstalled(
-                "Jax is not installed, run `pip install gymnasium[jax]`"
+                "jax is not installed, run `pip install gymnasium[jax]`"
             )
         super().__init__(env)
 
