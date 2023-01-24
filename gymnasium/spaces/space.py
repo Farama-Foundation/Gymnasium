@@ -6,7 +6,7 @@ from typing import Any, Generic, Iterable, Mapping, Sequence, TypeVar
 import numpy as np
 import numpy.typing as npt
 
-from gymnasium.utils import seeding
+from gymnasium import seeding
 
 
 T_cov = TypeVar("T_cov", covariant=True)

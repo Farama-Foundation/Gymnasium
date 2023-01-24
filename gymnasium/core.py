@@ -5,8 +5,7 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
-from gymnasium import spaces
-from gymnasium.utils import seeding
+from gymnasium import seeding, spaces
 
 
 if TYPE_CHECKING:
