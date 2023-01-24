@@ -4,9 +4,8 @@
 class EzPickle:
     """Objects that are pickled and unpickled via their constructor arguments.
 
-    Example::
-
-        >>> class Dog(Animal, EzPickle):
+    Example:
+        >>> class Dog(Animal, EzPickle): # doctest: +SKIP
         ...    def __init__(self, furcolor, tailkind="bushy"):
         ...        Animal.__init__()
         ...        EzPickle.__init__(self, furcolor, tailkind)

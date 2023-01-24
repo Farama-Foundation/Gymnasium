@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import types
+from collections.abc import Callable
 from typing import Any
 
 import gymnasium as gym
@@ -45,9 +46,9 @@ class GenericTestEnv(gym.Env):
         self,
         action_space: spaces.Space = spaces.Box(0, 1, (1,)),
         observation_space: spaces.Space = spaces.Box(0, 1, (1,)),
-        reset_func: callable = basic_reset_func,
-        step_func: callable = new_step_func,
-        render_func: callable = basic_render_func,
+        reset_func: Callable = basic_reset_func,
+        step_func: Callable = new_step_func,
+        render_func: Callable = basic_render_func,
         metadata: dict[str, Any] = {"render_modes": []},
         render_mode: str | None = None,
         spec: EnvSpec = EnvSpec(

@@ -4,13 +4,13 @@ import sys
 import time
 from copy import deepcopy
 from enum import Enum
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import Callable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import logger
-from gymnasium.core import ObsType
+from gymnasium.core import Env, ObsType
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
@@ -45,28 +45,27 @@ class AsyncVectorEnv(VectorEnv):
 
     It uses ``multiprocessing`` processes, and pipes for communication.
 
-    Example::
-
+    Example:
         >>> import gymnasium as gym
         >>> env = gym.vector.AsyncVectorEnv([
-        ...     lambda: gym.make("Pendulum-v0", g=9.81),
-        ...     lambda: gym.make("Pendulum-v0", g=1.62)
+        ...     lambda: gym.make("Pendulum-v1", g=9.81),
+        ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()
-        array([[-0.8286432 ,  0.5597771 ,  0.90249056],
-               [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
+        >>> env.reset(seed=42)
+        (array([[-0.14995256,  0.9886932 , -0.12224312],
+               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
     """
 
     def __init__(
         self,
-        env_fns: Sequence[callable],
+        env_fns: Sequence[Callable[[], Env]],
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         shared_memory: bool = True,
         copy: bool = True,
         context: Optional[str] = None,
         daemon: bool = True,
-        worker: Optional[callable] = None,
+        worker: Optional[Callable] = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -216,7 +215,7 @@ class AsyncVectorEnv(VectorEnv):
         timeout: Optional[Union[int, float]] = None,
         seed: Optional[int] = None,
         options: Optional[dict] = None,
-    ) -> Union[ObsType, Tuple[ObsType, List[dict]]]:
+    ) -> Union[ObsType, Tuple[ObsType, dict]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
