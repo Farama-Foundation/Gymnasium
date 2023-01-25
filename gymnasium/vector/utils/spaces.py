@@ -126,6 +126,7 @@ def _batch_space_dict(space: Dict, n: int = 1):
     )
 
 
+@batch_space.register(Space)
 @batch_space.register(Graph)
 @batch_space.register(Text)
 @batch_space.register(Sequence)
@@ -170,7 +171,7 @@ def iterate(space: Space, items: Iterable) -> Iterator:
         Traceback (most recent call last):
             ...
         StopIteration
-        
+
     Args:
         space: Space to which `items` belong to.
         items: Items to be iterated over.

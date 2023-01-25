@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from functools import singledispatch
-from typing import Any, Iterable, Callable
+from typing import Any, Callable, Iterable
 
 import numpy as np
 
@@ -165,7 +165,8 @@ def create_empty_array(
 @create_empty_array.register(MultiDiscrete)
 @create_empty_array.register(MultiBinary)
 def _create_empty_array_multi(space: Box, n: int = 1, fn=np.zeros) -> np.ndarray:
-    return fn((n,) + space.shape, dtype=space.dtype)
+    shape = space.shape if n is None else (n,) + space.shape
+    return fn(shape, dtype=space.dtype)
 
 
 @create_empty_array.register(Tuple)
