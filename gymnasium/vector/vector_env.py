@@ -125,8 +125,7 @@ class VectorEnv(gym.Env):
         Returns:
             A batch of observations and info from the vectorized environment.
 
-        An example::
-
+        Example:
             >>> import gymnasium as gym
             >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
             >>> envs.reset(seed=42)
@@ -134,7 +133,6 @@ class VectorEnv(gym.Env):
                    [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
                    [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
                   dtype=float32), {})
-
         """
         self.reset_async(seed=seed, options=options)
         return self.reset_wait(seed=seed, options=options)
@@ -174,8 +172,9 @@ class VectorEnv(gym.Env):
             the returned observation and info is not the final step's observation or info which is instead stored in
             info as `"final_observation"` and `"final_info"`.
 
-        An example::
-
+        Example:
+            >>> import gymnasium as gym
+            >>> import numpy as np
             >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
             >>> _ = envs.reset(seed=42)
             >>> actions = np.array([1, 0, 1])

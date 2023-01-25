@@ -17,13 +17,14 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
     This space represents the set of tuples of the form :math:`(a_0, \dots, a_n)` where the :math:`a_i` belong
     to some space that is specified during initialization and the integer :math:`n` is not fixed
 
-    Example::
-        >>> from gymnasium.spaces import Box
-        >>> space = Sequence(Box(0, 1), seed=42)
-        >>> space.sample()   # doctest: +SKIP
-        (array([0.6369617], dtype=float32),)
-        >>> space.sample()   # doctest: +SKIP
-        (array([0.01652764], dtype=float32), array([0.8132702], dtype=float32),)
+    Example:
+        >>> from gymnasium.spaces import Sequence, Box
+        >>> observation_space = Sequence(Box(0, 1), seed=2)
+        >>> observation_space.sample()
+        (array([0.26161215], dtype=float32),)
+        >>> observation_space = Sequence(Box(0, 1), seed=0)
+        >>> observation_space.sample()
+        (array([0.6369617], dtype=float32), array([0.26978672], dtype=float32), array([0.04097353], dtype=float32))
     """
 
     def __init__(
