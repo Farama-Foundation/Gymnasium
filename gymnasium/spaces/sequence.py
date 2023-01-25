@@ -129,9 +129,14 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
 
         if self.stack:
             # Concatenate values if stacked.
-            return gym.vector.utils.concatenate(
-                self.feature_space, sampled_values, None
+            out = (
+                gym.vector.utils.create_empty_array(
+                    self.feature_space, len(sampled_values), fn=np.zeros
+                )
+                if isinstance(self.feature_space, gym.spaces.Dict)
+                else None
             )
+            return gym.vector.utils.concatenate(self.feature_space, sampled_values, out)
 
         return sampled_values
 
@@ -157,11 +162,39 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as dict-repr of vectors
+        if self.stack and isinstance(self.feature_space, gym.spaces.Dict):
+            # Unstack batched sample of Dict for jsonification.
+            sample_n = [
+                tuple(
+                    [
+                        sample
+                        for sample in gym.vector.utils.iterate(
+                            self.batched_feature_space, sample_n
+                        )
+                    ]
+                )
+            ]
         return [self.feature_space.to_jsonable(list(sample)) for sample in sample_n]
 
     def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...]]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        return [tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n]
+        sample_output = [
+            tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n
+        ]
+
+        if isinstance(self.feature_space, gym.spaces.Dict) and self.stack:
+            # Restack batched sample of Dict for un-jsonification.
+            out = (
+                gym.vector.utils.create_empty_array(
+                    self.feature_space, len(sample_output[0]), fn=np.zeros
+                )
+                if isinstance(self.feature_space, gym.spaces.Dict)
+                else None
+            )
+            return [
+                gym.vector.utils.concatenate(self.feature_space, sample_output[0], out)
+            ]
+        return sample_output
 
     def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
