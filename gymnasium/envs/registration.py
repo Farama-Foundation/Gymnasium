@@ -314,7 +314,7 @@ def _check_spec_register(testing_spec: EnvSpec):
         )
     elif latest_versioned_spec is not None and testing_spec.version is None:
         raise error.RegistrationError(
-            "Can't register the unversioned environment `{testing_spec.id}` when the versioned environment "
+            f"Can't register the unversioned environment `{testing_spec.id}` when the versioned environment "
             f"`{latest_versioned_spec.id}` of the same name already exists. Note: the default behavior is "
             "that `gym.make` with the unversioned environment will return the latest versioned environment"
         )
@@ -530,13 +530,10 @@ def make(
                 ) from e
 
         # load the env spec from the registry
-        env_spec = registry.get(id)
+        env_spec = registry.get(env_name)
 
-        # check if id exists and up to date
-        ns, name, version = parse_env_id(id)
-        if env_spec is None:
-            _check_version_exists(ns, name, version)
-            raise error.Error(f"No registered env with id: {id}")
+        # update env spec is not version provided, raise warning if out of date
+        ns, name, version = parse_env_id(env_name)
 
         latest_version = find_highest_version(ns, name)
         if (
@@ -545,7 +542,7 @@ def make(
             and latest_version > version
         ):
             logger.warn(
-                f"The environment {id} is out of date. You should consider "
+                f"The environment {env_name} is out of date. You should consider "
                 f"upgrading to version `v{latest_version}`."
             )
         if version is None and latest_version is not None:
@@ -554,8 +551,12 @@ def make(
             env_spec = registry.get(new_env_id)
             logger.warn(
                 f"Using the latest versioned environment `{new_env_id}` "
-                f"instead of the unversioned environment `{id}`."
+                f"instead of the unversioned environment `{env_name}`."
             )
+
+        if env_spec is None:
+            _check_version_exists(ns, name, version)
+            raise error.Error(f"No registered env with id: {env_name}")
 
     assert isinstance(env_spec, EnvSpec)
     # Extract the spec kwargs and append the make kwargs
