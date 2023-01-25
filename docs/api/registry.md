@@ -20,11 +20,11 @@ Gymnasium allows users to automatically load environments, pre-wrapped with seve
 ```{eval-rst}
 .. autoclass:: gymnasium.envs.registration.EnvSpec
 .. attribute:: gymnasium.envs.registration.registry
-    
+
     The Global registry for gymnasium which is where environment specifications are stored by :meth:`gymnasium.register` and from which :meth:`gymnasium.make` is used to create environments.
-      
+
 .. attribute:: gymnasium.envs.registration.current_namespace
-    
+
     The current namespace when creating or registering environments. This is by default ``None`` by with :meth:`namespace` this can be modified to automatically set the environment id namespace.
 ```
 

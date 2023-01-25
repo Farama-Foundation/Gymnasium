@@ -62,6 +62,7 @@ __all__ = [
 
 class EnvCreator(Protocol):
     """Function type expected for an environment."""
+
     def __call__(self, **kwargs: Any) -> Env:
         ...
 
@@ -696,8 +697,8 @@ def spec(env_id: str) -> EnvSpec:
 
 
 def pprint_registry(
+    print_registry: dict[str, EnvSpec] = registry,
     *,
-    _registry: dict = registry,
     num_cols: int = 3,
     exclude_namespaces: list[str] | None = None,
     disable_print: bool = False,
@@ -708,21 +709,24 @@ def pprint_registry(
         All arguments are keyword only
 
     Args:
-        _registry: Environment registry to be printed. By default, :attr:`registry`
+        print_registry: Environment registry to be printed. By default, :attr:`registry`
         num_cols: Number of columns to arrange environments in, for display.
         exclude_namespaces: A list of namespaces to be excluded from printing. Helpful if only ALE environments are wanted.
         disable_print: Whether to return a string of all the namespaces and environment IDs
             or to print the string to console.
     """
-    # Defaultdict to store environment names according to namespace.
-    namespace_envs = defaultdict(lambda: [])
+    # Defaultdict to store environment ids according to namespace.
+    namespace_envs: dict[str, list[str]] = defaultdict(lambda: [])
     max_justify = float("-inf")
-    for env in _registry.values():
-        ns, _, _ = parse_env_id(env.id)
+
+    for env_spec in print_registry.values():
+        ns, _, _ = parse_env_id(env_spec.id)
+
         if ns is None:
             # Since namespace is currently none, use regex to obtain namespace from entrypoints.
-            env_entry_point = re.sub(r":\w+", "", env.entry_point)
+            env_entry_point = re.sub(r":\w+", "", env_spec.entry_point)
             e_ep_split = env_entry_point.split(".")
+
             if len(e_ep_split) >= 3:
                 # If namespace is of the format - gymnasium.envs.mujoco.ant_v4:AntEnv
                 # or gymnasium.envs.mujoco:HumanoidEnv
@@ -734,25 +738,30 @@ def pprint_registry(
                 ns = e_ep_split[idx]
             else:
                 # If namespace cannot be found, default to env id.
-                ns = env.id
-        namespace_envs[ns].append(env.id)
-        max_justify = max(max_justify, len(env.id))
+                ns = env_spec.id
+
+        namespace_envs[ns].append(env_spec.id)
+        max_justify = max(max_justify, len(env_spec.id))
 
     # Iterate through each namespace and print environment alphabetically.
     return_str = ""
-    for ns, envs in namespace_envs.items():
+    for ns, env_ids in namespace_envs.items():
         # Ignore namespaces to exclude.
         if exclude_namespaces is not None and ns in exclude_namespaces:
             continue
+
         return_str += f"{'=' * 5} {ns} {'=' * 5}\n"  # Print namespace.
+
         # Reference: https://stackoverflow.com/a/33464001
-        for count, item in enumerate(sorted(envs), 1):
+        for count, env_id in enumerate(sorted(env_ids), 1):
             return_str += (
-                item.ljust(max_justify) + " "
+                env_id.ljust(max_justify) + " "
             )  # Print column with justification.
+
             # Once all rows printed, switch to new column.
-            if count % num_cols == 0 or count == len(envs):
+            if count % num_cols == 0 or count == len(env_ids):
                 return_str = return_str.rstrip(" ") + "\n"
+
         return_str += "\n"
 
     if disable_print:
