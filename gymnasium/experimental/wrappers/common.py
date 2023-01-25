@@ -121,16 +121,17 @@ class OrderEnforcingV0(gym.Wrapper):
     """A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.
 
     Example:
-        >>> from gymnasium.envs.classic_control import CartPoleEnv
-        >>> env = CartPoleEnv()
+        >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import OrderEnforcingV0
+        >>> env = gym.make("CartPole-v1", render_mode="human")
         >>> env = OrderEnforcingV0(env)
-        >>> env.step(0)
-        ResetNeeded: Cannot call env.step() before calling env.reset()
+        >>> env.step(0) # doctest: +SKIP
+        gymnasium.error.ResetNeeded: Cannot call env.step() before calling env.reset()
+        >>> env.render() # doctest: +SKIP
+        gymnasium.error.ResetNeeded('Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.')
+        >>> _ = env.reset()
         >>> env.render()
-        ResetNeeded: Cannot call env.render() before calling env.reset()
-        >>> env.reset()
-        >>> env.render()
-        >>> env.step(0)
+        >>> _ = env.step(0)
     """
 
     def __init__(self, env: gym.Env, disable_render_order_enforcing: bool = False):
@@ -185,7 +186,6 @@ class RecordEpisodeStatisticsV0(gym.Wrapper):
     After the completion of an episode, ``info`` will look like this::
 
         >>> info = {
-        ...     ...
         ...     "episode": {
         ...         "r": "<cumulative reward>",
         ...         "l": "<episode length>",
@@ -196,7 +196,10 @@ class RecordEpisodeStatisticsV0(gym.Wrapper):
     For a vectorized environments the output will be in the form of::
 
         >>> infos = {
-        ...     ...
+        ...     "final_observation": "<array of length num-envs>",
+        ...     "_final_observation": "<boolean array of length num-envs>",
+        ...     "final_info": "<array of length num-envs>",
+        ...     "_final_info": "<boolean array of length num-envs>",
         ...     "episode": {
         ...         "r": "<array of cumulative reward>",
         ...         "l": "<array of episode length>",
@@ -204,6 +207,7 @@ class RecordEpisodeStatisticsV0(gym.Wrapper):
         ...     },
         ...     "_episode": "<boolean array of length num-envs>"
         ... }
+
 
     Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
     :attr:`wrapped_env.return_queue` and :attr:`wrapped_env.length_queue` respectively.

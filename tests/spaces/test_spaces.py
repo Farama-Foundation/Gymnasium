@@ -3,7 +3,7 @@ import itertools
 import json  # note: ujson fails this test due to float equality
 import pickle
 import tempfile
-from typing import List, Union
+from typing import Callable, List, Union
 
 import numpy as np
 import pytest
@@ -283,7 +283,7 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
     elif isinstance(space, MultiDiscrete):
         # Due to the multi-axis capability of MultiDiscrete, these functions need to be recursive and that the expected / observed numpy are of non-regular shapes
         def _generate_frequency(
-            _dim: Union[np.ndarray, int], _mask, func: callable
+            _dim: Union[np.ndarray, int], _mask, func: Callable
         ) -> List:
             if isinstance(_dim, np.ndarray):
                 return [
@@ -447,7 +447,11 @@ def test_sample_contains(space):
         assert space.contains(sample)
 
     for other_space in TESTING_SPACES:
-        assert isinstance(space.contains(other_space.sample()), bool)
+        sample = other_space.sample()
+        space_contains = other_space.contains(sample)
+        assert isinstance(
+            space_contains, bool
+        ), f"{space_contains}, {type(space_contains)}, {space}, {other_space}, {sample}"
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)

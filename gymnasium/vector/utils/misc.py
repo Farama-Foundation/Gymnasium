@@ -1,6 +1,11 @@
 """Miscellaneous utilities."""
+from __future__ import annotations
+
 import contextlib
 import os
+from collections.abc import Callable
+
+from gymnasium.core import Env
 
 
 __all__ = ["CloudpickleWrapper", "clear_mpi_env_vars"]
@@ -9,7 +14,7 @@ __all__ = ["CloudpickleWrapper", "clear_mpi_env_vars"]
 class CloudpickleWrapper:
     """Wrapper that uses cloudpickle to pickle and unpickle the result."""
 
-    def __init__(self, fn: callable):
+    def __init__(self, fn: Callable[[], Env]):
         """Cloudpickle wrapper for a function."""
         self.fn = fn
 

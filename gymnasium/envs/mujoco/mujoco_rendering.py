@@ -687,7 +687,7 @@ class MujocoRenderer:
                 self.viewer = OffScreenViewer(self.model, self.data)
             else:
                 raise AttributeError(
-                    f"Unexpected mode: {render_mode}, expected modes: human, rgb_arrray, or depth_array"
+                    f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, or depth_array"
                 )
             # Add default camera parameters
             self._set_cam_config()

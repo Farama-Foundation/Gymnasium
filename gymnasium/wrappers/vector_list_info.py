@@ -18,14 +18,28 @@ class VectorListInfo(gym.Wrapper):
     i.e. `VectorListInfo(RecordEpisodeStatistics(envs))`
 
     Example::
-
-        >>> # actual
-        >>> {
-        ...      "k": np.array[0., 0., 0.5, 0.3],
-        ...      "_k": np.array[False, False, True, True]
-        ...  }
-        >>> # classic
-        >>> [{}, {}, {k: 0.5}, {k: 0.3}]
+        >>> # As dict:
+        >>> infos = {
+        ...     "final_observation": "<array of length num-envs>",
+        ...     "_final_observation": "<boolean array of length num-envs>",
+        ...     "final_info": "<array of length num-envs>",
+        ...     "_final_info": "<boolean array of length num-envs>",
+        ...     "episode": {
+        ...         "r": "<array of cumulative reward>",
+        ...         "l": "<array of episode length>",
+        ...         "t": "<array of elapsed time since beginning of episode>"
+        ...     },
+        ...     "_episode": "<boolean array of length num-envs>"
+        ... }
+        >>> # As list:
+        >>> infos = [
+        ...     {
+        ...         "episode": {"r": "<cumulative reward>", "l": "<episode length>", "t": "<elapsed time since beginning of episode>"},
+        ...         "final_observation": "<observation>",
+        ...         "final_info": {},
+        ...     },
+        ...     ...,
+        ... ]
     """
 
     def __init__(self, env):

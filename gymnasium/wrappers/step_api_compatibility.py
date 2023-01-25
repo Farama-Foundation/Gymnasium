@@ -1,10 +1,7 @@
 """Implementation of StepAPICompatibility wrapper class for transforming envs between new and old step API."""
 import gymnasium as gym
 from gymnasium.logger import deprecation
-from gymnasium.utils.step_api_compatibility import (
-    convert_to_done_step_api,
-    convert_to_terminated_truncated_step_api,
-)
+from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
 
 class StepAPICompatibility(gym.Wrapper):
@@ -19,12 +16,14 @@ class StepAPICompatibility(gym.Wrapper):
         output_truncation_bool (bool): Apply to convert environment to use new step API that returns two bool. (True by default)
 
     Examples:
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import StepAPICompatibility
         >>> env = gym.make("CartPole-v1")
         >>> env # wrapper not applied by default, set to new API
         <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
-        >>> env = gym.make("CartPole-v1", apply_api_compatibility=True) # set to old API
+        >>> env = StepAPICompatibility(gym.make("CartPole-v1"))
+        >>> env
         <StepAPICompatibility<TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>>
-        >>> env = StepAPICompatibility(CustomEnv(), output_truncation_bool=False) # manually using wrapper on unregistered envs
 
     """
 
@@ -36,6 +35,7 @@ class StepAPICompatibility(gym.Wrapper):
             output_truncation_bool (bool): Whether the wrapper's step method outputs two booleans (new API) or one boolean (old API)
         """
         super().__init__(env)
+        self.is_vector_env = isinstance(env.unwrapped, gym.vector.VectorEnv)
         self.output_truncation_bool = output_truncation_bool
         if not self.output_truncation_bool:
             deprecation(
@@ -52,7 +52,6 @@ class StepAPICompatibility(gym.Wrapper):
             (observation, reward, terminated, truncated, info) or (observation, reward, done, info)
         """
         step_returns = self.env.step(action)
-        if self.output_truncation_bool:
-            return convert_to_terminated_truncated_step_api(step_returns)
-        else:
-            return convert_to_done_step_api(step_returns)
+        return step_api_compatibility(
+            step_returns, self.output_truncation_bool, self.is_vector_env
+        )

@@ -23,6 +23,12 @@ from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
 
 
+try:
+    import shimmy
+except ImportError:
+    shimmy = None
+
+
 @pytest.fixture(scope="function")
 def register_make_testing_envs():
     """Registers testing envs for `gym.make`"""
@@ -54,10 +60,16 @@ def register_make_testing_envs():
         entry_point="tests.envs.utils_envs:NoHumanNoRGB",
     )
 
+    gym.register(
+        id="test/NoRenderModesMetadata-v0",
+        entry_point="tests.envs.utils_envs:NoRenderModesMetadata",
+    )
+
     yield
 
     del gym.envs.registration.registry["RegisterDuringMakeEnv-v0"]
     del gym.envs.registration.registry["test.ArgumentEnv-v0"]
+    del gym.envs.registration.registry["test/NoRenderModesMetadata-v0"]
     del gym.envs.registration.registry["test/NoHuman-v0"]
     del gym.envs.registration.registry["test/NoHumanOldAPI-v0"]
     del gym.envs.registration.registry["test/NoHumanNoRGB-v0"]
@@ -303,6 +315,15 @@ def test_make_render_mode(register_make_testing_envs):
         match=re.escape("got an unexpected keyword argument 'render'"),
     ):
         gym.make("CarRacing-v2", render="human")
+
+    # This test checks that a user can create an environment without the metadata including the render mode
+    with pytest.warns(
+        UserWarning,
+        match=re.escape(
+            "\x1b[33mWARN: The environment is being initialised with render_mode='rgb_array' that is not in the possible render_modes ([]).\x1b[0m"
+        ),
+    ):
+        gym.make("test/NoRenderModesMetadata-v0", render_mode="rgb_array")
 
 
 def test_make_kwargs(register_make_testing_envs):
