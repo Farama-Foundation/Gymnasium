@@ -366,7 +366,8 @@ def load_env_plugins(entry_point: str = "gymnasium.envs"):
 def make(id: str, **kwargs) -> Env: ...
 @overload
 def make(id: EnvSpec, **kwargs) -> Env: ...
-
+@overload
+def make(id: SpecStack, **kwargs) -> Env: ...
 
 # Classic control
 # ----------------------------------------
@@ -570,7 +571,7 @@ def register(
 
 
 def make(
-    id: str | EnvSpec,
+    id: str | EnvSpec | SpecStack,
     max_episode_steps: int | None = None,
     autoreset: bool = False,
     apply_api_compatibility: bool | None = None,
@@ -602,9 +603,23 @@ def make(
         Error: If the ``id`` doesn't exist then an error is raised
     """
     if isinstance(id, tuple):
-        assert all(isinstance(spec, WrapperSpec) for spec in id[:-1])
+        assert all(isinstance(wrapper_spec, WrapperSpec) for wrapper_spec in id[:-1])
         assert isinstance(id[-1], EnvSpec)
 
+        wrapper_specs: tuple[WrapperSpec, ...] = id[:-1]
+        env_spec: EnvSpec = id[-1]
+
+        if callable(env_spec.entry_point):
+            env_creator = env_spec.entry_point
+        else:
+            env_creator = load(env_spec.entry_point)
+
+        env = env_creator(**env_spec.kwargs)
+
+        for wrapper_spec in reversed(wrapper_specs):
+            env = load(wrapper_spec.entry_point)(env, **wrapper_spec.kwargs)
+
+        return env
     elif isinstance(id, EnvSpec):
         spec_ = id
     else:
