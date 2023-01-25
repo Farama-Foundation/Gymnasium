@@ -43,8 +43,8 @@ class LambdaObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         >>> np.random.seed(0)
         >>> env = gym.make("CartPole-v1")
         >>> env = LambdaObservationV0(env, lambda obs: obs + 0.1 * np.random.random(obs.shape), env.observation_space)
-        >>> env.reset(seed=42)  # doctest: +SKIP
-        (array([ 0.06199517,  0.0511615 , -0.04432538,  0.02694618]), {})
+        >>> env.reset(seed=42)
+        (array([0.08227695, 0.06540678, 0.09613613, 0.07422512]), {})
     """
 
     def __init__(
@@ -370,7 +370,6 @@ class RescaleObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         >>> env = RescaleObservationV0(env, np.array([-2, -1, -10]), np.array([1, 0, 1]))
         >>> env.observation_space
         Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32)
-
     """
 
     def __init__(

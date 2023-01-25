@@ -157,36 +157,6 @@ def play(
 ):
     """Allows one to play the game using keyboard.
 
-    Example::
-
-        >>> import gymnasium as gym
-        >>> from gymnasium.utils.play import play
-        >>> play(gym.make("CarRacing-v2", render_mode="rgb_array"), keys_to_action={  # doctest: +SKIP
-        ...                                                "w": np.array([0, 0.7, 0]),
-        ...                                                "a": np.array([-1, 0, 0]),
-        ...                                                "s": np.array([0, 0, 1]),
-        ...                                                "d": np.array([1, 0, 0]),
-        ...                                                "wa": np.array([-1, 0.7, 0]),
-        ...                                                "dw": np.array([1, 0.7, 0]),
-        ...                                                "ds": np.array([1, 0, 1]),
-        ...                                                "as": np.array([-1, 0, 1]),
-        ...                                               }, noop=np.array([0,0,0]))
-
-    Above code works also if the environment is wrapped, so it's particularly useful in
-    verifying that the frame-level preprocessing does not render the game
-    unplayable.
-
-    If you wish to plot real time statistics as you play, you can use
-    :class:`gym.utils.play.PlayPlot`. Here's a sample code for plotting the reward
-    for last 150 steps.
-
-        >>> import gymnasium as gym
-        >>> from gymnasium.utils.play import PlayPlot, play
-        >>> def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
-        ...        return [rew,]
-        >>> plotter = PlayPlot(callback, 150, ["reward"])             # doctest: +SKIP
-        >>> play(gym.make("CartPole-v1"), callback=plotter.callback)  # doctest: +SKIP
-
     Args:
         env: Environment to use for playing.
         transpose: If this is ``True``, the output of observation is transposed. Defaults to ``True``.
@@ -233,6 +203,35 @@ def play(
             If ``None``, default ``key_to_action`` mapping for that environment is used, if provided.
         seed: Random seed used when resetting the environment. If None, no seed is used.
         noop: The action used when no key input has been entered, or the entered key combination is unknown.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> from gymnasium.utils.play import play
+        >>> play(gym.make("CarRacing-v2", render_mode="rgb_array"), keys_to_action={  # doctest: +SKIP
+        ...                                                "w": np.array([0, 0.7, 0]),
+        ...                                                "a": np.array([-1, 0, 0]),
+        ...                                                "s": np.array([0, 0, 1]),
+        ...                                                "d": np.array([1, 0, 0]),
+        ...                                                "wa": np.array([-1, 0.7, 0]),
+        ...                                                "dw": np.array([1, 0.7, 0]),
+        ...                                                "ds": np.array([1, 0, 1]),
+        ...                                                "as": np.array([-1, 0, 1]),
+        ...                                               }, noop=np.array([0,0,0]))
+
+        Above code works also if the environment is wrapped, so it's particularly useful in
+        verifying that the frame-level preprocessing does not render the game
+        unplayable.
+
+        If you wish to plot real time statistics as you play, you can use
+        :class:`gym.utils.play.PlayPlot`. Here's a sample code for plotting the reward
+        for last 150 steps.
+
+        >>> import gymnasium as gym
+        >>> from gymnasium.utils.play import PlayPlot, play
+        >>> def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
+        ...        return [rew,]
+        >>> plotter = PlayPlot(callback, 150, ["reward"])             # doctest: +SKIP
+        >>> play(gym.make("CartPole-v1"), callback=plotter.callback)  # doctest: +SKIP
     """
     env.reset(seed=seed)
 

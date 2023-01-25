@@ -90,7 +90,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         >>> env.step(env.action_space.sample())[0]
         {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': 0.002}
 
-    Flatten observation space example:
+        Flatten observation space example:
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservationV0(env, flatten=True)
         >>> env.observation_space
@@ -101,7 +101,6 @@ class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         >>> env.step(env.action_space.sample())[0]
         array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  0.002     ],
               dtype=float32)
-
     """
 
     def __init__(

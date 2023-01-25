@@ -17,7 +17,7 @@ class VectorListInfo(gym.Wrapper, gym.utils.EzPickle):
 
     i.e. `VectorListInfo(RecordEpisodeStatistics(envs))`
 
-    Example::
+    Example:
         >>> # As dict:
         >>> infos = {
         ...     "final_observation": "<array of length num-envs>",

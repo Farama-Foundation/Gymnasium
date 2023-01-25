@@ -58,7 +58,7 @@ class LambdaRewardV0(gym.RewardWrapper, gym.utils.EzPickle):
 class ClipRewardV0(LambdaRewardV0, gym.utils.EzPickle):
     """A wrapper that clips the rewards for an environment between an upper and lower bound.
 
-    Example with an upper and lower bound:
+    Example:
         >>> import gymnasium as gym
         >>> from gymnasium.experimental.wrappers import ClipRewardV0
         >>> env = gym.make("CartPole-v1")

@@ -5,7 +5,7 @@ from typing import Any
 class EzPickle:
     """Objects that are pickled and unpickled via their constructor arguments.
 
-    Example::
+    Example:
         >>> class Animal: pass
         >>> class Dog(Animal, EzPickle):
         ...    def __init__(self, furcolor, tailkind="bushy"):
