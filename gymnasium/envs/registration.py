@@ -46,13 +46,13 @@ __all__ = [
     "registry",
     "current_namespace",
     # Core Functions
-    "namespace",
     "register",
     "make",
     "spec",
     "pprint_registry",
     # Minor Functions
-    "get_full_env_id",
+    "namespace",
+    "get_env_id",
     "parse_env_id",
     "find_highest_version",
     "load_env",
@@ -61,23 +61,24 @@ __all__ = [
 
 
 class EnvCreator(Protocol):
+    """Function type expected for an environment."""
     def __call__(self, **kwargs: Any) -> Env:
         ...
 
 
 @dataclass
 class EnvSpec:
-    """A specification for creating environments with `gym.make`.
+    """A specification for creating environments with :meth:`gymnasium.make`.
 
-    * id: The string used to create the environment with `gym.make`
-    * entry_point: The location of the environment to create from
-    * reward_threshold: The reward threshold for completing the environment.
-    * nondeterministic: If the observation of an environment cannot be repeated with the same initial state, random number generator state and actions.
-    * max_episode_steps: The max number of steps that the environment can take before truncation
-    * order_enforce: If to enforce the order of `reset` before `step` and `render` functions
-    * autoreset: If to automatically reset the environment on episode end
-    * disable_env_checker: If to disable the environment checker wrapper in `gym.make`, by default False (runs the environment checker)
-    * kwargs: Additional keyword arguments passed to the environments through `gym.make`
+    * **id**: The string used to create the environment with :meth:`gymnasium.make`
+    * **entry_point**: A string for the environment location, ``(import path):(environment name)`` or a function that creates the environment.
+    * **reward_threshold**: The reward threshold for completing the environment.
+    * **nondeterministic**: If the observation of an environment cannot be repeated with the same initial state, random number generator state and actions.
+    * **max_episode_steps**: The max number of steps that the environment can take before truncation
+    * **order_enforce**: If to enforce the order of :meth:`gymnasium.Env.reset` before :meth:`gymnasium.Env.step` and :meth:`gymnasium.Env.render` functions
+    * **autoreset**: If to automatically reset the environment on episode end
+    * **disable_env_checker**: If to disable the environment checker wrapper in :meth:`gymnasium.make`, by default False (runs the environment checker)
+    * **kwargs**: Additional keyword arguments passed to the environment during initialisation
     """
 
     id: str
@@ -119,7 +120,7 @@ current_namespace: str | None = None
 
 
 def parse_env_id(env_id: str) -> tuple[str | None, str, int | None]:
-    """Parse environment ID string format - [namespace/](env-name)[-v(version)] where the namespace and version are optional.
+    """Parse environment ID string format - ``[namespace/](env-name)[-v(version)]`` where the namespace and version are optional.
 
     Args:
         env_id: The environment id to parse
@@ -128,7 +129,7 @@ def parse_env_id(env_id: str) -> tuple[str | None, str, int | None]:
         A tuple of environment namespace, environment name and version number
 
     Raises:
-        Error: If the environment id does not a valid environment regex
+        Error: If the environment id is not valid environment regex
     """
     match = ENV_ID_RE.fullmatch(env_id)
     if not match:
@@ -142,7 +143,7 @@ def parse_env_id(env_id: str) -> tuple[str | None, str, int | None]:
     return ns, name, version
 
 
-def get_full_env_id(ns: str | None, name: str, version: int | None) -> str:
+def get_env_id(ns: str | None, name: str, version: int | None) -> str:
     """Get the full env ID given a name and (optional) version and namespace. Inverse of :meth:`parse_env_id`.
 
     Args:
@@ -163,7 +164,15 @@ def get_full_env_id(ns: str | None, name: str, version: int | None) -> str:
 
 
 def find_highest_version(ns: str | None, name: str) -> int | None:
-    """Finds the highest registered version of the environment in the registry."""
+    """Finds the highest registered version of the environment given the namespace and name in the registry.
+
+    Args:
+        ns: The environment namespace
+        name: The environment name (id)
+
+    Returns:
+        The highest version of an environment with matching namespace and name, otherwise ``None`` is returned.
+    """
     version: list[int] = [
         env_spec.version
         for env_spec in registry.values()
@@ -238,14 +247,14 @@ def _check_version_exists(ns: str | None, name: str, version: int | None):
         VersionNotFound: The ``version`` used doesn't exist
         DeprecatedEnv: Environment version is deprecated
     """
-    if get_full_env_id(ns, name, version) in registry:
+    if get_env_id(ns, name, version) in registry:
         return
 
     _check_name_exists(ns, name)
     if version is None:
         return
 
-    message = f"Environment version `v{version}` for environment `{get_full_env_id(ns, name, None)}` doesn't exist."
+    message = f"Environment version `v{version}` for environment `{get_env_id(ns, name, None)}` doesn't exist."
 
     env_specs = [
         env_spec
@@ -276,7 +285,7 @@ def _check_version_exists(ns: str | None, name: str, version: int | None):
 
     if latest_spec is not None and version < latest_spec.version:
         raise error.DeprecatedEnv(
-            f"Environment version v{version} for `{get_full_env_id(ns, name, None)}` is deprecated. "
+            f"Environment version v{version} for `{get_env_id(ns, name, None)}` is deprecated. "
             f"Please use `{latest_spec.id}` instead."
         )
 
@@ -339,13 +348,13 @@ def _check_metadata(testing_metadata: dict[str, Any]):
 
 
 def load_env(name: str) -> EnvCreator:
-    """Loads an environment with name and returns an environment creation function.
+    """Loads an environment with name of style ``"(import path):(environment name)"`` and returns the environment creation function, normally the environment class type.
 
     Args:
         name: The environment name
 
     Returns:
-        Calls the environment constructor
+        The environment constructor for the given environment name.
     """
     mod_name, attr_name = name.split(":")
     mod = importlib.import_module(mod_name)
@@ -354,7 +363,7 @@ def load_env(name: str) -> EnvCreator:
 
 
 def load_plugin_envs(entry_point: str = "gymnasium.envs"):
-    """Load modules (plugins) using the gymnasium entry points in order to register their environments on ``import gymnasium``.
+    """Load modules (plugins) using the gymnasium entry points in order to register external module's environments on ``import gymnasium``.
 
     Args:
         entry_point: The string for the entry point.
@@ -426,24 +435,26 @@ def register(
     apply_api_compatibility: bool = False,
     **kwargs: Any,
 ):
-    """Register an environment with gymnasium.
+    """Registers an environment in gymnasium with an ``id`` to use with :meth:`gymnasium.make` with the ``entry_point`` being a string or callable for creating the environment.
 
-    The `id` parameter corresponds to the name of the environment, with the syntax as follows:
-    `(namespace)/(env_name)-v(version)` where `namespace` is optional.
+    The ``id`` parameter corresponds to the name of the environment, with the syntax as follows:
+    ``[namespace/](env_name)[-v(version)]`` where ``namespace`` and ``-v(version)`` is optional.
 
-    It takes arbitrary keyword arguments, which are passed to the `EnvSpec` constructor.
+    It takes arbitrary keyword arguments, which are passed to the :class:`EnvSpec` ``kwargs`` parameter.
 
     Args:
         id: The environment id
         entry_point: The entry point for creating the environment
-        reward_threshold: The reward threshold considered to have learnt an environment
-        nondeterministic: If the environment is nondeterministic (even with knowledge of the initial seed and all actions)
-        max_episode_steps: The maximum number of episodes steps before truncation. Used by the Time Limit wrapper.
-        order_enforce: If to enable the order enforcer wrapper to ensure users run functions in the correct order
-        autoreset: If to add the autoreset wrapper such that reset does not need to be called.
-        disable_env_checker: If to disable the environment checker for the environment. Recommended to False.
-        apply_api_compatibility: If to apply the `StepAPICompatibility` wrapper.
-        **kwargs: arbitrary keyword arguments which are passed to the environment constructor
+        reward_threshold: The reward threshold considered for an agent to have learnt the environment
+        nondeterministic: If the environment is nondeterministic (even with knowledge of the initial seed and all actions, the same state cannot be reached)
+        max_episode_steps: The maximum number of episodes steps before truncation. Used by the :class:`gymnasium.wrappers.TimeLimit` wrapper if not ``None``.
+        order_enforce: If to enable the order enforcer wrapper to ensure users run functions in the correct order.
+            If ``True``, then the :class:`gymnasium.wrappers.OrderEnforcing` is applied to the environment.
+        autoreset: If to add the :class:`gymnasium.wrappers.AutoResetWrapper` such that on ``(terminated or truncated) is True``, :meth:`gymnasium.Env.reset` is called.
+        disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.
+        apply_api_compatibility: If to apply the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper to the environment.
+            Use if the environment is implemented in the gym v0.21 environment API.
+        **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.
     """
     global registry, current_namespace
     ns, name, version = parse_env_id(id)
@@ -462,7 +473,7 @@ def register(
     else:
         ns_id = ns
 
-    full_env_id = get_full_env_id(ns_id, name, version)
+    full_env_id = get_env_id(ns_id, name, version)
 
     new_spec = EnvSpec(
         id=full_env_id,
@@ -491,29 +502,28 @@ def make(
     disable_env_checker: bool | None = None,
     **kwargs: Any,
 ) -> Env:
-    """Create an environment according to the given ID.
+    """Creates an environment previously registered with :meth:`gymnasium.register` or a :class:`EnvSpec`.
 
-    To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
+    To find all available environments use ``gymnasium.envs.registry.keys()`` for all valid ids.
 
     Args:
-        id: Name of the environment. Optionally, a module to import can be included, e.g. 'module:Env-v0'
-        max_episode_steps: Maximum length of an episode (TimeLimit wrapper).
-        autoreset: Whether to automatically reset the environment after each episode (AutoResetWrapper).
-        apply_api_compatibility: Whether to wrap the environment with the `StepAPICompatibility` wrapper that
+        id: A string for the environment id or a :class:`EnvSpec`. Optionally if using a string, a module to import can be included, e.g. ``'module:Env-v0'``.
+            This is equivalent to importing the module first to register the environment followed by making the environment.
+        max_episode_steps: Maximum length of an episode, can override the registered :class:`EnvSpec` ``max_episode_steps``.
+            The value is used by :class:`gymnasium.wrappers.TimeLimit`.
+        autoreset: Whether to automatically reset the environment after each episode (:class:`gymnasium.wrappers.AutoResetWrapper`).
+        apply_api_compatibility: Whether to wrap the environment with the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper that
             converts the environment step from a done bool to return termination and truncation bools.
-            By default, the argument is None to which the environment specification `apply_api_compatibility` is used
-            which defaults to False. Otherwise, the value of `apply_api_compatibility` is used.
-            If `True`, the wrapper is applied otherwise, the wrapper is not applied.
-        disable_env_checker: If to run the env checker, None will default to the environment specification `disable_env_checker`
-            (which is by default False, running the environment checker),
-            otherwise will run according to this parameter (`True` = not run, `False` = run)
+            By default, the argument is None in which the :class:`EnvSpec` ``apply_api_compatibility`` is used, otherwise this variable is used in favor.
+        disable_env_checker: If to add :class:`gymnasium.wrappers.PassiveEnvChecker`, ``None`` will default to the
+            :class:`EnvSpec` ``disable_env_checker`` value otherwise use this value will be used.
         kwargs: Additional arguments to pass to the environment constructor.
 
     Returns:
-        An instance of the environment.
+        An instance of the environment with wrappers applied.
 
     Raises:
-        Error: If the ``id`` doesn't exist then an error is raised
+        Error: If the ``id`` doesn't exist in the :attr:`registry`
     """
     if isinstance(id, EnvSpec):
         env_spec = id
@@ -547,7 +557,7 @@ def make(
             )
         if version is None and latest_version is not None:
             version = latest_version
-            new_env_id = get_full_env_id(ns, name, version)
+            new_env_id = get_env_id(ns, name, version)
             env_spec = registry.get(new_env_id)
             logger.warn(
                 f"Using the latest versioned environment `{new_env_id}` "
@@ -664,7 +674,17 @@ def make(
 
 
 def spec(env_id: str) -> EnvSpec:
-    """Retrieve the spec for the given environment from the global registry."""
+    """Retrieve the :class:`EnvSpec` for the environment id from the :attr:`registry`.
+
+    Args:
+        env_id: The environment id with the expected format of ``[(namespace)/]id[-v(version)]``
+
+    Returns:
+        The environment spec if it exists
+
+    Raises:
+        Error: If the environment id doesn't exist
+    """
     env_spec = registry.get(env_id)
     if env_spec is None:
         ns, name, version = parse_env_id(env_id)
@@ -676,19 +696,23 @@ def spec(env_id: str) -> EnvSpec:
 
 
 def pprint_registry(
+    *,
     _registry: dict = registry,
     num_cols: int = 3,
     exclude_namespaces: list[str] | None = None,
     disable_print: bool = False,
 ) -> str | None:
-    """Pretty print the environments in the registry.
+    """Pretty prints all environments in the :attr:`registry`.
+
+    Note:
+        All arguments are keyword only
 
     Args:
-        _registry: Environment registry to be printed.
+        _registry: Environment registry to be printed. By default, :attr:`registry`
         num_cols: Number of columns to arrange environments in, for display.
-        exclude_namespaces: Exclude any namespaces from being printed.
+        exclude_namespaces: A list of namespaces to be excluded from printing. Helpful if only ALE environments are wanted.
         disable_print: Whether to return a string of all the namespaces and environment IDs
-            instead of printing it to console.
+            or to print the string to console.
     """
     # Defaultdict to store environment names according to namespace.
     namespace_envs = defaultdict(lambda: [])
