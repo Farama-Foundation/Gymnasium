@@ -369,6 +369,7 @@ def make(id: EnvSpec, **kwargs) -> Env: ...
 @overload
 def make(id: SpecStack, **kwargs) -> Env: ...
 
+
 # Classic control
 # ----------------------------------------
 @overload
@@ -759,10 +760,6 @@ def make(
         env = RenderCollection(env)
 
     return env
-
-
-def _load_env():
-    pass
 
 
 def spec(env_id: str) -> EnvSpec:

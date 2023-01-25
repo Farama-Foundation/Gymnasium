@@ -70,7 +70,7 @@ class AtariPreprocessingV0(gym.Wrapper, gym.utils.EzPickle):
             grayscale_newaxis=grayscale_newaxis,
             scale_obs=scale_obs,
         )
-        super(gym.Wrapper).__init__(env)
+        gym.Wrapper.__init__(self, env)
 
         if cv2 is None:
             raise gym.error.DependencyNotInstalled(

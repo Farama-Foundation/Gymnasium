@@ -2,9 +2,13 @@
 
 import gymnasium as gym
 from gymnasium.envs.classic_control import CartPoleEnv
-from gymnasium.envs.registration import WrapperSpec, EnvSpec
-from gymnasium.utils.spec_stack import serialize_spec_stack, deserialize_spec_stack, pprint_spec_stack
+from gymnasium.envs.registration import EnvSpec, WrapperSpec
 from gymnasium.utils.env_checker import data_equivalence
+from gymnasium.utils.spec_stack import (
+    deserialize_spec_stack,
+    pprint_spec_stack,
+    serialize_spec_stack,
+)
 
 
 def test_full_integration():

@@ -11,7 +11,7 @@ from gymnasium.utils import EzPickle, seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec, SpecStack, WrapperSpec
+    from gymnasium.envs.registration import EnvSpec, SpecStack
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -311,6 +311,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
 
         assert hasattr(self, "_ezpickle_kwargs")
         from gymnasium.envs.registration import WrapperSpec
+
         wrapper_spec = WrapperSpec(
             type(self).__name__,
             f"{self.__module__}:{type(self).__name__}",

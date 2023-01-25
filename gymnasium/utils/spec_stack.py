@@ -7,7 +7,6 @@ from typing import Any
 
 from gymnasium.envs.registration import EnvSpec, SpecStack, WrapperSpec
 from gymnasium.logger import warn
-from gymnasium.spaces import Sequence
 
 
 def serialize_spec_stack(spec_stack: SpecStack) -> str:
