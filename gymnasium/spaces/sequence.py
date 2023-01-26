@@ -1,9 +1,8 @@
 """Implementation of a space that represents finite-length sequences."""
 from __future__ import annotations
 
-import collections.abc
 import typing
-from typing import Any
+from typing import Any, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -12,7 +11,7 @@ import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
-class Sequence(Space[typing.Tuple[Any, ...]]):
+class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
     r"""This space represent sets of finite-length sequences.
 
     This space represents the set of tuples of the form :math:`(a_0, \dots, a_n)` where the :math:`a_i` belong
@@ -47,7 +46,7 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
         self.feature_space = space
         self.stack = stack
         if self.stack:
-            self.batched_feature_space = gym.vector.utils.batch_space(
+            self.batched_feature_space: Space = gym.vector.utils.batch_space(
                 self.feature_space, 1
             )
 
@@ -129,12 +128,8 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
 
         if self.stack:
             # Concatenate values if stacked.
-            out = (
-                gym.vector.utils.create_empty_array(
-                    self.feature_space, len(sampled_values), fn=np.zeros
-                )
-                if isinstance(self.feature_space, gym.spaces.Dict)
-                else None
+            out = gym.vector.utils.create_empty_array(
+                self.feature_space, len(sampled_values)
             )
             return gym.vector.utils.concatenate(self.feature_space, sampled_values, out)
 
@@ -149,53 +144,36 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
                 for item in gym.vector.utils.iterate(self.batched_feature_space, x)
             )
         else:
-            return isinstance(x, collections.abc.Iterable) and all(
+            return isinstance(x, tuple) and all(
                 self.feature_space.contains(item) for item in x
             )
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
-        return f"Sequence({self.feature_space})"
+        return f"Sequence({self.feature_space}, stack={self.stack})"
 
     def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[Any, ...]]
+        self, sample_n: typing.Sequence[tuple[Any, ...] | Any]
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
-        # serialize as dict-repr of vectors
-        if self.stack and isinstance(self.feature_space, gym.spaces.Dict):
-            # Unstack batched sample of Dict for jsonification.
-            sample_n = [
-                tuple(
-                    [
-                        sample
-                        for sample in gym.vector.utils.iterate(
-                            self.batched_feature_space, sample_n
-                        )
-                    ]
-                )
-            ]
-        return [self.feature_space.to_jsonable(list(sample)) for sample in sample_n]
+        if self.stack:
+            return self.batched_feature_space.to_jsonable(sample_n)
+        else:
+            return [self.feature_space.to_jsonable(sample) for sample in sample_n]
 
-    def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...]]:
+    def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...] | Any]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        sample_output = [
-            tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n
-        ]
-
-        if isinstance(self.feature_space, gym.spaces.Dict) and self.stack:
-            # Restack batched sample of Dict for un-jsonification.
-            out = (
-                gym.vector.utils.create_empty_array(
-                    self.feature_space, len(sample_output[0]), fn=np.zeros
-                )
-                if isinstance(self.feature_space, gym.spaces.Dict)
-                else None
-            )
+        if self.stack:
+            return self.batched_feature_space.from_jsonable(sample_n)
+        else:
             return [
-                gym.vector.utils.concatenate(self.feature_space, sample_output[0], out)
+                tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n
             ]
-        return sample_output
 
     def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
-        return isinstance(other, Sequence) and self.feature_space == other.feature_space
+        return (
+            isinstance(other, Sequence)
+            and self.feature_space == other.feature_space
+            and self.stack == other.stack
+        )
