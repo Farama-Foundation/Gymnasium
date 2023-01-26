@@ -20,22 +20,34 @@ To perform conversion through a wrapper, the environment itself can be passed to
 An example of this is atari 0.8.0 which does not have a gymnasium implementation.
 ```python
 import gymnasium as gym
+
 env = gym.make("GymV26Environment-v0", env_id="ALE/Pong-v5")
 ```
 
-## Gym v0.22 Environment Compatibility
+## Gym v0.21 Environment Compatibility
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
 A number of environments have not updated to the recent Gym changes, in particular since v0.21.
 This update is significant for the introduction of ``termination`` and ``truncation`` signatures in favour of the previously used ``done``.
-To allow backward compatibility, Gym and Gymnasium v0.26+ include an ``apply_api_compatibility`` kwarg when calling :meth:`make` that automatically converts a v0.21 API compliant environment one that is compatible with v0.26+.
+To allow backward compatibility, Gym and Gymnasium v0.26+ include an ``apply_api_compatibility`` kwarg when calling :meth:`make` that automatically converts a v0.21 API compliant environment to one that is compatible with v0.26+.
 ```
 
 ```python
 import gym
+
 env = gym.make("OldV21Env-v0", apply_api_compatibility=True)
+```
+
+Additionally, in Gymnasium we provide specialist environments for compatibility that for ``env_id`` will call ``gym.make``.
+```python
+import gymnasium
+
+env = gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1", make_kwargs={"length": 1}, render_mode="human")
+# or
+env = gymnasium.make("GymV21Environment-v0", env=OldV21Env())
+
 ```
 
 ## Step API Compatibility
