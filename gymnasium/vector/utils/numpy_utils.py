@@ -97,6 +97,7 @@ def _concatenate_dict(
     )
 
 
+@concatenate.register(Space)
 @concatenate.register(Graph)
 @concatenate.register(Text)
 @concatenate.register(Sequence)
@@ -218,3 +219,8 @@ def _create_empty_array_sequence(
     space: Sequence, n: int = 1, fn=np.zeros
 ) -> tuple[tuple[()], ...]:
     return tuple(tuple() for _ in range(n))
+
+
+@create_empty_array.register(Space)
+def _create_empty_array_custom(space, n=1, fn=np.zeros):
+    return None
