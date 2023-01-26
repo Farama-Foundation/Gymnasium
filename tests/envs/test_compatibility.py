@@ -143,7 +143,7 @@ def test_make_compatibility_in_make():
 
 
 def test_shimmy_gym_compatibility():
-    assert gymnasium.spec("GymV22Environment-v0") is not None
+    assert gymnasium.spec("GymV21Environment-v0") is not None
     assert gymnasium.spec("GymV26Environment-v0") is not None
 
     if shimmy is None:
@@ -153,14 +153,14 @@ def test_shimmy_gym_compatibility():
                 "To use the gym compatibility environments, run `pip install shimmy[gym]`"
             ),
         ):
-            gymnasium.make("GymV22Environment-v0")
+            gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
         with pytest.raises(
             ImportError,
             match=re.escape(
                 "To use the gym compatibility environments, run `pip install shimmy[gym]`"
             ),
         ):
-            gymnasium.make("GymV26Environment-v0")
+            gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
     elif gym is None:
         with pytest.raises(
             DependencyNotInstalled,
@@ -168,6 +168,7 @@ def test_shimmy_gym_compatibility():
                 "No module named 'gym' (Hint: You need to install gym with `pip install gym` to use gym environments"
             ),
         ):
+            # todo - update when shimmy is updated to v0.28
             gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
         with pytest.raises(
             DependencyNotInstalled,
@@ -177,5 +178,6 @@ def test_shimmy_gym_compatibility():
         ):
             gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
     else:
+        # todo - update when shimmy is updated to v0.28
         gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
         gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
