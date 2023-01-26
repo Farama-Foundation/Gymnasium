@@ -145,7 +145,7 @@ class BlackjackEnv(gym.Env):
     """
 
     metadata = {
-        "render_modes": {"human", "rgb_array"},
+        "render_modes": ["human", "rgb_array"],
         "render_fps": 4,
     }
 
@@ -237,7 +237,7 @@ class BlackjackEnv(gym.Env):
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy_text]`"
+                "pygame is not installed, run `pip install gymnasium[toy-text]`"
             ) from e
 
         player_sum, dealer_card_value, usable_ace = self._get_obs()

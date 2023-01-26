@@ -211,7 +211,7 @@ class FrozenLakeEnv(Env):
     """
 
     metadata = {
-        "render_modes": {"human", "ansi", "rgb_array"},
+        "render_modes": ["human", "ansi", "rgb_array"],
         "render_fps": 4,
     }
 
@@ -342,7 +342,7 @@ class FrozenLakeEnv(Env):
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy_text]`"
+                "pygame is not installed, run `pip install gymnasium[toy-text]`"
             ) from e
 
         if self.window_surface is None:

@@ -10,7 +10,7 @@ from gymnasium.wrappers.monitoring import video_recorder
 def capped_cubic_video_schedule(episode_id: int) -> bool:
     """The default episode trigger.
 
-    This function will trigger recordings at the episode indices 0, 1, 4, 8, 27, ..., :math:`k^3`, ..., 729, 1000, 2000, 3000, ...
+    This function will trigger recordings at the episode indices 0, 1, 8, 27, ..., :math:`k^3`, ..., 729, 1000, 2000, 3000, ...
 
     Args:
         episode_id: The episode number

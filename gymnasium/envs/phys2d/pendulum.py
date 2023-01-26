@@ -96,7 +96,7 @@ class PendulumFunctional(
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
         screen, clock, last_u = render_state
 
@@ -168,7 +168,7 @@ class PendulumFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
 
         pygame.init()
@@ -183,7 +183,7 @@ class PendulumFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
         pygame.display.quit()
         pygame.quit()
@@ -192,7 +192,7 @@ class PendulumFunctional(
 class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based pendulum environment using the functional version as base."""
 
-    metadata = {"render_modes": {"rgb_array"}, "render_fps": 30}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor where the kwargs are passed to the base environment to modify the parameters."""

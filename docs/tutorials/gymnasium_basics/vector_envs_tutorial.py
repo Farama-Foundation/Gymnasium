@@ -1,13 +1,13 @@
 """
 Training A2C with Vector Envs and Domain Randomization
-=================================
+======================================================
 
 """
 
 
 # %%
 # Introduction
-# ------------------------------
+# ------------
 #
 # In this tutorial, you'll learn how to use vectorized environments to train an Advantage Actor-Critic agent.
 # We are going to use A2C, which is the synchronous version of the A3C algorithm [1].
@@ -56,7 +56,7 @@ import gymnasium as gym
 
 # %%
 # Advantage Actor-Critic (A2C)
-# ------------------------------
+# ----------------------------
 #
 # The Actor-Critic combines elements of value-based and policy-based methods. In A2C, the agent has two separate neural networks:
 # a critic network that estimates the state-value function, and an actor network that outputs logits for a categorical probability distribution over all actions.
@@ -241,7 +241,7 @@ class A2C(nn.Module):
 
 # %%
 # Using Vectorized Environments
-# ------------------------------
+# -----------------------------
 #
 # When you calculate the losses for the two Neural Networks over only one epoch, it might have a high variance. With vectorized environments,
 # we can play with `n_envs` in parallel and thus get up to a linear speedup (meaning that in theory, we collect samples `n_envs` times quicker)
@@ -259,7 +259,7 @@ envs = gym.vector.make("LunarLander-v2", num_envs=3, max_episode_steps=600)
 
 # %%
 # Domain Randomization
-# ------------------------------
+# --------------------
 #
 # If we want to randomize the environment for training to get more robust agents (that can deal with different parameterizations of an environment
 # and theirfore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.
@@ -337,7 +337,7 @@ envs = gym.vector.AsyncVectorEnv(
 
 # %%
 # Setup
-# ------------------------------
+# -----
 #
 
 # environment hyperparams
@@ -398,7 +398,7 @@ agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr, n_envs)
 
 # %%
 # Training the A2C Agent
-# ------------------------------
+# ----------------------
 #
 # For our training loop, we are using the `RecordEpisodeStatistics` wrapper to record the episode lengths and returns and we are also saving
 # the losses and entropies to plot them after the agent finished training.
@@ -478,7 +478,7 @@ for sample_phase in tqdm(range(n_updates)):
 
 # %%
 # Plotting
-# ------------------------------
+# --------
 #
 
 """ plot the results """
@@ -550,7 +550,7 @@ plt.show()
 
 # %%
 # Performance Analysis of Synchronous and Asynchronous Vectorized Environments
-# ------------------------------
+# ----------------------------------------------------------------------------
 #
 
 # %%
@@ -608,7 +608,7 @@ plt.show()
 
 # %%
 # Saving/ Loading Weights
-# ------------------------------
+# -----------------------
 #
 
 save_weights = False
@@ -638,7 +638,7 @@ if load_weights:
 
 # %%
 # Showcase the Agent
-# ------------------------------
+# ------------------
 #
 
 """ play a couple of showcase episodes """
@@ -690,7 +690,7 @@ env.close()
 
 # %%
 # Try playing the environment yourself
-# ------------------------------
+# ------------------------------------
 #
 
 # from gymnasium.utils.play import play
@@ -701,7 +701,7 @@ env.close()
 
 # %%
 # References
-# ------------------------------
+# ----------
 #
 # [1] V. Mnih, A. P. Badia, M. Mirza, A. Graves, T. P. Lillicrap, T. Harley, D. Silver, K. Kavukcuoglu. "Asynchronous Methods for Deep Reinforcement Learning" ICML (2016).
 #

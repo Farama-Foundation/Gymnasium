@@ -11,12 +11,14 @@ class ClipAction(ActionWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('Bipedal-Walker-v3')
+        >>> from gymnasium.wrappers import ClipAction
+        >>> env = gym.make("Hopper-v4")
         >>> env = ClipAction(env)
         >>> env.action_space
-        Box(-1.0, 1.0, (4,), float32)
-        >>> env.step(np.array([5.0, 2.0, -10.0, 0.0]))
-        # Executes the action np.array([1.0, 1.0, -1.0, 0]) in the base environment
+        Box(-1.0, 1.0, (3,), float32)
+        >>> _ = env.reset(seed=42)
+        >>> _ = env.step(np.array([5.0, -2.0, 0.0]))
+        ... # Executes the action np.array([1.0, -1.0, 0]) in the base environment
     """
 
     def __init__(self, env: gym.Env):

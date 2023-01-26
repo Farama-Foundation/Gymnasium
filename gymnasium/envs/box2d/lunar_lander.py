@@ -25,7 +25,7 @@ try:
     )
 except ImportError as e:
     raise DependencyNotInstalled(
-        "box2d is not installed, run `pip install gymnasium[box2d]`"
+        "Box2D is not installed, run `pip install gymnasium[box2d]`"
     ) from e
 
 
@@ -190,7 +190,7 @@ class LunarLander(gym.Env, EzPickle):
     """
 
     metadata = {
-        "render_modes": {"human", "rgb_array"},
+        "render_modes": ["human", "rgb_array"],
         "render_fps": FPS,
     }
 
@@ -826,4 +826,5 @@ class LunarLanderContinuous:
 
 
 if __name__ == "__main__":
-    demo_heuristic_lander(LunarLander(), render=True)
+    env = gym.make("LunarLander-v2", render_mode="rgb_array")
+    demo_heuristic_lander(env, render=True)

@@ -17,7 +17,7 @@ try:
     from pygame.event import Event
 except ImportError as e:
     raise gym.error.DependencyNotInstalled(
-        "Pygame is not installed, run `pip install gymnasium[classic_control]`"
+        "pygame is not installed, run `pip install gymnasium[classic-control]`"
     ) from e
 
 try:
@@ -26,7 +26,7 @@ try:
     matplotlib.use("TkAgg")
     import matplotlib.pyplot as plt
 except ImportError:
-    logger.warn("Matplotlib is not installed, run `pip install gymnasium[other]`")
+    logger.warn("matplotlib is not installed, run `pip install gymnasium[other]`")
     matplotlib, plt = None, None
 
 
@@ -157,35 +157,6 @@ def play(
 ):
     """Allows one to play the game using keyboard.
 
-    Example::
-
-        >>> import gymnasium as gym
-        >>> from gymnasium.utils.play import play
-        >>> play(gym.make("CarRacing-v1", render_mode="rgb_array"), keys_to_action={
-        ...                                                "w": np.array([0, 0.7, 0]),
-        ...                                                "a": np.array([-1, 0, 0]),
-        ...                                                "s": np.array([0, 0, 1]),
-        ...                                                "d": np.array([1, 0, 0]),
-        ...                                                "wa": np.array([-1, 0.7, 0]),
-        ...                                                "dw": np.array([1, 0.7, 0]),
-        ...                                                "ds": np.array([1, 0, 1]),
-        ...                                                "as": np.array([-1, 0, 1]),
-        ...                                               }, noop=np.array([0,0,0]))
-
-    Above code works also if the environment is wrapped, so it's particularly useful in
-    verifying that the frame-level preprocessing does not render the game
-    unplayable.
-
-    If you wish to plot real time statistics as you play, you can use
-    :class:`gym.utils.play.PlayPlot`. Here's a sample code for plotting the reward
-    for last 150 steps.
-
-        >>> import gymnasium as gym
-        >>> def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
-        ...        return [rew,]
-        >>> plotter = PlayPlot(callback, 150, ["reward"])
-        >>> play(gym.make("CartPole-v1"), callback=plotter.callback)
-
     Args:
         env: Environment to use for playing.
         transpose: If this is ``True``, the output of observation is transposed. Defaults to ``True``.
@@ -207,7 +178,7 @@ def play(
             For example if pressing 'w' and space at the same time is supposed
             to trigger action number 2 then ``key_to_action`` dict could look like this:
 
-                >>> {
+                >>> key_to_action = {
                 ...    # ...
                 ...    (ord('w'), ord(' ')): 2
                 ...    # ...
@@ -215,7 +186,7 @@ def play(
 
             or like this:
 
-                >>> {
+                >>> key_to_action = {
                 ...    # ...
                 ...    ("w", " "): 2
                 ...    # ...
@@ -223,7 +194,7 @@ def play(
 
             or like this:
 
-                >>> {
+                >>> key_to_action = {
                 ...    # ...
                 ...    "w ": 2
                 ...    # ...
@@ -232,6 +203,35 @@ def play(
             If ``None``, default ``key_to_action`` mapping for that environment is used, if provided.
         seed: Random seed used when resetting the environment. If None, no seed is used.
         noop: The action used when no key input has been entered, or the entered key combination is unknown.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> from gymnasium.utils.play import play
+        >>> play(gym.make("CarRacing-v2", render_mode="rgb_array"), keys_to_action={  # doctest: +SKIP
+        ...                                                "w": np.array([0, 0.7, 0]),
+        ...                                                "a": np.array([-1, 0, 0]),
+        ...                                                "s": np.array([0, 0, 1]),
+        ...                                                "d": np.array([1, 0, 0]),
+        ...                                                "wa": np.array([-1, 0.7, 0]),
+        ...                                                "dw": np.array([1, 0.7, 0]),
+        ...                                                "ds": np.array([1, 0, 1]),
+        ...                                                "as": np.array([-1, 0, 1]),
+        ...                                               }, noop=np.array([0,0,0]))
+
+        Above code works also if the environment is wrapped, so it's particularly useful in
+        verifying that the frame-level preprocessing does not render the game
+        unplayable.
+
+        If you wish to plot real time statistics as you play, you can use
+        :class:`gym.utils.play.PlayPlot`. Here's a sample code for plotting the reward
+        for last 150 steps.
+
+        >>> import gymnasium as gym
+        >>> from gymnasium.utils.play import PlayPlot, play
+        >>> def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
+        ...        return [rew,]
+        >>> plotter = PlayPlot(callback, 150, ["reward"])             # doctest: +SKIP
+        >>> play(gym.make("CartPole-v1"), callback=plotter.callback)  # doctest: +SKIP
     """
     env.reset(seed=seed)
 
@@ -315,13 +315,13 @@ class PlayPlot:
 
     Typically, this :meth:`callback` will be used in conjunction with :func:`play` to see how the metrics evolve as you play::
 
-        >>> plotter = PlayPlot(compute_metrics, horizon_timesteps=200,
+        >>> plotter = PlayPlot(compute_metrics, horizon_timesteps=200,                               # doctest: +SKIP
         ...                    plot_names=["Immediate Rew.", "Cumulative Rew.", "Action Magnitude"])
-        >>> play(your_env, callback=plotter.callback)
+        >>> play(your_env, callback=plotter.callback)                                                # doctest: +SKIP
     """
 
     def __init__(
-        self, callback: callable, horizon_timesteps: int, plot_names: List[str]
+        self, callback: Callable, horizon_timesteps: int, plot_names: List[str]
     ):
         """Constructor of :class:`PlayPlot`.
 
