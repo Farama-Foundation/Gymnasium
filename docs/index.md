@@ -68,6 +68,7 @@ environments/third_party_environments
 :caption: Tutorials
 
 tutorials/**/index
+Comet Tutorial <https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasium/>
 ```
 
 ```{toctree}
