@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=b332e145f118bbc5b181998bee244c1e810e1f8b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=9e86d0f2b4c7365fca1b48b729b6cac79739c5d7" />
     
     
 
@@ -379,6 +379,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference external" href="https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasium/">Comet Tutorial</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -440,17 +441,28 @@ The <code class="docutils literal notranslate"><span class="pre">&quot;GymV26Env
 To perform conversion through a wrapper, the environment itself can be passed to the wrapper <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.EnvCompatibility" title="gymnasium.wrappers.EnvCompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvCompatibility</span></code></a> through the <code class="docutils literal notranslate"><span class="pre">env</span></code> kwarg.</p>
 <p>An example of this is atari 0.8.0 which does not have a gymnasium implementation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV26Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">&quot;ALE/Pong-v5&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="gym-v0-22-environment-compatibility">
-<h2>Gym v0.22 Environment Compatibility<a class="headerlink" href="#gym-v0-22-environment-compatibility" title="Permalink to this heading">#</a></h2>
+<section id="gym-v0-21-environment-compatibility">
+<h2>Gym v0.21 Environment Compatibility<a class="headerlink" href="#gym-v0-21-environment-compatibility" title="Permalink to this heading">#</a></h2>
 <p>A number of environments have not updated to the recent Gym changes, in particular since v0.21.
 This update is significant for the introduction of <code class="docutils literal notranslate"><span class="pre">termination</span></code> and <code class="docutils literal notranslate"><span class="pre">truncation</span></code> signatures in favour of the previously used <code class="docutils literal notranslate"><span class="pre">done</span></code>.
-To allow backward compatibility, Gym and Gymnasium v0.26+ include an <code class="docutils literal notranslate"><span class="pre">apply_api_compatibility</span></code> kwarg when calling <a class="reference internal" href="../../api/registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make()</span></code></a> that automatically converts a v0.21 API compliant environment one that is compatible with v0.26+.</p>
+To allow backward compatibility, Gym and Gymnasium v0.26+ include an <code class="docutils literal notranslate"><span class="pre">apply_api_compatibility</span></code> kwarg when calling <a class="reference internal" href="../../api/registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make()</span></code></a> that automatically converts a v0.21 API compliant environment to one that is compatible with v0.26+.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
+
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;OldV21Env-v0&quot;</span><span class="p">,</span> <span class="n">apply_api_compatibility</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Additionally, in Gymnasium we provide specialist environments for compatibility that for <code class="docutils literal notranslate"><span class="pre">env_id</span></code> will call <code class="docutils literal notranslate"><span class="pre">gym.make</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV21Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">make_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+<span class="c1"># or</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV21Environment-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">OldV21Env</span><span class="p">())</span>
+
 </pre></div>
 </div>
 </section>
@@ -520,7 +532,7 @@ To allow backward compatibility, Gym and Gymnasium v0.26+ include an <code class
             <ul>
 <li><a class="reference internal" href="#">Compatibility with Gym</a><ul>
 <li><a class="reference internal" href="#loading-openai-gym-environments">Loading OpenAI Gym environments</a></li>
-<li><a class="reference internal" href="#gym-v0-22-environment-compatibility">Gym v0.22 Environment Compatibility</a></li>
+<li><a class="reference internal" href="#gym-v0-21-environment-compatibility">Gym v0.21 Environment Compatibility</a></li>
 <li><a class="reference internal" href="#step-api-compatibility">Step API Compatibility</a></li>
 </ul>
 </li>
