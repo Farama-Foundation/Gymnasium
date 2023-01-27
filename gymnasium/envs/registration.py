@@ -3,28 +3,22 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import dataclasses
 import difflib
 import importlib
 import importlib.util
+import json
 import re
 import sys
 import traceback
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import (
-    Any,
-    Callable,
-    Iterable,
-    Sequence,
-    SupportsFloat,
-    Tuple,
-    Union,
-    overload,
-)
+from typing import Any, Callable, Iterable, Sequence, SupportsFloat, overload
 
 import numpy as np
 
+from gymnasium.logger import warn
 from gymnasium.wrappers import (
     AutoResetWrapper,
     HumanRendering,
@@ -191,6 +185,9 @@ class EnvSpec:
     name: str = field(init=False)
     version: int | None = field(init=False)
 
+    # applied wrappers
+    applied_wrappers: tuple[WrapperSpec, ...] = field(init=False, default_factory=tuple)
+
     def __post_init__(self):
         """Calls after the spec is created to extract the namespace, name and version from the id."""
         # Initialize namespace, name, version
@@ -201,8 +198,113 @@ class EnvSpec:
         # For compatibility purposes
         return make(self, **kwargs)
 
+    def to_json(self) -> str:
+        """Converts the environment spec into a json compatible string.
 
-SpecStack = Tuple[Union[WrapperSpec, EnvSpec], ...]
+        Returns:
+            A jsonifyied string for the environment spec
+        """
+        env_spec_dict = dataclasses.asdict(self)
+        env_spec_dict.pop("namespace")
+        env_spec_dict.pop("name")
+        env_spec_dict.pop("version")
+        self._check_to_json(env_spec_dict)
+
+        for wrapper_spec in env_spec_dict["applied_wrappers"]:
+            self._check_to_json(wrapper_spec)
+
+        return json.dumps(env_spec_dict)
+
+    @staticmethod
+    def _check_to_json(env_spec: dict[str, Any]):
+        """Warns the user about serialisation failing if the spec contains a callable.
+
+        Args:
+            env_spec: An environment or wrapper specification.
+
+        Returns: The specification with lambda functions converted to strings.
+
+        """
+        spec_name = env_spec["name"] if "name" in env_spec else env_spec["id"]
+
+        for key, value in env_spec.items():
+            if callable(value):
+                warn(
+                    f"Callable found in {spec_name} for {key} attribute with value={value}. Currently, Gymnasium does not support serialising callables."
+                )
+
+    @staticmethod
+    def from_json(json_env_spec: str) -> EnvSpec:
+        """Converts a JSON string into a specification stack.
+
+        Args:
+            json_env_spec: A JSON string representing the env specification.
+
+        Returns:
+            An environment spec
+        """
+        parsed_env_spec = json.loads(json_env_spec)
+
+        applied_wrapper_specs = []
+        for wrapper_spec_json in parsed_env_spec.pop("applied_wrappers"):
+            try:
+                applied_wrapper_specs.append(WrapperSpec(**wrapper_spec_json))
+            except Exception as e:
+                raise ValueError(
+                    f"An issue occurred when trying to make {wrapper_spec_json} a WrapperSpec"
+                ) from e
+
+        try:
+            env_spec = EnvSpec(**parsed_env_spec)
+            env_spec.applied_wrappers = tuple(applied_wrapper_specs)
+        except Exception as e:
+            raise ValueError(
+                f"An issue occurred when trying to make {parsed_env_spec} an EnvSpec"
+            ) from e
+
+        return env_spec
+
+    def pprint(
+        self, disable_print: bool = False, print_all: bool = False
+    ) -> str | None:
+        """Pretty prints the environment spec.
+
+        Args:
+            disable_print: If to disable print and return the output
+            print_all: If to print all information, including variables with default values
+
+        Returns:
+            If ``disable_print is True`` a string otherwise ``None``
+        """
+        output = f"id={self.id}\n\tentry_point={self.entry_point}"
+
+        if print_all or self.reward_threshold is not None:
+            output += f"\n\treward_threshold={self.reward_threshold}"
+        if print_all or self.nondeterministic is not False:
+            output += f"\n\tnondeterministic={self.nondeterministic}"
+
+        if print_all or self.max_episode_steps is not None:
+            output += f"\n\tmax_episode_steps={self.max_episode_steps}"
+        if print_all or self.order_enforce is not True:
+            output += f"\n\torder_enforce={self.order_enforce}"
+        if print_all or self.autoreset is not False:
+            output += f"\n\tautoreset={self.autoreset}"
+        if print_all or self.disable_env_checker is not False:
+            output += f"\n\tdisable_env_checker={self.disable_env_checker}"
+        if print_all or self.apply_api_compatibility is not False:
+            output += f"\n\tapplied_api_compatibility={self.apply_api_compatibility}"
+
+        if print_all or self.applied_wrappers:
+            wrapper_output = [
+                f"\n\tname={wrapper_spec.name}, kwargs={wrapper_spec.kwargs}"
+                for wrapper_spec in self.applied_wrappers
+            ]
+            output += f"\n\tapplied_wrappers={wrapper_output}"
+
+        if disable_print:
+            return output
+        else:
+            print(output)
 
 
 def _check_namespace_exists(ns: str | None):
@@ -366,8 +468,6 @@ def load_env_plugins(entry_point: str = "gymnasium.envs"):
 def make(id: str, **kwargs) -> Env: ...
 @overload
 def make(id: EnvSpec, **kwargs) -> Env: ...
-@overload
-def make(id: SpecStack, **kwargs) -> Env: ...
 
 
 # Classic control
@@ -572,7 +672,7 @@ def register(
 
 
 def make(
-    id: str | EnvSpec | SpecStack,
+    id: str | EnvSpec,
     max_episode_steps: int | None = None,
     autoreset: bool = False,
     apply_api_compatibility: bool | None = None,
@@ -603,26 +703,25 @@ def make(
     Raises:
         Error: If the ``id`` doesn't exist then an error is raised
     """
-    if isinstance(id, tuple):
-        assert all(isinstance(wrapper_spec, WrapperSpec) for wrapper_spec in id[:-1])
-        assert isinstance(id[-1], EnvSpec)
+    if isinstance(id, EnvSpec):
+        if hasattr(id, "applied_wrappers") and id.applied_wrappers is not None:
+            if callable(id.entry_point):
+                env_creator = id.entry_point
+            else:
+                env_creator = load(id.entry_point)
 
-        wrapper_specs: tuple[WrapperSpec, ...] = id[:-1]
-        env_spec: EnvSpec = id[-1]
+            env = env_creator(**id.kwargs)
+            if env.unwrapped is not env:
+                warn(
+                    f"Environment creator ({env_creator}) applied additional wrappers which might be repeated if in the `spec.applied_wrappers`."
+                )
 
-        if callable(env_spec.entry_point):
-            env_creator = env_spec.entry_point
+            for wrapper_spec in id.applied_wrappers:
+                env = load(wrapper_spec.entry_point)(env, **wrapper_spec.kwargs)
+
+            return env
         else:
-            env_creator = load(env_spec.entry_point)
-
-        env = env_creator(**env_spec.kwargs)
-
-        for wrapper_spec in reversed(wrapper_specs):
-            env = load(wrapper_spec.entry_point)(env, **wrapper_spec.kwargs)
-
-        return env
-    elif isinstance(id, EnvSpec):
-        spec_ = id
+            spec_ = id
     else:
         assert isinstance(id, str)
 
