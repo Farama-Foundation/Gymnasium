@@ -26,7 +26,7 @@ class VectorListInfo(gym.experimental.VectorWrapper):
         ...      "_k": np.array([False, False, True, True])
         ...  }
         >>> # classic
-        >>> [{}, {}, {k: 0.5}, {k: 0.3}]
+        >>> [{}, {}, {k: 0.5}, {k: 0.3}]  # doctest: +SKIP
     """
 
     def __init__(self, env: VectorEnv):
