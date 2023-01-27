@@ -8,6 +8,7 @@ import importlib
 import importlib.util
 import re
 import sys
+import traceback
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -45,7 +46,7 @@ ENV_ID_RE = re.compile(
 )
 
 
-def load(name: str) -> callable:
+def load(name: str) -> Callable:
     """Loads an environment with name and returns an environment creation function.
 
     Args:
@@ -312,8 +313,8 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
             fn = plugin.load()
             try:
                 fn()
-            except Exception as e:
-                logger.warn(str(e))
+            except Exception:
+                logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
 
 
 # fmt: off

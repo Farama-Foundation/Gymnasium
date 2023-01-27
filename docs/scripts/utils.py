@@ -41,4 +41,5 @@ kill_strs = [
     "oulette",
     "DomainRandom",
     "RacingDiscrete",
+    "GymV21Environment",
 ]
