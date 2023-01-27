@@ -211,13 +211,14 @@ class Box(Space[NDArray[Any]]):
 
         sample[upp_bounded] = (
             -self.np_random.exponential(size=upp_bounded[upp_bounded].shape)
-            + self.high[upp_bounded]
+            + high[upp_bounded]
         )
 
         sample[bounded] = self.np_random.uniform(
             low=self.low[bounded], high=high[bounded], size=bounded[bounded].shape
         )
-        if self.dtype.kind == "i":
+
+        if self.dtype.kind != "f":
             sample = np.floor(sample)
 
         return sample.astype(self.dtype)
