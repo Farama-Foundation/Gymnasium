@@ -166,7 +166,7 @@ class AsyncVectorEnv(VectorEnv):
                 child_pipe.close()
 
         self._state = AsyncState.DEFAULT
-        self._to_reset = np.zeros(self.num_envs, dtype=np.bool)
+        self._to_reset = np.zeros(self.num_envs, dtype=np.bool_)
         self._check_spaces()
 
     def reset_async(
