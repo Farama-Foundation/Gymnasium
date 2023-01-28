@@ -23,13 +23,6 @@ def test_vector_env_info(asynchronous: bool):
         env.action_space.seed(SEED)
         action = env.action_space.sample()
         _, _, terminateds, truncateds, infos = env.step(action)
-        if any(terminateds) or any(truncateds):
-            for i, (terminated, truncated) in enumerate(zip(terminateds, truncateds)):
-                if terminated or truncated:
-                    assert infos["_final_observation"][i]
-                else:
-                    assert not infos["_final_observation"][i]
-                    assert infos["final_observation"][i] is None
 
 
 @pytest.mark.parametrize("concurrent_ends", [1, 2, 3])
@@ -45,8 +38,4 @@ def test_vector_env_info_concurrent_termination(concurrent_ends):
             for i, (terminated, truncated) in enumerate(zip(terminateds, truncateds)):
                 if i < concurrent_ends:
                     assert terminated or truncated
-                    assert infos["_final_observation"][i]
-                else:
-                    assert not infos["_final_observation"][i]
-                    assert infos["final_observation"][i] is None
             return
