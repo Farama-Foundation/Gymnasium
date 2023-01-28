@@ -627,11 +627,11 @@ def _worker(
                 pipe.send(((observation, info), True))
 
             elif command == "step":
-                actions, to_reset = data
+                action, to_reset = data
 
                 if to_reset:
                     observation, info = env.reset()
-                    reward = 0
+                    reward = 0.0
                     terminated = False
                     truncated = False
                 else:
@@ -641,7 +641,7 @@ def _worker(
                         terminated,
                         truncated,
                         info,
-                    ) = env.step(data)
+                    ) = env.step(action)
 
                 if shared_memory:
                     write_to_shared_memory(
