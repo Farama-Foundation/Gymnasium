@@ -68,6 +68,8 @@ class SyncVectorEnv(VectorEnv):
         self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
 
+        self._to_reset = np.zeros((self.num_envs,), dtype=np.bool_)
+
     def reset(
         self,
         seed: Optional[Union[int, List[int]]] = None,
@@ -119,20 +121,23 @@ class SyncVectorEnv(VectorEnv):
 
         observations, infos = [], {}
         for i, (env, action) in enumerate(zip(self.envs, actions)):
-
-            (
-                observation,
-                self._rewards[i],
-                self._terminateds[i],
-                self._truncateds[i],
-                info,
-            ) = env.step(action)
+            if self._to_reset[i]:
+                observation, info = env.reset()
+                self._rewards[i] = 0.0
+                self._terminateds[i] = False
+                self._truncateds[i] = False
+                self._to_reset[i] = False
+            else:
+                (
+                    observation,
+                    self._rewards[i],
+                    self._terminateds[i],
+                    self._truncateds[i],
+                    info,
+                ) = env.step(action)
 
             if self._terminateds[i] or self._truncateds[i]:
-                old_observation, old_info = observation, info
-                observation, info = env.reset()
-                info["final_observation"] = old_observation
-                info["final_info"] = old_info
+                self._to_reset[i] = True
             observations.append(observation)
             infos = self._add_info(infos, info, i)
         self.observations = concatenate(

@@ -166,6 +166,7 @@ class AsyncVectorEnv(VectorEnv):
                 child_pipe.close()
 
         self._state = AsyncState.DEFAULT
+        self._to_reset = np.zeros(self.num_envs, dtype=np.bool)
         self._check_spaces()
 
     def reset_async(
@@ -296,8 +297,8 @@ class AsyncVectorEnv(VectorEnv):
             )
 
         actions = iterate(self.action_space, actions)
-        for pipe, action in zip(self.parent_pipes, actions):
-            pipe.send(("step", action))
+        for pipe, action, to_reset in zip(self.parent_pipes, actions, self._to_reset):
+            pipe.send(("step", (action, to_reset)))
         self._state = AsyncState.WAITING_STEP
 
     def step_wait(
@@ -351,6 +352,8 @@ class AsyncVectorEnv(VectorEnv):
                 observations_list,
                 self.observations,
             )
+
+        self._to_reset = [term or trunc for term, trunc in zip(terminateds, truncateds)]
 
         return (
             deepcopy(self.observations) if self.copy else self.observations,
@@ -624,18 +627,21 @@ def _worker(
                 pipe.send(((observation, info), True))
 
             elif command == "step":
-                (
-                    observation,
-                    reward,
-                    terminated,
-                    truncated,
-                    info,
-                ) = env.step(data)
-                if terminated or truncated:
-                    old_observation, old_info = observation, info
+                actions, to_reset = data
+
+                if to_reset:
                     observation, info = env.reset()
-                    info["final_observation"] = old_observation
-                    info["final_info"] = old_info
+                    reward = 0
+                    terminated = False
+                    truncated = False
+                else:
+                    (
+                        observation,
+                        reward,
+                        terminated,
+                        truncated,
+                        info,
+                    ) = env.step(data)
 
                 if shared_memory:
                     write_to_shared_memory(
