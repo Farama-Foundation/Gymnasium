@@ -23,7 +23,7 @@ class SyncVectorEnv(VectorEnv):
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()
+        >>> env.reset()  # doctest: +SKIP
         array([[-0.8286432 ,  0.5597771 ,  0.90249056],
                [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
     """

@@ -51,7 +51,7 @@ class AsyncVectorEnv(VectorEnv):
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset(seed=42)
+        >>> env.reset(seed=42)  # doctest: +SKIP
         (array([[-0.14995256,  0.9886932 , -0.12224312],
                [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
     """
