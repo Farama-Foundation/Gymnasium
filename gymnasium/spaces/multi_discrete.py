@@ -30,12 +30,13 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
     Although this feature is rarely used, :class:`MultiDiscrete` spaces may also have several axes
     if ``nvec`` has several axes:
 
-    Example::
-
-        >> d = MultiDiscrete(np.array([[1, 2], [3, 4]]))
-        >> d.sample()
+    Example:
+        >>> from gymnasium.spaces import MultiDiscrete
+        >>> import numpy as np
+        >>> observation_space = MultiDiscrete(np.array([[1, 2], [3, 4]]), seed=42)
+        >>> observation_space.sample()
         array([[0, 0],
-               [2, 3]])
+               [2, 2]])
     """
 
     def __init__(
