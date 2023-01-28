@@ -95,8 +95,11 @@ def test_final_obs_info(vectoriser):
     )
 
     obs, _, termination, _, info = env.step([3])
+    assert obs == np.array([0]) and termination == np.array([True])
+
+    obs, _, termination, _, info = env.step([4])
     assert (
         obs == np.array([0])
-        and termination == np.array([True])
+        and termination == np.array([False])
         and info["reset"] == np.array([True])
     )
