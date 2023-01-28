@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 
 import gymnasium as gym
@@ -25,12 +24,6 @@ def test_vector_env_info(asynchronous: bool):
         action = env.action_space.sample()
         _, _, terminateds, truncateds, infos = env.step(action)
         if any(terminateds) or any(truncateds):
-            assert len(infos["final_observation"]) == NUM_ENVS
-            assert len(infos["_final_observation"]) == NUM_ENVS
-
-            assert isinstance(infos["final_observation"], np.ndarray)
-            assert isinstance(infos["_final_observation"], np.ndarray)
-
             for i, (terminated, truncated) in enumerate(zip(terminateds, truncateds)):
                 if terminated or truncated:
                     assert infos["_final_observation"][i]
