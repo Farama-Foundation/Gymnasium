@@ -17,7 +17,7 @@ from gymnasium.wrappers import (
 )
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
-from tests.envs.utils import all_testing_env_specs
+from tests.envs.utils import all_testing_env_ids
 from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv
 from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
@@ -195,11 +195,11 @@ def test_apply_api_compatibility():
 
 
 @pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
+    "env_id", all_testing_env_ids, ids=all_testing_env_ids
 )
-def test_passive_checker_wrapper_warnings(spec):
+def test_passive_checker_wrapper_warnings(env_id):
     with warnings.catch_warnings(record=True) as caught_warnings:
-        env = gym.make(spec)  # disable_env_checker=False
+        env = gym.make(env_id)  # disable_env_checker=False
         env.reset()
         env.step(env.action_space.sample())
         # todo, add check for render, bugged due to mujoco v2/3 and v4 envs
@@ -213,7 +213,7 @@ def test_passive_checker_wrapper_warnings(spec):
 
 def test_make_order_enforcing():
     """Checks that gym.make wrappers the environment with the OrderEnforcing wrapper."""
-    assert all(spec.order_enforce is True for spec in all_testing_env_specs)
+    assert all(spec.order_enforce is True for spec in all_testing_env_ids)
 
     env = gym.make("CartPole-v1", disable_env_checker=True)
     assert has_wrapper(env, OrderEnforcing)

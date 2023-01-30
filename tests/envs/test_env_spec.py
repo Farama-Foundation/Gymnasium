@@ -58,13 +58,17 @@ def test_env_wrapper_spec():
     pass
 
 
-def test_make_spec_stack():
+def test_env_spec_make():
     pass
 
 
-def test_serialize_spec_stack():
+def test_env_spec_to_json():
     pass
 
 
-def test_deserialize_spec_stack():
+def test_env_spec_from_json():
+    pass
+
+
+def test_env_spec_pprint():
     pass

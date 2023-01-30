@@ -7,7 +7,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.wrappers import AutoResetWrapper
-from tests.envs.utils import all_testing_env_specs
+from tests.envs.utils import all_testing_env_ids
 
 
 class DummyResetEnv(gym.Env):
@@ -53,7 +53,7 @@ def unwrap_env(env) -> Generator[gym.Wrapper, None, None]:
 
 
 @pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
+    "spec", all_testing_env_ids, ids=[spec.id for spec in all_testing_env_ids]
 )
 def test_make_autoreset_true(spec):
     """Tests gym.make with `autoreset=True`, and check that the reset actually happens.
@@ -78,7 +78,7 @@ def test_make_autoreset_true(spec):
 
 
 @pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
+    "spec", all_testing_env_ids, ids=[spec.id for spec in all_testing_env_ids]
 )
 def test_gym_make_autoreset(spec):
     """Tests that `gym.make` autoreset wrapper is applied only when `gym.make(..., autoreset=True)`."""

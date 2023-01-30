@@ -1,10 +1,9 @@
 import numpy as np
 import pytest
 
-from gymnasium.envs.registration import EnvSpec
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
-from tests.envs.utils import all_testing_env_specs
+from tests.envs.utils import all_testing_env_ids
 from tests.vector.utils import (
     CustomSpace,
     assert_rng_equal,
@@ -162,13 +161,11 @@ def test_sync_vector_env_seed():
         assert np.all(env_action == vector_action)
 
 
-@pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
-)
-def test_sync_vector_determinism(spec: EnvSpec, seed: int = 123, n: int = 3):
+@pytest.mark.parametrize("env_id", all_testing_env_ids, ids=all_testing_env_ids)
+def test_sync_vector_determinism(env_id: str, seed: int = 123, n: int = 3):
     """Check that for all environments, the sync vector envs produce the same action samples using the same seeds"""
-    env_1 = SyncVectorEnv([make_env(spec.id, seed=seed) for _ in range(n)])
-    env_2 = SyncVectorEnv([make_env(spec.id, seed=seed) for _ in range(n)])
+    env_1 = SyncVectorEnv([make_env(env_id, seed=seed) for _ in range(n)])
+    env_2 = SyncVectorEnv([make_env(env_id, seed=seed) for _ in range(n)])
     assert_rng_equal(env_1.action_space.np_random, env_2.action_space.np_random)
 
     for _ in range(100):

@@ -140,12 +140,12 @@ class WrapperSpec:
 
     * name: The name of the wrapper.
     * entry_point: The location of the wrapper to create from.
-    * kwargs: Additional keyword arguments passed to the wrapper.
+    * kwargs: Additional keyword arguments passed to the wrapper. If the wrapper doesn't inherit from EzPickle then this is ``None``
     """
 
     name: str
     entry_point: str
-    kwargs: dict[str, Any]
+    kwargs: dict[str, Any] | None
 
 
 @dataclass
@@ -265,41 +265,52 @@ class EnvSpec:
         return env_spec
 
     def pprint(
-        self, disable_print: bool = False, print_all: bool = False
+        self,
+        disable_print: bool = False,
+        include_entry_points: bool = False,
+        print_all: bool = False,
     ) -> str | None:
         """Pretty prints the environment spec.
 
         Args:
             disable_print: If to disable print and return the output
+            include_entry_points: If to include the entry_points in the output
             print_all: If to print all information, including variables with default values
 
         Returns:
             If ``disable_print is True`` a string otherwise ``None``
         """
-        output = f"id={self.id}\n\tentry_point={self.entry_point}"
+        output = f"id={self.id}"
+        if print_all or include_entry_points:
+            output += f"\nentry_point={self.entry_point}"
 
         if print_all or self.reward_threshold is not None:
-            output += f"\n\treward_threshold={self.reward_threshold}"
+            output += f"\nreward_threshold={self.reward_threshold}"
         if print_all or self.nondeterministic is not False:
-            output += f"\n\tnondeterministic={self.nondeterministic}"
+            output += f"\nnondeterministic={self.nondeterministic}"
 
         if print_all or self.max_episode_steps is not None:
-            output += f"\n\tmax_episode_steps={self.max_episode_steps}"
+            output += f"\nmax_episode_steps={self.max_episode_steps}"
         if print_all or self.order_enforce is not True:
-            output += f"\n\torder_enforce={self.order_enforce}"
+            output += f"\norder_enforce={self.order_enforce}"
         if print_all or self.autoreset is not False:
-            output += f"\n\tautoreset={self.autoreset}"
+            output += f"\nautoreset={self.autoreset}"
         if print_all or self.disable_env_checker is not False:
-            output += f"\n\tdisable_env_checker={self.disable_env_checker}"
+            output += f"\ndisable_env_checker={self.disable_env_checker}"
         if print_all or self.apply_api_compatibility is not False:
-            output += f"\n\tapplied_api_compatibility={self.apply_api_compatibility}"
+            output += f"\napplied_api_compatibility={self.apply_api_compatibility}"
 
         if print_all or self.applied_wrappers:
-            wrapper_output = [
-                f"\n\tname={wrapper_spec.name}, kwargs={wrapper_spec.kwargs}"
-                for wrapper_spec in self.applied_wrappers
-            ]
-            output += f"\n\tapplied_wrappers={wrapper_output}"
+            wrapper_output: list[str] = []
+            for wrapper_spec in self.applied_wrappers:
+                if include_entry_points:
+                    wrapper_output = f"\n\tname={wrapper_spec.name}, entry_point={wrapper_spec.entry_point}, kwargs={wrapper_spec.kwargs}"
+                else:
+                    wrapper_output = (
+                        f"\n\tname={wrapper_spec.name}, kwargs={wrapper_spec.kwargs}"
+                    )
+
+            output += f"\n\tapplied_wrappers=[{','.join(wrapper_output)}\n\t]"
 
         if disable_print:
             return output
@@ -590,6 +601,53 @@ def _check_metadata(metadata_: dict):
         )
 
 
+def _add_make_wrappers(
+    env: Env,
+    env_spec: EnvSpec,
+    render_mode: str | None,
+    apply_api_compatibility: bool | None,
+    disable_env_checker: bool | None,
+    max_episode_steps: int | None,
+    autoreset: bool,
+    apply_human_rendering: bool,
+    apply_render_collection: bool,
+) -> Env:
+    """Applies all `make` wrappers and returns the wrapped environment."""
+    # Add step API wrapper
+    if apply_api_compatibility is True or (
+        apply_api_compatibility is None and env_spec.apply_api_compatibility is True
+    ):
+        env = EnvCompatibility(env, render_mode)
+
+    # Run the environment checker as the lowest level wrapper
+    if disable_env_checker is False or (
+        disable_env_checker is None and env_spec.disable_env_checker is False
+    ):
+        env = PassiveEnvChecker(env)
+
+    # Add the order enforcing wrapper
+    if env_spec.order_enforce:
+        env = OrderEnforcing(env)
+
+    # Add the time limit wrapper
+    if max_episode_steps is not None:
+        env = TimeLimit(env, max_episode_steps)
+    elif env_spec.max_episode_steps is not None:
+        env = TimeLimit(env, env_spec.max_episode_steps)
+
+    # Add the autoreset wrapper
+    if autoreset:
+        env = AutoResetWrapper(env)
+
+    # Add human rendering wrapper
+    if apply_human_rendering:
+        env = HumanRendering(env)
+    elif apply_render_collection:
+        env = RenderCollection(env)
+
+    return env
+
+
 # Public API
 
 
@@ -710,14 +768,42 @@ def make(
             else:
                 env_creator = load(id.entry_point)
 
-            env = env_creator(**id.kwargs)
+            # This should primarily used to set the render_mode of the environment rather than any other parameter.
+            env = env_creator(**id.kwargs, **kwargs)
             if env.unwrapped is not env:
                 warn(
                     f"Environment creator ({env_creator}) applied additional wrappers which might be repeated if in the `spec.applied_wrappers`."
                 )
 
+            if max_episode_steps is not None:
+                warn(
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `max_episode_step` parameter is not used (value: {max_episode_steps})"
+                )
+            if autoreset is True:
+                warn(
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `autoreset` parameter is not used (value: {max_episode_steps})"
+                )
+            if apply_api_compatibility is not None:
+                warn(
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `apply_api_compatibility` parameter is not used (value: {max_episode_steps})"
+                )
+            if disable_env_checker is not None:
+                warn(
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `disable_env_checker` parameter is not used (value: {max_episode_steps})"
+                )
+
             for wrapper_spec in id.applied_wrappers:
+                if wrapper_spec.kwargs is None:
+                    raise ValueError(
+                        f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.EzPickle` therefore, the wrapper cannot be recreated."
+                    )
+
                 env = load(wrapper_spec.entry_point)(env, **wrapper_spec.kwargs)
+
+            env_spec = copy.deepcopy(id)
+            env_spec.kwargs.update(kwargs)
+            env_spec.applied_wrappers = ()
+            env.unwrapped.spec = env_spec
 
             return env
         else:
@@ -826,37 +912,17 @@ def make(
     spec_.kwargs = _kwargs
     env.unwrapped.spec = spec_
 
-    # Add step API wrapper
-    if apply_api_compatibility is True or (
-        apply_api_compatibility is None and spec_.apply_api_compatibility is True
-    ):
-        env = EnvCompatibility(env, render_mode)
-
-    # Run the environment checker as the lowest level wrapper
-    if disable_env_checker is False or (
-        disable_env_checker is None and spec_.disable_env_checker is False
-    ):
-        env = PassiveEnvChecker(env)
-
-    # Add the order enforcing wrapper
-    if spec_.order_enforce:
-        env = OrderEnforcing(env)
-
-    # Add the time limit wrapper
-    if max_episode_steps is not None:
-        env = TimeLimit(env, max_episode_steps)
-    elif spec_.max_episode_steps is not None:
-        env = TimeLimit(env, spec_.max_episode_steps)
-
-    # Add the autoreset wrapper
-    if autoreset:
-        env = AutoResetWrapper(env)
-
-    # Add human rendering wrapper
-    if apply_human_rendering:
-        env = HumanRendering(env)
-    elif apply_render_collection:
-        env = RenderCollection(env)
+    env = _add_make_wrappers(
+        env=env,
+        env_spec=spec_,
+        render_mode=render_mode,
+        apply_api_compatibility=apply_api_compatibility,
+        disable_env_checker=disable_env_checker,
+        max_episode_steps=max_episode_steps,
+        autoreset=autoreset,
+        apply_human_rendering=apply_human_rendering,
+        apply_render_collection=apply_render_collection,
+    )
 
     return env
 

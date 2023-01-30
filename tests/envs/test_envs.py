@@ -4,10 +4,9 @@ import warnings
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.registration import EnvSpec
 from gymnasium.utils.env_checker import check_env, data_equivalence
 from tests.envs.utils import (
-    all_testing_env_specs,
+    all_testing_env_ids,
     all_testing_initialised_envs,
     assert_equals,
 )
@@ -35,14 +34,14 @@ CHECK_ENV_IGNORE_WARNINGS = [
 
 
 @pytest.mark.parametrize(
-    "spec",
-    all_testing_env_specs,
-    ids=[spec.id for spec in all_testing_env_specs],
+    "env_id",
+    all_testing_env_ids,
+    ids=all_testing_env_ids,
 )
-def test_envs_pass_env_checker(spec):
+def test_envs_pass_env_checker(env_id):
     """Check that all environments pass the environment checker with no warnings other than the expected."""
     with warnings.catch_warnings(record=True) as caught_warnings:
-        env = spec.make(disable_env_checker=True).unwrapped
+        env = gym.make(env_id, disable_env_checker=True).unwrapped
         check_env(env, skip_render_check=True)
 
         env.close()
@@ -59,11 +58,11 @@ NUM_STEPS = 50
 
 
 @pytest.mark.parametrize(
-    "env_spec",
-    all_testing_env_specs,
-    ids=[env.id for env in all_testing_env_specs],
+    "env_id",
+    all_testing_env_ids,
+    ids=all_testing_env_ids,
 )
-def test_env_determinism_rollout(env_spec: EnvSpec):
+def test_env_determinism_rollout(env_id: str):
     """Run a rollout with two environments and assert equality.
 
     This test run a rollout of NUM_STEPS steps with two environments
@@ -74,12 +73,12 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
     - observations are contained in the observation space
     - obs, rew, done and info are equals between the two envs
     """
-    # Don't check rollout equality if it's a nondeterministic environment.
-    if env_spec.nondeterministic is True:
-        return
+    env_1 = gym.make(env_id, disable_env_checker=True)
+    env_2 = gym.make(env_id, disable_env_checker=True)
 
-    env_1 = env_spec.make(disable_env_checker=True)
-    env_2 = env_spec.make(disable_env_checker=True)
+    # Don't check rollout equality if it's a nondeterministic environment.
+    if env_1.spec is not None and env_1.spec.nondeterministic is True:
+        return
 
     initial_obs_1, initial_info_1 = env_1.reset(seed=SEED)
     initial_obs_2, initial_info_2 = env_2.reset(seed=SEED)
@@ -121,7 +120,10 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
 @pytest.mark.parametrize(
     "env",
     all_testing_initialised_envs,
-    ids=[env.spec.id for env in all_testing_initialised_envs if env.spec is not None],
+    ids=[
+        env.spec.id if env.spec is not None else f"{env}"
+        for env in all_testing_initialised_envs
+    ],
 )
 def test_pickle_env(env: gym.Env):
     pickled_env = pickle.loads(pickle.dumps(env))

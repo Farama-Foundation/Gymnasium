@@ -3,8 +3,8 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import envs
-from gymnasium.envs.registration import EnvSpec
-from tests.envs.utils import mujoco_testing_env_specs
+from gymnasium.envs.registration import get_env_id, parse_env_id
+from tests.envs.utils import mujoco_testing_env_ids
 
 
 EPS = 1e-6
@@ -55,69 +55,71 @@ EXCLUDE_POS_FROM_OBS = [
 
 
 @pytest.mark.parametrize(
-    "env_spec",
-    mujoco_testing_env_specs,
-    ids=[env_spec.id for env_spec in mujoco_testing_env_specs],
+    "env_id",
+    mujoco_testing_env_ids,
+    ids=mujoco_testing_env_ids,
 )
-def test_obs_space_mujoco_environments(env_spec: EnvSpec):
+def test_obs_space_mujoco_environments(env_id: str):
     """Check that the returned observations are contained in the observation space of the environment"""
-    env = env_spec.make(disable_env_checker=True)
+    env = gym.make(env_id, disable_env_checker=True)
     reset_obs, info = env.reset()
     assert env.observation_space.contains(
         reset_obs
-    ), f"Observation returned by reset() of {env_spec.id} is not contained in the default observation space {env.observation_space}."
+    ), f"Observation returned by reset() of {env_id} is not contained in the default observation space {env.observation_space}."
 
     action = env.action_space.sample()
     step_obs, _, _, _, _ = env.step(action)
     assert env.observation_space.contains(
         step_obs
-    ), f"Observation returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space}."
+    ), f"Observation returned by step(action) of {env_id} is not contained in the default observation space {env.observation_space}."
 
-    if env_spec.name in EXCLUDE_POS_FROM_OBS and (
-        env_spec.version == 4 or env_spec.version == 3
-    ):
-        env = env_spec.make(
-            disable_env_checker=True, exclude_current_positions_from_observation=False
+    ns, name, version = parse_env_id(env_id)
+    if name in EXCLUDE_POS_FROM_OBS and (version == 4 or version == 3):
+        env = gym.make(
+            env_id,
+            disable_env_checker=True,
+            exclude_current_positions_from_observation=False,
         )
         reset_obs, info = env.reset()
         assert env.observation_space.contains(
             reset_obs
-        ), f"Observation of {env_spec.id} is not contained in the default observation space {env.observation_space} when excluding current position from observation."
+        ), f"Observation of {env_id} is not contained in the default observation space {env.observation_space} when excluding current position from observation."
 
         step_obs, _, _, _, _ = env.step(action)
         assert env.observation_space.contains(
             step_obs
-        ), f"Observation returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space} when excluding current position from observation."
+        ), f"Observation returned by step(action) of {env_id} is not contained in the default observation space {env.observation_space} when excluding current position from observation."
 
     # Ant-v4 has the option of including contact forces in the observation space with the use_contact_forces argument
-    if env_spec.name == "Ant" and env_spec.version == 4:
-        env = env_spec.make(disable_env_checker=True, use_contact_forces=True)
+    if name == "Ant" and version == 4:
+        env = gym.make(env_id, disable_env_checker=True, use_contact_forces=True)
         reset_obs, info = env.reset()
         assert env.observation_space.contains(
             reset_obs
-        ), f"Observation of {env_spec.id} is not contained in the default observation space {env.observation_space} when using contact forces."
+        ), f"Observation of {env_id} is not contained in the default observation space {env.observation_space} when using contact forces."
 
         step_obs, _, _, _, _ = env.step(action)
         assert env.observation_space.contains(
             step_obs
-        ), f"Observation returned by step(action) of {env_spec.id} is not contained in the default observation space {env.observation_space} when using contact forces."
+        ), f"Observation returned by step(action) of {env_id} is not contained in the default observation space {env.observation_space} when using contact forces."
 
 
-MUJOCO_V2_V3_ENVS = [
-    spec.name
-    for spec in mujoco_testing_env_specs
-    if spec.version == 2 and f"{spec.name}-v3" in gym.envs.registry
-]
+MUJOCO_V2_V3_ENV_IDS = []
+for _env_id in mujoco_testing_env_ids:
+    _, name, version = parse_env_id(_env_id)
+
+    if version == 2 and get_env_id(None, name, 3) in gym.envs.registry:
+        MUJOCO_V2_V3_ENV_IDS.append(_env_id)
 
 
-@pytest.mark.parametrize("env_name", MUJOCO_V2_V3_ENVS)
-def test_mujoco_v2_to_v3_conversion(env_name: str):
+@pytest.mark.parametrize("env_id", MUJOCO_V2_V3_ENV_IDS)
+def test_mujoco_v2_to_v3_conversion(env_id: str):
     """Checks that all v2 mujoco environments are the same as v3 environments."""
-    verify_environments_match(f"{env_name}-v2", f"{env_name}-v3")
+    verify_environments_match(f"{env_id}-v2", f"{env_id}-v3")
 
 
-@pytest.mark.parametrize("env_name", MUJOCO_V2_V3_ENVS)
-def test_mujoco_incompatible_v3_to_v2(env_name: str):
+@pytest.mark.parametrize("env_id", MUJOCO_V2_V3_ENV_IDS)
+def test_mujoco_incompatible_v3_to_v2(env_id: str):
     """Checks that the v3 environment are slightly different from v2, (v3 has additional info keys that v2 does not)."""
     with pytest.raises(KeyError):
-        verify_environments_match(f"{env_name}-v3", f"{env_name}-v2")
+        verify_environments_match(f"{env_id}-v3", f"{env_id}-v2")

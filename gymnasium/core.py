@@ -277,38 +277,37 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
     @property
     def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""
-        env_spec = self.unwrapped.spec
+        env_spec = self.env.spec
 
         if env_spec is not None:
-            wrapper_specs: tuple[WrapperSpec, ...] = ()
+            from gymnasium.envs.registration import WrapperSpec
 
-            sub_env = self
-            while sub_env.unwrapped is not sub_env:
-                if issubclass(type(sub_env), EzPickle):
-                    assert hasattr(sub_env, "_ezpickle_args")
-                    if len(sub_env._ezpickle_args):
-                        warn(
-                            f"{sub_env.class_name()} EzPickle has position arguments rather than keyword arguments ({sub_env._ezpickle_args}). This is unsupported by `EnvSpec.to_json`."
-                        )
+            # See if the wrapper inherits from `EzPickle` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
+            if isinstance(self, EzPickle):
+                assert hasattr(self, "_ezpickle_args") and hasattr(
+                    self, "_ezpickle_kwargs"
+                )
 
-                    from gymnasium.envs.registration import WrapperSpec
-
-                    wrapper_spec = WrapperSpec(
-                        sub_env.class_name(),
-                        f"{sub_env.__module__}:{type(sub_env).__name__}",
-                        sub_env._ezpickle_kwargs,
-                    )
-
-                    wrapper_specs = (wrapper_spec,) + wrapper_specs
-                else:
+                ezpickle_args = getattr(self, "_ezpickle_args")
+                if ezpickle_args:
                     warn(
-                        f"{sub_env.class_name()} is not added to the `EnvSpec.applied_wrappers` as it does not inherit from `gymnasium.utils.EzPickle`."
+                        f"{self.class_name()} EzPickle has position arguments rather than keyword arguments ({ezpickle_args}). This is not saved in the `WrapperSpec.kwargs`."
                     )
 
-                sub_env = sub_env.env
+                kwargs = getattr(self, "_ezpickle_kwargs")
 
+            else:
+                kwargs = None
+
+            wrapper_spec = WrapperSpec(
+                name=self.class_name(),
+                entry_point=f"{self.__module__}:{type(self).__name__}",
+                kwargs=kwargs,
+            )
+
+            # to avoid reference issues we deepcopy the prior environments spec and add the new information
             env_spec = deepcopy(env_spec)
-            env_spec.applied_wrappers = wrapper_specs
+            env_spec.applied_wrappers += (wrapper_spec,)
 
         return env_spec
 

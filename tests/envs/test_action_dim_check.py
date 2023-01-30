@@ -3,16 +3,15 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import spaces
-from gymnasium.envs.registration import EnvSpec
-from tests.envs.utils import all_testing_initialised_envs, mujoco_testing_env_specs
+from tests.envs.utils import all_testing_initialised_envs, mujoco_testing_env_ids
 
 
 @pytest.mark.parametrize(
-    "env_spec",
-    mujoco_testing_env_specs,
-    ids=[env_spec.id for env_spec in mujoco_testing_env_specs],
+    "env_id",
+    mujoco_testing_env_ids,
+    ids=mujoco_testing_env_ids,
 )
-def test_mujoco_action_dimensions(env_spec: EnvSpec):
+def test_mujoco_action_dimensions(env_id: str):
     """Test that for all mujoco environment, mis-dimensioned actions, an error is raised.
 
     Types of mis-dimensioned actions:
@@ -22,7 +21,7 @@ def test_mujoco_action_dimensions(env_spec: EnvSpec):
      * Too many dimensions
      * Incorrect shape
     """
-    env = env_spec.make(disable_env_checker=True)
+    env = gym.make(env_id, disable_env_checker=True)
     env.reset()
 
     # Too few actions
