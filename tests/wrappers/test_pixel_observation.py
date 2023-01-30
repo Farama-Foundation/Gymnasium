@@ -14,6 +14,7 @@ class FakeEnvironment(gym.Env):
         self.action_space = spaces.Box(shape=(1,), low=-1, high=1, dtype=np.float32)
         self.render_mode = render_mode
 
+    # since env.render doesn't accept parameters anymore, this mock should be refactored
     def render(self, mode="human", width=32, height=32):
         image_shape = (height, width, 3)
         return np.zeros(image_shape, dtype=np.uint8)
@@ -47,6 +48,9 @@ class FakeDictObservationEnvironment(FakeEnvironment):
         )
         super().__init__(*args, **kwargs)
 
+    def render(self, mode="human", width=320, height=240):
+        return super().render(mode, width, height)
+
 
 @pytest.mark.parametrize("pixels_only", (True, False))
 def test_dict_observation(pixels_only):
@@ -65,7 +69,6 @@ def test_dict_observation(pixels_only):
         env,
         pixel_keys=(pixel_key,),
         pixels_only=pixels_only,
-        render_kwargs={pixel_key: {"width": width, "height": height}},
     )
 
     assert isinstance(wrapped_env.observation_space, spaces.Dict)

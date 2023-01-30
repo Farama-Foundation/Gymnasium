@@ -2,7 +2,7 @@
 import collections
 import copy
 from collections.abc import MutableMapping
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Tuple
 
 import numpy as np
 
@@ -52,7 +52,6 @@ class PixelObservationWrapper(gym.ObservationWrapper):
         self,
         env: gym.Env,
         pixels_only: bool = True,
-        render_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
         pixel_keys: Tuple[str, ...] = ("pixels",),
     ):
         """Initializes a new pixel Wrapper.
@@ -64,14 +63,11 @@ class PixelObservationWrapper(gym.ObservationWrapper):
                 observation will only include pixels. If `False`, the
                 observation dictionary will contain both the original
                 observations and the pixel observations.
-            render_kwargs (dict): Optional dictionary containing that maps elements of `pixel_keys` to
-                keyword arguments passed to the :meth:`self.render` method.
             pixel_keys: Optional custom string specifying the pixel
                 observation's key in the `OrderedDict` of observations.
                 Defaults to `(pixels,)`.
 
         Raises:
-            AssertionError: If any of the keys in ``render_kwargs``do not show up in ``pixel_keys``.
             ValueError: If ``env``'s observation space is not compatible with the
                 wrapper. Supported formats are a single array, or a dict of
                 arrays.
@@ -81,29 +77,13 @@ class PixelObservationWrapper(gym.ObservationWrapper):
         """
         super().__init__(env)
 
-        # Avoid side-effects that occur when render_kwargs is manipulated
-        render_kwargs = copy.deepcopy(render_kwargs)
         self.render_history = []
 
-        if render_kwargs is None:
-            render_kwargs = {}
-
-        for key in render_kwargs:
-            assert key in pixel_keys, (
-                "The argument render_kwargs should map elements of "
-                "pixel_keys to dictionaries of keyword arguments. "
-                f"Found key '{key}' in render_kwargs but not in pixel_keys."
-            )
-
-        default_render_kwargs = {}
         if not env.render_mode:
             raise AttributeError(
                 "env.render_mode must be specified to use PixelObservationWrapper:"
                 "`gymnasium.make(env_name, render_mode='rgb_array')`."
             )
-
-        for key in pixel_keys:
-            render_kwargs.setdefault(key, default_render_kwargs)
 
         wrapped_observation_space = env.observation_space
 
@@ -137,7 +117,7 @@ class PixelObservationWrapper(gym.ObservationWrapper):
         self.env.reset()
         pixels_spaces = {}
         for pixel_key in pixel_keys:
-            pixels = self._render(**render_kwargs[pixel_key])
+            pixels = self._render()
             pixels: np.ndarray = pixels[-1] if isinstance(pixels, List) else pixels
 
             if not hasattr(pixels, "dtype") or not hasattr(pixels, "shape"):
@@ -161,7 +141,6 @@ class PixelObservationWrapper(gym.ObservationWrapper):
         self.observation_space.spaces.update(pixels_spaces)
 
         self._pixels_only = pixels_only
-        self._render_kwargs = render_kwargs
         self._pixel_keys = pixel_keys
 
     def observation(self, observation):
@@ -186,24 +165,23 @@ class PixelObservationWrapper(gym.ObservationWrapper):
             observation[STATE_KEY] = wrapped_observation
 
         pixel_observations = {
-            pixel_key: self._render(**self._render_kwargs[pixel_key])
-            for pixel_key in self._pixel_keys
+            pixel_key: self._render() for pixel_key in self._pixel_keys
         }
 
         observation.update(pixel_observations)
 
         return observation
 
-    def render(self, *args, **kwargs):
+    def render(self):
         """Renders the environment."""
-        render = self.env.render(*args, **kwargs)
+        render = self.env.render()
         if isinstance(render, list):
             render = self.render_history + render
             self.render_history = []
         return render
 
-    def _render(self, *args, **kwargs):
-        render = self.env.render(*args, **kwargs)
+    def _render(self):
+        render = self.env.render()
         if isinstance(render, list):
             self.render_history += render
         return render
