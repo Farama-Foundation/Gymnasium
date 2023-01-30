@@ -123,7 +123,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         self,
         func_env: FuncEnv,
         num_envs: int,
-        time_limit: int = 0,
+        max_episode_steps: int = 0,
         metadata: dict[str, Any] | None = None,
         render_mode: str | None = None,
         reward_range: tuple[float, float] = (-float("inf"), float("inf")),
@@ -147,7 +147,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         self.render_mode = render_mode
         self.reward_range = reward_range
         self.spec = spec
-        self.time_limit = time_limit
+        self.time_limit = max_episode_steps
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
         self._to_reset = jnp.zeros(self.num_envs, dtype=jnp.bool_)

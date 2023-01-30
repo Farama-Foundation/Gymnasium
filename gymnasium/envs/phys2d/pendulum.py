@@ -220,7 +220,7 @@ class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
         self,
         num_envs: int,
         render_mode: str | None = None,
-        time_limit: int = 200,
+        max_episode_steps: int = 200,
         **kwargs: Any,
     ):
         """Constructor for the vectorized CartPole where the kwargs are applied to the functional environment."""
@@ -228,7 +228,7 @@ class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
             self,
             num_envs=num_envs,
             render_mode=render_mode,
-            time_limit=time_limit,
+            max_episode_steps=max_episode_steps,
             **kwargs,
         )
 
@@ -241,5 +241,5 @@ class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
             num_envs=num_envs,
             metadata=self.metadata,
             render_mode=render_mode,
-            time_limit=time_limit,
+            max_episode_steps=max_episode_steps,
         )

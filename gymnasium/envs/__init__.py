@@ -66,7 +66,6 @@ register(
     entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=200,
-    kwargs={"time_limit": 200},
     reward_threshold=195.0,
 )
 
@@ -75,7 +74,6 @@ register(
     entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=500,
-    kwargs={"time_limit": 500},
     reward_threshold=475.0,
 )
 
@@ -84,7 +82,6 @@ register(
     entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxVectorEnv",
     max_episode_steps=200,
-    kwargs={"time_limit": 200},
 )
 
 # Box2d
