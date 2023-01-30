@@ -97,6 +97,8 @@ TESTING_COMPOSITE_SPACES = [
     Sequence(Discrete(4)),
     Sequence(Dict({"feature": Box(0, 1, (3,))})),
     Sequence(Graph(node_space=Box(-100, 100, shape=(2, 2)), edge_space=Discrete(4))),
+    Sequence(Box(low=0.0, high=1.0), stack=True),
+    Sequence(Dict({"a": Box(0, 1, (3,)), "b": Discrete(5)}), stack=True),
 ]
 TESTING_COMPOSITE_SPACES_IDS = [f"{space}" for space in TESTING_COMPOSITE_SPACES]
 
