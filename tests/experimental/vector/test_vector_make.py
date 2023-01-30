@@ -1,13 +1,13 @@
 import pytest
 
 import gymnasium as gym
-from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.experimental import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
 
 
 def test_vector_make_id():
-    env = gym.vector.make("CartPole-v1")
+    env = gym.make_vec("CartPole-v1")
     assert isinstance(env, AsyncVectorEnv)
     assert env.num_envs == 1
     env.close()
@@ -15,23 +15,23 @@ def test_vector_make_id():
 
 @pytest.mark.parametrize("num_envs", [1, 3, 10])
 def test_vector_make_num_envs(num_envs):
-    env = gym.vector.make("CartPole-v1", num_envs=num_envs)
+    env = gym.make_vec("CartPole-v1", num_envs=num_envs)
     assert env.num_envs == num_envs
     env.close()
 
 
 def test_vector_make_asynchronous():
-    env = gym.vector.make("CartPole-v1", asynchronous=True)
+    env = gym.make_vec("CartPole-v1", vectorization_mode="async")
     assert isinstance(env, AsyncVectorEnv)
     env.close()
 
-    env = gym.vector.make("CartPole-v1", asynchronous=False)
+    env = gym.make_vec("CartPole-v1", vectorization_mode="sync")
     assert isinstance(env, SyncVectorEnv)
     env.close()
 
 
 def test_vector_make_wrappers():
-    env = gym.vector.make("CartPole-v1", num_envs=2, asynchronous=False)
+    env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
     assert isinstance(env, SyncVectorEnv)
     assert len(env.envs) == 2
 
@@ -46,10 +46,10 @@ def test_vector_make_wrappers():
     )
     env.close()
 
-    env = gym.vector.make(
+    env = gym.make_vec(
         "CartPole-v1",
         num_envs=2,
-        asynchronous=False,
+        vectorization_mode="sync",
         wrappers=[lambda _env: TransformObservation(_env, lambda obs: obs * 2)],
     )
     # As asynchronous environment are inaccessible, synchronous vector must be used

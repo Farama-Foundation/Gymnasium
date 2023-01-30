@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.vector.sync_vector_env import SyncVectorEnv
+from gymnasium.experimental.vector.sync_vector_env import SyncVectorEnv
 from tests.vector.utils import make_env
 
 
@@ -14,10 +14,10 @@ SEED = 42
 
 @pytest.mark.parametrize("asynchronous", [True, False])
 def test_vector_env_info(asynchronous: bool):
-    env = gym.vector.make(
+    env = gym.make_vec(
         ENV_ID,
         num_envs=NUM_ENVS,
-        asynchronous=asynchronous,
+        vectorization_mode="async" if asynchronous else "sync",
     )
     env.reset(seed=SEED)
     for _ in range(ENV_STEPS):

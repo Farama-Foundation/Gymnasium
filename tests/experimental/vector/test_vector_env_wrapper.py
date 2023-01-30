@@ -1,10 +1,10 @@
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.vector import VectorEnvWrapper
+from gymnasium.experimental.vector import VectorWrapper
 
 
-class DummyWrapper(VectorEnvWrapper):
+class DummyWrapper(VectorWrapper):
     def __init__(self, env):
         super().__init__(env)
         self.env = env
@@ -16,7 +16,7 @@ class DummyWrapper(VectorEnvWrapper):
 
 
 def test_vector_env_wrapper_inheritance():
-    env = gym.vector.make("FrozenLake-v1", asynchronous=True)
+    env = gym.make_vec("FrozenLake-v1", vectorization_mode="async")
     wrapped = DummyWrapper(env)
     wrapped.reset()
     assert wrapped.counter == 1
@@ -24,8 +24,8 @@ def test_vector_env_wrapper_inheritance():
 
 def test_vector_env_wrapper_attributes():
     """Test if `set_attr`, `call` methods for VecEnvWrapper get correctly forwarded to the vector env it is wrapping."""
-    env = gym.vector.make("CartPole-v1", num_envs=3)
-    wrapped = DummyWrapper(gym.vector.make("CartPole-v1", num_envs=3))
+    env = gym.make_vec("CartPole-v1", num_envs=3)
+    wrapped = DummyWrapper(gym.make_vec("CartPole-v1", num_envs=3))
 
     assert np.allclose(wrapped.call("gravity"), env.call("gravity"))
     env.set_attr("gravity", [20.0, 20.0, 20.0])
