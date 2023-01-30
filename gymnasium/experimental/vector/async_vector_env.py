@@ -189,6 +189,7 @@ class AsyncVectorEnv(VectorEnv):
                 calls to :meth:`reset_async`, with no call to :meth:`reset_wait` in between.
         """
         self._assert_is_running()
+        self._to_reset = np.zeros(self.num_envs, dtype=np.bool_)
 
         if seed is None:
             seed = [None for _ in range(self.num_envs)]

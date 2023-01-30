@@ -92,6 +92,8 @@ class SyncVectorEnv(VectorEnv):
 
         self._terminateds[:] = False
         self._truncateds[:] = False
+        self._to_reset[:] = False
+
         observations = []
         infos = {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
