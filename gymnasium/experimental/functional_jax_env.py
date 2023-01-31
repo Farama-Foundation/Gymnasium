@@ -123,7 +123,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         self,
         func_env: FuncEnv,
         num_envs: int,
-        time_limit: int = 0,
+        max_episode_steps: int = 0,
         metadata: dict[str, Any] | None = None,
         render_mode: str | None = None,
         reward_range: tuple[float, float] = (-float("inf"), float("inf")),
@@ -147,9 +147,10 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         self.render_mode = render_mode
         self.reward_range = reward_range
         self.spec = spec
-        self.time_limit = time_limit
+        self.time_limit = max_episode_steps
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
+        self._to_reset = jnp.zeros(self.num_envs, dtype=jnp.bool_)
 
         self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
@@ -180,6 +181,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         info = self.func_env.state_info(self.state)
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
+        self._to_reset = jnp.zeros(self.num_envs, dtype=jnp.bool_)
 
         obs = jax_to_numpy(obs)
 
@@ -198,28 +200,40 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
 
         rng, self.rng = jrng.split(self.rng)
 
-        rng = jrng.split(rng, self.num_envs)
+        # Reasoning for the following code:
+        # We need to reset some environments, and step through some other environments.
+        # First we step through all the environments and update the state. This is a bit wasteful, but should be ok.
+        # Then we reset the environments that need to be reset, and update the state.
+        # (All of this is for the step-reset order change)
 
+        rng = jrng.split(rng, self.num_envs)
         next_state = self.func_env.transition(self.state, action, rng)
         reward = self.func_env.reward(self.state, action, next_state)
         terminated = self.func_env.terminal(next_state)
 
         self.steps += 1
 
-        truncated = jnp.zeros_like(terminated)
-        info = self.func_env.step_info(self.state, action, next_state)
-        self.state = next_state
-
-        done = jnp.logical_or(terminated, truncated)
-        if jnp.any(done):
-            # TODO: record the final observations and return them in the info, check the format
-            to_reset = jnp.where(done)[0]
+        if self._to_reset.any():
+            to_reset = jnp.where(self._to_reset)[0]
             reset_count = to_reset.shape[0]
             rng, self.rng = jrng.split(self.rng)
             rng = jrng.split(rng, reset_count)
+
             new_initials = self.func_env.initial(rng)
-            self.state = self.state.at[to_reset].set(new_initials)
+            next_state = self.state.at[to_reset].set(new_initials)
+            reward = reward.at[to_reset].set(0)
+            terminated = terminated.at[to_reset].set(False)
             self.steps = self.steps.at[to_reset].set(0)
+
+        truncated = (
+            self.steps >= self.time_limit
+            if self.time_limit > 0
+            else jnp.zeros_like(terminated)
+        )
+        info = self.func_env.step_info(self.state, action, next_state)
+        self.state = next_state
+
+        self._to_reset = jnp.logical_or(terminated, truncated)
 
         observation = self.func_env.observation(next_state)
         observation = jax_to_numpy(observation)

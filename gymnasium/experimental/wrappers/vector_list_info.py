@@ -21,12 +21,12 @@ class VectorListInfo(gym.experimental.VectorWrapper):
     Example::
 
         >>> # actual
-        >>> {
-        ...      "k": np.array[0., 0., 0.5, 0.3],
-        ...      "_k": np.array[False, False, True, True]
+        >>> {  # doctest: +SKIP
+        ...      "k": np.array([0., 0., 0.5, 0.3]),
+        ...      "_k": np.array([False, False, True, True])
         ...  }
         >>> # classic
-        >>> [{}, {}, {k: 0.5}, {k: 0.3}]
+        >>> [{}, {}, {k: 0.5}, {k: 0.3}]  # doctest: +SKIP
     """
 
     def __init__(self, env: VectorEnv):

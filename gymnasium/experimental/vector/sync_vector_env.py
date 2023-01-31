@@ -20,10 +20,10 @@ class SyncVectorEnv(VectorEnv):
 
         >>> import gymnasium as gym
         >>> env = gym.vector.SyncVectorEnv([
-        ...     lambda: gym.make("Pendulum-v0", g=9.81),
-        ...     lambda: gym.make("Pendulum-v0", g=1.62)
+        ...     lambda: gym.make("Pendulum-v1", g=9.81),
+        ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()
+        >>> env.reset()  # doctest: +SKIP
         array([[-0.8286432 ,  0.5597771 ,  0.90249056],
                [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
     """
@@ -68,6 +68,8 @@ class SyncVectorEnv(VectorEnv):
         self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
 
+        self._to_reset = np.zeros((self.num_envs,), dtype=np.bool_)
+
     def reset(
         self,
         seed: Optional[Union[int, List[int]]] = None,
@@ -90,6 +92,8 @@ class SyncVectorEnv(VectorEnv):
 
         self._terminateds[:] = False
         self._truncateds[:] = False
+        self._to_reset[:] = False
+
         observations = []
         infos = {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
@@ -119,20 +123,23 @@ class SyncVectorEnv(VectorEnv):
 
         observations, infos = [], {}
         for i, (env, action) in enumerate(zip(self.envs, actions)):
-
-            (
-                observation,
-                self._rewards[i],
-                self._terminateds[i],
-                self._truncateds[i],
-                info,
-            ) = env.step(action)
+            if self._to_reset[i]:
+                observation, info = env.reset()
+                self._rewards[i] = 0.0
+                self._terminateds[i] = False
+                self._truncateds[i] = False
+                self._to_reset[i] = False
+            else:
+                (
+                    observation,
+                    self._rewards[i],
+                    self._terminateds[i],
+                    self._truncateds[i],
+                    info,
+                ) = env.step(action)
 
             if self._terminateds[i] or self._truncateds[i]:
-                old_observation, old_info = observation, info
-                observation, info = env.reset()
-                info["final_observation"] = old_observation
-                info["final_info"] = old_info
+                self._to_reset[i] = True
             observations.append(observation)
             infos = self._add_info(infos, info, i)
         self.observations = concatenate(
