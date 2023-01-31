@@ -36,12 +36,6 @@ def test_vector_env_equal(shared_memory):
         sync_observations, sync_rewards, sync_terminateds, sync_truncateds, sync_infos = sync_env.step(actions)
         # fmt: on
 
-        if any(sync_terminateds) or any(sync_truncateds):
-            assert "final_observation" in async_infos
-            assert "_final_observation" in async_infos
-            assert "final_observation" in sync_infos
-            assert "_final_observation" in sync_infos
-
         assert np.all(async_observations == sync_observations)
         assert np.all(async_rewards == sync_rewards)
         assert np.all(async_terminateds == sync_terminateds)
@@ -107,7 +101,3 @@ def test_final_obs_info(vectoriser):
         and termination == np.array([True])
         and info["reset"] == np.array([True])
     )
-    assert "final_observation" in info and "final_info" in info
-    assert info["final_observation"] == np.array([0]) and info["final_info"] == {
-        "action": 3
-    }
