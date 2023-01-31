@@ -51,10 +51,10 @@ class AsyncVectorEnv(VectorEnv):
 
         >>> import gymnasium as gym
         >>> env = gym.vector.AsyncVectorEnv([
-        ...     lambda: gym.make("Pendulum-v0", g=9.81),
-        ...     lambda: gym.make("Pendulum-v0", g=1.62)
+        ...     lambda: gym.make("Pendulum-v1", g=9.81),
+        ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()
+        >>> env.reset()  # doctest: +SKIP
         array([[-0.8286432 ,  0.5597771 ,  0.90249056],
                [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
     """
@@ -166,6 +166,7 @@ class AsyncVectorEnv(VectorEnv):
                 child_pipe.close()
 
         self._state = AsyncState.DEFAULT
+        self._to_reset = np.zeros(self.num_envs, dtype=np.bool_)
         self._check_spaces()
 
     def reset_async(
@@ -188,6 +189,7 @@ class AsyncVectorEnv(VectorEnv):
                 calls to :meth:`reset_async`, with no call to :meth:`reset_wait` in between.
         """
         self._assert_is_running()
+        self._to_reset = np.zeros(self.num_envs, dtype=np.bool_)
 
         if seed is None:
             seed = [None for _ in range(self.num_envs)]
@@ -296,8 +298,8 @@ class AsyncVectorEnv(VectorEnv):
             )
 
         actions = iterate(self.action_space, actions)
-        for pipe, action in zip(self.parent_pipes, actions):
-            pipe.send(("step", action))
+        for pipe, action, to_reset in zip(self.parent_pipes, actions, self._to_reset):
+            pipe.send(("step", (action, to_reset)))
         self._state = AsyncState.WAITING_STEP
 
     def step_wait(
@@ -351,6 +353,8 @@ class AsyncVectorEnv(VectorEnv):
                 observations_list,
                 self.observations,
             )
+
+        self._to_reset = [term or trunc for term, trunc in zip(terminateds, truncateds)]
 
         return (
             deepcopy(self.observations) if self.copy else self.observations,
@@ -624,18 +628,21 @@ def _worker(
                 pipe.send(((observation, info), True))
 
             elif command == "step":
-                (
-                    observation,
-                    reward,
-                    terminated,
-                    truncated,
-                    info,
-                ) = env.step(data)
-                if terminated or truncated:
-                    old_observation, old_info = observation, info
+                action, to_reset = data
+
+                if to_reset:
                     observation, info = env.reset()
-                    info["final_observation"] = old_observation
-                    info["final_info"] = old_info
+                    reward = 0.0
+                    terminated = False
+                    truncated = False
+                else:
+                    (
+                        observation,
+                        reward,
+                        terminated,
+                        truncated,
+                        info,
+                    ) = env.step(action)
 
                 if shared_memory:
                     write_to_shared_memory(
