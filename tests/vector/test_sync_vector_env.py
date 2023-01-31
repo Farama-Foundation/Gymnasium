@@ -3,7 +3,7 @@ import pytest
 
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gymnasium.vector import SyncVectorEnv
+from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from tests.envs.utils import all_testing_env_specs
 from tests.vector.utils import (
     CustomSpace,
