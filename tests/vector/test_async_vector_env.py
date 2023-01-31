@@ -10,7 +10,7 @@ from gymnasium.error import (
     NoAsyncCallError,
 )
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gymnasium.vector import AsyncVectorEnv
+from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from tests.vector.utils import (
     CustomSpace,
     make_custom_space_env,
