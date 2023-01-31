@@ -51,6 +51,7 @@ Please note that this is an incomplete list, and just includes libraries that th
 * [CleanRL](https://github.com/vwxyzjn/cleanrl) is a learning library based on the Gymnasium API. It is designed to cater to newer people in the field and provides very good reference implementations.
 * [PettingZoo](https://github.com/Farama-Foundation/PettingZoo) is a multi-agent version of Gymnasium with a number of implemented environments, i.e. multi-agent Atari environments.
 * The Farama Foundation also has a collection of many other [environments](https://farama.org/projects) that are maintained by the same team as Gymnasium and use the Gymnasium API.
+* If you're looking to track your rewards, hyperparameters, random seeds and more you can use [Comet](https://www.comet.com/site/?utm_source=gymnasium&utm_medium=partner&utm_campaign=partner_gymnasium_2023&utm_content=github) which has a built-in integration for Gymnasium. [Here's tutorial on how to use them together](https://bit.ly/CometGymnasiumIntegration) [sponsor].
 
 ## Environment Versioning
 
