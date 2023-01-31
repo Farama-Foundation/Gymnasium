@@ -3,7 +3,7 @@ from functools import partial
 import numpy as np
 import pytest
 
-from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.spaces import Discrete
 from tests.testing_env import GenericTestEnv
 from tests.vector.utils import make_env
