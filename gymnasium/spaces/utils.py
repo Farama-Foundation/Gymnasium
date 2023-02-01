@@ -14,6 +14,7 @@ from typing import Any, TypeVar, Union, cast
 import numpy as np
 from numpy.typing import NDArray
 
+import gymnasium as gym
 from gymnasium.spaces import (
     Box,
     Dict,
@@ -33,13 +34,6 @@ from gymnasium.spaces import (
 def flatdim(space: Space[Any]) -> int:
     """Return the number of dimensions a flattened equivalent of this space would have.
 
-    Example usage::
-
-        >>> from gymnasium.spaces import Discrete, Dict
-        >>> space = Dict({"position": Discrete(2), "velocity": Discrete(3)})
-        >>> flatdim(space)
-        5
-
     Args:
         space: The space to return the number of dimensions of the flattened spaces
 
@@ -49,6 +43,12 @@ def flatdim(space: Space[Any]) -> int:
     Raises:
          NotImplementedError: if the space is not defined in :mod:`gym.spaces`.
          ValueError: if the space cannot be flattened into a :class:`gymnasium.spaces.Box`
+
+    Example:
+        >>> from gymnasium.spaces import Dict, Discrete
+        >>> space = Dict({"position": Discrete(2), "velocity": Discrete(3)})
+        >>> flatdim(space)
+        5
     """
     if space.is_np_flattenable is False:
         raise ValueError(
@@ -117,19 +117,6 @@ def flatten(space: Space[T], x: T) -> FlatType:
     This is useful when e.g. points from spaces must be passed to a neural
     network, which only understands flat arrays of floats.
 
-    Example usage::
-        >>> from gymnasium.spaces import Box, Discrete, Tuple
-        >>> space = Box(0, 1, shape=(3, 5))
-        >>> flatten(space, space.sample()).shape
-        (15,)
-        >>> space = Discrete(4)
-        >>> flatten(space, 2)
-        array([0, 0, 1, 0])
-        >>> space = Tuple((Box(0, 1, shape=(2,)), Box(0, 1, shape=(3,)), Discrete(3)))
-        >>> example = ((.5, .25), (1., 0., .2), 1)
-        >>> flatten(space, example)
-        array([0.5 , 0.25, 1.  , 0.  , 0.2 , 0.  , 1.  , 0.  ])
-
     Args:
         space: The space that ``x`` is flattened by
         x: The value to flatten
@@ -151,6 +138,19 @@ def flatten(space: Space[T], x: T) -> FlatType:
 
     Raises:
         NotImplementedError: If the space is not defined in :mod:`gymnasium.spaces`.
+
+    Example:
+        >>> from gymnasium.spaces import Box, Discrete, Tuple
+        >>> space = Box(0, 1, shape=(3, 5))
+        >>> flatten(space, space.sample()).shape
+        (15,)
+        >>> space = Discrete(4)
+        >>> flatten(space, 2)
+        array([0, 0, 1, 0])
+        >>> space = Tuple((Box(0, 1, shape=(2,)), Box(0, 1, shape=(3,)), Discrete(3)))
+        >>> example = ((.5, .25), (1., 0., .2), 1)
+        >>> flatten(space, example)
+        array([0.5 , 0.25, 1.  , 0.  , 0.2 , 0.  , 1.  , 0.  ])
     """
     raise NotImplementedError(f"Unknown space: `{space}`")
 
@@ -237,8 +237,21 @@ def _flatten_text(space: Text, x: str) -> NDArray[np.int32]:
 
 
 @flatten.register(Sequence)
-def _flatten_sequence(space: Sequence, x: tuple[Any, ...]) -> tuple[Any, ...]:
-    return tuple(flatten(space.feature_space, item) for item in x)
+def _flatten_sequence(
+    space: Sequence, x: tuple[Any, ...] | Any
+) -> tuple[Any, ...] | Any:
+    if space.stack:
+        samples_iters = gym.vector.utils.iterate(space.batched_feature_space, x)
+        flattened_samples = [
+            flatten(space.feature_space, sample) for sample in samples_iters
+        ]
+        flattened_space = flatten_space(space.feature_space)
+        out = gym.vector.utils.create_empty_array(
+            flattened_space, n=len(flattened_samples)
+        )
+        return gym.vector.utils.concatenate(flattened_space, flattened_samples, out)
+    else:
+        return tuple(flatten(space.feature_space, item) for item in x)
 
 
 @singledispatch
@@ -364,8 +377,21 @@ def _unflatten_text(space: Text, x: NDArray[np.int32]) -> str:
 
 
 @unflatten.register(Sequence)
-def _unflatten_sequence(space: Sequence, x: tuple[Any, ...]) -> tuple[Any, ...]:
-    return tuple(unflatten(space.feature_space, item) for item in x)
+def _unflatten_sequence(space: Sequence, x: tuple[Any, ...]) -> tuple[Any, ...] | Any:
+    if space.stack:
+        flattened_space = flatten_space(space.feature_space)
+        flatten_iters = gym.vector.utils.iterate(flattened_space, x)
+        unflattened_samples = [
+            unflatten(space.feature_space, sample) for sample in flatten_iters
+        ]
+        out = gym.vector.utils.create_empty_array(
+            space.feature_space, len(unflattened_samples)
+        )
+        return gym.vector.utils.concatenate(
+            space.feature_space, unflattened_samples, out
+        )
+    else:
+        return tuple(unflatten(space.feature_space, item) for item in x)
 
 
 @singledispatch
@@ -388,7 +414,17 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
     a Box, and the results may not be integers or one-hot encodings. This may result in
     errors or non-uniform sampling.
 
-    Example::
+    Args:
+        space: The space to flatten
+
+    Returns:
+        A flattened Box
+
+    Raises:
+        NotImplementedError: if the space is not defined in :mod:`gymnasium.spaces`.
+
+    Example:
+        Flatten spaces.Box:
         >>> from gymnasium.spaces import Box
         >>> box = Box(0.0, 1.0, shape=(3, 4, 5))
         >>> box
@@ -398,15 +434,15 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> flatten(box, box.sample()) in flatten_space(box)
         True
 
-    Example that flattens a discrete space::
+        Flatten spaces.Discrete:
         >>> from gymnasium.spaces import Discrete
         >>> discrete = Discrete(5)
         >>> flatten_space(discrete)
         Box(0, 1, (5,), int64)
-        >>> flatten(box, box.sample()) in flatten_space(box)
+        >>> flatten(discrete, discrete.sample()) in flatten_space(discrete)
         True
 
-    Example that recursively flattens a dict::
+        Flatten spaces.Dict:
         >>> from gymnasium.spaces import Dict, Discrete, Box
         >>> space = Dict({"position": Discrete(2), "velocity": Box(0, 1, shape=(2, 2))})
         >>> flatten_space(space)
@@ -414,23 +450,13 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> flatten(space, space.sample()) in flatten_space(space)
         True
 
-
-    Example that flattens a graph::
-
+        Flatten spaces.Graph:
+        >>> from gymnasium.spaces import Graph, Discrete, Box
         >>> space = Graph(node_space=Box(low=-100, high=100, shape=(3, 4)), edge_space=Discrete(5))
         >>> flatten_space(space)
         Graph(Box(-100.0, 100.0, (12,), float32), Box(0, 1, (5,), int64))
         >>> flatten(space, space.sample()) in flatten_space(space)
         True
-
-    Args:
-        space: The space to flatten
-
-    Returns:
-        A flattened Box
-
-    Raises:
-        NotImplementedError: if the space is not defined in :mod:`gymnasium.spaces`.
     """
     raise NotImplementedError(f"Unknown space: `{space}`")
 
@@ -494,4 +520,4 @@ def _flatten_space_text(space: Text) -> Box:
 
 @flatten_space.register(Sequence)
 def _flatten_space_sequence(space: Sequence) -> Sequence:
-    return Sequence(flatten_space(space.feature_space))
+    return Sequence(flatten_space(space.feature_space), stack=space.stack)
