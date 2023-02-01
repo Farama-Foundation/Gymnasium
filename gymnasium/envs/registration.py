@@ -45,18 +45,10 @@ __all__ = [
     "EnvSpec",
     "registry",
     "current_namespace",
-    # Core Functions
     "register",
     "make",
     "spec",
     "pprint_registry",
-    # Minor Functions
-    "namespace",
-    "get_env_id",
-    "parse_env_id",
-    "find_highest_version",
-    "load_env",
-    "load_plugin_envs",
 ]
 
 
@@ -85,9 +77,6 @@ class EnvSpec:
     id: str
     entry_point: EnvCreator | str
 
-    # Environment arguments
-    kwargs: dict = field(default_factory=dict)
-
     # Environment attributes
     reward_threshold: float | None = field(default=None)
     nondeterministic: bool = field(default=False)
@@ -103,6 +92,9 @@ class EnvSpec:
     namespace: str | None = field(init=False)
     name: str = field(init=False)
     version: int | None = field(init=False)
+
+    # Environment arguments
+    kwargs: dict = field(default_factory=dict)
 
     def __post_init__(self):
         """Calls after the spec is created to extract the namespace, name and version from the id."""
@@ -569,7 +561,9 @@ def make(
             _check_version_exists(ns, name, version)
             raise error.Error(f"No registered env with id: {env_name}")
 
-    assert isinstance(env_spec, EnvSpec)
+    assert isinstance(
+        env_spec, EnvSpec
+    ), f"We expected to collect an `EnvSpec`, actually collected a {type(env_spec)}"
     # Extract the spec kwargs and append the make kwargs
     spec_kwargs = env_spec.kwargs.copy()
     spec_kwargs.update(kwargs)
@@ -692,7 +686,9 @@ def spec(env_id: str) -> EnvSpec:
         _check_version_exists(ns, name, version)
         raise error.Error(f"No registered env with id: {env_id}")
     else:
-        assert isinstance(env_spec, EnvSpec)
+        assert isinstance(
+            env_spec, EnvSpec
+        ), f"Expected the registry for {env_id} to be an `EnvSpec`, actual type is {type(env_spec)}"
         return env_spec
 
 
