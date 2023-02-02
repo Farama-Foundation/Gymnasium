@@ -339,7 +339,9 @@ def test_make_kwargs(register_make_testing_envs):
 def test_import_module_during_make():
     # Test custom environment which is registered at make
     assert "RegisterDuringMake-v0" not in gym.registry
-    env = gym.make("tests.envs.registration.utils_unregistered_env:RegisterDuringMake-v0")
+    env = gym.make(
+        "tests.envs.registration.utils_unregistered_env:RegisterDuringMake-v0"
+    )
     assert "RegisterDuringMake-v0" in gym.registry
     gym.registry.pop("RegisterDuringMake-v0")
 
