@@ -1,9 +1,8 @@
 import numpy as np
 import pytest
 
-import gymnasium as gym
 from gymnasium.logger import warn
-from tests.envs.utils import all_testing_env_ids
+from tests.envs.utils import all_testing_env_specs
 
 
 def check_rendered(rendered_frame, mode: str):
@@ -40,26 +39,28 @@ def check_rendered(rendered_frame, mode: str):
 
 
 # We do not check render_mode for some mujoco envs and any old Gym environment wrapped by `GymEnvironment`
-render_mode_env_ids = [
+render_mode_env_specs = [
     spec
-    for spec in all_testing_env_ids
+    for spec in all_testing_env_specs
     if "mujoco" not in spec.entry_point or "v4" in spec.id
 ]
 
 
-@pytest.mark.parametrize("env_id", render_mode_env_ids, ids=render_mode_env_ids)
-def test_render_modes(env_id):
+@pytest.mark.parametrize(
+    "spec", render_mode_env_specs, ids=[spec.id for spec in render_mode_env_specs]
+)
+def test_render_modes(spec):
     """There is a known issue where rendering a mujoco environment then mujoco-py will cause an error on non-mac based systems.
 
     Therefore, we are only testing with mujoco environments.
     """
-    env = gym.make(env_id)
+    env = spec.make()
 
     assert "rgb_array" in env.metadata["render_modes"]
 
     for mode in env.metadata["render_modes"]:
         if mode != "human":
-            new_env = gym.make(env_id, render_mode=mode)
+            new_env = spec.make(render_mode=mode)
 
             new_env.reset()
             rendered = new_env.render()

@@ -38,20 +38,19 @@ all_testing_initialised_envs: List[gym.Env] = [
 ]
 
 # All testing, mujoco and gymnasium environment specs
-all_testing_env_ids: List[str] = [
-    env.spec.id for env in all_testing_initialised_envs if env.spec is not None
+all_testing_env_specs: List[EnvSpec] = [
+    env.spec for env in all_testing_initialised_envs
 ]
-mujoco_testing_env_ids: List[str] = [
-    env.spec.id
-    for env in all_testing_initialised_envs
-    if env.spec is not None and "gymnasium.envs.mujoco" in env.spec.entry_point
+mujoco_testing_env_specs: List[EnvSpec] = [
+    env_spec
+    for env_spec in all_testing_env_specs
+    if "gymnasium.envs.mujoco" in env_spec.entry_point
 ]
-_gym_testing_env_ids: List[str] = [
-    env.spec.id
-    for env in all_testing_initialised_envs
-    if env.spec is not None
-    and any(
-        f"gymnasium.envs.{ep}" in env.spec.entry_point
+gym_testing_env_specs: List[EnvSpec] = [
+    env_spec
+    for env_spec in all_testing_env_specs
+    if any(
+        f"gymnasium.envs.{ep}" in env_spec.entry_point
         for ep in ["box2d", "classic_control", "toy_text"]
     )
 ]

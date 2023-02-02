@@ -810,19 +810,19 @@ def make(
         if hasattr(id, "applied_wrappers") and id.applied_wrappers is not None:
             if max_episode_steps is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `max_episode_step` parameter is not used (value: {max_episode_steps})"
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `max_episode_step` parameter is not used, do `gym.make({id.id}, max_episode_steps={max_episode_steps})`"
                 )
             if autoreset is True:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `autoreset` parameter is not used (value: {max_episode_steps})"
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `autoreset` parameter is not used, do `gym.make({id.id}, autoreset={autoreset})`"
                 )
             if apply_api_compatibility is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `apply_api_compatibility` parameter is not used (value: {max_episode_steps})"
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `apply_api_compatibility` parameter is not used, do `gym.make({id.id}, apply_api_compatibility={apply_api_compatibility})`"
                 )
             if disable_env_checker is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `disable_env_checker` parameter is not used (value: {max_episode_steps})"
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `disable_env_checker` parameter is not used, do `gym.make({id.id}, disable_env_checker={disable_env_checker})`"
                 )
 
             return _recreate_env_spec(
