@@ -18,7 +18,7 @@ def register_registration_testing_envs():
         env_id = f"{namespace}/{versioned_name}-v{version}"
         gym.register(
             id=env_id,
-            entry_point="tests.envs.utils_envs:ArgumentEnv",
+            entry_point="tests.envs.registration.utils_envs:ArgumentEnv",
             kwargs={
                 "arg1": "arg1",
                 "arg2": "arg2",

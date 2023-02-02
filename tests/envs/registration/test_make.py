@@ -34,7 +34,7 @@ def register_make_testing_envs():
     """Registers testing envs for `gym.make`"""
     gym.register(
         id="test.ArgumentEnv-v0",
-        entry_point="tests.envs.utils_envs:ArgumentEnv",
+        entry_point="tests.envs.registration.utils_envs:ArgumentEnv",
         kwargs={
             "arg1": "arg1",
             "arg2": "arg2",
@@ -43,21 +43,21 @@ def register_make_testing_envs():
 
     gym.register(
         id="test/NoHuman-v0",
-        entry_point="tests.envs.utils_envs:NoHuman",
+        entry_point="tests.envs.registration.utils_envs:NoHuman",
     )
     gym.register(
         id="test/NoHumanOldAPI-v0",
-        entry_point="tests.envs.utils_envs:NoHumanOldAPI",
+        entry_point="tests.envs.registration.utils_envs:NoHumanOldAPI",
     )
 
     gym.register(
         id="test/NoHumanNoRGB-v0",
-        entry_point="tests.envs.utils_envs:NoHumanNoRGB",
+        entry_point="tests.envs.registration.utils_envs:NoHumanNoRGB",
     )
 
     gym.register(
         id="test/NoRenderModesMetadata-v0",
-        entry_point="tests.envs.utils_envs:NoRenderModesMetadata",
+        entry_point="tests.envs.registration.utils_envs:NoRenderModesMetadata",
     )
 
     yield
@@ -214,7 +214,7 @@ def test_make_order_enforcing():
 
     gym.register(
         id="test.OrderlessArgumentEnv-v0",
-        entry_point="tests.envs.utils_envs:ArgumentEnv",
+        entry_point="tests.envs.registration.utils_envs:ArgumentEnv",
         order_enforce=False,
         kwargs={"arg1": None, "arg2": None, "arg3": None},
     )
@@ -337,7 +337,9 @@ def test_make_kwargs(register_make_testing_envs):
 def test_import_module_during_make():
     # Test custom environment which is registered at make
     assert "RegisterDuringMake-v0" not in gym.registry
-    env = gym.make("tests.envs.utils_unregistered_env:RegisterDuringMake-v0")
+    env = gym.make(
+        "tests.envs.registration.utils_unregistered_env:RegisterDuringMake-v0"
+    )
     assert "RegisterDuringMake-v0" in gym.registry
     gym.registry.pop("RegisterDuringMake-v0")
 
