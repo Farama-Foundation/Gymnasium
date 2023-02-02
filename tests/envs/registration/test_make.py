@@ -16,9 +16,9 @@ from gymnasium.wrappers import (
     TimeLimit,
 )
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
+from tests.envs.registration.utils_envs import ArgumentEnv
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
-from tests.envs.utils import all_testing_env_ids
-from tests.envs.utils_envs import ArgumentEnv, RegisterDuringMakeEnv
+from tests.envs.utils import all_testing_env_specs
 from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
 
@@ -32,11 +32,6 @@ except ImportError:
 @pytest.fixture(scope="function")
 def register_make_testing_envs():
     """Registers testing envs for `gym.make`"""
-    gym.register(
-        "RegisterDuringMakeEnv-v0",
-        entry_point="tests.envs.utils_envs:RegisterDuringMakeEnv",
-    )
-
     gym.register(
         id="test.ArgumentEnv-v0",
         entry_point="tests.envs.utils_envs:ArgumentEnv",
@@ -67,7 +62,6 @@ def register_make_testing_envs():
 
     yield
 
-    del gym.envs.registration.registry["RegisterDuringMakeEnv-v0"]
     del gym.envs.registration.registry["test.ArgumentEnv-v0"]
     del gym.envs.registration.registry["test/NoRenderModesMetadata-v0"]
     del gym.envs.registration.registry["test/NoHuman-v0"]
@@ -342,11 +336,14 @@ def test_make_kwargs(register_make_testing_envs):
     env.close()
 
 
-def test_import_module_during_make(register_make_testing_envs):
+def test_import_module_during_make():
     # Test custom environment which is registered at make
-    env = gym.make(
-        "tests.envs.utils:RegisterDuringMakeEnv-v0",
-        disable_env_checker=True,
-    )
+    assert "RegisterDuringMake-v0" not in gym.registry
+    env = gym.make("tests.envs.utils_unregistered_env:RegisterDuringMake-v0")
+    assert "RegisterDuringMake-v0" in gym.registry
+    gym.registry.pop("RegisterDuringMake-v0")
+
+    from tests.envs.registration.utils_unregistered_env import RegisterDuringMakeEnv
+
     assert isinstance(env.unwrapped, RegisterDuringMakeEnv)
     env.close()

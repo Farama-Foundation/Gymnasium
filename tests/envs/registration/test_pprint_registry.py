@@ -1,5 +1,4 @@
 import gymnasium as gym
-from gymnasium.envs.registration import EnvSpec
 
 
 # To ignore the trailing whitespaces, will need flake to ignore this file.

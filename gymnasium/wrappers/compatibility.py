@@ -65,8 +65,8 @@ class EnvCompatibility(gym.Env, gym.utils.EzPickle):
             render_mode (str): the render mode to use when rendering the environment, passed automatically to env.render
         """
         logger.warn(
-            "The `gymnasium.make(..., apply_api_compatibility=...)` parameter is deprecated and will be removed in v0.28. "
-            "Instead use `gym.make('GymV22Environment-v0', env_name=...)` or `from shimmy import GymV22CompatibilityV0`"
+            "The `gymnasium.make(..., apply_api_compatibility=...)` parameter is deprecated and will be removed in v0.29. "
+            "Instead use `gym.make('GymV21Environment-v0', env_name=...)` or `from shimmy import GymV21CompatibilityV0`"
         )
         gym.utils.EzPickle.__init__(self, old_env=old_env, render_mode=render_mode)
 

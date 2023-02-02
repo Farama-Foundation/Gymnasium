@@ -3,12 +3,20 @@ from typing import Callable, Iterable, List, Optional, Union
 
 import gymnasium as gym
 from gymnasium.core import Env
+from gymnasium.vector import utils
 from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from gymnasium.vector.vector_env import VectorEnv, VectorEnvWrapper
 
 
-__all__ = ["AsyncVectorEnv", "SyncVectorEnv", "VectorEnv", "VectorEnvWrapper", "make"]
+__all__ = [
+    "AsyncVectorEnv",
+    "SyncVectorEnv",
+    "VectorEnv",
+    "VectorEnvWrapper",
+    "make",
+    "utils",
+]
 
 
 def make(

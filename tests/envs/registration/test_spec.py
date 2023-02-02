@@ -52,7 +52,9 @@ def test_spec_missing_lookup():
 def test_spec_malformed_lookup():
     with pytest.raises(
         gym.error.Error,
-        match=f'^{re.escape("Malformed environment ID: “Breakout-v0”.(Currently all IDs must be of the form [namespace/](env-name)-v(version). (namespace is optional))")}$',
+        match=re.escape(
+            "Malformed environment ID: “Breakout-v0”. (Currently all IDs must be of the form [namespace/](env-name)-v(version). (namespace is optional))"
+        ),
     ):
         gym.spec("“Breakout-v0”")
 

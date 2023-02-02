@@ -6,13 +6,19 @@ import pytest
 import gymnasium as gym
 
 
-def test_stacked_box():
-    """Tests that sequence with a feature space of Box allows stacked np arrays."""
-    space = gym.spaces.Sequence(gym.spaces.Box(0, 1, shape=(3,)))
-    sample = np.float32(np.random.rand(5, 3))
-    assert space.contains(
-        sample
-    ), "Something went wrong, should be able to accept stacked np arrays for Box feature space."
+def test_stacked_sequence():
+    """Tests that a stacked sequence with a feature space of Box returns stacked values."""
+    # Box
+    space = gym.spaces.Sequence(gym.spaces.Box(0, 1, shape=(3,)), stack=True)
+    sample = space.sample()
+    # Check if the sample is in 2d format
+    assert len(sample.shape) == 2
+
+    # Discrete
+    space = gym.spaces.Sequence(gym.spaces.Discrete(n=3), stack=True)
+    sample = space.sample()
+    # Check if the sample is a `np.ndarray` as supposed to a tuple
+    assert type(sample) is np.ndarray
 
 
 def test_sample():
