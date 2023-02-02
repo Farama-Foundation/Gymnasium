@@ -1,4 +1,7 @@
 """Example file showing usage of env.specstack."""
+import json
+
+import pytest
 
 import gymnasium as gym
 from gymnasium.envs.classic_control import CartPoleEnv
@@ -58,17 +61,25 @@ def test_env_wrapper_spec():
     pass
 
 
-def test_env_spec_make():
-    pass
+@pytest.mark.parametrize("env_spec", [])
+def test_env_spec_to_from_json(env_spec: EnvSpec):
+    json_spec = env_spec.to_json()
+    recreated_env_spec = EnvSpec.from_json(json_spec)
 
-
-def test_env_spec_to_json():
-    pass
-
-
-def test_env_spec_from_json():
-    pass
+    assert env_spec == recreated_env_spec
 
 
 def test_env_spec_pprint():
-    pass
+    env = gym.make("CartPole-v1")
+    env_spec = env.spec
+
+    output = env_spec.pprint(disable_print=True)
+    assert output == ""
+
+    output = env_spec.pprint(disable_print=True, include_entry_points=True)
+    assert output == ""
+
+    output = env_spec.pprint(disable_print=True, print_all=True)
+    assert output == ""
+
+
