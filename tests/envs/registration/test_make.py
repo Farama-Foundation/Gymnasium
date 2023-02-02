@@ -16,9 +16,9 @@ from gymnasium.wrappers import (
     TimeLimit,
 )
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
+from tests.envs.registration.utils_envs import ArgumentEnv
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_env_specs
-from tests.envs.utils_envs import ArgumentEnv
 from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
 
@@ -343,7 +343,7 @@ def test_import_module_during_make():
     assert "RegisterDuringMake-v0" in gym.registry
     gym.registry.pop("RegisterDuringMake-v0")
 
-    from tests.envs.utils_unregistered_env import RegisterDuringMakeEnv
+    from tests.envs.registration.utils_unregistered_env import RegisterDuringMakeEnv
 
     assert isinstance(env.unwrapped, RegisterDuringMakeEnv)
     env.close()
