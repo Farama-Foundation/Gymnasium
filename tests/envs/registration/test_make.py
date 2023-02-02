@@ -18,7 +18,7 @@ from gymnasium.wrappers import (
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.registration.utils_envs import ArgumentEnv
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
-from tests.envs.utils import all_testing_env_specs
+from tests.envs.utils import all_testing_env_ids
 from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
 
@@ -188,9 +188,7 @@ def test_apply_api_compatibility():
     gym.envs.registry.pop("testing-old-env")
 
 
-@pytest.mark.parametrize(
-    "env_id", all_testing_env_ids, ids=all_testing_env_ids
-)
+@pytest.mark.parametrize("env_id", all_testing_env_ids, ids=all_testing_env_ids)
 def test_passive_checker_wrapper_warnings(env_id):
     with warnings.catch_warnings(record=True) as caught_warnings:
         env = gym.make(env_id)  # disable_env_checker=False
