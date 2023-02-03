@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import gymnasium as gym
 
 
@@ -14,6 +16,7 @@ class ArgumentEnv(gym.Env):
 # Environments to test render_mode
 class NoHuman(gym.Env):
     """Environment that does not have human-rendering."""
+
     observation_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
     action_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
 
@@ -26,6 +29,7 @@ class NoHuman(gym.Env):
 
 class NoHumanOldAPI(gym.Env):
     """Environment that does not have human-rendering."""
+
     observation_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
     action_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
 
@@ -37,6 +41,7 @@ class NoHumanOldAPI(gym.Env):
 
 class NoHumanNoRGB(gym.Env):
     """Environment that has neither human- nor rgb-rendering"""
+
     observation_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
     action_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
 
@@ -49,6 +54,7 @@ class NoHumanNoRGB(gym.Env):
 
 class NoRenderModesMetadata(gym.Env):
     """An environment that has rendering but has not updated the metadata."""
+
     observation_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
     action_space = gym.spaces.Box(low=-1, high=1, shape=(1,))
 

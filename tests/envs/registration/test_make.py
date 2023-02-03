@@ -329,7 +329,11 @@ def test_make_kwargs(register_testing_envs):
     )
     assert env.spec is not None
     assert env.spec.id == "test.ArgumentEnv-v0"
-    assert env.spec.kwargs == {"arg1": "arg1", "arg2": "override_arg2", "arg3": "override_arg3"}
+    assert env.spec.kwargs == {
+        "arg1": "arg1",
+        "arg2": "override_arg2",
+        "arg3": "override_arg3",
+    }
 
     assert isinstance(env.unwrapped, ArgumentEnv)
     assert env.arg1 == "arg1"
