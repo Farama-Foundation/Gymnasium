@@ -363,10 +363,10 @@ def _check_name_exists(ns: str | None, name: str):
     # Otherwise, raise a helpful error to the user
     suggestion = difflib.get_close_matches(name, names, n=1)
     namespace_msg = f" in namespace {ns}" if ns else ""
-    suggestion_msg = f"Did you mean: `{suggestion[0]}`?" if suggestion else ""
+    suggestion_msg = f" Did you mean: `{suggestion[0]}`?" if suggestion else ""
 
     raise error.NameNotFound(
-        f"Environment {name} doesn't exist{namespace_msg}. {suggestion_msg}"
+        f"Environment `{name}` doesn't exist{namespace_msg}.{suggestion_msg}"
     )
 
 
@@ -404,7 +404,7 @@ def _check_version_exists(ns: str | None, name: str, version: int | None):
     default_spec = [env_spec for env_spec in env_specs if env_spec.version is None]
 
     if default_spec:
-        message += f" It provides the default version {default_spec[0].id}`."
+        message += f" It provides the default version `{default_spec[0].id}`."
         if len(env_specs) == 1:
             raise error.DeprecatedEnv(message)
 
@@ -935,52 +935,55 @@ def pprint_registry(
     namespace_envs: dict[str, list[str]] = defaultdict(lambda: [])
     max_justify = float("-inf")
 
+    # Find the namespace associated with each environment spec
     for env_spec in print_registry.values():
-        ns, _, _ = parse_env_id(env_spec.id)
+        ns = env_spec.namespace
 
-        if ns is None:
-            # Since namespace is currently none, use regex to obtain namespace from entrypoints.
+        if ns is None and isinstance(env_spec.entry_point, str):
+            # Use regex to obtain namespace from entrypoints.
             env_entry_point = re.sub(r":\w+", "", env_spec.entry_point)
-            e_ep_split = env_entry_point.split(".")
+            split_entry_point = env_entry_point.split(".")
 
-            if len(e_ep_split) >= 3:
-                # If namespace is of the format - gymnasium.envs.mujoco.ant_v4:AntEnv
-                # or gymnasium.envs.mujoco:HumanoidEnv
-                idx = 2
-                ns = e_ep_split[idx]
-            elif len(e_ep_split) > 1:
+            if len(split_entry_point) >= 3:
+                # If namespace is of the format:
+                #  - gymnasium.envs.mujoco.ant_v4:AntEnv
+                #  - gymnasium.envs.mujoco:HumanoidEnv
+                ns = split_entry_point[2]
+            elif len(split_entry_point) > 1:
                 # If namespace is of the format - shimmy.atari_env
-                idx = 1
-                ns = e_ep_split[idx]
+                ns = split_entry_point[1]
             else:
-                # If namespace cannot be found, default to env id.
-                ns = env_spec.id
+                # If namespace cannot be found, default to env name
+                ns = env_spec.name
 
         namespace_envs[ns].append(env_spec.id)
-        max_justify = max(max_justify, len(env_spec.id))
+        max_justify = max(max_justify, len(env_spec.name))
 
-    # Iterate through each namespace and print environment alphabetically.
-    return_str = ""
+    # Iterate through each namespace and print environment alphabetically
+    output: list[str] = []
     for ns, env_ids in namespace_envs.items():
         # Ignore namespaces to exclude.
         if exclude_namespaces is not None and ns in exclude_namespaces:
             continue
 
-        return_str += f"{'=' * 5} {ns} {'=' * 5}\n"  # Print namespace.
+        # Print the namespace
+        namespace_output = f"{'=' * 5} {ns} {'=' * 5}\n"
 
         # Reference: https://stackoverflow.com/a/33464001
         for count, env_id in enumerate(sorted(env_ids), 1):
-            return_str += (
-                env_id.ljust(max_justify) + " "
-            )  # Print column with justification.
+            # Print column with justification.
+            namespace_output += env_id.ljust(max_justify) + " "
 
             # Once all rows printed, switch to new column.
-            if count % num_cols == 0 or count == len(env_ids):
-                return_str = return_str.rstrip(" ") + "\n"
+            if count % num_cols == 0:
+                namespace_output = namespace_output.rstrip(" ")
 
-        return_str += "\n"
+                if count != len(env_ids):
+                    namespace_output += "\n"
+
+        output.append(namespace_output.rstrip(" "))
 
     if disable_print:
-        return return_str
+        return "\n".join(output)
     else:
-        print(return_str, end="")
+        print("\n".join(output))

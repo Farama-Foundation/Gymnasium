@@ -1,4 +1,4 @@
-"""Tests that gym.spec works as expected."""
+"""Tests that `gym.spec` works as expected."""
 
 import re
 
@@ -13,40 +13,38 @@ def test_spec():
     assert spec is gym.envs.registry["CartPole-v1"]
 
 
-def test_spec_kwargs():
-    map_name_value = "8x8"
-    env = gym.make("FrozenLake-v1", map_name=map_name_value)
-    assert env.spec is not None
-    assert env.spec.kwargs["map_name"] == map_name_value
-
-
 def test_spec_missing_lookup():
-    gym.register(id="Test1-v0", entry_point="no-entry-point")
-    gym.register(id="Test1-v15", entry_point="no-entry-point")
-    gym.register(id="Test1-v9", entry_point="no-entry-point")
-    gym.register(id="Other1-v100", entry_point="no-entry-point")
+    gym.register(id="TestEnv-v0", entry_point="no-entry-point")
+    gym.register(id="TestEnv-v15", entry_point="no-entry-point")
+    gym.register(id="TestEnv-v9", entry_point="no-entry-point")
+    gym.register(id="OtherEnv-v100", entry_point="no-entry-point")
 
     with pytest.raises(
         gym.error.DeprecatedEnv,
         match=re.escape(
-            "Environment version v1 for `Test1` is deprecated. Please use `Test1-v15` instead."
+            "Environment version v1 for `TestEnv` is deprecated. Please use `TestEnv-v15` instead."
         ),
     ):
-        gym.spec("Test1-v1")
+        gym.spec("TestEnv-v1")
 
     with pytest.raises(
         gym.error.UnregisteredEnv,
         match=re.escape(
-            "Environment version `v1000` for environment `Test1` doesn't exist. It provides versioned environments: [ `v0`, `v9`, `v15` ]."
+            "Environment version `v1000` for environment `TestEnv` doesn't exist. It provides versioned environments: [ `v0`, `v9`, `v15` ]."
         ),
     ):
-        gym.spec("Test1-v1000")
+        gym.spec("TestEnv-v1000")
 
     with pytest.raises(
         gym.error.UnregisteredEnv,
-        match=re.escape("Environment Unknown1 doesn't exist. "),
+        match=re.escape("Environment `UnknownEnv` doesn't exist."),
     ):
-        gym.spec("Unknown1-v1")
+        gym.spec("UnknownEnv-v1")
+
+    del gym.registry["TestEnv-v0"]
+    del gym.registry["TestEnv-v15"]
+    del gym.registry["TestEnv-v9"]
+    del gym.registry["OtherEnv-v100"]
 
 
 def test_spec_malformed_lookup():
@@ -60,36 +58,38 @@ def test_spec_malformed_lookup():
 
 
 def test_spec_versioned_lookups():
-    gym.register("test/Test2-v5", "no-entry-point")
+    gym.register("test/TestEnv-v5", "no-entry-point")
 
     with pytest.raises(
         gym.error.VersionNotFound,
         match=re.escape(
-            "Environment version `v9` for environment `test/Test2` doesn't exist. It provides versioned environments: [ `v5` ]."
+            "Environment version `v9` for environment `test/TestEnv` doesn't exist. It provides versioned environments: [ `v5` ]."
         ),
     ):
-        gym.spec("test/Test2-v9")
+        gym.spec("test/TestEnv-v9")
 
     with pytest.raises(
         gym.error.DeprecatedEnv,
         match=re.escape(
-            "Environment version v4 for `test/Test2` is deprecated. Please use `test/Test2-v5` instead."
+            "Environment version v4 for `test/TestEnv` is deprecated. Please use `test/TestEnv-v5` instead."
         ),
     ):
-        gym.spec("test/Test2-v4")
+        gym.spec("test/TestEnv-v4")
 
-    assert gym.spec("test/Test2-v5") is not None
+    assert gym.spec("test/TestEnv-v5") is not None
+    del gym.registry["test/TestEnv-v5"]
 
 
 def test_spec_default_lookups():
-    gym.register("test/Test3", "no-entry-point")
+    gym.register("test/TestEnv", "no-entry-point")
 
     with pytest.raises(
         gym.error.DeprecatedEnv,
         match=re.escape(
-            "Environment version `v0` for environment `test/Test3` doesn't exist. It provides the default version test/Test3`."
+            "Environment version `v0` for environment `test/TestEnv` doesn't exist. It provides the default version `test/TestEnv`."
         ),
     ):
-        gym.spec("test/Test3-v0")
+        gym.spec("test/TestEnv-v0")
 
-    assert gym.spec("test/Test3") is not None
+    assert gym.spec("test/TestEnv") is not None
+    del gym.registry["test/TestEnv"]
