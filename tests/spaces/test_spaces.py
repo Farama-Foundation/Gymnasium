@@ -7,7 +7,7 @@ from typing import Callable, List, Union
 
 import numpy as np
 import pytest
-from scipy import stats
+import scipy
 
 from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space, Text
 from gymnasium.utils import seeding
@@ -72,23 +72,6 @@ def test_space_equality(space_1, space_2):
 # alpha used for the ks-test
 ALPHA = 0.05
 
-# The expected sum of variance for an alpha of 0.05
-# CHI_SQUARED = [0] + [scipy.stats.chi2.isf(0.05, df=df) for df in range(1, 25)]
-CHI_SQUARED = np.array(
-    [
-        0.01,
-        3.8414588206941285,
-        5.991464547107983,
-        7.814727903251178,
-        9.487729036781158,
-        11.070497693516355,
-        12.59158724374398,
-        14.067140449340167,
-        15.507313055865454,
-        16.91897760462045,
-    ]
-)
-
 
 @pytest.mark.parametrize(
     "space", TESTING_FUNDAMENTAL_SPACES, ids=TESTING_FUNDAMENTAL_SPACES_IDS
@@ -109,42 +92,40 @@ def test_sample(space: Space, n_trials: int = 1_000):
     assert len(samples) == n_trials
 
     if isinstance(space, Box):
-        if space.dtype.kind == "f":
-            assert space.shape == space.low.shape == space.high.shape
-            assert space.shape == samples.shape[1:]
+        assert space.shape == space.low.shape == space.high.shape
+        assert space.shape == samples.shape[1:]
 
-            # (n_trials, *space.shape) => (*space.shape, n_trials)
-            samples = np.moveaxis(samples, 0, -1)
+        # (n_trials, *space.shape) => (*space.shape, n_trials)
+        samples = np.moveaxis(samples, 0, -1)
 
-            for index in np.ndindex(space.shape):
-                low = space.low[index]
-                high = space.high[index]
-                sample = samples[index]
+        for index in np.ndindex(space.shape):
+            low = space.low[index]
+            high = space.high[index]
+            sample = samples[index]
 
-                bounded_below = space.bounded_below[index]
-                bounded_above = space.bounded_above[index]
+            bounded_below = space.bounded_below[index]
+            bounded_above = space.bounded_above[index]
 
-                if bounded_below and bounded_above:
-                    # X ~ U(low, high)
-                    dist = stats.uniform(low, high - low)
-                    _, p_value = stats.kstest(sample, dist.cdf)
-                    assert p_value >= ALPHA
-                elif bounded_below and not bounded_above:
-                    # X ~ low + Exp(1.0)
-                    # => X - low ~ Exp(1.0)
-                    _, p_value = stats.kstest(sample - low, stats.expon.cdf)
-                    assert p_value >= ALPHA
-                elif not bounded_below and bounded_above:
-                    # X ~ high - Exp(1.0)
-                    # => high - X ~ Exp(1.0)
-                    _, p_value = stats.kstest(high - sample, stats.expon.cdf)
-                    assert p_value >= ALPHA
-                else:
-                    # X ~ N(0.0, 1.0)
-                    _, p_value = stats.kstest(sample, stats.norm.cdf)
-                    assert p_value >= ALPHA
+            if space.dtype.kind == "f":
+                p_value = continuous_p_value(
+                    sample,
+                    low,
+                    high,
+                    bounded_below,
+                    bounded_above,
+                )
+            elif space.dtype.kind in ["b", "i"]:
+                p_value = discrete_p_value(
+                    sample,
+                    low,
+                    high,
+                    bounded_below,
+                    bounded_above,
+                )
+            else:
+                raise NotImplementedError(f"Unknown test for Box(dtype={space.dtype})")
 
-        # TODO: add testing for int and bool boxes
+            assert p_value >= ALPHA
     elif isinstance(space, Discrete):
         expected_frequency = np.ones(space.n) * n_trials / space.n
         observed_frequency = np.zeros(space.n)
@@ -158,7 +139,7 @@ def test_sample(space: Space, n_trials: int = 1_000):
         variance = np.sum(
             np.square(expected_frequency - observed_frequency) / expected_frequency
         )
-        assert variance < CHI_SQUARED[degrees_of_freedom]
+        assert variance < scipy.stats.chi2.isf(ALPHA, df=degrees_of_freedom)
     elif isinstance(space, MultiBinary):
         expected_frequency = n_trials / 2
         observed_frequency = np.sum(samples, axis=0)
@@ -169,7 +150,7 @@ def test_sample(space: Space, n_trials: int = 1_000):
             2 * np.square(observed_frequency - expected_frequency) / expected_frequency
         )
         assert variance.shape == space.shape
-        assert np.all(variance < CHI_SQUARED[1])
+        assert np.all(variance < scipy.stats.chi2.isf(ALPHA, df=1))
     elif isinstance(space, MultiDiscrete):
         # Due to the multi-axis capability of MultiDiscrete, these functions need to be recursive and that the expected / observed numpy are of non-regular shapes
         def _generate_frequency(dim, func):
@@ -205,7 +186,7 @@ def test_sample(space: Space, n_trials: int = 1_000):
                 assert np.sum(exp_freq) == n_trials
                 _variance = np.sum(np.square(exp_freq - obs_freq) / exp_freq)
                 _degrees_of_freedom = dim - 1
-                assert _variance < CHI_SQUARED[_degrees_of_freedom]
+                assert _variance < scipy.stats.chi2.isf(ALPHA, df=_degrees_of_freedom)
 
         _chi_squared_test(space.nvec, expected_frequency, observed_frequency)
     elif isinstance(space, Text):
@@ -227,13 +208,37 @@ def test_sample(space: Space, n_trials: int = 1_000):
         variance = np.sum(
             np.square(expected_frequency - observed_frequency) / expected_frequency
         )
-        if degrees_of_freedom == 61:
-            # scipy.stats.chi2.isf(0.05, df=61)
-            assert variance < 80.23209784876272
-        else:
-            assert variance < CHI_SQUARED[degrees_of_freedom]
+
+        assert variance < scipy.stats.chi2.isf(ALPHA, df=degrees_of_freedom)
     else:
         raise NotImplementedError(f"Unknown sample testing for {type(space)}")
+
+
+def discrete_p_value(sample, low, high, bounded_below, bounded_above):
+    # TODO:
+    return 0.0
+
+
+def continuous_p_value(sample, low, high, bounded_below, bounded_above):
+    if bounded_below and bounded_above:
+        # X ~ U(low, high)
+        dist = scipy.stats.uniform(low, high - low)
+    elif bounded_below and not bounded_above:
+        # X ~ low + Exp(1.0)
+        # => X - low ~ Exp(1.0)
+        dist = scipy.stats.expon
+        sample = sample - low
+    elif not bounded_below and bounded_above:
+        # X ~ high - Exp(1.0)
+        # => high - X ~ Exp(1.0)
+        dist = scipy.stats.expon
+        sample = high - sample
+    else:
+        # X ~ N(0.0, 1.0)
+        dist = scipy.stats.norm
+
+    _, p_value = scipy.stats.kstest(sample, dist.cdf)
+    return p_value
 
 
 SAMPLE_MASK_RNG, _ = seeding.np_random(1)
@@ -302,7 +307,10 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
             np.square(expected_frequency - observed_frequency)
             / np.clip(expected_frequency, 1, None)
         )
-        assert variance < CHI_SQUARED[degrees_of_freedom]
+        if degrees_of_freedom == 0:
+            assert variance == 0
+        else:
+            assert variance < scipy.stats.chi2.isf(ALPHA, df=degrees_of_freedom)
     elif isinstance(space, MultiBinary):
         expected_frequency = (
             np.ones(space.shape) * np.where(mask == 2, 0.5, mask) * n_trials
@@ -317,7 +325,7 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
             / np.clip(expected_frequency, 1, None)
         )
         assert variance.shape == space.shape
-        assert np.all(variance < CHI_SQUARED[1])
+        assert np.all(variance < scipy.stats.chi2.isf(ALPHA, df=1))
     elif isinstance(space, MultiDiscrete):
         # Due to the multi-axis capability of MultiDiscrete, these functions need to be recursive and that the expected / observed numpy are of non-regular shapes
         def _generate_frequency(
@@ -370,7 +378,13 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
                     np.square(exp_freq - obs_freq) / np.clip(exp_freq, 1, None)
                 )
                 _degrees_of_freedom = max(np.sum(_mask) - 1, 0)
-                assert _variance < CHI_SQUARED[_degrees_of_freedom]
+
+                if _degrees_of_freedom == 0:
+                    assert _variance == 0
+                else:
+                    assert _variance < scipy.stats.chi2.isf(
+                        ALPHA, df=_degrees_of_freedom
+                    )
 
         _chi_squared_test(space.nvec, mask, expected_frequency, observed_frequency)
     elif isinstance(space, Text):
@@ -408,14 +422,11 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
             np.square(expected_frequency - observed_frequency)
             / np.clip(expected_frequency, 1, None)
         )
-        if degrees_of_freedom == 26:
-            # scipy.stats.chi2.isf(0.05, df=29)
-            assert variance < 38.88513865983007
-        elif degrees_of_freedom == 31:
-            # scipy.stats.chi2.isf(0.05, df=31)
-            assert variance < 44.985343280365136
+
+        if degrees_of_freedom == 0:
+            assert variance == 0
         else:
-            assert variance < CHI_SQUARED[degrees_of_freedom]
+            assert variance < scipy.stats.chi2.isf(ALPHA, df=degrees_of_freedom)
     else:
         raise NotImplementedError()
 
