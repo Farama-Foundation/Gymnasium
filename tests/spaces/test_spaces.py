@@ -69,7 +69,7 @@ def test_space_equality(space_1, space_2):
     assert space_1 != space_2
 
 
-# alpha used for the ks-test
+# significance level of chi2 and KS tests
 ALPHA = 0.05
 
 
@@ -92,6 +92,15 @@ def test_sample(space: Space, n_trials: int = 1_000):
     assert len(samples) == n_trials
 
     if isinstance(space, Box):
+        if space.dtype.kind == "f":
+            test_function = ks_test
+        elif space.dtype.kind in ["i", "u"]:
+            test_function = chi2_test
+        elif space.dtype.kind == "b":
+            test_function = binary_chi2_test
+        else:
+            raise NotImplementedError(f"Unknown test for Box(dtype={space.dtype})")
+
         assert space.shape == space.low.shape == space.high.shape
         assert space.shape == samples.shape[1:]
 
@@ -106,26 +115,8 @@ def test_sample(space: Space, n_trials: int = 1_000):
             bounded_below = space.bounded_below[index]
             bounded_above = space.bounded_above[index]
 
-            if space.dtype.kind == "f":
-                p_value = continuous_p_value(
-                    sample,
-                    low,
-                    high,
-                    bounded_below,
-                    bounded_above,
-                )
-            elif space.dtype.kind in ["b", "i"]:
-                p_value = discrete_p_value(
-                    sample,
-                    low,
-                    high,
-                    bounded_below,
-                    bounded_above,
-                )
-            else:
-                raise NotImplementedError(f"Unknown test for Box(dtype={space.dtype})")
+            test_function(sample, low, high, bounded_below, bounded_above)
 
-            assert p_value >= ALPHA
     elif isinstance(space, Discrete):
         expected_frequency = np.ones(space.n) * n_trials / space.n
         observed_frequency = np.zeros(space.n)
@@ -214,12 +205,7 @@ def test_sample(space: Space, n_trials: int = 1_000):
         raise NotImplementedError(f"Unknown sample testing for {type(space)}")
 
 
-def discrete_p_value(sample, low, high, bounded_below, bounded_above):
-    # TODO:
-    return 0.0
-
-
-def continuous_p_value(sample, low, high, bounded_below, bounded_above):
+def ks_test(sample, low, high, bounded_below, bounded_above):
     if bounded_below and bounded_above:
         # X ~ U(low, high)
         dist = scipy.stats.uniform(low, high - low)
@@ -238,7 +224,78 @@ def continuous_p_value(sample, low, high, bounded_below, bounded_above):
         dist = scipy.stats.norm
 
     _, p_value = scipy.stats.kstest(sample, dist.cdf)
-    return p_value
+    assert p_value >= ALPHA
+
+
+def chi2_test(sample, low, high, bounded_below, bounded_above):
+    (n_trials,) = sample.shape
+
+    if bounded_below and bounded_above:
+        # X ~ U(low, high)
+        degrees_of_freedom = high - low + 1
+        observed_frequency = np.bincount(sample - low, minlength=degrees_of_freedom)
+        assert observed_frequency.shape == (degrees_of_freedom,)
+        expected_frequency = np.ones(degrees_of_freedom) * n_trials / degrees_of_freedom
+    elif bounded_below and not bounded_above:
+        # X ~ low + Geom(1 - e^-1)
+        # => X - low ~ Geom(1 - e^-1)
+        dist = scipy.stats.geom(1 - 1 / np.e)
+        observed_frequency = np.bincount(sample - low)
+        x = np.arange(len(observed_frequency))
+        expected_frequency = dist.pmf(x + 1) * n_trials
+        expected_frequency[-1] += n_trials - np.sum(expected_frequency)
+    elif not bounded_below and bounded_above:
+        # X ~ high - Geom(1 - e^-1)
+        # => high - X ~ Geom(1 - e^-1)
+        dist = scipy.stats.geom(1 - 1 / np.e)
+        observed_frequency = np.bincount(high - sample)
+        x = np.arange(len(observed_frequency))
+        expected_frequency = dist.pmf(x + 1) * n_trials
+        expected_frequency[-1] += n_trials - np.sum(expected_frequency)
+    else:
+        # X ~ floor(N(0.0, 1.0)
+        # => pmf(x) = cdf(x + 1) - cdf(x)
+        lowest = np.min(sample)
+        observed_frequency = np.bincount(sample - lowest)
+
+        normal_dist = scipy.stats.norm(0, 1)
+        x = lowest + np.arange(len(observed_frequency))
+        expected_frequency = normal_dist.cdf(x + 1) - normal_dist.cdf(x)
+        expected_frequency[0] += normal_dist.cdf(lowest)
+        expected_frequency *= n_trials
+        expected_frequency[-1] += n_trials - np.sum(expected_frequency)
+
+    assert observed_frequency.shape == expected_frequency.shape
+    variance = np.sum(
+        np.square(expected_frequency - observed_frequency) / expected_frequency
+    )
+    degrees_of_freedom = len(observed_frequency) - 1
+    critical_value = scipy.stats.chi2.isf(ALPHA, df=degrees_of_freedom)
+
+    assert variance < critical_value
+
+
+def binary_chi2_test(sample, low, high, bounded_below, bounded_above):
+    assert bounded_below
+    assert bounded_above
+
+    (n_trials,) = sample.shape
+
+    if low == high == 0:
+        assert np.all(sample == 0)
+    elif low == high == 1:
+        assert np.all(sample == 1)
+    else:
+        expected_frequency = n_trials / 2
+        observed_frequency = np.sum(sample)
+
+        # we can be lazy in the variance as the np.square is symmetric for the 0 and 1 categories
+        variance = (
+            2 * np.square(observed_frequency - expected_frequency) / expected_frequency
+        )
+
+        critical_value = scipy.stats.chi2.isf(ALPHA, df=1)
+        assert variance < critical_value
 
 
 SAMPLE_MASK_RNG, _ = seeding.np_random(1)
@@ -253,6 +310,9 @@ SAMPLE_MASK_RNG, _ = seeding.np_random(1)
             np.array([1, 1, 0], dtype=np.int8),
             np.array([0, 0, 0], dtype=np.int8),
             # Box
+            None,
+            None,
+            None,
             None,
             None,
             None,
