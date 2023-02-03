@@ -1,6 +1,4 @@
 """Example file showing usage of env.specstack."""
-import json
-
 import pytest
 
 import gymnasium as gym
@@ -28,14 +26,12 @@ def test_full_integration():
 
     # Deserialize the spec_stack
     recreate_env_spec = EnvSpec.from_json(env_spec_json)
-    # recreate_env_spec.pprint()
+    recreate_env_spec.pprint()
 
     for wrapper_spec, recreated_wrapper_spec in zip(
         env_spec.applied_wrappers, recreate_env_spec.applied_wrappers
     ):
-        assert (
-            wrapper_spec == recreated_wrapper_spec
-        ), f"{wrapper_spec} - {recreated_wrapper_spec}"
+        assert wrapper_spec == recreated_wrapper_spec
     assert recreate_env_spec == env_spec
 
     # Recreate the environment using the spec_stack
@@ -57,11 +53,15 @@ def test_full_integration():
     assert spec_stack_output == json_spec_stack_output
 
 
-def test_env_wrapper_spec():
-    pass
-
-
-@pytest.mark.parametrize("env_spec", [])
+@pytest.mark.parametrize(
+    "env_spec",
+    [
+        gym.spec("CartPole-v1"),
+        gym.make("CartPole-v1").unwrapped.spec,
+        gym.make("CartPole-v1").spec,
+        gym.wrappers.NormalizeReward(gym.make("CartPole-v1")).spec,
+    ],
+)
 def test_env_spec_to_from_json(env_spec: EnvSpec):
     json_spec = env_spec.to_json()
     recreated_env_spec = EnvSpec.from_json(json_spec)
@@ -69,17 +69,80 @@ def test_env_spec_to_from_json(env_spec: EnvSpec):
     assert env_spec == recreated_env_spec
 
 
+# flake8: noqa
+
+
 def test_env_spec_pprint():
     env = gym.make("CartPole-v1")
     env_spec = env.spec
+    assert env_spec is not None
 
     output = env_spec.pprint(disable_print=True)
-    assert output == ""
+    assert (
+        output
+        == """id=CartPole-v1
+reward_threshold=475.0
+max_episode_steps=500
+applied_wrappers=[
+	name=PassiveEnvChecker, kwargs={},
+	name=OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
+	name=TimeLimit, kwargs={'max_episode_steps': 500}
+]"""
+    )
 
     output = env_spec.pprint(disable_print=True, include_entry_points=True)
-    assert output == ""
+    assert (
+        output
+        == """id=CartPole-v1
+entry_point=gymnasium.envs.classic_control.cartpole:CartPoleEnv
+reward_threshold=475.0
+max_episode_steps=500
+applied_wrappers=[
+	name=PassiveEnvChecker, entry_point=gymnasium.wrappers.env_checker:PassiveEnvChecker, kwargs={},
+	name=OrderEnforcing, entry_point=gymnasium.wrappers.order_enforcing:OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
+	name=TimeLimit, entry_point=gymnasium.wrappers.time_limit:TimeLimit, kwargs={'max_episode_steps': 500}
+]"""
+    )
 
     output = env_spec.pprint(disable_print=True, print_all=True)
-    assert output == ""
+    assert (
+        output
+        == """id=CartPole-v1
+entry_point=gymnasium.envs.classic_control.cartpole:CartPoleEnv
+reward_threshold=475.0
+nondeterministic=False
+max_episode_steps=500
+order_enforce=True
+autoreset=False
+disable_env_checker=False
+applied_api_compatibility=False
+applied_wrappers=[
+	name=PassiveEnvChecker, kwargs={},
+	name=OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
+	name=TimeLimit, kwargs={'max_episode_steps': 500}
+]"""
+    )
 
+    env_spec.applied_wrappers = ()
+    output = env_spec.pprint(disable_print=True)
+    assert (
+        output
+        == """id=CartPole-v1
+reward_threshold=475.0
+max_episode_steps=500"""
+    )
 
+    output = env_spec.pprint(disable_print=True, print_all=True)
+    assert (
+        output
+        == """id=CartPole-v1
+entry_point=gymnasium.envs.classic_control.cartpole:CartPoleEnv
+reward_threshold=475.0
+nondeterministic=False
+max_episode_steps=500
+order_enforce=True
+autoreset=False
+disable_env_checker=False
+applied_api_compatibility=False
+applied_wrappers=[]"""
+    )

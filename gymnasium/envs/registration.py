@@ -144,8 +144,11 @@ class EnvSpec:
         env_spec_dict.pop("namespace")
         env_spec_dict.pop("name")
         env_spec_dict.pop("version")
-        # To check that the
+
+        # To check that the environment spec can be transformed to a json compatible type
         self._check_can_jsonify(env_spec_dict)
+
+        return json.dumps(env_spec_dict)
 
     @staticmethod
     def _check_can_jsonify(env_spec: dict[str, Any]):
@@ -177,7 +180,7 @@ class EnvSpec:
         """
         parsed_env_spec = json.loads(json_env_spec)
 
-        applied_wrapper_specs = []
+        applied_wrapper_specs: list[WrapperSpec] = []
         for wrapper_spec_json in parsed_env_spec.pop("applied_wrappers"):
             try:
                 applied_wrapper_specs.append(WrapperSpec(**wrapper_spec_json))
@@ -244,7 +247,10 @@ class EnvSpec:
                         f"\n\tname={wrapper_spec.name}, kwargs={wrapper_spec.kwargs}"
                     )
 
-            output += f"\n\tapplied_wrappers=[{','.join(wrapper_output)}\n\t]"
+            if len(wrapper_output) == 0:
+                output += "\napplied_wrappers=[]"
+            else:
+                output += f"\napplied_wrappers=[{','.join(wrapper_output)}\n]"
 
         if disable_print:
             return output
@@ -510,25 +516,33 @@ def _recreate_env_spec(
     else:
         env_creator = load_env_creator(env_spec.entry_point)
 
-    # This should primarily used to set the render_mode of the environment rather than any other parameter.
+    # Create the environment
     env = env_creator(**env_spec.kwargs, **kwargs)
-    if env.unwrapped is not env:
-        logger.warn(
-            f"Environment creator ({env_creator}) applied additional wrappers which might be repeated if in the `spec.applied_wrappers`."
-        )
 
-    for wrapper_spec in env_spec.applied_wrappers:
+    # Set the `EnvSpec` to the environment
+    new_env_spec = copy.deepcopy(env_spec)
+    new_env_spec.applied_wrappers = ()
+    new_env_spec.kwargs.update(kwargs)
+    env.unwrapped.spec = new_env_spec
+
+    # Check if the environment spec
+    assert env.spec is not None  # this is for pyright
+    num_prior_wrappers = len(env.spec.applied_wrappers)
+    if env_spec.applied_wrappers[:num_prior_wrappers] != env.spec.applied_wrappers:
+        for env_spec_wrapper_spec, recreated_wrapper_spec in zip(
+            env_spec.applied_wrappers, env.spec.applied_wrappers
+        ):
+            raise ValueError(
+                f"The environment's wrapper spec {recreated_wrapper_spec} is different from the saved `EnvSpec` applied_wrappers {env_spec_wrapper_spec}"
+            )
+
+    for wrapper_spec in env_spec.applied_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
             raise ValueError(
                 f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.EzPickle` therefore, the wrapper cannot be recreated."
             )
 
         env = load_env_creator(wrapper_spec.entry_point)(env, **wrapper_spec.kwargs)
-
-    env_spec = copy.deepcopy(env_spec)
-    env_spec.kwargs.update(kwargs)
-    env_spec.applied_wrappers = ()
-    env.unwrapped.spec = env_spec
 
     return env
 
@@ -810,19 +824,19 @@ def make(
         if hasattr(id, "applied_wrappers") and id.applied_wrappers is not None:
             if max_episode_steps is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `max_episode_step` parameter is not used, do `gym.make({id.id}, max_episode_steps={max_episode_steps})`"
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `max_episode_step` parameter is not used, use `gym.make({id.id}, max_episode_steps={max_episode_steps})`"
                 )
             if autoreset is True:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `autoreset` parameter is not used, do `gym.make({id.id}, autoreset={autoreset})`"
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `autoreset` parameter is not used, use `gym.make({id.id}, autoreset={autoreset})`"
                 )
             if apply_api_compatibility is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `apply_api_compatibility` parameter is not used, do `gym.make({id.id}, apply_api_compatibility={apply_api_compatibility})`"
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `apply_api_compatibility` parameter is not used, use `gym.make({id.id}, apply_api_compatibility={apply_api_compatibility})`"
                 )
             if disable_env_checker is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `disable_env_checker` parameter is not used, do `gym.make({id.id}, disable_env_checker={disable_env_checker})`"
+                    f"As the `make(id, ...)` is an `EnvSpec`, the `disable_env_checker` parameter is not used, use `gym.make({id.id}, disable_env_checker={disable_env_checker})`"
                 )
 
             return _recreate_env_spec(
@@ -830,7 +844,14 @@ def make(
                 kwargs,
             )
         else:
-            env_spec = id
+            return _make_env_spec(
+                id,
+                kwargs,
+                max_episode_steps=max_episode_steps,
+                autoreset=autoreset,
+                apply_api_compatibility=apply_api_compatibility,
+                disable_env_checker=disable_env_checker,
+            )
     else:
         # For string id's, load the environment spec from the registry then make the environment spec
         assert isinstance(id, str)
@@ -875,17 +896,14 @@ def make(
             _check_version_exists(ns, name, version)
             raise error.Error(f"No registered env with id: {env_name}")
 
-    assert isinstance(
-        env_spec, EnvSpec
-    ), f"We expected to find an `EnvSpec`, actually found a {type(env_spec)}"
-    return _make_env_spec(
-        env_spec,
-        kwargs,
-        max_episode_steps=max_episode_steps,
-        autoreset=autoreset,
-        apply_api_compatibility=apply_api_compatibility,
-        disable_env_checker=disable_env_checker,
-    )
+        return _make_env_spec(
+            env_spec,
+            kwargs,
+            max_episode_steps=max_episode_steps,
+            autoreset=autoreset,
+            apply_api_compatibility=apply_api_compatibility,
+            disable_env_checker=disable_env_checker,
+        )
 
 
 def spec(env_id: str) -> EnvSpec:
