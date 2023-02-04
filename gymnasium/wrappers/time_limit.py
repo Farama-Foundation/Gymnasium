@@ -35,7 +35,7 @@ class TimeLimit(gym.Wrapper, gym.utils.EzPickle):
             assert env.spec is not None
             max_episode_steps = env.spec.max_episode_steps
         if self.env.spec is not None:
-            self.env.spec.max_episode_steps = max_episode_steps
+            self.env.unwrapped.spec.max_episode_steps = max_episode_steps
         self._max_episode_steps = max_episode_steps
         self._elapsed_steps = None
 
