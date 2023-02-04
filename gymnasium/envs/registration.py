@@ -896,6 +896,7 @@ def make(
             _check_version_exists(ns, name, version)
             raise error.Error(f"No registered env with id: {env_name}")
 
+        print(f"Make env-spec with {max_episode_steps=}")
         return _make_env_spec(
             env_spec,
             kwargs,

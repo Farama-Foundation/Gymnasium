@@ -22,7 +22,7 @@ def test_mujoco_action_dimensions(env_spec: EnvSpec):
      * Too many dimensions
      * Incorrect shape
     """
-    env = env_spec.make(disable_env_checker=True)
+    env = env_spec.make()
     env.reset()
 
     # Too few actions
