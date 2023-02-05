@@ -39,7 +39,7 @@ CHECK_ENV_IGNORE_WARNINGS = [
     all_testing_env_specs,
     ids=[spec.id for spec in all_testing_env_specs],
 )
-def test_envs_pass_env_checker(spec):
+def test_all_env_api(spec):
     """Check that all environments pass the environment checker with no warnings other than the expected."""
     with warnings.catch_warnings(record=True) as caught_warnings:
         env = spec.make(disable_env_checker=True).unwrapped
@@ -49,6 +49,22 @@ def test_envs_pass_env_checker(spec):
 
     for warning in caught_warnings:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
+            raise gym.error.Error(f"Unexpected warning: {warning.message}")
+
+
+@pytest.mark.parametrize(
+    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
+)
+def test_all_env_passive_env_checker(spec):
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        env = gym.make(spec.id)
+        env.reset()
+        env.step(env.action_space.sample())
+
+        env.close()
+
+    for warning in caught_warnings:
+        if warning.message.args[0] not in PASSIVE_CHECK_IGNORE_WARNING:
             raise gym.error.Error(f"Unexpected warning: {warning.message}")
 
 
