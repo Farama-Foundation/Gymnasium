@@ -7,7 +7,7 @@ from typing import Callable, List, Union
 
 import numpy as np
 import pytest
-import scipy
+import scipy.stats
 
 from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space, Text
 from gymnasium.utils import seeding
