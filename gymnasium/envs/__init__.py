@@ -2,7 +2,7 @@
 from typing import Any
 
 from gymnasium.envs.registration import (
-    load_env_plugins,
+    load_plugin_envs,
     make,
     pprint_registry,
     register,
@@ -363,4 +363,4 @@ register(id="GymV26Environment-v0", entry_point=_raise_shimmy_error)
 
 
 # Hook to load plugins from entry points
-load_env_plugins()
+load_plugin_envs()

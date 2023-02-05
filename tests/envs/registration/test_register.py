@@ -18,7 +18,7 @@ def register_registration_testing_envs():
         env_id = f"{namespace}/{versioned_name}-v{version}"
         gym.register(
             id=env_id,
-            entry_point="tests.envs.utils_envs:ArgumentEnv",
+            entry_point="tests.envs.registration.utils_envs:ArgumentEnv",
             kwargs={
                 "arg1": "arg1",
                 "arg2": "arg2",
@@ -111,7 +111,7 @@ def test_env_suggestions(
     with pytest.raises(
         gym.error.UnregisteredEnv, match=f"Did you mean: `{env_id_suggested}`?"
     ):
-        gym.make(env_id_input, disable_env_checker=True)
+        gym.make(env_id_input)
 
 
 @pytest.mark.parametrize(
@@ -136,13 +136,13 @@ def test_env_version_suggestions(
             gym.error.DeprecatedEnv,
             match="It provides the default version",  # env name,
         ):
-            gym.make(env_id_input, disable_env_checker=True)
+            gym.make(env_id_input)
     else:
         with pytest.raises(
             gym.error.UnregisteredEnv,
             match=f"It provides versioned environments: \\[ {suggested_versions} \\]",
         ):
-            gym.make(env_id_input, disable_env_checker=True)
+            gym.make(env_id_input)
 
 
 def test_register_versioned_unversioned():
@@ -185,9 +185,7 @@ def test_make_latest_versioned_env(register_registration_testing_envs):
             "Using the latest versioned environment `MyAwesomeNamespace/MyAwesomeVersionedEnv-v5` instead of the unversioned environment `MyAwesomeNamespace/MyAwesomeVersionedEnv`."
         ),
     ):
-        env = gym.make(
-            "MyAwesomeNamespace/MyAwesomeVersionedEnv", disable_env_checker=True
-        )
+        env = gym.make("MyAwesomeNamespace/MyAwesomeVersionedEnv")
     assert env.spec is not None
     assert env.spec.id == "MyAwesomeNamespace/MyAwesomeVersionedEnv-v5"
 
