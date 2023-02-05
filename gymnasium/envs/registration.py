@@ -327,6 +327,75 @@ def find_highest_version(ns: str | None, name: str) -> int | None:
     return max(version, default=None)
 
 
+# Global registry of environments. Meant to be accessed through `register` and `make`
+registry: dict[str, EnvSpec] = {}
+current_namespace: str | None = None
+
+
+def parse_env_id(env_id: str) -> tuple[str | None, str, int | None]:
+    """Parse environment ID string format - ``[namespace/](env-name)[-v(version)]`` where the namespace and version are optional.
+
+    Args:
+        env_id: The environment id to parse
+
+    Returns:
+        A tuple of environment namespace, environment name and version number
+
+    Raises:
+        Error: If the environment id is not valid environment regex
+    """
+    match = ENV_ID_RE.fullmatch(env_id)
+    if not match:
+        raise error.Error(
+            f"Malformed environment ID: {env_id}. (Currently all IDs must be of the form [namespace/](env-name)-v(version). (namespace is optional))"
+        )
+    ns, name, version = match.group("namespace", "name", "version")
+    if version is not None:
+        version = int(version)
+
+    return ns, name, version
+
+
+def get_env_id(ns: str | None, name: str, version: int | None) -> str:
+    """Get the full env ID given a name and (optional) version and namespace. Inverse of :meth:`parse_env_id`.
+
+    Args:
+        ns: The environment namespace
+        name: The environment name
+        version: The environment version
+
+    Returns:
+        The environment id
+    """
+    full_name = name
+    if ns is not None:
+        full_name = f"{ns}/{name}"
+    if version is not None:
+        full_name = f"{full_name}-v{version}"
+
+    return full_name
+
+
+def find_highest_version(ns: str | None, name: str) -> int | None:
+    """Finds the highest registered version of the environment given the namespace and name in the registry.
+
+    Args:
+        ns: The environment namespace
+        name: The environment name (id)
+
+    Returns:
+        The highest version of an environment with matching namespace and name, otherwise ``None`` is returned.
+    """
+    version: list[int] = [
+        env_spec.version
+        for env_spec in registry.values()
+        if env_spec.namespace == ns
+        and env_spec.name == name
+        and env_spec.version is not None
+    ]
+    return max(version, default=None)
+
+
 def _check_namespace_exists(ns: str | None):
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
     # If the namespace is none, then the namespace does exist
