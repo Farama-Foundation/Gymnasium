@@ -235,7 +235,7 @@
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/registry/">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/registry/">Register and Make</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/spaces/composite/">Composite Spaces</a></li>
@@ -507,6 +507,8 @@
 </li>
         <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.create_shared_memory">create_shared_memory() (in module gymnasium.vector.utils)</a>
 </li>
+        <li><a href="../api/registry/#gymnasium.envs.registration.current_namespace">current_namespace (gymnasium.envs.registration attribute)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -537,11 +539,13 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/env/#gymnasium.Env">Env (class in gymnasium)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/#gymnasium.wrappers.gymnasium.Wrapper.env">env (gymnasium.wrappers.gymnasium.Wrapper attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.EnvCompatibility">EnvCompatibility (class in gymnasium.wrappers)</a>
+</li>
+        <li><a href="../api/registry/#gymnasium.envs.registration.EnvSpec">EnvSpec (class in gymnasium.envs.registration)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -554,6 +558,8 @@
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.FilterObservation">FilterObservation (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.FilterObservationV0">FilterObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/registry/#gymnasium.envs.registration.find_highest_version">find_highest_version() (in module gymnasium.envs.registration)</a>
 </li>
         <li><a href="../api/spaces/utils/#gymnasium.spaces.utils.flatdim">flatdim() (in module gymnasium.spaces.utils)</a>
 </li>
@@ -583,6 +589,8 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/registry/#gymnasium.envs.registration.get_env_id">get_env_id() (in module gymnasium.envs.registration)</a>
+</li>
         <li><a href="../api/spaces/composite/#gymnasium.spaces.Graph">Graph (class in gymnasium.spaces)</a>
 </li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.GrayScaleObservation">GrayScaleObservation (class in gymnasium.wrappers)</a>
@@ -661,11 +669,15 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.LambdaActionV0">LambdaActionV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.LambdaObservationV0">LambdaObservationV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.LambdaRewardV0">LambdaRewardV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/registry/#gymnasium.envs.registration.load_env">load_env() (in module gymnasium.envs.registration)</a>
+</li>
+        <li><a href="../api/registry/#gymnasium.envs.registration.load_plugin_envs">load_plugin_envs() (in module gymnasium.envs.registration)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -710,16 +722,18 @@
   <h2>N</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/registry/#gymnasium.envs.registration.namespace">namespace() (in module gymnasium.envs.registration)</a>
+</li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.NormalizeObservation">NormalizeObservation (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.NormalizeObservationV0">NormalizeObservationV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
         <li><a href="../api/wrappers/reward_wrappers/#gymnasium.wrappers.NormalizeReward">NormalizeReward (class in gymnasium.wrappers)</a>
 </li>
-        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.NormalizeRewardV0">NormalizeRewardV0 (class in gymnasium.experimental.wrappers)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.NormalizeRewardV0">NormalizeRewardV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li><a href="../api/env/#gymnasium.Env.np_random">np_random (gymnasium.Env property)</a>
 
         <ul>
@@ -768,6 +782,8 @@
   <h2>P</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/registry/#gymnasium.envs.registration.parse_env_id">parse_env_id() (in module gymnasium.envs.registration)</a>
+</li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.PassiveEnvChecker">PassiveEnvChecker (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.PassiveEnvCheckerV0">PassiveEnvCheckerV0 (class in gymnasium.experimental.wrappers)</a>
@@ -807,6 +823,8 @@
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RecordVideoV0">RecordVideoV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
         <li><a href="../api/registry/#gymnasium.register">register() (in module gymnasium)</a>
+</li>
+        <li><a href="../api/registry/#gymnasium.envs.registration.registry">registry (gymnasium.envs.registration attribute)</a>
 </li>
         <li><a href="../api/env/#gymnasium.Env.render">render() (in module gymnasium.Env)</a>
 </li>
