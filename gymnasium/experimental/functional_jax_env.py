@@ -10,7 +10,6 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
 from gymnasium.utils import seeding
@@ -48,7 +47,7 @@ class FunctionalJaxEnv(gym.Env):
 
         self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
-        if self.render_mode == "rgb_array" or self.render_mode == "human":
+        if self.render_mode == "rgb_array":
             self.render_state = self.func_env.render_init()
         else:
             self.render_state = None
@@ -116,21 +115,14 @@ class FunctionalJaxEnv(gym.Env):
         return observation, float(reward), bool(terminated), False, info
 
     def render(self):
-        """Renders using the wrapped functional env."""
-        try:
-            import pygame
-        except ImportError:
-            raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy_text]`"
-            )
-        if self.render_mode is not None:
+        """Returns the render state if `render_mode` is "rgb_array"."""
+        if self.render_mode == "rgb_array":
             self.render_state, image = self.func_env.render_image(
                 self.state, self.render_state
             )
-        if self.render_mode == "rgb_array":
             return image
-        elif self.render_mode == "human":
-            pygame.display.flip()
+        else:
+            raise NotImplementedError
 
     def close(self):
         """Closes the environments and render state if set."""

@@ -15,6 +15,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle, seeding
+from gymnasium.wrappers import HumanRendering
 
 
 RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
@@ -198,7 +199,7 @@ class BlackjackFunctional(
     # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 
     metadata = {
-        "render_modes": ["rgb_array", "human"],
+        "render_modes": ["rgb_array"],
         "render_fps": 4,
     }
 
@@ -297,7 +298,7 @@ class BlackjackFunctional(
         dealer_top_card_suit = rng.choice(suits)
         dealer_top_card_value_str = rng.choice(["J", "Q", "K"])
         pygame.init()
-        screen = pygame.display.set_mode((screen_width, screen_height))
+        screen = pygame.Surface((screen_width, screen_height))
 
         return screen, dealer_top_card_value_str, dealer_top_card_suit
 
@@ -425,7 +426,7 @@ class BlackjackFunctional(
 
 class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
 
-    metadata = {"render_modes": ["rgb_array", "human"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
@@ -447,7 +448,7 @@ class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
 
 if __name__ == "__main__":
 
-    env = BlackJackJaxEnv(render_mode="human")
+    env = HumanRendering(BlackJackJaxEnv(render_mode="rgb_array"))
 
     obs, info = env.reset()
     print(obs, info)
