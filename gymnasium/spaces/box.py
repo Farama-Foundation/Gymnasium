@@ -218,7 +218,7 @@ class Box(Space[NDArray[Any]]):
             low=self.low[bounded], high=high[bounded], size=bounded[bounded].shape
         )
 
-        if self.dtype.kind != "f":
+        if self.dtype.kind in ["i", "u", "b"]:
             sample = np.floor(sample)
 
         return sample.astype(self.dtype)

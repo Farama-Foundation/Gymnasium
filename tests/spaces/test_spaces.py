@@ -206,6 +206,9 @@ def test_sample(space: Space, n_trials: int = 1_000):
 
 
 def ks_test(sample, low, high, bounded_below, bounded_above):
+    """Perform Kolmogorov-Smirnov test on the sample. Automatically picks the
+    distribution to test against based on the bounds.
+    """
     if bounded_below and bounded_above:
         # X ~ U(low, high)
         dist = scipy.stats.uniform(low, high - low)
@@ -228,6 +231,9 @@ def ks_test(sample, low, high, bounded_below, bounded_above):
 
 
 def chi2_test(sample, low, high, bounded_below, bounded_above):
+    """Perform chi-squared test on the sample. Automatically picks the distribution
+    to test against based on the bounds.
+    """
     (n_trials,) = sample.shape
 
     if bounded_below and bounded_above:
@@ -276,6 +282,7 @@ def chi2_test(sample, low, high, bounded_below, bounded_above):
 
 
 def binary_chi2_test(sample, low, high, bounded_below, bounded_above):
+    """Perform Chi-squared test on boolean samples."""
     assert bounded_below
     assert bounded_above
 
