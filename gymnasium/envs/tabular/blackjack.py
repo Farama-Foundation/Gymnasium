@@ -10,7 +10,6 @@ from jax.random import PRNGKey
 
 from gymnasium import spaces
 
-# from gymnasium.envs.jax_toy_text.conversion import JaxEnv
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv

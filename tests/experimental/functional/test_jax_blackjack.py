@@ -6,7 +6,7 @@ import jax.numpy as jnp
 import jax.random as jrng
 import pytest
 
-from gymnasium.envs.jax_toy_text.blackjack import BlackjackFunctional  # noqa: E402
+from gymnasium.envs.tabular.blackjack import BlackjackFunctional  # noqa: E402
 
 
 def test_normal_BlackjackFunctional():
