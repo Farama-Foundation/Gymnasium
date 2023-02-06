@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.spaces import Box, Graph, utils
+from gymnasium.spaces import Box, Graph, Sequence, utils
 from gymnasium.utils.env_checker import data_equivalence
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 
@@ -20,6 +20,9 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     2,
     2,
     2,
+    12,
+    3,
+    4,
     # Multi-discrete
     4,
     10,
@@ -110,7 +113,9 @@ def test_flatten(space):
 
         assert single_dim == flatdim
     else:
-        assert isinstance(flattened_sample, (tuple, dict, Graph))
+        assert isinstance(space, Sequence) or isinstance(
+            flattened_sample, (tuple, dict, Graph)
+        )
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)

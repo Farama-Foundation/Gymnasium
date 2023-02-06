@@ -1,6 +1,8 @@
 """Registers the internal gym envs then loads the env plugins for module using the entry point."""
+from typing import Any
+
 from gymnasium.envs.registration import (
-    load_env_plugins,
+    load_plugin_envs,
     make,
     pprint_registry,
     register,
@@ -349,16 +351,16 @@ register(
 
 
 # --- For shimmy compatibility
-def _raise_shimmy_error():
+def _raise_shimmy_error(*args: Any, **kwargs: Any):
     raise ImportError(
         "To use the gym compatibility environments, run `pip install shimmy[gym]`"
     )
 
 
 # When installed, shimmy will re-register these environments with the correct entry_point
-register(id="GymV22Environment-v0", entry_point=_raise_shimmy_error)
+register(id="GymV21Environment-v0", entry_point=_raise_shimmy_error)
 register(id="GymV26Environment-v0", entry_point=_raise_shimmy_error)
 
 
 # Hook to load plugins from entry points
-load_env_plugins()
+load_plugin_envs()
