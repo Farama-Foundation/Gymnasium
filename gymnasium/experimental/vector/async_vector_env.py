@@ -19,7 +19,7 @@ from gymnasium.error import (
     CustomSpaceError,
     NoAsyncCallError,
 )
-from gymnasium.experimental.vector import VectorEnv
+from gymnasium.experimental.vector.vector_env import VectorEnv
 from gymnasium.experimental.vector.utils import (
     CloudpickleWrapper,
     clear_mpi_env_vars,
