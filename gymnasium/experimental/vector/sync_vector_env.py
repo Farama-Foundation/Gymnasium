@@ -7,8 +7,8 @@ from typing import Any, Callable, Iterable, Sequence
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.experimental.vector.vector_env import VectorEnv
 from gymnasium.experimental.vector.utils import concatenate, create_empty_array, iterate
+from gymnasium.experimental.vector.vector_env import VectorEnv
 from gymnasium.spaces import Space
 
 

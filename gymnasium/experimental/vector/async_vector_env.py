@@ -19,7 +19,6 @@ from gymnasium.error import (
     CustomSpaceError,
     NoAsyncCallError,
 )
-from gymnasium.experimental.vector.vector_env import VectorEnv
 from gymnasium.experimental.vector.utils import (
     CloudpickleWrapper,
     clear_mpi_env_vars,
@@ -30,6 +29,7 @@ from gymnasium.experimental.vector.utils import (
     read_from_shared_memory,
     write_to_shared_memory,
 )
+from gymnasium.experimental.vector.vector_env import VectorEnv
 
 
 __all__ = ["AsyncVectorEnv"]
