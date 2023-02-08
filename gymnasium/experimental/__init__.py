@@ -1,7 +1,7 @@
 """Root __init__ of the gym experimental wrappers."""
 
 
-from gymnasium.experimental import functional, wrappers
+from gymnasium.experimental import functional, vector, wrappers
 from gymnasium.experimental.functional import FuncEnv
 
 
@@ -12,5 +12,5 @@ __all__ = [
     # Wrappers
     "wrappers",
     # Vector
-    # "vector",
+    "vector",
 ]
