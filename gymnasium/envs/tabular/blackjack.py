@@ -1,3 +1,6 @@
+"""This module provides a Blackjack functional environment and Gymnasium environment wrapper BlackJackJaxEnv."""
+
+
 import math
 import os
 from typing import Optional, Tuple, Union
@@ -9,7 +12,6 @@ from jax import random
 from jax.random import PRNGKey
 
 from gymnasium import spaces
-
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
@@ -23,25 +25,26 @@ RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F82
 deck = jnp.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10])
 
 
-# converts a tuple of device arrays into a tutple of ints
 def obs_from_device(obs):
+    """Converts a tuple of device arrays into a tutple of ints."""
     return tuple([int(jax.device_get(obs[i])) for i in range(len(obs))])
 
 
 def cmp(a, b):
+    """Returns 1 if a > b, otherwise returns -1."""
     return (a > b).astype(int) - (a < b).astype(int)
 
 
-# gets a random card(with replacement)
 def random_card(key):
+    """Draws a randowm card (with replacement)."""
     key = random.split(key)[0]
     choice = random.choice(key, deck, shape=(1,))
 
     return choice[0].astype(int), key
 
 
-# draws a starting hand of two cards
 def draw_hand(key, hand):
+    """Draws a starting hand of two random cards."""
     new_card, key = random_card(key)
     hand = hand.at[0].set(new_card)
     new_card, key = random_card(key)
@@ -49,19 +52,20 @@ def draw_hand(key, hand):
     return hand, key
 
 
-# draws a single card
 def draw_card(key, hand, index):
+    """Draws a new card and adds it to a hand."""
     new_card, key = random_card(key)
     hand = hand.at[index].set(new_card)
     return key, hand, index + 1
 
 
-def usable_ace(hand):  # Does this hand have a usable ace?
+def usable_ace(hand):
+    """Checks to se if a hand has a usable ace."""
     return jnp.logical_and((jnp.count_nonzero(hand == 1) > 0), (sum(hand) + 10 <= 21))
 
 
-# the player has decided to take a card
 def take(env_state):
+    """This function is called if the player has decided to take a card."""
     state, key = env_state
     dealer_hand = state[0]
     player_hand = state[1]
@@ -73,16 +77,21 @@ def take(env_state):
 
 
 def dealer_stop(val):
+    """This function determines if the dealer should stop drawing."""
     return sum_hand(val[1]) < 17
 
 
 def draw_card_wrapper(val):
+    """Wrapper function for draw_card."""
     return draw_card(*val)
 
 
-# the player has decided to not take a card, ending the active portion
-# of the game and turning control over to the dealer
 def notake(env_state):
+    """This function is called if the player has decided to not take a card.
+
+    Calling this function ends the active portion
+    of the game and turns control over to the dealer.
+    """
     state, key = env_state
     dealer_hand = state[0]
     player_hand = state[1]
@@ -98,24 +107,28 @@ def notake(env_state):
     return (dealer_hand, player_hand, dealer_cards, player_cards), key
 
 
-# gets an observation from env state
 def _get_obsv(env_state):
+    """Gets an observation from env state."""
     return (sum_hand(env_state[0][1]), env_state[0][0][0], usable_ace(env_state[0][1]))
 
 
-def sum_hand(hand):  # Return current hand total
+def sum_hand(hand):
+    """Returns the total points in a hand."""
     return sum(hand) + (10 * usable_ace(hand))
 
 
-def is_bust(hand):  # Is this hand a bust?
+def is_bust(hand):
+    """Returns whether or not the hand is a bust."""
     return sum_hand(hand) > 21
 
 
-def score(hand):  # What is the score of this hand (0 if bust)
+def score(hand):
+    """Returns the score for a hand(0 if a bust)."""
     return (jnp.logical_not(is_bust(hand))) * sum_hand(hand)
 
 
-def is_natural(hand):  # Is this hand a natural blackjack?
+def is_natural(hand):
+    """Returns if the hand is a natural blackjack."""
     return jnp.logical_and(
         jnp.logical_and(
             jnp.count_nonzero(hand) == 2, (jnp.count_nonzero(hand == 1) > 0)
@@ -127,9 +140,7 @@ def is_natural(hand):  # Is this hand a natural blackjack?
 class BlackjackFunctional(
     FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
 ):
-    """
-    Blackjack is a card game where the goal is to beat the dealer by obtaining cards
-    that sum to closer to 21 (without going over 21) than the dealers cards.
+    """Blackjack is a card game where the goal is to beat the dealer by obtaining cards that sum to closer to 21 (without going over 21) than the dealers cards.
 
     ### Description
     Card Values:
@@ -203,6 +214,7 @@ class BlackjackFunctional(
     }
 
     def __init__(self, natural: bool = False, sutton_and_barto: bool = True):
+        """Initializes Blackjack functional env."""
         # Flag to payout 1.5 on a "natural" blackjack win, like casino rules
         # Ref: http://www.bicyclecards.com/how-to-play/blackjack/
         self.natural = natural
@@ -212,7 +224,7 @@ class BlackjackFunctional(
     def transition(
         self, state: jnp.ndarray, action: Union[int, jnp.ndarray], key: PRNGKey
     ):
-
+        """The blackjack environment's state transition function."""
         env_state = jax.lax.cond(action, take, notake, (state, key))
 
         hand_state, key = env_state
@@ -230,8 +242,7 @@ class BlackjackFunctional(
         return new_state
 
     def initial(self, rng: PRNGKey):
-        # env_state = self._reset(key)
-
+        """Blackjack initial observataion function."""
         player_hand = jnp.zeros(21)
         dealer_hand = jnp.zeros(21)
         player_hand, rng = draw_hand(rng, player_hand)
@@ -244,16 +255,17 @@ class BlackjackFunctional(
         return state
 
     def observation(self, state: jnp.ndarray) -> jnp.ndarray:
-        """BlackJack observation."""
+        """Blackjack observation."""
         return (sum_hand(state[1]), state[0][0], usable_ace(state[1]) * 1.0)
 
     def terminal(self, state: jnp.ndarray) -> jnp.ndarray:
+        """Determines if a particular Blackjack observation is terminal."""
         return (state[4]) > 0
 
     def reward(
         self, state: StateType, action: ActType, next_state: StateType
     ) -> jnp.ndarray:
-
+        """Calculates reward from a state."""
         state = next_state
 
         dealer_hand = state[0]
@@ -284,6 +296,7 @@ class BlackjackFunctional(
     def render_init(
         self, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
+        """Returns an initial render state."""
         try:
             import pygame
         except ImportError:
@@ -306,7 +319,7 @@ class BlackjackFunctional(
         state: StateType,
         render_state: RenderStateType,
     ) -> Tuple[RenderStateType, np.ndarray]:
-
+        """Renders an image from a state."""
         try:
             import pygame
         except ImportError:
@@ -424,10 +437,12 @@ class BlackjackFunctional(
 
 
 class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
+    """A Gymnasium Env wrapper for the functional blackjack env."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
+        """Initializes Gym wrapper for blackjack functional env."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         print(kwargs)
         env = BlackjackFunctional(**kwargs)
@@ -446,6 +461,9 @@ class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
 
 
 if __name__ == "__main__":
+    """
+    Temporary environment tester function.
+    """
 
     env = HumanRendering(BlackJackJaxEnv(render_mode="rgb_array"))
 
