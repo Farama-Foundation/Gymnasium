@@ -10,6 +10,7 @@ from enum import Enum
 from multiprocessing.connection import Connection
 from multiprocessing.queues import Queue
 from typing import Any, Callable, Sequence
+from typing_extensions import Protocol
 
 import numpy as np
 
@@ -45,10 +46,25 @@ __all__ = ["AsyncVectorEnv", "AsyncState", "default_async_worker"]
 
 
 class AsyncState(Enum):
+    """State of the AsyncVectorEnv."""
+
     DEFAULT = "default"
     WAITING_RESET = "reset"
     WAITING_STEP = "step"
     WAITING_CALL = "call"
+
+
+class AsyncWorker(Protocol):
+    def __call__(
+        self,
+        worker_num: int,
+        env_fn: Callable[[], Env],
+        pipe: Connection,
+        parent_pipe: Connection,
+        shared_memory: mp.Array | None,
+        error_queue: Queue,
+    ):
+        ...
 
 
 class AsyncVectorEnv(VectorEnv):
@@ -75,7 +91,7 @@ class AsyncVectorEnv(VectorEnv):
         copy: bool = True,
         context: str | None = None,
         daemon: bool = True,
-        worker: callable | None = None,
+        worker: AsyncWorker | None = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -151,12 +167,16 @@ class AsyncVectorEnv(VectorEnv):
         self.parent_pipes, self.processes = [], []
         self.error_queue = ctx.Queue()
 
-        target = worker or default_async_worker
+        if worker is not None:
+            target_fn = worker
+        else:
+            target_fn = default_async_worker
+
         with clear_mpi_env_vars():
             for idx, env_fn in enumerate(env_fns):
                 parent_pipe, child_pipe = ctx.Pipe()
                 process = ctx.Process(
-                    target=target,
+                    target=target_fn,
                     name=f"Worker<{type(self).__name__}>-{idx}",
                     args=(
                         idx,
@@ -634,13 +654,23 @@ class AsyncVectorEnv(VectorEnv):
 
 
 def default_async_worker(
-    index: int,
+    worker_num: int,
     env_fn: Callable[[], Env],
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: bool,
+    shared_memory: mp.Array | None,
     error_queue: Queue,
 ):
+    """The default async worker that is run in a separate process.
+
+    Args:
+        worker_num: The environment number
+        env_fn: The environment creation function
+        pipe: The process pipe to "talk" back to the `AsyncVectorEnv`
+        parent_pipe: The parent pipe from the original process
+        shared_memory: An shared memory object if shared memory should be used otherwise ``None``
+        error_queue: A shared Queue between the processes to pass the error messages for the many queue to report.
+    """
     env = env_fn()
     observation_space: Space[ObsType] = env.observation_space
     action_space: Space[ActType] = env.action_space
@@ -654,7 +684,6 @@ def default_async_worker(
             if command == "reset":
                 obs, info = env.reset(**data)
                 if shared_memory:
-                    write_to_shared_memory(observation_space, index, obs, shared_memory)
                     obs = None
                 pipe.send(((obs, info), True))
 
@@ -676,7 +705,9 @@ def default_async_worker(
                     ) = env.step(action)
 
                 if shared_memory:
-                    write_to_shared_memory(observation_space, index, obs, shared_memory)
+                    write_to_shared_memory(
+                        observation_space, worker_num, obs, shared_memory
+                    )
                     obs = None
 
                 pipe.send(((obs, reward, terminated, truncated, info), True))
@@ -721,7 +752,7 @@ def default_async_worker(
                     f"Received unknown command `{command}`. Must be one of `reset`, `step`, `seed`, `close`, `_call`, `_setattr`, `_check_spaces`."
                 )
     except (KeyboardInterrupt, Exception):
-        error_queue.put((index,) + sys.exc_info()[:2])
+        error_queue.put((worker_num,) + sys.exc_info()[:2])
         pipe.send((None, False))
     finally:
         env.close()

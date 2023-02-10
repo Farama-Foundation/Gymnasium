@@ -9,8 +9,11 @@ import numpy as np
 
 from gymnasium import Space
 from gymnasium.core import ActType, Env, ObsType, RenderFrame
-from gymnasium.experimental.vector import VectorEnv
-from gymnasium.experimental.vector.vector_env import VectorActType, VectorObsType
+from gymnasium.experimental.vector.vector_env import (
+    VectorActType,
+    VectorEnv,
+    VectorObsType,
+)
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 

@@ -1,6 +1,7 @@
 """`__init__` of the gym experimental vector module."""
 
 from gymnasium.experimental.vector import wrappers
+from gymnasium.experimental.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.experimental.vector.sync_vector_env import SyncVectorEnv
 from gymnasium.experimental.vector.vector_env import (
     VectorActionWrapper,
@@ -21,7 +22,7 @@ __all__ = [
     "VectorRewardWrapper",
     # Vector implementations
     "SyncVectorEnv",
-    # "AsyncVectorEnv",
+    "AsyncVectorEnv",
     # "FunctionalJaxVectorEnv",
     # Folders
     "wrappers",

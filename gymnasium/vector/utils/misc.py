@@ -30,7 +30,7 @@ class CloudpickleWrapper:
 
         self.fn = pickle.loads(ob)
 
-    def __call__(self):
+    def __call__(self) -> Env:
         """Calls the function `self.fn` with no arguments."""
         return self.fn()
 
