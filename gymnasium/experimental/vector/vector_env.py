@@ -15,6 +15,20 @@ if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
 
 
+__all__ = [
+    "VectorEnv",
+    "VectorWrapper",
+    "VectorObservationWrapper",
+    "VectorActionWrapper",
+    "VectorRewardWrapper",
+    "VectorObsType",
+    "VectorActType",
+    "VectorArrayType",
+    "VectorWrapperObsType",
+    "VectorWrapperActType",
+    "VectorWrapperArrayType",
+]
+
 VectorObsType = TypeVar("VectorObsType")
 VectorActType = TypeVar("VectorActType")
 VectorArrayType = TypeVar("VectorArrayType")

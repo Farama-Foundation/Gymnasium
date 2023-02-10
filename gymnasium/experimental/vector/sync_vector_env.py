@@ -14,6 +14,9 @@ from gymnasium.experimental.vector.vector_env import VectorActType, VectorObsTyp
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
+__all__ = ["SyncVectorEnv"]
+
+
 class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
     """Vectorized environment that serially runs multiple environments.
 
@@ -33,12 +36,14 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
         self,
         envs: Iterable[Callable[[], Env[ObsType, ActType]]]
         | Sequence[Env[ObsType, ActType]],
+        copy: bool = True,
         render_mode: str | None = None,
     ):
         """Vectorized environment that serially runs multiple environments.
 
         Args:
             envs: A sequence of environments or functions that generate environments
+            copy: Copy the observation on `reset` and `step` functions
             render_mode: The render_mode of the environment
         """
         envs = tuple(envs)
@@ -50,6 +55,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
         self.metadata = self.envs[0].metadata
         self.render_mode = render_mode
+        self.copy = copy
 
         assert len(envs) > 0
         self.single_observation_space: Space[ObsType] = self.envs[0].observation_space
@@ -75,7 +81,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
             self.single_observation_space, self.num_envs
         )
         self._reset_options: dict[str, Any] | None = None
-        self._reset_envs: np.ndarray = np.full(self.num_envs, dtype=bool)
+        self._to_reset_envs: np.ndarray = np.full(self.num_envs, dtype=bool)
 
     def reset(
         self,
@@ -110,7 +116,9 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
             obs[env_num] = env_obs
             info = self.add_dict_info(info, env_info, env_num)
 
-        obs = deepcopy(concatenate(self.single_observation_space, obs, self._obs_array))
+        obs = concatenate(self.single_observation_space, obs, self._obs_array)
+        if self.copy:
+            obs = deepcopy(obs)
         return obs, info
 
     def step(
@@ -130,7 +138,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
         info = {}
 
         for env_num, (env, action) in enumerate(zip(self.envs, env_actions)):
-            if self._reset_envs[env_num]:
+            if self._to_reset_envs[env_num]:
                 env_obs, env_info = env.reset(options=self._reset_options)
 
                 rewards[env_num] = 0
@@ -146,10 +154,12 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
             info = self.add_dict_info(info, env_info, env_num)
 
-        obs = deepcopy(concatenate(self.single_observation_space, obs, self._obs_array))
+        obs = concatenate(self.single_observation_space, obs, self._obs_array)
+        if self.copy:
+            obs = deepcopy(self.copy)
         assert all(reward is not None for reward in rewards)
         rewards = np.array(rewards)
-        self._reset_envs = np.logical_or(terminations, truncations)
+        self._to_reset_envs = np.logical_or(terminations, truncations)
 
         return obs, rewards, terminations, truncations, info
 
@@ -167,9 +177,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
             env.close()
         super().close()
 
-    def call(
-        self, name: str, *args: list[Any], **kwargs: dict[str, Any]
-    ) -> tuple[Any, ...]:
+    def call(self, name: str, *args: Any, **kwargs: Any) -> tuple[Any, ...]:
         """Calls a function in each sub-environment with name using args and kwargs return a tuple of results."""
         results = []
         for i, env in enumerate(self.envs):
@@ -200,7 +208,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
         return tuple(results)
 
-    def set_attr(self, name: str, values: list | tuple | Any):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any] | Any):
         """Sets an attribute of each sub-environments.
 
         Args:
