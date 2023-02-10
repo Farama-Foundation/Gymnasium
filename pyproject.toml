@@ -154,3 +154,13 @@ reportUnboundVariable = "warning"
 [tool.pytest.ini_options]
 filterwarnings = ['ignore:.*The environment .* is out of date.*']
 # filterwarnings = ['ignore:.*step API.*:DeprecationWarning']
+
+[tool.mypy]
+files = ["gymnasium/**/*.py", "tests/**/*.py"]
+
+python_version = "3.8"
+platform = "All"
+
+strict = true
+follow_imports = "silent"
+ignore_missing_imports = true
