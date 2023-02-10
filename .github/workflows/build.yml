@@ -18,6 +18,8 @@ jobs:
              --tag gymnasium-all-docker .
       - name: Run tests
         run: docker run gymnasium-all-docker pytest tests/*
+      - name: Run doctest
+        run: docker run gymnasium-all-docker pytest --doctest-modules gymnasium/
 
   build-necessary:
     runs-on:

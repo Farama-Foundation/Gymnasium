@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.spaces import Box, Graph, utils
+from gymnasium.spaces import Box, Graph, Sequence, utils
 from gymnasium.utils.env_checker import data_equivalence
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 
@@ -110,7 +110,9 @@ def test_flatten(space):
 
         assert single_dim == flatdim
     else:
-        assert isinstance(flattened_sample, (tuple, dict, Graph))
+        assert isinstance(space, Sequence) or isinstance(
+            flattened_sample, (tuple, dict, Graph)
+        )
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
@@ -135,3 +137,15 @@ def test_flatten_roundtripping(space):
 
     for original, roundtripped in zip(samples, unflattened_samples):
         assert data_equivalence(original, roundtripped)
+
+
+def test_unflatten_discrete_error():
+    value = np.array([0])
+    with pytest.raises(ValueError):
+        utils.unflatten(gym.spaces.Discrete(1), value)
+
+
+def test_unflatten_multidiscrete_error():
+    value = np.array([0, 0])
+    with pytest.raises(ValueError):
+        utils.unflatten(gym.spaces.MultiDiscrete([1, 1]), value)

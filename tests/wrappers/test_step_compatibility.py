@@ -1,7 +1,9 @@
+import numpy as np
 import pytest
 
 import gymnasium as gym
 from gymnasium.spaces import Discrete
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import StepAPICompatibility
 
 
@@ -52,6 +54,20 @@ def test_step_compatibility_to_old_api(env):
     assert len(step_returns) == 4
     _, _, done, _ = step_returns
     assert isinstance(done, bool)
+
+
+@pytest.mark.parametrize("vector_env", [SyncVectorEnv, AsyncVectorEnv])
+def test_vector_env_step_compatibility_to_old_api(vector_env):
+    num_envs = 2
+    env = vector_env([NewStepEnv for _ in range(num_envs)])
+    old_env = StepAPICompatibility(env, False)
+
+    step_returns = old_env.step([0] * num_envs)
+    assert len(step_returns) == 4
+    _, _, dones, _ = step_returns
+    assert isinstance(dones, np.ndarray)
+    for done in dones:
+        assert isinstance(done, np.bool_)
 
 
 @pytest.mark.parametrize("apply_api_compatibility", [None, True, False])

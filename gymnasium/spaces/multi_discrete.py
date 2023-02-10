@@ -30,12 +30,13 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
     Although this feature is rarely used, :class:`MultiDiscrete` spaces may also have several axes
     if ``nvec`` has several axes:
 
-    Example::
-
-        >> d = MultiDiscrete(np.array([[1, 2], [3, 4]]))
-        >> d.sample()
+    Example:
+        >>> from gymnasium.spaces import MultiDiscrete
+        >>> import numpy as np
+        >>> observation_space = MultiDiscrete(np.array([[1, 2], [3, 4]]), seed=42)
+        >>> observation_space.sample()
         array([[0, 0],
-               [2, 3]])
+               [2, 2]])
     """
 
     def __init__(
@@ -152,7 +153,7 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
         self, sample_n: list[Sequence[int]]
     ) -> list[npt.NDArray[np.integer[Any]]]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        return np.array(sample_n)
+        return [np.array(sample) for sample in sample_n]
 
     def __repr__(self):
         """Gives a string representation of this space."""

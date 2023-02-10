@@ -8,6 +8,7 @@ import importlib
 import importlib.util
 import re
 import sys
+import traceback
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -45,7 +46,7 @@ ENV_ID_RE = re.compile(
 )
 
 
-def load(name: str) -> callable:
+def load(name: str) -> Callable:
     """Loads an environment with name and returns an environment creation function.
 
     Args:
@@ -312,8 +313,8 @@ def load_env_plugins(entry_point: str = "gymnasium.envs") -> None:
             fn = plugin.load()
             try:
                 fn()
-            except Exception as e:
-                logger.warn(str(e))
+            except Exception:
+                logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
 
 
 # fmt: off
@@ -804,6 +805,7 @@ def make_vec(
     elif vectorization_mode == "custom":
         if len(wrappers) > 0:
             raise error.Error("Cannot use custom vectorization mode with wrappers.")
+        _kwargs["max_episode_steps"] = spec_.max_episode_steps
         env = env_creator(num_envs=num_envs, **_kwargs)
     else:
         raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")

@@ -44,12 +44,12 @@ class Box(Space[NDArray[Any]]):
     * Identical bound for each dimension::
 
         >>> Box(low=-1.0, high=2.0, shape=(3, 4), dtype=np.float32)
-        Box(3, 4)
+        Box(-1.0, 2.0, (3, 4), float32)
 
     * Independent bound for each dimension::
 
         >>> Box(low=np.array([-1.0, -2.0]), high=np.array([2.0, 4.0]), dtype=np.float32)
-        Box(2,)
+        Box([-1. -2.], [2. 4.], (2,), float32)
     """
 
     def __init__(
@@ -238,9 +238,9 @@ class Box(Space[NDArray[Any]]):
             and np.all(x <= self.high)
         )
 
-    def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[NDArray[Any]]:
+    def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[list]:
         """Convert a batch of samples from this space to a JSONable data type."""
-        return np.array(sample_n).tolist()
+        return [sample.tolist() for sample in sample_n]
 
     def from_jsonable(self, sample_n: Sequence[float | int]) -> list[NDArray[Any]]:
         """Convert a JSONable data type to a batch of samples from this space."""

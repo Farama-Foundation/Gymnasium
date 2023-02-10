@@ -23,6 +23,12 @@ from tests.testing_env import GenericTestEnv, old_step_func
 from tests.wrappers.utils import has_wrapper
 
 
+try:
+    import shimmy
+except ImportError:
+    shimmy = None
+
+
 @pytest.fixture(scope="function")
 def register_make_testing_envs():
     """Registers testing envs for `gym.make`"""

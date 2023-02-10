@@ -16,17 +16,16 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
 
     Elements of this space are (ordered) dictionaries of elements from the constituent spaces.
 
-    Example usage:
-
+    Example:
         >>> from gymnasium.spaces import Dict, Discrete
-        >>> observation_space = Dict({"position": Discrete(2), "velocity": Discrete(3)})
+        >>> observation_space = Dict({"position": Discrete(2), "velocity": Discrete(3)}, seed=42)
         >>> observation_space.sample()
-        OrderedDict([('position', 1), ('velocity', 2)])
+        OrderedDict([('position', 0), ('velocity', 2)])
 
-    Example usage [nested]::
+        With a nested dict:
 
         >>> from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete
-        >>> Dict(
+        >>> Dict(  # doctest: +SKIP
         ...     {
         ...         "ext_controller": MultiDiscrete([5, 2, 2]),
         ...         "inner_state": Dict(
@@ -62,18 +61,19 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         of spaces to :meth:`__init__` via the ``spaces`` argument, or you pass the spaces as separate
         keyword arguments (where you will need to avoid the keys ``spaces`` and ``seed``)
 
-        Example::
-
-            >>> from gymnasium.spaces import Box, Discrete
-            >>> Dict({"position": Box(-1, 1, shape=(2,)), "color": Discrete(3)})
-            Dict(color:Discrete(3), position:Box(-1.0, 1.0, (2,), float32))
-            >>> Dict(position=Box(-1, 1, shape=(2,)), color=Discrete(3))
-            Dict(color:Discrete(3), position:Box(-1.0, 1.0, (2,), float32))
-
         Args:
             spaces: A dictionary of spaces. This specifies the structure of the :class:`Dict` space
             seed: Optionally, you can use this argument to seed the RNGs of the spaces that make up the :class:`Dict` space.
             **spaces_kwargs: If ``spaces`` is ``None``, you need to pass the constituent spaces as keyword arguments, as described above.
+
+        Example:
+            >>> from gymnasium.spaces import Dict, Box, Discrete
+            >>> observation_space = Dict({"position": Box(-1, 1, shape=(2,)), "color": Discrete(3)}, seed=42)
+            >>> observation_space.sample()
+            OrderedDict([('color', 0), ('position', array([-0.3991573 ,  0.21649833], dtype=float32))])
+            >>> observation_space = Dict(position=Box(-1, 1, shape=(2,)), color=Discrete(3), seed=42)
+            >>> observation_space.sample()
+            OrderedDict([('position', array([0.6273108, 0.240238 ], dtype=float32)), ('color', 2)])
         """
         # Convert the spaces into an OrderedDict
         if isinstance(spaces, collections.abc.Mapping) and not isinstance(

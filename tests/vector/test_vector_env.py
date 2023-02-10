@@ -3,10 +3,12 @@ from functools import partial
 import numpy as np
 import pytest
 
-from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv
-from gymnasium.spaces import Discrete
+from gymnasium.spaces import Discrete, Tuple
+from gymnasium.vector.async_vector_env import AsyncVectorEnv
+from gymnasium.vector.sync_vector_env import SyncVectorEnv
+from gymnasium.vector.vector_env import VectorEnv
 from tests.testing_env import GenericTestEnv
-from tests.vector.utils import make_env
+from tests.vector.utils import CustomSpace, make_env
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])
@@ -49,6 +51,16 @@ def test_vector_env_equal(shared_memory):
 
     async_env.close()
     sync_env.close()
+
+
+def test_custom_space_vector_env():
+    env = VectorEnv(4, CustomSpace(), CustomSpace())
+
+    assert isinstance(env.single_observation_space, CustomSpace)
+    assert isinstance(env.observation_space, Tuple)
+
+    assert isinstance(env.single_action_space, CustomSpace)
+    assert isinstance(env.action_space, Tuple)
 
 
 @pytest.mark.parametrize(

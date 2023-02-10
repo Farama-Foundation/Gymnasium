@@ -16,7 +16,11 @@ from __future__ import annotations
 from typing import Any, Callable, Sequence
 from typing_extensions import Final
 
-import jumpy as jp
+
+try:
+    import jumpy as jp
+except ImportError as e:
+    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym
@@ -35,11 +39,13 @@ class LambdaObservationV0(gym.ObservationWrapper):
 
     Example:
         >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import LambdaObservationV0
         >>> import numpy as np
-        >>> env = gym.make('CartPole-v1')
-        >>> env = LambdaObservationV0(env, lambda obs: obs + 0.1 * np.random.random(obs.shape))
-        >>> env.reset()
-        array([-0.08319338,  0.04635121, -0.07394746,  0.20877492])
+        >>> np.random.seed(0)
+        >>> env = gym.make("CartPole-v1")
+        >>> env = LambdaObservationV0(env, lambda obs: obs + 0.1 * np.random.random(obs.shape), env.observation_space)
+        >>> env.reset(seed=42)
+        (array([0.08227695, 0.06540678, 0.09613613, 0.07422512]), {})
     """
 
     def __init__(
@@ -71,17 +77,18 @@ class FilterObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.wrappers.TransformObservation(
-        ...     gym.make('CartPole-v1'), lambda obs: {'obs': obs, 'time': 0}
-        ... )
+        >>> from gymnasium.wrappers import TransformObservation
+        >>> from gymnasium.experimental.wrappers import FilterObservationV0
+        >>> env = gym.make("CartPole-v1")
+        >>> env = gym.wrappers.TransformObservation(env, lambda obs: {'obs': obs, 'time': 0})
         >>> env.observation_space = gym.spaces.Dict(obs=env.observation_space, time=gym.spaces.Discrete(1))
-        >>> env.reset()
-        {'obs': array([-0.00067088, -0.01860439,  0.04772898, -0.01911527], dtype=float32), 'time': 0}
+        >>> env.reset(seed=42)
+        ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': 0}, {})
         >>> env = FilterObservationV0(env, filter_keys=['time'])
-        >>> env.reset()
-        {'obs': array([ 0.04560107,  0.04466959, -0.0328232 , -0.02367178], dtype=float32)}
+        >>> env.reset(seed=42)
+        ({'time': 0}, {})
         >>> env.step(0)
-        ({'obs': array([ 0.04649447, -0.14996664, -0.03329664,  0.25847703], dtype=float32)}, 1.0, False, {})
+        ({'time': 0}, 1.0, False, False, {})
     """
 
     def __init__(self, env: gym.Env, filter_keys: Sequence[str | int]):
@@ -167,13 +174,14 @@ class FlattenObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CarRacing-v1')
+        >>> from gymnasium.experimental.wrappers import FlattenObservationV0
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> env = FlattenObservationV0(env)
         >>> env.observation_space.shape
         (27648,)
-        >>> obs, info = env.reset()
+        >>> obs, _ = env.reset()
         >>> obs.shape
         (27648,)
     """
@@ -194,7 +202,8 @@ class GrayscaleObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make("CarRacing-v1")
+        >>> from gymnasium.experimental.wrappers import GrayscaleObservationV0
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> grayscale_env = GrayscaleObservationV0(env)
@@ -254,6 +263,7 @@ class ResizeObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import ResizeObservationV0
         >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
@@ -279,7 +289,7 @@ class ResizeObservationV0(LambdaObservationV0):
             import cv2
         except ImportError as e:
             raise DependencyNotInstalled(
-                "opencv is not installed, run `pip install gymnasium[other]`"
+                "opencv (cv2) is not installed, run `pip install gymnasium[other]`"
             ) from e
 
         self.shape: Final[tuple[int, ...]] = tuple(shape)
@@ -299,7 +309,8 @@ class ReshapeObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make("CarRacing-v1")
+        >>> from gymnasium.experimental.wrappers import ReshapeObservationV0
+        >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> reshape_env = ReshapeObservationV0(env, (24, 4, 96, 1, 3))
@@ -331,11 +342,13 @@ class RescaleObservationV0(LambdaObservationV0):
 
     Example:
         >>> import gymnasium as gym
+        >>> from gymnasium.experimental.wrappers import RescaleObservationV0
         >>> env = gym.make("Pendulum-v1")
         >>> env.observation_space
         Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)
         >>> env = RescaleObservationV0(env, np.array([-2, -1, -10]), np.array([1, 0, 1]))
-        Box([-2. -1. -10.], [1. 0. 1.], (3,), float32)
+        >>> env.observation_space
+        Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32)
     """
 
     def __init__(
@@ -489,6 +502,10 @@ class PixelObservationV0(LambdaObservationV0):
 class NormalizeObservationV0(ObservationWrapper):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
+    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
+    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.observation()` is called.
+    If `False`, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+
     Note:
         The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
         newly instantiated or the policy was changed recently.
@@ -504,10 +521,22 @@ class NormalizeObservationV0(ObservationWrapper):
         super().__init__(env)
         self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
         self.epsilon = epsilon
+        self._update_running_mean = True
+
+    @property
+    def update_running_mean(self) -> bool:
+        """Property to freeze/continue the running mean calculation of the observation statistics."""
+        return self._update_running_mean
+
+    @update_running_mean.setter
+    def update_running_mean(self, setting: bool):
+        """Sets the property to freeze/continue the running mean calculation of the observation statistics."""
+        self._update_running_mean = setting
 
     def observation(self, observation: ObsType) -> WrapperObsType:
         """Normalises the observation using the running mean and variance of the observations."""
-        self.obs_rms.update(observation)
+        if self._update_running_mean:
+            self.obs_rms.update(observation)
         return (observation - self.obs_rms.mean) / np.sqrt(
             self.obs_rms.var + self.epsilon
         )

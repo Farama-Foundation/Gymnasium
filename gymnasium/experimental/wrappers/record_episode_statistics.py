@@ -19,7 +19,7 @@ class VectorRecordEpisodeStatistics(gym.experimental.VectorWrapper):
 
     After the completion of an episode, ``info`` will look like this::
 
-        >>> info = {
+        >>> info = {  # doctest: +SKIP
         ...     ...
         ...     "episode": {
         ...         "r": "<cumulative reward>",
@@ -30,7 +30,7 @@ class VectorRecordEpisodeStatistics(gym.experimental.VectorWrapper):
 
     For a vectorized environments the output will be in the form of::
 
-        >>> infos = {
+        >>> infos = {  # doctest: +SKIP
         ...     ...
         ...     "episode": {
         ...         "r": "<array of cumulative reward>",
