@@ -1,7 +1,7 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, Literal, SupportsFloat, TypeVar
 
 import numpy as np
 
@@ -100,12 +100,12 @@ class Env(Generic[ObsType, ActType]):
         """
         raise NotImplementedError
 
-    def reset(
+    def reset(  # type: ignore[return]
         self,
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment to an initial internal state, returning an initial observation and info.
 
         This method generates a new starting state often with some randomness to ensure that the agent explores the
@@ -177,7 +177,7 @@ class Env(Generic[ObsType, ActType]):
         """
         raise NotImplementedError
 
-    def close(self):
+    def close(self) -> None:
         """After the user has finished using the environment, close contains the code necessary to "clean up" the environment.
 
         This is critical for closing rendering windows, database or HTTP connections.
@@ -205,10 +205,10 @@ class Env(Generic[ObsType, ActType]):
         return self._np_random
 
     @np_random.setter
-    def np_random(self, value: np.random.Generator):
+    def np_random(self, value: np.random.Generator) -> None:
         self._np_random = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns a string of the environment with :attr:`spec` id's if :attr:`spec.
 
         Returns:
@@ -219,11 +219,11 @@ class Env(Generic[ObsType, ActType]):
         else:
             return f"<{type(self).__name__}<{self.spec.id}>>"
 
-    def __enter__(self):
+    def __enter__(self) -> Env[ObsType, ActType]:
         """Support with-statement for the environment."""
         return self
 
-    def __exit__(self, *args: Any):
+    def __exit__(self, *args: Any) -> Literal[False]:
         """Support with-statement for the environment and closes the environment."""
         self.close()
         # propagate exception
@@ -273,7 +273,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return getattr(self.env, name)
 
     @property
-    def spec(self) -> EnvSpec | None:
+    def spec(self) -> EnvSpec | None:  # type: ignore[override]
         """Returns the :attr:`Env` :attr:`spec` attribute."""
         return self.env.spec
 
@@ -282,20 +282,20 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         """Returns the class name of the wrapper."""
         return cls.__name__
 
-    @property
+    @property  # type: ignore[override]
     def action_space(
         self,
     ) -> spaces.Space[ActType] | spaces.Space[WrapperActType]:
         """Return the :attr:`Env` :attr:`action_space` unless overwritten then the wrapper :attr:`action_space` is used."""
         if self._action_space is None:
-            return self.env.action_space
+            return self.env.action_space  # type: ignore[return-value]
         return self._action_space
 
     @action_space.setter
-    def action_space(self, space: spaces.Space[WrapperActType]):
+    def action_space(self, space: spaces.Space[WrapperActType]) -> None:
         self._action_space = space
 
-    @property
+    @property  # type: ignore[override]
     def observation_space(
         self,
     ) -> spaces.Space[ObsType] | spaces.Space[WrapperObsType]:
@@ -305,10 +305,10 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self._observation_space
 
     @observation_space.setter
-    def observation_space(self, space: spaces.Space[WrapperObsType]):
+    def observation_space(self, space: spaces.Space[WrapperObsType]) -> None:
         self._observation_space = space
 
-    @property
+    @property  # type: ignore[override]
     def reward_range(self) -> tuple[SupportsFloat, SupportsFloat]:
         """Return the :attr:`Env` :attr:`reward_range` unless overwritten then the wrapper :attr:`reward_range` is used."""
         if self._reward_range is None:
@@ -316,7 +316,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self._reward_range
 
     @reward_range.setter
-    def reward_range(self, value: tuple[SupportsFloat, SupportsFloat]):
+    def reward_range(self, value: tuple[SupportsFloat, SupportsFloat]) -> None:
         self._reward_range = value
 
     @property
@@ -327,11 +327,11 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self._metadata
 
     @metadata.setter
-    def metadata(self, value: dict[str, Any]):
+    def metadata(self, value: dict[str, Any]) -> None:
         self._metadata = value
 
     @property
-    def render_mode(self) -> str | None:
+    def render_mode(self) -> str | None:  # type: ignore[override]
         """Returns the :attr:`Env` :attr:`render_mode`."""
         return self.env.render_mode
 
@@ -341,11 +341,11 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self.env.np_random
 
     @np_random.setter
-    def np_random(self, value: np.random.Generator):
+    def np_random(self, value: np.random.Generator) -> None:
         self.env.np_random = value
 
     @property
-    def _np_random(self):
+    def _np_random(self) -> None:  # type: ignore[override]
         """This code will never be run due to __getattr__ being called prior this.
 
         It seems that @property overwrites the variable (`_np_random`) meaning that __getattr__ gets called with the missing variable.
@@ -358,32 +358,32 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         self, action: WrapperActType
     ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.step(action)
+        return self.env.step(action)  # type: ignore[arg-type, return-value]
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.reset(seed=seed, options=options)
+        return self.env.reset(seed=seed, options=options)  # type: ignore[return-value]
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
         return self.env.render()
 
-    def close(self):
+    def close(self) -> None:
         """Closes the wrapper and :attr:`env`."""
         return self.env.close()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns the wrapper name and the :attr:`env` representation string."""
         return f"<{type(self).__name__}{self.env}>"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns the string representation of the wrapper."""
         return str(self)
 
     @property
-    def unwrapped(self) -> Env[ObsType, ActType]:
+    def unwrapped(self) -> Env[ObsType, ActType]:  # type: ignore[override]
         """Returns the base environment of the wrapper.
 
         This will be the bare :class:`gymnasium.Env` environment, underneath all layers of wrappers.
@@ -419,7 +419,7 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
         self, action: ActType
     ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Modifies the :attr:`env` after calling :meth:`step` using :meth:`self.observation` on the returned observations."""
-        observation, reward, terminated, truncated, info = self.env.step(action)
+        observation, reward, terminated, truncated, info = self.env.step(action)  # type: ignore[arg-type]
         return self.observation(observation), reward, terminated, truncated, info
 
     def observation(self, observation: ObsType) -> WrapperObsType:
@@ -452,8 +452,8 @@ class RewardWrapper(Wrapper[ObsType, ActType]):
         self, action: ActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Modifies the :attr:`env` :meth:`step` reward using :meth:`self.reward`."""
-        observation, reward, terminated, truncated, info = self.env.step(action)
-        return observation, self.reward(reward), terminated, truncated, info
+        observation, reward, terminated, truncated, info = self.env.step(action)  # type: ignore[arg-type]
+        return observation, self.reward(reward), terminated, truncated, info  # type: ignore[return-value]
 
     def reward(self, reward: SupportsFloat) -> SupportsFloat:
         """Returns a modified environment ``reward``.
@@ -488,9 +488,9 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType]):
         self, action: WrapperActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Runs the :attr:`env` :meth:`env.step` using the modified ``action`` from :meth:`self.action`."""
-        return self.env.step(self.action(action))
+        return self.env.step(self.action(action))  # type: ignore[return-value]
 
-    def action(self, action: WrapperActType) -> ActType:
+    def action(self, action: WrapperActType) -> ActType:  # type: ignore[type-var]
         """Returns a modified action before :meth:`env.step` is called.
 
         Args:

@@ -57,6 +57,17 @@ repos:
           - --explain
           - --convention=google
         additional_dependencies: ["toml"]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.0.0'
+    hooks:
+      - id: mypy
+        files: 'gymnasium/core.py'
+        args:
+          - --python-version=3.8
+          - --platform=All
+          - --strict
+          - --follow-imports=silent
+          - --ignore-missing-imports
   - repo: local
     hooks:
       - id: pyright
@@ -68,14 +79,3 @@ repos:
         additional_dependencies: ["pyright"]
         args:
           - --project=pyproject.toml
-  - repo: local
-    hooks:
-      - id: mypy
-        name: mypy
-        entry: mypy
-        language: node
-        pass_filenames: false
-        types: [python]
-        additional_dependencies: ["mypy"]
-        args:
-          - --config-file=pyproject.toml
