@@ -68,3 +68,14 @@ repos:
         additional_dependencies: ["pyright"]
         args:
           - --project=pyproject.toml
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: node
+        pass_filenames: false
+        types: [python]
+        additional_dependencies: ["mypy"]
+        args:
+          - --config-file=pyproject.toml

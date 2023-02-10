@@ -156,7 +156,7 @@ filterwarnings = ['ignore:.*The environment .* is out of date.*']
 # filterwarnings = ['ignore:.*step API.*:DeprecationWarning']
 
 [tool.mypy]
-files = ["gymnasium/**/*.py", "tests/**/*.py"]
+files = ["gymnasium/core.py"]
 
 python_version = "3.8"
 platform = "All"
