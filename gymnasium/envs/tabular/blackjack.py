@@ -193,7 +193,7 @@ class BlackjackFunctional(
     If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).
 
     ### Version History
-    * v0: Initial version release (1.0.0), adapted from original gym blackjack v1
+    * v0: Initial version release (0.0.0), adapted from original gym blackjack v1
     """
 
     action_space = spaces.Discrete(2)
@@ -201,11 +201,6 @@ class BlackjackFunctional(
     observation_space = spaces.Box(
         low=np.array([1, 1, 0]), high=np.array([32, 11, 1]), shape=(3,), dtype=np.int32
     )
-    # observation_space = spaces.Tuple(
-    #    (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
-    # )
-
-    # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 
     metadata = {
         "render_modes": ["rgb_array"],
