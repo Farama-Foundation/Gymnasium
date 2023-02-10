@@ -48,9 +48,9 @@ def test_normal_BlackjackFunctional():
         assert next_state[4].dtype == jnp.int32
 
         assert rng.dtype == jnp.uint32
-        assert obs[0].dtype == jnp.float32
-        assert obs[1].dtype == jnp.float32
-        assert obs[2].dtype == jnp.float32
+        assert obs[0].dtype == jnp.int32
+        assert obs[1].dtype == jnp.int32
+        assert obs[2].dtype == jnp.int32
 
         state = next_state
 
@@ -91,9 +91,9 @@ def test_jit_BlackjackFunctional():
         assert next_state[4].dtype == jnp.int32
 
         assert rng.dtype == jnp.uint32
-        assert obs[0].dtype == jnp.float32
-        assert obs[1].dtype == jnp.float32
-        assert obs[2].dtype == jnp.float32
+        assert obs[0].dtype == jnp.int32
+        assert obs[1].dtype == jnp.int32
+        assert obs[2].dtype == jnp.int32
 
         state = next_state
 
@@ -128,9 +128,9 @@ def test_vmap_BlackJack():
         assert reward.dtype == jnp.float32
         assert terminal.shape == (num_envs,)
         assert terminal.dtype == bool
-        assert isinstance(obs, tuple)
-        assert obs[0].dtype == jnp.float32
-        assert obs[1].dtype == jnp.float32
-        assert obs[2].dtype == jnp.float32
+        assert isinstance(obs, jnp.ndarray)
+        assert obs[0].dtype == jnp.int32
+        assert obs[1].dtype == jnp.int32
+        assert obs[2].dtype == jnp.int32
 
         state = next_state

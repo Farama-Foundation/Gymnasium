@@ -107,11 +107,6 @@ def notake(env_state):
     return (dealer_hand, player_hand, dealer_cards, player_cards), key
 
 
-def _get_obsv(env_state):
-    """Gets an observation from env state."""
-    return (sum_hand(env_state[0][1]), env_state[0][0][0], usable_ace(env_state[0][1]))
-
-
 def sum_hand(hand):
     """Returns the total points in a hand."""
     return sum(hand) + (10 * usable_ace(hand))
@@ -202,9 +197,13 @@ class BlackjackFunctional(
     """
 
     action_space = spaces.Discrete(2)
-    observation_space = spaces.Tuple(
-        (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
+
+    observation_space = spaces.Box(
+        low=np.array([1, 1, 0]), high=np.array([32, 11, 1]), shape=(3,), dtype=np.int32
     )
+    # observation_space = spaces.Tuple(
+    #    (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
+    # )
 
     # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 
@@ -256,7 +255,10 @@ class BlackjackFunctional(
 
     def observation(self, state: jnp.ndarray) -> jnp.ndarray:
         """Blackjack observation."""
-        return (sum_hand(state[1]), state[0][0], usable_ace(state[1]) * 1.0)
+        return jnp.array(
+            [sum_hand(state[1]), state[0][0], usable_ace(state[1]) * 1.0],
+            dtype=np.int32,
+        )
 
     def terminal(self, state: jnp.ndarray) -> jnp.ndarray:
         """Determines if a particular Blackjack observation is terminal."""
@@ -444,7 +446,6 @@ class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         """Initializes Gym wrapper for blackjack functional env."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-        print(kwargs)
         env = BlackjackFunctional(**kwargs)
         env.transform(jax.jit)
 
