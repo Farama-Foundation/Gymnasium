@@ -71,15 +71,6 @@ class FunctionalJaxEnv(gym.Env):
 
         obs = jax_to_numpy(obs)
 
-        # checks for multidiscrete, and applies int cast
-        if isinstance(self.observation_space, gym.spaces.Tuple) and all(
-            [
-                isinstance(space, gym.spaces.Discrete)
-                for space in self.observation_space.spaces
-            ]
-        ):
-            obs = tuple([int(value) for value in obs])
-
         return obs, info
 
     def step(self, action: ActType):
@@ -102,15 +93,6 @@ class FunctionalJaxEnv(gym.Env):
         self.state = next_state
 
         observation = jax_to_numpy(observation)
-
-        # checks for multidiscrete, and applies int cast
-        if isinstance(self.observation_space, gym.spaces.Tuple) and all(
-            [
-                isinstance(space, gym.spaces.Discrete)
-                for space in self.observation_space.spaces
-            ]
-        ):
-            observation = tuple([int(value) for value in observation])
 
         return observation, float(reward), bool(terminated), False, info
 

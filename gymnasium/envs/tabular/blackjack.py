@@ -180,7 +180,7 @@ class BlackjackFunctional(
     ### Arguments
 
     ```
-    gym.make('Jax-Blackjack-v1', natural=False, sutton_and_barto=False)
+    gym.make('Jax-Blackjack-v0', natural=False, sutton_and_barto=False)
     ```
 
     <a id="nat">`natural=False`</a>: Whether to give an additional reward for
@@ -193,7 +193,7 @@ class BlackjackFunctional(
     If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).
 
     ### Version History
-    * v1: Initial versions release (1.0.0)
+    * v0: Initial version release (1.0.0), adapted from original gym blackjack v1
     """
 
     action_space = spaces.Discrete(2)

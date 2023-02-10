@@ -160,7 +160,7 @@ register(
 # ----------------------------------------
 
 register(
-    id="Jax-BlackJack-v0",
+    id="Jax-Blackjack-v0",
     entry_point="gymnasium.envs.tabular.blackjack:BlackJackJaxEnv",
     kwargs={"sutton_and_barto": True, "natural": False},
 )
