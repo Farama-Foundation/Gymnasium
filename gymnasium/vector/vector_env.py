@@ -2,6 +2,7 @@
 from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium.vector.utils.spaces import batch_space
@@ -146,7 +147,7 @@ class VectorEnv(gym.Env):
             actions: The actions to take asynchronously
         """
 
-    def step_wait(self, **kwargs):
+    def step_wait(self) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
         """Retrieves the results of a :meth:`step_async` call.
 
         A call to this method must always be preceded by a call to :meth:`step_async`.
@@ -157,8 +158,11 @@ class VectorEnv(gym.Env):
         Returns:
             The results from the :meth:`step_async` call
         """
+        raise NotImplementedError()
 
-    def step(self, actions):
+    def step(
+        self, actions
+    ) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
         """Take an action for each parallel environment.
 
         Args:
