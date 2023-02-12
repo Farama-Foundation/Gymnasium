@@ -2,11 +2,10 @@
 
 from typing import List
 
-import gymnasium as gym
-from gymnasium.experimental import VectorEnv
+from gymnasium.experimental.vector.vector_env import VectorEnv, VectorWrapper
 
 
-class VectorListInfo(gym.experimental.VectorWrapper):
+class VectorListInfo(VectorWrapper):
     """Converts infos of vectorized environments from dict to List[dict].
 
     This wrapper converts the info format of a

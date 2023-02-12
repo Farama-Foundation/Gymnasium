@@ -4,7 +4,6 @@ import shutil
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.experimental import AsyncVectorEnv
 from gymnasium.utils.save_video import capped_cubic_video_schedule, save_video
 
 
@@ -82,13 +81,9 @@ def test_record_video_within_vector():
     n_steps = 199
     expected_video = 2
 
-    envs = gym.make_vec(
-        "CartPole-v1",
-        num_envs=2,
-        vectorization_mode="async",
-        render_mode="rgb_array_list",
+    envs = gym.vector.make(
+        "CartPole-v1", num_envs=2, asynchronous=True, render_mode="rgb_array_list"
     )
-    assert isinstance(envs, AsyncVectorEnv)
     envs.reset()
     episode_frames = []
     step_starting_index = 0

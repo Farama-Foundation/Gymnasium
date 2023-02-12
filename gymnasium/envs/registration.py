@@ -129,7 +129,6 @@ class EnvSpec:
 
     id: str
     entry_point: Callable | str | None = None
-    vector_entry_point: Callable | str | None = None
 
     # Environment attributes
     reward_threshold: float | None = field(default=None)
@@ -149,6 +148,8 @@ class EnvSpec:
     namespace: str | None = field(init=False)
     name: str = field(init=False)
     version: int | None = field(init=False)
+
+    vector_entry_point: Callable | str | None = None
 
     def __post_init__(self):
         """Calls after the spec is created to extract the namespace, name and version from the id."""
