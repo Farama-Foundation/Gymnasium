@@ -10,8 +10,11 @@ from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional_jax_env import (
+    FunctionalJaxEnv,
+    FunctionalJaxVectorEnv,
+)
 from gymnasium.utils import EzPickle
 
 
@@ -268,13 +271,43 @@ class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
         env = CartPoleFunctional(**kwargs)
         env.transform(jax.jit)
 
-        action_space = env.action_space
-        observation_space = env.observation_space
-
-        super().__init__(
+        FunctionalJaxEnv.__init__(
+            self,
             env,
-            observation_space=observation_space,
-            action_space=action_space,
             metadata=self.metadata,
             render_mode=render_mode,
+        )
+
+
+class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
+    """Jax-based implementation of the vectorized CartPole environment."""
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+
+    def __init__(
+        self,
+        num_envs: int,
+        render_mode: str | None = None,
+        max_episode_steps: int = 200,
+        **kwargs: Any,
+    ):
+        """Constructor for the vectorized CartPole where the kwargs are applied to the functional environment."""
+        EzPickle.__init__(
+            self,
+            num_envs=num_envs,
+            render_mode=render_mode,
+            max_episode_steps=max_episode_steps,
+            **kwargs,
+        )
+
+        env = CartPoleFunctional(**kwargs)
+        env.transform(jax.jit)
+
+        FunctionalJaxVectorEnv.__init__(
+            self,
+            func_env=env,
+            num_envs=num_envs,
+            metadata=self.metadata,
+            render_mode=render_mode,
+            max_episode_steps=max_episode_steps,
         )
