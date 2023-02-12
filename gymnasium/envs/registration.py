@@ -63,13 +63,6 @@ class EnvCreator(Protocol):
         ...
 
 
-class WrapperCreator(Protocol):
-    """Function type expected for a wrapper."""
-
-    def __call__(self, env: Env, **kwargs: Any) -> Env:
-        ...
-
-
 @dataclass
 class WrapperSpec:
     """A specification for recording wrapper configs.
@@ -491,7 +484,7 @@ def _check_metadata(testing_metadata: dict[str, Any]):
         )
 
 
-def load_env_creator(name: str) -> EnvCreator | WrapperCreator:
+def load_env_creator(name: str) -> EnvCreator:
     """Loads an environment with name of style ``"(import path):(environment name)"`` and returns the environment creation function, normally the environment class type.
 
     Args:
@@ -506,7 +499,7 @@ def load_env_creator(name: str) -> EnvCreator | WrapperCreator:
     return fn
 
 
-def _recreate_env_spec(
+def _create_from_env_spec(
     env_spec: EnvSpec,
     kwargs: dict[str, Any],
 ) -> Env:
@@ -542,12 +535,12 @@ def _recreate_env_spec(
                 f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.EzPickle` therefore, the wrapper cannot be recreated."
             )
 
-        env = load_env_creator(wrapper_spec.entry_point)(env, **wrapper_spec.kwargs)
+        env = load_env_creator(wrapper_spec.entry_point)(env=env, **wrapper_spec.kwargs)
 
     return env
 
 
-def _make_env_spec(
+def _create_from_env_id(
     env_spec: EnvSpec,
     kwargs: dict[str, Any],
     max_episode_steps: int | None = None,
@@ -826,27 +819,27 @@ def make(
         if hasattr(id, "applied_wrappers") and id.applied_wrappers is not None:
             if max_episode_steps is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `max_episode_step` parameter is not used, use `gym.make({id.id}, max_episode_steps={max_episode_steps})`"
+                    f"For `gymnasium.make` with an `EnvSpec`, the `max_episode_step` parameter is ignored, use `gym.make({id.id}, max_episode_steps={max_episode_steps})` and any additional wrappers"
                 )
             if autoreset is True:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `autoreset` parameter is not used, use `gym.make({id.id}, autoreset={autoreset})`"
+                    f"For `gymnasium.make` with an `EnvSpec`, the `autoreset` parameter is ignored, use `gym.make({id.id}, autoreset={autoreset})` and any additional wrappers"
                 )
             if apply_api_compatibility is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `apply_api_compatibility` parameter is not used, use `gym.make({id.id}, apply_api_compatibility={apply_api_compatibility})`"
+                    f"For `gymnasium.make` with an `EnvSpec`, the `apply_api_compatibility` parameter is ignored, use `gym.make({id.id}, apply_api_compatibility={apply_api_compatibility})` and any additional wrappers"
                 )
             if disable_env_checker is not None:
                 logger.warn(
-                    f"As the `make(id, ...)` is an `EnvSpec`, the `disable_env_checker` parameter is not used, use `gym.make({id.id}, disable_env_checker={disable_env_checker})`"
+                    f"For `gymnasium.make` with an `EnvSpec`, the `disable_env_checker` parameter is ignored, use `gym.make({id.id}, disable_env_checker={disable_env_checker})` and any additional wrappers"
                 )
 
-            return _recreate_env_spec(
+            return _create_from_env_spec(
                 id,
                 kwargs,
             )
         else:
-            return _make_env_spec(
+            return _create_from_env_id(
                 id,
                 kwargs,
                 max_episode_steps=max_episode_steps,
@@ -898,7 +891,7 @@ def make(
             _check_version_exists(ns, name, version)
             raise error.Error(f"No registered env with id: {env_name}")
 
-        return _make_env_spec(
+        return _create_from_env_id(
             env_spec,
             kwargs,
             max_episode_steps=max_episode_steps,
