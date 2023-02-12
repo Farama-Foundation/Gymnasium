@@ -839,7 +839,7 @@ def register(
         order_enforce=order_enforce,
         autoreset=autoreset,
         disable_env_checker=disable_env_checker,
-        kwargs=kwargs,
+        **kwargs,
         apply_api_compatibility=apply_api_compatibility,
         vector_entry_point=vector_entry_point,
     )
