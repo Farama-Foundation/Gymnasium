@@ -14,12 +14,12 @@
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
         <title>Register and Make - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=3cf7b839e8c50b5f3a39bb99d90baa7b845de926" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=c36209c3579494d5f9512671edd8cd731f7c406c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=9e86d0f2b4c7365fca1b48b729b6cac79739c5d7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=57f753f2a36df4cd87bf0e4232aabc9b3cc73912" />
     
     
 
@@ -187,10 +187,8 @@
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
 
-
-
 <div class="page">
-   <!--<header class="mobile-header">
+  <!--<header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
         <div class="visually-hidden">Toggle site navigation sidebar</div>
@@ -395,17 +393,23 @@
       
     </div>
   </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          
+  <div class="main-container">
+
+    
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container">
+            
     
     <div class="edit-this-page">
   <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/api/registry.md" title="Edit this page">
@@ -417,21 +421,29 @@
     <span class="visually-hidden">Edit this page</span>
   </a>
 </div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
+              <button class="theme-toggle">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
-        </div>
-        <article role="main">
-          
-          <section id="register-and-make">
+          <article role="main">
+            
+            <section id="register-and-make">
 <h1>Register and Make<a class="headerlink" href="#register-and-make" title="Permalink to this heading">#</a></h1>
 <p>Gymnasium allows users to automatically load environments, pre-wrapped with several important wrappers through the <a class="reference internal" href="#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a> function. To do this, the environment must be registered prior with <a class="reference internal" href="#gymnasium.register" title="gymnasium.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.register()</span></code></a>. To get the environment specifications for a registered environment, use <a class="reference internal" href="#gymnasium.spec" title="gymnasium.spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.spec()</span></code></a> and to print the whole registry, use <a class="reference internal" href="#gymnasium.pprint_registry" title="gymnasium.pprint_registry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.pprint_registry()</span></code></a>.</p>
 <dl class="py function">
@@ -466,7 +478,7 @@ By default, the argument is None in which the <code class="xref py py-class docu
 
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.register">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EnvCreator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nondeterministic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_episode_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_enforce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_env_checker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_api_compatibility</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.register" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EnvCreator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nondeterministic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_episode_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_enforce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_env_checker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_api_compatibility</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector_entry_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">VectorEnvCreator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.register" title="Permalink to this definition">#</a></dt>
 <dd><p>Registers an environment in gymnasium with an <code class="docutils literal notranslate"><span class="pre">id</span></code> to use with <a class="reference internal" href="#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">entry_point</span></code> being a string or callable for creating the environment.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">id</span></code> parameter corresponds to the name of the environment, with the syntax as follows:
 <code class="docutils literal notranslate"><span class="pre">[namespace/](env_name)[-v(version)]</span></code> where <code class="docutils literal notranslate"><span class="pre">namespace</span></code> and <code class="docutils literal notranslate"><span class="pre">-v(version)</span></code> is optional.</p>
@@ -485,6 +497,7 @@ If <code class="docutils literal notranslate"><span class="pre">True</span></cod
 <li><p><strong>disable_env_checker</strong> – If to disable the <a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.PassiveEnvChecker" title="gymnasium.wrappers.PassiveEnvChecker"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.PassiveEnvChecker</span></code></a> to the environment.</p></li>
 <li><p><strong>apply_api_compatibility</strong> – If to apply the <a class="reference internal" href="../wrappers/misc_wrappers/#gymnasium.wrappers.StepAPICompatibility" title="gymnasium.wrappers.StepAPICompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.StepAPICompatibility</span></code></a> wrapper to the environment.
 Use if the environment is implemented in the gym v0.21 environment API.</p></li>
+<li><p><strong>vector_entry_point</strong> – The entry point for creating the vector environment</p></li>
 <li><p><strong>**kwargs</strong> – arbitrary keyword arguments which are passed to the environment constructor on initialisation.</p></li>
 </ul>
 </dd>
@@ -533,7 +546,7 @@ or to print the string to console.</p></li>
 <h2>Core variables<a class="headerlink" href="#core-variables" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.envs.registration.EnvSpec">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.envs.registration.</span></span><span class="sig-name descname"><span class="pre">EnvSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_point:</span> <span class="pre">EnvCreator</span> <span class="pre">|</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_threshold:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nondeterministic:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_episode_steps:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_enforce:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_env_checker:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_api_compatibility:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs:</span> <span class="pre">dict</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.envs.registration.EnvSpec" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.envs.registration.</span></span><span class="sig-name descname"><span class="pre">EnvSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_point:</span> <span class="pre">EnvCreator</span> <span class="pre">|</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_threshold:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nondeterministic:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_episode_steps:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_enforce:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_env_checker:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_api_compatibility:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs:</span> <span class="pre">dict</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector_entry_point:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.envs.registration.EnvSpec" title="Permalink to this definition">#</a></dt>
 <dd><p>A specification for creating environments with <a class="reference internal" href="#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a>.</p>
 <ul class="simple">
 <li><p><strong>id</strong>: The string used to create the environment with <a class="reference internal" href="#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a></p></li>
@@ -545,6 +558,7 @@ or to print the string to console.</p></li>
 <li><p><strong>autoreset</strong>: If to automatically reset the environment on episode end</p></li>
 <li><p><strong>disable_env_checker</strong>: If to disable the environment checker wrapper in <a class="reference internal" href="#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a>, by default False (runs the environment checker)</p></li>
 <li><p><strong>kwargs</strong>: Additional keyword arguments passed to the environment during initialisation</p></li>
+<li><p><strong>vector_entry_point</strong>: The location of the vectorized environment to create from</p></li>
 </ul>
 </dd></dl>
 
@@ -649,22 +663,26 @@ or to print the string to console.</p></li>
 </section>
 </section>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="../spaces/">
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../spaces/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
                 <div class="title">Spaces</div>
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
             </a>
             <a class="prev-page" href="../env/">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -674,39 +692,39 @@ or to print the string to console.</p></li>
                 
               </div>
             </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
                 Copyright &#169; 2022 Farama Foundation
-            </div>
-            <!--
+              </div>
+              <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             -->
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                
+              </div>
             </div>
           </div>
-        </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
         
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
 <li><a class="reference internal" href="#">Register and Make</a><ul>
 <li><a class="reference internal" href="#gymnasium.make"><code class="docutils literal notranslate"><span class="pre">make()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.register"><code class="docutils literal notranslate"><span class="pre">register()</span></code></a></li>
@@ -731,12 +749,13 @@ or to print the string to console.</p></li>
 </li>
 </ul>
 
+            </div>
           </div>
         </div>
-      </div>
-      
-      
-    </aside>
+        
+        
+      </aside>
+    </div>
   </div>
 </div>
     <script>
@@ -936,5 +955,7 @@ or to print the string to console.</p></li>
             console.warn("Unable to load versioning menu", response);
         }
       });
-    </script></body>
+    </script>
+
+    </body>
 </html>
