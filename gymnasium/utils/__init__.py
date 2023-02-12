@@ -8,3 +8,6 @@ These are not intended as API functions, and will not remain stable over time.
 # that verify that our dependencies are actually present.
 from gymnasium.utils.colorize import colorize
 from gymnasium.utils.ezpickle import EzPickle
+
+
+__all__ = ["colorize", "EzPickle"]

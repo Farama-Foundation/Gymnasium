@@ -39,6 +39,7 @@ def test_reset_async_vector_env(shared_memory):
 
     assert isinstance(env.observation_space, Box)
     assert isinstance(observations, np.ndarray)
+    assert isinstance(infos, dict)
     assert observations.dtype == env.observation_space.dtype
     assert observations.shape == (8,) + env.single_observation_space.shape
     assert observations.shape == env.observation_space.shape
