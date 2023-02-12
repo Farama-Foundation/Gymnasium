@@ -29,6 +29,7 @@ def test_reset_sync_vector_env():
 
     assert isinstance(env.observation_space, Box)
     assert isinstance(observations, np.ndarray)
+    assert isinstance(infos, dict)
     assert observations.dtype == env.observation_space.dtype
     assert observations.shape == (8,) + env.single_observation_space.shape
     assert observations.shape == env.observation_space.shape
@@ -130,14 +131,17 @@ def test_custom_space_sync_vector_env():
 
     assert isinstance(env.single_action_space, CustomSpace)
     assert isinstance(env.action_space, Tuple)
+    assert isinstance(infos, dict)
 
     actions = ("action-2", "action-3", "action-5", "action-7")
-    step_observations, rewards, terminateds, truncateds, _ = env.step(actions)
+    step_observations, rewards, terminateds, truncateds, infos = env.step(actions)
 
     env.close()
 
     assert isinstance(env.single_observation_space, CustomSpace)
     assert isinstance(env.observation_space, Tuple)
+
+    assert isinstance(infos, dict)
 
     assert isinstance(reset_observations, tuple)
     assert reset_observations == ("reset", "reset", "reset", "reset")
