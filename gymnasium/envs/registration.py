@@ -698,7 +698,7 @@ def make_vec(
 ) -> gym.experimental.VectorEnv:
     """Create a vector environment according to the given ID.
 
-    Note: 
+    Note:
         This feature is experimental, and is likely to change in future releases.
 
     To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
