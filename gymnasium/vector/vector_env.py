@@ -147,7 +147,9 @@ class VectorEnv(gym.Env):
             actions: The actions to take asynchronously
         """
 
-    def step_wait(self) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
+    def step_wait(
+        self, **kwargs
+    ) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
         """Retrieves the results of a :meth:`step_async` call.
 
         A call to this method must always be preceded by a call to :meth:`step_async`.
