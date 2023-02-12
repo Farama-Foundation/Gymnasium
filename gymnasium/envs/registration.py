@@ -13,9 +13,10 @@ import sys
 import traceback
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable, Sequence
 
-from gymnasium import Env, error, logger
+import gymnasium as gym
+from gymnasium import Env, Wrapper, error, logger
 from gymnasium.wrappers import (
     AutoResetWrapper,
     EnvCompatibility,
@@ -44,13 +45,14 @@ ENV_ID_RE = re.compile(
 
 
 __all__ = [
-    "WrapperSpec",
-    "EnvSpec",
     "registry",
     "current_namespace",
+    "EnvSpec",
+    "WrapperSpec",
     # Functions
     "register",
     "make",
+    "make_vec",
     "spec",
     "pprint_registry",
 ]
@@ -60,6 +62,13 @@ class EnvCreator(Protocol):
     """Function type expected for an environment."""
 
     def __call__(self, **kwargs: Any) -> Env:
+        ...
+
+
+class VectorEnvCreator(Protocol):
+    """Function type expected for an environment."""
+
+    def __call__(self, **kwargs: Any) -> gym.experimental.VectorEnv:
         ...
 
 
@@ -91,10 +100,11 @@ class EnvSpec:
     * **disable_env_checker**: If to disable the environment checker wrapper in :meth:`gymnasium.make`, by default False (runs the environment checker)
     * **kwargs**: Additional keyword arguments passed to the environment during initialisation
     * **applied_wrappers**: A tuple of applied wrappers (WrapperSpec)
+    * **vector_entry_point**: The location of the vectorized environment to create from
     """
 
     id: str
-    entry_point: EnvCreator | str
+    entry_point: EnvCreator | str | None = field(default=None)
 
     # Environment attributes
     reward_threshold: float | None = field(default=None)
@@ -117,6 +127,9 @@ class EnvSpec:
 
     # applied wrappers
     applied_wrappers: tuple[WrapperSpec, ...] = field(init=False, default_factory=tuple)
+
+    # Vectorized environment
+    vector_entry_point: str | None = field(default=None)
 
     def __post_init__(self):
         """Calls after the spec is created to extract the namespace, name and version from the environment id."""
@@ -484,7 +497,46 @@ def _check_metadata(testing_metadata: dict[str, Any]):
         )
 
 
-def load_env_creator(name: str) -> EnvCreator:
+def _find_spec(id: str) -> EnvSpec:
+    module, env_name = (None, id) if ":" not in id else id.split(":")
+    if module is not None:
+        try:
+            importlib.import_module(module)
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                f"{e}. Environment registration via importing a module failed. "
+                f"Check whether '{module}' contains env registration and can be imported."
+            ) from e
+
+    # load the env spec from the registry
+    env_spec = registry.get(env_name)
+
+    # update env spec is not version provided, raise warning if out of date
+    ns, name, version = parse_env_id(env_name)
+
+    latest_version = find_highest_version(ns, name)
+    if version is not None and latest_version is not None and latest_version > version:
+        logger.warn(
+            f"The environment {env_name} is out of date. You should consider "
+            f"upgrading to version `v{latest_version}`."
+        )
+    if version is None and latest_version is not None:
+        version = latest_version
+        new_env_id = get_env_id(ns, name, version)
+        env_spec = registry.get(new_env_id)
+        logger.warn(
+            f"Using the latest versioned environment `{new_env_id}` "
+            f"instead of the unversioned environment `{env_name}`."
+        )
+
+    if env_spec is None:
+        _check_version_exists(ns, name, version)
+        raise error.Error(f"No registered env with id: {env_name}")
+
+    return env_spec
+
+
+def load_env_creator(name: str) -> EnvCreator | VectorEnvCreator:
     """Loads an environment with name of style ``"(import path):(environment name)"`` and returns the environment creation function, normally the environment class type.
 
     Args:
@@ -715,7 +767,7 @@ def namespace(ns: str):
 
 def register(
     id: str,
-    entry_point: EnvCreator | str,
+    entry_point: EnvCreator | str | None = None,
     reward_threshold: float | None = None,
     nondeterministic: bool = False,
     max_episode_steps: int | None = None,
@@ -723,6 +775,7 @@ def register(
     autoreset: bool = False,
     disable_env_checker: bool = False,
     apply_api_compatibility: bool = False,
+    vector_entry_point: VectorEnvCreator | str | None = None,
     **kwargs: Any,
 ):
     """Registers an environment in gymnasium with an ``id`` to use with :meth:`gymnasium.make` with the ``entry_point`` being a string or callable for creating the environment.
@@ -744,8 +797,12 @@ def register(
         disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.
         apply_api_compatibility: If to apply the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper to the environment.
             Use if the environment is implemented in the gym v0.21 environment API.
+        vector_entry_point: The entry point for creating the vector environment
         **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.
     """
+    assert (
+        entry_point is not None or vector_entry_point is not None
+    ), "Either `entry_point` or `vector_entry_point` (or both) must be provided"
     global registry, current_namespace
     ns, name, version = parse_env_id(id)
 
@@ -775,6 +832,7 @@ def register(
         autoreset=autoreset,
         disable_env_checker=disable_env_checker,
         apply_api_compatibility=apply_api_compatibility,
+        vector_entry_point=vector_entry_point,
         **kwargs,
     )
     _check_spec_register(new_spec)
@@ -852,44 +910,7 @@ def make(
         assert isinstance(id, str)
 
         # The environment name can include an unloaded module in "module:env_name" style
-        module, env_name = (None, id) if ":" not in id else id.split(":")
-        if module is not None:
-            try:
-                importlib.import_module(module)
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    f"{e}. Environment registration via importing a module failed. "
-                    f"Check whether '{module}' contains env registration and can be imported."
-                ) from e
-
-        # load the env spec from the registry
-        env_spec = registry.get(env_name)
-
-        # update env spec is not version provided, raise warning if out of date
-        ns, name, version = parse_env_id(env_name)
-
-        latest_version = find_highest_version(ns, name)
-        if (
-            version is not None
-            and latest_version is not None
-            and latest_version > version
-        ):
-            logger.warn(
-                f"The environment {env_name} is out of date. You should consider "
-                f"upgrading to version `v{latest_version}`."
-            )
-        if version is None and latest_version is not None:
-            version = latest_version
-            new_env_id = get_env_id(ns, name, version)
-            env_spec = registry.get(new_env_id)
-            logger.warn(
-                f"Using the latest versioned environment `{new_env_id}` "
-                f"instead of the unversioned environment `{env_name}`."
-            )
-
-        if env_spec is None:
-            _check_version_exists(ns, name, version)
-            raise error.Error(f"No registered env with id: {env_name}")
+        env_spec = _find_spec(id)
 
         return _create_from_env_id(
             env_spec,
@@ -899,6 +920,118 @@ def make(
             apply_api_compatibility=apply_api_compatibility,
             disable_env_checker=disable_env_checker,
         )
+
+
+def make_vec(
+    id: str | EnvSpec,
+    num_envs: int = 1,
+    vectorization_mode: str = "async",
+    vector_kwargs: dict[str, Any] | None = None,
+    wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
+    **kwargs,
+) -> gym.experimental.VectorEnv:
+    """Create an environment according to the given ID.
+
+    To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
+
+    Args:
+        id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
+        num_envs: Number of environments to create
+        vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom"
+        kwargs: Additional arguments to pass to the environment constructor.
+        vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
+        wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
+        **kwargs: Additional arguments to pass to the environment constructor.
+
+    Returns:
+        An instance of the environment.
+
+    Raises:
+        Error: If the ``id`` doesn't exist then an error is raised
+    """
+    if vector_kwargs is None:
+        vector_kwargs = {}
+
+    if wrappers is None:
+        wrappers = []
+
+    if isinstance(id, EnvSpec):
+        spec_ = id
+    else:
+        spec_ = _find_spec(id)
+
+    _kwargs = spec_.kwargs.copy()
+    _kwargs.update(kwargs)
+
+    # Check if we have the necessary entry point
+    if vectorization_mode in ("sync", "async"):
+        if spec_.entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id} because it doesn't have an entry point defined."
+            )
+        entry_point = spec_.entry_point
+    elif vectorization_mode in ("custom",):
+        if spec_.vector_entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
+            )
+        entry_point = spec_.vector_entry_point
+    else:
+        raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
+
+    if callable(entry_point):
+        env_creator = entry_point
+    else:
+        # Assume it's a string
+        env_creator = load_env_creator(entry_point)
+
+    def _create_env():
+        # Env creator for use with sync and async modes
+        render_mode = _kwargs.get("render_mode", None)
+        inner_render_mode = (
+            render_mode[: -len("_list")]
+            if render_mode is not None and render_mode.endswith("_list")
+            else render_mode
+        )
+        _kwargs_copy = _kwargs.copy()
+        _kwargs_copy["render_mode"] = inner_render_mode
+
+        _env = env_creator(**_kwargs_copy)
+        _env.spec = spec_
+        if spec_.max_episode_steps is not None:
+            _env = TimeLimit(_env, spec_.max_episode_steps)
+
+        if render_mode is not None and render_mode.endswith("_list"):
+            _env = RenderCollection(_env)
+
+        for wrapper in wrappers:
+            _env = wrapper(_env)
+        return _env
+
+    if vectorization_mode == "sync":
+        env = gym.experimental.SyncVectorEnv(
+            env_fns=[_create_env for _ in range(num_envs)],
+            **vector_kwargs,
+        )
+    elif vectorization_mode == "async":
+        env = gym.experimental.AsyncVectorEnv(
+            env_fns=[_create_env for _ in range(num_envs)],
+            **vector_kwargs,
+        )
+    elif vectorization_mode == "custom":
+        if len(wrappers) > 0:
+            raise error.Error("Cannot use custom vectorization mode with wrappers.")
+        _kwargs["max_episode_steps"] = spec_.max_episode_steps
+        env = env_creator(num_envs=num_envs, **_kwargs)
+    else:
+        raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
+
+    # Copies the environment creation specification and kwargs to add to the environment specification details
+    spec_ = copy.deepcopy(spec_)
+    spec_.kwargs = _kwargs
+    env.unwrapped.spec = spec_
+
+    return env
 
 
 def spec(env_id: str) -> EnvSpec:
