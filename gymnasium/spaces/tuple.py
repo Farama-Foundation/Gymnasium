@@ -47,7 +47,7 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
-    def seed(self, seed: int | typing.Sequence[int] | None = None) -> list[int]:
+    def seed(self, seed: int | typing.Sequence[int] | None = None) -> list[int | None]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
@@ -59,7 +59,7 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         Args:
             seed: An optional list of ints or int to seed the (sub-)spaces.
         """
-        seeds: list[int] = []
+        seeds: list[int | None] = []
 
         if isinstance(seed, collections.abc.Sequence):
             assert len(seed) == len(

@@ -102,7 +102,7 @@ class Space(Generic[T_cov]):
         """
         raise NotImplementedError
 
-    def seed(self, seed: int | None = None) -> list[int]:
+    def seed(self, seed: int | None = None) -> list[int | None]:
         """Seed the PRNG of this space and possibly the PRNGs of subspaces."""
         self._np_random, seed = seeding.np_random(seed)
         return [seed]

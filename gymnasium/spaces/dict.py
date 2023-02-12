@@ -52,7 +52,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
     def __init__(
         self,
         spaces: None | dict[str, Space] | Sequence[tuple[str, Space]] = None,
-        seed: dict | int | np.random.Generator | None = None,
+        seed: int | np.random.Generator | None = None,
         **spaces_kwargs: Space,
     ):
         """Constructor of :class:`Dict` space.
@@ -117,7 +117,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces.values())
 
-    def seed(self, seed: dict[str, Any] | int | None = None) -> list[int]:
+    def seed(self, seed: dict[str, Any] | int | None = None) -> list[int | None]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
@@ -129,7 +129,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         Args:
             seed: An optional list of ints or int to seed the (sub-)spaces.
         """
-        seeds: list[int] = []
+        seeds: list[int | None] = []
 
         if isinstance(seed, dict):
             assert (
@@ -226,7 +226,9 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
             for key, space in self.spaces.items()
         }
 
-    def from_jsonable(self, sample_n: dict[str, list[Any]]) -> list[dict[str, Any]]:
+    def from_jsonable(
+        self, sample_n: dict[str, list[Any]]
+    ) -> list[OrderedDict[str, Any]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         dict_of_list: dict[str, list[Any]] = {
             key: space.from_jsonable(sample_n[key])

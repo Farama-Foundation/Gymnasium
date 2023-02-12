@@ -4,12 +4,12 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-import numpy.typing as npt
+from numpy.typing import NDArray
 
 from gymnasium.spaces.space import Space
 
 
-alphanumeric: frozenset[str] = frozenset(
+alphanumeric: set[str] = set(
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
 
@@ -76,7 +76,7 @@ class Text(Space[str]):
 
     def sample(
         self,
-        mask: None | (tuple[int | None, npt.NDArray[np.int8] | None]) = None,
+        mask: None | (tuple[int | None, NDArray[np.int8] | None]) = None,
     ) -> str:
         """Generates a single random sample from this space with by default a random length between `min_length` and `max_length` and sampled from the `charset`.
 
