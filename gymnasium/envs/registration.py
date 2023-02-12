@@ -696,7 +696,10 @@ def make_vec(
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
 ) -> gym.experimental.VectorEnv:
-    """Create an environment according to the given ID.
+    """Create a vector environment according to the given ID.
+
+    Note:
+        This feature is experimental, and is likely to change in future releases.
 
     To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
 
@@ -787,8 +790,8 @@ def make_vec(
     elif vectorization_mode == "custom":
         if len(wrappers) > 0:
             raise error.Error("Cannot use custom vectorization mode with wrappers.")
-        _kwargs["max_episode_steps"] = spec_.max_episode_steps
-        env = env_creator(num_envs=num_envs, **_kwargs)
+        vector_kwargs["max_episode_steps"] = spec_.max_episode_steps
+        env = env_creator(num_envs=num_envs, **vector_kwargs)
     else:
         raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
 
