@@ -695,7 +695,7 @@ def make_vec(
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
-) -> gym.experimental.VectorEnv:
+) -> gym.experimental.vector.VectorEnv:
     """Create an environment according to the given ID.
 
     To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
