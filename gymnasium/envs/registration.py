@@ -13,8 +13,8 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any, Callable, Iterable, Sequence
 
-import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
+from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv, VectorEnv
 from gymnasium.wrappers import (
     AutoResetWrapper,
     HumanRendering,
@@ -63,7 +63,7 @@ class EnvCreator(Protocol):
 class VectorEnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> gym.experimental.VectorEnv:
+    def __call__(self, **kwargs: Any) -> VectorEnv:
         ...
 
 
@@ -695,7 +695,7 @@ def make_vec(
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
-) -> gym.experimental.vector.VectorEnv:
+) -> VectorEnv:
     """Create an environment according to the given ID.
 
     To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
@@ -775,12 +775,12 @@ def make_vec(
         return _env
 
     if vectorization_mode == "sync":
-        env = gym.experimental.SyncVectorEnv(
+        env = SyncVectorEnv(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )
     elif vectorization_mode == "async":
-        env = gym.experimental.AsyncVectorEnv(
+        env = AsyncVectorEnv(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )
