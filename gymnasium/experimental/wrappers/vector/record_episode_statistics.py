@@ -5,11 +5,10 @@ from typing import List, Optional, Union
 
 import numpy as np
 
-import gymnasium as gym
-from gymnasium.experimental import VectorEnv
+from gymnasium.experimental.vector.vector_env import VectorEnv, VectorWrapper
 
 
-class VectorRecordEpisodeStatistics(gym.experimental.VectorWrapper):
+class VectorRecordEpisodeStatistics(VectorWrapper):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of an episode, the statistics of the episode will be added to ``info``
