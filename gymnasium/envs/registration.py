@@ -128,8 +128,8 @@ class EnvSpec:
     # applied wrappers
     applied_wrappers: tuple[WrapperSpec, ...] = field(init=False, default_factory=tuple)
 
-    # Vectorized environment
-    vector_entry_point: str | None = field(default=None)
+    # Vectorized environment entry point
+    vector_entry_point: VectorEnvCreator | str | None = field(default=None)
 
     def __post_init__(self):
         """Calls after the spec is created to extract the namespace, name and version from the environment id."""
@@ -138,6 +138,10 @@ class EnvSpec:
     def make(self, **kwargs: Any) -> Env:
         """Calls ``make`` using the environment spec and any keyword arguments."""
         return make(self, **kwargs)
+
+    def make_vec(self, **kwargs: Any) -> gym.experimental.VectorEnv:
+        """Calls ``make_vec`` using the environment spec and any keyword arguments."""
+        return make_vec(self, **kwargs)
 
     def to_json(self) -> str:
         """Converts the environment spec into a json compatible string.
@@ -497,8 +501,12 @@ def _check_metadata(testing_metadata: dict[str, Any]):
         )
 
 
-def _find_spec(id: str) -> EnvSpec:
-    module, env_name = (None, id) if ":" not in id else id.split(":")
+def _find_spec(env_id: str) -> EnvSpec:
+    # For string id's, load the environment spec from the registry then make the environment spec
+    assert isinstance(env_id, str)
+
+    # The environment name can include an unloaded module in "module:env_name" style
+    module, env_name = (None, env_id) if ":" not in env_id else env_id.split(":")
     if module is not None:
         try:
             importlib.import_module(module)
@@ -559,10 +567,10 @@ def _create_from_env_spec(
     if callable(env_spec.entry_point):
         env_creator = env_spec.entry_point
     else:
-        env_creator = load_env_creator(env_spec.entry_point)
+        env_creator: EnvCreator = load_env_creator(env_spec.entry_point)
 
     # Create the environment
-    env = env_creator(**env_spec.kwargs, **kwargs)
+    env: Env = env_creator(**env_spec.kwargs, **kwargs)
 
     # Set the `EnvSpec` to the environment
     new_env_spec = copy.deepcopy(env_spec)
@@ -831,9 +839,9 @@ def register(
         order_enforce=order_enforce,
         autoreset=autoreset,
         disable_env_checker=disable_env_checker,
+        kwargs=kwargs,
         apply_api_compatibility=apply_api_compatibility,
         vector_entry_point=vector_entry_point,
-        **kwargs,
     )
     _check_spec_register(new_spec)
 
