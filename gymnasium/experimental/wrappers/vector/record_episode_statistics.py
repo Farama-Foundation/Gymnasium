@@ -1,7 +1,7 @@
 """Wrapper that tracks the cumulative rewards and episode lengths."""
 import time
 from collections import deque
-from typing import Optional
+from typing import List, Optional, Union
 
 import numpy as np
 
@@ -65,9 +65,13 @@ class VectorRecordEpisodeStatistics(gym.experimental.VectorWrapper):
         self.length_queue = deque(maxlen=deque_size)
         self.is_vector_env = True
 
-    def reset(self, **kwargs):
+    def reset(
+        self,
+        seed: Optional[Union[int, List[int]]] = None,
+        options: Optional[dict] = None,
+    ):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
-        obs, info = super().reset(**kwargs)
+        obs, info = super().reset(seed=seed, options=options)
         self.episode_start_times = np.full(
             self.num_envs, time.perf_counter(), dtype=np.float32
         )

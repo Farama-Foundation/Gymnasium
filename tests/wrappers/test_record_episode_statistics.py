@@ -2,10 +2,10 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental.wrappers.record_episode_statistics import (
+from gymnasium.experimental.wrappers.vector.record_episode_statistics import (
     VectorRecordEpisodeStatistics,
 )
-from gymnasium.experimental.wrappers.vector_list_info import VectorListInfo
+from gymnasium.experimental.wrappers.vector.vector_list_info import VectorListInfo
 from gymnasium.wrappers import RecordEpisodeStatistics
 
 
