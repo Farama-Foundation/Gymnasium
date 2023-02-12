@@ -9,8 +9,8 @@ from gymnasium.error import (
     ClosedEnvironmentError,
     NoAsyncCallError,
 )
+from gymnasium.experimental.vector import AsyncVectorEnv
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from tests.vector.utils import (
     CustomSpace,
     make_custom_space_env,
@@ -39,7 +39,6 @@ def test_reset_async_vector_env(shared_memory):
 
     assert isinstance(env.observation_space, Box)
     assert isinstance(observations, np.ndarray)
-    assert isinstance(infos, dict)
     assert observations.dtype == env.observation_space.dtype
     assert observations.shape == (8,) + env.single_observation_space.shape
     assert observations.shape == env.observation_space.shape
