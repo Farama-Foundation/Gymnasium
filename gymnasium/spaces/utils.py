@@ -356,17 +356,7 @@ def _unflatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
     nodes and edges in the graph.
     """
 
-    def _graph_unflatten_nodes(
-        unflatten_space: Box | Discrete, unflatten_x: NDArray[Any]
-    ) -> NDArray[Any]:
-        if isinstance(unflatten_space, Box):
-            return unflatten_x.reshape(-1, *unflatten_space.shape)
-        elif isinstance(unflatten_space, Discrete):
-            return np.asarray(np.nonzero(unflatten_x))[-1, :]
-
-    def _graph_unflatten_edges(
-        unflatten_space: Box | Discrete | None, unflatten_x: NDArray[Any] | None
-    ) -> NDArray[Any] | None:
+    def _graph_unflatten(unflatten_space, unflatten_x):
         result = None
         if unflatten_space is not None and unflatten_x is not None:
             if isinstance(unflatten_space, Box):
@@ -375,8 +365,8 @@ def _unflatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
                 result = np.asarray(np.nonzero(unflatten_x))[-1, :]
         return result
 
-    nodes = _graph_unflatten_nodes(space.node_space, x.nodes)
-    edges = _graph_unflatten_edges(space.edge_space, x.edges)
+    nodes = _graph_unflatten(space.node_space, x.nodes)
+    edges = _graph_unflatten(space.edge_space, x.edges)
 
     return GraphInstance(nodes, edges, x.edge_links)
 
