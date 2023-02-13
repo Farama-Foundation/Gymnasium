@@ -58,7 +58,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: MaskNDArray | None = None) -> NDArray[Any]:
+    def sample(self, mask: MaskNDArray | None = None) -> NDArray[np.bool_ | np.int8]:
         """Generates a single random sample from this space.
 
         A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).

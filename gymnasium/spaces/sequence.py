@@ -53,7 +53,7 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         # None for shape and dtype, since it'll require special handling
         super().__init__(None, None, seed)
 
-    def seed(self, seed: int | None = None) -> list[int | None]:
+    def seed(self, seed: int | None = None) -> list[int]:
         """Seed the PRNG of this space and the feature space."""
         seeds = super().seed(seed)
         seeds += self.feature_space.seed(seed)
@@ -73,7 +73,7 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
                 Any,
             ]
         ) = None,
-    ) -> tuple[Any] | dict[Any, Any] | NDArray[Any]:
+    ) -> tuple[Any] | Any:
         """Generates a single random sample from this space.
 
         Args:

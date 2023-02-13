@@ -117,7 +117,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces.values())
 
-    def seed(self, seed: dict[str, Any] | int | None = None) -> list[int | None]:
+    def seed(self, seed: dict[str, Any] | int | None = None) -> list[int]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
@@ -129,7 +129,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         Args:
             seed: An optional list of ints or int to seed the (sub-)spaces.
         """
-        seeds: list[int | None] = []
+        seeds: list[int] = []
 
         if isinstance(seed, dict):
             assert (

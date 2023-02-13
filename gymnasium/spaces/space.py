@@ -102,10 +102,10 @@ class Space(Generic[T_cov]):
         """
         raise NotImplementedError
 
-    def seed(self, seed: int | None = None) -> list[int | None]:
+    def seed(self, seed: int | None = None) -> list[int]:
         """Seed the PRNG of this space and possibly the PRNGs of subspaces."""
-        self._np_random, seed = seeding.np_random(seed)
-        return [seed]
+        self._np_random, np_random_seed = seeding.np_random(seed)
+        return [np_random_seed]
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
