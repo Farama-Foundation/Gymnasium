@@ -4,7 +4,6 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
-from numpy.typing import NDArray
 
 from gymnasium.spaces.space import MaskNDArray, Space
 
@@ -56,7 +55,7 @@ class Discrete(Space[np.int64]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: MaskNDArray | None = None) -> np.int64 | NDArray[np.int64]:
+    def sample(self, mask: MaskNDArray | None = None) -> np.int64:
         """Generates a single random sample from this space.
 
         A sample will be chosen uniformly at random with the mask if provided
