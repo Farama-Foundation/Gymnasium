@@ -18,7 +18,7 @@ from gymnasium.core import ActType, ObsType, RenderFrame, WrapperActType, Wrappe
 from gymnasium.error import DependencyNotInstalled
 
 
-class RenderCollectionV0(gym.Wrapper, gym.utils.EzPickle):
+class RenderCollectionV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``."""
 
     def __init__(
@@ -34,7 +34,7 @@ class RenderCollectionV0(gym.Wrapper, gym.utils.EzPickle):
             pop_frames (bool): If true, clear the collection frames after ``meth:render`` is called. Default value is ``True``.
             reset_clean (bool): If true, clear the collection frames when ``meth:reset`` is called. Default value is ``True``.
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self, pop_frames=pop_frames, reset_clean=reset_clean
         )
         gym.Wrapper.__init__(self, env)
@@ -84,7 +84,7 @@ class RenderCollectionV0(gym.Wrapper, gym.utils.EzPickle):
         return frames
 
 
-class RecordVideoV0(gym.Wrapper, gym.utils.EzPickle):
+class RecordVideoV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """This wrapper records videos of rollouts.
 
     Usually, you only want to record episodes intermittently, say every hundredth episode.
@@ -122,7 +122,7 @@ class RecordVideoV0(gym.Wrapper, gym.utils.EzPickle):
             name_prefix (str): Will be prepended to the filename of the recordings
             disable_logger (bool): Whether to disable moviepy logger or not
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self,
             video_folder=video_folder,
             episode_trigger=episode_trigger,
@@ -290,7 +290,7 @@ class RecordVideoV0(gym.Wrapper, gym.utils.EzPickle):
             logger.warn("Unable to save last video! Did you call close()?")
 
 
-class HumanRenderingV0(gym.Wrapper, gym.utils.EzPickle):
+class HumanRenderingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Performs human rendering for an environment that only supports "rgb_array"rendering.
 
     This wrapper is particularly useful when you have implemented an environment that can produce
@@ -330,7 +330,7 @@ class HumanRenderingV0(gym.Wrapper, gym.utils.EzPickle):
         Args:
             env: The environment that is being wrapped
         """
-        gym.utils.EzPickle.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
         assert env.render_mode in [

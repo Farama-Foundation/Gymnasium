@@ -4,7 +4,7 @@ from typing import Any, Callable
 import gymnasium as gym
 
 
-class TransformObservation(gym.ObservationWrapper, gym.utils.EzPickle):
+class TransformObservation(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Transform the observation via an arbitrary function :attr:`f`.
 
     The function :attr:`f` should be defined on the observation space of the base environment, ``env``, and should, ideally, return values in the same space.
@@ -29,7 +29,7 @@ class TransformObservation(gym.ObservationWrapper, gym.utils.EzPickle):
             env: The environment to apply the wrapper
             f: A function that transforms the observation
         """
-        gym.utils.EzPickle.__init__(self, f=f)
+        gym.utils.RecordConstructorArgs.__init__(self, f=f)
         gym.ObservationWrapper.__init__(self, env)
 
         assert callable(f)

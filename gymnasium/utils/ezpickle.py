@@ -20,11 +20,8 @@ class EzPickle:
 
     def __init__(self, *args: Any, **kwargs: Any):
         """Uses the ``args`` and ``kwargs`` from the object's constructor for pickling."""
-        if not (hasattr(self, "_ezpickle_args") or hasattr(self, "_ezpickle_kwargs")):
-            # If two class inherit from EzPickle then the second class will overwrite the first class.
-            # To avoid this, call `EzPickle.__init__(self, ...)` first for the top level class that you need to save the parameters for.
-            self._ezpickle_args = args
-            self._ezpickle_kwargs = kwargs
+        self._ezpickle_args = args
+        self._ezpickle_kwargs = kwargs
 
     def __getstate__(self):
         """Returns the object pickle state with args and kwargs."""

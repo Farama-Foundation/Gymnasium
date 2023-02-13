@@ -11,7 +11,7 @@ except ImportError:
     cv2 = None
 
 
-class AtariPreprocessingV0(gym.Wrapper, gym.utils.EzPickle):
+class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Atari 2600 preprocessing wrapper.
 
     This class follows the guidelines in Machado et al. (2018),
@@ -60,7 +60,7 @@ class AtariPreprocessingV0(gym.Wrapper, gym.utils.EzPickle):
             DependencyNotInstalled: opencv-python package not installed
             ValueError: Disable frame-skipping in the original env
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self,
             noop_max=noop_max,
             frame_skip=frame_skip,

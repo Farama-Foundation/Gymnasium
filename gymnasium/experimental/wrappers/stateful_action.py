@@ -8,7 +8,7 @@ from gymnasium.core import ActType, WrapperActType, WrapperObsType
 from gymnasium.error import InvalidProbability
 
 
-class StickyActionV0(gym.ActionWrapper, gym.utils.EzPickle):
+class StickyActionV0(gym.ActionWrapper, gym.utils.RecordConstructorArgs):
     """Wrapper which adds a probability of repeating the previous action.
 
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_
@@ -27,7 +27,7 @@ class StickyActionV0(gym.ActionWrapper, gym.utils.EzPickle):
                 f"repeat_action_probability should be in the interval [0,1). Received {repeat_action_probability}"
             )
 
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self, repeat_action_probability=repeat_action_probability
         )
         gym.ActionWrapper.__init__(self, env)

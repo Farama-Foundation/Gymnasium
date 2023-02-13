@@ -30,7 +30,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
-class LambdaObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
+class LambdaObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Transforms an observation via a function provided to the wrapper.
 
     The function :attr:`func` will be applied to all observations.
@@ -60,7 +60,7 @@ class LambdaObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
             func: A function that will transform an observation. If this transformed observation is outside the observation space of `env.observation_space` then provide an `observation_space`.
             observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as `env.observation_space`.
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self, func=func, observation_space=observation_space
         )
         gym.ObservationWrapper.__init__(self, env)
@@ -75,7 +75,7 @@ class LambdaObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         return self.func(observation)
 
 
-class FilterObservationV0(LambdaObservationV0, gym.utils.EzPickle):
+class FilterObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
     """Filter Dict observation space by the keys.
 
     Example:
@@ -97,7 +97,7 @@ class FilterObservationV0(LambdaObservationV0, gym.utils.EzPickle):
     def __init__(self, env: gym.Env, filter_keys: Sequence[str | int]):
         """Constructor for an environment with a dictionary observation space where all :attr:`filter_keys` are in the observation space keys."""
         assert isinstance(filter_keys, Sequence)
-        gym.utils.EzPickle.__init__(self, filter_keys=filter_keys)
+        gym.utils.RecordConstructorArgs.__init__(self, filter_keys=filter_keys)
 
         # Filters for dictionary space
         if isinstance(env.observation_space, spaces.Dict):
@@ -175,7 +175,7 @@ class FilterObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         self.filter_keys: Final[Sequence[str | int]] = filter_keys
 
 
-class FlattenObservationV0(LambdaObservationV0, gym.utils.EzPickle):
+class FlattenObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
     """Observation wrapper that flattens the observation.
 
     Example:
@@ -194,7 +194,7 @@ class FlattenObservationV0(LambdaObservationV0, gym.utils.EzPickle):
 
     def __init__(self, env: gym.Env):
         """Constructor for any environment's observation space that implements ``spaces.utils.flatten_space`` and ``spaces.utils.flatten``."""
-        gym.utils.EzPickle.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(self)
         LambdaObservationV0.__init__(
             self,
             env=env,
@@ -203,7 +203,7 @@ class FlattenObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         )
 
 
-class GrayscaleObservationV0(LambdaObservationV0, gym.utils.EzPickle):
+class GrayscaleObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
     """Observation wrapper that converts an RGB image to grayscale.
 
     The :attr:`keep_dim` will keep the channel dimension
@@ -234,7 +234,7 @@ class GrayscaleObservationV0(LambdaObservationV0, gym.utils.EzPickle):
             and np.all(env.observation_space.high == 255)
             and env.observation_space.dtype == np.uint8
         )
-        gym.utils.EzPickle.__init__(self, keep_dim=keep_dim)
+        gym.utils.RecordConstructorArgs.__init__(self, keep_dim=keep_dim)
 
         self.keep_dim: Final[bool] = keep_dim
         if keep_dim:
@@ -269,7 +269,7 @@ class GrayscaleObservationV0(LambdaObservationV0, gym.utils.EzPickle):
             )
 
 
-class ResizeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
+class ResizeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
     """Resizes image observations using OpenCV to shape.
 
     Example:
@@ -309,7 +309,7 @@ class ResizeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
             low=0, high=255, shape=self.shape + env.observation_space.shape[2:]
         )
 
-        gym.utils.EzPickle.__init__(self, shape=shape)
+        gym.utils.RecordConstructorArgs.__init__(self, shape=shape)
         LambdaObservationV0.__init__(
             self,
             env=env,
@@ -318,7 +318,7 @@ class ResizeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         )
 
 
-class ReshapeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
+class ReshapeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
     """Reshapes array based observations to shapes.
 
     Example:
@@ -349,7 +349,7 @@ class ReshapeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         )
         self.shape = shape
 
-        gym.utils.EzPickle.__init__(self, shape=shape)
+        gym.utils.RecordConstructorArgs.__init__(self, shape=shape)
         LambdaObservationV0.__init__(
             self,
             env=env,
@@ -358,7 +358,7 @@ class ReshapeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         )
 
 
-class RescaleObservationV0(LambdaObservationV0, gym.utils.EzPickle):
+class RescaleObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
     """Linearly rescales observation to between a minimum and maximum value.
 
     Example:
@@ -411,7 +411,7 @@ class RescaleObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         )
         intercept = gradient * -env.observation_space.low + min_obs
 
-        gym.utils.EzPickle.__init__(self, min_obs=min_obs, max_obs=max_obs)
+        gym.utils.RecordConstructorArgs.__init__(self, min_obs=min_obs, max_obs=max_obs)
         LambdaObservationV0.__init__(
             self,
             env=env,
@@ -425,7 +425,7 @@ class RescaleObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         )
 
 
-class DtypeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
+class DtypeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
     """Observation wrapper for transforming the dtype of an observation."""
 
     def __init__(self, env: gym.Env, dtype: Any):
@@ -466,7 +466,7 @@ class DtypeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
                 "DtypeObservation is only compatible with value / array-based observations."
             )
 
-        gym.utils.EzPickle.__init__(self, dtype=dtype)
+        gym.utils.RecordConstructorArgs.__init__(self, dtype=dtype)
         LambdaObservationV0.__init__(
             self,
             env=env,
@@ -475,7 +475,7 @@ class DtypeObservationV0(LambdaObservationV0, gym.utils.EzPickle):
         )
 
 
-class PixelObservationV0(LambdaObservationV0, gym.utils.EzPickle):
+class PixelObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
     """Augment observations by pixel values.
 
     Observations of this wrapper will be dictionaries of images.
@@ -505,7 +505,7 @@ class PixelObservationV0(LambdaObservationV0, gym.utils.EzPickle):
             pixels_key: Optional custom string specifying the pixel key. Defaults to "pixels"
             obs_key: Optional custom string specifying the obs key. Defaults to "state"
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self, pixels_only=pixels_only, pixels_key=pixels_key, obs_key=obs_key
         )
 
@@ -544,7 +544,7 @@ class PixelObservationV0(LambdaObservationV0, gym.utils.EzPickle):
             )
 
 
-class NormalizeObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
+class NormalizeObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
@@ -563,7 +563,7 @@ class NormalizeObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
             env (Env): The environment to apply the wrapper
             epsilon: A stability parameter that is used when scaling the observations.
         """
-        gym.utils.EzPickle.__init__(self, epsilon=epsilon)
+        gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         gym.ObservationWrapper.__init__(self, env)
 
         self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)

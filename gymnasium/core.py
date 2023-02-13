@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 import numpy as np
 
 from gymnasium import spaces
-from gymnasium.logger import warn
-from gymnasium.utils import EzPickle, seeding
+from gymnasium.utils import RecordConstructorArgs, seeding
 
 
 if TYPE_CHECKING:
@@ -282,20 +281,12 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         if env_spec is not None:
             from gymnasium.envs.registration import WrapperSpec
 
-            # See if the wrapper inherits from `EzPickle` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
-            if isinstance(self, EzPickle):
-                assert hasattr(self, "_ezpickle_args") and hasattr(
-                    self, "_ezpickle_kwargs"
-                )
-
-                ezpickle_args = getattr(self, "_ezpickle_args")
-                if ezpickle_args:
-                    warn(
-                        f"{self.class_name()} EzPickle has position arguments rather than keyword arguments ({ezpickle_args}). This is not saved in the `WrapperSpec.kwargs`."
-                    )
-
-                kwargs = getattr(self, "_ezpickle_kwargs")
-
+            # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
+            if isinstance(self, RecordConstructorArgs):
+                kwargs = getattr(self, "_saved_kwargs")
+                if "env" in kwargs:
+                    kwargs = deepcopy(kwargs)
+                    kwargs.pop("env")
             else:
                 kwargs = None
 
@@ -440,7 +431,7 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
 
     def __init__(self, env: Env[ObsType, ActType]):
         """Constructor for the observation wrapper."""
-        super().__init__(env)
+        Wrapper.__init__(self, env)
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -480,7 +471,7 @@ class RewardWrapper(Wrapper[ObsType, ActType]):
 
     def __init__(self, env: Env[ObsType, ActType]):
         """Constructor for the Reward wrapper."""
-        super().__init__(env)
+        Wrapper.__init__(self, env)
 
     def step(
         self, action: ActType
@@ -516,7 +507,7 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType]):
 
     def __init__(self, env: Env[ObsType, ActType]):
         """Constructor for the action wrapper."""
-        super().__init__(env)
+        Wrapper.__init__(self, env)
 
     def step(
         self, action: WrapperActType

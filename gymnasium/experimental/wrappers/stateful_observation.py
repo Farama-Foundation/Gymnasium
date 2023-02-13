@@ -26,7 +26,7 @@ from gymnasium.spaces import Box, Dict, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
-class DelayObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
+class DelayObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Wrapper which adds a delay to the returned observation."""
 
     def __init__(self, env: gym.Env, delay: int):
@@ -44,11 +44,11 @@ class DelayObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         ), type(env.observation_space)
         assert 0 < delay
 
+        gym.utils.RecordConstructorArgs.__init__(self, delay=delay)
+        gym.ObservationWrapper.__init__(self, env)
+
         self.delay: Final[int] = delay
         self.observation_queue: Final[deque] = deque()
-
-        gym.utils.EzPickle.__init__(self, delay=delay)
-        gym.ObservationWrapper.__init__(self, env)
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -68,7 +68,7 @@ class DelayObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         return jp.zeros_like(observation)
 
 
-class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
+class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Augment the observation with time information of the episode.
 
     Time can be represented as a normalized value between [0,1]
@@ -120,7 +120,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
                 otherwise return time as remaining timesteps before truncation
             dict_time_key: For environment with a ``Dict`` observation space, the key for the time space. By default, `"time"`.
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self,
             flatten=flatten,
             normalize_time=normalize_time,
@@ -220,7 +220,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper, gym.utils.EzPickle):
         return super().reset(seed=seed, options=options)
 
 
-class FrameStackObservationV0(gym.Wrapper, gym.utils.EzPickle):
+class FrameStackObservationV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
@@ -254,7 +254,7 @@ class FrameStackObservationV0(gym.Wrapper, gym.utils.EzPickle):
         assert np.issubdtype(type(stack_size), np.integer)
         assert stack_size > 0
 
-        gym.utils.EzPickle.__init__(self, stack_size=stack_size)
+        gym.utils.RecordConstructorArgs.__init__(self, stack_size=stack_size)
         gym.Wrapper.__init__(self, env)
 
         self.observation_space = batch_space(env.observation_space, n=stack_size)

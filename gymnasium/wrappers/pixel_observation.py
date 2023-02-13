@@ -13,7 +13,7 @@ from gymnasium import spaces
 STATE_KEY = "state"
 
 
-class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
+class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Augment observations by pixel values.
 
     Observations of this wrapper will be dictionaries of images.
@@ -32,7 +32,7 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
         odict_keys(['pixels'])
         >>> obs['pixels'].shape
         (400, 600, 3)
-        >>> env = PixelObservationWrapper(gym.make("CarRacing-v2", render_mode="rgb_array"), pixels_only=False)
+        >>> env = PixelObservationSaveWrapperArgs(gym.make("CarRacing-v2", render_mode="rgb_array"), pixels_only=False)
         >>> obs, _ = env.reset()
         >>> obs.keys()
         odict_keys(['state', 'pixels'])
@@ -40,7 +40,7 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
         (96, 96, 3)
         >>> obs['pixels'].shape
         (400, 600, 3)
-        >>> env = PixelObservationWrapper(gym.make("CarRacing-v2", render_mode="rgb_array"), pixel_keys=('obs',))
+        >>> env = PixelObservationSaveWrapperArgs(gym.make("CarRacing-v2", render_mode="rgb_array"), pixel_keys=('obs',))
         >>> obs, _ = env.reset()
         >>> obs.keys()
         odict_keys(['obs'])
@@ -79,7 +79,7 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.EzPickle):
                 specified ``pixel_keys``.
             TypeError: When an unexpected pixel type is used
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self,
             pixels_only=pixels_only,
             render_kwargs=render_kwargs,

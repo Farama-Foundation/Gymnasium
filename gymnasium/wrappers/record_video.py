@@ -24,7 +24,7 @@ def capped_cubic_video_schedule(episode_id: int) -> bool:
         return episode_id % 1000 == 0
 
 
-class RecordVideo(gym.Wrapper, gym.utils.EzPickle):
+class RecordVideo(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """This wrapper records videos of rollouts.
 
     Usually, you only want to record episodes intermittently, say every hundredth episode.
@@ -59,7 +59,7 @@ class RecordVideo(gym.Wrapper, gym.utils.EzPickle):
             name_prefix (str): Will be prepended to the filename of the recordings
             disable_logger (bool): Whether to disable moviepy logger or not.
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self,
             video_folder=video_folder,
             episode_trigger=episode_trigger,

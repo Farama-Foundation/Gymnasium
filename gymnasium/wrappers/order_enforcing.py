@@ -3,7 +3,7 @@ import gymnasium as gym
 from gymnasium.error import ResetNeeded
 
 
-class OrderEnforcing(gym.Wrapper, gym.utils.EzPickle):
+class OrderEnforcing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.
 
     Example:
@@ -32,7 +32,7 @@ class OrderEnforcing(gym.Wrapper, gym.utils.EzPickle):
             env: The environment to wrap
             disable_render_order_enforcing: If to disable render order enforcing
         """
-        gym.utils.EzPickle.__init__(
+        gym.utils.RecordConstructorArgs.__init__(
             self, disable_render_order_enforcing=disable_render_order_enforcing
         )
         gym.Wrapper.__init__(self, env)

@@ -16,7 +16,7 @@ from gymnasium.error import InvalidBound
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
-class LambdaRewardV0(gym.RewardWrapper, gym.utils.EzPickle):
+class LambdaRewardV0(gym.RewardWrapper, gym.utils.RecordConstructorArgs):
     """A reward wrapper that allows a custom function to modify the step reward.
 
     Example:
@@ -41,7 +41,7 @@ class LambdaRewardV0(gym.RewardWrapper, gym.utils.EzPickle):
             env (Env): The environment to apply the wrapper
             func: (Callable): The function to apply to reward
         """
-        gym.utils.EzPickle.__init__(self, func=func)
+        gym.utils.RecordConstructorArgs.__init__(self, func=func)
         gym.RewardWrapper.__init__(self, env)
 
         self.func = func
@@ -55,7 +55,7 @@ class LambdaRewardV0(gym.RewardWrapper, gym.utils.EzPickle):
         return self.func(reward)
 
 
-class ClipRewardV0(LambdaRewardV0, gym.utils.EzPickle):
+class ClipRewardV0(LambdaRewardV0, gym.utils.RecordConstructorArgs):
     """A wrapper that clips the rewards for an environment between an upper and lower bound.
 
     Example:
@@ -91,13 +91,15 @@ class ClipRewardV0(LambdaRewardV0, gym.utils.EzPickle):
                     f"Min reward ({min_reward}) must be smaller than max reward ({max_reward})"
                 )
 
-        gym.utils.EzPickle.__init__(self, min_reward=min_reward, max_reward=max_reward)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, min_reward=min_reward, max_reward=max_reward
+        )
         LambdaRewardV0.__init__(
             self, env=env, func=lambda x: np.clip(x, a_min=min_reward, a_max=max_reward)
         )
 
 
-class NormalizeRewardV0(gym.Wrapper, gym.utils.EzPickle):
+class NormalizeRewardV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
@@ -124,7 +126,7 @@ class NormalizeRewardV0(gym.Wrapper, gym.utils.EzPickle):
             epsilon (float): A stability parameter
             gamma (float): The discount factor that is used in the exponential moving average.
         """
-        gym.utils.EzPickle.__init__(self, gamma=gamma, epsilon=epsilon)
+        gym.utils.RecordConstructorArgs.__init__(self, gamma=gamma, epsilon=epsilon)
         gym.Wrapper.__init__(self, env)
 
         self.rewards_running_means = RunningMeanStd(shape=())

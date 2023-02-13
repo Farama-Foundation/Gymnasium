@@ -5,7 +5,7 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-class GrayScaleObservation(gym.ObservationWrapper, gym.utils.EzPickle):
+class GrayScaleObservation(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Convert the image observation from RGB to gray scale.
 
     Example:
@@ -30,7 +30,7 @@ class GrayScaleObservation(gym.ObservationWrapper, gym.utils.EzPickle):
             keep_dim (bool): If `True`, a singleton dimension will be added, i.e. observations are of the shape AxBx1.
                 Otherwise, they are of shape AxB.
         """
-        gym.utils.EzPickle.__init__(self, keep_dim=keep_dim)
+        gym.utils.RecordConstructorArgs.__init__(self, keep_dim=keep_dim)
         gym.ObservationWrapper.__init__(self, env)
 
         self.keep_dim = keep_dim

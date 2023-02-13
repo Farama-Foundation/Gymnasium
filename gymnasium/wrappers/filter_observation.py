@@ -6,7 +6,7 @@ import gymnasium as gym
 from gymnasium import spaces
 
 
-class FilterObservation(gym.ObservationWrapper, gym.utils.EzPickle):
+class FilterObservation(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Filter Dict observation space by the keys.
 
     Example:
@@ -35,7 +35,7 @@ class FilterObservation(gym.ObservationWrapper, gym.utils.EzPickle):
             ValueError: If the environment's observation space is not :class:`spaces.Dict`
             ValueError: If any of the `filter_keys` are not included in the original `env`'s observation space
         """
-        gym.utils.EzPickle.__init__(self, filter_keys=filter_keys)
+        gym.utils.RecordConstructorArgs.__init__(self, filter_keys=filter_keys)
         gym.ObservationWrapper.__init__(self, env)
 
         wrapped_observation_space = env.observation_space

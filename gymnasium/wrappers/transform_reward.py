@@ -2,10 +2,9 @@
 from typing import Callable
 
 import gymnasium as gym
-from gymnasium import RewardWrapper
 
 
-class TransformReward(RewardWrapper, gym.utils.EzPickle):
+class TransformReward(gym.RewardWrapper, gym.utils.RecordConstructorArgs):
     """Transform the reward via an arbitrary function.
 
     Warning:
@@ -29,7 +28,7 @@ class TransformReward(RewardWrapper, gym.utils.EzPickle):
             env: The environment to apply the wrapper
             f: A function that transforms the reward
         """
-        gym.utils.EzPickle.__init__(self, f=f)
+        gym.utils.RecordConstructorArgs.__init__(self, f=f)
         gym.RewardWrapper.__init__(self, env)
 
         assert callable(f)

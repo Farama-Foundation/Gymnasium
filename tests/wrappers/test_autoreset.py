@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import AutoResetWrapper
+from gymnasium.wrappers import AutoResetSaveWrapperArgs
 from tests.envs.utils import all_testing_env_specs
 
 
@@ -64,7 +64,7 @@ def test_make_autoreset_true(spec):
      amount of time with random actions, which is true as of the time of adding this test.
     """
     env = gym.make(spec.id, autoreset=True, disable_env_checker=True)
-    assert AutoResetWrapper in unwrap_env(env)
+    assert AutoResetSaveWrapperArgs in unwrap_env(env)
 
     env.reset(seed=0)
     env.unwrapped.reset = MagicMock(side_effect=env.unwrapped.reset)
@@ -83,22 +83,22 @@ def test_make_autoreset_true(spec):
 def test_gym_make_autoreset(spec):
     """Tests that `gym.make` autoreset wrapper is applied only when `gym.make(..., autoreset=True)`."""
     env = gym.make(spec.id, disable_env_checker=True)
-    assert AutoResetWrapper not in unwrap_env(env)
+    assert AutoResetSaveWrapperArgs not in unwrap_env(env)
     env.close()
 
     env = gym.make(spec.id, autoreset=False, disable_env_checker=True)
-    assert AutoResetWrapper not in unwrap_env(env)
+    assert AutoResetSaveWrapperArgs not in unwrap_env(env)
     env.close()
 
     env = gym.make(spec.id, autoreset=True, disable_env_checker=True)
-    assert AutoResetWrapper in unwrap_env(env)
+    assert AutoResetSaveWrapperArgs in unwrap_env(env)
     env.close()
 
 
 def test_autoreset_wrapper_autoreset():
     """Tests the autoreset wrapper actually automatically resets correctly."""
     env = DummyResetEnv()
-    env = AutoResetWrapper(env)
+    env = AutoResetSaveWrapperArgs(env)
 
     obs, info = env.reset()
     assert obs == np.array([0])

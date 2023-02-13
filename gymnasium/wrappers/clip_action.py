@@ -2,11 +2,10 @@
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import ActionWrapper
 from gymnasium.spaces import Box
 
 
-class ClipAction(ActionWrapper, gym.utils.EzPickle):
+class ClipAction(gym.ActionWrapper, gym.utils.RecordConstructorArgs):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -29,7 +28,7 @@ class ClipAction(ActionWrapper, gym.utils.EzPickle):
         """
         assert isinstance(env.action_space, Box)
 
-        gym.utils.EzPickle.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(self)
         gym.ActionWrapper.__init__(self, env)
 
     def action(self, action):

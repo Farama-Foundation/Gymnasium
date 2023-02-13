@@ -20,7 +20,7 @@ from gymnasium.core import ActType, WrapperActType
 from gymnasium.spaces import Box, Space
 
 
-class LambdaActionV0(gym.ActionWrapper, gym.utils.EzPickle):
+class LambdaActionV0(gym.ActionWrapper, gym.utils.RecordConstructorArgs):
     """A wrapper that provides a function to modify the action passed to :meth:`step`."""
 
     def __init__(
@@ -36,7 +36,9 @@ class LambdaActionV0(gym.ActionWrapper, gym.utils.EzPickle):
             func: Function to apply to ``step`` ``action``
             action_space: The updated action space of the wrapper given the function.
         """
-        gym.utils.EzPickle.__init__(self, func=func, action_space=action_space)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, func=func, action_space=action_space
+        )
         gym.Wrapper.__init__(self, env)
 
         if action_space is not None:
@@ -49,7 +51,7 @@ class LambdaActionV0(gym.ActionWrapper, gym.utils.EzPickle):
         return self.func(action)
 
 
-class ClipActionV0(LambdaActionV0, gym.utils.EzPickle):
+class ClipActionV0(LambdaActionV0, gym.utils.RecordConstructorArgs):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -73,7 +75,7 @@ class ClipActionV0(LambdaActionV0, gym.utils.EzPickle):
         """
         assert isinstance(env.action_space, Box)
 
-        gym.utils.EzPickle.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(self)
         LambdaActionV0.__init__(
             self,
             env=env,
@@ -89,7 +91,7 @@ class ClipActionV0(LambdaActionV0, gym.utils.EzPickle):
         )
 
 
-class RescaleActionV0(LambdaActionV0, gym.utils.EzPickle):
+class RescaleActionV0(LambdaActionV0, gym.utils.RecordConstructorArgs):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
@@ -124,7 +126,9 @@ class RescaleActionV0(LambdaActionV0, gym.utils.EzPickle):
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
-        gym.utils.EzPickle.__init__(self, min_action=min_action, max_action=max_action)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, min_action=min_action, max_action=max_action
+        )
 
         assert isinstance(env.action_space, Box)
         assert not np.any(env.action_space.low == np.inf) and not np.any(

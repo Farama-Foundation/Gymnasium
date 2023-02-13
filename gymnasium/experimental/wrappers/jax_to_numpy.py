@@ -92,7 +92,7 @@ if jnp is not None:
         return type(value)(jax_to_numpy(v) for v in value)
 
 
-class JaxToNumpyV0(gym.Wrapper, gym.utils.EzPickle):
+class JaxToNumpyV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a jax environment so that it can be interacted with through numpy arrays.
 
     Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
@@ -112,7 +112,7 @@ class JaxToNumpyV0(gym.Wrapper, gym.utils.EzPickle):
             raise DependencyNotInstalled(
                 "jax is not installed, run `pip install gymnasium[jax]`"
             )
-        gym.utils.EzPickle.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
     def step(

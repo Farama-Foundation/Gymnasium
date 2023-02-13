@@ -10,12 +10,12 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-class PassiveEnvChecker(gym.Wrapper, gym.utils.EzPickle):
+class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API."""
 
     def __init__(self, env):
         """Initialises the wrapper with the environments, run the observation and action space tests."""
-        gym.utils.EzPickle.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
         assert hasattr(

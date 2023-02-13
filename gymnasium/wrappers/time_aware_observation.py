@@ -5,7 +5,7 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-class TimeAwareObservation(gym.ObservationWrapper, gym.utils.EzPickle):
+class TimeAwareObservation(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Augment the observation with the current time step in the episode.
 
     The observation space of the wrapped environment is assumed to be a flat :class:`Box`.
@@ -29,7 +29,7 @@ class TimeAwareObservation(gym.ObservationWrapper, gym.utils.EzPickle):
         Args:
             env: The environment to apply the wrapper
         """
-        gym.utils.EzPickle.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(self)
         gym.ObservationWrapper.__init__(self, env)
 
         assert isinstance(env.observation_space, Box)

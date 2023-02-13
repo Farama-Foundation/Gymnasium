@@ -44,7 +44,7 @@ class LegacyEnv(Protocol):
         ...
 
 
-class EnvCompatibility(gym.Env, gym.utils.EzPickle):
+class EnvCompatibility(gym.Env):
     r"""A wrapper which can transform an environment from the old API to the new API.
 
     Old step API refers to step() method returning (observation, reward, done, info), and reset() only retuning the observation.
@@ -68,7 +68,6 @@ class EnvCompatibility(gym.Env, gym.utils.EzPickle):
             "The `gymnasium.make(..., apply_api_compatibility=...)` parameter is deprecated and will be removed in v0.29. "
             "Instead use `gym.make('GymV21Environment-v0', env_name=...)` or `from shimmy import GymV21CompatibilityV0`"
         )
-        gym.utils.EzPickle.__init__(self, old_env=old_env, render_mode=render_mode)
 
         self.env = old_env
         self.metadata = getattr(old_env, "metadata", {"render_modes": []})

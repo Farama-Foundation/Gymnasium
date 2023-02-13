@@ -131,7 +131,7 @@ if torch is not None and jnp is not None:
         return type(value)(jax_to_torch(v, device) for v in value)
 
 
-class JaxToTorchV0(gym.Wrapper, gym.utils.EzPickle):
+class JaxToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a jax-based environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
@@ -156,7 +156,7 @@ class JaxToTorchV0(gym.Wrapper, gym.utils.EzPickle):
                 "jax is not installed, run `pip install gymnasium[jax]`"
             )
 
-        gym.utils.EzPickle.__init__(self, device=device)
+        gym.utils.RecordConstructorArgs.__init__(self, device=device)
         gym.Wrapper.__init__(self, env)
 
         self.device: Device | None = device

@@ -94,7 +94,7 @@ if torch is not None:
         return type(value)(numpy_to_torch(v, device) for v in value)
 
 
-class NumpyToTorchV0(gym.Wrapper, gym.utils.EzPickle):
+class NumpyToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
@@ -115,7 +115,7 @@ class NumpyToTorchV0(gym.Wrapper, gym.utils.EzPickle):
                 "torch is not installed, run `pip install torch`"
             )
 
-        gym.utils.EzPickle.__init__(self, device=device)
+        gym.utils.RecordConstructorArgs.__init__(self, device=device)
         gym.Wrapper.__init__(self, env)
 
         self.device: Device | None = device

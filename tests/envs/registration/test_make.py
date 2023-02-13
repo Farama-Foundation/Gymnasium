@@ -359,7 +359,7 @@ def test_import_module_during_make():
     del gym.registry["RegisterDuringMake-v0"]
 
 
-class NoEzPickleWrapper(gym.ObservationWrapper):
+class NoRecordArgsWrapper(gym.ObservationWrapper):
     def __init__(self, env: Env[ObsType, ActType]):
         super().__init__(env)
 
@@ -404,20 +404,20 @@ def test_make_env_spec():
     env_4.close()
 
     # make with no ezpickle wrapper
-    env_5 = NoEzPickleWrapper(gym.make("CartPole-v1").unwrapped)
+    env_5 = NoRecordArgsWrapper(gym.make("CartPole-v1").unwrapped)
     env_5.close()
     with pytest.raises(
         ValueError,
         match=re.escape(
-            "NoEzPickleWrapper wrapper does not inherit from `gymnasium.utils.EzPickle` therefore, the wrapper cannot be recreated."
+            "NoRecordArgsWrapper wrapper does not inherit from `gymnasium.utils.RecordConstructorArgs`, therefore, the wrapper cannot be recreated."
         ),
     ):
         gym.make(env_5.spec)
 
     # make with no ezpickle wrapper but in the entry point
-    gym.register("CartPole-v4", entry_point=lambda: NoEzPickleWrapper(CartPoleEnv()))
+    gym.register("CartPole-v4", entry_point=lambda: NoRecordArgsWrapper(CartPoleEnv()))
     env_6 = gym.make(gym.spec("CartPole-v4"))
-    assert isinstance(env_6, NoEzPickleWrapper)
+    assert isinstance(env_6, NoRecordArgsWrapper)
     assert isinstance(env_6.unwrapped, CartPoleEnv)
 
     del gym.registry["CartPole-v2"]

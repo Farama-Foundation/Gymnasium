@@ -592,7 +592,7 @@ def _create_from_env_spec(
     for wrapper_spec in env_spec.applied_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
             raise ValueError(
-                f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.EzPickle` therefore, the wrapper cannot be recreated."
+                f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.RecordConstructorArgs`, therefore, the wrapper cannot be recreated."
             )
 
         env = load_env_creator(wrapper_spec.entry_point)(env=env, **wrapper_spec.kwargs)
