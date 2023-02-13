@@ -52,7 +52,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
     def __init__(
         self,
         spaces: None | dict[str, Space] | Sequence[tuple[str, Space]] = None,
-        seed: int | np.random.Generator | None = None,
+        seed: dict | int | np.random.Generator | None = None,
         **spaces_kwargs: Space,
     ):
         """Constructor of :class:`Dict` space.
@@ -110,7 +110,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
             ), f"Dict space element is not an instance of Space: key='{key}', space={space}"
 
         # None for shape and dtype, since it'll require special handling
-        super().__init__(None, None, seed)
+        super().__init__(None, None, seed)  # type: ignore
 
     @property
     def is_np_flattenable(self):
