@@ -183,18 +183,14 @@ def _flatten_multidiscrete(
 @flatten.register(Tuple)
 def _flatten_tuple(space: Tuple, x: tuple[Any, ...]) -> tuple[Any, ...] | NDArray[Any]:
     if space.is_np_flattenable:
-        return np.concatenate(
-            np.array(flatten(s, x_part) for x_part, s in zip(x, space.spaces))
-        )
+        return np.concatenate([np.array(flatten(s, x_part)) for x_part, s in zip(x, space.spaces)])
     return tuple(flatten(s, x_part) for x_part, s in zip(x, space.spaces))
 
 
 @flatten.register(Dict)
 def _flatten_dict(space: Dict, x: dict[str, Any]) -> dict[str, Any] | NDArray[Any]:
     if space.is_np_flattenable:
-        return np.concatenate(
-            np.array(flatten(s, x[key]) for key, s in space.spaces.items())
-        )
+        return np.concatenate([np.array(flatten(s, x[key])) for key, s in space.spaces.items()])
     return OrderedDict((key, flatten(s, x[key])) for key, s in space.spaces.items())
 
 
