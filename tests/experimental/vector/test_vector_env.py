@@ -5,22 +5,10 @@ from functools import partial
 import numpy as np
 import pytest
 
-import gymnasium as gym
-from gymnasium.experimental.vector import (
-    AsyncVectorEnv,
-    SyncVectorEnv,
-    VectorEnv,
-    VectorEnvWrapper,
-)
-from gymnasium.spaces import Discrete, Tuple
-from tests.experimental.vector.testing_utils import CustomSpace, make_env
+from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.spaces import Discrete
 from tests.testing_env import GenericTestEnv
-
-
-ENV_ID = "CartPole-v1"
-NUM_ENVS = 3
-ENV_STEPS = 50
-SEED = 42
+from tests.vector.utils import make_env
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])
@@ -46,10 +34,8 @@ def test_vector_env_equal(shared_memory):
         actions = async_env.action_space.sample()
         assert actions in sync_env.action_space
 
-        # fmt: off
         async_observations, async_rewards, async_terminations, async_truncations, async_infos = async_env.step(actions)
         sync_observations, sync_rewards, sync_terminations, sync_truncations, sync_infos = sync_env.step(actions)
-        # fmt: on
 
         if any(sync_terminations) or any(sync_truncations):
             assert "final_observation" in async_infos
@@ -64,17 +50,6 @@ def test_vector_env_equal(shared_memory):
 
     async_env.close()
     sync_env.close()
-
-
-def test_custom_space_vector_env():
-    """Test custom space with vector environment."""
-    env = VectorEnv(4, CustomSpace(), CustomSpace())
-
-    assert isinstance(env.single_observation_space, CustomSpace)
-    assert isinstance(env.observation_space, Tuple)
-
-    assert isinstance(env.single_action_space, CustomSpace)
-    assert isinstance(env.action_space, Tuple)
 
 
 @pytest.mark.parametrize(
@@ -137,85 +112,3 @@ def test_final_obs_info(vectoriser):
     assert info["final_observation"] == np.array([0]) and info["final_info"] == {
         "action": 3
     }
-
-
-@pytest.mark.parametrize("asynchronous", [True, False])
-def test_vector_env_info(asynchronous):
-    """Test the vector environment info."""
-    env = gym.vector.make(
-        ENV_ID, num_envs=NUM_ENVS, asynchronous=asynchronous, disable_env_checker=True
-    )
-    env.reset(seed=SEED)
-    for _ in range(ENV_STEPS):
-        env.action_space.seed(SEED)
-        action = env.action_space.sample()
-        _, _, terminations, terminations, infos = env.step(action)
-        if any(terminations) or any(terminations):
-            assert len(infos["final_observation"]) == NUM_ENVS
-            assert len(infos["_final_observation"]) == NUM_ENVS
-
-            assert isinstance(infos["final_observation"], np.ndarray)
-            assert isinstance(infos["_final_observation"], np.ndarray)
-
-            for i, (terminated, truncated) in enumerate(
-                zip(terminations, terminations)
-            ):
-                if terminated or truncated:
-                    assert infos["_final_observation"][i]
-                else:
-                    assert not infos["_final_observation"][i]
-                    assert infos["final_observation"][i] is None
-
-
-@pytest.mark.parametrize("concurrent_ends", [1, 2, 3])
-def test_vector_env_info_concurrent_terminations(concurrent_ends):
-    """Tests the vector environment info with concurrent terminations."""
-    # envs that need to terminate together will have the same action
-    actions = [0] * concurrent_ends + [1] * (NUM_ENVS - concurrent_ends)
-    envs = [make_env(ENV_ID, SEED) for _ in range(NUM_ENVS)]
-    envs = SyncVectorEnv(envs)
-
-    for _ in range(ENV_STEPS):
-        _, _, terminateds, truncateds, infos = envs.step(actions)
-        if any(terminateds) or any(truncateds):
-            for i, (terminated, truncated) in enumerate(zip(terminateds, truncateds)):
-                if i < concurrent_ends:
-                    assert terminated or truncated
-                    assert infos["_final_observation"][i]
-                else:
-                    assert not infos["_final_observation"][i]
-                    assert infos["final_observation"][i] is None
-            return
-
-
-class DummyVectorWrapper(VectorEnvWrapper):
-    """Dummy Vector wrapper."""
-
-    def __init__(self, env):
-        """Initialise the wrapper."""
-        self.env = env
-        self.counter = 0
-
-    def reset_async(self, **kwargs):
-        """Reset the environment."""
-        super().reset_async()
-        self.counter += 1
-
-
-def test_vector_env_wrapper_inheritance():
-    """Test the vector custom wrapper."""
-    env = gym.vector.make("FrozenLake-v1", asynchronous=False)
-    wrapped = DummyVectorWrapper(env)
-    wrapped.reset()
-    assert wrapped.counter == 1
-
-
-def test_vector_env_wrapper_attributes():
-    """Test if `set_attr`, `call` methods for VecEnvWrapper get correctly forwarded to the vector env it is wrapping."""
-    env = gym.vector.make("CartPole-v1", num_envs=3)
-    wrapped = DummyVectorWrapper(gym.vector.make("CartPole-v1", num_envs=3))
-
-    assert np.allclose(wrapped.call("gravity"), env.call("gravity"))
-    env.set_attr("gravity", [20.0, 20.0, 20.0])
-    wrapped.set_attr("gravity", [20.0, 20.0, 20.0])
-    assert np.allclose(wrapped.get_attr("gravity"), env.get_attr("gravity"))
