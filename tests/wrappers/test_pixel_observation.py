@@ -6,10 +6,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import spaces
-from gymnasium.wrappers.pixel_observation import (
-    STATE_KEY,
-    PixelObservationSaveWrapperArgs,
-)
+from gymnasium.wrappers.pixel_observation import STATE_KEY, PixelObservationWrapper
 
 
 class FakeEnvironment(gym.Env):
@@ -64,7 +61,7 @@ def test_dict_observation(pixels_only):
     width, height = (320, 240)
 
     # The wrapper should only add one observation.
-    wrapped_env = PixelObservationSaveWrapperArgs(
+    wrapped_env = PixelObservationWrapper(
         env,
         pixel_keys=(pixel_key,),
         pixels_only=pixels_only,
@@ -101,7 +98,7 @@ def test_single_array_observation(pixels_only):
     observation_space = env.observation_space
     assert isinstance(observation_space, spaces.Box)
 
-    wrapped_env = PixelObservationSaveWrapperArgs(
+    wrapped_env = PixelObservationWrapper(
         env, pixel_keys=(pixel_key,), pixels_only=pixels_only
     )
     wrapped_env.observation_space = wrapped_env.observation_space
