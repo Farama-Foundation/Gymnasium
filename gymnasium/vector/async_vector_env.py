@@ -4,9 +4,10 @@ import sys
 import time
 from copy import deepcopy
 from enum import Enum
-from typing import Callable, List, Optional, Sequence, Tuple, Union
+from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium import logger
@@ -287,7 +288,7 @@ class AsyncVectorEnv(VectorEnv):
 
     def step_wait(
         self, timeout: Optional[Union[int, float]] = None
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, List[dict]]:
+    ) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
         """Wait for the calls to :obj:`step` in each sub-environment to finish.
 
         Args:
