@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 from gymnasium.spaces.space import Space
 
 
-alphanumeric: set[str] = set(
+alphanumeric: frozenset[str] = frozenset(
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
 
@@ -35,7 +35,7 @@ class Text(Space[str]):
         max_length: int,
         *,
         min_length: int = 1,
-        charset: set[str] | str = alphanumeric,
+        charset: set[str] | frozenset[str] | str = alphanumeric,
         seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Text` space.
