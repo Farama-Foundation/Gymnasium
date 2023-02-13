@@ -35,7 +35,7 @@ class Text(Space[str]):
         max_length: int,
         *,
         min_length: int = 1,
-        charset: set[str] | frozenset[str] | str = alphanumeric,
+        charset: frozenset[str] | str = alphanumeric,
         seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Text` space.
