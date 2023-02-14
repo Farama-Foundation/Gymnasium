@@ -32,7 +32,7 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.RecordConstructo
         odict_keys(['pixels'])
         >>> obs['pixels'].shape
         (400, 600, 3)
-        >>> env = PixelObservationSaveWrapperArgs(gym.make("CarRacing-v2", render_mode="rgb_array"), pixels_only=False)
+        >>> env = PixelObservationWrapper(gym.make("CarRacing-v2", render_mode="rgb_array"), pixels_only=False)
         >>> obs, _ = env.reset()
         >>> obs.keys()
         odict_keys(['state', 'pixels'])
@@ -40,7 +40,7 @@ class PixelObservationWrapper(gym.ObservationWrapper, gym.utils.RecordConstructo
         (96, 96, 3)
         >>> obs['pixels'].shape
         (400, 600, 3)
-        >>> env = PixelObservationSaveWrapperArgs(gym.make("CarRacing-v2", render_mode="rgb_array"), pixel_keys=('obs',))
+        >>> env = PixelObservationWrapper(gym.make("CarRacing-v2", render_mode="rgb_array"), pixel_keys=('obs',))
         >>> obs, _ = env.reset()
         >>> obs.keys()
         odict_keys(['obs'])
