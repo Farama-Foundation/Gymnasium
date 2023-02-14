@@ -17,7 +17,7 @@ from gymnasium.envs.registration import (
     pprint_registry,
     make_vec,
 )
-from gymnasium import envs, spaces, utils, vector, wrappers, error, logger, experimental
+from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
 
 
 __all__ = [
@@ -43,7 +43,6 @@ __all__ = [
     "wrappers",
     "error",
     "logger",
-    "experimental",
 ]
 __version__ = "0.27.1"
 

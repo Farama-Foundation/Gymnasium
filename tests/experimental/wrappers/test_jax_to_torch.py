@@ -5,8 +5,11 @@ import numpy as np
 import pytest
 import torch
 
-from gymnasium.experimental.wrappers import JaxToTorchV0
-from gymnasium.experimental.wrappers.jax_to_torch import jax_to_torch, torch_to_jax
+from gymnasium.experimental.wrappers.conversion.jax_to_torch import (
+    JaxToTorchV0,
+    jax_to_torch,
+    torch_to_jax,
+)
 from tests.testing_env import GenericTestEnv
 
 

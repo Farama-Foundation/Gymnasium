@@ -4,8 +4,11 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
-from gymnasium.experimental.wrappers import JaxToNumpyV0
-from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy, numpy_to_jax
+from gymnasium.experimental.wrappers.conversion.jax_to_numpy import (
+    JaxToNumpyV0,
+    jax_to_numpy,
+    numpy_to_jax,
+)
 from gymnasium.utils.env_checker import data_equivalence
 from tests.testing_env import GenericTestEnv
 
