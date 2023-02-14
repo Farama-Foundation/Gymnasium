@@ -132,7 +132,7 @@ def _batch_space_dict(space: Dict, n: int = 1):
 @batch_space.register(Graph)
 @batch_space.register(Text)
 @batch_space.register(Sequence)
-def _batch_space_custom(space: Tuple, n: int = 1):
+def _batch_space_custom(space: Graph | Text | Sequence, n: int = 1):
     # Without deepcopy, then the space.np_random is batched_space.spaces[0].np_random
     # Which is an issue if you are sampling actions of both the original space and the batched space
     batched_space = Tuple(

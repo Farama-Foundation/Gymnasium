@@ -1,5 +1,5 @@
 ---
-title: Vectorisation
+title: Vector
 ---
 
 # Vectorizing Environment
