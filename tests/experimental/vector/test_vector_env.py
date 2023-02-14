@@ -34,8 +34,20 @@ def test_vector_env_equal(shared_memory):
         actions = async_env.action_space.sample()
         assert actions in sync_env.action_space
 
-        async_observations, async_rewards, async_terminations, async_truncations, async_infos = async_env.step(actions)
-        sync_observations, sync_rewards, sync_terminations, sync_truncations, sync_infos = sync_env.step(actions)
+        (
+            async_observations,
+            async_rewards,
+            async_terminations,
+            async_truncations,
+            async_infos,
+        ) = async_env.step(actions)
+        (
+            sync_observations,
+            sync_rewards,
+            sync_terminations,
+            sync_truncations,
+            sync_infos,
+        ) = sync_env.step(actions)
 
         if any(sync_terminations) or any(sync_truncations):
             assert "final_observation" in async_infos
