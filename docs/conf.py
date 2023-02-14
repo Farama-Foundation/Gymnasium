@@ -72,8 +72,11 @@ autodoc_preserve_defaults = True
 # the class docstring.
 def remove_lines_before_parameters(app, what, name, obj, options, lines):
     if what == "class":
-        result = [i for i in lines if i.startswith(":param")]
-        lines[:] = result if result else lines
+        # ":" represents args values such as :param: or :raises:
+        idx_to_keep = next(
+            (i for i, line in enumerate(lines) if line.startswith(":")), 0
+        )
+        lines[:] = lines[idx_to_keep:]
 
 
 def setup(app):
