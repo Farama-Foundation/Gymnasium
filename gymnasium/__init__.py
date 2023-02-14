@@ -30,6 +30,7 @@ __all__ = [
     "Space",
     # registration
     "make",
+    "make_vec",
     "spec",
     "register",
     "registry",

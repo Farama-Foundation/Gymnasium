@@ -109,6 +109,27 @@ class VectorEnv(Generic[VectorObsType, VectorActType, VectorArrayType]):
             As the vector environments autoreset for a terminating and truncating sub-environments,
             the returned observation and info is not the final step's observation or info which is instead stored in
             info as `"final_observation"` and `"final_info"`.
+
+        Example:
+            >>> import gymnasium as gym
+            >>> import numpy as np
+            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
+            >>> _ = envs.reset(seed=42)
+            >>> actions = np.array([1, 0, 1])
+            >>> observations, rewards, termination, truncation, infos = envs.step(actions)
+            >>> observations
+            array([[ 0.02727336,  0.18847767,  0.03625453, -0.26141977],
+                   [ 0.01431748, -0.24002443, -0.04731862,  0.3110827 ],
+                   [-0.03822722,  0.1710671 , -0.00848456, -0.2487226 ]],
+                  dtype=float32)
+            >>> rewards
+            array([1., 1., 1.])
+            >>> termination
+            array([False, False, False])
+            >>> termination
+            array([False, False, False])
+            >>> infos
+            {}
         """
         raise NotImplementedError
 

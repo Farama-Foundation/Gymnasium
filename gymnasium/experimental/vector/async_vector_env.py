@@ -10,6 +10,8 @@ from enum import Enum
 from multiprocessing.connection import Connection
 from multiprocessing.queues import Queue
 from typing import Any, Callable, Sequence
+
+from numpy.typing import NDArray
 from typing_extensions import Protocol
 
 import numpy as np
@@ -22,14 +24,7 @@ from gymnasium.error import (
     CustomSpaceError,
     NoAsyncCallError,
 )
-from gymnasium.experimental.vector.vector_env import (
-    VectorActType,
-    VectorArrayType,
-    VectorEnv,
-    VectorObsType,
-)
-from gymnasium.spaces import Space
-from gymnasium.vector.utils import (
+from gymnasium.experimental.vector.utils import (
     CloudpickleWrapper,
     batch_space,
     clear_mpi_env_vars,
@@ -72,16 +67,15 @@ class AsyncVectorEnv(VectorEnv):
 
     It uses ``multiprocessing`` processes, and pipes for communication.
 
-    Example::
-
+    Example:
         >>> import gymnasium as gym
         >>> env = gym.vector.AsyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()  # doctest: +SKIP
-        array([[-0.8286432 ,  0.5597771 ,  0.90249056],
-               [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
+        >>> env.reset(seed=42)
+        (array([[-0.14995256,  0.9886932 , -0.12224312],
+               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
     """
 
     def __init__(
@@ -196,7 +190,6 @@ class AsyncVectorEnv(VectorEnv):
                 child_pipe.close()
 
         self._state: AsyncState = AsyncState.DEFAULT
-        self._to_reset_envs = np.zeros(self.num_envs, dtype=np.bool_)
         self._check_spaces()
 
     def reset(
@@ -234,7 +227,6 @@ class AsyncVectorEnv(VectorEnv):
                 calls to :meth:`reset_async`, with no call to :meth:`reset_wait` in between.
         """
         self._assert_is_running()
-        self._to_reset_envs = np.zeros(self.num_envs, dtype=np.bool_)
 
         if seed is None:
             seed = [None for _ in range(self.num_envs)]
@@ -310,7 +302,7 @@ class AsyncVectorEnv(VectorEnv):
     def step(
         self, actions: VectorActType
     ) -> tuple[
-        VectorObsType, VectorArrayType, VectorArrayType, VectorArrayType, dict[str, Any]
+        VectorObsType, NDArray[np.float32], NDArray[np.bool_], NDArray[np.bool_], dict[str, Any]
     ]:
         """Take an action for each parallel environment.
 
@@ -344,10 +336,8 @@ class AsyncVectorEnv(VectorEnv):
             )
 
         actions = iterate(self.action_space, actions)
-        for pipe, action, to_reset in zip(
-            self.parent_pipes, actions, self._to_reset_envs
-        ):
-            pipe.send(("step", (action, to_reset)))
+        for pipe, action in zip(self.parent_pipes, actions):
+            pipe.send(("step", action))
         self._state = AsyncState.WAITING_STEP
 
     def step_wait(
@@ -385,17 +375,17 @@ class AsyncVectorEnv(VectorEnv):
         successes = []
         for i, pipe in enumerate(self.parent_pipes):
             result, success = pipe.recv()
+            obs, rew, terminated, truncated, info = result
 
-            obs, reward, terminated, truncated, info = result
             successes.append(success)
+            if success:
+                obs_list.append(obs)
+                rewards.append(rew)
+                terminations.append(terminated)
+                truncations.append(truncated)
+                infos = self._add_info(infos, info, i)
 
-            obs_list.append(obs)
-            rewards.append(reward)
-            terminations.append(terminated)
-            truncations.append(truncated)
-            infos = self.add_dict_info(infos, info, i)
-
-        self.raise_if_errors(successes)
+        self._raise_if_errors(successes)
         self._state = AsyncState.DEFAULT
 
         if not self.shared_memory:
@@ -405,13 +395,11 @@ class AsyncVectorEnv(VectorEnv):
                 self.observations,
             )
 
+        if self.copy:
+            self.observations = deepcopy(self.observations)
         rewards = np.array(rewards)
         terminations = np.array(terminations, dtype=np.bool_)
         truncations = np.array(truncations, dtype=np.bool_)
-
-        self._to_reset_envs = np.logical_or(terminations, truncations)
-        if self.copy:
-            self.observations = deepcopy(self.observations)
 
         return (
             self.observations,
@@ -490,7 +478,7 @@ class AsyncVectorEnv(VectorEnv):
         self.raise_if_errors(successes)
         self._state = AsyncState.DEFAULT
 
-        return results
+        return tuple(results)
 
     def get_attr(self, name: str) -> tuple[Any]:
         """Get a property from each parallel environment.
@@ -688,21 +676,18 @@ def default_async_worker(
                 pipe.send(((obs, info), True))
 
             elif command == "step":
-                action, to_reset_env = data
-
-                if to_reset_env:
+                (
+                    obs,
+                    reward,
+                    terminated,
+                    truncated,
+                    info,
+                ) = env.step(data)
+                if terminated or truncated:
+                    old_obs, old_info = obs, info
                     obs, info = env.reset()
-                    reward = 0.0
-                    terminated = False
-                    truncated = False
-                else:
-                    (
-                        obs,
-                        reward,
-                        terminated,
-                        truncated,
-                        info,
-                    ) = env.step(action)
+                    info["final_observation"] = old_obs
+                    info["final_info"] = old_info
 
                 if shared_memory:
                     write_to_shared_memory(

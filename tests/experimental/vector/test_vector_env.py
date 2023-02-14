@@ -1,3 +1,5 @@
+"""Test vector environment implementations."""
+
 from functools import partial
 
 import numpy as np
@@ -11,6 +13,7 @@ from tests.vector.utils import make_env
 
 @pytest.mark.parametrize("shared_memory", [True, False])
 def test_vector_env_equal(shared_memory):
+    """Test that vector environment are equal for both async and sync variants."""
     env_fns = [make_env("CartPole-v1", i) for i in range(4)]
     num_steps = 100
 
@@ -31,15 +34,31 @@ def test_vector_env_equal(shared_memory):
         actions = async_env.action_space.sample()
         assert actions in sync_env.action_space
 
-        # fmt: off
-        async_observations, async_rewards, async_terminateds, async_truncateds, async_infos = async_env.step(actions)
-        sync_observations, sync_rewards, sync_terminateds, sync_truncateds, sync_infos = sync_env.step(actions)
-        # fmt: on
+        (
+            async_observations,
+            async_rewards,
+            async_terminations,
+            async_truncations,
+            async_infos,
+        ) = async_env.step(actions)
+        (
+            sync_observations,
+            sync_rewards,
+            sync_terminations,
+            sync_truncations,
+            sync_infos,
+        ) = sync_env.step(actions)
+
+        if any(sync_terminations) or any(sync_truncations):
+            assert "final_observation" in async_infos
+            assert "_final_observation" in async_infos
+            assert "final_observation" in sync_infos
+            assert "_final_observation" in sync_infos
 
         assert np.all(async_observations == sync_observations)
         assert np.all(async_rewards == sync_rewards)
-        assert np.all(async_terminateds == sync_terminateds)
-        assert np.all(async_truncateds == sync_truncateds)
+        assert np.all(async_terminations == sync_terminations)
+        assert np.all(async_truncations == sync_truncations)
 
     async_env.close()
     sync_env.close()
@@ -96,11 +115,12 @@ def test_final_obs_info(vectoriser):
     )
 
     obs, _, termination, _, info = env.step([3])
-    assert obs == np.array([0]) and termination == np.array([True])
-
-    obs, _, termination, _, info = env.step([4])
     assert (
         obs == np.array([0])
-        and termination == np.array([False])
+        and termination == np.array([True])
         and info["reset"] == np.array([True])
     )
+    assert "final_observation" in info and "final_info" in info
+    assert info["final_observation"] == np.array([0]) and info["final_info"] == {
+        "action": 3
+    }

@@ -1,20 +1,19 @@
 """A synchronous vector environment implementation, equivalent to for loop through a number of environments."""
-
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any, Callable, Iterator
 
 import numpy as np
 
-from gymnasium import Space
-from gymnasium.core import ActType, Env, ObsType, RenderFrame
-from gymnasium.experimental.vector.vector_env import (
-    VectorActType,
-    VectorEnv,
-    VectorObsType,
+from gymnasium import Env
+from gymnasium.experimental.vector.utils import (
+    batch_space,
+    concatenate,
+    create_empty_array,
+    iterate,
 )
-from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.experimental.vector.vector_env import VectorEnv
 
 
 __all__ = ["SyncVectorEnv"]
@@ -30,15 +29,15 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()  # doctest: +SKIP
-        array([[-0.8286432 ,  0.5597771 ,  0.90249056],
-               [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
+        >>> env.reset(seed=42)
+        (array([[-0.14995256,  0.9886932 , -0.12224312],
+               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
     """
 
     def __init__(
         self,
-        envs: Iterable[Callable[[], Env[ObsType, ActType]]]
-        | Sequence[Env[ObsType, ActType]],
+        env_fns: Iterable[Callable[[], Env[ObsType, ActType]]]
+        | Sequence[Env[ObsType, ActType]],,
         copy: bool = True,
         render_mode: str | None = None,
     ):
@@ -141,23 +140,18 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
         info = {}
 
         for env_num, (env, action) in enumerate(zip(self.envs, env_actions)):
-            if self._to_reset_envs[env_num]:
-                env_obs, env_info = env.reset(options=self._reset_options)
-
-                rewards[env_num] = 0
-                terminations[env_num], truncations[env_num] = False, False
-            else:
-                (
-                    env_obs,
-                    rewards[env_num],
-                    terminations[env_num],
-                    truncations[env_num],
-                    env_info,
-                ) = env.step(action)
+            (
+                env_obs,
+                rewards[env_num],
+                terminations[env_num],
+                truncations[env_num],
+                env_info,
+            ) = env.step(action)
 
             info = self.add_dict_info(info, env_info, env_num)
 
         obs = concatenate(self.single_observation_space, obs, self._obs_array)
+
         if self.copy:
             obs = deepcopy(self.copy)
         assert all(reward is not None for reward in rewards)
