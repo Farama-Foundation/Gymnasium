@@ -43,7 +43,7 @@ def batch_space(space: Space, n: int = 1) -> Space:
         ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
         ... })
         >>> batch_space(space, n=5)
-        Dict(position:Box(5, 3), velocity:Box(5, 2))
+        Dict('position': Box(0.0, 1.0, (5, 3), float32), 'velocity': Box(0.0, 1.0, (5, 2), float32))
 
     Args:
         space: Space (e.g. the observation space) for a single environment in the vectorized environment.
@@ -153,11 +153,13 @@ def concatenate(
 
         >>> from gymnasium.spaces import Box
         >>> space = Box(low=0, high=1, shape=(3,), dtype=np.float32)
+        >>> space.seed(123)
+        [123]
         >>> out = np.zeros((2, 3), dtype=np.float32)
         >>> items = [space.sample() for _ in range(2)]
         >>> concatenate(space, items, out)
-        array([[0.6348213 , 0.28607962, 0.60760117],
-               [0.87383074, 0.192658  , 0.2148103 ]], dtype=float32)
+        array([[0.6823519 , 0.05382102, 0.22035988],
+               [0.18437181, 0.1759059 , 0.8120945 ]], dtype=float32)
 
     Args:
         space: Observation space of a single environment in the vectorized environment.
@@ -235,15 +237,17 @@ def iterate(space: Space, items: Iterable) -> Iterator:
         >>> space = Dict({
         ... 'position': Box(low=0, high=1, shape=(2, 3), dtype=np.float32),
         ... 'velocity': Box(low=0, high=1, shape=(2, 2), dtype=np.float32)})
+        >>> space.seed(123)
+        [123, 33158374, 1465339467]
         >>> items = space.sample()
         >>> it = iterate(space, items)
         >>> next(it)
-        {'position': array([-0.99644893, -0.08304597, -0.7238421 ], dtype=float32),
-        'velocity': array([0.35848552, 0.1533453 ], dtype=float32)}
+        OrderedDict([('position', array([0.24928133, 0.05314875, 0.28939998], dtype=float32)), ('velocity', array([0.49644083, 0.1371249 ], dtype=float32))])
         >>> next(it)
-        {'position': array([-0.67958736, -0.49076623,  0.38661423], dtype=float32),
-        'velocity': array([0.7975036 , 0.93317133], dtype=float32)}
+        OrderedDict([('position', array([0.6575984 , 0.01709149, 0.9258122 ], dtype=float32)), ('velocity', array([0.98059106, 0.03165356], dtype=float32))])
         >>> next(it)
+        Traceback (most recent call last):
+        ...
         StopIteration
 
     Args:
@@ -330,9 +334,9 @@ def create_empty_array(
         ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
         >>> create_empty_array(space, n=2, fn=np.zeros)
         OrderedDict([('position', array([[0., 0., 0.],
-                                         [0., 0., 0.]], dtype=float32)),
-                     ('velocity', array([[0., 0.],
-                                         [0., 0.]], dtype=float32))])
+               [0., 0., 0.]], dtype=float32)), ('velocity', array([[0., 0.],
+               [0., 0.]], dtype=float32))])
+
 
     Args:
         space: Observation space of a single environment in the vectorized environment.
