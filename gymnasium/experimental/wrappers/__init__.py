@@ -1,10 +1,6 @@
 """Experimental Wrappers."""
 # isort: skip_file
 
-from typing import TypeVar
-
-ArgType = TypeVar("ArgType")
-
 from gymnasium.experimental.wrappers.lambda_action import (
     LambdaActionV0,
     ClipActionV0,
@@ -49,6 +45,11 @@ from gymnasium.experimental.wrappers.rendering import (
     HumanRenderingV0,
 )
 
+from gymnasium.experimental.wrappers.vector import (
+    VectorRecordEpisodeStatistics,
+    VectorListInfo,
+)
+
 __all__ = [
     # --- Observation wrappers ---
     "LambdaObservationV0",
@@ -88,4 +89,7 @@ __all__ = [
     "JaxToNumpyV0",
     "JaxToTorchV0",
     "NumpyToTorchV0",
+    # --- Vector ---
+    "VectorRecordEpisodeStatistics",
+    "VectorListInfo",
 ]
