@@ -73,10 +73,10 @@ autodoc_preserve_defaults = True
 def remove_lines_before_parameters(app, what, name, obj, options, lines):
     if what == "class":
         # ":" represents args values such as :param: or :raises:
-        idx_to_keep = next(
+        first_idx_to_keep = next(
             (i for i, line in enumerate(lines) if line.startswith(":")), 0
         )
-        lines[:] = lines[idx_to_keep:]
+        lines[:] = lines[first_idx_to_keep:]
 
 
 def setup(app):
