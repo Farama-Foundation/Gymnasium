@@ -1189,62 +1189,6 @@ will always return an empty list:</p>
 </section>
 <section id="environment-data-conversion">
 <h2>Environment data conversion<a class="headerlink" href="#environment-data-conversion" title="Permalink to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.JaxToNumpyV0">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToNumpyV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.JaxToNumpyV0" title="Permalink to this definition">#</a></dt>
-<dd><p>Wraps a jax environment so that it can be interacted with through numpy arrays.</p>
-<p>Actions must be provided as numpy arrays and observations will be returned as numpy arrays.</p>
-<p class="rubric">Notes</p>
-<p>The Jax To Numpy and Numpy to Jax conversion does not guarantee a roundtrip (jax -&gt; numpy -&gt; jax) and vice versa.
-The reason for this is jax does not support non-array values, therefore numpy <code class="docutils literal notranslate"><span class="pre">int_32(5)</span> <span class="pre">-&gt;</span> <span class="pre">DeviceArray([5],</span> <span class="pre">dtype=jnp.int23)</span></code></p>
-<p>Wraps an environment such that the input and outputs are numpy arrays.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env</strong> – the environment to wrap</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.JaxToTorchV0">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToTorchV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.JaxToTorchV0" title="Permalink to this definition">#</a></dt>
-<dd><p>Wraps a jax-based environment so that it can be interacted with through PyTorch Tensors.</p>
-<p>Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">rendered</span></code> this is returned as a NumPy array not a pytorch Tensor.</p>
-</div>
-<p>Wrapper class to change inputs and outputs of environment to PyTorch tensors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env</strong> – The Jax-based environment to wrap</p></li>
-<li><p><strong>device</strong> – The device the torch Tensors should be moved to</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.NumpyToTorchV0">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">NumpyToTorchV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.NumpyToTorchV0" title="Permalink to this definition">#</a></dt>
-<dd><p>Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors.</p>
-<p>Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">rendered</span></code> this is returned as a NumPy array not a pytorch Tensor.</p>
-</div>
-<p>Wrapper class to change inputs and outputs of environment to PyTorch tensors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env</strong> – The Jax-based environment to wrap</p></li>
-<li><p><strong>device</strong> – The device the torch Tensors should be moved to</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 </section>
 
@@ -1354,12 +1298,7 @@ The reason for this is jax does not support non-array values, therefore numpy <c
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.RenderCollectionV0"><code class="docutils literal notranslate"><span class="pre">RenderCollectionV0</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#environment-data-conversion">Environment data conversion</a><ul>
-<li><a class="reference internal" href="#gymnasium.experimental.wrappers.JaxToNumpyV0"><code class="docutils literal notranslate"><span class="pre">JaxToNumpyV0</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.wrappers.JaxToTorchV0"><code class="docutils literal notranslate"><span class="pre">JaxToTorchV0</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.wrappers.NumpyToTorchV0"><code class="docutils literal notranslate"><span class="pre">NumpyToTorchV0</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#environment-data-conversion">Environment data conversion</a></li>
 </ul>
 </li>
 </ul>
