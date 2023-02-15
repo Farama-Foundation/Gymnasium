@@ -1,8 +1,9 @@
 """A synchronous vector environment."""
 from copy import deepcopy
-from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
+from typing import Any, Callable, Iterable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 from gymnasium import Env
 from gymnasium.spaces import Space
@@ -16,16 +17,15 @@ __all__ = ["SyncVectorEnv"]
 class SyncVectorEnv(VectorEnv):
     """Vectorized environment that serially runs multiple environments.
 
-    Example::
-
+    Example:
         >>> import gymnasium as gym
         >>> env = gym.vector.SyncVectorEnv([
-        ...     lambda: gym.make("Pendulum-v0", g=9.81),
-        ...     lambda: gym.make("Pendulum-v0", g=1.62)
+        ...     lambda: gym.make("Pendulum-v1", g=9.81),
+        ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()
-        array([[-0.8286432 ,  0.5597771 ,  0.90249056],
-               [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
+        >>> env.reset(seed=42)
+        (array([[-0.14995256,  0.9886932 , -0.12224312],
+               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
     """
 
     def __init__(
@@ -133,7 +133,7 @@ class SyncVectorEnv(VectorEnv):
         """Sets :attr:`_actions` for use by the :meth:`step_wait` by converting the ``actions`` to an iterable version."""
         self._actions = iterate(self.action_space, actions)
 
-    def step_wait(self):
+    def step_wait(self) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
         """Steps through each of the environments returning the batched results.
 
         Returns:

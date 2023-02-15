@@ -27,16 +27,6 @@ __all__ = ["BaseGymSpaces", "_BaseGymSpaces", "batch_space", "iterate"]
 def batch_space(space: Space, n: int = 1) -> Space:
     """Create a (batched) space, containing multiple copies of a single space.
 
-    Example::
-
-        >>> from gymnasium.spaces import Box, Dict
-        >>> space = Dict({
-        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
-        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
-        ... })
-        >>> batch_space(space, n=5)
-        Dict(position:Box(5, 3), velocity:Box(5, 2))
-
     Args:
         space: Space (e.g. the observation space) for a single environment in the vectorized environment.
         n: Number of environments in the vectorized environment.
@@ -46,6 +36,16 @@ def batch_space(space: Space, n: int = 1) -> Space:
 
     Raises:
         ValueError: Cannot batch space that is not a valid :class:`gym.Space` instance
+
+    Example:
+        >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
+        >>> space = Dict({
+        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
+        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
+        ... })
+        >>> batch_space(space, n=5)
+        Dict('position': Box(0.0, 1.0, (5, 3), float32), 'velocity': Box(0.0, 1.0, (5, 2), float32))
     """
     raise ValueError(
         f"Cannot batch space with type `{type(space)}`. The space must be a valid `gymnasium.Space` instance."
@@ -137,23 +137,6 @@ def _batch_space_custom(space, n=1):
 def iterate(space: Space, items) -> Iterator:
     """Iterate over the elements of a (batched) space.
 
-    Example::
-
-        >>> from gymnasium.spaces import Box, Dict
-        >>> space = Dict({
-        ... 'position': Box(low=0, high=1, shape=(2, 3), dtype=np.float32),
-        ... 'velocity': Box(low=0, high=1, shape=(2, 2), dtype=np.float32)})
-        >>> items = space.sample()
-        >>> it = iterate(space, items)
-        >>> next(it)
-        {'position': array([-0.99644893, -0.08304597, -0.7238421 ], dtype=float32),
-        'velocity': array([0.35848552, 0.1533453 ], dtype=float32)}
-        >>> next(it)
-        {'position': array([-0.67958736, -0.49076623,  0.38661423], dtype=float32),
-        'velocity': array([0.7975036 , 0.93317133], dtype=float32)}
-        >>> next(it)
-        StopIteration
-
     Args:
         space: Space to which `items` belong to.
         items: Items to be iterated over.
@@ -163,6 +146,23 @@ def iterate(space: Space, items) -> Iterator:
 
     Raises:
         ValueError: Space is not an instance of :class:`gym.Space`
+
+    Example:
+        >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
+        >>> space = Dict({
+        ... 'position': Box(low=0, high=1, shape=(2, 3), seed=42, dtype=np.float32),
+        ... 'velocity': Box(low=0, high=1, shape=(2, 2), seed=42, dtype=np.float32)})
+        >>> items = space.sample()
+        >>> it = iterate(space, items)
+        >>> next(it)
+        OrderedDict([('position', array([0.77395606, 0.43887845, 0.85859793], dtype=float32)), ('velocity', array([0.77395606, 0.43887845], dtype=float32))])
+        >>> next(it)
+        OrderedDict([('position', array([0.697368  , 0.09417735, 0.97562236], dtype=float32)), ('velocity', array([0.85859793, 0.697368  ], dtype=float32))])
+        >>> next(it)
+        Traceback (most recent call last):
+            ...
+        StopIteration
     """
     raise ValueError(
         f"Space of type `{type(space)}` is not a valid `gymnasium.Space` instance."

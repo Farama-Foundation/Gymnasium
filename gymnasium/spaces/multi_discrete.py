@@ -4,14 +4,14 @@ from __future__ import annotations
 from typing import Any, Sequence
 
 import numpy as np
-import numpy.typing as npt
+from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium.spaces.discrete import Discrete
 from gymnasium.spaces.space import MaskNDArray, Space
 
 
-class MultiDiscrete(Space[npt.NDArray[np.integer]]):
+class MultiDiscrete(Space[NDArray[np.integer]]):
     """This represents the cartesian product of arbitrary :class:`Discrete` spaces.
 
     It is useful to represent game controllers or keyboards where each key can be represented as a discrete action space.
@@ -30,17 +30,18 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
     Although this feature is rarely used, :class:`MultiDiscrete` spaces may also have several axes
     if ``nvec`` has several axes:
 
-    Example::
-
-        >> d = MultiDiscrete(np.array([[1, 2], [3, 4]]))
-        >> d.sample()
+    Example:
+        >>> from gymnasium.spaces import MultiDiscrete
+        >>> import numpy as np
+        >>> observation_space = MultiDiscrete(np.array([[1, 2], [3, 4]]), seed=42)
+        >>> observation_space.sample()
         array([[0, 0],
-               [2, 3]])
+               [2, 2]])
     """
 
     def __init__(
         self,
-        nvec: npt.NDArray[np.integer[Any]] | list[int],
+        nvec: NDArray[np.integer[Any]] | list[int],
         dtype: str | type[np.integer[Any]] = np.int64,
         seed: int | np.random.Generator | None = None,
     ):
@@ -71,7 +72,7 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
 
     def sample(
         self, mask: tuple[MaskNDArray, ...] | None = None
-    ) -> npt.NDArray[np.integer[Any]]:
+    ) -> NDArray[np.integer[Any]]:
         """Generates a single random sample this space.
 
         Args:
@@ -87,7 +88,7 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
             def _apply_mask(
                 sub_mask: MaskNDArray | tuple[MaskNDArray, ...],
                 sub_nvec: MaskNDArray | np.integer[Any],
-            ) -> int | Sequence[int]:
+            ) -> int | list[Any]:
                 if isinstance(sub_nvec, np.ndarray):
                     assert isinstance(
                         sub_mask, tuple
@@ -143,16 +144,16 @@ class MultiDiscrete(Space[npt.NDArray[np.integer]]):
         )
 
     def to_jsonable(
-        self, sample_n: Sequence[npt.NDArray[np.integer[Any]]]
+        self, sample_n: Sequence[NDArray[np.integer[Any]]]
     ) -> list[Sequence[int]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [sample.tolist() for sample in sample_n]
 
     def from_jsonable(
         self, sample_n: list[Sequence[int]]
-    ) -> list[npt.NDArray[np.integer[Any]]]:
+    ) -> list[NDArray[np.integer[Any]]]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        return np.array(sample_n)
+        return [np.array(sample) for sample in sample_n]
 
     def __repr__(self):
         """Gives a string representation of this space."""

@@ -22,7 +22,7 @@ repos:
     hooks:
       - id: codespell
         args:
-          - --ignore-words-list=nd,reacher,thist,ths,ure,referenc,wile
+          - --ignore-words-list=reacher,ure,referenc,wile
   - repo: https://github.com/PyCQA/flake8
     rev: 5.0.4
     hooks:
@@ -40,7 +40,7 @@ repos:
       - id: pyupgrade
         args: ["--py37-plus"]
   - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
+    rev: 5.12.0
     hooks:
       - id: isort
   - repo: https://github.com/python/black
@@ -51,7 +51,7 @@ repos:
     rev: 6.1.1
     hooks:
       - id: pydocstyle
-        exclude: ^(gymnasium/envs/box2d)|(gymnasium/envs/classic_control)|(gymnasium/envs/mujoco)|(gymnasium/envs/toy_text)|(tests/envs)|(tests/spaces)|(tests/utils)|(tests/vector)|(tests/wrappers)|(docs/)
+        exclude: ^(gymnasium/envs/box2d)|(gymnasium/envs/classic_control)|(gymnasium/envs/mujoco)|(gymnasium/envs/toy_text)|(tests/experimental/vector)|(tests/envs)|(tests/spaces)|(tests/utils)|(tests/vector)|(tests/wrappers)|(docs/)
         args:
           - --source
           - --explain

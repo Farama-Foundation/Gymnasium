@@ -1,10 +1,6 @@
 """Experimental Wrappers."""
 # isort: skip_file
 
-from typing import TypeVar
-
-ArgType = TypeVar("ArgType")
-
 from gymnasium.experimental.wrappers.lambda_action import (
     LambdaActionV0,
     ClipActionV0,
@@ -27,9 +23,6 @@ from gymnasium.experimental.wrappers.lambda_reward import (
     LambdaRewardV0,
     NormalizeRewardV0,
 )
-from gymnasium.experimental.wrappers.jax_to_numpy import JaxToNumpyV0
-from gymnasium.experimental.wrappers.jax_to_torch import JaxToTorchV0
-from gymnasium.experimental.wrappers.numpy_to_torch import NumpyToTorchV0
 from gymnasium.experimental.wrappers.stateful_action import StickyActionV0
 from gymnasium.experimental.wrappers.stateful_observation import (
     TimeAwareObservationV0,
@@ -47,6 +40,11 @@ from gymnasium.experimental.wrappers.rendering import (
     RenderCollectionV0,
     RecordVideoV0,
     HumanRenderingV0,
+)
+
+from gymnasium.experimental.wrappers.vector import (
+    VectorRecordEpisodeStatistics,
+    VectorListInfo,
 )
 
 __all__ = [
@@ -84,8 +82,7 @@ __all__ = [
     "RenderCollectionV0",
     "RecordVideoV0",
     "HumanRenderingV0",
-    # --- Data Conversion ---
-    "JaxToNumpyV0",
-    "JaxToTorchV0",
-    "NumpyToTorchV0",
+    # --- Vector ---
+    "VectorRecordEpisodeStatistics",
+    "VectorListInfo",
 ]

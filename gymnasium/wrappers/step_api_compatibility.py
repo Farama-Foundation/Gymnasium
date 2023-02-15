@@ -11,18 +11,15 @@ class StepAPICompatibility(gym.Wrapper):
     New step API refers to step() method returning (observation, reward, terminated, truncated, info)
     (Refer to docs for details on the API change)
 
-    Args:
-        env (gym.Env): the env to wrap. Can be in old or new API
-        output_truncation_bool (bool): Apply to convert environment to use new step API that returns two bool. (True by default)
-
-    Examples:
+    Example:
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import StepAPICompatibility
         >>> env = gym.make("CartPole-v1")
         >>> env # wrapper not applied by default, set to new API
         <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
-        >>> env = gym.make("CartPole-v1", apply_api_compatibility=True) # set to old API
+        >>> env = StepAPICompatibility(gym.make("CartPole-v1"))
+        >>> env
         <StepAPICompatibility<TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>>
-        >>> env = StepAPICompatibility(CustomEnv(), output_truncation_bool=False) # manually using wrapper on unregistered envs
-
     """
 
     def __init__(self, env: gym.Env, output_truncation_bool: bool = True):

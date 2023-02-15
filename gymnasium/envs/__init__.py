@@ -1,6 +1,8 @@
 """Registers the internal gym envs then loads the env plugins for module using the entry point."""
+from typing import Any
+
 from gymnasium.envs.registration import (
-    load_env_plugins,
+    load_plugin_envs,
     make,
     pprint_registry,
     register,
@@ -15,6 +17,7 @@ from gymnasium.envs.registration import (
 register(
     id="CartPole-v0",
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
+    vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
     max_episode_steps=200,
     reward_threshold=195.0,
 )
@@ -22,6 +25,7 @@ register(
 register(
     id="CartPole-v1",
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
+    vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
     max_episode_steps=500,
     reward_threshold=475.0,
 )
@@ -60,6 +64,7 @@ register(
 register(
     id="CartPoleJax-v0",
     entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
+    vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=200,
     reward_threshold=195.0,
 )
@@ -67,6 +72,7 @@ register(
 register(
     id="CartPoleJax-v1",
     entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
+    vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=500,
     reward_threshold=475.0,
 )
@@ -74,6 +80,7 @@ register(
 register(
     id="PendulumJax-v0",
     entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxEnv",
+    vector_entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxVectorEnv",
     max_episode_steps=200,
 )
 
@@ -348,5 +355,17 @@ register(
 )
 
 
+# --- For shimmy compatibility
+def _raise_shimmy_error(*args: Any, **kwargs: Any):
+    raise ImportError(
+        "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+    )
+
+
+# When installed, shimmy will re-register these environments with the correct entry_point
+register(id="GymV21Environment-v0", entry_point=_raise_shimmy_error)
+register(id="GymV26Environment-v0", entry_point=_raise_shimmy_error)
+
+
 # Hook to load plugins from entry points
-load_env_plugins()
+load_plugin_envs()

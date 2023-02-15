@@ -148,17 +148,20 @@ def step_api_compatibility(
     Returns:
         step_returns (tuple): Depending on `output_truncation_bool` bool, it can return `(obs, rew, done, info)` or `(obs, rew, terminated, truncated, info)`
 
-    Examples:
+    Example:
         This function can be used to ensure compatibility in step interfaces with conflicting API. Eg. if env is written in old API,
          wrapper is written in new API, and the final step output is desired to be in old API.
 
         >>> import gymnasium as gym
-        >>> env = gym.make("OldEnv")
-        >>> obs, rew, done, info = step_api_compatibility(env.step(action), output_truncation_bool=False)
-        >>> obs, rew, terminated, truncated, info = step_api_compatibility(env.step(action), output_truncation_bool=True)
+        >>> env = gym.make("CartPole-v0")
+        >>> _ = env.reset()
+        >>> obs, rewards, done, info = step_api_compatibility(env.step(0), output_truncation_bool=False)
+        >>> obs, rewards, terminated, truncated, info = step_api_compatibility(env.step(0), output_truncation_bool=True)
 
-        >>> vec_env = gym.vector.make("OldEnv")
-        >>> observations, rewards, dones, infos = step_api_compatibility(vec_env.step(action), is_vector_env=True)
+        >>> vec_env = gym.vector.make("CartPole-v0")
+        >>> _ = vec_env.reset()
+        >>> obs, rewards, dones, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=False)
+        >>> obs, rewards, terminated, truncated, info = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)
     """
     if output_truncation_bool:
         return convert_to_terminated_truncated_step_api(step_returns, is_vector_env)

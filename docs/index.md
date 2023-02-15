@@ -67,7 +67,8 @@ environments/third_party_environments
 :glob:
 :caption: Tutorials
 
-tutorials/*
+tutorials/**/index
+Comet Tutorial <https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasium/?utm_source=gymnasium&utm_medium=partner&utm_campaign=partner_gymnasium_2023&utm_content=docs_gymnasium>
 ```
 
 ```{toctree}
@@ -75,6 +76,6 @@ tutorials/*
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
-content/release_notes
+release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```

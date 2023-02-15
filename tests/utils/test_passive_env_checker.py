@@ -1,6 +1,6 @@
 import re
 import warnings
-from typing import Dict, Union
+from typing import Callable, Dict, Union
 
 import numpy as np
 import pytest
@@ -297,7 +297,7 @@ def _make_reset_results(results):
         ],
     ],
 )
-def test_passive_env_reset_checker(test, func: callable, message: str, kwargs: Dict):
+def test_passive_env_reset_checker(test, func: Callable, message: str, kwargs: Dict):
     """Tests the passive env reset check"""
     if test is UserWarning:
         with pytest.warns(
@@ -376,7 +376,7 @@ def _modified_step(
     ],
 )
 def test_passive_env_step_checker(
-    test: Union[UserWarning, type], func: callable, message: str
+    test: Union[UserWarning, type], func: Callable, message: str
 ):
     """Tests the passive env step checker."""
     if test is UserWarning:

@@ -10,8 +10,11 @@ from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.func_jax_env import FunctionalJaxEnv
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional_jax_env import (
+    FunctionalJaxEnv,
+    FunctionalJaxVectorEnv,
+)
 from gymnasium.utils import EzPickle
 
 
@@ -23,29 +26,48 @@ class CartPoleFunctional(
 ):
     """Cartpole but in jax and functional.
 
-    Example usage:
-
+    Example:
         >>> import jax
         >>> import jax.numpy as jnp
-
+        >>> from gymnasium.envs.phys2d.cartpole import CartPoleFunctional
         >>> key = jax.random.PRNGKey(0)
-
-        >>> env = CartPole({"x_init": 0.5})
+        >>> env = CartPoleFunctional({"x_init": 0.5})
         >>> state = env.initial(key)
         >>> print(state)
-        >>> print(env.step(state, 0))
-
+        [ 0.46532142 -0.27484107  0.13302994 -0.20361817]
+        >>> print(env.transition(state, 0))
+        [ 0.4598246  -0.6357784   0.12895757  0.1278053 ]
         >>> env.transform(jax.jit)
-
         >>> state = env.initial(key)
         >>> print(state)
-        >>> print(env.step(state, 0))
-
+        [ 0.46532142 -0.27484107  0.13302994 -0.20361817]
+        >>> print(env.transition(state, 0))
+        [ 0.4598246  -0.6357784   0.12895757  0.12780523]
         >>> vkey = jax.random.split(key, 10)
         >>> env.transform(jax.vmap)
         >>> vstate = env.initial(vkey)
         >>> print(vstate)
-        >>> print(env.step(vstate, jnp.array([0 for _ in range(10)])))
+        [[ 0.25117755 -0.03159595  0.09428263  0.12404168]
+         [ 0.231457    0.41420317 -0.13484478  0.29151905]
+         [-0.11706758 -0.37130308  0.13587534  0.33141208]
+         [-0.4613737   0.36557996  0.3950702   0.3639989 ]
+         [-0.14707637 -0.34273267 -0.32374108 -0.48110402]
+         [-0.45774353  0.3633288  -0.3157575  -0.03586268]
+         [ 0.37344885 -0.279778   -0.33894253  0.07415426]
+         [-0.20234215  0.39775252 -0.2556088   0.32877135]
+         [-0.2572986  -0.29943776 -0.45600426 -0.35740316]
+         [ 0.05436695  0.35021234 -0.36484408  0.2805779 ]]
+        >>> print(env.transition(vstate, jnp.array([0 for _ in range(10)])))
+        [[ 0.25054562 -0.38763174  0.09676346  0.4448946 ]
+         [ 0.23974106  0.09849604 -0.1290144   0.5390002 ]
+         [-0.12449364 -0.7323911   0.14250359  0.6634313 ]
+         [-0.45406207 -0.01028753  0.4023502   0.7505522 ]
+         [-0.15393102 -0.6168968  -0.33336315 -0.30407968]
+         [-0.45047694  0.08870795 -0.31647477  0.14311607]
+         [ 0.36785328 -0.54895645 -0.33745944  0.24393772]
+         [-0.19438711  0.10855066 -0.24903338  0.5316877 ]
+         [-0.26328734 -0.5420943  -0.46315232 -0.2344252 ]
+         [ 0.06137119  0.08665388 -0.35923252  0.4403924 ]]
     """
 
     gravity = 9.8
@@ -144,7 +166,7 @@ class CartPoleFunctional(
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
         screen, clock = render_state
 
@@ -216,7 +238,7 @@ class CartPoleFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
 
         pygame.init()
@@ -231,7 +253,7 @@ class CartPoleFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[classic-control]`"
             ) from e
         pygame.display.quit()
         pygame.quit()
@@ -249,13 +271,43 @@ class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
         env = CartPoleFunctional(**kwargs)
         env.transform(jax.jit)
 
-        action_space = env.action_space
-        observation_space = env.observation_space
-
-        super().__init__(
+        FunctionalJaxEnv.__init__(
+            self,
             env,
-            observation_space=observation_space,
-            action_space=action_space,
             metadata=self.metadata,
             render_mode=render_mode,
+        )
+
+
+class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
+    """Jax-based implementation of the vectorized CartPole environment."""
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+
+    def __init__(
+        self,
+        num_envs: int,
+        render_mode: str | None = None,
+        max_episode_steps: int = 200,
+        **kwargs: Any,
+    ):
+        """Constructor for the vectorized CartPole where the kwargs are applied to the functional environment."""
+        EzPickle.__init__(
+            self,
+            num_envs=num_envs,
+            render_mode=render_mode,
+            max_episode_steps=max_episode_steps,
+            **kwargs,
+        )
+
+        env = CartPoleFunctional(**kwargs)
+        env.transform(jax.jit)
+
+        FunctionalJaxVectorEnv.__init__(
+            self,
+            func_env=env,
+            num_envs=num_envs,
+            metadata=self.metadata,
+            render_mode=render_mode,
+            max_episode_steps=max_episode_steps,
         )

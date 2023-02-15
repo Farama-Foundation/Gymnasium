@@ -9,8 +9,15 @@ from gymnasium.core import (
     RewardWrapper,
 )
 from gymnasium.spaces.space import Space
-from gymnasium.envs.registration import make, spec, register, registry, pprint_registry
-from gymnasium import envs, spaces, utils, vector, wrappers, error, logger, experimental
+from gymnasium.envs.registration import (
+    make,
+    spec,
+    register,
+    registry,
+    pprint_registry,
+    make_vec,
+)
+from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
 
 
 __all__ = [
@@ -23,6 +30,7 @@ __all__ = [
     "Space",
     # registration
     "make",
+    "make_vec",
     "spec",
     "register",
     "registry",
@@ -35,9 +43,8 @@ __all__ = [
     "wrappers",
     "error",
     "logger",
-    "experimental",
 ]
-__version__ = "0.27.0"
+__version__ = "0.27.1"
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
 # SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using
