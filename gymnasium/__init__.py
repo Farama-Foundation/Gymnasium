@@ -60,11 +60,10 @@ if sys.platform.startswith("linux"):
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
 try:
-    import gym_notices.notices as notices
+    from farama_notifications.notifications import notifications
 
-    # print version warning if necessary
-    notice = notices.notices.get(__version__)
-    if notice:
-        print(notice, file=sys.stderr)
+    if "gymnasium" in notifications and __version__ in notifications["gymnasium"]:
+        print(notifications["gymnasium"][__version__], file=sys.stderr)
+
 except Exception:  # nosec
     pass
