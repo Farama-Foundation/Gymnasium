@@ -69,8 +69,8 @@ class Box(Space[NDArray[Any]]):
         this value across all dimensions.
 
         Args:
-            low (SupportsFloat | np.ndarray): Lower bounds of the intervals.
-            high (SupportsFloat | np.ndarray]): Upper bounds of the intervals.
+            low (SupportsFloat | np.ndarray): Lower bounds of the intervals. If integer, must be at least ``-2**63``.
+            high (SupportsFloat | np.ndarray]): Upper bounds of the intervals. If integer, must be at most ``2**63 - 2``.
             shape (Optional[Sequence[int]]): The shape is inferred from the shape of `low` or `high` `np.ndarray`s with
                 `low` and `high` scalars defaulting to a shape of (1,)
             dtype: The dtype of the elements of the space. If this is an integer type, the :class:`Box` is essentially a discrete space.
