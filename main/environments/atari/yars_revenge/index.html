@@ -7,12 +7,12 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/environments/atari/ms_pacman.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="NameThisGame" href="../name_this_game/" /><link rel="prev" title="MontezumaRevenge" href="../montezuma_revenge/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/environments/atari/ms_pacman.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/environments/atari/yars_revenge.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Zaxxon" href="../zaxxon/" /><link rel="prev" title="WizardOfWor" href="../wizard_of_wor/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/environments/atari/yars_revenge.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
-        <title>MsPacman - Gymnasium Documentation</title>
+        <title>YarsRevenge - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=c36209c3579494d5f9512671edd8cd731f7c406c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
@@ -335,7 +335,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../krull/">Krull</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../kung_fu_master/">KungFuMaster</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../montezuma_revenge/">MontezumaRevenge</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">MsPacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ms_pacman/">MsPacman</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../name_this_game/">NameThisGame</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../phoenix/">Phoenix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pitfall/">Pitfall</a></li>
@@ -358,7 +358,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../venture/">Venture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../video_pinball/">VideoPinball</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../wizard_of_wor/">WizardOfWor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../yars_revenge/">YarsRevenge</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">YarsRevenge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
@@ -413,7 +413,7 @@
             
     
     <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/environments/atari/ms_pacman.md" title="Edit this page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/environments/atari/yars_revenge.md" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -444,23 +444,21 @@
           </div>
           <article role="main">
             
-            <section id="mspacman">
-<h1>MsPacman<a class="headerlink" href="#mspacman" title="Permalink to this heading">#</a></h1>
+            <section id="yarsrevenge">
+<h1>YarsRevenge<a class="headerlink" href="#yarsrevenge" title="Permalink to this heading">#</a></h1>
 <figure class="align-default" id="id1">
-<a class="reference internal image-reference" href="../../../_images/ms_pacman.gif"><img alt="../../../_images/ms_pacman.gif" src="../../../_images/ms_pacman.gif" style="width: 120px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/yars_revenge.gif"><img alt="../../../_images/yars_revenge.gif" src="../../../_images/yars_revenge.gif" style="width: 120px;" /></a>
 </figure>
 <p>This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
-<p>Your goal is to collect all of the pellets on the screen while avoiding the ghosts.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_page.php?SoftwareLabelID=924">the AtariAge page</a></p>
+<p>The objective is to break a path through the shield and destroy the Qotile with a blast from the Zorlon Cannon.</p>
+<p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_page.php?SoftwareLabelID=603&amp;currentPage=1&amp;maxPages=12">the AtariAge page</a></p>
 </section>
 <section id="actions">
 <h2>Actions<a class="headerlink" href="#actions" title="Permalink to this heading">#</a></h2>
-<p>MsPacman has the action space <code class="docutils literal notranslate"><span class="pre">Discrete(9)</span></code> with the table below lists the meaning of each action’s meanings.
-As MsPacman uses a reduced set of actions for <code class="docutils literal notranslate"><span class="pre">v0</span></code>, <code class="docutils literal notranslate"><span class="pre">v4</span></code> and <code class="docutils literal notranslate"><span class="pre">v5</span></code> versions of the environment.
-To enable all 18 possible actions that can be performed on an Atari 2600, specify <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> during
-initialization or by passing <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> to <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.</p>
+<p>YarsRevenge has the action space <code class="docutils literal notranslate"><span class="pre">Discrete(18)</span></code> with the table below lists the meaning of each action’s meanings.
+As YarsRevenge uses the full set of actions then specifying <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> will not modify the action space of the environment if passed to <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -473,28 +471,55 @@ initialization or by passing <code class="docutils literal notranslate"><span cl
 <td><p><code class="docutils literal notranslate"><span class="pre">NOOP</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">UP</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FIRE</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">RIGHT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UP</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">LEFT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RIGHT</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">DOWN</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LEFT</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">UPRIGHT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DOWN</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">6</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">UPLEFT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UPRIGHT</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">7</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">DOWNRIGHT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UPLEFT</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">8</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DOWNRIGHT</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">9</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">DOWNLEFT</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UPFIRE</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">11</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RIGHTFIRE</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">12</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LEFTFIRE</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">13</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DOWNFIRE</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">14</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UPRIGHTFIRE</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">15</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UPLEFTFIRE</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">16</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DOWNRIGHTFIRE</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">17</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DOWNLEFTFIRE</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -512,7 +537,7 @@ See variants section for the type of observation used by each environment id.</p
 </section>
 <section id="variants">
 <h2>Variants<a class="headerlink" href="#variants" title="Permalink to this heading">#</a></h2>
-<p>MsPacman has the following variants of the environment id which have the following differences in observation,
+<p>YarsRevenge has the following variants of the environment id which have the following differences in observation,
 the number of frame-skips and the repeat action probability.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -524,72 +549,72 @@ the number of frame-skips and the repeat action probability.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>MsPacman-v0</p></td>
+<tr class="row-even"><td><p>YarsRevenge-v0</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">5)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>MsPacman-ram-v0</p></td>
+<tr class="row-odd"><td><p>YarsRevenge-ram-v0</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">5)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>MsPacman-ramDeterministic-v0</p></td>
+<tr class="row-even"><td><p>YarsRevenge-ramDeterministic-v0</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>MsPacman-ramNoFrameskip-v0</p></td>
+<tr class="row-odd"><td><p>YarsRevenge-ramNoFrameskip-v0</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>MsPacmanDeterministic-v0</p></td>
+<tr class="row-even"><td><p>YarsRevengeDeterministic-v0</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>MsPacmanNoFrameskip-v0</p></td>
+<tr class="row-odd"><td><p>YarsRevengeNoFrameskip-v0</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>MsPacman-v4</p></td>
+<tr class="row-even"><td><p>YarsRevenge-v4</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">5)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>MsPacman-ram-v4</p></td>
+<tr class="row-odd"><td><p>YarsRevenge-ram-v4</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">5)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>MsPacman-ramDeterministic-v4</p></td>
+<tr class="row-even"><td><p>YarsRevenge-ramDeterministic-v4</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>MsPacman-ramNoFrameskip-v4</p></td>
+<tr class="row-odd"><td><p>YarsRevenge-ramNoFrameskip-v4</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>MsPacmanDeterministic-v4</p></td>
+<tr class="row-even"><td><p>YarsRevengeDeterministic-v4</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>MsPacmanNoFrameskip-v4</p></td>
+<tr class="row-odd"><td><p>YarsRevengeNoFrameskip-v4</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>ALE/MsPacman-v5</p></td>
+<tr class="row-even"><td><p>ALE/YarsRevenge-v5</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>ALE/MsPacman-ram-v5</p></td>
+<tr class="row-odd"><td><p>ALE/YarsRevenge-ram-v5</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.25</span></code></p></td>
@@ -613,9 +638,9 @@ along with the default values.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">32,</span> <span class="pre">64,</span> <span class="pre">96]</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
 </tr>
 </tbody>
@@ -638,18 +663,18 @@ along with the default values.</p>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../name_this_game/">
+            <a class="next-page" href="../zaxxon/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">NameThisGame</div>
+                <div class="title">Zaxxon</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../montezuma_revenge/">
+            <a class="prev-page" href="../wizard_of_wor/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -658,7 +683,7 @@ along with the default values.</p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">MontezumaRevenge</div>
+                <div class="title">WizardOfWor</div>
                 
               </div>
             </a>
@@ -695,7 +720,7 @@ along with the default values.</p>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">MsPacman</a><ul>
+<li><a class="reference internal" href="#">YarsRevenge</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#actions">Actions</a></li>
 <li><a class="reference internal" href="#observations">Observations</a></li>
