@@ -478,8 +478,8 @@ this value across all dimensions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>low</strong> (<em>SupportsFloat</em><em> | </em><em>np.ndarray</em>) – Lower bounds of the intervals. If integer, must be at least <code class="docutils literal notranslate"><span class="pre">-2**63</span></code>.</p></li>
-<li><p><strong>high</strong> (<em>SupportsFloat</em><em> | </em><em>np.ndarray</em><em>]</em>) – Upper bounds of the intervals. If integer, must be at most <code class="docutils literal notranslate"><span class="pre">2**63</span> <span class="pre">-</span> <span class="pre">2</span></code>.</p></li>
+<li><p><strong>low</strong> (<em>SupportsFloat</em><em> | </em><em>np.ndarray</em>) – Lower bounds of the intervals.</p></li>
+<li><p><strong>high</strong> (<em>SupportsFloat</em><em> | </em><em>np.ndarray</em><em>]</em>) – Upper bounds of the intervals.</p></li>
 <li><p><strong>shape</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><em>Sequence</em></a><em>[</em><em>int</em><em>]</em><em>]</em>) – The shape is inferred from the shape of <cite>low</cite> or <cite>high</cite> <cite>np.ndarray`s with
 `low</cite> and <cite>high</cite> scalars defaulting to a shape of (1,)</p></li>
 <li><p><strong>dtype</strong> – The dtype of the elements of the space. If this is an integer type, the <a class="reference internal" href="#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a> is essentially a discrete space.</p></li>
