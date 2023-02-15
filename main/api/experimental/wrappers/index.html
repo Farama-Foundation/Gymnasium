@@ -465,7 +465,6 @@ If the observations from <code class="xref py py-attr docutils literal notransla
 <span class="go">(array([0.08227695, 0.06540678, 0.09613613, 0.07422512]), {})</span>
 </pre></div>
 </div>
-<p>Constructor for the lambda observation wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -614,7 +613,6 @@ In that case, if the base environment has an observation space of type <code cla
 of rendered images will be updated with the base environment’s observation. If, however, the observation
 space is of type <code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code>, the base environment’s observation (which will be an element of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code>
 space) will be added to the dictionary under the key “state”.</p>
-<p>Initializes a new pixel Wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -643,7 +641,6 @@ If <cite>False</cite>, the calculated statistics are used but not updated anymor
 <p>The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
 newly instantiated or the policy was changed recently.</p>
 </div>
-<p>This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -691,7 +688,6 @@ Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38</p>
 <span class="go">      dtype=float32)</span>
 </pre></div>
 </div>
-<p>Initialize <a class="reference internal" href="#gymnasium.experimental.wrappers.TimeAwareObservationV0" title="gymnasium.experimental.wrappers.TimeAwareObservationV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservationV0</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -732,7 +728,6 @@ I.e. the observation returned by <code class="xref py py-meth docutils literal n
 <span class="go">(4, 96, 96, 3)</span>
 </pre></div>
 </div>
-<p>Observation wrapper that stacks the observations in a rolling manner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -747,7 +742,6 @@ I.e. the observation returned by <code class="xref py py-meth docutils literal n
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.DelayObservationV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">DelayObservationV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.DelayObservationV0" title="Permalink to this definition">#</a></dt>
 <dd><p>Wrapper which adds a delay to the returned observation.</p>
-<p>Initialize the DelayObservation wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -781,7 +775,6 @@ same shape of the observation space.</p></li>
 <li><p>Grayscale observation: If the observation is colour or greyscale, by default, greyscale.</p></li>
 <li><p>Scale observation: If to scale the observation between [0, 1) or [0, 255), by default, not scaled.</p></li>
 </ul>
-<p>Wrapper for Atari 2600 preprocessing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -815,7 +808,6 @@ optimization benefits of FrameStack Wrapper.</p></li>
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.LambdaActionV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">LambdaActionV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gym.Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">WrapperActType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.LambdaActionV0" title="Permalink to this definition">#</a></dt>
 <dd><p>A wrapper that provides a function to modify the action passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code>.</p>
-<p>Initialize LambdaAction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -844,7 +836,6 @@ optimization benefits of FrameStack Wrapper.</p></li>
 <span class="gp">... </span><span class="c1"># Executes the action np.array([1.0, -1.0, 0]) in the base environment</span>
 </pre></div>
 </div>
-<p>A wrapper for clipping continuous actions within the valid bound.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – The environment to apply the wrapper</p>
@@ -874,7 +865,6 @@ or <code class="xref py py-attr docutils literal notranslate"><span class="pre">
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>Initializes the <code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleAction</span></code> wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -892,7 +882,6 @@ or <code class="xref py py-attr docutils literal notranslate"><span class="pre">
 <dd><p>Wrapper which adds a probability of repeating the previous action.</p>
 <p>This wrapper follows the implementation proposed by <a class="reference external" href="https://arxiv.org/pdf/1709.06009.pdf">Machado et al., 2018</a>
 in Section 5.2 on page 12.</p>
-<p>Initialize StickyAction wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -921,7 +910,6 @@ in Section 5.2 on page 12.</p>
 <span class="go">3.0</span>
 </pre></div>
 </div>
-<p>Initialize LambdaRewardV0 wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -947,7 +935,6 @@ in Section 5.2 on page 12.</p>
 <span class="go">0.5</span>
 </pre></div>
 </div>
-<p>Initialize ClipRewardsV0 wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -972,7 +959,6 @@ If False, the calculated statistics are used but not updated anymore; this may b
 <p>The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
 instantiated or the policy was changed recently.</p>
 </div>
-<p>This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -991,7 +977,6 @@ instantiated or the policy was changed recently.</p>
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.AutoresetV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">AutoresetV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.AutoresetV0" title="Permalink to this definition">#</a></dt>
 <dd><p>A class for providing an automatic reset functionality for gymnasium environments when calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.step()</span></code>.</p>
-<p>A class for providing an automatic reset functionality for gymnasium environments when calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.step()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> (<em>gym.Env</em>) – The environment to apply the wrapper</p>
@@ -1029,7 +1014,6 @@ instantiated or the policy was changed recently.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>A wrapper that will produce an error if <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> is called before an initial <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1043,38 +1027,7 @@ instantiated or the policy was changed recently.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordEpisodeStatisticsV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'episode'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0" title="Permalink to this definition">#</a></dt>
-<dd><p>This wrapper will keep track of cumulative rewards and episode lengths.</p>
-<p>At the end of an episode, the statistics of the episode will be added to <code class="docutils literal notranslate"><span class="pre">info</span></code>
-using the key <code class="docutils literal notranslate"><span class="pre">episode</span></code>. If using a vectorized environment also the key
-<code class="docutils literal notranslate"><span class="pre">_episode</span></code> is used which indicates whether the env at the respective index has
-the episode statistics.</p>
-<p>After the completion of an episode, <code class="docutils literal notranslate"><span class="pre">info</span></code> will look like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
-<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;cumulative reward&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;episode length&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
-<span class="gp">... </span>    <span class="p">},</span>
-<span class="gp">... </span><span class="p">}</span>
-</pre></div>
-</div>
-<p>For a vectorized environments the output will be in the form of:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span> <span class="o">=</span> <span class="p">{</span>
-<span class="gp">... </span>    <span class="s2">&quot;final_observation&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of length num-envs&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;_final_observation&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;final_info&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of length num-envs&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;_final_info&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of cumulative reward&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of episode length&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of elapsed time since beginning of episode&gt;&quot;</span>
-<span class="gp">... </span>    <span class="p">},</span>
-<span class="gp">... </span>    <span class="s2">&quot;_episode&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span>
-<span class="gp">... </span><span class="p">}</span>
-</pre></div>
-</div>
-<p>Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively.</p>
+<dd><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1082,11 +1035,8 @@ the episode statistics.</p>
 <li><p><strong>episode_length_buffer</strong> – The lengths of the last <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>-many episodes</p></li>
 </ul>
 </dd>
-</dl>
-<p>This wrapper will keep track of cumulative rewards and episode lengths.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the wrapper</p></li>
 <li><p><strong>buffer_length</strong> – The size of the buffers <code class="xref py py-attr docutils literal notranslate"><span class="pre">return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">length_queue</span></code></p></li>
 <li><p><strong>stats_key</strong> – The info key for the episode statistics</p></li>
@@ -1113,7 +1063,6 @@ By default, the recording will be stopped once reset is called. However, you can
 length (possibly spanning several episodes) by passing a strictly positive value for <code class="docutils literal notranslate"><span class="pre">video_length</span></code>.
 This wrapper uses the value <cite>fps</cite> from metadata as the number of frames per second;
 if <cite>fps</cite> is not defined in metadata, the default value 30 is used.</p>
-<p>Wrapper records videos of rollouts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1163,7 +1112,6 @@ will always return an empty list:</p>
 <span class="go">[]</span>
 </pre></div>
 </div>
-<p>Initialize a <code class="xref py py-class docutils literal notranslate"><span class="pre">HumanRendering</span></code> instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – The environment that is being wrapped</p>
@@ -1175,7 +1123,6 @@ will always return an empty list:</p>
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.RenderCollectionV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">RenderCollectionV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_clean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.RenderCollectionV0" title="Permalink to this definition">#</a></dt>
 <dd><p>Collect rendered frames of an environment such <code class="docutils literal notranslate"><span class="pre">render</span></code> returns a <code class="docutils literal notranslate"><span class="pre">list[RenderedFrame]</span></code>.</p>
-<p>Initialize a <code class="xref py py-class docutils literal notranslate"><span class="pre">RenderCollection</span></code> instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

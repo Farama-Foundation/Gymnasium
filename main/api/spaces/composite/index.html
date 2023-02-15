@@ -454,10 +454,10 @@
 <dd><p>A dictionary of <a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a> instances.</p>
 <p>Elements of this space are (ordered) dictionaries of elements from the constituent spaces.</p>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-<span class="go">OrderedDict([(&#39;position&#39;, 0), (&#39;velocity&#39;, 2)])</span>
+<span class="go">OrderedDict([(&#39;color&#39;, 0), (&#39;position&#39;, array([-0.3991573 ,  0.21649833], dtype=float32))])</span>
 </pre></div>
 </div>
 <p>With a nested dict:</p>
@@ -485,10 +485,6 @@
 Usually, it will not be possible to use elements of this space directly in learning code. However, you can easily
 convert <cite>Dict</cite> observations to flat arrays by using a <a class="reference internal" href="../../wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.FlattenObservation</span></code></a> wrapper.
 Similar wrappers can be implemented to deal with <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> actions.</p>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> space.</p>
-<p>This space can be instantiated in one of two ways: Either you pass a dictionary
-of spaces to <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> via the <code class="docutils literal notranslate"><span class="pre">spaces</span></code> argument, or you pass the spaces as separate
-keyword arguments (where you will need to avoid the keys <code class="docutils literal notranslate"><span class="pre">spaces</span></code> and <code class="docutils literal notranslate"><span class="pre">seed</span></code>)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -498,16 +494,6 @@ keyword arguments (where you will need to avoid the keys <code class="docutils l
 </ul>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-<span class="go">OrderedDict([(&#39;color&#39;, 0), (&#39;position&#39;, array([-0.3991573 ,  0.21649833], dtype=float32))])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">color</span><span class="o">=</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-<span class="go">OrderedDict([(&#39;position&#39;, array([0.6273108, 0.240238 ], dtype=float32)), (&#39;color&#39;, 2)])</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -557,8 +543,6 @@ keyword arguments (where you will need to avoid the keys <code class="docutils l
 <span class="go">(0, array([-0.3991573 ,  0.21649833], dtype=float32))</span>
 </pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Tuple" title="gymnasium.spaces.Tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code></a> space.</p>
-<p>The generated instance will represent the cartesian product <span class="math notranslate nohighlight">\(\text{spaces}[0] \times ... \times \text{spaces}[-1]\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -621,7 +605,6 @@ to some space that is specified during initialization and the integer <span clas
 <span class="go">(array([0.6369617], dtype=float32), array([0.26978672], dtype=float32), array([0.04097353], dtype=float32))</span>
 </pre></div>
 </div>
-<p>Constructor of the <a class="reference internal" href="#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a> space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -693,11 +676,6 @@ sampling elements from the base space. The mask is applied for each feature spac
 <span class="go">       [8, 8]]))</span>
 </pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Graph" title="gymnasium.spaces.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>.</p>
-<p>The argument <code class="docutils literal notranslate"><span class="pre">node_space</span></code> specifies the base space that each node feature will use.
-This argument must be either a Box or Discrete instance.</p>
-<p>The argument <code class="docutils literal notranslate"><span class="pre">edge_space</span></code> specifies the base space that each edge feature will use.
-This argument must be either a None, Box or Discrete instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
