@@ -12,6 +12,7 @@ import gymnasium as gym
 from gymnasium import logger, spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
+from gymnasium.experimental.vector import VectorEnv
 from gymnasium.vector.utils import batch_space
 
 
@@ -315,7 +316,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.isopen = False
 
 
-class CartPoleVectorEnv(gym.experimental.VectorEnv):
+class CartPoleVectorEnv(VectorEnv):
     metadata = {
         "render_modes": ["human", "rgb_array"],
         "render_fps": 50,

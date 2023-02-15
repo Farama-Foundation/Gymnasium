@@ -66,6 +66,23 @@ napoleon_custom_sections = [("Returns", "params_style")]
 autoclass_content = "both"
 autodoc_preserve_defaults = True
 
+
+# This function removes the content before the parameters in the __init__ function.
+# This content is often not useful for the website documentation as it replicates
+# the class docstring.
+def remove_lines_before_parameters(app, what, name, obj, options, lines):
+    if what == "class":
+        # ":" represents args values such as :param: or :raises:
+        first_idx_to_keep = next(
+            (i for i, line in enumerate(lines) if line.startswith(":")), 0
+        )
+        lines[:] = lines[first_idx_to_keep:]
+
+
+def setup(app):
+    app.connect("autodoc-process-docstring", remove_lines_before_parameters)
+
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
