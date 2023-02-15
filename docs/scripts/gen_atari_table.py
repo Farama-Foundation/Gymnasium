@@ -1,109 +1,226 @@
+import itertools
+import json
+
 import tabulate
+from ale_py.roms import utils as rom_utils
+from shimmy.utils.envs_configs import LEGACY_ATARI_GAMES as ALL_ATARI_GAMES
 from tqdm import tqdm
 
 import gymnasium
 
 
-def shortened_repr(lst):
-    assert all(isinstance(item, int) for item in lst)
-    assert len(set(lst)) == len(lst)
-    lst = sorted(lst)
+# while part of the ale-py list of roms this is not part of the roms downloaded by AutoROM
+exclude_envs = ["TicTacToe3D", "Videochess", "Videocube"]
 
-    if lst[-1] - lst[0] == len(lst) - 1 and len(lst) > 3:
-        return f"`[{lst[0]}, ..., {lst[-1]}]`"
-    elif len(lst) > 3 and lst[-2] - lst[0] == len(lst) - 2:
-        return f"`[{lst[0]}, ..., {lst[-2]}, {lst[-1]}]`"
-    return f"`{str(lst)}`"
+# # Generate the list of all atari games on atari.md
+for rom_id in sorted(ALL_ATARI_GAMES):
+    if rom_utils.rom_id_to_name(rom_id) not in exclude_envs:
+        print(f"atari/{rom_id}")
 
 
-def to_gymnasium_spelling(game):
-    parts = game.split("_")
-    return "".join([part.capitalize() for part in parts])
+def generate_value_ranges(values):
+    for a, b in itertools.groupby(enumerate(values), lambda pair: pair[1] - pair[0]):
+        b = list(b)
+        yield b[0][1], b[-1][1]
 
 
-atari_envs = [
-    "adventure",
-    "air_raid",
-    "alien",
-    "amidar",
-    "assault",
-    "asterix",
-    "asteroids",
-    "atlantis",
-    "bank_heist",
-    "battle_zone",
-    "beam_rider",
-    "berzerk",
-    "bowling",
-    "boxing",
-    "breakout",
-    "carnival",
-    "centipede",
-    "chopper_command",
-    "crazy_climber",
-    "defender",
-    "demon_attack",
-    "double_dunk",
-    "elevator_action",
-    "enduro",
-    "fishing_derby",
-    "freeway",
-    "frostbite",
-    "gopher",
-    "gravitar",
-    "hero",
-    "ice_hockey",
-    "jamesbond",
-    "journey_escape",
-    "kangaroo",
-    "krull",
-    "kung_fu_master",
-    "montezuma_revenge",
-    "ms_pacman",
-    "name_this_game",
-    "phoenix",
-    "pitfall",
-    "pong",
-    "pooyan",
-    "private_eye",
-    "qbert",
-    "riverraid",
-    "road_runner",
-    "robotank",
-    "seaquest",
-    "skiing",
-    "solaris",
-    "space_invaders",
-    "star_gunner",
-    "tennis",
-    "time_pilot",
-    "tutankham",
-    "up_n_down",
-    "venture",
-    "video_pinball",
-    "wizard_of_wor",
-    "yars_revenge",
-    "zaxxon",
+def shortened_repr(values):
+    output = []
+    for low, high in generate_value_ranges(values):
+        if high - low < 5:
+            output.append(", ".join(map(str, range(low, high + 1))))
+        else:
+            output.append(f"{low}, ..., {high}")
+    return "[" + ", ".join(output) + "]"
+
+
+# # Test examples
+# print(shortened_repr([0]))
+# print(shortened_repr([1, 2, 3]))
+# print(shortened_repr([0, 1, 2, 3]))
+# print(shortened_repr([0, 4, 8, 12, 16, 20, 24, 28]))
+# print(shortened_repr(list(range(32)) + [128]))
+
+
+# # Generate difficult levels table on atari.md
+headers = [
+    "Environment",
+    "Possible Modes",
+    "Default Mode",
+    "Possible Difficulties",
+    "Default Difficulty",
 ]
-
-
-header = ["Environment", "Valid Modes", "Valid Difficulties", "Default Mode"]
 rows = []
 
-for game in tqdm(atari_envs):
-    env = gymnasium.make(f"ALE/{to_gymnasium_spelling(game)}-v5")
-    valid_modes = env.unwrapped.ale.getAvailableModes()
-    valid_difficulties = env.unwrapped.ale.getAvailableDifficulties()
-    difficulty = env.unwrapped.ale.cloneState().getDifficulty()
-    assert difficulty == 0, difficulty
+for rom_id in tqdm(ALL_ATARI_GAMES):
+    env_name = rom_utils.rom_id_to_name(rom_id)
+    if env_name in exclude_envs:
+        continue
+
+    env = gymnasium.make(f"ALE/{env_name}-v5")
+
+    available_difficulties = env.ale.getAvailableDifficulties()
+    default_difficulty = env.ale.cloneState().getDifficulty()
+    available_modes = env.ale.getAvailableModes()
+    default_mode = env.ale.cloneState().getCurrentMode()
+
     rows.append(
         [
-            to_gymnasium_spelling(game),
-            shortened_repr(valid_modes),
-            shortened_repr(valid_difficulties),
-            f"`{env.unwrapped.ale.cloneState().getCurrentMode()}`",
+            env_name,
+            shortened_repr(available_modes),
+            default_mode,
+            shortened_repr(available_difficulties),
+            default_difficulty,
         ]
     )
+    env.close()
 
+print(tabulate.tabulate(rows, headers=headers, tablefmt="github"))
 
-print(tabulate.tabulate(rows, headers=header, tablefmt="github"))
+# Generate each pages results
+with open("atari-docs.json") as file:
+    atari_data = json.load(file)
+
+for rom_id in tqdm(ALL_ATARI_GAMES):
+    env_name = rom_utils.rom_id_to_name(rom_id)
+    if env_name in exclude_envs:
+        continue
+
+    env = gymnasium.make(f"ALE/{env_name}-v5")
+    env_data = atari_data[rom_id]
+
+    env_description = env_data["env_description"]
+    if env_data["atariage_url"]:
+        env_url = f"""
+For a more detailed documentation, see [the AtariAge page]({env_data['atariage_url']})
+"""
+    else:
+        env_url = ""
+    reward_description = env_data["reward_description"]
+
+    default_action_table = tabulate.tabulate(
+        [
+            [f"`{num}`", f"`{meaning}`"]
+            for num, meaning in enumerate(env.get_action_meanings())
+        ],
+        headers=["Value", "Meaning"],
+        tablefmt="github",
+    )
+    if env.action_space.n == 18:
+        action_description = f"""{env_name} has the action space `{env.action_space}` with the table below lists the meaning of each action's meanings.
+As {env_name} uses the full set of actions then specifying `full_action_space=True` will not modify the action space of the environment if passed to `gymnasium.make`."""
+    else:
+        action_description = f"""{env_name} has the action space `{env.action_space}` with the table below lists the meaning of each action's meanings.
+As {env_name} uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
+initialization or by passing `full_action_space=True` to `gymnasium.make`."""
+
+    # Environment variants
+    env_specs = sorted(
+        [
+            env_spec
+            for env_spec in gymnasium.registry.values()
+            if env_name in env_spec.name
+        ],
+        key=lambda env_spec: f"{env_spec.version}{env_spec.name}",
+    )
+
+    env_variant_headers = [
+        "Env-id",
+        "obs_type=",
+        "frameskip=",
+        "repeat_action_probability=",
+    ]
+    env_variant_rows = [
+        [
+            env_spec.id,
+            f'`"{env_spec.kwargs["obs_type"]}"`',
+            f'`{env_spec.kwargs["frameskip"]}`',
+            f'`{env_spec.kwargs["repeat_action_probability"]}`',
+        ]
+        for env_spec in env_specs
+    ]
+    env_variant_table = tabulate.tabulate(
+        env_variant_rows, headers=env_variant_headers, tablefmt="github"
+    )
+
+    # difficult and mode description
+
+    difficulty_mode_header = [
+        "Available Modes",
+        "Default Mode",
+        "Available Difficulties",
+        "Default Difficulty",
+    ]
+    difficulty_mode_row = [
+        [
+            f"`{shortened_repr(env.ale.getAvailableModes())}`",
+            f"`{env.ale.cloneState().getCurrentMode()}`",
+            f"`{shortened_repr(env.ale.getAvailableDifficulties())}`",
+            f"`{env.ale.cloneState().getDifficulty()}`",
+        ]
+    ]
+    difficulty_mode_table = tabulate.tabulate(
+        difficulty_mode_row, headers=difficulty_mode_header, tablefmt="github"
+    )
+
+    env.close()
+
+    TEMPLATE = f"""---
+title: {env_name}
+---
+
+# {env_name}
+
+```{{figure}} ../../_static/videos/atari/{rom_id}.gif
+:width: 120px
+:name: {env_name}
+```
+
+This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
+
+## Description
+
+{env_description}
+{env_url}
+## Actions
+
+{action_description}
+
+{default_action_table}
+
+## Observations
+
+Atari environment have two possible observation types, the observation space is listed below.
+See variants section for the type of observation used by each environment id.
+
+- `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
+- `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+
+Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+{reward_description}
+## Variants
+
+{env_name} has the following variants of the environment id which have the following differences in observation,
+the number of frame-skips and the repeat action probability.
+
+{env_variant_table}
+
+## Difficulty and modes
+
+It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`.
+A flavor is a combination of a game mode and a difficulty setting. The table below lists the possible difficulty and mode values
+along with the default values.
+
+{difficulty_mode_table}
+
+## Version History
+
+A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
+
+* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v4: Stickiness of actions was removed
+* v0: Initial versions release
+"""
+    with open(f"../environments/atari/{rom_id}.md", "w") as file:
+        file.write(TEMPLATE)

@@ -1,8 +1,8 @@
 ---
-title: Kung Fu Master
+title: KungFuMaster
 ---
 
-# Kung Fu Master
+# KungFuMaster
 
 ```{figure} ../../_static/videos/atari/kung_fu_master.gif
 :width: 120px
@@ -11,82 +11,82 @@ title: Kung Fu Master
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
-|                   |                                         |
-|-------------------|-----------------------------------------|
-| Action Space      | Discrete(18)                            |
-| Observation Space | (210, 160, 3)                           |
-| Observation High  | 255                                     |
-| Observation Low   | 0                                       |
-| Import            | `gymnasium.make("ALE/KungFuMaster-v5")` |
-
 ## Description
 
-You are a Kung-Fu Master fighting your way through the Evil Wizard's temple. Your goal is to rescue Princess Victoria, defeating various enemies along the way. Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=268).
+You are a Kung-Fu Master fighting your way through the Evil Wizard's temple. Your goal is to rescue Princess Victoria, defeating various enemies along the way.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=268)
 
 ## Actions
 
-By default, all actions that can be performed on an Atari 2600 are available in this environment. However, if you use v0 or v4 or specify full_action_space=False during initialization, only a reduced number of actions (those that are meaningful in this game) are available. The reduced action space may depend on the flavor of the environment (the combination of mode and difficulty). The reduced action space for the default flavor looks like this:
+KungFuMaster has the action space `Discrete(14)` with the table below lists the meaning of each action's meanings.
+As KungFuMaster uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
+initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Num | Action        |
-|-----|---------------|
-| 0   | NOOP          |
-| 1   | UP            |
-| 2   | RIGHT         |
-| 3   | LEFT          |
-| 4   | DOWN          |
-| 5   | DOWNRIGHT     |
-| 6   | DOWNLEFT      |
-| 7   | RIGHTFIRE     |
-| 8   | LEFTFIRE      |
-| 9   | DOWNFIRE      |
-| 10  | UPRIGHTFIRE   |
-| 11  | UPLEFTFIRE    |
-| 12  | DOWNRIGHTFIRE |
-| 13  | DOWNLEFTFIRE  |
+| Value   | Meaning         |
+|---------|-----------------|
+| `0`     | `NOOP`          |
+| `1`     | `UP`            |
+| `2`     | `RIGHT`         |
+| `3`     | `LEFT`          |
+| `4`     | `DOWN`          |
+| `5`     | `DOWNRIGHT`     |
+| `6`     | `DOWNLEFT`      |
+| `7`     | `RIGHTFIRE`     |
+| `8`     | `LEFTFIRE`      |
+| `9`     | `DOWNFIRE`      |
+| `10`    | `UPRIGHTFIRE`   |
+| `11`    | `UPLEFTFIRE`    |
+| `12`    | `DOWNRIGHTFIRE` |
+| `13`    | `DOWNLEFTFIRE`  |
 
 ## Observations
 
-By default, the environment returns the RGB image that is displayed to human players as an observation. However, it is
-possible to observe
+Atari environment have two possible observation types, the observation space is listed below.
+See variants section for the type of observation used by each environment id.
 
-- The 128 Bytes of RAM of the console
-- A grayscale image
+- `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
+- `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
 
-instead. The respective observation spaces are
+Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
 
-- `Box([0 ... 0], [255 ... 255], (128,), uint8)`
-- `Box([[0 ... 0]
- ...
- [0  ... 0]], [[255 ... 255]
- ...
- [255  ... 255]], (250, 160), uint8)
-`
+## Variants
 
-respectively. The general article on Atari environments outlines different ways to instantiate corresponding environments
-via `gymnasium.make`.
+KungFuMaster has the following variants of the environment id which have the following differences in observation,
+the number of frame-skips and the repeat action probability.
 
-## Arguments
+| Env-id                           | obs_type=   | frameskip=   | repeat_action_probability=   |
+|----------------------------------|-------------|--------------|------------------------------|
+| KungFuMaster-v0                  | `"rgb"`     | `(2, 5)`     | `0.25`                       |
+| KungFuMaster-ram-v0              | `"ram"`     | `(2, 5)`     | `0.25`                       |
+| KungFuMaster-ramDeterministic-v0 | `"ram"`     | `4`          | `0.25`                       |
+| KungFuMaster-ramNoFrameskip-v0   | `"ram"`     | `1`          | `0.25`                       |
+| KungFuMasterDeterministic-v0     | `"rgb"`     | `4`          | `0.25`                       |
+| KungFuMasterNoFrameskip-v0       | `"rgb"`     | `1`          | `0.25`                       |
+| KungFuMaster-v4                  | `"rgb"`     | `(2, 5)`     | `0.0`                        |
+| KungFuMaster-ram-v4              | `"ram"`     | `(2, 5)`     | `0.0`                        |
+| KungFuMaster-ramDeterministic-v4 | `"ram"`     | `4`          | `0.0`                        |
+| KungFuMaster-ramNoFrameskip-v4   | `"ram"`     | `1`          | `0.0`                        |
+| KungFuMasterDeterministic-v4     | `"rgb"`     | `4`          | `0.0`                        |
+| KungFuMasterNoFrameskip-v4       | `"rgb"`     | `1`          | `0.0`                        |
+| ALE/KungFuMaster-v5              | `"rgb"`     | `4`          | `0.25`                       |
+| ALE/KungFuMaster-ram-v5          | `"ram"`     | `4`          | `0.25`                       |
 
-```python
-env = gymnasium.make("ALE/KungFuMaster-v5")
-```
+## Difficulty and modes
 
-The various ways to configure the environment are described in detail in the article on Atari environments.
+It is possible to specify various flavors of the environment via the keyword arguments `difficulty` and `mode`.
+A flavor is a combination of a game mode and a difficulty setting. The table below lists the possible difficulty and mode values
+along with the default values.
 
-| Environment  | Valid Modes | Valid Difficulties | Default Mode |
-|--------------|-------------|--------------------|--------------|
-| KungFuMaster | `[0]`       | `[0]`              | `0`          |
-
-You may use the suffix "-ram" to switch to the RAM observation space. In v0 and v4, the suffixes "Deterministic" and "Noframeskip"
-are available. These are no longer supported in v5. In order to obtain equivalent behavior, pass keyword arguments to `gymnasium.make` as outlined in
-the general article on Atari environments.
-The versions v0 and v4 are not contained in the "ALE" namespace. I.e. they are instantiated via `gymnasium.make("KungFuMaster-v0")`
+| Available Modes   | Default Mode   | Available Difficulties   | Default Difficulty   |
+|-------------------|----------------|--------------------------|----------------------|
+| `[0]`             | `0`            | `[0]`                    | `0`                  |
 
 ## Version History
 
-A thorough discussion of the intricate differences between the versions and configurations can be found in the
-general article on Atari environments.
+A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The entire action space is used by default. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
-* v0: Initial versions release (1.0.0)
+* v0: Initial versions release
