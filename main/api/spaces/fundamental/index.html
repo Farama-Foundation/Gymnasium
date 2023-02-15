@@ -451,10 +451,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Box">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">np.floating</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">np.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Box" title="Permalink to this definition">#</a></dt>
-<dd><p>A (possibly unbounded) box in <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span>.</p>
-<p>Specifically, a Box represents the Cartesian product of n closed intervals.
-Each interval has the form of one of <span class="math notranslate nohighlight">\([a, b]\)</span>, <span class="math notranslate nohighlight">\((-\infty, b]\)</span>,
-<span class="math notranslate nohighlight">\([a, \infty)\)</span>, or <span class="math notranslate nohighlight">\((-\infty, \infty)\)</span>.</p>
+<dd><p><span class="math notranslate nohighlight">\([a, \infty)\)</span>, or <span class="math notranslate nohighlight">\((-\infty, \infty)\)</span>.</p>
 <p>There are two common use cases:</p>
 <ul>
 <li><p>Identical bound for each dimension:</p>
@@ -470,16 +467,11 @@ Each interval has the form of one of <span class="math notranslate nohighlight">
 </div>
 </li>
 </ul>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a>.</p>
-<p>The argument <code class="docutils literal notranslate"><span class="pre">low</span></code> specifies the lower bound of each dimension and <code class="docutils literal notranslate"><span class="pre">high</span></code> specifies the upper bounds.
-I.e., the space that is constructed will be the product of the intervals <span class="math notranslate nohighlight">\([\text{low}[i], \text{high}[i]]\)</span>.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">low</span></code> (or <code class="docutils literal notranslate"><span class="pre">high</span></code>) is a scalar, the lower bound (or upper bound, respectively) will be assumed to be
-this value across all dimensions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>low</strong> (<em>SupportsFloat</em><em> | </em><em>np.ndarray</em>) – Lower bounds of the intervals.</p></li>
-<li><p><strong>high</strong> (<em>SupportsFloat</em><em> | </em><em>np.ndarray</em><em>]</em>) – Upper bounds of the intervals.</p></li>
+<li><p><strong>low</strong> (<em>SupportsFloat</em><em> | </em><em>np.ndarray</em>) – Lower bounds of the intervals. If integer, must be at least <code class="docutils literal notranslate"><span class="pre">-2**63</span></code>.</p></li>
+<li><p><strong>high</strong> (<em>SupportsFloat</em><em> | </em><em>np.ndarray</em><em>]</em>) – Upper bounds of the intervals. If integer, must be at most <code class="docutils literal notranslate"><span class="pre">2**63</span> <span class="pre">-</span> <span class="pre">2</span></code>.</p></li>
 <li><p><strong>shape</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><em>Sequence</em></a><em>[</em><em>int</em><em>]</em><em>]</em>) – The shape is inferred from the shape of <cite>low</cite> or <cite>high</cite> <cite>np.ndarray`s with
 `low</cite> and <cite>high</cite> scalars defaulting to a shape of (1,)</p></li>
 <li><p><strong>dtype</strong> – The dtype of the elements of the space. If this is an integer type, the <a class="reference internal" href="#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a> is essentially a discrete space.</p></li>
@@ -556,8 +548,6 @@ that is chosen according to the form of the interval:</p>
 <span class="go">-1</span>
 </pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code></a> space.</p>
-<p>This will construct the space <span class="math notranslate nohighlight">\(\{\text{start}, ..., \text{start} + n - 1\}\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -612,7 +602,6 @@ If there are no possible actions (i.e. <cite>np.all(mask == 0)</cite>) then <cit
 <span class="go">       [1, 1]], dtype=int8)</span>
 </pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.MultiBinary" title="gymnasium.spaces.MultiBinary"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiBinary</span></code></a> space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -677,8 +666,6 @@ if <code class="docutils literal notranslate"><span class="pre">nvec</span></cod
 <span class="go">       [2, 2]])</span>
 </pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.MultiDiscrete" title="gymnasium.spaces.MultiDiscrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiDiscrete</span></code></a> space.</p>
-<p>The argument <code class="docutils literal notranslate"><span class="pre">nvec</span></code> will determine the number of values each categorical variable can take.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -733,8 +720,6 @@ Only mask values == 1 are possible to sample unless all mask values for an actio
 <span class="go">Text(1, 10, characters=0123456789)</span>
 </pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Text" title="gymnasium.spaces.Text"><code class="xref py py-class docutils literal notranslate"><span class="pre">Text</span></code></a> space.</p>
-<p>Both bounds for text length are inclusive.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
