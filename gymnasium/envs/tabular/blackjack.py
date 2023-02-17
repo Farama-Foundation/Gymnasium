@@ -3,7 +3,7 @@
 
 import math
 import os
-from typing import Optional, Tuple, Union
+from typing import NamedTuple, Optional, Tuple, Union
 
 import jax
 import jax.numpy as jnp
@@ -25,9 +25,14 @@ RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F82
 deck = jnp.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10])
 
 
-def obs_from_device(obs):
-    """Converts a tuple of device arrays into a tutple of ints."""
-    return tuple([int(jax.device_get(obs[i])) for i in range(len(obs))])
+class EnvState(NamedTuple):
+    """A named tuple which contains the full state of the blackjack game."""
+
+    dealer_hand: jnp.ndarray
+    player_hand: jnp.ndarray
+    dealer_cards: int
+    player_cards: int
+    done: int
 
 
 def cmp(a, b):
@@ -67,13 +72,25 @@ def usable_ace(hand):
 def take(env_state):
     """This function is called if the player has decided to take a card."""
     state, key = env_state
-    dealer_hand = state[0]
-    player_hand = state[1]
-    dealer_cards = state[2]
-    player_cards = state[3]
+    dealer_hand = state.dealer_hand
+    player_hand = state.player_hand
+    dealer_cards = state.dealer_cards
+    player_cards = state.player_cards
     key, new_player_hand, _ = draw_card(key, player_hand, player_cards)
+    new_player_cards = player_cards + 1
 
-    return (dealer_hand, new_player_hand, dealer_cards, player_cards + 1), key
+    # done is set to zero here because it is determined later whether the player is bust
+
+    return (
+        EnvState(
+            dealer_hand=dealer_hand,
+            player_hand=new_player_hand,
+            dealer_cards=dealer_cards,
+            player_cards=new_player_cards,
+            done=0,
+        ),
+        key,
+    )
 
 
 def dealer_stop(val):
@@ -93,10 +110,10 @@ def notake(env_state):
     of the game and turns control over to the dealer.
     """
     state, key = env_state
-    dealer_hand = state[0]
-    player_hand = state[1]
-    dealer_cards = state[2]
-    player_cards = state[3]
+    dealer_hand = state.dealer_hand
+    player_hand = state.player_hand
+    dealer_cards = state.dealer_cards
+    player_cards = state.player_cards
 
     key, dealer_hand, dealer_cards = jax.lax.while_loop(
         dealer_stop,
@@ -104,7 +121,16 @@ def notake(env_state):
         (key, dealer_hand, dealer_cards),
     )
 
-    return (dealer_hand, player_hand, dealer_cards, player_cards), key
+    return (
+        EnvState(
+            dealer_hand=dealer_hand,
+            player_hand=player_hand,
+            dealer_cards=dealer_cards,
+            player_cards=player_cards,
+            done=1,
+        ),
+        key,
+    )
 
 
 def sum_hand(hand):
@@ -216,22 +242,28 @@ class BlackjackFunctional(
         self.sutton_and_barto = sutton_and_barto
 
     def transition(
-        self, state: jnp.ndarray, action: Union[int, jnp.ndarray], key: PRNGKey
+        self, state: EnvState, action: Union[int, jnp.ndarray], key: PRNGKey
     ):
         """The blackjack environment's state transition function."""
         env_state = jax.lax.cond(action, take, notake, (state, key))
 
         hand_state, key = env_state
-        dealer_hand = hand_state[0]
-        player_hand = hand_state[1]
-        dealer_cards = hand_state[2]
-        player_cards = hand_state[3]
+        dealer_hand = hand_state.dealer_hand
+        player_hand = hand_state.player_hand
+        dealer_cards = hand_state.dealer_cards
+        player_cards = hand_state.player_cards
 
         # note that only a bust or player action ends the round, the player
         # can still request another card with 21 cards
         done = (is_bust(player_hand) * action) + ((jnp.logical_not(action)) * 1)
 
-        new_state = (dealer_hand, player_hand, dealer_cards, player_cards, done)
+        new_state = EnvState(
+            dealer_hand=dealer_hand,
+            player_hand=player_hand,
+            dealer_cards=dealer_cards,
+            player_cards=player_cards,
+            done=done,
+        )
 
         return new_state
 
@@ -244,29 +276,39 @@ class BlackjackFunctional(
         dealer_cards = 2
         player_cards = 2
 
-        state = (dealer_hand, player_hand, dealer_cards, player_cards, 0)
+        state = EnvState(
+            dealer_hand=dealer_hand,
+            player_hand=player_hand,
+            dealer_cards=dealer_cards,
+            player_cards=player_cards,
+            done=0,
+        )
 
         return state
 
-    def observation(self, state: jnp.ndarray) -> jnp.ndarray:
+    def observation(self, state: EnvState) -> jnp.ndarray:
         """Blackjack observation."""
         return jnp.array(
-            [sum_hand(state[1]), state[0][0], usable_ace(state[1]) * 1.0],
+            [
+                sum_hand(state.player_hand),
+                state.dealer_hand[0],
+                usable_ace(state.player_hand) * 1.0,
+            ],
             dtype=np.int32,
         )
 
-    def terminal(self, state: jnp.ndarray) -> jnp.ndarray:
+    def terminal(self, state: EnvState) -> jnp.ndarray:
         """Determines if a particular Blackjack observation is terminal."""
-        return (state[4]) > 0
+        return (state.done) > 0
 
     def reward(
-        self, state: StateType, action: ActType, next_state: StateType
+        self, state: EnvState, action: ActType, next_state: StateType
     ) -> jnp.ndarray:
         """Calculates reward from a state."""
         state = next_state
 
-        dealer_hand = state[0]
-        player_hand = state[1]
+        dealer_hand = state.dealer_hand
+        player_hand = state.player_hand
 
         # -1 reward if the player busts, otherwise +1 if better than dealer, 0 if tie, -1 if loss.
         reward = (
@@ -465,13 +507,11 @@ if __name__ == "__main__":
 
     obs, info = env.reset()
     print(obs, info)
-    env.render()
 
     terminal = False
     while not terminal:
         action = int(input("Please input an action\n"))
         obs, reward, terminal, truncated, info = env.step(action)
         print(obs, reward, terminal, truncated, info)
-        env.render()
 
     exit()
