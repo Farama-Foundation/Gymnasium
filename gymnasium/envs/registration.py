@@ -139,7 +139,7 @@ class EnvSpec:
         """Calls ``make`` using the environment spec and any keyword arguments."""
         return make(self, **kwargs)
 
-    def make_vec(self, **kwargs: Any) -> gym.experimental.VectorEnv:
+    def make_vec(self, **kwargs: Any) -> VectorEnv:
         """Calls ``make_vec`` using the environment spec and any keyword arguments."""
         return make_vec(self, **kwargs)
 
