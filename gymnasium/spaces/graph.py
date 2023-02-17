@@ -230,9 +230,9 @@ class Graph(Space[GraphInstance]):
 
     def to_jsonable(
         self, sample_n: Sequence[GraphInstance]
-    ) -> list[dict[str, list[int] | list[float]]]:
+    ) -> list[dict[str, list[int | float]]]:
         """Convert a batch of samples from this space to a JSONable data type."""
-        ret_n: list[dict[str, list[int | float]]] = []
+        ret_n = []
         for sample in sample_n:
             ret = {"nodes": sample.nodes.tolist()}
             if sample.edges is not None and sample.edge_links is not None:

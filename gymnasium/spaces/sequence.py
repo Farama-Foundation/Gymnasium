@@ -5,7 +5,7 @@ import typing
 from typing import Any, Union
 
 import numpy as np
-import numpy.typing as npt
+from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium.spaces.space import Space
@@ -69,11 +69,11 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         mask: None
         | (
             tuple[
-                None | np.integer | npt.NDArray[np.integer],
+                None | np.integer | NDArray[np.integer],
                 Any,
             ]
         ) = None,
-    ) -> tuple[Any]:
+    ) -> tuple[Any] | Any:
         """Generates a single random sample from this space.
 
         Args:
