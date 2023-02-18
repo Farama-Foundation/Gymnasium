@@ -1,3 +1,5 @@
+"""Testing of the `gym.make_vec` function."""
+
 import pytest
 
 import gymnasium as gym
@@ -6,7 +8,8 @@ from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
 
 
-def test_vector_make_id():
+def test_make_vec_env_id():
+    """Ensure that the `gym.make_vec` creates the right environment."""
     env = gym.make_vec("CartPole-v1")
     assert isinstance(env, AsyncVectorEnv)
     assert env.num_envs == 1
@@ -14,13 +17,15 @@ def test_vector_make_id():
 
 
 @pytest.mark.parametrize("num_envs", [1, 3, 10])
-def test_vector_make_num_envs(num_envs):
+def test_make_vec_num_envs(num_envs):
+    """Test that the `gym.make_vec` num_envs parameter works."""
     env = gym.make_vec("CartPole-v1", num_envs=num_envs)
     assert env.num_envs == num_envs
     env.close()
 
 
-def test_vector_make_asynchronous():
+def test_make_vec_vectorization_mode():
+    """Tests the `gym.make_vec` vectorization mode works."""
     env = gym.make_vec("CartPole-v1", vectorization_mode="async")
     assert isinstance(env, AsyncVectorEnv)
     env.close()
@@ -30,7 +35,8 @@ def test_vector_make_asynchronous():
     env.close()
 
 
-def test_vector_make_wrappers():
+def test_make_vec_wrappers():
+    """Tests that the `gym.make_vec` wrappers parameter works."""
     env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
     assert isinstance(env, SyncVectorEnv)
     assert len(env.envs) == 2
