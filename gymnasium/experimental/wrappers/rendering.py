@@ -158,7 +158,7 @@ class RecordVideoV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
         self.name_prefix: str = name_prefix
         self._video_name: str | None = None
         self.frames_per_sec: int = self.metadata.get("render_fps", 30)
-        self.video_length: int = video_length if video_length != 0 else int("inf")
+        self.video_length: int = video_length if video_length != 0 else float("inf")
         self.recording: bool = False
         self.recorded_frames: list[RenderFrame] = []
         self.render_history: list[RenderFrame] = []
