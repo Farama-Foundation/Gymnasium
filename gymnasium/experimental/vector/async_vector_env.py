@@ -1,25 +1,26 @@
 """An async vector environment."""
+from __future__ import annotations
+
 import multiprocessing as mp
 import sys
 import time
 from copy import deepcopy
 from enum import Enum
+from multiprocessing import Queue
 from multiprocessing.connection import Connection
-from multiprocessing.queues import Queue
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from typing import Any, Callable, Sequence
 
 import numpy as np
 
 from gymnasium import logger
-from gymnasium.core import ObsType
+from gymnasium.core import Env, ObsType
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
     CustomSpaceError,
     NoAsyncCallError,
 )
-from gymnasium.experimental.vector.vector_env import VectorEnv
-from gymnasium.vector.utils import (
+from gymnasium.experimental.vector.utils import (
     CloudpickleWrapper,
     batch_space,
     clear_mpi_env_vars,
@@ -30,6 +31,7 @@ from gymnasium.vector.utils import (
     read_from_shared_memory,
     write_to_shared_memory,
 )
+from gymnasium.experimental.vector.vector_env import VectorEnv
 
 
 __all__ = ["AsyncVectorEnv"]
@@ -47,26 +49,25 @@ class AsyncVectorEnv(VectorEnv):
 
     It uses ``multiprocessing`` processes, and pipes for communication.
 
-    Example::
-
+    Example:
         >>> import gymnasium as gym
         >>> env = gym.vector.AsyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()  # doctest: +SKIP
-        array([[-0.8286432 ,  0.5597771 ,  0.90249056],
-               [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
+        >>> env.reset(seed=42)
+        (array([[-0.14995256,  0.9886932 , -0.12224312],
+               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
     """
 
     def __init__(
         self,
-        env_fns: Sequence[callable],
+        env_fns: Sequence[Callable[[], Env]],
         shared_memory: bool = True,
         copy: bool = True,
-        context: Optional[str] = None,
+        context: str | None = None,
         daemon: bool = True,
-        worker: Optional[callable] = None,
+        worker: callable | None = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -124,7 +125,7 @@ class AsyncVectorEnv(VectorEnv):
                 self.observations = read_from_shared_memory(
                     self.single_observation_space, _obs_buffer, n=self.num_envs
                 )
-            except CustomSpaceError:
+            except CustomSpaceError as e:
                 raise ValueError(
                     "Using `shared_memory=True` in `AsyncVectorEnv` "
                     "is incompatible with non-standard Gymnasium observation spaces "
@@ -132,7 +133,7 @@ class AsyncVectorEnv(VectorEnv):
                     "only compatible with default Gymnasium spaces (e.g. `Box`, "
                     "`Tuple`, `Dict`) for batching. Set `shared_memory=False` "
                     "if you use custom observation spaces."
-                )
+                ) from e
         else:
             _obs_buffer = None
             self.observations = create_empty_array(
@@ -170,8 +171,8 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_async(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
     ):
         """Send calls to the :obj:`reset` methods of the sub-environments.
 
@@ -213,8 +214,8 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_wait(
         self,
-        timeout: Optional[Union[int, float]] = None,
-    ) -> Union[ObsType, Tuple[ObsType, List[dict]]]:
+        timeout: int | float | None = None,
+    ) -> tuple[ObsType, list[dict]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
@@ -260,8 +261,8 @@ class AsyncVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
     ):
         """Reset all parallel environments and return a batch of initial observations and info.
 
@@ -301,8 +302,8 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.WAITING_STEP
 
     def step_wait(
-        self, timeout: Optional[Union[int, float]] = None
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+        self, timeout: int | float | None = None
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
         """Wait for the calls to :obj:`step` in each sub-environment to finish.
 
         Args:
@@ -336,11 +337,12 @@ class AsyncVectorEnv(VectorEnv):
             obs, rew, terminated, truncated, info = result
 
             successes.append(success)
-            observations_list.append(obs)
-            rewards.append(rew)
-            terminateds.append(terminated)
-            truncateds.append(truncated)
-            infos = self._add_info(infos, info, i)
+            if success:
+                observations_list.append(obs)
+                rewards.append(rew)
+                terminateds.append(terminated)
+                truncateds.append(truncated)
+                infos = self._add_info(infos, info, i)
 
         self._raise_if_errors(successes)
         self._state = AsyncState.DEFAULT
@@ -396,7 +398,7 @@ class AsyncVectorEnv(VectorEnv):
             pipe.send(("_call", (name, args, kwargs)))
         self._state = AsyncState.WAITING_CALL
 
-    def call_wait(self, timeout: Optional[Union[int, float]] = None) -> list:
+    def call_wait(self, timeout: int | float | None = None) -> list:
         """Calls all parent pipes and waits for the results.
 
         Args:
@@ -429,7 +431,7 @@ class AsyncVectorEnv(VectorEnv):
 
         return results
 
-    def call(self, name: str, *args, **kwargs) -> List[Any]:
+    def call(self, name: str, *args, **kwargs) -> list[Any]:
         """Call a method, or get a property, from each parallel environment.
 
         Args:
@@ -454,7 +456,7 @@ class AsyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: Union[list, tuple, object]):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any] | object):
         """Sets an attribute of the sub-environments.
 
         Args:
@@ -489,9 +491,7 @@ class AsyncVectorEnv(VectorEnv):
         _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
         self._raise_if_errors(successes)
 
-    def close_extras(
-        self, timeout: Optional[Union[int, float]] = None, terminate: bool = False
-    ):
+    def close_extras(self, timeout: int | float | None = None, terminate: bool = False):
         """Close the environments & clean up the extra resources (processes and pipes).
 
         Args:
@@ -556,15 +556,13 @@ class AsyncVectorEnv(VectorEnv):
         same_observation_spaces, same_action_spaces = zip(*results)
         if not all(same_observation_spaces):
             raise RuntimeError(
-                "Some environments have an observation space different from "
-                f"`{self.single_observation_space}`. In order to batch observations, "
-                "the observation spaces from all environments must be equal."
+                f"Some environments have an observation space different from `{self.single_observation_space}`. "
+                "In order to batch observations, the observation spaces from all environments must be equal."
             )
         if not all(same_action_spaces):
             raise RuntimeError(
-                "Some environments have an action space different from "
-                f"`{self.single_action_space}`. In order to batch actions, the "
-                "action spaces from all environments must be equal."
+                f"Some environments have an action space different from `{self.single_action_space}`. "
+                "In order to batch actions, the action spaces from all environments must be equal."
             )
 
     def _assert_is_running(self):
@@ -573,7 +571,7 @@ class AsyncVectorEnv(VectorEnv):
                 f"Trying to operate on `{type(self).__name__}`, after a call to `close()`."
             )
 
-    def _raise_if_errors(self, successes):
+    def _raise_if_errors(self, successes: list[bool]):
         if all(successes):
             return
 

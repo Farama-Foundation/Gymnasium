@@ -1,3 +1,5 @@
+"""Test the `SyncVectorEnv` implementation."""
+
 import numpy as np
 import pytest
 
@@ -14,6 +16,7 @@ from tests.vector.utils import (
 
 
 def test_create_sync_vector_env():
+    """Tests creating the sync vector environment."""
     env_fns = [make_env("FrozenLake-v1", i) for i in range(8)]
     env = SyncVectorEnv(env_fns)
     env.close()
@@ -22,6 +25,7 @@ def test_create_sync_vector_env():
 
 
 def test_reset_sync_vector_env():
+    """Tests sync vector `reset` function."""
     env_fns = [make_env("CartPole-v1", i) for i in range(8)]
     env = SyncVectorEnv(env_fns)
     observations, infos = env.reset()
@@ -38,6 +42,7 @@ def test_reset_sync_vector_env():
 
 @pytest.mark.parametrize("use_single_action_space", [True, False])
 def test_step_sync_vector_env(use_single_action_space):
+    """Test sync vector `steps` function."""
     env_fns = [make_env("FrozenLake-v1", i) for i in range(8)]
 
     env = SyncVectorEnv(env_fns)
@@ -77,6 +82,7 @@ def test_step_sync_vector_env(use_single_action_space):
 
 
 def test_call_sync_vector_env():
+    """Test sync vector `call` on sub-environments."""
     env_fns = [
         make_env("CartPole-v1", i, render_mode="rgb_array_list") for i in range(4)
     ]
@@ -102,6 +108,7 @@ def test_call_sync_vector_env():
 
 
 def test_set_attr_sync_vector_env():
+    """Test sync vector `set_attr` function."""
     env_fns = [make_env("CartPole-v1", i) for i in range(4)]
 
     env = SyncVectorEnv(env_fns)
@@ -113,6 +120,7 @@ def test_set_attr_sync_vector_env():
 
 
 def test_check_spaces_sync_vector_env():
+    """Tests the sync vector `check_spaces` function."""
     # CartPole-v1 - observation_space: Box(4,), action_space: Discrete(2)
     env_fns = [make_env("CartPole-v1", i) for i in range(8)]
     # FrozenLake-v1 - Discrete(16), action_space: Discrete(4)
@@ -123,6 +131,7 @@ def test_check_spaces_sync_vector_env():
 
 
 def test_custom_space_sync_vector_env():
+    """Test the use of custom spaces with sync vector environment."""
     env_fns = [make_custom_space_env(i) for i in range(4)]
 
     env = SyncVectorEnv(env_fns)
@@ -152,6 +161,7 @@ def test_custom_space_sync_vector_env():
 
 
 def test_sync_vector_env_seed():
+    """Test seeding for sync vector environments."""
     env = make_env("BipedalWalker-v3", seed=123)()
     sync_vector_env = SyncVectorEnv([make_env("BipedalWalker-v3", seed=123)])
 
@@ -166,7 +176,7 @@ def test_sync_vector_env_seed():
     "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
 )
 def test_sync_vector_determinism(spec: EnvSpec, seed: int = 123, n: int = 3):
-    """Check that for all environments, the sync vector envs produce the same action samples using the same seeds"""
+    """Check that for all environments, the sync vector envs produce the same action samples using the same seeds."""
     env_1 = SyncVectorEnv([make_env(spec.id, seed=seed) for _ in range(n)])
     env_2 = SyncVectorEnv([make_env(spec.id, seed=seed) for _ in range(n)])
     assert_rng_equal(env_1.action_space.np_random, env_2.action_space.np_random)
