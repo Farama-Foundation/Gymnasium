@@ -39,8 +39,6 @@ def test_normal_BlackjackFunctional():
         except ValueError:
             pytest.fail("Terminal is not castable to bool")
 
-        print(next_state)
-
         assert next_state[0].dtype == jnp.float32
         assert next_state[1].dtype == jnp.float32
         assert next_state[2].dtype == jnp.int32
