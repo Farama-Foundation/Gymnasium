@@ -1,1 +1,1 @@
-"""Testing for the vector environments."""
+"""Testing for `gymnasium.experimental.vector`."""

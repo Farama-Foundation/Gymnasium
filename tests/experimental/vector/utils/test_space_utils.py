@@ -1,4 +1,4 @@
-"""Testing suite for the experimental vector utility functions for spaces."""
+"""Testing `gymnasium.experimental.vector.utils.space_utils` functions."""
 
 import copy
 import re

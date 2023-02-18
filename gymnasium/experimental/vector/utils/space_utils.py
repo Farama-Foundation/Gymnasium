@@ -31,19 +31,12 @@ from gymnasium.spaces import (
 )
 
 
+__all__ = ["batch_space", "iterate", "concatenate", "create_empty_array"]
+
+
 @singledispatch
 def batch_space(space: Space, n: int = 1) -> Space:
     """Create a (batched) space, containing multiple copies of a single space.
-
-    Example::
-
-        >>> from gymnasium.spaces import Box, Dict
-        >>> space = Dict({
-        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
-        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
-        ... })
-        >>> batch_space(space, n=5)
-        Dict('position': Box(0.0, 1.0, (5, 3), float32), 'velocity': Box(0.0, 1.0, (5, 2), float32))
 
     Args:
         space: Space (e.g. the observation space) for a single environment in the vectorized environment.
@@ -54,6 +47,16 @@ def batch_space(space: Space, n: int = 1) -> Space:
 
     Raises:
         ValueError: Cannot batch space does not have a registered function.
+
+    Example::
+
+        >>> from gymnasium.spaces import Box, Dict
+        >>> space = Dict({
+        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
+        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
+        ... })
+        >>> batch_space(space, n=5)
+        Dict('position': Box(0.0, 1.0, (5, 3), float32), 'velocity': Box(0.0, 1.0, (5, 2), float32))
     """
     if isinstance(space, Space):
         raise ValueError(
@@ -73,7 +76,7 @@ def _batch_space_box(space: Box, n: int = 1):
 
 
 @batch_space.register(Discrete)
-def _batch_space_discrete(space: Discrete, n: int = 1):
+def _batch_space_discrete(space, n=1):
     if space.start == 0:
         return MultiDiscrete(
             np.full((n,), space.n, dtype=space.dtype),
@@ -91,7 +94,7 @@ def _batch_space_discrete(space: Discrete, n: int = 1):
 
 
 @batch_space.register(MultiDiscrete)
-def _batch_space_multidiscrete(space: MultiDiscrete, n: int = 1):
+def _batch_space_multidiscrete(space, n=1):
     repeats = tuple([n] + [1] * space.nvec.ndim)
     high = np.tile(space.nvec, repeats) - 1
     return Box(
@@ -103,7 +106,7 @@ def _batch_space_multidiscrete(space: MultiDiscrete, n: int = 1):
 
 
 @batch_space.register(MultiBinary)
-def _batch_space_multibinary(space: MultiBinary, n: int = 1):
+def _batch_space_multibinary(space, n=1):
     return Box(
         low=0,
         high=1,
@@ -114,7 +117,7 @@ def _batch_space_multibinary(space: MultiBinary, n: int = 1):
 
 
 @batch_space.register(Tuple)
-def _batch_space_tuple(space: Tuple, n: int = 1):
+def _batch_space_tuple(space, n=1):
     return Tuple(
         tuple(batch_space(subspace, n=n) for subspace in space.spaces),
         seed=deepcopy(space.np_random),
@@ -138,33 +141,14 @@ def _batch_space_custom(space: Graph | Text | Sequence, n: int = 1):
     batched_space = Tuple(
         tuple(deepcopy(space) for _ in range(n)), seed=deepcopy(space.np_random)
     )
-    new_seeds = list(map(int, space.np_random.integers(0, 1_000_000, n)))
+    new_seeds = list(map(int, batched_space.np_random.integers(0, 1e8, n)))
     batched_space.seed(new_seeds)
     return batched_space
 
 
 @singledispatch
-def iterate(space: Space, items: Iterable) -> Iterator:
+def iterate(space: Space, items) -> Iterator:
     """Iterate over the elements of a (batched) space.
-
-    Example::
-
-        >>> from gymnasium.spaces import Box, Dict
-        >>> space = Dict({
-        ... 'position': Box(low=0, high=1, shape=(2, 3), dtype=np.float32),
-        ... 'velocity': Box(low=0, high=1, shape=(2, 2), dtype=np.float32)})
-        >>> space.seed(123)
-        [123, 33158374, 1465339467]
-        >>> items = space.sample()
-        >>> it = iterate(space, items)
-        >>> next(it)
-        OrderedDict([('position', array([0.24928133, 0.05314875, 0.28939998], dtype=float32)), ('velocity', array([0.49644083, 0.1371249 ], dtype=float32))])
-        >>> next(it)
-        OrderedDict([('position', array([0.6575984 , 0.01709149, 0.9258122 ], dtype=float32)), ('velocity', array([0.98059106, 0.03165356], dtype=float32))])
-        >>> next(it)
-        Traceback (most recent call last):
-        ...
-        StopIteration
 
     Args:
         space: Space to which `items` belong to.
@@ -174,7 +158,24 @@ def iterate(space: Space, items: Iterable) -> Iterator:
         Iterator over the elements in `items`.
 
     Raises:
-        ValueError: Space is not an instance of :class:`gymnasium.Space`
+        ValueError: Space is not an instance of :class:`gym.Space`
+
+    Example:
+        >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
+        >>> space = Dict({
+        ... 'position': Box(low=0, high=1, shape=(2, 3), seed=42, dtype=np.float32),
+        ... 'velocity': Box(low=0, high=1, shape=(2, 2), seed=42, dtype=np.float32)})
+        >>> items = space.sample()
+        >>> it = iterate(space, items)
+        >>> next(it)
+        OrderedDict([('position', array([0.77395606, 0.43887845, 0.85859793], dtype=float32)), ('velocity', array([0.77395606, 0.43887845], dtype=float32))])
+        >>> next(it)
+        OrderedDict([('position', array([0.697368  , 0.09417735, 0.97562236], dtype=float32)), ('velocity', array([0.85859793, 0.697368  ], dtype=float32))])
+        >>> next(it)
+        Traceback (most recent call last):
+            ...
+        StopIteration
     """
     if isinstance(space, Space):
         raise ValueError(
@@ -187,7 +188,7 @@ def iterate(space: Space, items: Iterable) -> Iterator:
 
 
 @iterate.register(Discrete)
-def _iterate_discrete(space: Discrete, items: Iterable):
+def _iterate_discrete(space, items):
     raise TypeError("Unable to iterate over a space of type `Discrete`.")
 
 
@@ -240,18 +241,6 @@ def concatenate(
 ) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
     """Concatenate multiple samples from space into a single object.
 
-    Example::
-
-        >>> from gymnasium.spaces import Box
-        >>> space = Box(low=0, high=1, shape=(3,), dtype=np.float32)
-        >>> space.seed(123)
-        [123]
-        >>> out = np.zeros((2, 3), dtype=np.float32)
-        >>> items = [space.sample() for _ in range(2)]
-        >>> concatenate(space, items, out)
-        array([[0.6823519 , 0.05382102, 0.22035988],
-               [0.18437181, 0.1759059 , 0.8120945 ]], dtype=float32)
-
     Args:
         space: Observation space of a single environment in the vectorized environment.
         items: Samples to be concatenated.
@@ -262,6 +251,16 @@ def concatenate(
 
     Raises:
         ValueError: Space
+
+    Example:
+        >>> from gymnasium.spaces import Box
+        >>> import numpy as np
+        >>> space = Box(low=0, high=1, shape=(3,), seed=42, dtype=np.float32)
+        >>> out = np.zeros((2, 3), dtype=np.float32)
+        >>> items = [space.sample() for _ in range(2)]
+        >>> concatenate(space, items, out)
+        array([[0.77395606, 0.43887845, 0.85859793],
+               [0.697368  , 0.09417735, 0.97562236]], dtype=float32)
     """
     if isinstance(space, Space):
         raise ValueError(
@@ -326,18 +325,6 @@ def create_empty_array(
 
     In most cases, the array will be contained within the batched space, however, this is not guaranteed.
 
-    Example::
-
-        >>> from gymnasium.spaces import Box, Dict
-        >>> space = Dict({
-        ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
-        ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
-        >>> create_empty_array(space, n=2, fn=np.zeros)
-        OrderedDict([('position', array([[0., 0., 0.],
-               [0., 0., 0.]], dtype=float32)), ('velocity', array([[0., 0.],
-               [0., 0.]], dtype=float32))])
-
-
     Args:
         space: Observation space of a single environment in the vectorized environment.
         n: Number of environments in the vectorized environment. If `None`, creates an empty sample from `space`.
@@ -348,6 +335,17 @@ def create_empty_array(
 
     Raises:
         ValueError: Space is not a valid :class:`gym.Space` instance
+
+    Example:
+        >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
+        >>> space = Dict({
+        ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
+        ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
+        >>> create_empty_array(space, n=2, fn=np.zeros)
+        OrderedDict([('position', array([[0., 0., 0.],
+               [0., 0., 0.]], dtype=float32)), ('velocity', array([[0., 0.],
+               [0., 0.]], dtype=float32))])
     """
     if isinstance(space, Space):
         raise ValueError(

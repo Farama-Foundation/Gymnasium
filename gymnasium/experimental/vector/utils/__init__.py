@@ -1,5 +1,14 @@
-"""Utility functions for the Vector environments."""
+"""Module for gymnasium experimental vector utility functions."""
 
+from gymnasium.experimental.vector.utils.misc import (
+    CloudpickleWrapper,
+    clear_mpi_env_vars,
+)
+from gymnasium.experimental.vector.utils.shared_memory import (
+    create_shared_memory,
+    read_from_shared_memory,
+    write_to_shared_memory,
+)
 from gymnasium.experimental.vector.utils.space_utils import (
     batch_space,
     concatenate,
@@ -8,4 +17,14 @@ from gymnasium.experimental.vector.utils.space_utils import (
 )
 
 
-__all__ = ["batch_space", "concatenate", "iterate", "create_empty_array"]
+__all__ = [
+    "batch_space",
+    "iterate",
+    "concatenate",
+    "create_empty_array",
+    "read_from_shared_memory",
+    "create_shared_memory",
+    "write_to_shared_memory",
+    "CloudpickleWrapper",
+    "clear_mpi_env_vars",
+]

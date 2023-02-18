@@ -77,7 +77,7 @@ Every environment specifies the format of valid actions and observations with th
 
 In the example, we sampled random actions via ``env.action_space.sample()`` instead of using an agent policy, mapping observations to actions which users will want to make. See one of the agent tutorials for an example of creating and training an agent policy.
 
-Every environment should have the attributes ``action_space`` and ``observation_space``, both of which should be instances of classes that inherit from ``Space``. Gymnasium has support for a major of possible spaces are users need:
+Every environment should have the attributes ``action_space`` and ``observation_space``, both of which should be instances of classes that inherit from ``Space``. Gymnasium has support for a majority of possible spaces users might need:
 
 - ``Box``: describes an n-dimensional continuous space. It's a bounded space where we can define the upper and lower
   limits which describe the valid values our observations can take.
