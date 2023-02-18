@@ -144,90 +144,6 @@ def _batch_space_custom(space: Graph | Text | Sequence, n: int = 1):
 
 
 @singledispatch
-def concatenate(
-    space: Space, items: Iterable, out: tuple[Any, ...] | dict[str, Any] | np.ndarray
-) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
-    """Concatenate multiple samples from space into a single object.
-
-    Example::
-
-        >>> from gymnasium.spaces import Box
-        >>> space = Box(low=0, high=1, shape=(3,), dtype=np.float32)
-        >>> space.seed(123)
-        [123]
-        >>> out = np.zeros((2, 3), dtype=np.float32)
-        >>> items = [space.sample() for _ in range(2)]
-        >>> concatenate(space, items, out)
-        array([[0.6823519 , 0.05382102, 0.22035988],
-               [0.18437181, 0.1759059 , 0.8120945 ]], dtype=float32)
-
-    Args:
-        space: Observation space of a single environment in the vectorized environment.
-        items: Samples to be concatenated.
-        out: The output object. This object is a (possibly nested) numpy array.
-
-    Returns:
-        The output object. This object is a (possibly nested) numpy array.
-
-    Raises:
-        ValueError: Space
-    """
-    if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `concatenate` function."
-        )
-    else:
-        raise TypeError(
-            f"The space provided to `concatenate` is not a gymnasium Space instance, type: {type(space)}, {space}"
-        )
-
-
-@concatenate.register(Box)
-@concatenate.register(Discrete)
-@concatenate.register(MultiDiscrete)
-@concatenate.register(MultiBinary)
-def _concatenate_base(
-    space: Box | Discrete | MultiDiscrete | MultiBinary,
-    items: Iterable,
-    out: np.ndarray,
-) -> np.ndarray:
-    return np.stack(items, axis=0, out=out)
-
-
-@concatenate.register(Tuple)
-def _concatenate_tuple(
-    space: Tuple, items: Iterable, out: tuple[Any, ...]
-) -> tuple[Any, ...]:
-    return tuple(
-        concatenate(subspace, [item[i] for item in items], out[i])
-        for (i, subspace) in enumerate(space.spaces)
-    )
-
-
-@concatenate.register(Dict)
-def _concatenate_dict(
-    space: Dict, items: Iterable, out: dict[str, Any]
-) -> dict[str, Any]:
-    return OrderedDict(
-        {
-            key: concatenate(subspace, [item[key] for item in items], out[key])
-            for key, subspace in space.items()
-        }
-    )
-
-
-@concatenate.register(Graph)
-@concatenate.register(Text)
-@concatenate.register(Sequence)
-def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
-    if out is not None:
-        warn(
-            f"For {type(space)} concatenate, `out` is not None ({out}) however the value is ignored."
-        )
-    return tuple(items)
-
-
-@singledispatch
 def iterate(space: Space, items: Iterable) -> Iterator:
     """Iterate over the elements of a (batched) space.
 
@@ -316,6 +232,90 @@ def _iterate_dict(space, items):
     )
     for item in zip(*values):
         yield OrderedDict({key: value for key, value in zip(keys, item)})
+
+
+@singledispatch
+def concatenate(
+    space: Space, items: Iterable, out: tuple[Any, ...] | dict[str, Any] | np.ndarray
+) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
+    """Concatenate multiple samples from space into a single object.
+
+    Example::
+
+        >>> from gymnasium.spaces import Box
+        >>> space = Box(low=0, high=1, shape=(3,), dtype=np.float32)
+        >>> space.seed(123)
+        [123]
+        >>> out = np.zeros((2, 3), dtype=np.float32)
+        >>> items = [space.sample() for _ in range(2)]
+        >>> concatenate(space, items, out)
+        array([[0.6823519 , 0.05382102, 0.22035988],
+               [0.18437181, 0.1759059 , 0.8120945 ]], dtype=float32)
+
+    Args:
+        space: Observation space of a single environment in the vectorized environment.
+        items: Samples to be concatenated.
+        out: The output object. This object is a (possibly nested) numpy array.
+
+    Returns:
+        The output object. This object is a (possibly nested) numpy array.
+
+    Raises:
+        ValueError: Space
+    """
+    if isinstance(space, Space):
+        raise ValueError(
+            f"Space of type `{type(space)}` doesn't have an registered `concatenate` function."
+        )
+    else:
+        raise TypeError(
+            f"The space provided to `concatenate` is not a gymnasium Space instance, type: {type(space)}, {space}"
+        )
+
+
+@concatenate.register(Box)
+@concatenate.register(Discrete)
+@concatenate.register(MultiDiscrete)
+@concatenate.register(MultiBinary)
+def _concatenate_base(
+    space: Box | Discrete | MultiDiscrete | MultiBinary,
+    items: Iterable,
+    out: np.ndarray,
+) -> np.ndarray:
+    return np.stack(items, axis=0, out=out)
+
+
+@concatenate.register(Tuple)
+def _concatenate_tuple(
+    space: Tuple, items: Iterable, out: tuple[Any, ...]
+) -> tuple[Any, ...]:
+    return tuple(
+        concatenate(subspace, [item[i] for item in items], out[i])
+        for (i, subspace) in enumerate(space.spaces)
+    )
+
+
+@concatenate.register(Dict)
+def _concatenate_dict(
+    space: Dict, items: Iterable, out: dict[str, Any]
+) -> dict[str, Any]:
+    return OrderedDict(
+        {
+            key: concatenate(subspace, [item[key] for item in items], out[key])
+            for key, subspace in space.items()
+        }
+    )
+
+
+@concatenate.register(Graph)
+@concatenate.register(Text)
+@concatenate.register(Sequence)
+def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
+    if out is not None:
+        warn(
+            f"For {type(space)} concatenate, `out` is not None ({out}) however the value is ignored."
+        )
+    return tuple(items)
 
 
 @singledispatch
