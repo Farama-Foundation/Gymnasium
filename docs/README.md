@@ -2,7 +2,7 @@
 
 This folder contains the documentation for [Gymnasium](https://github.com/Farama-Foundation/Gymnasium).
 
-If you are modifying an atari environment page, please follow the instructions bellow. For more information about how to contribute to the documentation go to our [CONTRIBUTE.md](https://github.com/Farama-Foundation/Celshast/blob/main/CONTRIBUTE.md)
+If you are modifying an atari environment page, please follow the instructions below. For more information about how to contribute to the documentation go to our [CONTRIBUTE.md](https://github.com/Farama-Foundation/Celshast/blob/main/CONTRIBUTE.md)
 
 ## Instructions for modifying environment pages
 
