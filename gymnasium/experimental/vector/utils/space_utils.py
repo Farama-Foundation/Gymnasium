@@ -29,13 +29,14 @@ from gymnasium.spaces import (
     Text,
     Tuple,
 )
+from gymnasium.spaces.space import T_cov
 
 
 __all__ = ["batch_space", "iterate", "concatenate", "create_empty_array"]
 
 
 @singledispatch
-def batch_space(space: Space, n: int = 1) -> Space:
+def batch_space(space: Space[Any], n: int = 1) -> Space[Any]:
     """Create a (batched) space, containing multiple copies of a single space.
 
     Args:
@@ -76,7 +77,7 @@ def _batch_space_box(space: Box, n: int = 1):
 
 
 @batch_space.register(Discrete)
-def _batch_space_discrete(space, n=1):
+def _batch_space_discrete(space: Discrete, n=1):
     if space.start == 0:
         return MultiDiscrete(
             np.full((n,), space.n, dtype=space.dtype),
@@ -94,7 +95,7 @@ def _batch_space_discrete(space, n=1):
 
 
 @batch_space.register(MultiDiscrete)
-def _batch_space_multidiscrete(space, n=1):
+def _batch_space_multidiscrete(space: MultiDiscrete, n=1):
     repeats = tuple([n] + [1] * space.nvec.ndim)
     high = np.tile(space.nvec, repeats) - 1
     return Box(
@@ -106,7 +107,7 @@ def _batch_space_multidiscrete(space, n=1):
 
 
 @batch_space.register(MultiBinary)
-def _batch_space_multibinary(space, n=1):
+def _batch_space_multibinary(space: MultiBinary, n=1):
     return Box(
         low=0,
         high=1,
@@ -117,7 +118,7 @@ def _batch_space_multibinary(space, n=1):
 
 
 @batch_space.register(Tuple)
-def _batch_space_tuple(space, n=1):
+def _batch_space_tuple(space: Tuple, n=1):
     return Tuple(
         tuple(batch_space(subspace, n=n) for subspace in space.spaces),
         seed=deepcopy(space.np_random),
@@ -141,13 +142,14 @@ def _batch_space_custom(space: Graph | Text | Sequence, n: int = 1):
     batched_space = Tuple(
         tuple(deepcopy(space) for _ in range(n)), seed=deepcopy(space.np_random)
     )
-    new_seeds = list(map(int, batched_space.np_random.integers(0, 1e8, n)))
+    space_rng = deepcopy(space.np_random)
+    new_seeds = list(map(int, space_rng.integers(0, 1e8, n)))
     batched_space.seed(new_seeds)
     return batched_space
 
 
 @singledispatch
-def iterate(space: Space, items) -> Iterator:
+def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
     """Iterate over the elements of a (batched) space.
 
     Args:
@@ -224,7 +226,7 @@ def _iterate_tuple(space: Tuple, items: tuple[Any, ...]):
 
 
 @iterate.register(Dict)
-def _iterate_dict(space, items):
+def _iterate_dict(space: Dict, items: dict[str, Any]):
     keys, values = zip(
         *[
             (key, iterate(subspace, items[key]))
@@ -412,5 +414,10 @@ def _create_empty_array_text(space: Text, n: int = 1, fn=np.zeros) -> tuple[str,
 @create_empty_array.register(Sequence)
 def _create_empty_array_sequence(
     space: Sequence, n: int = 1, fn=np.zeros
-) -> tuple[tuple[()], ...]:
-    return tuple(tuple() for _ in range(n))
+) -> tuple[Any, ...]:
+    if space.stack:
+        return tuple(
+            create_empty_array(space.feature_space, n=1, fn=fn) for _ in range(n)
+        )
+    else:
+        return tuple(tuple() for _ in range(n))

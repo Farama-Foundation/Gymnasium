@@ -243,7 +243,7 @@ def _flatten_sequence(
     space: Sequence, x: tuple[Any, ...] | Any
 ) -> tuple[Any, ...] | Any:
     if space.stack:
-        samples_iters = gym.vector.utils.iterate(space.batched_feature_space, x)
+        samples_iters = gym.vector.utils.iterate(space.stacked_feature_space, x)
         flattened_samples = [
             flatten(space.feature_space, sample) for sample in samples_iters
         ]
