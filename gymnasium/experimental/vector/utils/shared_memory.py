@@ -47,10 +47,14 @@ def create_shared_memory(
     Raises:
         CustomSpaceError: Space is not a valid :class:`gymnasium.Space` instance
     """
-    raise CustomSpaceError(
-        f"Cannot create a shared memory for space with type `{type(space)}`. "
-        "`create_shared_memory` only supports by default built-in Gymnasium spaces, register function for custom space."
-    )
+    if isinstance(space, Space):
+        raise CustomSpaceError(
+            f"Space of type `{type(space)}` doesn't have an registered `create_shared_memory` function. Register `{type(space)}` for `create_shared_memory` to support it."
+        )
+    else:
+        raise TypeError(
+            f"The space provided to `create_shared_memory` is not a gymnasium Space instance, type: {type(space)}, {space}"
+        )
 
 
 @create_shared_memory.register(Box)
@@ -120,10 +124,14 @@ def read_from_shared_memory(
     Raises:
         CustomSpaceError: Space is not a valid :class:`gymnasium.Space` instance
     """
-    raise CustomSpaceError(
-        f"Cannot read from a shared memory for space with type `{type(space)}`. "
-        "`read_from_shared_memory` only supports by default built-in Gymnasium spaces, register function for custom space."
-    )
+    if isinstance(space, Space):
+        raise CustomSpaceError(
+            f"Space of type `{type(space)}` doesn't have an registered `read_from_shared_memory` function. Register `{type(space)}` for `read_from_shared_memory` to support it."
+        )
+    else:
+        raise TypeError(
+            f"The space provided to `read_from_shared_memory` is not a gymnasium Space instance, type: {type(space)}, {space}"
+        )
 
 
 @read_from_shared_memory.register(Box)
@@ -179,7 +187,7 @@ def write_to_shared_memory(
     space: Space,
     index: int,
     value: np.ndarray,
-    shared_memory: dict | tuple | mp.Array,
+    shared_memory: dict[str, Any] | tuple[Any, ...] | mp.Array,
 ):
     """Write the observation of a single environment into shared memory.
 
@@ -193,10 +201,14 @@ def write_to_shared_memory(
     Raises:
         CustomSpaceError: Space is not a valid :class:`gymnasium.Space` instance
     """
-    raise CustomSpaceError(
-        f"Cannot write to a shared memory for space with type `{type(space)}`. "
-        "`write_to_shared_memory` only supports by default built-in Gymnasium spaces, register function for custom space."
-    )
+    if isinstance(space, Space):
+        raise CustomSpaceError(
+            f"Space of type `{type(space)}` doesn't have an registered `write_to_shared_memory` function. Register `{type(space)}` for `write_to_shared_memory` to support it."
+        )
+    else:
+        raise TypeError(
+            f"The space provided to `write_to_shared_memory` is not a gymnasium Space instance, type: {type(space)}, {space}"
+        )
 
 
 @write_to_shared_memory.register(Box)

@@ -1,9 +1,11 @@
 """Tests `gymnasium.experimental.vector.utils.shared_memory functions."""
 
 import multiprocessing as mp
+import re
 
 import pytest
 
+from gymnasium import Space
 from gymnasium.error import CustomSpaceError
 from gymnasium.experimental.vector.utils import (
     create_shared_memory,
@@ -37,7 +39,23 @@ def test_shared_memory_create_read_write(space, num, ctx):
         data_equivalence(read_sample, sample)
 
 
-@pytest.mark.parametrize("space", CUSTOM_SPACES, ids=CUSTOM_SPACES_IDS)
-def test_shared_memory_custom_space(space):
-    with pytest.raises(CustomSpaceError):
-        create_shared_memory(space)
+def test_shared_memory_custom_space():
+    with pytest.raises(CustomSpaceError, match=re.escape("Space of type `<class 'gymnasium.spaces.space.Space'>` doesn't have an registered `create_shared_memory` function. Register `<class 'gymnasium.spaces.space.Space'>` for `create_shared_memory` to support it.")):
+        create_shared_memory(Space())
+
+    with pytest.raises(CustomSpaceError, match=re.escape("Space of type `<class 'gymnasium.spaces.space.Space'>` doesn't have an registered `read_from_shared_memory` function. Register `<class 'gymnasium.spaces.space.Space'>` for `read_from_shared_memory` to support it.")):
+        read_from_shared_memory(Space(), None, 1)
+
+    with pytest.raises(CustomSpaceError, match=re.escape("Space of type `<class 'gymnasium.spaces.space.Space'>` doesn't have an registered `write_to_shared_memory` function. Register `<class 'gymnasium.spaces.space.Space'>` for `write_to_shared_memory` to support it.")):
+        write_to_shared_memory(Space(), 1, None, None)
+
+
+def test_non_space():
+    with pytest.raises(TypeError, match=re.escape("The space provided to `create_shared_memory` is not a gymnasium Space instance, type: <class 'str'>, space")):
+        create_shared_memory("space")
+
+    with pytest.raises(TypeError, match=re.escape("The space provided to `read_from_shared_memory` is not a gymnasium Space instance, type: <class 'str'>, space")):
+        read_from_shared_memory("space", None, 1)
+
+    with pytest.raises(TypeError, match=re.escape("The space provided to `write_to_shared_memory` is not a gymnasium Space instance, type: <class 'str'>, space")):
+        write_to_shared_memory("space", 1, None, None)
