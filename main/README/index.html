@@ -447,7 +447,7 @@
             <section id="gymnasium-docs">
 <h1>Gymnasium-docs<a class="headerlink" href="#gymnasium-docs" title="Permalink to this heading">#</a></h1>
 <p>This folder contains the documentation for <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Gymnasium</a>.</p>
-<p>If you are modifying a non-environment page or an atari environment page, please PR this repo. Otherwise, follow the steps below:</p>
+<p>If you are modifying an atari environment page, please follow the instructions below. For more information about how to contribute to the documentation go to our <a class="reference external" href="https://github.com/Farama-Foundation/Celshast/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
 <section id="instructions-for-modifying-environment-pages">
 <h2>Instructions for modifying environment pages<a class="headerlink" href="#instructions-for-modifying-environment-pages" title="Permalink to this heading">#</a></h2>
 <section id="editing-an-environment-page">
@@ -459,11 +459,11 @@
 <h3>Adding a new environment<a class="headerlink" href="#adding-a-new-environment" title="Permalink to this heading">#</a></h3>
 <section id="atari-env">
 <h4>Atari env<a class="headerlink" href="#atari-env" title="Permalink to this heading">#</a></h4>
-<p>For Atari envs, add a Markdown file into <code class="docutils literal notranslate"><span class="pre">pages/environments/atari</span></code> then complete the <strong>other steps</strong>.</p>
+<p>For Atari envs, add a Markdown file into <code class="docutils literal notranslate"><span class="pre">docs/environments/atari</span></code> then complete the <span class="xref myst">other steps</span>.</p>
 </section>
 <section id="non-atari-env">
 <h4>Non-Atari env<a class="headerlink" href="#non-atari-env" title="Permalink to this heading">#</a></h4>
-<p>Ensure the environment is in Gymnasium (or your fork). Ensure that the environment’s Python file has a properly formatted markdown docstring. Pip install Gymnasium (or your fork) then run <code class="docutils literal notranslate"><span class="pre">docs/scripts/gen_mds.py</span></code>. This will automatically generate a md page for the environment. Then complete the <span class="xref myst">other steps</span>.</p>
+<p>Ensure the environment is in Gymnasium (or your fork). Ensure that the environment’s Python file has a properly formatted markdown docstring. Install using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> and then run <code class="docutils literal notranslate"><span class="pre">docs/scripts/gen_mds.py</span></code>. This will automatically generate a md page for the environment. Then complete the <span class="xref myst">other steps</span>.</p>
 </section>
 <section id="other-steps">
 <h4>Other steps<a class="headerlink" href="#other-steps" title="Permalink to this heading">#</a></h4>
@@ -478,13 +478,12 @@
 <h2>Build the Documentation<a class="headerlink" href="#build-the-documentation" title="Permalink to this heading">#</a></h2>
 <p>Install the required packages and Gymnasium (or your fork):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">gymnasium</span>
-<span class="n">cd</span> <span class="n">docs</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>  <span class="c1"># To install document builder requirements.</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">docs</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
 <p>To build the documentation once:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">docs</span>
-<span class="n">make</span> <span class="n">dirhtml</span> <span class="n">_build</span>
+<span class="n">make</span> <span class="n">dirhtml</span>
 </pre></div>
 </div>
 <p>To rebuild the documentation automatically every time a change is made:</p>
