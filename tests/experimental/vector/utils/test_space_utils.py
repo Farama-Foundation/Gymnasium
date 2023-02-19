@@ -7,15 +7,17 @@ from typing import Iterable
 import pytest
 
 from gymnasium import Space
+from gymnasium.error import CustomSpaceError
 from gymnasium.experimental.vector.utils import (
     batch_space,
     concatenate,
     create_empty_array,
     iterate,
 )
+from gymnasium.spaces import Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from tests.experimental.vector.utils.utils import is_rng_equal
-from tests.spaces.utils import TESTING_BASE_SPACE, TESTING_SPACES, TESTING_SPACES_IDS
+from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS, CustomSpace
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
@@ -119,7 +121,7 @@ def test_batch_space_different_samples(space: Space, n: int, base_seed: int):
     "func, n_args",
     [(batch_space, 1), (concatenate, 2), (iterate, 1), (create_empty_array, 2)],
 )
-def test_unknown_spaces(func, n_args):
+def test_non_space(func, n_args):
     """Test spaces for vector utility functions on the error produced with unknown spaces."""
     args = [None for _ in range(n_args)]
     func_name = func.__name__
@@ -131,10 +133,24 @@ def test_unknown_spaces(func, n_args):
     ):
         func("space", *args)
 
+
+def test_custom_space():
+    """Test custom spaces with space util functions."""
+    custom_space = CustomSpace()
+
+    batched_space = batch_space(custom_space, n=2)
+    assert batched_space == Tuple([custom_space, custom_space])
+
     with pytest.raises(
-        ValueError,
+        CustomSpaceError,
         match=re.escape(
-            f"Space of type `<class 'gymnasium.spaces.space.Space'>` doesn't have an registered `{func_name}` function."
+            "Space of type `<class 'tests.spaces.utils.CustomSpace'>` doesn't have an registered `iterate` function. Register `<class 'tests.spaces.utils.CustomSpace'>` for `iterate` to support it."
         ),
     ):
-        func(TESTING_BASE_SPACE, *args)
+        iterate(custom_space, None)
+
+    concatenated_items = concatenate(custom_space, (None, None), out=None)
+    assert concatenated_items == (None, None)
+
+    empty_array = create_empty_array(custom_space)
+    assert empty_array is None

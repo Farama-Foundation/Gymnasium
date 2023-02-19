@@ -59,14 +59,9 @@ def batch_space(space: Space[Any], n: int = 1) -> Space[Any]:
         >>> batch_space(space, n=5)
         Dict('position': Box(0.0, 1.0, (5, 3), float32), 'velocity': Box(0.0, 1.0, (5, 2), float32))
     """
-    if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `batch_space` function."
-        )
-    else:
-        raise TypeError(
-            f"The space provided to `batch_space` is not a gymnasium Space instance, type: {type(space)}, {space}"
-        )
+    raise TypeError(
+        f"The space provided to `batch_space` is not a gymnasium Space instance, type: {type(space)}, {space}"
+    )
 
 
 @batch_space.register(Box)
@@ -181,8 +176,8 @@ def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
         StopIteration
     """
     if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `iterate` function."
+        raise CustomSpaceError(
+            f"Space of type `{type(space)}` doesn't have an registered `iterate` function. Register `{type(space)}` for `iterate` to support it."
         )
     else:
         raise TypeError(
@@ -265,14 +260,9 @@ def concatenate(
         array([[0.77395606, 0.43887845, 0.85859793],
                [0.697368  , 0.09417735, 0.97562236]], dtype=float32)
     """
-    if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `concatenate` function."
-        )
-    else:
-        raise TypeError(
-            f"The space provided to `concatenate` is not a gymnasium Space instance, type: {type(space)}, {space}"
-        )
+    raise TypeError(
+        f"The space provided to `concatenate` is not a gymnasium Space instance, type: {type(space)}, {space}"
+    )
 
 
 @concatenate.register(Box)
@@ -351,14 +341,9 @@ def create_empty_array(
                [0., 0., 0.]], dtype=float32)), ('velocity', array([[0., 0.],
                [0., 0.]], dtype=float32))])
     """
-    if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `create_empty_array` function."
-        )
-    else:
-        raise TypeError(
-            f"The space provided to `create_empty_array` is not a gymnasium Space instance, type: {type(space)}, {space}"
-        )
+    raise TypeError(
+        f"The space provided to `create_empty_array` is not a gymnasium Space instance, type: {type(space)}, {space}"
+    )
 
 
 @create_empty_array.register(Box)
