@@ -136,6 +136,7 @@ def _batch_space_dict(space: Dict, n: int = 1):
 @batch_space.register(Graph)
 @batch_space.register(Text)
 @batch_space.register(Sequence)
+@batch_space.register(Space)
 def _batch_space_custom(space: Graph | Text | Sequence, n: int = 1):
     # Without deepcopy, then the space.np_random is batched_space.spaces[0].np_random
     # Which is an issue if you are sampling actions of both the original space and the batched space
@@ -311,10 +312,11 @@ def _concatenate_dict(
 @concatenate.register(Graph)
 @concatenate.register(Text)
 @concatenate.register(Sequence)
+@concatenate.register(Space)
 def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
     if out is not None:
         warn(
-            f"For {type(space)} concatenate, `out` is not None ({out}) however the value is ignored."
+            f"For `vector.utils.concatenate({type(space)}, ...)`, `out` is not None ({out}) however the value is ignored."
         )
     return tuple(items)
 
@@ -421,3 +423,8 @@ def _create_empty_array_sequence(
         )
     else:
         return tuple(tuple() for _ in range(n))
+
+
+@create_empty_array.register(Space)
+def _create_empty_array_custom(space, n=1, fn=np.zeros):
+    return None
