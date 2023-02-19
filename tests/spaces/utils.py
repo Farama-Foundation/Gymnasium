@@ -115,6 +115,6 @@ TESTING_SPACES_IDS = TESTING_FUNDAMENTAL_SPACES_IDS + TESTING_COMPOSITE_SPACES_I
 CUSTOM_SPACES = [
     Space(),
     Tuple([Space(), Space(), Space()]),
-    Dict(a=Space(), b=Space())
+    Dict(a=Space(), b=Space()),
 ]
 CUSTOM_SPACES_IDS = [f"{space}" for space in CUSTOM_SPACES]
