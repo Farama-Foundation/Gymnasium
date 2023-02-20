@@ -60,7 +60,7 @@ if sys.platform.startswith("linux"):
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
 try:
-    from farama_notifications.notifications import notifications
+    from farama_notifications import notifications
 
     if "gymnasium" in notifications and __version__ in notifications["gymnasium"]:
         print(notifications["gymnasium"][__version__], file=sys.stderr)
