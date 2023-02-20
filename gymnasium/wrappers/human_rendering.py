@@ -28,9 +28,6 @@ class HumanRendering(gym.Wrapper):
         ``render_mode="human"`` to ``make``. The wrapper will only be applied if the environment does not
         implement human-rendering natively (i.e. ``render_mode`` does not contain ``"human"``).
 
-        >>> env = gym.make("CartPoleJax-v1", render_mode="human")      # CartPoleJax-v1 doesn't implement human-rendering natively
-        >>> obs, _ = env.reset()     # This will start rendering to the screen
-
         Warning: If the base environment uses ``render_mode="rgb_array_list"``, its (i.e. the *base environment's*) render method
         will always return an empty list:
 
