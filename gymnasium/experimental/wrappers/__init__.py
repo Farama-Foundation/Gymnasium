@@ -94,30 +94,55 @@ class DeprecatedWrapper(ImportError):
     pass
 
 
+class InvalidVersionWrapper(ImportError):
+    """Exception raised when an invalid version of a wrapper is imported."""
+
+    pass
+
+
 def __getattr__(wrapper_name):
-    """Raises a DeprecatedWrapper exception when an old version of a wrapper is imported, or an ImportError if the wrapper being imported does not exist."""
-    wrapper_module = __name__
+    """Raise errors when importing deprecated or invalid versions of wrappers.
 
+    Args:
+        wrapper_name (str): The name of the wrapper being imported.
+
+    Raises:
+        DeprecatedWrapper: If the version is not the latest.
+        InvalidVersionWrapper: If the version doesn't exist.
+        ImportError: If the wrapper does not exist.
+    """
+    base_name = wrapper_name[:-1]
     version = wrapper_name[-1]
-    base = wrapper_name[:-1]
 
-    try:
-        version_num = int(version)
-        is_valid_version = True
-    except ValueError:
-        is_valid_version = False
+    # Get all wrappers that start with the base wrapper name
+    wrappers = [name for name in globals().keys() if name.startswith(base_name)]
 
-    global_dict = globals()
+    # If the wrapper does not exist, raise an ImportError
+    if not wrappers:
+        raise ImportError(
+            f"cannot import name '{wrapper_name}' from 'gymnasium.experimental.wrappers'"
+        )
 
-    if is_valid_version:
-        for act_version_num in range(1000):
-            act_wrapper_name = f"{base}{act_version_num}"
-            if act_wrapper_name in global_dict:
-                if version_num < act_version_num:
-                    raise DeprecatedWrapper(
-                        f"{base}{version_num} is now deprecated, use {act_wrapper_name} instead.\n"
-                        f"To see the changes made, go to "
-                        f"https://gymnasium.farama.org/api/experimental/wrappers/#{wrapper_module}.{act_wrapper_name}."
-                    )
+    # Get the latest version of the wrapper
+    latest_version = max([int(name[-1]) for name in wrappers])
 
-    raise ImportError(f"cannot import name '{wrapper_name}' from '{wrapper_module}'")
+    # Raise an InvalidVersionWrapper exception if the version is not a digit
+    if not version.isdigit():
+        raise InvalidVersionWrapper(
+            f"{wrapper_name} is not a valid version number, use {base_name}{latest_version} instead."
+        )
+
+    version = int(version)
+
+    # Raise a DeprecatedWrapper exception if the version is not the latest
+    if version < latest_version:
+        raise DeprecatedWrapper(
+            f"{wrapper_name} is now deprecated, use {base_name}{latest_version} instead.\n"
+            f"To see the changes made, go to "
+            f"https://gymnasium.farama.org/api/experimental/wrappers/#gymnasium.experimental.wrappers.{base_name}{latest_version}."
+        )
+    # Raise an InvalidVersionWrapper exception if the version is greater than the latest
+    elif version > latest_version:
+        raise InvalidVersionWrapper(
+            f"{wrapper_name} is the wrong version number, use {base_name}{latest_version} instead."
+        )
