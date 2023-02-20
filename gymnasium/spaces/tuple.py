@@ -39,7 +39,7 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         for space in self.spaces:
             assert isinstance(
                 space, Space
-            ), "Elements of the tuple must be instances of gym.Space"
+            ), f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
         super().__init__(None, None, seed)  # type: ignore
 
     @property
