@@ -24,6 +24,6 @@ __all__ = [
     "AsyncVectorEnv",
     # "FunctionalJaxVectorEnv",
     # Folders
-    "wrappers",
-    # "utils",
+    "utils",
+    # "wrappers",
 ]

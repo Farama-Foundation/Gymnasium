@@ -2,24 +2,30 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Iterable, Sequence
 
 import numpy as np
+from numpy.typing import NDArray
 
-from gymnasium import Env
+from gymnasium import Env, Space
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.experimental.vector.utils import (
     batch_space,
     concatenate,
     create_empty_array,
     iterate,
 )
-from gymnasium.experimental.vector.vector_env import VectorEnv
+from gymnasium.experimental.vector.vector_env import (
+    VectorActType,
+    VectorEnv,
+    VectorObsType,
+)
 
 
 __all__ = ["SyncVectorEnv"]
 
 
-class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
+class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, NDArray[Any]]):
     """Vectorized environment that serially runs multiple environments.
 
     Example:
@@ -36,22 +42,25 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
     def __init__(
         self,
         env_fns: Iterable[Callable[[], Env[ObsType, ActType]]]
-        | Sequence[Env[ObsType, ActType]],,
+        | Sequence[Env[ObsType, ActType]],
         copy: bool = True,
         render_mode: str | None = None,
     ):
         """Vectorized environment that serially runs multiple environments.
 
         Args:
-            envs: A sequence of environments or functions that generate environments
+            env_fns: A sequence of environments or functions that generate environments
             copy: Copy the observation on `reset` and `step` functions
             render_mode: The render_mode of the environment
         """
-        envs = tuple(envs)
-        if all(callable(env_fn) for env_fn in envs):
-            envs = [env_fn() for env_fn in envs]
+        env_sequence = tuple(env_fns)
+        if all(callable(env_fn) for env_fn in env_sequence):
+            envs = tuple(env_fn() for env_fn in env_sequence)
+        else:
+            envs = env_sequence
         assert all(isinstance(env, Env) for env in envs)
-        self.envs: Sequence[Env[ObsType, ActType]] = envs
+        self.envs: tuple[Env[ObsType, ActType], ...] = envs
+
         self.num_envs = len(self.envs)
 
         self.metadata = self.envs[0].metadata
@@ -60,15 +69,36 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
         assert len(envs) > 0
         self.single_observation_space: Space[ObsType] = self.envs[0].observation_space
-        assert all(
+        if not all(
             env.observation_space == self.single_observation_space for env in self.envs
-        )
+        ):
+            mismatched_spaces = [
+                i
+                for i, env in enumerate(self.envs)
+                if env.observation_space != self.single_observation_space
+            ]
+            raise RuntimeError(
+                f"Environment ids {mismatched_spaces} have a different observation space from `{self.single_observation_space}`."
+                "In order to batch observations, the observation spaces from all environments must be equal."
+            )
         self.single_action_space: Space[ActType] = self.envs[0].action_space
-        assert all(env.action_space == self.single_action_space for env in self.envs)
-        self.observation_space = batch_space(
+        if not all(env.action_space == self.single_action_space for env in self.envs):
+            mismatched_spaces = [
+                i
+                for i, env in enumerate(self.envs)
+                if env.action_space != self.single_action_space
+            ]
+            raise RuntimeError(
+                f"Environment ids {mismatched_spaces} have a different action space from `{self.single_observation_space}`."
+                "In order to pass batched actions to `step`, the action spaces from all environments must be equal."
+            )
+
+        self.observation_space: Space[VectorObsType] = batch_space(
             self.single_observation_space, self.num_envs
         )
-        self.action_space = batch_space(self.single_action_space, self.num_envs)
+        self.action_space: Space[VectorActType] = batch_space(
+            self.single_action_space, self.num_envs
+        )
 
         assert render_mode != "human"
         if render_mode is not None and render_mode.startswith("single_"):
@@ -82,7 +112,6 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
             self.single_observation_space, self.num_envs
         )
         self._reset_options: dict[str, Any] | None = None
-        self._to_reset_envs: np.ndarray = np.full(self.num_envs, dtype=bool)
 
     def reset(
         self,
@@ -124,7 +153,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
     def step(
         self, actions: VectorActType
-    ) -> tuple[VectorObsType, np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
+    ) -> tuple[VectorObsType, NDArray[Any], NDArray[Any], NDArray[Any], dict[str, Any]]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
@@ -140,7 +169,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
         for env_num, (env, action) in enumerate(zip(self.envs, env_actions)):
             (
-                env_obs,
+                obs[env_num],
                 rewards[env_num],
                 terminations[env_num],
                 truncations[env_num],
@@ -155,7 +184,6 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
             obs = deepcopy(self.copy)
         assert all(reward is not None for reward in rewards)
         rewards = np.array(rewards)
-        self._to_reset_envs = np.logical_or(terminations, truncations)
 
         return obs, rewards, terminations, truncations, info
 
@@ -167,15 +195,9 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
         else:
             return [env.render() for env in self.envs]
 
-    def close(self):
-        """Closes each sub-environments."""
-        for env in self.envs:
-            env.close()
-        super().close()
-
     def call(self, name: str, *args: Any, **kwargs: Any) -> tuple[Any, ...]:
         """Calls a function in each sub-environment with name using args and kwargs return a tuple of results."""
-        results = []
+        results: list[Any] = []
         for i, env in enumerate(self.envs):
             try:
                 result = getattr(env, name)
@@ -192,8 +214,15 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
         return tuple(results)
 
     def get_attr(self, name: str) -> tuple[Any, ...]:
-        """Gets the attribute from each sub-environment."""
-        results = []
+        """Get a property from each parallel environment.
+
+        Args:
+            name (str): Name of the property to be get from each individual environment.
+
+        Returns:
+            The property with name
+        """
+        results: list[Any] = []
         for i, env in enumerate(self.envs):
             try:
                 results.append(getattr(env, name))
@@ -204,7 +233,7 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
         return tuple(results)
 
-    def set_attr(self, name: str, values: list[Any] | tuple[Any] | Any):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any):
         """Sets an attribute of each sub-environments.
 
         Args:
@@ -227,3 +256,9 @@ class SyncVectorEnv(VectorEnv[VectorObsType, VectorActType, np.ndarray]):
 
         for env, value in zip(self.envs, values):
             setattr(env, name, value)
+
+    def close(self, **kwargs):
+        """Closes each sub-environments."""
+        for env in self.envs:
+            env.close(**kwargs)
+        super().close()

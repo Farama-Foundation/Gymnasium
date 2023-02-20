@@ -72,7 +72,7 @@ def _create_base_shared_memory(
 
 
 @create_shared_memory.register(Tuple)
-def _create_tuple_shared_memory(space, n: int = 1, ctx=mp):
+def _create_tuple_shared_memory(space: Tuple, n: int = 1, ctx=mp):
     return tuple(
         create_shared_memory(subspace, n=n, ctx=ctx) for subspace in space.spaces
     )
@@ -230,13 +230,17 @@ def _write_base_to_shared_memory(
 
 
 @write_to_shared_memory.register(Tuple)
-def _write_tuple_to_shared_memory(space, index, values, shared_memory):
+def _write_tuple_to_shared_memory(
+    space: Tuple, index: int, values: tuple[Any, ...], shared_memory
+):
     for value, memory, subspace in zip(values, shared_memory, space.spaces):
         write_to_shared_memory(subspace, index, value, memory)
 
 
 @write_to_shared_memory.register(Dict)
-def _write_dict_to_shared_memory(space, index, values, shared_memory):
+def _write_dict_to_shared_memory(
+    space: Dict, index: int, values: dict[str, Any], shared_memory
+):
     for key, subspace in space.spaces.items():
         write_to_shared_memory(subspace, index, values[key], shared_memory[key])
 
