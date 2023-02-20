@@ -17,7 +17,7 @@ from gymnasium.envs.registration import (
     pprint_registry,
     make_vec,
 )
-from gymnasium import envs, spaces, utils, vector, wrappers, error, logger, experimental
+from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
 
 
 __all__ = [
@@ -44,7 +44,6 @@ __all__ = [
     "wrappers",
     "error",
     "logger",
-    "experimental",
 ]
 __version__ = "0.27.1"
 
@@ -62,11 +61,10 @@ if sys.platform.startswith("linux"):
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
 try:
-    import gym_notices.notices as notices
+    from farama_notifications import notifications
 
-    # print version warning if necessary
-    notice = notices.notices.get(__version__)
-    if notice:
-        print(notice, file=sys.stderr)
+    if "gymnasium" in notifications and __version__ in notifications["gymnasium"]:
+        print(notifications["gymnasium"][__version__], file=sys.stderr)
+
 except Exception:  # nosec
     pass

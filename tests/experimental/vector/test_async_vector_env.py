@@ -1,3 +1,5 @@
+"""Test the `SyncVectorEnv` implementation."""
+
 import re
 from multiprocessing import TimeoutError
 

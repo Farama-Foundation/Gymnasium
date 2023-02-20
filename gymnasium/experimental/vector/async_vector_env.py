@@ -24,7 +24,8 @@ from gymnasium.error import (
     CustomSpaceError,
     NoAsyncCallError,
 )
-from gymnasium.experimental.vector.utils import (
+from gymnasium.experimental.vector.vector_env import VectorEnv
+from gymnasium.vector.utils import (
     CloudpickleWrapper,
     batch_space,
     clear_mpi_env_vars,
