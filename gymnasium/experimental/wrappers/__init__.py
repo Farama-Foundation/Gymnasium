@@ -111,8 +111,7 @@ def __getattr__(wrapper_name):
         InvalidVersionWrapper: If the version doesn't exist.
         ImportError: If the wrapper does not exist.
     """
-    invalid_attrs = ("__wrapped__", "__test__")
-    if wrapper_name in invalid_attrs:
+    if wrapper_name == "__wrapped__" or "__test__":
         raise AttributeError(
             f"module 'gymnasium.experimental.wrappers' has no attribute {wrapper_name}"
         )
