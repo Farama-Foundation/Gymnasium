@@ -109,22 +109,17 @@ def __getattr__(wrapper_name):
     Raises:
         DeprecatedWrapper: If the version is not the latest.
         InvalidVersionWrapper: If the version doesn't exist.
-        ImportError: If the wrapper does not exist.
+        AttributeError: If the wrapper does not exist.
     """
-    if wrapper_name == "__wrapped__" or "__test__":
-        raise AttributeError(
-            f"module 'gymnasium.experimental.wrappers' has no attribute {wrapper_name}"
-        )
-
     base_name = wrapper_name[:-1]
     version = wrapper_name[-1]
 
     # Get all wrappers that start with the base wrapper name
-    wrappers = [name for name in globals().keys() if name.startswith(base_name)]
+    wrappers = [name for name in __all__ if name.startswith(base_name)]
 
-    # If the wrapper does not exist, raise an ImportError
+    # If the wrapper does not exist, raise an AttributeError
     if not wrappers:
-        raise ImportError(
+        raise AttributeError(
             f"cannot import name '{wrapper_name}' from 'gymnasium.experimental.wrappers'"
         )
 
