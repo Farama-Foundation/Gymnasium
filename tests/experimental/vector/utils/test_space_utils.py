@@ -1,11 +1,12 @@
-"""Testing suite for the experimental vector utility functions for spaces."""
+"""Testing `gymnasium.experimental.vector.utils.space_utils` functions."""
 
 import copy
-from typing import Iterable
+from collections import OrderedDict
 
+import numpy as np
 import pytest
+from numpy.testing import assert_array_equal
 
-from gymnasium import Space
 from gymnasium.experimental.vector.utils import (
     batch_space,
     concatenate,

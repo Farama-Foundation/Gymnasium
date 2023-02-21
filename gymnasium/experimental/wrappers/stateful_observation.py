@@ -10,6 +10,11 @@ from collections import deque
 from copy import deepcopy
 from typing import Any, SupportsFloat
 
+
+try:
+    import jumpy as jp
+except ImportError as e:
+    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 from typing_extensions import Final
 
@@ -109,7 +114,7 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType]):
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.experimental.wrappers import TimeAwareObservationV0
-        >>> env = gym.make('CartPole-v1')
+        >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservationV0(env)
         >>> env.observation_space
         Dict('obs': Box([-4.8000002e+00 ...], [4.8000002e+00 ...], (4,), float32), 'time': Box(0.0, 1.0, (1,), float32))
@@ -122,21 +127,24 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType]):
         >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservationV0(env, normalize_time=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 ...], [4.8000002e+00 ...], (4,), float32), 'time': Box(0, 500, (1,), int32))
-        >>> env.reset()[0]
+        Dict('obs': Box([-4.8000002e+00 ...], [4.8000002e+00 ...], (4,), float32), 'time': Box(0, 1.0, (1,), int32))
+        >>> env.reset(seed=42)
+        >>> _ = env.action_space.seed(42)[0]
         {'obs': array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 'time': 500}
         >>> env.step(env.action_space.sample())[0]
-        {'obs': array([ 0.01734283,  0.15089367, -0.02859527, -0.33293587], dtype=float32), 'time': 499}
+        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': 0.002}
 
-    Flatten observation space example:
-        >>> env = gym.make('CartPole-v1')
+        Flatten observation space example:
+        >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservationV0(env, flatten=True)
         >>> env.observation_space
-        Box([-4.8000002e+00 ... 0.0000000e+00], [4.8000002e+00 ... 1.0000000e+00], (5,), float32)
-        >>> _ = env.reset()
-        array([-0.00746845, -0.00803149,  0.01018551,  0.00115262,  0.        ], dtype=float32)
+        Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38
+          0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 1.0000000e+00], (5,), float32)
+        >>> _ = env.reset(seed=42)
+        >>> _ = env.action_space.seed(42)
         >>> env.step(env.action_space.sample())[0]
-        array([-0.00762907,  0.18694292,  0.01020856, -0.28829932,  0.002     ], dtype=float32)
+        array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  0.002     ],
+              dtype=float32)
     """
 
     def __init__(
@@ -258,7 +266,7 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType]):
 
 
 class FrameStackObservationV0(Wrapper):
-    """Stacks environment observations in a rolling manner.
+    """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
     the most recent 4 observations. For environment 'Pendulum-v1', the original observation
@@ -271,10 +279,11 @@ class FrameStackObservationV0(Wrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CarRacing-v1')
+        >>> from gymnasium.experimental.wrappers import FrameStackObservationV0
+        >>> env = gym.make("CarRacing-v2")
         >>> env = FrameStackObservationV0(env, 4)
         >>> env.observation_space
-        Box(4, 96, 96, 3)
+        Box(0, 255, (4, 96, 96, 3), uint8)
         >>> obs, _ = env.reset()
         >>> obs.shape
         (4, 96, 96, 3)
@@ -294,6 +303,9 @@ class FrameStackObservationV0(Wrapper):
             stack_size: The number of frames to stack with zero_obs being used originally.
             zeros_obs: Keyword only parameter that allows a custom padding observation at :meth:`reset`
         """
+        assert np.issubdtype(type(stack_size), np.integer)
+        assert stack_size > 0
+
         super().__init__(env)
 
         if not np.issubdtype(type(stack_size), np.integer):

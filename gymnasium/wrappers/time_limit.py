@@ -11,9 +11,9 @@ class TimeLimit(gym.Wrapper):
     Critically, this is different from the `terminated` signal that originates from the underlying environment as part of the MDP.
 
     Example:
-       >>> from gymnasium.envs.classic_control import CartPoleEnv
+       >>> import gymnasium as gym
        >>> from gymnasium.wrappers import TimeLimit
-       >>> env = CartPoleEnv()
+       >>> env = gym.make("CartPole-v1")
        >>> env = TimeLimit(env, max_episode_steps=1000)
     """
 

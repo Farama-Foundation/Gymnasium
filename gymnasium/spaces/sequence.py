@@ -1,46 +1,54 @@
 """Implementation of a space that represents finite-length sequences."""
 from __future__ import annotations
 
-import collections.abc
 import typing
-from typing import Any
+from typing import Any, Union
 
 import numpy as np
-import numpy.typing as npt
+from numpy.typing import NDArray
 
+import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
-class Sequence(Space[typing.Tuple[Any, ...]]):
+class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
     r"""This space represent sets of finite-length sequences.
 
     This space represents the set of tuples of the form :math:`(a_0, \dots, a_n)` where the :math:`a_i` belong
     to some space that is specified during initialization and the integer :math:`n` is not fixed
 
-    Example::
-        >>> from gymnasium.spaces import Box
-        >>> space = Sequence(Box(0, 1))
-        >>> space.sample()
-        (array([0.0259352], dtype=float32),)
-        >>> space.sample()
-        (array([0.80977976], dtype=float32), array([0.80066574], dtype=float32), array([0.77165383], dtype=float32))
+    Example:
+        >>> from gymnasium.spaces import Sequence, Box
+        >>> observation_space = Sequence(Box(0, 1), seed=2)
+        >>> observation_space.sample()
+        (array([0.26161215], dtype=float32),)
+        >>> observation_space = Sequence(Box(0, 1), seed=0)
+        >>> observation_space.sample()
+        (array([0.6369617], dtype=float32), array([0.26978672], dtype=float32), array([0.04097353], dtype=float32))
     """
 
     def __init__(
         self,
         space: Space[Any],
         seed: int | np.random.Generator | None = None,
+        stack: bool = False,
     ):
         """Constructor of the :class:`Sequence` space.
 
         Args:
             space: Elements in the sequences this space represent must belong to this space.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
+            stack: If `True` then the resulting samples would be stacked.
         """
         assert isinstance(
             space, Space
         ), f"Expects the feature space to be instance of a gym Space, actual type: {type(space)}"
         self.feature_space = space
+        self.stack = stack
+        if self.stack:
+            self.batched_feature_space: Space = gym.vector.utils.batch_space(
+                self.feature_space, 1
+            )
 
         # None for shape and dtype, since it'll require special handling
         super().__init__(None, None, seed)
@@ -61,11 +69,11 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
         mask: None
         | (
             tuple[
-                None | np.integer | npt.NDArray[np.integer],
+                None | np.integer | NDArray[np.integer],
                 Any,
             ]
         ) = None,
-    ) -> tuple[Any]:
+    ) -> tuple[Any] | Any:
         """Generates a single random sample from this space.
 
         Args:
@@ -113,31 +121,59 @@ class Sequence(Space[typing.Tuple[Any, ...]]):
             # The choice of 0.25 is arbitrary
             length = self.np_random.geometric(0.25)
 
-        return tuple(
+        # Generate sample values from feature_space.
+        sampled_values = tuple(
             self.feature_space.sample(mask=feature_mask) for _ in range(length)
         )
 
+        if self.stack:
+            # Concatenate values if stacked.
+            out = gym.vector.utils.create_empty_array(
+                self.feature_space, len(sampled_values)
+            )
+            return gym.vector.utils.concatenate(self.feature_space, sampled_values, out)
+
+        return sampled_values
+
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        return isinstance(x, collections.abc.Sequence) and all(
-            self.feature_space.contains(item) for item in x
-        )
+        # by definition, any sequence is an iterable
+        if self.stack:
+            return all(
+                item in self.feature_space
+                for item in gym.vector.utils.iterate(self.batched_feature_space, x)
+            )
+        else:
+            return isinstance(x, tuple) and all(
+                self.feature_space.contains(item) for item in x
+            )
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
-        return f"Sequence({self.feature_space})"
+        return f"Sequence({self.feature_space}, stack={self.stack})"
 
     def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[Any, ...]]
+        self, sample_n: typing.Sequence[tuple[Any, ...] | Any]
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
-        # serialize as dict-repr of vectors
-        return [self.feature_space.to_jsonable(list(sample)) for sample in sample_n]
+        if self.stack:
+            return self.batched_feature_space.to_jsonable(sample_n)
+        else:
+            return [self.feature_space.to_jsonable(sample) for sample in sample_n]
 
-    def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...]]:
+    def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...] | Any]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        return [tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n]
+        if self.stack:
+            return self.batched_feature_space.from_jsonable(sample_n)
+        else:
+            return [
+                tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n
+            ]
 
     def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
-        return isinstance(other, Sequence) and self.feature_space == other.feature_space
+        return (
+            isinstance(other, Sequence)
+            and self.feature_space == other.feature_space
+            and self.stack == other.stack
+        )

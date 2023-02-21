@@ -4,9 +4,12 @@ __pycache__
 build/
 _build/
 
-tutorials/*
-!tutorials/*.md
-!tutorials/*.py
+tutorials/**/*.pickle
+tutorials/**/images/
+tutorials/**/*.rst
+tutorials/**/*.ipynb
+tutorials/**/*.zip
+!tutorials/**/README.rst
 
 environments/**/list.html
 environments/**/complete_list.html

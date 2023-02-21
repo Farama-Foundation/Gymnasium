@@ -44,12 +44,12 @@ class Box(Space[NDArray[Any]]):
     * Identical bound for each dimension::
 
         >>> Box(low=-1.0, high=2.0, shape=(3, 4), dtype=np.float32)
-        Box(3, 4)
+        Box(-1.0, 2.0, (3, 4), float32)
 
     * Independent bound for each dimension::
 
         >>> Box(low=np.array([-1.0, -2.0]), high=np.array([2.0, 4.0]), dtype=np.float32)
-        Box(2,)
+        Box([-1. -2.], [2. 4.], (2,), float32)
     """
 
     def __init__(
@@ -69,8 +69,8 @@ class Box(Space[NDArray[Any]]):
         this value across all dimensions.
 
         Args:
-            low (Union[SupportsFloat, np.ndarray]): Lower bounds of the intervals.
-            high (Union[SupportsFloat, np.ndarray]): Upper bounds of the intervals.
+            low (SupportsFloat | np.ndarray): Lower bounds of the intervals. If integer, must be at least ``-2**63``.
+            high (SupportsFloat | np.ndarray]): Upper bounds of the intervals. If integer, must be at most ``2**63 - 2``.
             shape (Optional[Sequence[int]]): The shape is inferred from the shape of `low` or `high` `np.ndarray`s with
                 `low` and `high` scalars defaulting to a shape of (1,)
             dtype: The dtype of the elements of the space. If this is an integer type, the :class:`Box` is essentially a discrete space.
@@ -104,12 +104,13 @@ class Box(Space[NDArray[Any]]):
 
         # Capture the boundedness information before replacing np.inf with get_inf
         _low = np.full(shape, low, dtype=float) if is_float_integer(low) else low
-        self.bounded_below: bool = -np.inf < _low
-        _high = np.full(shape, high, dtype=float) if is_float_integer(high) else high
-        self.bounded_above: bool = np.inf > _high
+        self.bounded_below: NDArray[np.bool_] = -np.inf < _low
 
-        low: NDArray[Any] = _broadcast(low, dtype, shape, inf_sign="-")
-        high: NDArray[Any] = _broadcast(high, dtype, shape, inf_sign="+")
+        _high = np.full(shape, high, dtype=float) if is_float_integer(high) else high
+        self.bounded_above: NDArray[np.bool_] = np.inf > _high
+
+        low = _broadcast(low, self.dtype, shape, inf_sign="-")
+        high = _broadcast(high, self.dtype, shape, inf_sign="+")
 
         assert isinstance(low, np.ndarray)
         assert (
@@ -211,13 +212,14 @@ class Box(Space[NDArray[Any]]):
 
         sample[upp_bounded] = (
             -self.np_random.exponential(size=upp_bounded[upp_bounded].shape)
-            + self.high[upp_bounded]
+            + high[upp_bounded]
         )
 
         sample[bounded] = self.np_random.uniform(
             low=self.low[bounded], high=high[bounded], size=bounded[bounded].shape
         )
-        if self.dtype.kind == "i":
+
+        if self.dtype.kind in ["i", "u", "b"]:
             sample = np.floor(sample)
 
         return sample.astype(self.dtype)
@@ -238,9 +240,9 @@ class Box(Space[NDArray[Any]]):
             and np.all(x <= self.high)
         )
 
-    def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[NDArray[Any]]:
+    def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[list]:
         """Convert a batch of samples from this space to a JSONable data type."""
-        return np.array(sample_n).tolist()
+        return [sample.tolist() for sample in sample_n]
 
     def from_jsonable(self, sample_n: Sequence[float | int]) -> list[NDArray[Any]]:
         """Convert a JSONable data type to a batch of samples from this space."""
@@ -279,7 +281,7 @@ class Box(Space[NDArray[Any]]):
             self.high_repr = _short_repr(self.high)
 
 
-def get_inf(dtype: np.dtype, sign: str) -> SupportsFloat:
+def get_inf(dtype: np.dtype, sign: str) -> int | float:
     """Returns an infinite that doesn't break things.
 
     Args:

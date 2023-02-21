@@ -13,9 +13,10 @@ class TransformReward(RewardWrapper):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.make('CartPole-v1')
+        >>> from gymnasium.wrappers import TransformReward
+        >>> env = gym.make("CartPole-v1")
         >>> env = TransformReward(env, lambda r: 0.01*r)
-        >>> env.reset()
+        >>> _ = env.reset()
         >>> observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
         >>> reward
         0.01

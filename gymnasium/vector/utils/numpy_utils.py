@@ -1,7 +1,7 @@
 """Numpy utility functions: concatenate space samples and create empty array."""
 from collections import OrderedDict
 from functools import singledispatch
-from typing import Iterable, Union
+from typing import Callable, Iterable, Union
 
 import numpy as np
 
@@ -25,16 +25,6 @@ def concatenate(
 ) -> Union[tuple, dict, np.ndarray]:
     """Concatenate multiple samples from space into a single object.
 
-    Example::
-
-        >>> from gymnasium.spaces import Box
-        >>> space = Box(low=0, high=1, shape=(3,), dtype=np.float32)
-        >>> out = np.zeros((2, 3), dtype=np.float32)
-        >>> items = [space.sample() for _ in range(2)]
-        >>> concatenate(space, items, out)
-        array([[0.6348213 , 0.28607962, 0.60760117],
-               [0.87383074, 0.192658  , 0.2148103 ]], dtype=float32)
-
     Args:
         space: Observation space of a single environment in the vectorized environment.
         items: Samples to be concatenated.
@@ -45,6 +35,16 @@ def concatenate(
 
     Raises:
         ValueError: Space is not a valid :class:`gym.Space` instance
+
+    Example:
+        >>> from gymnasium.spaces import Box
+        >>> import numpy as np
+        >>> space = Box(low=0, high=1, shape=(3,), seed=42, dtype=np.float32)
+        >>> out = np.zeros((2, 3), dtype=np.float32)
+        >>> items = [space.sample() for _ in range(2)]
+        >>> concatenate(space, items, out)
+        array([[0.77395606, 0.43887845, 0.85859793],
+               [0.697368  , 0.09417735, 0.97562236]], dtype=float32)
     """
     raise ValueError(
         f"Space of type `{type(space)}` is not a valid `gymnasium.Space` instance."
@@ -84,21 +84,9 @@ def _concatenate_custom(space, items, out):
 
 @singledispatch
 def create_empty_array(
-    space: Space, n: int = 1, fn: callable = np.zeros
+    space: Space, n: int = 1, fn: Callable[..., np.ndarray] = np.zeros
 ) -> Union[tuple, dict, np.ndarray]:
     """Create an empty (possibly nested) numpy array.
-
-    Example::
-
-        >>> from gymnasium.spaces import Box, Dict
-        >>> space = Dict({
-        ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
-        ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
-        >>> create_empty_array(space, n=2, fn=np.zeros)
-        OrderedDict([('position', array([[0., 0., 0.],
-                                         [0., 0., 0.]], dtype=float32)),
-                     ('velocity', array([[0., 0.],
-                                         [0., 0.]], dtype=float32))])
 
     Args:
         space: Observation space of a single environment in the vectorized environment.
@@ -110,6 +98,17 @@ def create_empty_array(
 
     Raises:
         ValueError: Space is not a valid :class:`gym.Space` instance
+
+    Example:
+        >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
+        >>> space = Dict({
+        ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
+        ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
+        >>> create_empty_array(space, n=2, fn=np.zeros)
+        OrderedDict([('position', array([[0., 0., 0.],
+               [0., 0., 0.]], dtype=float32)), ('velocity', array([[0., 0.],
+               [0., 0.]], dtype=float32))])
     """
     raise ValueError(
         f"Space of type `{type(space)}` is not a valid `gymnasium.Space` instance."

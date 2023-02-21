@@ -2,7 +2,7 @@
 
 This folder contains the documentation for [Gymnasium](https://github.com/Farama-Foundation/Gymnasium).
 
-If you are modifying a non-environment page or an atari environment page, please PR this repo. Otherwise, follow the steps below:
+If you are modifying an atari environment page, please follow the instructions below. For more information about how to contribute to the documentation go to our [CONTRIBUTING.md](https://github.com/Farama-Foundation/Celshast/blob/main/CONTRIBUTING.md)
 
 ## Instructions for modifying environment pages
 
@@ -16,11 +16,11 @@ Otherwise, fork Gymnasium and edit the docstring in the environment's Python fil
 
 #### Atari env
 
-For Atari envs, add a Markdown file into `pages/environments/atari` then complete the **other steps**.
+For Atari envs, add a Markdown file into `docs/environments/atari` then complete the [other steps](#other-steps).
 
 #### Non-Atari env
 
-Ensure the environment is in Gymnasium (or your fork). Ensure that the environment's Python file has a properly formatted markdown docstring. Pip install Gymnasium (or your fork) then run `docs/scripts/gen_mds.py`. This will automatically generate a md page for the environment. Then complete the [other steps](#other-steps).
+Ensure the environment is in Gymnasium (or your fork). Ensure that the environment's Python file has a properly formatted markdown docstring. Install using `pip install -e .` and then run `docs/scripts/gen_mds.py`. This will automatically generate a md page for the environment. Then complete the [other steps](#other-steps).
 
 #### Other steps
 
@@ -33,15 +33,14 @@ Install the required packages and Gymnasium (or your fork):
 
 ```
 pip install gymnasium
-cd docs
-pip install -r requirements.txt  # To install document builder requirements.
+pip install -r docs/requirements.txt
 ```
 
 To build the documentation once:
 
 ```
 cd docs
-make dirhtml _build
+make dirhtml
 ```
 
 To rebuild the documentation automatically every time a change is made:

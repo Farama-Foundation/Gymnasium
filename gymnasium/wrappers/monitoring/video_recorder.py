@@ -45,7 +45,7 @@ class VideoRecorder:
             import moviepy  # noqa: F401
         except ImportError as e:
             raise error.DependencyNotInstalled(
-                "MoviePy is not installed, run `pip install moviepy`"
+                "moviepy is not installed, run `pip install moviepy`"
             ) from e
 
         self._async = env.metadata.get("semantics.async")
@@ -153,7 +153,7 @@ class VideoRecorder:
                 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
             except ImportError as e:
                 raise error.DependencyNotInstalled(
-                    "MoviePy is not installed, run `pip install moviepy`"
+                    "moviepy is not installed, run `pip install moviepy`"
                 ) from e
 
             clip = ImageSequenceClip(self.recorded_frames, fps=self.frames_per_sec)

@@ -24,6 +24,13 @@ TESTING_FUNDAMENTAL_SPACES = [
     Box(low=np.array([-10.0, 0.0]), high=np.array([10.0, 10.0]), dtype=np.float64),
     Box(low=-np.inf, high=0.0, shape=(2, 1)),
     Box(low=0.0, high=np.inf, shape=(2, 1)),
+    Box(low=0, high=255, shape=(2, 2, 3), dtype=np.uint8),
+    Box(low=np.array([0, 0, 1]), high=np.array([1, 0, 1]), dtype=np.bool_),
+    Box(
+        low=np.array([-np.inf, -np.inf, 0, -10]),
+        high=np.array([np.inf, 0, np.inf, 10]),
+        dtype=np.int32,
+    ),
     MultiDiscrete([2, 2]),
     MultiDiscrete([[2, 3], [3, 2]]),
     MultiBinary(8),
@@ -97,8 +104,17 @@ TESTING_COMPOSITE_SPACES = [
     Sequence(Discrete(4)),
     Sequence(Dict({"feature": Box(0, 1, (3,))})),
     Sequence(Graph(node_space=Box(-100, 100, shape=(2, 2)), edge_space=Discrete(4))),
+    Sequence(Box(low=0.0, high=1.0), stack=True),
+    Sequence(Dict({"a": Box(0, 1, (3,)), "b": Discrete(5)}), stack=True),
 ]
 TESTING_COMPOSITE_SPACES_IDS = [f"{space}" for space in TESTING_COMPOSITE_SPACES]
 
 TESTING_SPACES: List[Space] = TESTING_FUNDAMENTAL_SPACES + TESTING_COMPOSITE_SPACES
 TESTING_SPACES_IDS = TESTING_FUNDAMENTAL_SPACES_IDS + TESTING_COMPOSITE_SPACES_IDS
+
+CUSTOM_SPACES = [
+    Space(),
+    Tuple([Space(), Space(), Space()]),
+    Dict(a=Space(), b=Space()),
+]
+CUSTOM_SPACES_IDS = [f"{space}" for space in CUSTOM_SPACES]

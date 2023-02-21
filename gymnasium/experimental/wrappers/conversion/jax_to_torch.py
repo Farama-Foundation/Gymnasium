@@ -17,7 +17,7 @@ from typing import Any, Iterable, Mapping, SupportsFloat, Union
 from gymnasium import Env, Wrapper
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
+from gymnasium.experimental.wrappers.conversion.jax_to_numpy import jax_to_numpy
 
 
 try:
@@ -149,11 +149,11 @@ class JaxToTorchV0(Wrapper):
         """
         if torch is None:
             raise DependencyNotInstalled(
-                "Torch is not installed, run `pip install torch`"
+                "torch is not installed, run `pip install torch`"
             )
         elif jnp is None:
             raise DependencyNotInstalled(
-                "Jax is not installed, run `pip install gymnasium[jax]`"
+                "jax is not installed, run `pip install gymnasium[jax]`"
             )
 
         super().__init__(env)

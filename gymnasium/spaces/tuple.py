@@ -15,12 +15,11 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
 
     Elements of this space are tuples of elements of the constituent spaces.
 
-    Example usage::
-
-        >>> from gymnasium.spaces import Box, Discrete
-        >>> observation_space = Tuple((Discrete(2), Box(-1, 1, shape=(2,))))
+    Example:
+        >>> from gymnasium.spaces import Tuple, Box, Discrete
+        >>> observation_space = Tuple((Discrete(2), Box(-1, 1, shape=(2,))), seed=42)
         >>> observation_space.sample()
-        (0, array([0.03633198, 0.42370757], dtype=float32))
+        (0, array([-0.3991573 ,  0.21649833], dtype=float32))
     """
 
     def __init__(
@@ -40,7 +39,7 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         for space in self.spaces:
             assert isinstance(
                 space, Space
-            ), "Elements of the tuple must be instances of gym.Space"
+            ), f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
         super().__init__(None, None, seed)  # type: ignore
 
     @property

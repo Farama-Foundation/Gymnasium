@@ -10,29 +10,29 @@ with (possibly optional) parameters to the wrapper's constructor.
 
     >>> import gymnasium as gym
     >>> from gymnasium.wrappers import RescaleAction
-    >>> base_env = gym.make("BipedalWalker-v3")
+    >>> base_env = gym.make("Hopper-v4")
     >>> base_env.action_space
-    Box([-1. -1. -1. -1.], [1. 1. 1. 1.], (4,), float32)
+    Box(-1.0, 1.0, (3,), float32)
     >>> wrapped_env = RescaleAction(base_env, min_action=0, max_action=1)
     >>> wrapped_env.action_space
-    Box([0. 0. 0. 0.], [1. 1. 1. 1.], (4,), float32)
+    Box(-1.0, 1.0, (3,), float32)
 
 You can access the environment underneath the **first** wrapper by using the :attr:`gymnasium.Wrapper.env` attribute.
 As the :class:`gymnasium.Wrapper` class inherits from :class:`gymnasium.Env` then :attr:`gymnasium.Wrapper.env` can be another wrapper.
 
     >>> wrapped_env
-    <RescaleAction<TimeLimit<OrderEnforcing<BipedalWalker<BipedalWalker-v3>>>>>
+    <RescaleAction<TimeLimit<OrderEnforcing<PassiveEnvChecker<HopperEnv<Hopper-v4>>>>>>
     >>> wrapped_env.env
-    <TimeLimit<OrderEnforcing<BipedalWalker<BipedalWalker-v3>>>>
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<HopperEnv<Hopper-v4>>>>>
 
 If you want to get to the environment underneath **all** of the layers of wrappers, you can use the
 :attr:`gymnasium.Wrapper.unwrapped` attribute.
 If the environment is already a bare environment, the :attr:`gymnasium.Wrapper.unwrapped` attribute will just return itself.
 
     >>> wrapped_env
-    <RescaleAction<TimeLimit<OrderEnforcing<BipedalWalker<BipedalWalker-v3>>>>>
-    >>> wrapped_env.unwrapped
-    <gymnasium.envs.box2d.bipedal_walker.BipedalWalker object at 0x7f87d70712d0>
+    <RescaleAction<TimeLimit<OrderEnforcing<PassiveEnvChecker<HopperEnv<Hopper-v4>>>>>>
+    >>> wrapped_env.unwrapped # doctest: +SKIP
+    <gymnasium.envs.mujoco.hopper_v4.HopperEnv object at 0x7fbb5efd0490>
 
 There are three common things you might want a wrapper to do:
 
