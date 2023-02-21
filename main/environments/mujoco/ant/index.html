@@ -805,7 +805,7 @@ where the elements correspond to the following:</p>
 </tbody>
 </table>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> then the observation space is extended by 14*6 = 84 elements, which are contact forces
+<p>If version &lt; <code class="docutils literal notranslate"><span class="pre">v4</span></code> or <code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> then the observation space is extended by 14*6 = 84 elements, which are contact forces
 (external forces - force x, y, z and torque x, y, z) applied to the
 center of mass of each of the links. The 14 links are: the ground link,
 the torso link, and 3 links for each leg (1 + 1 + 12) with the 6 external forces.</p>
@@ -835,7 +835,7 @@ force is too large. It is calculated <em><code class="docutils literal notransla
 force to <code class="docutils literal notranslate"><span class="pre">contact_force_range</span></code>)<sup>2</sup>)</em>.</p></li>
 </ul>
 <p>The total reward returned is <em><strong>reward</strong></em> <em>=</em> <em>healthy_reward + forward_reward - ctrl_cost</em>.</p>
-<p>But if <code class="docutils literal notranslate"><span class="pre">use_contact_forces=True</span></code>
+<p>But if <code class="docutils literal notranslate"><span class="pre">use_contact_forces=True</span></code> or version &lt; <code class="docutils literal notranslate"><span class="pre">v4</span></code>
 The total reward returned is <em><strong>reward</strong></em> <em>=</em> <em>healthy_reward + forward_reward - ctrl_cost - contact_cost</em>.</p>
 <p>In either case <code class="docutils literal notranslate"><span class="pre">info</span></code> will also contain the individual reward terms.</p>
 </section>
