@@ -116,10 +116,8 @@ def __getattr__(wrapper_name):
 
     try:
         version = int(re.findall(r"\d+", wrapper_name)[-1])
-        invalid_version = False
     except IndexError:
         version = -1
-        invalid_version = True
 
     # Get all wrappers that start with the base wrapper name
     wrappers = [name for name in __all__ if name.startswith(base_name)]
@@ -134,7 +132,7 @@ def __getattr__(wrapper_name):
     latest_version = max([int(re.findall(r"\d+", name)[-1]) for name in wrappers])
 
     # Raise an InvalidVersionWrapper exception if the version is not a digit
-    if invalid_version:
+    if version < 0:
         raise InvalidVersionWrapper(
             f"{wrapper_name} is not a valid version number, use {base_name}{latest_version} instead."
         )
