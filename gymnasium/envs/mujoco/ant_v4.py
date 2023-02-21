@@ -84,7 +84,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 26  |angular velocity of the angle between back right links        | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angle (rad)              |
 
 
-    If `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
+    If version < `v4` or `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
     (external forces - force x, y, z and torque x, y, z) applied to the
     center of mass of each of the links. The 14 links are: the ground link,
     the torso link, and 3 links for each leg (1 + 1 + 12) with the 6 external forces.
@@ -116,7 +116,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*.
 
-    But if `use_contact_forces=True`
+    But if `use_contact_forces=True` or version < `v4`
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
 
     In either case `info` will also contain the individual reward terms.
