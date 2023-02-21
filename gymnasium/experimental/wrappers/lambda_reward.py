@@ -93,7 +93,7 @@ class ClipRewardV0(LambdaRewardV0):
         super().__init__(env, lambda x: np.clip(x, a_min=min_reward, a_max=max_reward))
 
 
-class NormalizeRewardV0(gym.Wrapper):
+class NormalizeRewardV1(gym.Wrapper):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.

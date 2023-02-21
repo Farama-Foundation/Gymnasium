@@ -100,7 +100,7 @@ We aimed to replace the wrappers in gymnasium v0.30.0 with these experimental wr
     * - `supersuit.clip_reward_v0 <https://github.com/Farama-Foundation/SuperSuit/blob/314831a7d18e7254f455b181694c049908f95155/supersuit/generic_wrappers/basic_wrappers.py#L74>`_
       - :class:`experimental.wrappers.ClipRewardV0`
     * - :class:`wrappers.NormalizeReward`
-      - :class:`experimental.wrappers.NormalizeRewardV0`
+      - :class:`experimental.wrappers.NormalizeRewardV1`
 ```
 
 ### Common Wrappers

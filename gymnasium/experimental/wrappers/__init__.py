@@ -1,5 +1,6 @@
 """Experimental Wrappers."""
 # isort: skip_file
+import re
 
 from gymnasium.experimental.wrappers.lambda_action import (
     LambdaActionV0,
@@ -21,7 +22,7 @@ from gymnasium.experimental.wrappers.lambda_observations import (
 from gymnasium.experimental.wrappers.lambda_reward import (
     ClipRewardV0,
     LambdaRewardV0,
-    NormalizeRewardV0,
+    NormalizeRewardV1,
 )
 from gymnasium.experimental.wrappers.stateful_action import StickyActionV0
 from gymnasium.experimental.wrappers.stateful_observation import (
@@ -72,7 +73,7 @@ __all__ = [
     # --- Reward wrappers ---
     "LambdaRewardV0",
     "ClipRewardV0",
-    "NormalizeRewardV0",
+    "NormalizeRewardV1",
     # --- Common ---
     "AutoresetV0",
     "PassiveEnvCheckerV0",
@@ -111,8 +112,14 @@ def __getattr__(wrapper_name):
         InvalidVersionWrapper: If the version doesn't exist.
         AttributeError: If the wrapper does not exist.
     """
-    base_name = wrapper_name[:-1]
-    version = wrapper_name[-1]
+    base_name = wrapper_name[:-2]
+
+    try:
+        version = int(re.findall(r"\d+", wrapper_name)[-1])
+        invalid_version = False
+    except IndexError:
+        version = -1
+        invalid_version = True
 
     # Get all wrappers that start with the base wrapper name
     wrappers = [name for name in __all__ if name.startswith(base_name)]
@@ -124,15 +131,13 @@ def __getattr__(wrapper_name):
         )
 
     # Get the latest version of the wrapper
-    latest_version = max([int(name[-1]) for name in wrappers])
+    latest_version = max([int(re.findall(r"\d+", name)[-1]) for name in wrappers])
 
     # Raise an InvalidVersionWrapper exception if the version is not a digit
-    if not version.isdigit():
+    if invalid_version:
         raise InvalidVersionWrapper(
             f"{wrapper_name} is not a valid version number, use {base_name}{latest_version} instead."
         )
-
-    version = int(version)
 
     # Raise a DeprecatedWrapper exception if the version is not the latest
     if version < latest_version:
