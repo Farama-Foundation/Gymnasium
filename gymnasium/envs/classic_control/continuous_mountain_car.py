@@ -144,7 +144,6 @@ class Continuous_MountainCarEnv(gym.Env):
         )
 
     def step(self, action: np.ndarray):
-
         position = self.state[0]
         velocity = self.state[1]
         force = min(max(action[0], self.min_action), self.max_action)
