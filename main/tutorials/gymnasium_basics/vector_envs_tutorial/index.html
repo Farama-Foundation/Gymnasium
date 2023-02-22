@@ -809,7 +809,6 @@ use the rest of the timesteps to begin a new one).</p>
 
 <span class="c1"># use tqdm to get a progress bar for training</span>
 <span class="k">for</span> <span class="n">sample_phase</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_updates</span><span class="p">)):</span>
-
     <span class="c1"># we don&#39;t have to reset the envs, they just continue playing</span>
     <span class="c1"># until the episode is over and then reset automatically</span>
 
@@ -825,7 +824,6 @@ use the rest of the timesteps to begin a new one).</p>
 
     <span class="c1"># play n steps in our parallel environments to collect data</span>
     <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">):</span>
-
         <span class="c1"># select an action A_{t} using S_{t} as input for the agent</span>
         <span class="n">actions</span><span class="p">,</span> <span class="n">action_log_probs</span><span class="p">,</span> <span class="n">state_value_preds</span><span class="p">,</span> <span class="n">entropy</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">select_action</span><span class="p">(</span>
             <span class="n">states</span>
@@ -1024,7 +1022,6 @@ parallel environments to achieve optimal performance.</p>
     <span class="c1"># play one episode</span>
     <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
-
         <span class="c1"># select an action A_{t} using S_{t} as input for the agent</span>
         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
             <span class="n">action</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">select_action</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span>
