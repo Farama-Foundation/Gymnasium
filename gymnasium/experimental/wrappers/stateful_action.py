@@ -4,18 +4,20 @@ from __future__ import annotations
 from typing import Any
 
 import gymnasium as gym
-from gymnasium.core import ActionWrapper, ActType, WrapperActType, WrapperObsType
+from gymnasium.core import ActionWrapper, ActType, ObsType
 from gymnasium.error import InvalidProbability
 
 
-class StickyActionV0(ActionWrapper):
+class StickyActionV0(ActionWrapper[ObsType, ActType, ActType]):
     """Wrapper which adds a probability of repeating the previous action.
 
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_
     in Section 5.2 on page 12.
     """
 
-    def __init__(self, env: gym.Env, repeat_action_probability: float):
+    def __init__(
+        self, env: gym.Env[ObsType, ActType], repeat_action_probability: float
+    ):
         """Initialize StickyAction wrapper.
 
         Args:
@@ -29,17 +31,17 @@ class StickyActionV0(ActionWrapper):
 
         super().__init__(env)
         self.repeat_action_probability = repeat_action_probability
-        self.last_action: WrapperActType | None = None
+        self.last_action: ActType | None = None
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the environment."""
         self.last_action = None
 
         return super().reset(seed=seed, options=options)
 
-    def action(self, action: WrapperActType) -> ActType:
+    def action(self, action: ActType) -> ActType:
         """Execute the action."""
         if (
             self.last_action is not None

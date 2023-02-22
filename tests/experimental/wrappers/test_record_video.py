@@ -23,6 +23,7 @@ def test_record_video_using_default_trigger():
     env.close()
     assert os.path.isdir("videos")
     mp4_files = [file for file in os.listdir("videos") if file.endswith(".mp4")]
+    assert env.episode_trigger is not None
     assert len(mp4_files) == sum(
         env.episode_trigger(i) for i in range(episode_count + 1)
     )
@@ -46,6 +47,7 @@ def test_record_video_while_rendering():
     env.close()
     assert os.path.isdir("videos")
     mp4_files = [file for file in os.listdir("videos") if file.endswith(".mp4")]
+    assert env.episode_trigger is not None
     assert len(mp4_files) == sum(
         env.episode_trigger(i) for i in range(episode_count + 1)
     )

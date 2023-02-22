@@ -26,10 +26,10 @@ from gymnasium.spaces import Box, Dict, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
-class DelayObservationV0(gym.ObservationWrapper):
+class DelayObservationV0(gym.ObservationWrapper[ObsType, ActType, ObsType]):
     """Wrapper which adds a delay to the returned observation."""
 
-    def __init__(self, env: gym.Env, delay: int):
+    def __init__(self, env: gym.Env[ObsType, ActType], delay: int):
         """Initialize the DelayObservation wrapper.
 
         Args:
@@ -45,13 +45,13 @@ class DelayObservationV0(gym.ObservationWrapper):
         assert 0 < delay
 
         self.delay: Final[int] = delay
-        self.observation_queue: Final[deque] = deque()
+        self.observation_queue: Final[deque[ObsType]] = deque()
 
         super().__init__(env)
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment, clearing the observation queue."""
         self.observation_queue.clear()
 
@@ -67,7 +67,7 @@ class DelayObservationV0(gym.ObservationWrapper):
         return jp.zeros_like(observation)
 
 
-class TimeAwareObservationV0(gym.ObservationWrapper):
+class TimeAwareObservationV0(gym.ObservationWrapper[WrapperObsType, ActType, ObsType]):
     """Augment the observation with time information of the episode.
 
     Time can be represented as a normalized value between [0,1]
@@ -104,7 +104,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         flatten: bool = False,
         normalize_time: bool = True,
         *,
@@ -212,7 +212,7 @@ class TimeAwareObservationV0(gym.ObservationWrapper):
         return super().reset(seed=seed, options=options)
 
 
-class FrameStackObservationV0(gym.Wrapper):
+class FrameStackObservationV0(gym.Wrapper[WrapperObsType, ActType, ObsType, ActType]):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
@@ -302,7 +302,7 @@ class FrameStackObservationV0(gym.Wrapper):
             info,
         )
 
-    def _init_stacked_obs(self) -> deque:
+    def _init_stacked_obs(self) -> deque[ObsType]:
         return deque(
             iterate(
                 self.observation_space,

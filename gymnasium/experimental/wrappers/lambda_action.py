@@ -16,18 +16,18 @@ except ImportError as e:
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType, WrapperActType
+from gymnasium.core import ActType, ObsType, WrapperActType
 from gymnasium.spaces import Box, Space
 
 
-class LambdaActionV0(gym.ActionWrapper):
+class LambdaActionV0(gym.ActionWrapper[ObsType, WrapperActType, ActType]):
     """A wrapper that provides a function to modify the action passed to :meth:`step`."""
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         func: Callable[[WrapperActType], ActType],
-        action_space: Space | None,
+        action_space: Space[WrapperActType] | None,
     ):
         """Initialize LambdaAction.
 
@@ -47,7 +47,7 @@ class LambdaActionV0(gym.ActionWrapper):
         return self.func(action)
 
 
-class ClipActionV0(LambdaActionV0):
+class ClipActionV0(LambdaActionV0[ObsType, WrapperActType, ActType]):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -63,7 +63,7 @@ class ClipActionV0(LambdaActionV0):
         ... # Executes the action np.array([1.0, -1.0, 0]) in the base environment
     """
 
-    def __init__(self, env: gym.Env):
+    def __init__(self, env: gym.Env[ObsType, ActType]):
         """A wrapper for clipping continuous actions within the valid bound.
 
         Args:
@@ -83,7 +83,7 @@ class ClipActionV0(LambdaActionV0):
         )
 
 
-class RescaleActionV0(LambdaActionV0):
+class RescaleActionV0(LambdaActionV0[ObsType, WrapperActType, ActType]):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
@@ -107,7 +107,7 @@ class RescaleActionV0(LambdaActionV0):
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         min_action: float | int | np.ndarray,
         max_action: float | int | np.ndarray,
     ):
