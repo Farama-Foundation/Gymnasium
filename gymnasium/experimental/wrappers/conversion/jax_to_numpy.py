@@ -9,7 +9,7 @@ from typing import Any, Iterable, Mapping, SupportsFloat
 import numpy as np
 
 from gymnasium import Env, Wrapper
-from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
+from gymnasium.core import ActType, ObsType, RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
 
@@ -92,7 +92,7 @@ if jnp is not None:
         return type(value)(jax_to_numpy(v) for v in value)
 
 
-class JaxToNumpyV0(Wrapper):
+class JaxToNumpyV0(Wrapper[WrapperObsType, WrapperActType, ObsType, ActType]):
     """Wraps a jax environment so that it can be interacted with through numpy arrays.
 
     Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
@@ -102,7 +102,7 @@ class JaxToNumpyV0(Wrapper):
         The reason for this is jax does not support non-array values, therefore numpy ``int_32(5) -> DeviceArray([5], dtype=jnp.int23)``
     """
 
-    def __init__(self, env: Env):
+    def __init__(self, env: Env[ObsType, ActType]):
         """Wraps an environment such that the input and outputs are numpy arrays.
 
         Args:
