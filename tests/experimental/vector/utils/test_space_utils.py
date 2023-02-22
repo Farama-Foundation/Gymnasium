@@ -1,21 +1,23 @@
 """Testing `gymnasium.experimental.vector.utils.space_utils` functions."""
 
 import copy
-from collections import OrderedDict
+import re
+from typing import Iterable
 
-import numpy as np
 import pytest
-from numpy.testing import assert_array_equal
 
+from gymnasium import Space
+from gymnasium.error import CustomSpaceError
 from gymnasium.experimental.vector.utils import (
     batch_space,
     concatenate,
     create_empty_array,
     iterate,
 )
+from gymnasium.spaces import Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from tests.experimental.vector.utils.utils import is_rng_equal
-from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
+from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS, CustomSpace
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
@@ -24,6 +26,7 @@ def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int
     """Test all space_utils functions using them together."""
     # Batch the space and create a sample
     batched_space = batch_space(space, n)
+    assert isinstance(batched_space, Space)
     batched_sample = batched_space.sample()
     assert batched_sample in batched_space
 
@@ -34,12 +37,21 @@ def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int
     assert len(unbatched_samples) == n
     assert all(item in space for item in unbatched_samples)
 
-    # Generate samples from the original space and concatenate using create_empty_array into a single object
+    # Create an empty array and check that space is within the batch space
+    array = create_empty_array(space, n)
+    # We do not check that the generated array is within the batched_space.
+    # assert array in batched_space
+    unbatched_array = list(iterate(batched_space, array))
+    assert len(unbatched_array) == n
+    # assert all(item in space for item in unbatched_array)
+
+    # Generate samples from the original space and concatenate using array into a single object
     space_samples = [space.sample() for _ in range(n)]
     assert all(item in space for item in space_samples)
-    out = create_empty_array(space, n)
-    concatenated_samples_array = concatenate(space, space_samples, out)
+    concatenated_samples_array = concatenate(space, space_samples, array)
+    # `concatenate` does not necessarily use the out object as the returned object
     # assert out is concatenated_samples_array
+    assert concatenated_samples_array in batched_space
 
     # Iterate over the samples and check that the concatenated samples == original samples
     iterated_samples = iterate(batched_space, concatenated_samples_array)
@@ -103,3 +115,42 @@ def test_batch_space_different_samples(space: Space, n: int, base_seed: int):
     assert not all(
         data_equivalence(element, unbatched_samples[0]) for element in unbatched_samples
     ), unbatched_samples
+
+
+@pytest.mark.parametrize(
+    "func, n_args",
+    [(batch_space, 1), (concatenate, 2), (iterate, 1), (create_empty_array, 2)],
+)
+def test_non_space(func, n_args):
+    """Test spaces for vector utility functions on the error produced with unknown spaces."""
+    args = [None for _ in range(n_args)]
+    func_name = func.__name__
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            f"The space provided to `{func_name}` is not a gymnasium Space instance, type: <class 'str'>, space"
+        ),
+    ):
+        func("space", *args)
+
+
+def test_custom_space():
+    """Test custom spaces with space util functions."""
+    custom_space = CustomSpace()
+
+    batched_space = batch_space(custom_space, n=2)
+    assert batched_space == Tuple([custom_space, custom_space])
+
+    with pytest.raises(
+        CustomSpaceError,
+        match=re.escape(
+            "Space of type `<class 'tests.spaces.utils.CustomSpace'>` doesn't have an registered `iterate` function. Register `<class 'tests.spaces.utils.CustomSpace'>` for `iterate` to support it."
+        ),
+    ):
+        iterate(custom_space, None)
+
+    concatenated_items = concatenate(custom_space, (None, None), out=None)
+    assert concatenated_items == (None, None)
+
+    empty_array = create_empty_array(custom_space)
+    assert empty_array is None

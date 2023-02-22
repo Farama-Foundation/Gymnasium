@@ -10,12 +10,12 @@ from typing import Any, Callable, SupportsFloat
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import WrapperActType, WrapperObsType
+from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidBound
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
-class LambdaRewardV0(gym.RewardWrapper):
+class LambdaRewardV0(gym.RewardWrapper[ObsType, ActType]):
     """A reward wrapper that allows a custom function to modify the step reward.
 
     Example:
@@ -31,7 +31,7 @@ class LambdaRewardV0(gym.RewardWrapper):
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         func: Callable[[SupportsFloat], SupportsFloat],
     ):
         """Initialize LambdaRewardV0 wrapper.
@@ -53,7 +53,7 @@ class LambdaRewardV0(gym.RewardWrapper):
         return self.func(reward)
 
 
-class ClipRewardV0(LambdaRewardV0):
+class ClipRewardV0(LambdaRewardV0[ObsType, ActType]):
     """A wrapper that clips the rewards for an environment between an upper and lower bound.
 
     Example:
@@ -69,7 +69,7 @@ class ClipRewardV0(LambdaRewardV0):
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         min_reward: float | np.ndarray | None = None,
         max_reward: float | np.ndarray | None = None,
     ):
@@ -92,7 +92,7 @@ class ClipRewardV0(LambdaRewardV0):
         super().__init__(env, lambda x: np.clip(x, a_min=min_reward, a_max=max_reward))
 
 
-class NormalizeRewardV0(gym.Wrapper):
+class NormalizeRewardV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
@@ -108,7 +108,7 @@ class NormalizeRewardV0(gym.Wrapper):
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         gamma: float = 0.99,
         epsilon: float = 1e-8,
     ):
@@ -137,8 +137,8 @@ class NormalizeRewardV0(gym.Wrapper):
         self._update_running_mean = setting
 
     def step(
-        self, action: WrapperActType
-    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment, normalizing the reward returned."""
         obs, reward, terminated, truncated, info = super().step(action)
         self.discounted_reward = self.discounted_reward * self.gamma * (
@@ -146,7 +146,7 @@ class NormalizeRewardV0(gym.Wrapper):
         ) + float(reward)
         return obs, self.normalize(float(reward)), terminated, truncated, info
 
-    def normalize(self, reward):
+    def normalize(self, reward: SupportsFloat):
         """Normalizes the rewards with the running mean rewards and their variance."""
         if self._update_running_mean:
             self.rewards_running_means.update(self.discounted_reward)

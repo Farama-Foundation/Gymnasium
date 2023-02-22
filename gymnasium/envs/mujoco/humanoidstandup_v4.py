@@ -210,7 +210,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             5,
             observation_space=observation_space,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
-            **kwargs
+            **kwargs,
         )
         utils.EzPickle.__init__(self, **kwargs)
 

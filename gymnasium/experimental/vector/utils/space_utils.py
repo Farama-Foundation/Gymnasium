@@ -29,21 +29,15 @@ from gymnasium.spaces import (
     Text,
     Tuple,
 )
+from gymnasium.spaces.space import T_cov
+
+
+__all__ = ["batch_space", "iterate", "concatenate", "create_empty_array"]
 
 
 @singledispatch
-def batch_space(space: Space, n: int = 1) -> Space:
+def batch_space(space: Space[Any], n: int = 1) -> Space[Any]:
     """Create a (batched) space, containing multiple copies of a single space.
-
-    Example::
-
-        >>> from gymnasium.spaces import Box, Dict
-        >>> space = Dict({
-        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
-        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
-        ... })
-        >>> batch_space(space, n=5)
-        Dict(position:Box(5, 3), velocity:Box(5, 2))
 
     Args:
         space: Space (e.g. the observation space) for a single environment in the vectorized environment.
@@ -54,15 +48,21 @@ def batch_space(space: Space, n: int = 1) -> Space:
 
     Raises:
         ValueError: Cannot batch space does not have a registered function.
+
+    Example:
+
+        >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
+        >>> space = Dict({
+        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
+        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
+        ... })
+        >>> batch_space(space, n=5)
+        Dict('position': Box(0.0, 1.0, (5, 3), float32), 'velocity': Box(0.0, 1.0, (5, 2), float32))
     """
-    if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `batch_space` function."
-        )
-    else:
-        raise TypeError(
-            f"The space provided to `batch_space` is not a gymnasium Space instance, type: {type(space)}, {space}"
-        )
+    raise TypeError(
+        f"The space provided to `batch_space` is not a gymnasium Space instance, type: {type(space)}, {space}"
+    )
 
 
 @batch_space.register(Box)
@@ -129,36 +129,25 @@ def _batch_space_dict(space: Dict, n: int = 1):
     )
 
 
-@batch_space.register(Space)
 @batch_space.register(Graph)
 @batch_space.register(Text)
 @batch_space.register(Sequence)
-def _batch_space_custom(space: Tuple, n: int = 1):
+@batch_space.register(Space)
+def _batch_space_custom(space: Graph | Text | Sequence, n: int = 1):
     # Without deepcopy, then the space.np_random is batched_space.spaces[0].np_random
     # Which is an issue if you are sampling actions of both the original space and the batched space
     batched_space = Tuple(
         tuple(deepcopy(space) for _ in range(n)), seed=deepcopy(space.np_random)
     )
-    new_seeds = list(map(int, space.np_random.integers(0, 1_000_000, n)))
+    space_rng = deepcopy(space.np_random)
+    new_seeds = list(map(int, space_rng.integers(0, 1e8, n)))
     batched_space.seed(new_seeds)
     return batched_space
 
 
 @singledispatch
-def concatenate(
-    space: Space, items: Iterable, out: tuple[Any, ...] | dict[str, Any] | np.ndarray
-) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
-    """Concatenate multiple samples from space into a single object.
-
-    Example::
-
-        >>> from gymnasium.spaces import Box
-        >>> space = Box(low=0, high=1, shape=(3,), dtype=np.float32)
-        >>> out = np.zeros((2, 3), dtype=np.float32)
-        >>> items = [space.sample() for _ in range(2)]
-        >>> concatenate(space, items, out)
-        array([[0.6348213 , 0.28607962, 0.60760117],
-               [0.87383074, 0.192658  , 0.2148103 ]], dtype=float32)
+def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
+    """Iterate over the elements of a (batched) space.
 
     Args:
         space: Observation space of a single environment in the vectorized environment.
@@ -169,98 +158,28 @@ def concatenate(
         The output object. This object is a (possibly nested) numpy array.
 
     Raises:
-        ValueError: Space
-    """
-    if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `concatenate` function."
-        )
-    else:
-        raise TypeError(
-            f"The space provided to `concatenate` is not a gymnasium Space instance, type: {type(space)}, {space}"
-        )
+        ValueError: Space is not an instance of :class:`gym.Space`
 
-
-@concatenate.register(Box)
-@concatenate.register(Discrete)
-@concatenate.register(MultiDiscrete)
-@concatenate.register(MultiBinary)
-def _concatenate_base(
-    space: Box | Discrete | MultiDiscrete | MultiBinary,
-    items: Iterable,
-    out: np.ndarray,
-) -> np.ndarray:
-    return np.stack(items, axis=0, out=out)
-
-
-@concatenate.register(Tuple)
-def _concatenate_tuple(
-    space: Tuple, items: Iterable, out: tuple[Any, ...]
-) -> tuple[Any, ...]:
-    return tuple(
-        concatenate(subspace, [item[i] for item in items], out[i])
-        for (i, subspace) in enumerate(space.spaces)
-    )
-
-
-@concatenate.register(Dict)
-def _concatenate_dict(
-    space: Dict, items: Iterable, out: dict[str, Any]
-) -> dict[str, Any]:
-    return OrderedDict(
-        {
-            key: concatenate(subspace, [item[key] for item in items], out[key])
-            for key, subspace in space.items()
-        }
-    )
-
-
-@concatenate.register(Space)
-@concatenate.register(Graph)
-@concatenate.register(Text)
-@concatenate.register(Sequence)
-def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
-    if out is not None:
-        warn(
-            f"For {type(space)} concatenate, `out` is not None ({out}) however the value is ignored."
-        )
-    return tuple(items)
-
-
-@singledispatch
-def iterate(space: Space, items: Iterable) -> Iterator:
-    """Iterate over the elements of a (batched) space.
-
-    Example::
-
+    Example:
         >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
         >>> space = Dict({
-        ... 'position': Box(low=0, high=1, shape=(2, 3), dtype=np.float32),
-        ... 'velocity': Box(low=0, high=1, shape=(2, 2), dtype=np.float32)})
+        ... 'position': Box(low=0, high=1, shape=(2, 3), seed=42, dtype=np.float32),
+        ... 'velocity': Box(low=0, high=1, shape=(2, 2), seed=42, dtype=np.float32)})
         >>> items = space.sample()
         >>> it = iterate(space, items)
         >>> next(it)
-        {'position': array([-0.99644893, -0.08304597, -0.7238421 ], dtype=float32),
-        'velocity': array([0.35848552, 0.1533453 ], dtype=float32)}
+        OrderedDict([('position', array([0.77395606, 0.43887845, 0.85859793], dtype=float32)), ('velocity', array([0.77395606, 0.43887845], dtype=float32))])
         >>> next(it)
-        {'position': array([-0.67958736, -0.49076623,  0.38661423], dtype=float32),
-        'velocity': array([0.7975036 , 0.93317133], dtype=float32)}
+        OrderedDict([('position', array([0.697368  , 0.09417735, 0.97562236], dtype=float32)), ('velocity', array([0.85859793, 0.697368  ], dtype=float32))])
         >>> next(it)
+        Traceback (most recent call last):
+            ...
         StopIteration
-
-    Args:
-        space: Space to which `items` belong to.
-        items: Items to be iterated over.
-
-    Returns:
-        Iterator over the elements in `items`.
-
-    Raises:
-        ValueError: Space is not an instance of :class:`gymnasium.Space`
     """
     if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `iterate` function."
+        raise CustomSpaceError(
+            f"Space of type `{type(space)}` doesn't have an registered `iterate` function. Register `{type(space)}` for `iterate` to support it."
         )
     else:
         raise TypeError(
@@ -305,7 +224,7 @@ def _iterate_tuple(space: Tuple, items: tuple[Any, ...]):
 
 
 @iterate.register(Dict)
-def _iterate_dict(space, items):
+def _iterate_dict(space: Dict, items: dict[str, Any]):
     keys, values = zip(
         *[
             (key, iterate(subspace, items[key]))
@@ -317,22 +236,90 @@ def _iterate_dict(space, items):
 
 
 @singledispatch
+def concatenate(
+    space: Space, items: Iterable, out: tuple[Any, ...] | dict[str, Any] | np.ndarray
+) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
+    """Concatenate multiple samples from space into a single object.
+
+    Args:
+        space: Observation space of a single environment in the vectorized environment.
+        items: Samples to be concatenated.
+        out: The output object. This object is a (possibly nested) numpy array.
+
+    Returns:
+        The output object. This object is a (possibly nested) numpy array.
+
+    Raises:
+        ValueError: Space
+
+    Example:
+        >>> from gymnasium.spaces import Box
+        >>> import numpy as np
+        >>> space = Box(low=0, high=1, shape=(3,), seed=42, dtype=np.float32)
+        >>> out = np.zeros((2, 3), dtype=np.float32)
+        >>> items = [space.sample() for _ in range(2)]
+        >>> concatenate(space, items, out)
+        array([[0.77395606, 0.43887845, 0.85859793],
+               [0.697368  , 0.09417735, 0.97562236]], dtype=float32)
+    """
+    raise TypeError(
+        f"The space provided to `concatenate` is not a gymnasium Space instance, type: {type(space)}, {space}"
+    )
+
+
+@concatenate.register(Box)
+@concatenate.register(Discrete)
+@concatenate.register(MultiDiscrete)
+@concatenate.register(MultiBinary)
+def _concatenate_base(
+    space: Box | Discrete | MultiDiscrete | MultiBinary,
+    items: Iterable,
+    out: np.ndarray,
+) -> np.ndarray:
+    return np.stack(items, axis=0, out=out)
+
+
+@concatenate.register(Tuple)
+def _concatenate_tuple(
+    space: Tuple, items: Iterable, out: tuple[Any, ...]
+) -> tuple[Any, ...]:
+    return tuple(
+        concatenate(subspace, [item[i] for item in items], out[i])
+        for (i, subspace) in enumerate(space.spaces)
+    )
+
+
+@concatenate.register(Dict)
+def _concatenate_dict(
+    space: Dict, items: Iterable, out: dict[str, Any]
+) -> dict[str, Any]:
+    return OrderedDict(
+        {
+            key: concatenate(subspace, [item[key] for item in items], out[key])
+            for key, subspace in space.items()
+        }
+    )
+
+
+@concatenate.register(Graph)
+@concatenate.register(Text)
+@concatenate.register(Sequence)
+@concatenate.register(Space)
+def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
+    if out is not None:
+        warn(
+            f"For `vector.utils.concatenate({type(space)}, ...)`, `out` is not None ({out}) however the value is ignored."
+        )
+    return tuple(items)
+
+
+@singledispatch
 def create_empty_array(
     space: Space, n: int = 1, fn: callable = np.zeros
 ) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
     """Create an empty (possibly nested) (normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``.
 
-    Example::
-
-        >>> from gymnasium.spaces import Box, Dict
-        >>> space = Dict({
-        ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
-        ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
-        >>> create_empty_array(space, n=2, fn=np.zeros)
-        OrderedDict([('position', array([[0., 0., 0.],
-                                         [0., 0., 0.]], dtype=float32)),
-                     ('velocity', array([[0., 0.],
-                                         [0., 0.]], dtype=float32))])
+    In most cases, the array will be contained within the batched space, however, this is not guaranteed.
 
     Args:
         space: Observation space of a single environment in the vectorized environment.
@@ -344,26 +331,29 @@ def create_empty_array(
 
     Raises:
         ValueError: Space is not a valid :class:`gym.Space` instance
+
+    Example:
+        >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
+        >>> space = Dict({
+        ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
+        ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
+        >>> create_empty_array(space, n=2, fn=np.zeros)
+        OrderedDict([('position', array([[0., 0., 0.],
+               [0., 0., 0.]], dtype=float32)), ('velocity', array([[0., 0.],
+               [0., 0.]], dtype=float32))])
     """
-    if isinstance(space, Space):
-        raise ValueError(
-            f"Space of type `{type(space)}` doesn't have an registered `create_empty_array` function."
-        )
-    else:
-        raise TypeError(
-            f"The space provided to `create_empty_array` is not a gymnasium Space instance, type: {type(space)}, {space}"
-        )
+    raise TypeError(
+        f"The space provided to `create_empty_array` is not a gymnasium Space instance, type: {type(space)}, {space}"
+    )
 
 
 @create_empty_array.register(Box)
 @create_empty_array.register(Discrete)
 @create_empty_array.register(MultiDiscrete)
 @create_empty_array.register(MultiBinary)
-def _create_empty_array_base(
-    space: Box | Discrete | MultiDiscrete | MultiBinary, n: int = 1, fn=np.zeros
-) -> np.ndarray:
-    shape = space.shape if (n is None) else (n,) + space.shape
-    return fn(shape, dtype=space.dtype)
+def _create_empty_array_multi(space: Box, n: int = 1, fn=np.zeros) -> np.ndarray:
+    return fn((n,) + space.shape, dtype=space.dtype)
 
 
 @create_empty_array.register(Tuple)
@@ -388,16 +378,16 @@ def _create_empty_array_graph(
     if space.edge_space is not None:
         return tuple(
             GraphInstance(
-                nodes=create_empty_array(space.node_space, fn=fn),
-                edges=create_empty_array(space.edge_space, fn=fn),
-                edge_links=create_empty_array(space.edge_space, fn=fn),
+                nodes=fn((1,) + space.node_space.shape, dtype=space.node_space.dtype),
+                edges=fn((1,) + space.edge_space.shape, dtype=space.edge_space.dtype),
+                edge_links=fn((1, 2), dtype=np.int64),
             )
             for _ in range(n)
         )
     else:
         return tuple(
             GraphInstance(
-                nodes=create_empty_array(space.node_space, fn=fn),
+                nodes=fn((1,) + space.node_space.shape, dtype=space.node_space.dtype),
                 edges=None,
                 edge_links=None,
             )
@@ -407,11 +397,21 @@ def _create_empty_array_graph(
 
 @create_empty_array.register(Text)
 def _create_empty_array_text(space: Text, n: int = 1, fn=np.zeros) -> tuple[str, ...]:
-    return tuple(" " * space.min_length for _ in range(n))
+    return tuple(space.characters[0] * space.min_length for _ in range(n))
 
 
 @create_empty_array.register(Sequence)
 def _create_empty_array_sequence(
     space: Sequence, n: int = 1, fn=np.zeros
-) -> tuple[tuple[()], ...]:
-    return tuple(tuple() for _ in range(n))
+) -> tuple[Any, ...]:
+    if space.stack:
+        return tuple(
+            create_empty_array(space.feature_space, n=1, fn=fn) for _ in range(n)
+        )
+    else:
+        return tuple(tuple() for _ in range(n))
+
+
+@create_empty_array.register(Space)
+def _create_empty_array_custom(space, n=1, fn=np.zeros):
+    return None

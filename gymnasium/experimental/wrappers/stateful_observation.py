@@ -9,14 +9,9 @@ from __future__ import annotations
 from collections import deque
 from copy import deepcopy
 from typing import Any, SupportsFloat
-
-
-try:
-    import jumpy as jp
-except ImportError as e:
-    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
-import numpy as np
 from typing_extensions import Final
+
+import numpy as np
 
 import gymnasium.spaces as spaces
 from gymnasium import Env, ObservationWrapper, Space, Wrapper
@@ -30,7 +25,7 @@ from gymnasium.logger import warn
 from gymnasium.spaces import Box, Dict, Tuple
 
 
-class DelayObservationV0(ObservationWrapper[ObsType, ActType]):
+class DelayObservationV0(ObservationWrapper[ObsType, ActType, ObsType]):
     """Wrapper which adds a delay to the returned observation.
 
     Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
@@ -80,7 +75,7 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType]):
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment, clearing the observation queue."""
         self.observation_queue.clear()
 
@@ -96,7 +91,7 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType]):
             return create_empty_array(self.observation_space)
 
 
-class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType]):
+class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType, ObsType]):
     """Augment the observation with time information of the episode.
 
     The :attr:`normalize_time` if ``True`` represents time as a normalized value between [0,1]
@@ -265,7 +260,7 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType]):
         return super().reset(seed=seed, options=options)
 
 
-class FrameStackObservationV0(Wrapper):
+class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
