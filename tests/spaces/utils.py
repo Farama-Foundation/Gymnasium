@@ -118,4 +118,4 @@ class CustomSpace(Space):
         return isinstance(o, CustomSpace)
 
 
-TESTING_CUSTOM_SPACES = CustomSpace()
+TESTING_CUSTOM_SPACE = CustomSpace()
