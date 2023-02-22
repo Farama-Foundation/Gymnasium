@@ -790,7 +790,6 @@ def heuristic(env, s):
 
 
 def demo_heuristic_lander(env, seed=None, render=False):
-
     total_reward = 0
     steps = 0
     s, info = env.reset(seed=seed)

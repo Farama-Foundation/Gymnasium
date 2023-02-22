@@ -24,7 +24,7 @@ class HumanoidStandupEnv(MuJocoPyEnv, utils.EzPickle):
             "humanoidstandup.xml",
             5,
             observation_space=observation_space,
-            **kwargs
+            **kwargs,
         )
         utils.EzPickle.__init__(self, **kwargs)
 

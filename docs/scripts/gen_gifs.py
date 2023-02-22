@@ -57,7 +57,6 @@ for env_spec in tqdm(gymnasium.envs.registry.values()):
             state, info = env.reset()
             terminated, truncated = False, False
             while not (terminated or truncated) and len(frames) <= LENGTH:
-
                 frame = env.render(mode="rgb_array")
                 repeat = (
                     int(60 / env.metadata["render_fps"])

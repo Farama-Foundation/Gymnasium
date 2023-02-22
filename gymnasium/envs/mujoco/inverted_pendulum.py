@@ -23,7 +23,7 @@ class InvertedPendulumEnv(MuJocoPyEnv, utils.EzPickle):
             "inverted_pendulum.xml",
             2,
             observation_space=observation_space,
-            **kwargs
+            **kwargs,
         )
 
     def step(self, a):

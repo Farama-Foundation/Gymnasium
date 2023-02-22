@@ -343,7 +343,7 @@ class AcrobotEnv(Env):
             color=(0, 0, 0),
         )
 
-        for ((x, y), th, llen) in zip(xys, thetas, link_lengths):
+        for (x, y), th, llen in zip(xys, thetas, link_lengths):
             x = x + offset
             y = y + offset
             l, r, t, b = 0, llen, 0.1 * scale, -0.1 * scale
@@ -456,7 +456,6 @@ def rk4(derivs, y0, t):
     yout[0] = y0
 
     for i in np.arange(len(t) - 1):
-
         this = t[i]
         dt = t[i + 1] - this
         dt2 = dt / 2.0

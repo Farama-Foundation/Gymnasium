@@ -202,7 +202,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         contact_force_range=(-1.0, 1.0),
         reset_noise_scale=0.1,
         exclude_current_positions_from_observation=True,
-        **kwargs
+        **kwargs,
     ):
         utils.EzPickle.__init__(
             self,
@@ -216,7 +216,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             contact_force_range,
             reset_noise_scale,
             exclude_current_positions_from_observation,
-            **kwargs
+            **kwargs,
         )
 
         self._ctrl_cost_weight = ctrl_cost_weight
@@ -252,7 +252,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             5,
             observation_space=observation_space,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
-            **kwargs
+            **kwargs,
         )
 
     @property

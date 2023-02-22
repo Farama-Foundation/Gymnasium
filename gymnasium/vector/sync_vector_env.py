@@ -113,7 +113,6 @@ class SyncVectorEnv(VectorEnv):
         observations = []
         infos = {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
-
             kwargs = {}
             if single_seed is not None:
                 kwargs["seed"] = single_seed
@@ -141,7 +140,6 @@ class SyncVectorEnv(VectorEnv):
         """
         observations, infos = [], {}
         for i, (env, action) in enumerate(zip(self.envs, self._actions)):
-
             (
                 observation,
                 self._rewards[i],

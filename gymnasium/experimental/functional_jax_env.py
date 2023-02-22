@@ -215,7 +215,6 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
 
         done = jnp.logical_or(terminated, truncated)
         if jnp.any(done):
-
             final_obs = self.func_env.observation(next_state)
 
             to_reset = jnp.where(done)[0]

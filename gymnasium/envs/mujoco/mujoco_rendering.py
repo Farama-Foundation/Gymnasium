@@ -153,7 +153,6 @@ class OffScreenViewer(BaseRender):
         self.cam.distance = self.model.stat.extent
 
     def _get_opengl_backend(self, width: int, height: int):
-
         self.backend = os.environ.get("MUJOCO_GL")
         if self.backend is not None:
             try:
@@ -197,7 +196,6 @@ class OffScreenViewer(BaseRender):
         camera_id: Optional[int] = None,
         segmentation: bool = False,
     ):
-
         if camera_id is not None:
             if camera_id == -1:
                 self.cam.type = mujoco.mjtCamera.mjCAMERA_FREE
@@ -348,6 +346,7 @@ class WindowViewer(BaseRender):
             6. Swap front and back buffer, https://www.glfw.org/docs/3.3/quick.html.
             7. Poll events like mouse clicks or keyboard input.
         """
+
         # mjv_updateScene, mjr_render, mjr_overlay
         def update():
             # fill overlay items
