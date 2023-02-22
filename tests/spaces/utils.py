@@ -112,9 +112,10 @@ TESTING_COMPOSITE_SPACES_IDS = [f"{space}" for space in TESTING_COMPOSITE_SPACES
 TESTING_SPACES: List[Space] = TESTING_FUNDAMENTAL_SPACES + TESTING_COMPOSITE_SPACES
 TESTING_SPACES_IDS = TESTING_FUNDAMENTAL_SPACES_IDS + TESTING_COMPOSITE_SPACES_IDS
 
-CUSTOM_SPACES = [
-    Space(),
-    Tuple([Space(), Space(), Space()]),
-    Dict(a=Space(), b=Space()),
-]
-CUSTOM_SPACES_IDS = [f"{space}" for space in CUSTOM_SPACES]
+
+class CustomSpace(Space):
+    def __eq__(self, o: object) -> bool:
+        return isinstance(o, CustomSpace)
+
+
+TESTING_CUSTOM_SPACE = CustomSpace()
