@@ -1,341 +1,85 @@
 """Testing `gymnasium.experimental.vector.utils.space_utils` functions."""
 
 import copy
-from collections import OrderedDict
+import re
+from typing import Iterable
 
-import numpy as np
 import pytest
-from numpy.testing import assert_array_equal
 
+from gymnasium import Space
+from gymnasium.error import CustomSpaceError
 from gymnasium.experimental.vector.utils import (
     batch_space,
     concatenate,
     create_empty_array,
     iterate,
 )
-from gymnasium.spaces import Box, Dict, MultiDiscrete, Space, Tuple
-from tests.experimental.vector.testing_utils import (
-    BaseGymSpaces,
-    CustomSpace,
-    assert_rng_equal,
-    custom_spaces,
-    spaces,
-)
+from gymnasium.spaces import Tuple
+from gymnasium.utils.env_checker import data_equivalence
+from tests.experimental.vector.utils.utils import is_rng_equal
+from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS, CustomSpace
 
 
-@pytest.mark.parametrize(
-    "space", spaces, ids=[space.__class__.__name__ for space in spaces]
-)
-def test_concatenate(space):
-    """Tests the `concatenate` functions with list of spaces."""
-
-    def assert_type(lhs, rhs, n):
-        # Special case: if rhs is a list of scalars, lhs must be an np.ndarray
-        if np.isscalar(rhs[0]):
-            assert isinstance(lhs, np.ndarray)
-            assert all([np.isscalar(rhs[i]) for i in range(n)])
-        else:
-            assert all([isinstance(rhs[i], type(lhs)) for i in range(n)])
-
-    def assert_nested_equal(lhs, rhs, n):
-        assert isinstance(rhs, list)
-        assert (n > 0) and (len(rhs) == n)
-        assert_type(lhs, rhs, n)
-        if isinstance(lhs, np.ndarray):
-            assert lhs.shape[0] == n
-            for i in range(n):
-                assert np.all(lhs[i] == rhs[i])
-
-        elif isinstance(lhs, tuple):
-            for i in range(len(lhs)):
-                rhs_T_i = [rhs[j][i] for j in range(n)]
-                assert_nested_equal(lhs[i], rhs_T_i, n)
-
-        elif isinstance(lhs, OrderedDict):
-            for key in lhs.keys():
-                rhs_T_key = [rhs[j][key] for j in range(n)]
-                assert_nested_equal(lhs[key], rhs_T_key, n)
-
-        else:
-            raise TypeError(f"Got unknown type `{type(lhs)}`.")
-
-    samples = [space.sample() for _ in range(8)]
-    array = create_empty_array(space, n=8)
-    concatenated = concatenate(space, samples, array)
-
-    assert np.all(concatenated == array)
-    assert_nested_equal(array, samples, n=8)
-
-
-@pytest.mark.parametrize("n", [1, 8])
-@pytest.mark.parametrize(
-    "space", spaces, ids=[space.__class__.__name__ for space in spaces]
-)
-def test_create_empty_array(space, n):
-    """Test `create_empty_array` function with list of spaces and different `n` values."""
-
-    def assert_nested_type(arr, space, n):
-        if isinstance(space, BaseGymSpaces):
-            assert isinstance(arr, np.ndarray)
-            assert arr.dtype == space.dtype
-            assert arr.shape == (n,) + space.shape
-
-        elif isinstance(space, Tuple):
-            assert isinstance(arr, tuple)
-            assert len(arr) == len(space.spaces)
-            for i in range(len(arr)):
-                assert_nested_type(arr[i], space.spaces[i], n)
-
-        elif isinstance(space, Dict):
-            assert isinstance(arr, OrderedDict)
-            assert set(arr.keys()) ^ set(space.spaces.keys()) == set()
-            for key in arr.keys():
-                assert_nested_type(arr[key], space.spaces[key], n)
-
-        else:
-            raise TypeError(f"Got unknown type `{type(arr)}`.")
-
-    array = create_empty_array(space, n=n, fn=np.empty)
-    assert_nested_type(array, space, n=n)
-
-
-@pytest.mark.parametrize("n", [1, 8])
-@pytest.mark.parametrize(
-    "space", spaces, ids=[space.__class__.__name__ for space in spaces]
-)
-def test_create_empty_array_zeros(space, n):
-    """Test `create_empty_array` with a list of spaces and different `n`."""
-
-    def assert_nested_type(arr, space, n):
-        if isinstance(space, BaseGymSpaces):
-            assert isinstance(arr, np.ndarray)
-            assert arr.dtype == space.dtype
-            assert arr.shape == (n,) + space.shape
-            assert np.all(arr == 0)
-
-        elif isinstance(space, Tuple):
-            assert isinstance(arr, tuple)
-            assert len(arr) == len(space.spaces)
-            for i in range(len(arr)):
-                assert_nested_type(arr[i], space.spaces[i], n)
-
-        elif isinstance(space, Dict):
-            assert isinstance(arr, OrderedDict)
-            assert set(arr.keys()) ^ set(space.spaces.keys()) == set()
-            for key in arr.keys():
-                assert_nested_type(arr[key], space.spaces[key], n)
-
-        else:
-            raise TypeError(f"Got unknown type `{type(arr)}`.")
-
-    array = create_empty_array(space, n=n, fn=np.zeros)
-    assert_nested_type(array, space, n=n)
-
-
-@pytest.mark.parametrize(
-    "space", spaces, ids=[space.__class__.__name__ for space in spaces]
-)
-def test_create_empty_array_none_shape_ones(space):
-    """Tests `create_empty_array` with ``None`` space."""
-
-    def assert_nested_type(arr, space):
-        if isinstance(space, BaseGymSpaces):
-            assert isinstance(arr, np.ndarray)
-            assert arr.dtype == space.dtype
-            assert arr.shape == space.shape
-            assert np.all(arr == 1)
-
-        elif isinstance(space, Tuple):
-            assert isinstance(arr, tuple)
-            assert len(arr) == len(space.spaces)
-            for i in range(len(arr)):
-                assert_nested_type(arr[i], space.spaces[i])
-
-        elif isinstance(space, Dict):
-            assert isinstance(arr, OrderedDict)
-            assert set(arr.keys()) ^ set(space.spaces.keys()) == set()
-            for key in arr.keys():
-                assert_nested_type(arr[key], space.spaces[key])
-
-        else:
-            raise TypeError(f"Got unknown type `{type(arr)}`.")
-
-    array = create_empty_array(space, n=None, fn=np.ones)
-    assert_nested_type(array, space)
-
-
-expected_batch_spaces_4 = [
-    Box(low=-1.0, high=1.0, shape=(4,), dtype=np.float64),
-    Box(low=0.0, high=10.0, shape=(4, 1), dtype=np.float64),
-    Box(
-        low=np.array(
-            [[-1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [-1.0, 0.0, 0.0]]
-        ),
-        high=np.array(
-            [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
-        ),
-        dtype=np.float64,
-    ),
-    Box(
-        low=np.array(
-            [
-                [[-1.0, 0.0], [0.0, -1.0]],
-                [[-1.0, 0.0], [0.0, -1.0]],
-                [[-1.0, 0.0], [0.0, -1]],
-                [[-1.0, 0.0], [0.0, -1.0]],
-            ]
-        ),
-        high=np.ones((4, 2, 2)),
-        dtype=np.float64,
-    ),
-    Box(low=0, high=255, shape=(4,), dtype=np.uint8),
-    Box(low=0, high=255, shape=(4, 32, 32, 3), dtype=np.uint8),
-    MultiDiscrete([2, 2, 2, 2]),
-    Box(low=-2, high=2, shape=(4,), dtype=np.int64),
-    Tuple((MultiDiscrete([3, 3, 3, 3]), MultiDiscrete([5, 5, 5, 5]))),
-    Tuple(
-        (
-            MultiDiscrete([7, 7, 7, 7]),
-            Box(
-                low=np.array([[0.0, -1.0], [0.0, -1.0], [0.0, -1.0], [0.0, -1]]),
-                high=np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]),
-                dtype=np.float64,
-            ),
-        )
-    ),
-    Box(
-        low=np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]),
-        high=np.array([[10, 12, 16], [10, 12, 16], [10, 12, 16], [10, 12, 16]]),
-        dtype=np.int64,
-    ),
-    Box(low=0, high=1, shape=(4, 19), dtype=np.int8),
-    Dict(
-        {
-            "position": MultiDiscrete([23, 23, 23, 23]),
-            "velocity": Box(low=0.0, high=1.0, shape=(4, 1), dtype=np.float64),
-        }
-    ),
-    Dict(
-        {
-            "position": Dict(
-                {
-                    "x": MultiDiscrete([29, 29, 29, 29]),
-                    "y": MultiDiscrete([31, 31, 31, 31]),
-                }
-            ),
-            "velocity": Tuple(
-                (
-                    MultiDiscrete([37, 37, 37, 37]),
-                    Box(low=0, high=255, shape=(4,), dtype=np.uint8),
-                )
-            ),
-        }
-    ),
-]
-
-expected_custom_batch_spaces_4 = [
-    Tuple((CustomSpace(), CustomSpace(), CustomSpace(), CustomSpace())),
-    Tuple(
-        (
-            Tuple((CustomSpace(), CustomSpace(), CustomSpace(), CustomSpace())),
-            Box(low=0, high=255, shape=(4,), dtype=np.uint8),
-        )
-    ),
-]
-
-
-@pytest.mark.parametrize(
-    "space,expected_batch_space_4",
-    list(zip(spaces, expected_batch_spaces_4)),
-    ids=[space.__class__.__name__ for space in spaces],
-)
-def test_batch_space(space, expected_batch_space_4):
-    """Tests `batch_space` with the expected spaces."""
-    batch_space_4 = batch_space(space, n=4)
-    assert batch_space_4 == expected_batch_space_4
-
-
-@pytest.mark.parametrize(
-    "space,expected_batch_space_4",
-    list(zip(custom_spaces, expected_custom_batch_spaces_4)),
-    ids=[space.__class__.__name__ for space in custom_spaces],
-)
-def test_batch_space_custom_space(space, expected_batch_space_4):
-    """Tests `batch_space` for custom spaces with the expected batch spaces."""
-    batch_space_4 = batch_space(space, n=4)
-    assert batch_space_4 == expected_batch_space_4
-
-
-@pytest.mark.parametrize(
-    "space,batched_space",
-    list(zip(spaces, expected_batch_spaces_4)),
-    ids=[space.__class__.__name__ for space in spaces],
-)
-def test_iterate(space, batched_space):
-    """Test `iterate` function with list of spaces and expected batch space."""
-    items = batched_space.sample()
-    iterator = iterate(batched_space, items)
-    i = 0
-    for i, item in enumerate(iterator):
-        assert item in space
-    assert i == 3
-
-
-@pytest.mark.parametrize(
-    "space,batched_space",
-    list(zip(custom_spaces, expected_custom_batch_spaces_4)),
-    ids=[space.__class__.__name__ for space in custom_spaces],
-)
-def test_iterate_custom_space(space, batched_space):
-    """Test iterating over a custom space."""
-    items = batched_space.sample()
-    iterator = iterate(batched_space, items)
-    i = 0
-    for i, item in enumerate(iterator):
-        assert item in space
-    assert i == 3
-
-
-@pytest.mark.parametrize(
-    "space", spaces, ids=[space.__class__.__name__ for space in spaces]
-)
-@pytest.mark.parametrize("n", [4, 5], ids=[f"n={n}" for n in [4, 5]])
-@pytest.mark.parametrize(
-    "base_seed", [123, 456], ids=[f"seed={base_seed}" for base_seed in [123, 456]]
-)
-def test_rng_different_at_each_index(space: Space, n: int, base_seed: int):
-    """Tests that the rng values produced at each index are different to prevent if the rng is copied for each subspace."""
-    space.seed(base_seed)
-
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+@pytest.mark.parametrize("n", [1, 4], ids=[f"n={n}" for n in [1, 4]])
+def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int):
+    """Test all space_utils functions using them together."""
+    # Batch the space and create a sample
     batched_space = batch_space(space, n)
-    assert space.np_random is not batched_space.np_random
-    assert_rng_equal(space.np_random, batched_space.np_random)
-
+    assert isinstance(batched_space, Space)
     batched_sample = batched_space.sample()
-    sample = list(iterate(batched_space, batched_sample))
-    assert not all(np.all(element == sample[0]) for element in sample), sample
+    assert batched_sample in batched_space
+
+    # Check the batched samples are within the original space
+    iterated_samples = iterate(batched_space, batched_sample)
+    assert isinstance(iterated_samples, Iterable)
+    unbatched_samples = list(iterated_samples)
+    assert len(unbatched_samples) == n
+    assert all(item in space for item in unbatched_samples)
+
+    # Create an empty array and check that space is within the batch space
+    array = create_empty_array(space, n)
+    # We do not check that the generated array is within the batched_space.
+    # assert array in batched_space
+    unbatched_array = list(iterate(batched_space, array))
+    assert len(unbatched_array) == n
+    # assert all(item in space for item in unbatched_array)
+
+    # Generate samples from the original space and concatenate using array into a single object
+    space_samples = [space.sample() for _ in range(n)]
+    assert all(item in space for item in space_samples)
+    concatenated_samples_array = concatenate(space, space_samples, array)
+    # `concatenate` does not necessarily use the out object as the returned object
+    # assert out is concatenated_samples_array
+    assert concatenated_samples_array in batched_space
+
+    # Iterate over the samples and check that the concatenated samples == original samples
+    iterated_samples = iterate(batched_space, concatenated_samples_array)
+    assert isinstance(iterated_samples, Iterable)
+    unbatched_samples = list(iterated_samples)
+    assert len(unbatched_samples) == n
+    for unbatched_sample, original_sample in zip(unbatched_samples, space_samples):
+        assert data_equivalence(unbatched_sample, original_sample)
 
 
-@pytest.mark.parametrize(
-    "space", spaces, ids=[space.__class__.__name__ for space in spaces]
-)
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
 @pytest.mark.parametrize("n", [1, 2, 5], ids=[f"n={n}" for n in [1, 2, 5]])
 @pytest.mark.parametrize(
     "base_seed", [123, 456], ids=[f"seed={base_seed}" for base_seed in [123, 456]]
 )
-def test_deterministic(space: Space, n: int, base_seed: int):
+def test_batch_space_deterministic(space: Space, n: int, base_seed: int):
     """Tests the batched spaces are deterministic by using a copied version."""
     # Copy the spaces and check that the np_random are not reference equal
     space_a = space
     space_a.seed(base_seed)
     space_b = copy.deepcopy(space_a)
-    assert_rng_equal(space_a.np_random, space_b.np_random)
+    is_rng_equal(space_a.np_random, space_b.np_random)
     assert space_a.np_random is not space_b.np_random
 
     # Batch the spaces and check that the np_random are not reference equal
     space_a_batched = batch_space(space_a, n)
     space_b_batched = batch_space(space_b, n)
-    assert_rng_equal(space_a_batched.np_random, space_b_batched.np_random)
+    is_rng_equal(space_a_batched.np_random, space_b_batched.np_random)
     assert space_a_batched.np_random is not space_b_batched.np_random
     # Create that the batched space is not reference equal to the origin spaces
     assert space_a.np_random is not space_a_batched.np_random
@@ -348,9 +92,65 @@ def test_deterministic(space: Space, n: int, base_seed: int):
         iterate(space_a_batched, space_a_batched_sample),
         iterate(space_b_batched, space_b_batched_sample),
     ):
-        if isinstance(a_sample, tuple):
-            assert len(a_sample) == len(b_sample)
-            for a_subsample, b_subsample in zip(a_sample, b_sample):
-                assert_array_equal(a_subsample, b_subsample)
-        else:
-            assert_array_equal(a_sample, b_sample)
+        assert data_equivalence(a_sample, b_sample)
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+@pytest.mark.parametrize("n", [4, 5], ids=[f"n={n}" for n in [4, 5]])
+@pytest.mark.parametrize(
+    "base_seed", [123, 456], ids=[f"seed={base_seed}" for base_seed in [123, 456]]
+)
+def test_batch_space_different_samples(space: Space, n: int, base_seed: int):
+    """Tests that the rng values produced at each index are different to prevent if the rng is copied for each subspace."""
+    space.seed(base_seed)
+
+    batched_space = batch_space(space, n)
+    assert space.np_random is not batched_space.np_random
+    is_rng_equal(space.np_random, batched_space.np_random)
+
+    batched_sample = batched_space.sample()
+    unbatched_samples = list(iterate(batched_space, batched_sample))
+    assert len(unbatched_samples) == n
+    assert all(item in space for item in unbatched_samples)
+    assert not all(
+        data_equivalence(element, unbatched_samples[0]) for element in unbatched_samples
+    ), unbatched_samples
+
+
+@pytest.mark.parametrize(
+    "func, n_args",
+    [(batch_space, 1), (concatenate, 2), (iterate, 1), (create_empty_array, 2)],
+)
+def test_non_space(func, n_args):
+    """Test spaces for vector utility functions on the error produced with unknown spaces."""
+    args = [None for _ in range(n_args)]
+    func_name = func.__name__
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            f"The space provided to `{func_name}` is not a gymnasium Space instance, type: <class 'str'>, space"
+        ),
+    ):
+        func("space", *args)
+
+
+def test_custom_space():
+    """Test custom spaces with space util functions."""
+    custom_space = CustomSpace()
+
+    batched_space = batch_space(custom_space, n=2)
+    assert batched_space == Tuple([custom_space, custom_space])
+
+    with pytest.raises(
+        CustomSpaceError,
+        match=re.escape(
+            "Space of type `<class 'tests.spaces.utils.CustomSpace'>` doesn't have an registered `iterate` function. Register `<class 'tests.spaces.utils.CustomSpace'>` for `iterate` to support it."
+        ),
+    ):
+        iterate(custom_space, None)
+
+    concatenated_items = concatenate(custom_space, (None, None), out=None)
+    assert concatenated_items == (None, None)
+
+    empty_array = create_empty_array(custom_space)
+    assert empty_array is None
