@@ -67,7 +67,7 @@ class ClipActionV0(
         >>> env.action_space
         Box(-inf, inf, (3,), float32)
         >>> _ = env.reset(seed=42)
-        >>> _ = env.step(np.array([5.0, -2.0, 0.0]))
+        >>> _ = env.step(np.array([5.0, -2.0, 0.0], dtype=np.float32))
         ... # Executes the action np.array([1.0, -1.0, 0]) in the base environment
     """
 
@@ -109,10 +109,10 @@ class RescaleActionV0(
         >>> import numpy as np
         >>> env = gym.make("Hopper-v4", disable_env_checker=True)
         >>> _ = env.reset(seed=42)
-        >>> obs, _, _, _, _ = env.step(np.array([1,1,1]))
+        >>> obs, _, _, _, _ = env.step(np.array([1, 1, 1], dtype=np.float32))
         >>> _ = env.reset(seed=42)
         >>> min_action = -0.5
-        >>> max_action = np.array([0.0, 0.5, 0.75])
+        >>> max_action = np.array([0.0, 0.5, 0.75], dtype=np.float32)
         >>> wrapped_env = RescaleActionV0(env, min_action=min_action, max_action=max_action)
         >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
         >>> np.alltrue(obs == wrapped_env_obs)
