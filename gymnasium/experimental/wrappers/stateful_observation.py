@@ -12,6 +12,7 @@ from typing import Any, SupportsFloat
 from typing_extensions import Final
 
 import numpy as np
+
 import gymnasium as gym
 import gymnasium.spaces as spaces
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
@@ -71,6 +72,7 @@ class DelayObservationV0(
 
         self.delay: Final[int] = int(delay)
         self.observation_queue: Final[deque] = deque()
+
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[ObsType, dict[str, Any]]:
@@ -87,7 +89,6 @@ class DelayObservationV0(
             return self.observation_queue.popleft()
         else:
             return create_zero_array(self.observation_space)
-
 
 
 class TimeAwareObservationV0(
