@@ -26,7 +26,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy >=1.21.0",
-    "jax-jumpy >=0.2.0",
+    "jax-jumpy @ git+https://github.com/Farama-Foundation/Jumpy.git@main",
     "cloudpickle >=1.2.0",
     "importlib-metadata >=4.8.0; python_version < '3.10'",
     "typing-extensions >=4.3.0",
