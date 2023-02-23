@@ -109,30 +109,33 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType, ObsType
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservationV0(env)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 ...], [4.8000002e+00 ...], (4,), float32), 'time': Box(0.0, 1.0, (1,), float32))
-        >>> env.reset()[0]
-        {'obs': array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 'time': 0.0}
+        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0.0, 1.0, (1,), float32))
+        >>> env.reset(seed=42)[0]
+        {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0.], dtype=float32)}
+        >>> _ = env.action_space.seed(42)
         >>> env.step(env.action_space.sample())[0]
-        {'obs': array([ 0.01734283, -0.23932791, -0.02859527,  0.25216764], dtype=float32), 'time': 0.002}
+        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': array([0.002], dtype=float32)}
 
     Unnormalize time observation space example:
         >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservationV0(env, normalize_time=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 ...], [4.8000002e+00 ...], (4,), float32), 'time': Box(0, 1.0, (1,), int32))
-        >>> env.reset(seed=42)
+        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        >>> env.reset(seed=42)[0]
+        {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([500], dtype=int32)}
         >>> _ = env.action_space.seed(42)[0]
-        {'obs': array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 'time': 500}
         >>> env.step(env.action_space.sample())[0]
-        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': 0.002}
+        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': array([499], dtype=int32)}
 
-        Flatten observation space example:
+    Flatten observation space example:
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservationV0(env, flatten=True)
         >>> env.observation_space
         Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38
           0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 1.0000000e+00], (5,), float32)
-        >>> _ = env.reset(seed=42)
+        >>> env.reset(seed=42)[0]
+        array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ],
+              dtype=float32)
         >>> _ = env.action_space.seed(42)
         >>> env.step(env.action_space.sample())[0]
         array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  0.002     ],

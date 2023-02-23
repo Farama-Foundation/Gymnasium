@@ -348,7 +348,7 @@ class RescaleObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType]
         >>> env = gym.make("Pendulum-v1")
         >>> env.observation_space
         Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)
-        >>> env = RescaleObservationV0(env, np.array([-2, -1, -10]), np.array([1, 0, 1]))
+        >>> env = RescaleObservationV0(env, np.array([-2, -1, -10], dtype=np.float32), np.array([1, 0, 1], dtype=np.float32))
         >>> env.observation_space
         Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32)
     """
