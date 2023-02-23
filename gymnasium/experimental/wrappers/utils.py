@@ -1,5 +1,24 @@
 """Utility functions for the wrappers."""
+from collections import OrderedDict
+from functools import singledispatch
+
 import numpy as np
+
+from gymnasium import Space
+from gymnasium.error import CustomSpaceError
+from gymnasium.spaces import (
+    Box,
+    Dict,
+    Discrete,
+    Graph,
+    GraphInstance,
+    MultiBinary,
+    MultiDiscrete,
+    Sequence,
+    Text,
+    Tuple,
+)
+from gymnasium.spaces.space import T_cov
 
 
 class RunningMeanStd:
@@ -41,3 +60,81 @@ def update_mean_var_count_from_moments(
     new_count = tot_count
 
     return new_mean, new_var, new_count
+
+
+@singledispatch
+def create_zero_array(space: Space[T_cov]) -> T_cov:
+    """Creates a zero-based array of a space, this is similar to ``create_empty_array`` except all arrays are valid samples from the space.
+
+    As some ``Box`` cases have ``high`` or ``low`` that don't contain zero then the ``create_empty_array`` would in case
+    create arrays which is not contained in the space.
+
+    Args:
+        space: The space to create a zero array for
+
+    Returns:
+        Valid sample from the space that is as close to zero as possible
+    """
+    if isinstance(space, Space):
+        raise CustomSpaceError(
+            f"Space of type `{type(space)}` doesn't have an registered `create_zero_array` function. Register `{type(space)}` for `create_zero_array` to support it."
+        )
+    else:
+        raise TypeError(
+            f"The space provided to `create_zero_array` is not a gymnasium Space instance, type: {type(space)}, {space}"
+        )
+
+
+@create_zero_array.register(Box)
+def _create_box_zero_array(space: Box):
+    zero_array = np.zeros(space.shape, dtype=space.dtype)
+    zero_array = np.where(space.low > 0, space.low, zero_array)
+    zero_array = np.where(space.high < 0, space.high, zero_array)
+    return zero_array
+
+
+@create_zero_array.register(Discrete)
+def _create_discrete_zero_array(space: Discrete):
+    return space.start
+
+
+@create_zero_array.register(MultiDiscrete)
+@create_zero_array.register(MultiBinary)
+def _create_array_zero_array(space: Discrete):
+    return np.zeros(space.shape, dtype=space.dtype)
+
+
+@create_zero_array.register(Tuple)
+def _create_tuple_zero_array(space: Tuple):
+    return tuple(create_zero_array(subspace) for subspace in space.spaces)
+
+
+@create_zero_array.register(Dict)
+def _create_dict_zero_array(space: Dict):
+    return OrderedDict(
+        {key: create_zero_array(subspace) for key, subspace in space.spaces.items()}
+    )
+
+
+@create_zero_array.register(Sequence)
+def _create_sequence_zero_array(space: Sequence):
+    if space.stack:
+        return create_zero_array(space.stacked_feature_space)
+    else:
+        return tuple()
+
+
+@create_zero_array.register(Text)
+def _create_text_zero_array(space: Text):
+    return "".join(space.characters[0] for _ in range(space.min_length))
+
+
+@create_zero_array.register(Graph)
+def _create_graph_zero_array(space: Graph):
+    nodes = np.expand_dims(create_zero_array(space.node_space), axis=0)
+    if space.edge_space is None:
+        return GraphInstance(nodes=nodes, edges=None, edge_links=None)
+    else:
+        edges = np.expand_dims(create_zero_array(space.edge_space), axis=0)
+        edge_links = np.zeros((1, 2), dtype=np.int64)
+        return GraphInstance(nodes=nodes, edges=edges, edge_links=edge_links)

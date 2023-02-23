@@ -49,9 +49,10 @@ def batch_space(space: Space[Any], n: int = 1) -> Space[Any]:
     Raises:
         ValueError: Cannot batch space does not have a registered function.
 
-    Example::
+    Example:
 
         >>> from gymnasium.spaces import Box, Dict
+        >>> import numpy as np
         >>> space = Dict({
         ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
         ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
@@ -72,7 +73,7 @@ def _batch_space_box(space: Box, n: int = 1):
 
 
 @batch_space.register(Discrete)
-def _batch_space_discrete(space: Discrete, n=1):
+def _batch_space_discrete(space: Discrete, n: int = 1):
     if space.start == 0:
         return MultiDiscrete(
             np.full((n,), space.n, dtype=space.dtype),
@@ -90,7 +91,7 @@ def _batch_space_discrete(space: Discrete, n=1):
 
 
 @batch_space.register(MultiDiscrete)
-def _batch_space_multidiscrete(space: MultiDiscrete, n=1):
+def _batch_space_multidiscrete(space: MultiDiscrete, n: int = 1):
     repeats = tuple([n] + [1] * space.nvec.ndim)
     high = np.tile(space.nvec, repeats) - 1
     return Box(
@@ -102,7 +103,7 @@ def _batch_space_multidiscrete(space: MultiDiscrete, n=1):
 
 
 @batch_space.register(MultiBinary)
-def _batch_space_multibinary(space: MultiBinary, n=1):
+def _batch_space_multibinary(space: MultiBinary, n: int = 1):
     return Box(
         low=0,
         high=1,
@@ -113,7 +114,7 @@ def _batch_space_multibinary(space: MultiBinary, n=1):
 
 
 @batch_space.register(Tuple)
-def _batch_space_tuple(space: Tuple, n=1):
+def _batch_space_tuple(space: Tuple, n: int = 1):
     return Tuple(
         tuple(batch_space(subspace, n=n) for subspace in space.spaces),
         seed=deepcopy(space.np_random),
@@ -149,11 +150,12 @@ def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
     """Iterate over the elements of a (batched) space.
 
     Args:
-        space: Space to which `items` belong to.
-        items: Items to be iterated over.
+        space: Observation space of a single environment in the vectorized environment.
+        items: Samples to be concatenated.
+        out: The output object. This object is a (possibly nested) numpy array.
 
     Returns:
-        Iterator over the elements in `items`.
+        The output object. This object is a (possibly nested) numpy array.
 
     Raises:
         ValueError: Space is not an instance of :class:`gym.Space`
@@ -186,7 +188,7 @@ def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
 
 
 @iterate.register(Discrete)
-def _iterate_discrete(space, items):
+def _iterate_discrete(space: Discrete, items: Iterable):
     raise TypeError("Unable to iterate over a space of type `Discrete`.")
 
 
@@ -346,7 +348,9 @@ def create_empty_array(
     )
 
 
+# It is possible for the some of the Box low to be greater than 0, then array is not in space
 @create_empty_array.register(Box)
+# If the Discrete start > 0 or start + length < 0 then array is not in space
 @create_empty_array.register(Discrete)
 @create_empty_array.register(MultiDiscrete)
 @create_empty_array.register(MultiBinary)

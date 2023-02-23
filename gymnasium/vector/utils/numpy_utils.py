@@ -115,7 +115,9 @@ def create_empty_array(
     )
 
 
+# It is possible for the some of the Box low to be greater than 0, then array is not in space
 @create_empty_array.register(Box)
+# If the Discrete start > 0 or start + length < 0 then array is not in space
 @create_empty_array.register(Discrete)
 @create_empty_array.register(MultiDiscrete)
 @create_empty_array.register(MultiBinary)
