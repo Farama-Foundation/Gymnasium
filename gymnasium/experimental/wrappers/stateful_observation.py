@@ -14,7 +14,6 @@ from typing_extensions import Final
 import numpy as np
 import gymnasium as gym
 import gymnasium.spaces as spaces
-from gymnasium import Env, ObservationWrapper, Space, Wrapper
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.experimental.vector.utils import (
     batch_space,
@@ -51,7 +50,7 @@ class DelayObservationV0(
         This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.
     """
 
-    def __init__(self, env: Env[ObsType, ActType], delay: int):
+    def __init__(self, env: gym.Env[ObsType, ActType], delay: int):
         """Initialises the DelayObservation wrapper with an integer.
 
         Args:
@@ -92,7 +91,7 @@ class DelayObservationV0(
 
 
 class TimeAwareObservationV0(
-    ObservationWrapper[WrapperObsType, ActType, ObsType],
+    gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
     """Augment the observation with time information of the episode.
@@ -215,14 +214,14 @@ class TimeAwareObservationV0(
 
         # If to flatten the observation space
         if self.flatten:
-            self.observation_space: Space[WrapperObsType] = spaces.flatten_space(
+            self.observation_space: gym.Space[WrapperObsType] = spaces.flatten_space(
                 observation_space
             )
             self._obs_postprocess_func = lambda obs: spaces.flatten(
                 observation_space, obs
             )
         else:
-            self.observation_space: Space[WrapperObsType] = observation_space
+            self.observation_space: gym.Space[WrapperObsType] = observation_space
             self._obs_postprocess_func = lambda obs: obs
 
     def observation(self, observation: ObsType) -> WrapperObsType:
@@ -273,7 +272,7 @@ class TimeAwareObservationV0(
 
 
 class FrameStackObservationV0(
-    Wrapper[WrapperObsType, ActType, ObsType, ActType],
+    gym.Wrapper[WrapperObsType, ActType, ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
     """Observation wrapper that stacks the observations in a rolling manner.
