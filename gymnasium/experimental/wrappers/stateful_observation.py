@@ -313,12 +313,6 @@ class FrameStackObservationV0(
             stack_size: The number of frames to stack with zero_obs being used originally.
             zeros_obs: Keyword only parameter that allows a custom padding observation at :meth:`reset`
         """
-        assert np.issubdtype(type(stack_size), np.integer)
-        assert stack_size > 0
-
-        gym.utils.RecordConstructorArgs.__init__(self, stack_size=stack_size)
-        gym.Wrapper.__init__(self, env)
-
         if not np.issubdtype(type(stack_size), np.integer):
             raise TypeError(
                 f"The stack_size is expected to be an integer, actual type: {type(stack_size)}"
@@ -327,6 +321,9 @@ class FrameStackObservationV0(
             raise ValueError(
                 f"The stack_size needs to be greater than one, actual value: {stack_size}"
             )
+
+        gym.utils.RecordConstructorArgs.__init__(self, stack_size=stack_size)
+        gym.Wrapper.__init__(self, env)
 
         self.observation_space = batch_space(env.observation_space, n=stack_size)
         self.stack_size: Final[int] = stack_size
