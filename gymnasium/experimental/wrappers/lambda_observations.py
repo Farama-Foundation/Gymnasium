@@ -30,7 +30,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
-class LambdaObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
+class LambdaObservationV0(gym.ObservationWrapper[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Transforms an observation via a function provided to the wrapper.
 
     The function :attr:`func` will be applied to all observations.
@@ -49,9 +49,9 @@ class LambdaObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructorArg
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         func: Callable[[ObsType], Any],
-        observation_space: gym.Space | None,
+        observation_space: gym.Space[WrapperObsType] | None,
     ):
         """Constructor for the lambda observation wrapper.
 
@@ -75,7 +75,7 @@ class LambdaObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructorArg
         return self.func(observation)
 
 
-class FilterObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
+class FilterObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Filter Dict observation space by the keys.
 
     Example:
@@ -94,7 +94,9 @@ class FilterObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
         ({'time': 0}, 1.0, False, False, {})
     """
 
-    def __init__(self, env: gym.Env, filter_keys: Sequence[str | int]):
+    def __init__(
+        self, env: gym.Env[ObsType, ActType], filter_keys: Sequence[str | int]
+    ):
         """Constructor for an environment with a dictionary observation space where all :attr:`filter_keys` are in the observation space keys."""
         assert isinstance(filter_keys, Sequence)
         gym.utils.RecordConstructorArgs.__init__(self, filter_keys=filter_keys)
@@ -175,7 +177,7 @@ class FilterObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
         self.filter_keys: Final[Sequence[str | int]] = filter_keys
 
 
-class FlattenObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
+class FlattenObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Observation wrapper that flattens the observation.
 
     Example:
@@ -192,7 +194,7 @@ class FlattenObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs)
         (27648,)
     """
 
-    def __init__(self, env: gym.Env):
+    def __init__(self, env: gym.Env[ObsType, ActType]):
         """Constructor for any environment's observation space that implements ``spaces.utils.flatten_space`` and ``spaces.utils.flatten``."""
         gym.utils.RecordConstructorArgs.__init__(self)
         LambdaObservationV0.__init__(
@@ -203,7 +205,7 @@ class FlattenObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs)
         )
 
 
-class GrayscaleObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
+class GrayscaleObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Observation wrapper that converts an RGB image to grayscale.
 
     The :attr:`keep_dim` will keep the channel dimension
@@ -222,7 +224,7 @@ class GrayscaleObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArg
         (96, 96, 1)
     """
 
-    def __init__(self, env: gym.Env, keep_dim: bool = False):
+    def __init__(self, env: gym.Env[ObsType, ActType], keep_dim: bool = False):
         """Constructor for an RGB image based environments to make the image grayscale."""
         assert isinstance(env.observation_space, spaces.Box)
         assert (
@@ -269,7 +271,7 @@ class GrayscaleObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArg
             )
 
 
-class ResizeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
+class ResizeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Resizes image observations using OpenCV to shape.
 
     Example:
@@ -283,7 +285,7 @@ class ResizeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
         (32, 32, 3)
     """
 
-    def __init__(self, env: gym.Env, shape: tuple[int, ...]):
+    def __init__(self, env: gym.Env[ObsType, ActType], shape: tuple[int, ...]):
         """Constructor that requires an image environment observation space with a shape."""
         assert isinstance(env.observation_space, spaces.Box)
         assert len(env.observation_space.shape) in [2, 3]
@@ -318,7 +320,7 @@ class ResizeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
         )
 
 
-class ReshapeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
+class ReshapeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Reshapes array based observations to shapes.
 
     Example:
@@ -332,7 +334,7 @@ class ReshapeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs)
         (24, 4, 96, 1, 3)
     """
 
-    def __init__(self, env: gym.Env, shape: int | tuple[int, ...]):
+    def __init__(self, env: gym.Env[ObsType, ActType], shape: int | tuple[int, ...]):
         """Constructor for env with Box observation space that has a shape product equal to the new shape product."""
         assert isinstance(env.observation_space, spaces.Box)
         assert np.product(shape) == np.product(env.observation_space.shape)
@@ -357,8 +359,7 @@ class ReshapeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs)
             observation_space=new_observation_space,
         )
 
-
-class RescaleObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
+class RescaleObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Linearly rescales observation to between a minimum and maximum value.
 
     Example:
@@ -374,7 +375,7 @@ class RescaleObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs)
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         min_obs: np.floating | np.integer | np.ndarray,
         max_obs: np.floating | np.integer | np.ndarray,
     ):
@@ -425,10 +426,10 @@ class RescaleObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs)
         )
 
 
-class DtypeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
+class DtypeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Observation wrapper for transforming the dtype of an observation."""
 
-    def __init__(self, env: gym.Env, dtype: Any):
+    def __init__(self, env: gym.Env[ObsType, ActType], dtype: Any):
         """Constructor for Dtype, this is only valid with :class:`Box`, :class:`Discrete`, :class:`MultiDiscrete` and :class:`MultiBinary` observation spaces."""
         assert isinstance(
             env.observation_space,
@@ -475,7 +476,7 @@ class DtypeObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
         )
 
 
-class PixelObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
+class PixelObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """Augment observations by pixel values.
 
     Observations of this wrapper will be dictionaries of images.
@@ -544,7 +545,7 @@ class PixelObservationV0(LambdaObservationV0, gym.utils.RecordConstructorArgs):
             )
 
 
-class NormalizeObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
+class NormalizeObservationV0(gym.ObservationWrapper[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
@@ -556,7 +557,7 @@ class NormalizeObservationV0(gym.ObservationWrapper, gym.utils.RecordConstructor
         newly instantiated or the policy was changed recently.
     """
 
-    def __init__(self, env: gym.Env, epsilon: float = 1e-8):
+    def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
         """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
         Args:

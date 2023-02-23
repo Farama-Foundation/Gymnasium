@@ -46,7 +46,7 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         self.feature_space = space
         self.stack = stack
         if self.stack:
-            self.batched_feature_space: Space = gym.vector.utils.batch_space(
+            self.stacked_feature_space: Space = gym.vector.utils.batch_space(
                 self.feature_space, 1
             )
 
@@ -141,7 +141,7 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         if self.stack:
             return all(
                 item in self.feature_space
-                for item in gym.vector.utils.iterate(self.batched_feature_space, x)
+                for item in gym.vector.utils.iterate(self.stacked_feature_space, x)
             )
         else:
             return isinstance(x, tuple) and all(
@@ -157,14 +157,14 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         if self.stack:
-            return self.batched_feature_space.to_jsonable(sample_n)
+            return self.stacked_feature_space.to_jsonable(sample_n)
         else:
             return [self.feature_space.to_jsonable(sample) for sample in sample_n]
 
     def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...] | Any]:
         """Convert a JSONable data type to a batch of samples from this space."""
         if self.stack:
-            return self.batched_feature_space.from_jsonable(sample_n)
+            return self.stacked_feature_space.from_jsonable(sample_n)
         else:
             return [
                 tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n

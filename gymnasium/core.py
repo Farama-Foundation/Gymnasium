@@ -202,7 +202,7 @@ class Env(Generic[ObsType, ActType]):
             Instances of `np.random.Generator`
         """
         if self._np_random is None:
-            self._np_random, seed = seeding.np_random()
+            self._np_random, _ = seeding.np_random()
         return self._np_random
 
     @np_random.setter
@@ -235,7 +235,10 @@ WrapperObsType = TypeVar("WrapperObsType")
 WrapperActType = TypeVar("WrapperActType")
 
 
-class Wrapper(Env[WrapperObsType, WrapperActType]):
+class Wrapper(
+    Env[WrapperObsType, WrapperActType],
+    Generic[WrapperObsType, WrapperActType, ObsType, ActType],
+):
     """Wraps a :class:`gymnasium.Env` to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.
 
     This class is the base class of all wrappers to change the behavior of the underlying environment.
@@ -416,7 +419,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self.env.unwrapped
 
 
-class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
+class ObservationWrapper(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
     """Superclass of wrappers that can modify observations using :meth:`observation` for :meth:`reset` and :meth:`step`.
 
     If you would like to apply a function to only the observation before
@@ -459,7 +462,7 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
         raise NotImplementedError
 
 
-class RewardWrapper(Wrapper[ObsType, ActType]):
+class RewardWrapper(Wrapper[ObsType, ActType, ObsType, ActType]):
     """Superclass of wrappers that can modify the returning reward from a step.
 
     If you would like to apply a function to the reward that is returned by the base environment before
@@ -492,7 +495,7 @@ class RewardWrapper(Wrapper[ObsType, ActType]):
         raise NotImplementedError
 
 
-class ActionWrapper(Wrapper[ObsType, WrapperActType]):
+class ActionWrapper(Wrapper[ObsType, WrapperActType, ObsType, ActType]):
     """Superclass of wrappers that can modify the action before :meth:`env.step`.
 
     If you would like to apply a function to the action before passing it to the base environment,

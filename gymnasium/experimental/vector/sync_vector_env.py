@@ -1,13 +1,19 @@
 """A synchronous vector environment."""
+from __future__ import annotations
+
 from copy import deepcopy
-from typing import Any, Callable, Iterator, List, Optional, Union
+from typing import Any, Callable, Iterator
 
 import numpy as np
 
 from gymnasium import Env
+from gymnasium.experimental.vector.utils import (
+    batch_space,
+    concatenate,
+    create_empty_array,
+    iterate,
+)
 from gymnasium.experimental.vector.vector_env import VectorEnv
-from gymnasium.vector.utils import concatenate, create_empty_array, iterate
-from gymnasium.vector.utils.spaces import batch_space
 
 
 __all__ = ["SyncVectorEnv"]
@@ -16,16 +22,15 @@ __all__ = ["SyncVectorEnv"]
 class SyncVectorEnv(VectorEnv):
     """Vectorized environment that serially runs multiple environments.
 
-    Example::
-
+    Example:
         >>> import gymnasium as gym
         >>> env = gym.vector.SyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset()  # doctest: +SKIP
-        array([[-0.8286432 ,  0.5597771 ,  0.90249056],
-               [-0.85009176,  0.5266346 ,  0.60007906]], dtype=float32)
+        >>> env.reset(seed=42)
+        (array([[-0.14995256,  0.9886932 , -0.12224312],
+               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
     """
 
     def __init__(
@@ -70,8 +75,8 @@ class SyncVectorEnv(VectorEnv):
 
     def reset(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
     ):
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
@@ -93,7 +98,6 @@ class SyncVectorEnv(VectorEnv):
         observations = []
         infos = {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
-
             kwargs = {}
             if single_seed is not None:
                 kwargs["seed"] = single_seed
@@ -119,7 +123,6 @@ class SyncVectorEnv(VectorEnv):
 
         observations, infos = [], {}
         for i, (env, action) in enumerate(zip(self.envs, actions)):
-
             (
                 observation,
                 self._rewards[i],
@@ -179,7 +182,7 @@ class SyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: Union[list, tuple, Any]):
+    def set_attr(self, name: str, values: list | tuple | Any):
         """Sets an attribute of the sub-environments.
 
         Args:

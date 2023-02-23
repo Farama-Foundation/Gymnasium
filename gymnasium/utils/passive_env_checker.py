@@ -8,6 +8,13 @@ import numpy as np
 from gymnasium import Space, error, logger, spaces
 
 
+__all__ = [
+    "env_render_passive_checker",
+    "env_reset_passive_checker",
+    "env_step_passive_checker",
+]
+
+
 def _check_box_observation_space(observation_space: spaces.Box):
     """Checks that a :class:`Box` observation space is defined in a sensible way.
 
