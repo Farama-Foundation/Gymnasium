@@ -21,7 +21,7 @@ from gymnasium.experimental.vector.utils import (
     concatenate,
     create_empty_array,
 )
-from gymnasium.logger import warn
+from gymnasium.experimental.wrappers.utils import create_zero_array
 from gymnasium.spaces import Box, Dict, Tuple
 
 
@@ -44,6 +44,9 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType, ObsType]):
         (array([0., 0., 0., 0.], dtype=float32), 1.0, False, False, {})
         >>> env.step(env.action_space.sample())
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 1.0, False, False, {})
+
+    Note:
+        This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.
     """
 
     def __init__(self, env: Env[ObsType, ActType], delay: int):
@@ -67,12 +70,6 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType, ObsType]):
         self.delay: Final[int] = int(delay)
         self.observation_queue: Final[deque] = deque()
 
-        zero_obs = create_empty_array(self.observation_space)
-        if zero_obs not in self.observation_space:
-            warn(
-                f"The zero observation is not contained within the observation space. Please report this on github. Zero obs: {zero_obs}"
-            )
-
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[ObsType, dict[str, Any]]:
@@ -88,7 +85,7 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType, ObsType]):
         if len(self.observation_queue) > self.delay:
             return self.observation_queue.popleft()
         else:
-            return create_empty_array(self.observation_space)
+            return create_zero_array(self.observation_space)
 
 
 class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType, ObsType]):
@@ -298,9 +295,6 @@ class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]
             stack_size: The number of frames to stack with zero_obs being used originally.
             zeros_obs: Keyword only parameter that allows a custom padding observation at :meth:`reset`
         """
-        assert np.issubdtype(type(stack_size), np.integer)
-        assert stack_size > 0
-
         super().__init__(env)
 
         if not np.issubdtype(type(stack_size), np.integer):
@@ -315,19 +309,9 @@ class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]
         self.observation_space = batch_space(env.observation_space, n=stack_size)
         self.stack_size: Final[int] = stack_size
 
-        if zeros_obs is not None:
-            zeros_obs = create_empty_array(env.observation_space)
-            if zeros_obs not in env.observation_space:
-                warn(
-                    f"Zero observation created by `create_empty_array` is not contained within the environment's observation space. {zeros_obs}"
-                )
-        else:
-            if zeros_obs not in env.observation_space:
-                warn(
-                    f"`zero_obs` parameter is not contained within the environment's observation space. {zeros_obs}"
-                )
-
-        self.zero_obs: Final[ObsType] = zeros_obs
+        self.zero_obs: Final[ObsType] = (
+            zeros_obs if zeros_obs else create_zero_array(env.observation_space)
+        )
         self._stacked_obs = deque(
             [self.zero_obs for _ in range(self.stack_size)], maxlen=self.stack_size
         )
@@ -349,17 +333,12 @@ class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]
         obs, reward, terminated, truncated, info = super().step(action)
         self._stacked_obs.append(obs)
 
-        return (
-            deepcopy(
-                concatenate(
-                    self.observation_space, self._stacked_obs, self._stacked_array
-                )
-            ),
-            reward,
-            terminated,
-            truncated,
-            info,
+        updated_obs = deepcopy(
+            concatenate(
+                self.env.observation_space, self._stacked_obs, self._stacked_array
+            )
         )
+        return updated_obs, reward, terminated, truncated, info
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -378,11 +357,9 @@ class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]
             self._stacked_obs.append(self.zero_obs)
         self._stacked_obs.append(obs)
 
-        return (
-            deepcopy(
-                concatenate(
-                    self.observation_space, self._stacked_obs, self._stacked_array
-                )
-            ),
-            info,
+        updated_obs = deepcopy(
+            concatenate(
+                self.env.observation_space, self._stacked_obs, self._stacked_array
+            )
         )
+        return updated_obs, info

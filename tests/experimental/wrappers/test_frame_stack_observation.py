@@ -4,8 +4,9 @@ import re
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental.vector.utils import batch_space, create_empty_array, iterate
+from gymnasium.experimental.vector.utils import iterate
 from gymnasium.experimental.wrappers import FrameStackObservationV0
+from gymnasium.experimental.wrappers.utils import create_zero_array
 from gymnasium.utils.env_checker import data_equivalence
 from tests.experimental.wrappers.utils import (
     SEED,
@@ -15,33 +16,30 @@ from tests.experimental.wrappers.utils import (
 
 
 @pytest.mark.parametrize("env", TESTING_OBS_ENVS, ids=TESTING_OBS_ENVS_IDS)
-def test_env_obs(env, stack_size=3):
+def test_env_obs(env, stack_size: int = 3):
     """Test different environment observations for testing."""
-    unstacked_obs = list(
-        iterate(
-            batch_space(env.observation_space, n=stack_size - 1),
-            create_empty_array(env.observation_space, n=stack_size - 1),
-        )
-    )
-
     obs, _ = env.reset(seed=SEED)
-    unstacked_obs.append(obs)
-
     env.action_space.seed(SEED)
+
+    unstacked_obs = [
+        create_zero_array(env.observation_space) for _ in range(stack_size - 1)
+    ]
+    unstacked_obs.append(obs)
     for _ in range(stack_size * 2):
         obs, _, _, _, _ = env.step(env.action_space.sample())
         unstacked_obs.append(obs)
 
     env = FrameStackObservationV0(env, stack_size=stack_size)
-    stacked_obs = []
+    env.action_space.seed(SEED)
 
     obs, _ = env.reset(seed=SEED)
-    stacked_obs.append(obs)
+    stacked_obs = [obs]
+    assert obs in env.observation_space
 
-    env.action_space.seed(SEED)
     for i in range(stack_size * 2):
         obs, _, _, _, _ = env.step(env.action_space.sample())
         stacked_obs.append(obs)
+        assert obs in env.observation_space
 
     assert len(unstacked_obs) == len(stacked_obs) + stack_size - 1
     for i in range(len(stacked_obs)):
@@ -59,9 +57,7 @@ def test_stack_size(stack_size: int):
     first_obs, _ = env.reset(seed=SEED)
     second_obs, _, _, _, _ = env.step(env.action_space.sample())
 
-    zero_obs = next(
-        iterate(env.observation_space, create_empty_array(env.observation_space))
-    )
+    zero_obs = create_zero_array(env.observation_space)
 
     env = FrameStackObservationV0(env, stack_size=stack_size)
 
