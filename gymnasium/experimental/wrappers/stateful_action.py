@@ -8,7 +8,9 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidProbability
 
 
-class StickyActionV0(ActionWrapper[ObsType, ActType, ActType], gym.utils.RecordConstructorArgs):
+class StickyActionV0(
+    gym.ActionWrapper[ObsType, ActType, ActType], gym.utils.RecordConstructorArgs
+):
     """Wrapper which adds a probability of repeating the previous action.
 
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_

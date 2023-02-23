@@ -15,7 +15,9 @@ from gymnasium.error import InvalidBound
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
-class LambdaRewardV0(gym.RewardWrapper[ObsType, ActType], gym.utils.RecordConstructorArgs):
+class LambdaRewardV0(
+    gym.RewardWrapper[ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """A reward wrapper that allows a custom function to modify the step reward.
 
     Example:
@@ -98,7 +100,9 @@ class ClipRewardV0(LambdaRewardV0[ObsType, ActType], gym.utils.RecordConstructor
         )
 
 
-class NormalizeRewardV0(gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs):
+class NormalizeRewardV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.

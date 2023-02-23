@@ -30,7 +30,10 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
-class LambdaObservationV0(gym.ObservationWrapper[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class LambdaObservationV0(
+    gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Transforms an observation via a function provided to the wrapper.
 
     The function :attr:`func` will be applied to all observations.
@@ -75,7 +78,10 @@ class LambdaObservationV0(gym.ObservationWrapper[WrapperObsType, ActType, ObsTyp
         return self.func(observation)
 
 
-class FilterObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class FilterObservationV0(
+    LambdaObservationV0[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Filter Dict observation space by the keys.
 
     Example:
@@ -177,7 +183,10 @@ class FilterObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType],
         self.filter_keys: Final[Sequence[str | int]] = filter_keys
 
 
-class FlattenObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class FlattenObservationV0(
+    LambdaObservationV0[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Observation wrapper that flattens the observation.
 
     Example:
@@ -205,7 +214,10 @@ class FlattenObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType]
         )
 
 
-class GrayscaleObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class GrayscaleObservationV0(
+    LambdaObservationV0[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Observation wrapper that converts an RGB image to grayscale.
 
     The :attr:`keep_dim` will keep the channel dimension
@@ -271,7 +283,10 @@ class GrayscaleObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsTyp
             )
 
 
-class ResizeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class ResizeObservationV0(
+    LambdaObservationV0[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Resizes image observations using OpenCV to shape.
 
     Example:
@@ -320,7 +335,10 @@ class ResizeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType],
         )
 
 
-class ReshapeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class ReshapeObservationV0(
+    LambdaObservationV0[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Reshapes array based observations to shapes.
 
     Example:
@@ -359,7 +377,11 @@ class ReshapeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType]
             observation_space=new_observation_space,
         )
 
-class RescaleObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+
+class RescaleObservationV0(
+    LambdaObservationV0[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Linearly rescales observation to between a minimum and maximum value.
 
     Example:
@@ -426,7 +448,10 @@ class RescaleObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType]
         )
 
 
-class DtypeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class DtypeObservationV0(
+    LambdaObservationV0[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Observation wrapper for transforming the dtype of an observation."""
 
     def __init__(self, env: gym.Env[ObsType, ActType], dtype: Any):
@@ -476,7 +501,10 @@ class DtypeObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], 
         )
 
 
-class PixelObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class PixelObservationV0(
+    LambdaObservationV0[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Augment observations by pixel values.
 
     Observations of this wrapper will be dictionaries of images.
@@ -545,7 +573,10 @@ class PixelObservationV0(LambdaObservationV0[WrapperObsType, ActType, ObsType], 
             )
 
 
-class NormalizeObservationV0(gym.ObservationWrapper[WrapperObsType, ActType, ObsType], gym.utils.RecordConstructorArgs):
+class NormalizeObservationV0(
+    gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation

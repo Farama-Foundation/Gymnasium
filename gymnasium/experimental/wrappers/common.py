@@ -25,7 +25,9 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-class AutoresetV0(gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs):
+class AutoresetV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`."""
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
@@ -69,7 +71,9 @@ class AutoresetV0(gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.Rec
         return super().reset(seed=seed, options=self._reset_options)
 
 
-class PassiveEnvCheckerV0(gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs):
+class PassiveEnvCheckerV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API."""
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
@@ -119,7 +123,9 @@ class PassiveEnvCheckerV0(gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.u
             return self.env.render()
 
 
-class OrderEnforcingV0(gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs):
+class OrderEnforcingV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.
 
     Example:
@@ -188,7 +194,9 @@ class OrderEnforcingV0(gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.util
         return self._has_reset
 
 
-class RecordEpisodeStatisticsV0(gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs):
+class RecordEpisodeStatisticsV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of an episode, the statistics of the episode will be added to ``info``

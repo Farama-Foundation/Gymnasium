@@ -20,7 +20,9 @@ from gymnasium.core import ActType, ObsType, WrapperActType
 from gymnasium.spaces import Box, Space
 
 
-class LambdaActionV0(gym.ActionWrapper[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs):
+class LambdaActionV0(
+    gym.ActionWrapper[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
+):
     """A wrapper that provides a function to modify the action passed to :meth:`step`."""
 
     def __init__(
@@ -51,7 +53,9 @@ class LambdaActionV0(gym.ActionWrapper[ObsType, WrapperActType, ActType], gym.ut
         return self.func(action)
 
 
-class ClipActionV0(LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs):
+class ClipActionV0(
+    LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
+):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -91,7 +95,9 @@ class ClipActionV0(LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.R
         )
 
 
-class RescaleActionV0(LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs):
+class RescaleActionV0(
+    LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
+):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
