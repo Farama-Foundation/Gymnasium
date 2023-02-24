@@ -8,7 +8,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.spaces import Box
 
 
-class ResizeObservation(gym.ObservationWrapper):
+class ResizeObservation(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Resize the image observation.
 
     This wrapper works on environments with image observations. More generally,
@@ -36,7 +36,9 @@ class ResizeObservation(gym.ObservationWrapper):
             env: The environment to apply the wrapper
             shape: The shape of the resized observations
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self, shape=shape)
+        gym.ObservationWrapper.__init__(self, env)
+
         if isinstance(shape, int):
             shape = (shape, shape)
         assert len(shape) == 2 and all(

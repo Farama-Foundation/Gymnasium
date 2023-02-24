@@ -4,7 +4,7 @@ import copy
 import gymnasium as gym
 
 
-class RenderCollection(gym.Wrapper):
+class RenderCollection(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Save collection of render frames."""
 
     def __init__(self, env: gym.Env, pop_frames: bool = True, reset_clean: bool = True):
@@ -17,7 +17,11 @@ class RenderCollection(gym.Wrapper):
             reset_clean (bool): If true, clear the collection frames when .reset() is called.
             Default value is True.
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, pop_frames=pop_frames, reset_clean=reset_clean
+        )
+        gym.Wrapper.__init__(self, env)
+
         assert env.render_mode is not None
         assert not env.render_mode.endswith("_list")
         self.frame_list = []

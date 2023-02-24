@@ -8,7 +8,7 @@ from typing import Any, Iterable, Mapping, SupportsFloat, Union
 
 import numpy as np
 
-from gymnasium import Env, Wrapper
+import gymnasium as gym
 from gymnasium.core import WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
@@ -94,7 +94,7 @@ if torch is not None:
         return type(value)(numpy_to_torch(v, device) for v in value)
 
 
-class NumpyToTorchV0(Wrapper):
+class NumpyToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
@@ -103,7 +103,7 @@ class NumpyToTorchV0(Wrapper):
         For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
     """
 
-    def __init__(self, env: Env, device: Device | None = None):
+    def __init__(self, env: gym.Env, device: Device | None = None):
         """Wrapper class to change inputs and outputs of environment to PyTorch tensors.
 
         Args:
@@ -115,7 +115,9 @@ class NumpyToTorchV0(Wrapper):
                 "torch is not installed, run `pip install torch`"
             )
 
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self, device=device)
+        gym.Wrapper.__init__(self, env)
+
         self.device: Device | None = device
 
     def step(

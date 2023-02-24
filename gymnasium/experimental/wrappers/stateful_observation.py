@@ -13,8 +13,8 @@ from typing_extensions import Final
 
 import numpy as np
 
+import gymnasium as gym
 import gymnasium.spaces as spaces
-from gymnasium import Env, ObservationWrapper, Space, Wrapper
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.experimental.vector.utils import (
     batch_space,
@@ -25,7 +25,9 @@ from gymnasium.experimental.wrappers.utils import create_zero_array
 from gymnasium.spaces import Box, Dict, Tuple
 
 
-class DelayObservationV0(ObservationWrapper[ObsType, ActType, ObsType]):
+class DelayObservationV0(
+    gym.ObservationWrapper[ObsType, ActType, ObsType], gym.utils.RecordConstructorArgs
+):
     """Wrapper which adds a delay to the returned observation.
 
     Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
@@ -49,15 +51,13 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType, ObsType]):
         This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.
     """
 
-    def __init__(self, env: Env[ObsType, ActType], delay: int):
+    def __init__(self, env: gym.Env[ObsType, ActType], delay: int):
         """Initialises the DelayObservation wrapper with an integer.
 
         Args:
             env: The environment to wrap
             delay: The number of timesteps to delay observations
         """
-        super().__init__(env)
-
         if not np.issubdtype(type(delay), np.integer):
             raise TypeError(
                 f"The delay is expected to be an integer, actual type: {type(delay)}"
@@ -66,6 +66,9 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType, ObsType]):
             raise ValueError(
                 f"The delay needs to be greater than zero, actual value: {delay}"
             )
+
+        gym.utils.RecordConstructorArgs.__init__(self, delay=delay)
+        gym.ObservationWrapper.__init__(self, env)
 
         self.delay: Final[int] = int(delay)
         self.observation_queue: Final[deque] = deque()
@@ -88,7 +91,10 @@ class DelayObservationV0(ObservationWrapper[ObsType, ActType, ObsType]):
             return create_zero_array(self.observation_space)
 
 
-class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType, ObsType]):
+class TimeAwareObservationV0(
+    gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
     """Augment the observation with time information of the episode.
 
     The :attr:`normalize_time` if ``True`` represents time as a normalized value between [0,1]
@@ -144,7 +150,7 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType, ObsType
 
     def __init__(
         self,
-        env: Env[ObsType, ActType],
+        env: gym.Env[ObsType, ActType],
         flatten: bool = False,
         normalize_time: bool = True,
         *,
@@ -159,7 +165,13 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType, ObsType
                 otherwise return time as remaining timesteps before truncation
             dict_time_key: For environment with a ``Dict`` observation space, the key for the time space. By default, `"time"`.
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self,
+            flatten=flatten,
+            normalize_time=normalize_time,
+            dict_time_key=dict_time_key,
+        )
+        gym.ObservationWrapper.__init__(self, env)
 
         self.flatten: Final[bool] = flatten
         self.normalize_time: Final[bool] = normalize_time
@@ -203,14 +215,14 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType, ObsType
 
         # If to flatten the observation space
         if self.flatten:
-            self.observation_space: Space[WrapperObsType] = spaces.flatten_space(
+            self.observation_space: gym.Space[WrapperObsType] = spaces.flatten_space(
                 observation_space
             )
             self._obs_postprocess_func = lambda obs: spaces.flatten(
                 observation_space, obs
             )
         else:
-            self.observation_space: Space[WrapperObsType] = observation_space
+            self.observation_space: gym.Space[WrapperObsType] = observation_space
             self._obs_postprocess_func = lambda obs: obs
 
     def observation(self, observation: ObsType) -> WrapperObsType:
@@ -260,7 +272,10 @@ class TimeAwareObservationV0(ObservationWrapper[WrapperObsType, ActType, ObsType
         return super().reset(seed=seed, options=options)
 
 
-class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
+class FrameStackObservationV0(
+    gym.Wrapper[WrapperObsType, ActType, ObsType, ActType],
+    gym.utils.RecordConstructorArgs,
+):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
@@ -286,7 +301,7 @@ class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]
 
     def __init__(
         self,
-        env: Env[ObsType, ActType],
+        env: gym.Env[ObsType, ActType],
         stack_size: int,
         *,
         zeros_obs: ObsType | None = None,
@@ -298,8 +313,6 @@ class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]
             stack_size: The number of frames to stack with zero_obs being used originally.
             zeros_obs: Keyword only parameter that allows a custom padding observation at :meth:`reset`
         """
-        super().__init__(env)
-
         if not np.issubdtype(type(stack_size), np.integer):
             raise TypeError(
                 f"The stack_size is expected to be an integer, actual type: {type(stack_size)}"
@@ -308,6 +321,9 @@ class FrameStackObservationV0(Wrapper[WrapperObsType, ActType, ObsType, ActType]
             raise ValueError(
                 f"The stack_size needs to be greater than one, actual value: {stack_size}"
             )
+
+        gym.utils.RecordConstructorArgs.__init__(self, stack_size=stack_size)
+        gym.Wrapper.__init__(self, env)
 
         self.observation_space = batch_space(env.observation_space, n=stack_size)
         self.stack_size: Final[int] = stack_size
