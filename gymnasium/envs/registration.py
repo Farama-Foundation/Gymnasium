@@ -139,10 +139,6 @@ class EnvSpec:
         """Calls ``make`` using the environment spec and any keyword arguments."""
         return make(self, **kwargs)
 
-    def make_vec(self, **kwargs: Any) -> VectorEnv:
-        """Calls ``make_vec`` using the environment spec and any keyword arguments."""
-        return make_vec(self, **kwargs)
-
     def to_json(self) -> str:
         """Converts the environment spec into a json compatible string.
 
@@ -905,13 +901,8 @@ def make(
                 kwargs,
             )
         else:
-            return _create_from_env_id(
-                id,
-                kwargs,
-                max_episode_steps=max_episode_steps,
-                autoreset=autoreset,
-                apply_api_compatibility=apply_api_compatibility,
-                disable_env_checker=disable_env_checker,
+            raise ValueError(
+                f"The EnvSpec used does not contain `applied_wrappers` parameters or is `None`. Expected to be a tuple, actually {id}."
             )
     else:
         # For string id's, load the environment spec from the registry then make the environment spec
