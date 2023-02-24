@@ -8,6 +8,8 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
+from gymnasium import Env
+from gymnasium.core import ActType, ObsType, WrapperObsType
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.wrappers import (
     AutoResetWrapper,
@@ -355,3 +357,69 @@ def test_import_module_during_make():
     env.close()
 
     del gym.registry["RegisterDuringMake-v0"]
+
+
+class NoRecordArgsWrapper(gym.ObservationWrapper):
+    def __init__(self, env: Env[ObsType, ActType]):
+        super().__init__(env)
+
+    def observation(self, observation: ObsType) -> WrapperObsType:
+        return self.observation_space.sample()
+
+
+def test_make_env_spec():
+    # make
+    env_1 = gym.make(gym.spec("CartPole-v1"))
+    assert isinstance(env_1, CartPoleEnv)
+    assert env_1 is env_1.unwrapped
+    env_1.close()
+
+    # make with applied wrappers
+    env_2 = gym.wrappers.NormalizeReward(
+        gym.wrappers.TimeAwareObservation(
+            gym.wrappers.FlattenObservation(
+                gym.make("CartPole-v1", render_mode="rgb_array")
+            )
+        ),
+        gamma=0.8,
+    )
+    env_2_recreated = gym.make(env_2.spec)
+    assert env_2.spec == env_2_recreated.spec
+    env_2.close()
+    env_2_recreated.close()
+
+    # make with callable entry point
+    gym.register("CartPole-v2", lambda: CartPoleEnv())
+    env_3 = gym.make("CartPole-v2")
+    assert isinstance(env_3.unwrapped, CartPoleEnv)
+    env_3.close()
+
+    # make with wrapper in env-creator
+    gym.register(
+        "CartPole-v3", lambda: gym.wrappers.TimeAwareObservation(CartPoleEnv())
+    )
+    env_4 = gym.make(gym.spec("CartPole-v3"))
+    assert isinstance(env_4, gym.wrappers.TimeAwareObservation)
+    assert isinstance(env_4.env, CartPoleEnv)
+    env_4.close()
+
+    # make with no ezpickle wrapper
+    env_5 = NoRecordArgsWrapper(gym.make("CartPole-v1").unwrapped)
+    env_5.close()
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "NoRecordArgsWrapper wrapper does not inherit from `gymnasium.utils.RecordConstructorArgs`, therefore, the wrapper cannot be recreated."
+        ),
+    ):
+        gym.make(env_5.spec)
+
+    # make with no ezpickle wrapper but in the entry point
+    gym.register("CartPole-v4", entry_point=lambda: NoRecordArgsWrapper(CartPoleEnv()))
+    env_6 = gym.make(gym.spec("CartPole-v4"))
+    assert isinstance(env_6, NoRecordArgsWrapper)
+    assert isinstance(env_6.unwrapped, CartPoleEnv)
+
+    del gym.registry["CartPole-v2"]
+    del gym.registry["CartPole-v3"]
+    del gym.registry["CartPole-v4"]

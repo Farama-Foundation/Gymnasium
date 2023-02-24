@@ -8,7 +8,7 @@ import numpy as np
 import gymnasium as gym
 
 
-class RecordEpisodeStatistics(gym.Wrapper):
+class RecordEpisodeStatistics(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of an episode, the statistics of the episode will be added to ``info``
@@ -56,7 +56,9 @@ class RecordEpisodeStatistics(gym.Wrapper):
             env (Env): The environment to apply the wrapper
             deque_size: The size of the buffers :attr:`return_queue` and :attr:`length_queue`
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self, deque_size=deque_size)
+        gym.Wrapper.__init__(self, env)
+
         self.num_envs = getattr(env, "num_envs", 1)
         self.episode_count = 0
         self.episode_start_times: np.ndarray = None

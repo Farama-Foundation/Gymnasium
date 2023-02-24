@@ -7,7 +7,7 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-class RescaleAction(gym.ActionWrapper):
+class RescaleAction(gym.ActionWrapper, gym.utils.RecordConstructorArgs):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
@@ -47,7 +47,11 @@ class RescaleAction(gym.ActionWrapper):
         ), f"expected Box action space, got {type(env.action_space)}"
         assert np.less_equal(min_action, max_action).all(), (min_action, max_action)
 
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, min_action=min_action, max_action=max_action
+        )
+        gym.ActionWrapper.__init__(self, env)
+
         self.min_action = (
             np.zeros(env.action_space.shape, dtype=env.action_space.dtype) + min_action
         )

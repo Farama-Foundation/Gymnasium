@@ -97,7 +97,7 @@ class LazyFrames:
         return frame
 
 
-class FrameStack(gym.ObservationWrapper):
+class FrameStack(gym.ObservationWrapper, gym.utils.RecordConstructorArgs):
     """Observation wrapper that stacks the observations in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
@@ -137,7 +137,11 @@ class FrameStack(gym.ObservationWrapper):
             num_stack (int): The number of frames to stack
             lz4_compress (bool): Use lz4 to compress the frames internally
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, num_stack=num_stack, lz4_compress=lz4_compress
+        )
+        gym.ObservationWrapper.__init__(self, env)
+
         self.num_stack = num_stack
         self.lz4_compress = lz4_compress
 

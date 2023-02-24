@@ -14,7 +14,7 @@ import numbers
 from collections import abc
 from typing import Any, Iterable, Mapping, SupportsFloat, Union
 
-from gymnasium import Env, Wrapper
+import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.wrappers.conversion.jax_to_numpy import jax_to_numpy
@@ -131,7 +131,7 @@ if torch is not None and jnp is not None:
         return type(value)(jax_to_torch(v, device) for v in value)
 
 
-class JaxToTorchV0(Wrapper):
+class JaxToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a jax-based environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
@@ -140,7 +140,7 @@ class JaxToTorchV0(Wrapper):
         For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
     """
 
-    def __init__(self, env: Env, device: Device | None = None):
+    def __init__(self, env: gym.Env, device: Device | None = None):
         """Wrapper class to change inputs and outputs of environment to PyTorch tensors.
 
         Args:
@@ -156,7 +156,9 @@ class JaxToTorchV0(Wrapper):
                 "jax is not installed, run `pip install gymnasium[jax]`"
             )
 
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self, device=device)
+        gym.Wrapper.__init__(self, env)
+
         self.device: Device | None = device
 
     def step(

@@ -24,7 +24,7 @@ def capped_cubic_video_schedule(episode_id: int) -> bool:
         return episode_id % 1000 == 0
 
 
-class RecordVideo(gym.Wrapper):
+class RecordVideo(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """This wrapper records videos of rollouts.
 
     Usually, you only want to record episodes intermittently, say every hundredth episode.
@@ -58,9 +58,17 @@ class RecordVideo(gym.Wrapper):
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
             disable_logger (bool): Whether to disable moviepy logger or not.
-
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self,
+            video_folder=video_folder,
+            episode_trigger=episode_trigger,
+            step_trigger=step_trigger,
+            video_length=video_length,
+            name_prefix=name_prefix,
+            disable_logger=disable_logger,
+        )
+        gym.Wrapper.__init__(self, env)
 
         if episode_trigger is None and step_trigger is None:
             episode_trigger = capped_cubic_video_schedule

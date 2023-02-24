@@ -106,7 +106,7 @@ class TestNestedDictWrapper:
         observation_space = env.observation_space
         assert isinstance(observation_space, Dict)
 
-        wrapped_env = FlattenObservation(FilterObservation(env, env.obs_keys))
+        wrapped_env = FlattenObservation(FilterObservation(env, list(env.obs_keys)))
         assert wrapped_env.observation_space.shape == flat_shape
 
         assert wrapped_env.observation_space.dtype == np.float32
@@ -114,7 +114,7 @@ class TestNestedDictWrapper:
     @pytest.mark.parametrize("observation_space, flat_shape", NESTED_DICT_TEST_CASES)
     def test_nested_dicts_ravel(self, observation_space, flat_shape):
         env = FakeEnvironment(observation_space=observation_space)
-        wrapped_env = FlattenObservation(FilterObservation(env, env.obs_keys))
+        wrapped_env = FlattenObservation(FilterObservation(env, list(env.obs_keys)))
         obs, info = wrapped_env.reset()
         assert obs.shape == wrapped_env.observation_space.shape
         assert isinstance(info, dict)

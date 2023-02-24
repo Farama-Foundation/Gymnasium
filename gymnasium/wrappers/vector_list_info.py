@@ -5,7 +5,7 @@ from typing import List
 import gymnasium as gym
 
 
-class VectorListInfo(gym.Wrapper):
+class VectorListInfo(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Converts infos of vectorized environments from dict to List[dict].
 
     This wrapper converts the info format of a
@@ -51,7 +51,9 @@ class VectorListInfo(gym.Wrapper):
         assert getattr(
             env, "is_vector_env", False
         ), "This wrapper can only be used in vectorized environments."
-        super().__init__(env)
+
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
     def step(self, action):
         """Steps through the environment, convert dict info to list."""

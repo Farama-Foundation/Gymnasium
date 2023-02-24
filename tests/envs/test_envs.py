@@ -42,7 +42,7 @@ CHECK_ENV_IGNORE_WARNINGS = [
 def test_all_env_api(spec):
     """Check that all environments pass the environment checker with no warnings other than the expected."""
     with warnings.catch_warnings(record=True) as caught_warnings:
-        env = spec.make(disable_env_checker=True).unwrapped
+        env = spec.make().unwrapped
         check_env(env, skip_render_check=True)
 
         env.close()

@@ -2,7 +2,7 @@
 import gymnasium as gym
 
 
-class AutoResetWrapper(gym.Wrapper):
+class AutoResetWrapper(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.
 
     When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,
@@ -31,7 +31,8 @@ class AutoResetWrapper(gym.Wrapper):
         Args:
             env (gym.Env): The environment to apply the wrapper
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
     def step(self, action):
         """Steps through the environment with action and resets the environment if a terminated or truncated signal is encountered.

@@ -18,7 +18,9 @@ from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 
 
-class RenderCollectionV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
+class RenderCollectionV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``."""
 
     def __init__(
@@ -34,7 +36,11 @@ class RenderCollectionV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
             pop_frames (bool): If true, clear the collection frames after ``meth:render`` is called. Default value is ``True``.
             reset_clean (bool): If true, clear the collection frames when ``meth:reset`` is called. Default value is ``True``.
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, pop_frames=pop_frames, reset_clean=reset_clean
+        )
+        gym.Wrapper.__init__(self, env)
+
         assert env.render_mode is not None
         assert not env.render_mode.endswith("_list")
 
@@ -80,7 +86,9 @@ class RenderCollectionV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
         return frames
 
 
-class RecordVideoV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
+class RecordVideoV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """This wrapper records videos of rollouts.
 
     Usually, you only want to record episodes intermittently, say every hundredth episode.
@@ -117,9 +125,18 @@ class RecordVideoV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
             disable_logger (bool): Whether to disable moviepy logger or not
-
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self,
+            video_folder=video_folder,
+            episode_trigger=episode_trigger,
+            step_trigger=step_trigger,
+            video_length=video_length,
+            name_prefix=name_prefix,
+            disable_logger=disable_logger,
+        )
+        gym.Wrapper.__init__(self, env)
+
         try:
             import moviepy  # noqa: F401
         except ImportError as e:
@@ -277,7 +294,9 @@ class RecordVideoV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
             logger.warn("Unable to save last video! Did you call close()?")
 
 
-class HumanRenderingV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
+class HumanRenderingV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """Performs human rendering for an environment that only supports "rgb_array"rendering.
 
     This wrapper is particularly useful when you have implemented an environment that can produce
@@ -317,7 +336,9 @@ class HumanRenderingV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
         Args:
             env: The environment that is being wrapped
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
+
         assert env.render_mode in [
             "rgb_array",
             "rgb_array_list",

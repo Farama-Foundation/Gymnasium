@@ -11,7 +11,7 @@ except ImportError:
     cv2 = None
 
 
-class AtariPreprocessing(gym.Wrapper):
+class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Atari 2600 preprocessing wrapper.
 
     This class follows the guidelines in Machado et al. (2018),
@@ -60,7 +60,18 @@ class AtariPreprocessing(gym.Wrapper):
             DependencyNotInstalled: opencv-python package not installed
             ValueError: Disable frame-skipping in the original env
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self,
+            noop_max=noop_max,
+            frame_skip=frame_skip,
+            screen_size=screen_size,
+            terminal_on_life_loss=terminal_on_life_loss,
+            grayscale_obs=grayscale_obs,
+            grayscale_newaxis=grayscale_newaxis,
+            scale_obs=scale_obs,
+        )
+        gym.Wrapper.__init__(self, env)
+
         if cv2 is None:
             raise gym.error.DependencyNotInstalled(
                 "opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari"

@@ -14,7 +14,6 @@ from typing import Any, SupportsFloat
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import Env
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import ResetNeeded
 from gymnasium.utils.passive_env_checker import (
@@ -26,7 +25,9 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-class AutoresetV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
+class AutoresetV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`."""
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
@@ -35,7 +36,9 @@ class AutoresetV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
         Args:
             env (gym.Env): The environment to apply the wrapper
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
+
         self._episode_ended: bool = False
         self._reset_options: dict[str, Any] | None = None
 
@@ -68,12 +71,15 @@ class AutoresetV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
         return super().reset(seed=seed, options=self._reset_options)
 
 
-class PassiveEnvCheckerV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
+class PassiveEnvCheckerV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API."""
 
-    def __init__(self, env: Env[ObsType, ActType]):
+    def __init__(self, env: gym.Env[ObsType, ActType]):
         """Initialises the wrapper with the environments, run the observation and action space tests."""
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
         assert hasattr(
             env, "action_space"
@@ -117,7 +123,9 @@ class PassiveEnvCheckerV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
             return self.env.render()
 
 
-class OrderEnforcingV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
+class OrderEnforcingV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.
 
     Example:
@@ -150,7 +158,11 @@ class OrderEnforcingV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
             env: The environment to wrap
             disable_render_order_enforcing: If to disable render order enforcing
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, disable_render_order_enforcing=disable_render_order_enforcing
+        )
+        gym.Wrapper.__init__(self, env)
+
         self._has_reset: bool = False
         self._disable_render_order_enforcing: bool = disable_render_order_enforcing
 
@@ -182,7 +194,9 @@ class OrderEnforcingV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
         return self._has_reset
 
 
-class RecordEpisodeStatisticsV0(gym.Wrapper[ObsType, ActType, ObsType, ActType]):
+class RecordEpisodeStatisticsV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of an episode, the statistics of the episode will be added to ``info``
@@ -226,7 +240,7 @@ class RecordEpisodeStatisticsV0(gym.Wrapper[ObsType, ActType, ObsType, ActType])
 
     def __init__(
         self,
-        env: Env[ObsType, ActType],
+        env: gym.Env[ObsType, ActType],
         buffer_length: int | None = 100,
         stats_key: str = "episode",
     ):
@@ -237,7 +251,8 @@ class RecordEpisodeStatisticsV0(gym.Wrapper[ObsType, ActType, ObsType, ActType])
             buffer_length: The size of the buffers :attr:`return_queue` and :attr:`length_queue`
             stats_key: The info key for the episode statistics
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
         self._stats_key = stats_key
 

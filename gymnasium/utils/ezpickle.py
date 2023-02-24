@@ -1,13 +1,15 @@
 """Class for pickling and unpickling objects via their constructor arguments."""
+from typing import Any
 
 
 class EzPickle:
     """Objects that are pickled and unpickled via their constructor arguments.
 
     Example:
-        >>> class Dog(Animal, EzPickle): # doctest: +SKIP
+        >>> class Animal: pass
+        >>> class Dog(Animal, EzPickle):
         ...    def __init__(self, furcolor, tailkind="bushy"):
-        ...        Animal.__init__()
+        ...        Animal.__init__(self)
         ...        EzPickle.__init__(self, furcolor, tailkind)
 
     When this object is unpickled, a new ``Dog`` will be constructed by passing the provided furcolor and tailkind into the constructor.
@@ -16,7 +18,7 @@ class EzPickle:
     This is generally needed only for environments which wrap C/C++ code, such as MuJoCo and Atari.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         """Uses the ``args`` and ``kwargs`` from the object's constructor for pickling."""
         self._ezpickle_args = args
         self._ezpickle_kwargs = kwargs
