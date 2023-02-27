@@ -7,11 +7,10 @@ Training A2C with Vector Envs and Domain Randomization
 # Notice
 # ------
 #
-# If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from ```gym.vector.make`=``` or ```gym.vector.AsyncVectorEnv``` to the end of the code by ```if__name__ == '__main__'```.
+# If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from ``gym.vector.make=`` or ``gym.vector.AsyncVectorEnv`` to the end of the code by ``if__name__ == '__main__'``.
 #
-# ```An attempt has been made to start a new process before the current process has finished its bootstrapping phase.```
+# ``An attempt has been made to start a new process before the current process has finished its bootstrapping phase.``
 #
-
 
 # %%
 #
