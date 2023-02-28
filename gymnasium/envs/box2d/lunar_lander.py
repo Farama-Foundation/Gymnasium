@@ -558,22 +558,27 @@ class LunarLander(gym.Env, EzPickle):
             else:
                 direction = action - 2
                 s_power = 1.0
+            
+            #The components of the impulse to be applied by the side engines.
             ox = tip[0] * dispersion[0] + side[0] * (
                 3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
             )
             oy = -tip[1] * dispersion[0] - side[1] * (
                 3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
             )
+            
             impulse_pos = (
                 self.lander.position[0] + ox - tip[0] * 17 / SCALE,
                 self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
             )
-            p = self._create_particle(0.7, impulse_pos[0], impulse_pos[1], s_power)
-            p.ApplyLinearImpulse(
-                (ox * SIDE_ENGINE_POWER * s_power, oy * SIDE_ENGINE_POWER * s_power),
-                impulse_pos,
-                True,
-            )
+            if self.render_mode is not None:
+                # particles are just a decoration, with no impact on the physics, so don't add them when not rendering
+                p = self._create_particle(0.7, impulse_pos[0], impulse_pos[1], s_power)
+                p.ApplyLinearImpulse(
+                    (ox * SIDE_ENGINE_POWER * s_power, oy * SIDE_ENGINE_POWER * s_power),
+                    impulse_pos,
+                    True,
+                )
             self.lander.ApplyLinearImpulse(
                 (-ox * SIDE_ENGINE_POWER * s_power, -oy * SIDE_ENGINE_POWER * s_power),
                 impulse_pos,
