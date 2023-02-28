@@ -50,6 +50,8 @@ LEG_SPRING_TORQUE = 40
 SIDE_ENGINE_HEIGHT = 14.0
 SIDE_ENGINE_AWAY = 12.0
 
+MAIN_ENGINE_Y_LOCATION = 4.0 #The location of the main engine on the body of the Lander.
+
 VIEWPORT_W = 600
 VIEWPORT_H = 400
 
@@ -518,8 +520,8 @@ class LunarLander(gym.Env, EzPickle):
 
             # 4 is move a bit downwards, +-2 for randomness
             # The components of the impulse to be applied by the main engine.
-            ox = tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1]
-            oy = -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
+            ox = tip[0] * (MAIN_ENGINE_Y_LOCATION / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1]
+            oy = -tip[1] * (MAIN_ENGINE_Y_LOCATION / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
 
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
             if self.render_mode is not None:
