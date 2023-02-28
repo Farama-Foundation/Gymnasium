@@ -47,10 +47,11 @@ LEG_DOWN = 18
 LEG_W, LEG_H = 2, 8
 LEG_SPRING_TORQUE = 40
 
-SIDE_ENGINE_HEIGHT = 14.0
-SIDE_ENGINE_AWAY = 12.0
+SIDE_ENGINE_HEIGHT = 14
+SIDE_ENGINE_AWAY = 12
+SIDE_ENGINE_Y_LOCATION = 17 #The Y location of the side engine on the body of the Lander.
 
-MAIN_ENGINE_Y_LOCATION = 4.0 #The location of the main engine on the body of the Lander.
+MAIN_ENGINE_Y_LOCATION = 4 #The Y location of the main engine on the body of the Lander.
 
 VIEWPORT_W = 600
 VIEWPORT_H = 400
@@ -556,6 +557,7 @@ class LunarLander(gym.Env, EzPickle):
                 s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
                 assert s_power >= 0.5 and s_power <= 1.0
             else:
+                # action = 1 is left, action = 3 is right
                 direction = action - 2
                 s_power = 1.0
             
@@ -568,7 +570,7 @@ class LunarLander(gym.Env, EzPickle):
             )
             
             impulse_pos = (
-                self.lander.position[0] + ox - tip[0] * 17 / SCALE,
+                self.lander.position[0] + ox - tip[0] * SIDE_ENGINE_Y_LOCATION / SCALE,
                 self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
             )
             if self.render_mode is not None:
