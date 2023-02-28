@@ -358,8 +358,9 @@ class LunarLander(gym.Env, EzPickle):
         self.moon.color2 = (0.0, 0.0, 0.0)
 
         initial_y = VIEWPORT_H / SCALE
+        initial_x = VIEWPORT_W / SCALE / 2
         self.lander: Box2D.b2Body = self.world.CreateDynamicBody(
-            position=(VIEWPORT_W / SCALE / 2, initial_y),
+            position=(initial_x, initial_y),
             angle=0.0,
             fixtures=fixtureDef(
                 shape=polygonShape(
@@ -385,7 +386,7 @@ class LunarLander(gym.Env, EzPickle):
         self.legs = []
         for i in [-1, +1]:
             leg = self.world.CreateDynamicBody(
-                position=(VIEWPORT_W / SCALE / 2 - i * LEG_AWAY / SCALE, initial_y),
+                position=(initial_x - i * LEG_AWAY / SCALE, initial_y),
                 angle=(i * 0.05),
                 fixtures=fixtureDef(
                     shape=polygonShape(box=(LEG_W / SCALE, LEG_H / SCALE)),
