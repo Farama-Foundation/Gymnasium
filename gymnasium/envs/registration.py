@@ -605,7 +605,6 @@ def _create_from_env_id(
     else:
         # Assume it's a string
         env_creator = load_env_creator(env_spec.entry_point)
-
     # Determine if to use the rendering
     render_modes: list[str] | None = None
     if hasattr(env_creator, "metadata"):
@@ -661,13 +660,11 @@ def _create_from_env_id(
     env_spec = copy.deepcopy(env_spec)
     env_spec.kwargs = spec_kwargs
     env.unwrapped.spec = env_spec
-
     # Add step API wrapper
     if apply_api_compatibility is True or (
         apply_api_compatibility is None and env_spec.apply_api_compatibility is True
     ):
-        env = default_wrapper(EnvCompatibility)(env, render_mode)
-
+        env = EnvCompatibility(env, render_mode)
     # Run the environment checker as the lowest level wrapper
     if disable_env_checker is False or (
         disable_env_checker is None and env_spec.disable_env_checker is False
@@ -677,7 +674,7 @@ def _create_from_env_id(
     # Add the order enforcing wrapper
     if env_spec.order_enforce:
         env = default_wrapper(OrderEnforcing)(env)
-
+    
     # Add the time limit wrapper
     if max_episode_steps is not None:
         assert env.unwrapped.spec is not None  # for pyright
@@ -695,7 +692,7 @@ def _create_from_env_id(
         env = default_wrapper(HumanRendering)(env)
     elif apply_render_collection:
         env = default_wrapper(RenderCollection)(env)
-
+    
     return env
 
 
@@ -896,10 +893,8 @@ def make(
     else:
         # For string id's, load the environment spec from the registry then make the environment spec
         assert isinstance(id, str)
-
         # The environment name can include an unloaded module in "module:env_name" style
         env_spec = _find_spec(id)
-
         return _create_from_env_id(
             env_spec,
             kwargs,
