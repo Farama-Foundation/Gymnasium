@@ -49,8 +49,6 @@ LEG_SPRING_TORQUE = 40
 
 SIDE_ENGINE_HEIGHT = 14
 SIDE_ENGINE_AWAY = 12
-SIDE_ENGINE_Y_LOCATION = 17 #The Y location of the side engine on the body of the Lander.
-
 MAIN_ENGINE_Y_LOCATION = 4 #The Y location of the main engine on the body of the Lander.
 
 VIEWPORT_W = 600
@@ -568,9 +566,14 @@ class LunarLander(gym.Env, EzPickle):
             oy = -tip[1] * dispersion[0] - side[1] * (
                 3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
             )
+
+            # The constant 17 is a constant, that is presumably meant to be SIDE_ENGINE_HEIGHT.
+            # However, SIDE_ENGINE_HEIGHT is defined as 14
+            # This casuses the position of the thurst to change, depending on the orientation of the lander.
+            # This in turn results in an orientation depentant torque being applied to the lander.
             
             impulse_pos = (
-                self.lander.position[0] + ox - tip[0] * SIDE_ENGINE_Y_LOCATION / SCALE,
+                self.lander.position[0] + ox - tip[0] * 17 / SCALE,
                 self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
             )
             if self.render_mode is not None:
@@ -591,6 +594,8 @@ class LunarLander(gym.Env, EzPickle):
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
+
+        
         state = [
             (pos.x - VIEWPORT_W / SCALE / 2) / (VIEWPORT_W / SCALE / 2),
             (pos.y - (self.helipad_y + LEG_DOWN / SCALE)) / (VIEWPORT_H / SCALE / 2),
