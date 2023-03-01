@@ -184,6 +184,36 @@ class LunarLander(gym.Env, EzPickle):
         renormalized to 200; harder initial random push.
     - v0: Initial version
 
+
+    ## Notes
+
+    There are several unexpected bugs with the implementation of the environment.
+
+    1. The position of the side thursters on the body of the lander changes, depending on the orientation of the lander.
+    This in turn results in an orientation depentant torque being applied to the lander.
+
+    2. The units of the state are not consistent. I.e. 
+    * The angular velocity is in units of 0.4 radians per second. In order to convert to radians per second, the value needs to be multiplied by a factor of 2.5.
+    * The velocity uses slightly different units to the position. 
+
+    state = [
+            1 / (VIEWPORT_W / SCALE / 2),
+            1 / (VIEWPORT_H / SCALE / 2),
+            (VIEWPORT_W / SCALE / 2) / FPS,
+            (VIEWPORT_H / SCALE / 2) / FPS,
+            1,
+            20.0 / FPS,
+        ]
+
+    state = [
+            0.1,
+            0.15,
+            0.2,
+            0.133,
+            1,
+            2.5,
+        ]
+        
     <!-- ## References -->
 
     ## Credits
@@ -569,9 +599,8 @@ class LunarLander(gym.Env, EzPickle):
 
             # The constant 17 is a constant, that is presumably meant to be SIDE_ENGINE_HEIGHT.
             # However, SIDE_ENGINE_HEIGHT is defined as 14
-            # This casuses the position of the thurst to change, depending on the orientation of the lander.
+            # This casuses the position of the thurst on the body of the lander to change, depending on the orientation of the lander.
             # This in turn results in an orientation depentant torque being applied to the lander.
-            
             impulse_pos = (
                 self.lander.position[0] + ox - tip[0] * 17 / SCALE,
                 self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
