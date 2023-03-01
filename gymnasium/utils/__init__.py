@@ -12,5 +12,4 @@ from gymnasium.utils.ezpickle import EzPickle
 from gymnasium.utils.record_constructor import RecordConstructorArgs
 
 
-
 __all__ = ["default_wrapper", "colorize", "EzPickle", "RecordConstructorArgs"]

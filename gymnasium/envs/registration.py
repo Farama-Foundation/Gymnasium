@@ -127,7 +127,9 @@ class EnvSpec:
     version: int | None = field(init=False)
 
     # additional wrappers
-    additional_wrappers: tuple[WrapperSpec, ...] = field(init=False, default_factory=tuple)
+    additional_wrappers: tuple[WrapperSpec, ...] = field(
+        init=False, default_factory=tuple
+    )
 
     # Vectorized environment entry point
     vector_entry_point: VectorEnvCreator | str | None = field(default=None)
@@ -561,12 +563,22 @@ def _create_from_env_spec(
     kwargs: dict[str, Any],
 ) -> Env:
     """Recreates an environment spec using a list of wrapper specs."""
-    env = _create_from_env_id(env_spec=env_spec, kwargs=kwargs, max_episode_steps=env_spec.max_episode_steps, autoreset=env_spec.autoreset, apply_api_compatibility=env_spec.apply_api_compatibility, disable_env_checker=env_spec.disable_env_checker)
-    
+    env = _create_from_env_id(
+        env_spec=env_spec,
+        kwargs=kwargs,
+        max_episode_steps=env_spec.max_episode_steps,
+        autoreset=env_spec.autoreset,
+        apply_api_compatibility=env_spec.apply_api_compatibility,
+        disable_env_checker=env_spec.disable_env_checker,
+    )
+
     # Check if the environment spec
     assert env.spec is not None  # this is for pyright
     num_prior_wrappers = len(env.spec.additional_wrappers)
-    if env_spec.additional_wrappers[:num_prior_wrappers] != env.spec.additional_wrappers:
+    if (
+        env_spec.additional_wrappers[:num_prior_wrappers]
+        != env.spec.additional_wrappers
+    ):
         for env_spec_wrapper_spec, recreated_wrapper_spec in zip(
             env_spec.additional_wrappers, env.spec.additional_wrappers
         ):
@@ -674,7 +686,7 @@ def _create_from_env_id(
     # Add the order enforcing wrapper
     if env_spec.order_enforce:
         env = default_wrapper(OrderEnforcing)(env)
-    
+
     # Add the time limit wrapper
     if max_episode_steps is not None:
         assert env.unwrapped.spec is not None  # for pyright
@@ -692,7 +704,7 @@ def _create_from_env_id(
         env = default_wrapper(HumanRendering)(env)
     elif apply_render_collection:
         env = default_wrapper(RenderCollection)(env)
-    
+
     return env
 
 
