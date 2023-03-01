@@ -301,7 +301,7 @@ class Wrapper(
 
             # to avoid reference issues we deepcopy the prior environments spec and add the new information
             env_spec = deepcopy(env_spec)
-            env_spec.applied_wrappers += (wrapper_spec,)
+            env_spec.additional_wrappers += (wrapper_spec,)
 
         return env_spec
 

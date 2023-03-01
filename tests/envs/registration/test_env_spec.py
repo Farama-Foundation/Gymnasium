@@ -31,7 +31,7 @@ def test_full_integration():
     # recreate_env_spec.pprint()
 
     for wrapper_spec, recreated_wrapper_spec in zip(
-        env_spec.applied_wrappers, recreate_env_spec.applied_wrappers
+        env_spec.additional_wrappers, recreate_env_spec.additional_wrappers
     ):
         assert wrapper_spec == recreated_wrapper_spec
     assert recreate_env_spec == env_spec
@@ -172,7 +172,7 @@ def test_env_spec_pprint():
         == """id=CartPole-v1
 reward_threshold=475.0
 max_episode_steps=500
-applied_wrappers=[
+additional_wrappers=[
 	name=PassiveEnvChecker, kwargs={},
 	name=OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
 	name=TimeLimit, kwargs={'max_episode_steps': 500}
@@ -186,7 +186,7 @@ applied_wrappers=[
 entry_point=gymnasium.envs.classic_control.cartpole:CartPoleEnv
 reward_threshold=475.0
 max_episode_steps=500
-applied_wrappers=[
+additional_wrappers=[
 	name=PassiveEnvChecker, entry_point=gymnasium.wrappers.env_checker:PassiveEnvChecker, kwargs={},
 	name=OrderEnforcing, entry_point=gymnasium.wrappers.order_enforcing:OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
 	name=TimeLimit, entry_point=gymnasium.wrappers.time_limit:TimeLimit, kwargs={'max_episode_steps': 500}
@@ -205,14 +205,14 @@ order_enforce=True
 autoreset=False
 disable_env_checker=False
 applied_api_compatibility=False
-applied_wrappers=[
+additional_wrappers=[
 	name=PassiveEnvChecker, kwargs={},
 	name=OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
 	name=TimeLimit, kwargs={'max_episode_steps': 500}
 ]"""
     )
 
-    env_spec.applied_wrappers = ()
+    env_spec.additional_wrappers = ()
     output = env_spec.pprint(disable_print=True)
     assert (
         output
@@ -233,5 +233,5 @@ order_enforce=True
 autoreset=False
 disable_env_checker=False
 applied_api_compatibility=False
-applied_wrappers=[]"""
+additional_wrappers=[]"""
     )
