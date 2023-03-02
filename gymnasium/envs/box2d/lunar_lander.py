@@ -194,26 +194,24 @@ class LunarLander(gym.Env, EzPickle):
 
     2. The units of the state are not consistent. I.e. 
     * The angular velocity is in units of 0.4 radians per second. In order to convert to radians per second, the value needs to be multiplied by a factor of 2.5.
-    * The velocity uses slightly different units to the position. 
 
-    state = [
-            1 / (VIEWPORT_W / SCALE / 2),
-            1 / (VIEWPORT_H / SCALE / 2),
-            (VIEWPORT_W / SCALE / 2) / FPS,
-            (VIEWPORT_H / SCALE / 2) / FPS,
-            1,
-            20.0 / FPS,
-        ]
+    For the default values of VIEWPORT_W, VIEWPORT_H, SCALE, and FPS, the scale factors equal:
+    'x': 10
+    'y': 6.666
+    'vx': 5
+    'vy': 7.5
+    'angle': 1
+    'angular velocity': 2.5 
 
-    state = [
-            0.1,
-            0.15,
-            0.2,
-            0.133,
-            1,
-            2.5,
-        ]
-        
+    After the correction has been made, the units of the state are as follows:
+    'x': (units)
+    'y': (units)
+    'vx': (units/second)
+    'vy': (units/second)
+    'angle': (radians)
+    'angular velocity': (radians/second)
+
+   
     <!-- ## References -->
 
     ## Credits
