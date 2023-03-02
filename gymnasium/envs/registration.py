@@ -99,7 +99,7 @@ class EnvSpec:
     * **autoreset**: If to automatically reset the environment on episode end
     * **disable_env_checker**: If to disable the environment checker wrapper in :meth:`gymnasium.make`, by default False (runs the environment checker)
     * **kwargs**: Additional keyword arguments passed to the environment during initialisation
-    * **applied_wrappers**: A tuple of applied wrappers (WrapperSpec)
+    * **additional_wrappers**: A tuple of additional wrappers applied to the environment (WrapperSpec)
     * **vector_entry_point**: The location of the vectorized environment to create from
     """
 
@@ -126,7 +126,7 @@ class EnvSpec:
     version: int | None = field(init=False)
 
     # applied wrappers
-    applied_wrappers: tuple[WrapperSpec, ...] = field(init=False, default_factory=tuple)
+    additional_wrappers: tuple[WrapperSpec, ...] = field(default_factory=tuple)
 
     # Vectorized environment entry point
     vector_entry_point: VectorEnvCreator | str | None = field(default=None)
@@ -187,7 +187,7 @@ class EnvSpec:
         parsed_env_spec = json.loads(json_env_spec)
 
         applied_wrapper_specs: list[WrapperSpec] = []
-        for wrapper_spec_json in parsed_env_spec.pop("applied_wrappers"):
+        for wrapper_spec_json in parsed_env_spec.pop("additional_wrappers"):
             try:
                 applied_wrapper_specs.append(WrapperSpec(**wrapper_spec_json))
             except Exception as e:
@@ -197,7 +197,7 @@ class EnvSpec:
 
         try:
             env_spec = EnvSpec(**parsed_env_spec)
-            env_spec.applied_wrappers = tuple(applied_wrapper_specs)
+            env_spec.additional_wrappers = tuple(applied_wrapper_specs)
         except Exception as e:
             raise ValueError(
                 f"An issue occurred when trying to make {parsed_env_spec} an EnvSpec"
@@ -241,9 +241,9 @@ class EnvSpec:
         if print_all or self.apply_api_compatibility is not False:
             output += f"\napplied_api_compatibility={self.apply_api_compatibility}"
 
-        if print_all or self.applied_wrappers:
+        if print_all or self.additional_wrappers:
             wrapper_output: list[str] = []
-            for wrapper_spec in self.applied_wrappers:
+            for wrapper_spec in self.additional_wrappers:
                 if include_entry_points:
                     wrapper_output.append(
                         f"\n\tname={wrapper_spec.name}, entry_point={wrapper_spec.entry_point}, kwargs={wrapper_spec.kwargs}"
@@ -254,9 +254,9 @@ class EnvSpec:
                     )
 
             if len(wrapper_output) == 0:
-                output += "\napplied_wrappers=[]"
+                output += "\nadditional_wrappers=[]"
             else:
-                output += f"\napplied_wrappers=[{','.join(wrapper_output)}\n]"
+                output += f"\nadditional_wrappers=[{','.join(wrapper_output)}\n]"
 
         if disable_print:
             return output
@@ -558,6 +558,10 @@ def load_env_creator(name: str) -> EnvCreator | VectorEnvCreator:
 def _create_from_env_spec(
     env_spec: EnvSpec,
     kwargs: dict[str, Any],
+    max_episode_steps: int | None,
+    autoreset: bool,
+    apply_api_compatibility: bool | None,
+    disable_env_checker: bool | None,
 ) -> Env:
     """Recreates an environment spec using a list of wrapper specs."""
     if callable(env_spec.entry_point):
@@ -570,22 +574,64 @@ def _create_from_env_spec(
 
     # Set the `EnvSpec` to the environment
     new_env_spec = copy.deepcopy(env_spec)
-    new_env_spec.applied_wrappers = ()
     new_env_spec.kwargs.update(kwargs)
-    env.unwrapped.spec = new_env_spec
+    env.unwrapped.spec = EnvSpec(
+        id=new_env_spec.id,
+        entry_point=new_env_spec.entry_point,
+        reward_threshold=new_env_spec.reward_threshold,
+        nondeterministic=new_env_spec.nondeterministic,
+        max_episode_steps=None,
+        order_enforce=False,
+        autoreset=False,
+        disable_env_checker=True,
+        apply_api_compatibility=False,
+        kwargs=new_env_spec.kwargs,
+        vector_entry_point=new_env_spec.vector_entry_point,
+    )
+    render_mode = new_env_spec.kwargs.get("render_mode")
 
-    # Check if the environment spec
+    # Check if pre-wrapped wrappers
     assert env.spec is not None  # this is for pyright
-    num_prior_wrappers = len(env.spec.applied_wrappers)
-    if env_spec.applied_wrappers[:num_prior_wrappers] != env.spec.applied_wrappers:
+    num_prior_wrappers = len(env.spec.additional_wrappers)
+    if (
+        env_spec.additional_wrappers[:num_prior_wrappers]
+        != env.spec.additional_wrappers
+    ):
         for env_spec_wrapper_spec, recreated_wrapper_spec in zip(
-            env_spec.applied_wrappers, env.spec.applied_wrappers
+            env_spec.additional_wrappers, env.spec.additional_wrappers
         ):
             raise ValueError(
                 f"The environment's wrapper spec {recreated_wrapper_spec} is different from the saved `EnvSpec` applied_wrappers {env_spec_wrapper_spec}"
             )
 
-    for wrapper_spec in env_spec.applied_wrappers[num_prior_wrappers:]:
+    # Add step API wrapper
+    if apply_api_compatibility is True or (
+        apply_api_compatibility is None and env_spec.apply_api_compatibility is True
+    ):
+        env = EnvCompatibility(env, render_mode)
+
+    # Run the environment checker as the lowest level wrapper
+    if disable_env_checker is False or (
+        disable_env_checker is None and env_spec.disable_env_checker is False
+    ):
+        env = PassiveEnvChecker(env)
+
+    # Add the order enforcing wrapper
+    if env_spec.order_enforce:
+        env = OrderEnforcing(env)
+
+    # Add the time limit wrapper
+
+    if max_episode_steps is not None:
+        env = TimeLimit(env, max_episode_steps)
+    elif env_spec.max_episode_steps is not None:
+        env = TimeLimit(env, env_spec.max_episode_steps)
+
+    # Add the auto-reset wrapper
+    if autoreset is True or (autoreset is None and env_spec.autoreset is True):
+        env = AutoResetWrapper(env)
+
+    for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
             raise ValueError(
                 f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.RecordConstructorArgs`, therefore, the wrapper cannot be recreated."
@@ -599,10 +645,10 @@ def _create_from_env_spec(
 def _create_from_env_id(
     env_spec: EnvSpec,
     kwargs: dict[str, Any],
-    max_episode_steps: int | None = None,
-    autoreset: bool = False,
-    apply_api_compatibility: bool | None = None,
-    disable_env_checker: bool | None = None,
+    max_episode_steps: int | None,
+    autoreset: bool,
+    apply_api_compatibility: bool | None,
+    disable_env_checker: bool | None,
 ) -> Env:
     """Creates an environment based on the `env_spec` along with wrapper options. See `make` for their meaning."""
     spec_kwargs = copy.deepcopy(env_spec.kwargs)
@@ -671,18 +717,25 @@ def _create_from_env_id(
     # Copies the environment creation specification and kwargs to add to the environment specification details
     env_spec = copy.deepcopy(env_spec)
     env_spec.kwargs = spec_kwargs
+    env_spec.apply_api_compatibility = apply_api_compatibility is True or (
+        apply_api_compatibility is None and env_spec.apply_api_compatibility is True
+    )
+    env_spec.disable_env_checker = disable_env_checker is False or (
+        disable_env_checker is None and env_spec.disable_env_checker is False
+    )
+    if max_episode_steps is not None:
+        env_spec.max_episode_steps = max_episode_steps
+    env_spec.autoreset = autoreset is True or (
+        autoreset is None and env_spec.autoreset is True
+    )
     env.unwrapped.spec = env_spec
 
     # Add step API wrapper
-    if apply_api_compatibility is True or (
-        apply_api_compatibility is None and env_spec.apply_api_compatibility is True
-    ):
+    if env_spec.apply_api_compatibility:
         env = EnvCompatibility(env, render_mode)
 
     # Run the environment checker as the lowest level wrapper
-    if disable_env_checker is False or (
-        disable_env_checker is None and env_spec.disable_env_checker is False
-    ):
+    if env_spec.disable_env_checker:
         env = PassiveEnvChecker(env)
 
     # Add the order enforcing wrapper
@@ -690,15 +743,11 @@ def _create_from_env_id(
         env = OrderEnforcing(env)
 
     # Add the time limit wrapper
-    if max_episode_steps is not None:
-        assert env.unwrapped.spec is not None  # for pyright
-        env.unwrapped.spec.max_episode_steps = max_episode_steps
+    if env_spec.max_episode_steps is not None:
         env = TimeLimit(env, max_episode_steps)
-    elif env_spec.max_episode_steps is not None:
-        env = TimeLimit(env, env_spec.max_episode_steps)
 
     # Add the auto-reset wrapper
-    if autoreset:
+    if env_spec.autoreset:
         env = AutoResetWrapper(env)
 
     # Add human rendering wrapper
@@ -779,6 +828,7 @@ def register(
     autoreset: bool = False,
     disable_env_checker: bool = False,
     apply_api_compatibility: bool = False,
+    additional_wrappers: tuple[WrapperSpec, ...] = (),
     vector_entry_point: VectorEnvCreator | str | None = None,
     **kwargs: Any,
 ):
@@ -801,6 +851,7 @@ def register(
         disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.
         apply_api_compatibility: If to apply the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper to the environment.
             Use if the environment is implemented in the gym v0.21 environment API.
+        additional_wrappers: Additional wrappers to apply the environment.
         vector_entry_point: The entry point for creating the vector environment
         **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.
     """
@@ -835,8 +886,9 @@ def register(
         order_enforce=order_enforce,
         autoreset=autoreset,
         disable_env_checker=disable_env_checker,
-        **kwargs,
         apply_api_compatibility=apply_api_compatibility,
+        **kwargs,
+        additional_wrappers=additional_wrappers,
         vector_entry_point=vector_entry_point,
     )
     _check_spec_register(new_spec)
@@ -849,7 +901,7 @@ def register(
 def make(
     id: str | EnvSpec,
     max_episode_steps: int | None = None,
-    autoreset: bool = False,
+    autoreset: bool | None = None,
     apply_api_compatibility: bool | None = None,
     disable_env_checker: bool | None = None,
     **kwargs: Any,
@@ -878,27 +930,14 @@ def make(
         Error: If the ``id`` doesn't exist in the :attr:`registry`
     """
     if isinstance(id, EnvSpec):
-        if hasattr(id, "applied_wrappers") and id.applied_wrappers is not None:
-            if max_episode_steps is not None:
-                logger.warn(
-                    f"For `gymnasium.make` with an `EnvSpec`, the `max_episode_step` parameter is ignored, use `gym.make({id.id}, max_episode_steps={max_episode_steps})` and any additional wrappers"
-                )
-            if autoreset is True:
-                logger.warn(
-                    f"For `gymnasium.make` with an `EnvSpec`, the `autoreset` parameter is ignored, use `gym.make({id.id}, autoreset={autoreset})` and any additional wrappers"
-                )
-            if apply_api_compatibility is not None:
-                logger.warn(
-                    f"For `gymnasium.make` with an `EnvSpec`, the `apply_api_compatibility` parameter is ignored, use `gym.make({id.id}, apply_api_compatibility={apply_api_compatibility})` and any additional wrappers"
-                )
-            if disable_env_checker is not None:
-                logger.warn(
-                    f"For `gymnasium.make` with an `EnvSpec`, the `disable_env_checker` parameter is ignored, use `gym.make({id.id}, disable_env_checker={disable_env_checker})` and any additional wrappers"
-                )
-
+        if hasattr(id, "additional_wrappers") and id.additional_wrappers is not None:
             return _create_from_env_spec(
                 id,
                 kwargs,
+                max_episode_steps=max_episode_steps,
+                autoreset=autoreset,
+                apply_api_compatibility=apply_api_compatibility,
+                disable_env_checker=disable_env_checker,
             )
         else:
             raise ValueError(
