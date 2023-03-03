@@ -90,25 +90,25 @@
    <g
    id="farama"
    transform="matrix(0.93801459,0,0,0.93801459,30.992051,30.992705)"
-   style="stroke:#a3a4a5;stroke-width:68;stroke-dasharray:none">
+   style="stroke:#1c1c1c;stroke-width:50;stroke-dasharray:none">
     <path
    id="path1610"
    class="fil0 str0"
    d="m 479.42,14.7 c -0.19,18.78 -1.74,36.61 -4.47,53.6 -13.77,85.65 -57.48,150.05 -108.09,208.73 -182.87,191.04 -182.87,252.32 0.57,442.11 59.87,70.36 111.99,150.42 111.99,266.16"
    sodipodi:nodetypes="csccc"
-   style="stroke:#a3a4a5;stroke-width:68;stroke-dasharray:none" />
+   style="stroke:#1c1c1c;stroke-width:50;stroke-dasharray:none" />
     <path
    id="path1712"
    class="fil0 str1"
    d="M 411.79,775.78 C 406.5,755.96 381.28,651.48 530.8,497.02 692.08,328.33 584.29,227.43 584.29,227.43"
    sodipodi:nodetypes="ccc"
-   style="stroke:#a3a4a5;stroke-width:68;stroke-dasharray:none" />
+   style="stroke:#1c1c1c;stroke-width:50;stroke-dasharray:none" />
     <path
    id="path1710"
    class="fil0 str0"
    d="m 584.29,227.43 c 247.35,270.77 248.47,270.77 0,538.89 m 100.1,-279.6"
    sodipodi:nodetypes="cc"
-   style="stroke:#a3a4a5;stroke-width:68;stroke-dasharray:none" />
+   style="stroke:#1c1c1c;stroke-width:50;stroke-dasharray:none" />
    </g>
   </g>
  </g>
