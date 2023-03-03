@@ -13,11 +13,11 @@ import sys
 import traceback
 from collections import defaultdict
 from dataclasses import dataclass, field
+from functools import wraps
 from typing import Any, Callable, Iterable, Sequence
 
 from gymnasium import Env, Wrapper, error, logger
 from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv, VectorEnv
-from gymnasium.utils import default_wrapper
 from gymnasium.wrappers import (
     AutoResetWrapper,
     EnvCompatibility,
@@ -91,7 +91,7 @@ class WrapperSpec:
 class EnvSpec:
     """A specification for creating environments with :meth:`gymnasium.make`.
 
-    * **id**: The string used to create the environment with :meth:`gymnasium.make`
+    id**: The string used to create the environment with :meth:`gymnasium.make`
     * **entry_point**: A string for the environment location, ``(import path):(environment name)`` or a function that creates the environment.
     * **reward_threshold**: The reward threshold for completing the environment.
     * **nondeterministic**: If the observation of an environment cannot be repeated with the same initial state, random number generator state and actions.
@@ -270,6 +270,42 @@ class EnvSpec:
 # Global registry of environments. Meant to be accessed through `register` and `make`
 registry: dict[str, EnvSpec] = {}
 current_namespace: str | None = None
+
+
+def _make_default_wrapper(wrapper_cls: Wrapper) -> Wrapper:
+    """Add "default" functionality to the spec of a wrapper.
+
+    "Default" wrappers are those initialised when the environment is created with `make()`
+    based on the arguments passed i.e. wrap with `TimeLimit` when a value for `max_episode_steps`
+    is given.
+
+    These wrappers are not included in the `additonal_wrappers` attribute of the environment spec.
+
+    Args:
+        wrapper_cls (Wrapper): wrapper class to add default functionality
+
+    Returns:
+        Wrapper: default wrapper
+    """
+
+    @wraps(wrapper_cls, updated=())
+    class DefaultWrapper(wrapper_cls):
+        @property
+        def spec(self):
+            # the spec of default wrappers are not added to the `additional_wrappers` attribute
+            # of the environment spec
+            return self.env.spec
+
+    return DefaultWrapper
+
+
+# create default wrappers
+_DefaulTimeLimit = _make_default_wrapper(TimeLimit)
+_DefaultAutoResetWrapper = _make_default_wrapper(AutoResetWrapper)
+_DefaultHumanRendering = _make_default_wrapper(HumanRendering)
+_DefaultOrderEnforcing = _make_default_wrapper(OrderEnforcing)
+_DefaultPassiveEnvChecker = _make_default_wrapper(PassiveEnvChecker)
+_DefaultRenderCollection = _make_default_wrapper(RenderCollection)
 
 
 def parse_env_id(env_id: str) -> tuple[str | None, str, int | None]:
@@ -563,7 +599,7 @@ def _create_from_env_spec(
     kwargs: dict[str, Any],
 ) -> Env:
     """Recreates an environment spec using a list of wrapper specs."""
-    env = _create_from_env_id(
+    env = _create_env(
         env_spec=env_spec,
         kwargs=kwargs,
         max_episode_steps=env_spec.max_episode_steps,
@@ -597,7 +633,7 @@ def _create_from_env_spec(
     return env
 
 
-def _create_from_env_id(
+def _create_env(
     env_spec: EnvSpec,
     kwargs: dict[str, Any],
     max_episode_steps: int | None = None,
@@ -681,29 +717,29 @@ def _create_from_env_id(
     if disable_env_checker is False or (
         disable_env_checker is None and env_spec.disable_env_checker is False
     ):
-        env = default_wrapper(PassiveEnvChecker)(env)
+        env = _DefaultPassiveEnvChecker(env)
 
     # Add the order enforcing wrapper
     if env_spec.order_enforce:
-        env = default_wrapper(OrderEnforcing)(env)
+        env = _DefaultOrderEnforcing(env)
 
     # Add the time limit wrapper
     if max_episode_steps is not None:
         assert env.unwrapped.spec is not None  # for pyright
         env.unwrapped.spec.max_episode_steps = max_episode_steps
-        env = default_wrapper(TimeLimit)(env, max_episode_steps)
+        env = _DefaulTimeLimit(env, max_episode_steps)
     elif env_spec.max_episode_steps is not None:
-        env = default_wrapper(TimeLimit)(env, max_episode_steps)
+        env = _DefaulTimeLimit(env, max_episode_steps)
 
     # Add the auto-reset wrapper
     if autoreset:
-        env = default_wrapper(AutoResetWrapper)(env)
+        env = _DefaultAutoResetWrapper(env)
 
     # Add human rendering wrapper
     if apply_human_rendering:
-        env = default_wrapper(HumanRendering)(env)
+        env = _DefaultHumanRendering(env)
     elif apply_render_collection:
-        env = default_wrapper(RenderCollection)(env)
+        env = _DefaultRenderCollection(env)
 
     return env
 
@@ -907,7 +943,7 @@ def make(
         assert isinstance(id, str)
         # The environment name can include an unloaded module in "module:env_name" style
         env_spec = _find_spec(id)
-        return _create_from_env_id(
+        return _create_env(
             env_spec,
             kwargs,
             max_episode_steps=max_episode_steps,
