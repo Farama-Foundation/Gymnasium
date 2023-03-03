@@ -124,6 +124,8 @@ def test_pickling_env_stack():
 
 def test_env_spec_pprint():
     env = gym.make("CartPole-v1")
+    env = gym.wrappers.TimeAwareObservation(env)
+
     env_spec = env.spec
     assert env_spec is not None
 
@@ -133,10 +135,8 @@ def test_env_spec_pprint():
         == """id=CartPole-v1
 reward_threshold=475.0
 max_episode_steps=500
-applied_wrappers=[
-	name=PassiveEnvChecker, kwargs={},
-	name=OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
-	name=TimeLimit, kwargs={'max_episode_steps': 500}
+additional_wrappers=[
+	name=TimeAwareObservation, kwargs={}
 ]"""
     )
 
@@ -147,10 +147,8 @@ applied_wrappers=[
 entry_point=gymnasium.envs.classic_control.cartpole:CartPoleEnv
 reward_threshold=475.0
 max_episode_steps=500
-applied_wrappers=[
-	name=PassiveEnvChecker, entry_point=gymnasium.wrappers.env_checker:PassiveEnvChecker, kwargs={},
-	name=OrderEnforcing, entry_point=gymnasium.wrappers.order_enforcing:OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
-	name=TimeLimit, entry_point=gymnasium.wrappers.time_limit:TimeLimit, kwargs={'max_episode_steps': 500}
+additional_wrappers=[
+	name=TimeAwareObservation, entry_point=gymnasium.wrappers.time_aware_observation:TimeAwareObservation, kwargs={}
 ]"""
     )
 
@@ -166,10 +164,8 @@ order_enforce=True
 autoreset=False
 disable_env_checker=False
 applied_api_compatibility=False
-applied_wrappers=[
-	name=PassiveEnvChecker, kwargs={},
-	name=OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
-	name=TimeLimit, kwargs={'max_episode_steps': 500}
+additional_wrappers=[
+	name=TimeAwareObservation, kwargs={}
 ]"""
     )
 
@@ -194,5 +190,5 @@ order_enforce=True
 autoreset=False
 disable_env_checker=False
 applied_api_compatibility=False
-applied_wrappers=[]"""
+additional_wrappers=[]"""
     )

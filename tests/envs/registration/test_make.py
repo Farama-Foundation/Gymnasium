@@ -435,6 +435,7 @@ def test_make_with_env_spec():
     del gym.registry["CartPole-v3"]
     del gym.registry["CartPole-v4"]
     del gym.registry["CartPole-v5"]
+    del gym.registry["CartPole-v6"]
 
 
 def test_make_with_env_spec_levels():
