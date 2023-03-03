@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Adventure" href="adventure/" /><link rel="prev" title="Walker2D" href="../mujoco/walker2d/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/atari.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
         <title>Atari - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=c36209c3579494d5f9512671edd8cd731f7c406c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=57f753f2a36df4cd87bf0e4232aabc9b3cc73912" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=8813674eb59e2b45ca74943a66245a41bd1ea937" />
     
     
 
@@ -81,7 +81,7 @@
         <div class="farama-header__right">
           <div class="farama-header-menu">
             <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
-              <img class="farama-white-logo-invert" src="../../_static/img/farama-logo-header.svg">
+              <img class="farama-black-logo-invert" src="../../_static/img/farama-logo-header.svg">
               <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
               </svg>
@@ -221,7 +221,7 @@
       <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
     <span class="farama-header__title">Gymnasium Documentation</span>
   </a><form class="sidebar-search-container" method="get" action="../../search/" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -410,19 +410,8 @@
             <span>Back to top</span>
           </a>
           <div class="content-icon-container">
-            
-    
-    <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/environments/atari.md" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-              <button class="theme-toggle">
+            <div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
                 <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
                 <svg class="theme-icon-when-auto">
                   <use href="#svg-sun-half"></use>
@@ -556,7 +545,7 @@
 </a>
 
     
-<p>Atari environments are simulated via the Arcade Learning Environment (ALE) <a class="reference internal" href="#id1"><span class="std std-ref">[1]</span></a> through the Stella emulator.</p>
+<p>Atari environments are simulated via the Arcade Learning Environment (ALE) <a class="reference internal" href="#1"><span class="xref myst">[1]</span></a> through the Stella emulator.</p>
 <section id="autorom-installing-the-roms">
 <h2>AutoROM (installing the ROMs)<a class="headerlink" href="#autorom-installing-the-roms" title="Permalink to this heading">#</a></h2>
 <p>ALE-py doesn’t include the atari ROMs (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[atari]</span></code>) which are necessary to make any of the atari environments.
@@ -671,8 +660,8 @@ random between <code class="docutils literal notranslate"><span class="pre">fram
 <p>When initializing Atari environments via <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>, you may pass some additional arguments. These work for any
 Atari environment.</p>
 <ul class="simple">
-<li><p><strong>mode</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. Game mode, see <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Legal values depend on the environment and are listed in the table above.</p></li>
-<li><p><strong>difficulty</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. The difficulty of the game, see <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Legal values depend on the environment and are listed in
+<li><p><strong>mode</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. Game mode, see <a class="reference internal" href="#2"><span class="xref myst">[2]</span></a>. Legal values depend on the environment and are listed in the table above.</p></li>
+<li><p><strong>difficulty</strong>: <code class="docutils literal notranslate"><span class="pre">int</span></code>. The difficulty of the game, see <a class="reference internal" href="#2"><span class="xref myst">[2]</span></a>. Legal values depend on the environment and are listed in
 the table above. Together with <code class="docutils literal notranslate"><span class="pre">mode</span></code>, this determines the “flavor” of the game.</p></li>
 <li><p><strong>obs_type</strong>: <code class="docutils literal notranslate"><span class="pre">str</span></code>. This argument determines what observations are returned by the environment. Its values are:</p>
 <ul>
@@ -726,7 +715,7 @@ The differences are listed in the following table:</p>
 </table>
 </div>
 <blockquote>
-<div><p>Version v5 follows the best practices outlined in <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a>. Thus, it is recommended to transition to v5 and
+<div><p>Version v5 follows the best practices outlined in <a class="reference internal" href="#2"><span class="xref myst">[2]</span></a>. Thus, it is recommended to transition to v5 and
 customize the environment using the arguments above, if necessary.</p>
 </div></blockquote>
 <p>For each Atari game, several different configurations are registered in Gymnasium. The naming schemes are analogous for
@@ -804,7 +793,7 @@ are in the “ALE” namespace. The suffix “-ram” is still available. Thus, 
 <section id="flavors">
 <h2>Flavors<a class="headerlink" href="#flavors" title="Permalink to this heading">#</a></h2>
 <p>Some games allow the user to set a difficulty level and a game mode. Different modes/difficulties may have different
-game dynamics and (if a reduced action space is used) different action spaces. We follow the convention of <a class="reference internal" href="#id2"><span class="std std-ref">[2]</span></a> and
+game dynamics and (if a reduced action space is used) different action spaces. We follow the convention of <a class="reference internal" href="#2"><span class="xref myst">[2]</span></a> and
 refer to the combination of difficulty level and game mode as a flavor of a game. The following table shows
 the available modes and difficulty levels for different Atari games:</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -1560,9 +1549,6 @@ URL: https://jair.org/index.php/jair/article/view/11182</p>
       </script>
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
