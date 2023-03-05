@@ -73,10 +73,14 @@ class AutoResetWrapper(gym.Wrapper, gym.utils.RecordConstructorArgs):
     @property
     def spec(self) -> EnvSpec | None:
         """Modifies the environment spec to specify the `autoreset=True`."""
-        env_spec = self.env.spec
+        if self._cached_spec is None:
+            env_spec = self.env.spec
 
-        if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.autoreset = True
+            if env_spec is not None:
+                env_spec = deepcopy(env_spec)
+                env_spec.autoreset = True
 
-        return env_spec
+            self._cached_spec = env_spec
+            return env_spec
+        else:
+            return self._cached_spec

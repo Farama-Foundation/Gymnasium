@@ -266,6 +266,8 @@ class Wrapper(
         self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
         self._metadata: dict[str, Any] | None = None
 
+        self._cached_spec: EnvSpec | None = None
+
     def __getattr__(self, name: str) -> Any:
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
         if name == "_np_random":
@@ -279,31 +281,35 @@ class Wrapper(
     @property
     def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""
-        env_spec = self.env.spec
+        if self._cached_spec is None:
+            env_spec = self.env.spec
 
-        if env_spec is not None:
-            # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
-            if isinstance(self, RecordConstructorArgs):
-                kwargs = getattr(self, "_saved_kwargs")
-                if "env" in kwargs:
-                    kwargs = deepcopy(kwargs)
-                    kwargs.pop("env")
-            else:
-                kwargs = None
+            if env_spec is not None:
+                # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
+                if isinstance(self, RecordConstructorArgs):
+                    kwargs = getattr(self, "_saved_kwargs")
+                    if "env" in kwargs:
+                        kwargs = deepcopy(kwargs)
+                        kwargs.pop("env")
+                else:
+                    kwargs = None
 
-            from gymnasium.envs.registration import WrapperSpec
+                from gymnasium.envs.registration import WrapperSpec
 
-            wrapper_spec = WrapperSpec(
-                name=self.class_name(),
-                entry_point=f"{self.__module__}:{type(self).__name__}",
-                kwargs=kwargs,
-            )
+                wrapper_spec = WrapperSpec(
+                    name=self.class_name(),
+                    entry_point=f"{self.__module__}:{type(self).__name__}",
+                    kwargs=kwargs,
+                )
 
-            # to avoid reference issues we deepcopy the prior environments spec and add the new information
-            env_spec = deepcopy(env_spec)
-            env_spec.additional_wrappers += (wrapper_spec,)
+                # to avoid reference issues we deepcopy the prior environments spec and add the new information
+                env_spec = deepcopy(env_spec)
+                env_spec.additional_wrappers += (wrapper_spec,)
 
-        return env_spec
+            self._cached_spec = env_spec
+            return env_spec
+        else:
+            return self._cached_spec
 
     @classmethod
     def wrapper_spec(cls, **kwargs: Any) -> WrapperSpec:
