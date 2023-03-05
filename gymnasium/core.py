@@ -276,6 +276,13 @@ class Wrapper(
             raise AttributeError(f"accessing private attribute '{name}' is prohibited")
         return getattr(self.env, name)
 
+    def __setattr__(self, key: str, value: Any):
+        """Sets the attribute in this wrapper if the key is an attribute of the wrapper already otherwise assign the variable in the wrappers environment."""
+        if "env" not in self.__dict__ or key in self.__dict__:
+            super().__setattr__(key, value)
+        else:
+            setattr(self.env, key, value)
+
     @property
     def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""
