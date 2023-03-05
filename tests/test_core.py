@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional, SupportsFloat, Tuple
 import numpy as np
 import pytest
 
+import gymnasium as gym
 from gymnasium import Env, ObservationWrapper, RewardWrapper, Wrapper, spaces
 from gymnasium.core import (
     ActionWrapper,
@@ -326,3 +327,65 @@ def test_wrapper_types():
     action_env = ExampleActionWrapper(env)
     obs, _, _, _, _ = action_env.step(0)
     assert obs == np.array([1])
+
+
+def get_all_env_wrappers(env):
+    all_wrappers = []
+    while env is not env.unwrapped:
+        all_wrappers.append(env)
+        env = env.env
+
+    return all_wrappers
+
+
+class ReferenceBeforeEnvWrapper(gym.Wrapper):
+    def __init__(self, env):
+        x = self.unallocated_variable  # noqa F841
+        super().__init__(env)
+
+
+class ReferenceAfterEnvWrapper(gym.Wrapper):
+    def __init__(self, env):
+        super().__init__(env)
+        x = self.unallocated_variable  # noqa F841
+
+
+def test_wrapper_get_attr_set_attr():
+    env = gym.make("CartPole-v1")
+    all_wrappers = get_all_env_wrappers(env)
+
+    assert env.gravity == 9.8
+    assert all("gravity" not in wrapper.__dict__ for wrapper in all_wrappers)
+
+    # Check we can update gravity of the base environment
+    env.gravity = 1
+    assert env.gravity == 1
+    assert all("gravity" not in wrapper.__dict__ for wrapper in all_wrappers)
+    assert env.unwrapped.gravity == 1
+
+    # Check we can update an intermediate wrapper variable
+    assert env.checked_reset is False
+    assert hasattr(env.unwrapped, "checked_reset") is False
+    env.checked_reset = True
+    assert env.checked_reset is True
+    assert all("checked_reset" not in wrapper.__dict__ for wrapper in all_wrappers[:-1])
+
+    # Check we set a new variable to the new wrapper
+    env.new_variable = 5
+    assert env.new_variable == 5
+    assert all("new_variable" not in wrapper.__dict__ for wrapper in all_wrappers[1:])
+    assert hasattr(env.unwrapped, "new_variable") is False
+
+    # Check two weird edge cases of `__getattr__`.
+    with pytest.raises(
+        AttributeError,
+        match="'ReferenceBeforeEnvWrapper' object has no attribute 'unallocated_variable'",
+    ):
+        ReferenceBeforeEnvWrapper(env)
+
+    # In a perfect world, we would wish that this says `ReferenceAfterEnvWrapper` has no attribute
+    with pytest.raises(
+        AttributeError,
+        match="'CartPoleEnv' object has no attribute 'unallocated_variable'",
+    ):
+        ReferenceAfterEnvWrapper(env)

@@ -274,14 +274,31 @@ class Wrapper(
             )
         elif name.startswith("_"):
             raise AttributeError(f"accessing private attribute '{name}' is prohibited")
-        return getattr(self.env, name)
+        elif "env" in self.__dict__:
+            return getattr(self.env, name)
+        else:
+            # This will just raise the correct error for name
+            return super().__getattribute__(name)
 
     def __setattr__(self, key: str, value: Any):
         """Sets the attribute in this wrapper if the key is an attribute of the wrapper already otherwise assign the variable in the wrappers environment."""
         if "env" not in self.__dict__ or key in self.__dict__:
             super().__setattr__(key, value)
-        else:
+        elif hasattr(self.env, key):
             setattr(self.env, key, value)
+        else:
+            super().__setattr__(key, value)
+
+    def _set_env_attr(self, key: str, value: Any):
+        """A helper function for `__setattr__`.
+
+        To ensure that if the sub-environment has an instance of the variable then we do not run the `hasattr` for each of the wrapper until the base.
+        Rather we just run a wrapper attribute only version of `hasattr` with `key in self.__dict__`.
+        """
+        if key in self.__dict__:
+            super().__setattr__(key, value)
+        else:
+            self.__set_env_attr(key, value)
 
     @property
     def spec(self) -> EnvSpec | None:
