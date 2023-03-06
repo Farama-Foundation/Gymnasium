@@ -285,7 +285,7 @@ class Wrapper(
 
     def __setattr__(self, key: str, value: Any):
         """Sets the attribute in this wrapper if the key is an attribute of the wrapper already otherwise assign the variable in the wrappers environment."""
-        if key in self.__dir__() or "env" not in self.__dict__:
+        if key in self.__dir__() or key.startswith("_") or "env" not in self.__dict__:
             super().__setattr__(key, value)
         elif hasattr(self.env, key):
             # while `hasattr` is a "costly" operation, due to check sub-environments.
