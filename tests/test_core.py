@@ -171,7 +171,7 @@ def test_compatibility_with_old_style_env():
     """Test compatibility with old style environment."""
     env = OldStyleEnv()
     env = OrderEnforcing(env)
-    env = TimeLimit(env)
+    env = TimeLimit(env, 100)
     obs = env.reset()
     assert obs == 0
 
