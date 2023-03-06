@@ -11,7 +11,7 @@ from gymnasium.utils import RecordConstructorArgs, seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec, WrapperSpec
+    from gymnasium.envs.registration import EnvSpec
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
