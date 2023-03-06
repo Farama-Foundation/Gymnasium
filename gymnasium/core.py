@@ -230,6 +230,9 @@ class Env(Generic[ObsType, ActType]):
         # propagate exception
         return False
 
+    def _set_env_attr(self, key, value):
+        setattr(self, key, value)
+
 
 WrapperObsType = TypeVar("WrapperObsType")
 WrapperActType = TypeVar("WrapperActType")
@@ -282,7 +285,7 @@ class Wrapper(
 
     def __setattr__(self, key: str, value: Any):
         """Sets the attribute in this wrapper if the key is an attribute of the wrapper already otherwise assign the variable in the wrappers environment."""
-        if key in self.__dict__ or "env" not in self.__dict__:
+        if key in self.__dir__() or "env" not in self.__dict__:
             super().__setattr__(key, value)
         elif hasattr(self.env, key):
             # while `hasattr` is a "costly" operation, due to check sub-environments.
@@ -297,10 +300,10 @@ class Wrapper(
         To ensure that if the sub-environment has an instance of the variable then we do not run the `hasattr` for each of the wrapper until the base.
         Rather we just run a wrapper attribute only version of `hasattr` with `key in self.__dict__`.
         """
-        if key in self.__dict__:
+        if key in self.__dir__():
             super().__setattr__(key, value)
         else:
-            self._set_env_attr(key, value)
+            self.env._set_env_attr(key, value)
 
     @property
     def spec(self) -> EnvSpec | None:
