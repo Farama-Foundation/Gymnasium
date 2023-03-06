@@ -1,9 +1,4 @@
 """A passive environment checker wrapper for an environment's observation and action space along with the reset, step and render functions."""
-from __future__ import annotations
-
-from copy import deepcopy
-from typing import TYPE_CHECKING
-
 import gymnasium as gym
 from gymnasium.core import ActType
 from gymnasium.utils.passive_env_checker import (
@@ -13,10 +8,6 @@ from gymnasium.utils.passive_env_checker import (
     env_reset_passive_checker,
     env_step_passive_checker,
 )
-
-
-if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec
 
 
 class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
@@ -63,14 +54,3 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
             return env_render_passive_checker(self.env, *args, **kwargs)
         else:
             return self.env.render(*args, **kwargs)
-
-    @property
-    def spec(self) -> EnvSpec | None:
-        """Modifies the environment spec to such that `disable_env_checker=False`."""
-        env_spec = self.env.spec
-
-        if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.disable_env_checker = False
-
-        return env_spec

@@ -282,10 +282,12 @@ class Wrapper(
 
     def __setattr__(self, key: str, value: Any):
         """Sets the attribute in this wrapper if the key is an attribute of the wrapper already otherwise assign the variable in the wrappers environment."""
-        if "env" not in self.__dict__ or key in self.__dict__:
+        if key in self.__dict__ or "env" not in self.__dict__:
             super().__setattr__(key, value)
         elif hasattr(self.env, key):
-            setattr(self.env, key, value)
+            # while `hasattr` is a "costly" operation, due to check sub-environments.
+            #    we use the `_set_env_attr` to avoid calling the `hasattr` in the `self.env.__setattr__`
+            self._set_env_attr(key, value)
         else:
             super().__setattr__(key, value)
 
@@ -298,7 +300,7 @@ class Wrapper(
         if key in self.__dict__:
             super().__setattr__(key, value)
         else:
-            self.__set_env_attr(key, value)
+            self._set_env_attr(key, value)
 
     @property
     def spec(self) -> EnvSpec | None:
@@ -306,6 +308,8 @@ class Wrapper(
         env_spec = self.env.spec
 
         if env_spec is not None:
+            from gymnasium.envs.registration import WrapperSpec
+
             # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
             if isinstance(self, RecordConstructorArgs):
                 kwargs = getattr(self, "_saved_kwargs")
@@ -315,8 +319,6 @@ class Wrapper(
             else:
                 kwargs = None
 
-            from gymnasium.envs.registration import WrapperSpec
-
             wrapper_spec = WrapperSpec(
                 name=self.class_name(),
                 entry_point=f"{self.__module__}:{type(self).__name__}",
@@ -325,20 +327,9 @@ class Wrapper(
 
             # to avoid reference issues we deepcopy the prior environments spec and add the new information
             env_spec = deepcopy(env_spec)
-            env_spec.additional_wrappers += (wrapper_spec,)
+            env_spec.applied_wrappers += (wrapper_spec,)
 
         return env_spec
-
-    @classmethod
-    def wrapper_spec(cls, **kwargs: Any) -> WrapperSpec:
-        """Generates a `WrapperSpec` for the wrappers."""
-        from gymnasium.envs.registration import WrapperSpec
-
-        return WrapperSpec(
-            name=cls.class_name(),
-            entry_point=f"{cls.__module__}:{cls.__name__}",
-            kwargs=kwargs,
-        )
 
     @classmethod
     def class_name(cls) -> str:
