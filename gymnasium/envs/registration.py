@@ -555,210 +555,6 @@ def load_env_creator(name: str) -> EnvCreator | VectorEnvCreator:
     return fn
 
 
-def _create_from_env_spec(
-    env_spec: EnvSpec,
-    kwargs: dict[str, Any],
-    max_episode_steps: int | None,
-    autoreset: bool,
-    apply_api_compatibility: bool | None,
-    disable_env_checker: bool | None,
-) -> Env:
-    """Recreates an environment spec using a list of wrapper specs."""
-    if callable(env_spec.entry_point):
-        env_creator = env_spec.entry_point
-    else:
-        env_creator: EnvCreator = load_env_creator(env_spec.entry_point)
-
-    # Create the environment
-    env: Env = env_creator(**env_spec.kwargs, **kwargs)
-
-    # Set the `EnvSpec` to the environment
-    new_env_spec = copy.deepcopy(env_spec)
-    new_env_spec.kwargs.update(kwargs)
-    env.unwrapped.spec = EnvSpec(
-        id=new_env_spec.id,
-        entry_point=new_env_spec.entry_point,
-        reward_threshold=new_env_spec.reward_threshold,
-        nondeterministic=new_env_spec.nondeterministic,
-        max_episode_steps=None,
-        order_enforce=False,
-        autoreset=False,
-        disable_env_checker=True,
-        apply_api_compatibility=False,
-        kwargs=new_env_spec.kwargs,
-        vector_entry_point=new_env_spec.vector_entry_point,
-    )
-    render_mode = new_env_spec.kwargs.get("render_mode")
-
-    # Check if pre-wrapped wrappers
-    assert env.spec is not None  # this is for pyright
-    num_prior_wrappers = len(env.spec.additional_wrappers)
-    if (
-        env_spec.additional_wrappers[:num_prior_wrappers]
-        != env.spec.additional_wrappers
-    ):
-        for env_spec_wrapper_spec, recreated_wrapper_spec in zip(
-            env_spec.additional_wrappers, env.spec.additional_wrappers
-        ):
-            raise ValueError(
-                f"The environment's wrapper spec {recreated_wrapper_spec} is different from the saved `EnvSpec` applied_wrappers {env_spec_wrapper_spec}"
-            )
-
-    # Add step API wrapper
-    if apply_api_compatibility is True or (
-        apply_api_compatibility is None and env_spec.apply_api_compatibility is True
-    ):
-        env = EnvCompatibility(env, render_mode)
-
-    # Run the environment checker as the lowest level wrapper
-    if disable_env_checker is False or (
-        disable_env_checker is None and env_spec.disable_env_checker is False
-    ):
-        env = PassiveEnvChecker(env)
-
-    # Add the order enforcing wrapper
-    if env_spec.order_enforce:
-        env = OrderEnforcing(env)
-
-    # Add the time limit wrapper
-
-    if max_episode_steps is not None:
-        env = TimeLimit(env, max_episode_steps)
-    elif env_spec.max_episode_steps is not None:
-        env = TimeLimit(env, env_spec.max_episode_steps)
-
-    # Add the auto-reset wrapper
-    if autoreset is True or (autoreset is None and env_spec.autoreset is True):
-        env = AutoResetWrapper(env)
-
-    for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
-        if wrapper_spec.kwargs is None:
-            raise ValueError(
-                f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.RecordConstructorArgs`, therefore, the wrapper cannot be recreated."
-            )
-
-        env = load_env_creator(wrapper_spec.entry_point)(env=env, **wrapper_spec.kwargs)
-
-    return env
-
-
-def _create_from_env_id(
-    env_spec: EnvSpec,
-    kwargs: dict[str, Any],
-    max_episode_steps: int | None,
-    autoreset: bool,
-    apply_api_compatibility: bool | None,
-    disable_env_checker: bool | None,
-) -> Env:
-    """Creates an environment based on the `env_spec` along with wrapper options. See `make` for their meaning."""
-    spec_kwargs = copy.deepcopy(env_spec.kwargs)
-    spec_kwargs.update(kwargs)
-
-    # Load the environment creator
-    if env_spec.entry_point is None:
-        raise error.Error(f"{env_spec.id} registered but entry_point is not specified")
-    elif callable(env_spec.entry_point):
-        env_creator = env_spec.entry_point
-    else:
-        # Assume it's a string
-        env_creator = load_env_creator(env_spec.entry_point)
-
-    # Determine if to use the rendering
-    render_modes: list[str] | None = None
-    if hasattr(env_creator, "metadata"):
-        _check_metadata(env_creator.metadata)
-        render_modes = env_creator.metadata.get("render_modes")
-    mode = spec_kwargs.get("render_mode")
-    apply_human_rendering = False
-    apply_render_collection = False
-
-    # If mode is not valid, try applying HumanRendering/RenderCollection wrappers
-    if mode is not None and render_modes is not None and mode not in render_modes:
-        displayable_modes = {"rgb_array", "rgb_array_list"}.intersection(render_modes)
-        if mode == "human" and len(displayable_modes) > 0:
-            logger.warn(
-                "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
-                "The HumanRendering wrapper is being applied to your environment."
-            )
-            spec_kwargs["render_mode"] = displayable_modes.pop()
-            apply_human_rendering = True
-        elif mode.endswith("_list") and mode[: -len("_list")] in render_modes:
-            spec_kwargs["render_mode"] = mode[: -len("_list")]
-            apply_render_collection = True
-        else:
-            logger.warn(
-                f"The environment is being initialised with render_mode={mode!r} "
-                f"that is not in the possible render_modes ({render_modes})."
-            )
-
-    if apply_api_compatibility or (
-        apply_api_compatibility is None and env_spec.apply_api_compatibility
-    ):
-        # If we use the compatibility layer, we treat the render mode explicitly and don't pass it to the env creator
-        render_mode = spec_kwargs.pop("render_mode", None)
-    else:
-        render_mode = None
-
-    try:
-        env = env_creator(**spec_kwargs)
-    except TypeError as e:
-        if (
-            str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
-            and apply_human_rendering
-        ):
-            raise error.Error(
-                f"You passed render_mode='human' although {env_spec.id} doesn't implement human-rendering natively. "
-                "Gym tried to apply the HumanRendering wrapper but it looks like your environment is using the old "
-                "rendering API, which is not supported by the HumanRendering wrapper."
-            ) from e
-        else:
-            raise e
-
-    # Copies the environment creation specification and kwargs to add to the environment specification details
-    env_spec = copy.deepcopy(env_spec)
-    env_spec.kwargs = spec_kwargs
-    env_spec.apply_api_compatibility = apply_api_compatibility is True or (
-        apply_api_compatibility is None and env_spec.apply_api_compatibility is True
-    )
-    env_spec.disable_env_checker = disable_env_checker is False or (
-        disable_env_checker is None and env_spec.disable_env_checker is False
-    )
-    if max_episode_steps is not None:
-        env_spec.max_episode_steps = max_episode_steps
-    env_spec.autoreset = autoreset is True or (
-        autoreset is None and env_spec.autoreset is True
-    )
-    env.unwrapped.spec = env_spec
-
-    # Add step API wrapper
-    if env_spec.apply_api_compatibility:
-        env = EnvCompatibility(env, render_mode)
-
-    # Run the environment checker as the lowest level wrapper
-    if env_spec.disable_env_checker:
-        env = PassiveEnvChecker(env)
-
-    # Add the order enforcing wrapper
-    if env_spec.order_enforce:
-        env = OrderEnforcing(env)
-
-    # Add the time limit wrapper
-    if env_spec.max_episode_steps is not None:
-        env = TimeLimit(env, max_episode_steps)
-
-    # Add the auto-reset wrapper
-    if env_spec.autoreset:
-        env = AutoResetWrapper(env)
-
-    # Add human rendering wrapper
-    if apply_human_rendering:
-        env = HumanRendering(env)
-    elif apply_render_collection:
-        env = RenderCollection(env)
-
-    return env
-
-
 def load_plugin_envs(entry_point: str = "gymnasium.envs"):
     """Load modules (plugins) using the gymnasium entry points in order to register external module's environments on ``import gymnasium``.
 
@@ -930,19 +726,12 @@ def make(
         Error: If the ``id`` doesn't exist in the :attr:`registry`
     """
     if isinstance(id, EnvSpec):
-        if hasattr(id, "additional_wrappers") and id.additional_wrappers is not None:
-            return _create_from_env_spec(
-                id,
-                kwargs,
-                max_episode_steps=max_episode_steps,
-                autoreset=autoreset,
-                apply_api_compatibility=apply_api_compatibility,
-                disable_env_checker=disable_env_checker,
+        env_spec = id
+        if not hasattr(env_spec, "additional_wrappers"):
+            logger.warn(
+                f"The env spec passed to `make` does not have a `additional_wrappers`, set it to an empty tuple. Env_spec={env_spec}"
             )
-        else:
-            raise ValueError(
-                f"The EnvSpec used does not contain `applied_wrappers` parameters or is `None`. Expected to be a tuple, actually {id}."
-            )
+            env_spec.additional_wrappers = ()
     else:
         # For string id's, load the environment spec from the registry then make the environment spec
         assert isinstance(id, str)
@@ -950,14 +739,150 @@ def make(
         # The environment name can include an unloaded module in "module:env_name" style
         env_spec = _find_spec(id)
 
-        return _create_from_env_id(
-            env_spec,
-            kwargs,
-            max_episode_steps=max_episode_steps,
-            autoreset=autoreset,
-            apply_api_compatibility=apply_api_compatibility,
-            disable_env_checker=disable_env_checker,
-        )
+    assert isinstance(env_spec, EnvSpec)
+
+    # Update the env spec kwargs with the `make` kwargs
+    env_spec_kwargs = copy.deepcopy(env_spec.kwargs)
+    env_spec_kwargs.update(kwargs)
+
+    # Load the environment creator
+    if env_spec.entry_point is None:
+        raise error.Error(f"{env_spec.id} registered but entry_point is not specified")
+    elif callable(env_spec.entry_point):
+        env_creator = env_spec.entry_point
+    else:
+        # Assume it's a string
+        env_creator = load_env_creator(env_spec.entry_point)
+
+    # Determine if to use the rendering
+    render_modes: list[str] | None = None
+    if hasattr(env_creator, "metadata"):
+        _check_metadata(env_creator.metadata)
+        render_modes = env_creator.metadata.get("render_modes")
+    render_mode = env_spec_kwargs.get("render_mode")
+    apply_human_rendering = False
+    apply_render_collection = False
+
+    # If mode is not valid, try applying HumanRendering/RenderCollection wrappers
+    if (
+        render_mode is not None
+        and render_modes is not None
+        and render_mode not in render_modes
+    ):
+        displayable_modes = {"rgb_array", "rgb_array_list"}.intersection(render_modes)
+        if render_mode == "human" and len(displayable_modes) > 0:
+            logger.warn(
+                "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
+                "The HumanRendering wrapper is being applied to your environment."
+            )
+            env_spec_kwargs["render_mode"] = displayable_modes.pop()
+            apply_human_rendering = True
+        elif (
+            render_mode.endswith("_list")
+            and render_mode[: -len("_list")] in render_modes
+        ):
+            env_spec_kwargs["render_mode"] = render_mode[: -len("_list")]
+            apply_render_collection = True
+        else:
+            logger.warn(
+                f"The environment is being initialised with render_mode={render_mode!r} "
+                f"that is not in the possible render_modes ({render_modes})."
+            )
+
+    if apply_api_compatibility or (
+        apply_api_compatibility is None and env_spec.apply_api_compatibility
+    ):
+        # If we use the compatibility layer, we treat the render mode explicitly and don't pass it to the env creator
+        render_mode = env_spec_kwargs.pop("render_mode", None)
+    else:
+        render_mode = None
+
+    try:
+        env = env_creator(**env_spec_kwargs)
+    except TypeError as e:
+        if (
+            str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
+            and apply_human_rendering
+        ):
+            raise error.Error(
+                f"You passed render_mode='human' although {env_spec.id} doesn't implement human-rendering natively. "
+                "Gym tried to apply the HumanRendering wrapper but it looks like your environment is using the old "
+                "rendering API, which is not supported by the HumanRendering wrapper."
+            ) from e
+        else:
+            raise e
+
+    # Set the minimal env spec for the environment.
+    env.unwrapped.spec = EnvSpec(
+        id=env_spec.id,
+        entry_point=env_spec.entry_point,
+        reward_threshold=env_spec.reward_threshold,
+        nondeterministic=env_spec.nondeterministic,
+        max_episode_steps=None,
+        order_enforce=False,
+        autoreset=False,
+        disable_env_checker=True,
+        apply_api_compatibility=False,
+        kwargs=env_spec_kwargs,
+        additional_wrappers=(),
+        vector_entry_point=env_spec.vector_entry_point,
+    )
+
+    # Check if pre-wrapped wrappers
+    assert env.spec is not None
+    num_prior_wrappers = len(env.spec.additional_wrappers)
+    if (
+        env_spec.additional_wrappers[:num_prior_wrappers]
+        != env.spec.additional_wrappers
+    ):
+        for env_spec_wrapper_spec, recreated_wrapper_spec in zip(
+            env_spec.additional_wrappers, env.spec.additional_wrappers
+        ):
+            raise ValueError(
+                f"The environment's wrapper spec {recreated_wrapper_spec} is different from the saved `EnvSpec` additional wrapper {env_spec_wrapper_spec}"
+            )
+
+    # Add step API wrapper
+    if apply_api_compatibility is True or (
+        apply_api_compatibility is None and env_spec.apply_api_compatibility is True
+    ):
+        env = EnvCompatibility(env, render_mode)
+
+    # Run the environment checker as the lowest level wrapper
+    if disable_env_checker is False or (
+        disable_env_checker is None and env_spec.disable_env_checker is False
+    ):
+        env = PassiveEnvChecker(env)
+
+    # Add the order enforcing wrapper
+    if env_spec.order_enforce:
+        env = OrderEnforcing(env)
+
+    # Add the time limit wrapper
+    if max_episode_steps is not None:
+        env = TimeLimit(env, max_episode_steps)
+    elif env_spec.max_episode_steps is not None:
+        env = TimeLimit(env, env_spec.max_episode_steps)
+
+    # Add the auto-reset wrapper
+    if autoreset is True or (autoreset is None and env_spec.autoreset is True):
+        env = AutoResetWrapper(env)
+
+    for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
+        if wrapper_spec.kwargs is None:
+            raise ValueError(
+                f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.RecordConstructorArgs`, therefore, the wrapper cannot be recreated."
+            )
+
+        env = load_env_creator(wrapper_spec.entry_point)(env=env, **wrapper_spec.kwargs)
+
+    # Add human rendering wrapper
+    if apply_human_rendering:
+        env = HumanRendering(env)
+    elif apply_render_collection:
+        env = RenderCollection(env)
+
+    return env
 
 
 def make_vec(

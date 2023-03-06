@@ -27,7 +27,7 @@ class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
     def __init__(
         self,
         env: gym.Env,
-        max_episode_steps: int | None = None,
+        max_episode_steps: int,
     ):
         """Initializes the :class:`TimeLimit` wrapper with an environment and the number of steps after which truncation will occur.
 
@@ -40,9 +40,6 @@ class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
         )
         gym.Wrapper.__init__(self, env)
 
-        if max_episode_steps is None and self.env.spec is not None:
-            assert env.spec is not None
-            max_episode_steps = env.spec.max_episode_steps
         self._max_episode_steps = max_episode_steps
         self._elapsed_steps = None
 
