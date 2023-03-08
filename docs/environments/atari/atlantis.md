@@ -11,11 +11,21 @@ title: Atlantis
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(4) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/Atlantis-v5")` |
+
+For more Atlantis variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 Your job is to defend the submerged city of Atlantis. Your enemies slowly descend towards the city and you must destroy them before they reach striking distance. To this end, you control three defense posts.You lose if your enemies manage to destroy all seven of Atlantis' installations. You may rebuild installations after you have fought of a wave of enemies and scored a sufficient number of points.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=835)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=835)
 
 ## Actions
 

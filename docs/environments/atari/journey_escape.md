@@ -11,11 +11,21 @@ title: JourneyEscape
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(16) |
+| Observation Shape | (230, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/JourneyEscape-v5")` |
+
+For more JourneyEscape variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You must lead all 5 members of JOURNEY through waves of pesky characters and backstage obstacles to the Scarab Escape Vehicle before time runs out.You must also protect $50,000 in concert cash from grasping groupies, photographers, and promoters.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252)
 
 ## Actions
 

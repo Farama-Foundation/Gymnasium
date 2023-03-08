@@ -11,11 +11,21 @@ title: Tutankham
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(8) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/Tutankham-v5")` |
+
+For more Tutankham variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 Your goal is to rack up points by finding treasures in the mazes of the tomb while eliminating its guardians.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=572)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=572)
 
 ## Actions
 
