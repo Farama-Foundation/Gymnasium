@@ -281,35 +281,34 @@ class Wrapper(
     @property
     def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""
-        if self._cached_spec is None:
-            env_spec = self.env.spec
-
-            if env_spec is not None:
-                # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
-                if isinstance(self, RecordConstructorArgs):
-                    kwargs = getattr(self, "_saved_kwargs")
-                    if "env" in kwargs:
-                        kwargs = deepcopy(kwargs)
-                        kwargs.pop("env")
-                else:
-                    kwargs = None
-
-                from gymnasium.envs.registration import WrapperSpec
-
-                wrapper_spec = WrapperSpec(
-                    name=self.class_name(),
-                    entry_point=f"{self.__module__}:{type(self).__name__}",
-                    kwargs=kwargs,
-                )
-
-                # to avoid reference issues we deepcopy the prior environments spec and add the new information
-                env_spec = deepcopy(env_spec)
-                env_spec.additional_wrappers += (wrapper_spec,)
-
-            self._cached_spec = env_spec
-            return env_spec
-        else:
+        if self._cached_spec is not None:
             return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
+            if isinstance(self, RecordConstructorArgs):
+                kwargs = getattr(self, "_saved_kwargs")
+                if "env" in kwargs:
+                    kwargs = deepcopy(kwargs)
+                    kwargs.pop("env")
+            else:
+                kwargs = None
+
+            from gymnasium.envs.registration import WrapperSpec
+
+            wrapper_spec = WrapperSpec(
+                name=self.class_name(),
+                entry_point=f"{self.__module__}:{type(self).__name__}",
+                kwargs=kwargs,
+            )
+
+            # to avoid reference issues we deepcopy the prior environments spec and add the new information
+            env_spec = deepcopy(env_spec)
+            env_spec.additional_wrappers += (wrapper_spec,)
+
+        self._cached_spec = env_spec
+        return env_spec
 
     @classmethod
     def wrapper_spec(cls, **kwargs: Any) -> WrapperSpec:

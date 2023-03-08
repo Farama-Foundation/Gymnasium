@@ -77,14 +77,13 @@ class OrderEnforcing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     @property
     def spec(self) -> EnvSpec | None:
         """Modifies the environment spec to add the `order_enforce=True`."""
-        if self._cached_spec is None:
-            env_spec = self.env.spec
-
-            if env_spec is not None:
-                env_spec = deepcopy(env_spec)
-                env_spec.order_enforce = True
-
-            self._cached_spec = env_spec
-            return env_spec
-        else:
+        if self._cached_spec is not None:
             return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            env_spec = deepcopy(env_spec)
+            env_spec.order_enforce = True
+
+        self._cached_spec = env_spec
+        return env_spec

@@ -77,14 +77,13 @@ class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
     @property
     def spec(self) -> EnvSpec | None:
         """Modifies the environment spec to include the `max_episode_steps=self._max_episode_steps`."""
-        if self._cached_spec is None:
-            env_spec = self.env.spec
-
-            if env_spec is not None:
-                env_spec = deepcopy(env_spec)
-                env_spec.max_episode_steps = self._max_episode_steps
-
-            self._cached_spec = env_spec
-            return env_spec
-        else:
+        if self._cached_spec is not None:
             return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            env_spec = deepcopy(env_spec)
+            env_spec.max_episode_steps = self._max_episode_steps
+
+        self._cached_spec = env_spec
+        return env_spec

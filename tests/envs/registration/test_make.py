@@ -12,6 +12,7 @@ from gymnasium import Env
 from gymnasium.core import ActType, ObsType, WrapperObsType
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.error import NameNotFound
+from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.wrappers import (
     AutoResetWrapper,
     HumanRendering,
@@ -454,6 +455,43 @@ def test_make_with_env_spec_levels():
         assert env.spec == recreated_env.spec
 
         env = env.env
+
+
+def test_wrapped_env_entry_point():
+    def _create_env():
+        _env = gym.make("CartPole-v1", render_mode="rgb_array")
+        _env = gym.wrappers.FlattenObservation(_env)
+        return _env
+
+    gym.register("TestingEnv-v0", entry_point=_create_env)
+
+    env = gym.make("TestingEnv-v0")
+    env = gym.wrappers.TimeAwareObservation(env)
+    env = gym.wrappers.NormalizeReward(env, gamma=0.8)
+
+    recreated_env = gym.make(env.spec)
+
+    obs, info = env.reset(seed=42)
+    recreated_obs, recreated_info = recreated_env.reset(seed=42)
+    assert data_equivalence(obs, recreated_obs)
+    assert data_equivalence(info, recreated_info)
+
+    action = env.action_space.sample()
+    obs, reward, terminated, truncated, info = env.step(action)
+    (
+        recreated_obs,
+        recreated_reward,
+        recreated_terminated,
+        recreated_truncated,
+        recreated_info,
+    ) = recreated_env.step(action)
+    assert data_equivalence(obs, recreated_obs)
+    assert data_equivalence(reward, recreated_reward)
+    assert data_equivalence(terminated, recreated_terminated)
+    assert data_equivalence(truncated, recreated_truncated)
+    assert data_equivalence(info, recreated_info)
+
+    del gym.registry["TestingEnv-v0"]
 
 
 def test_make_errors():
