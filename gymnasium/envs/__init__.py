@@ -128,7 +128,7 @@ register(
 # ----------------------------------------
 
 register(
-    id="Blackjack-v1",
+    id="Blackjack-v2",
     entry_point="gymnasium.envs.toy_text.blackjack:BlackjackEnv",
     kwargs={"sab": True, "natural": False},
 )
