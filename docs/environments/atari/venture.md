@@ -11,11 +11,21 @@ title: Venture
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(18) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/Venture-v5")` |
+
+For more Venture variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 Your goal is to capture the treasure in every chamber of the dungeon while eliminating the monsters.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=576)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=576)
 
 ## Actions
 

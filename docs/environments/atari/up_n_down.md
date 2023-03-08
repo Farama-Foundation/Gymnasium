@@ -11,11 +11,21 @@ title: UpNDown
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(6) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/UpNDown-v5")` |
+
+For more UpNDown variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 Your goal is to steer your baja bugger to collect prizes and eliminate opponents.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=574)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=574)
 
 ## Actions
 

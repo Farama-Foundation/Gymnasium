@@ -11,11 +11,21 @@ title: Adventure
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(18) |
+| Observation Shape | (250, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/Adventure-v5")` |
+
+For more Adventure variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You must find the enchanted chalice and return it to the golden castle. You can pick up various objects (keys, a sword,a bridge, or a magnet) and have to fight or outmanoeuvre dragons.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=1)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=1)
 
 ## Actions
 

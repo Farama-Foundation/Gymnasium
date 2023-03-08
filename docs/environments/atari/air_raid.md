@@ -11,6 +11,16 @@ title: AirRaid
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(6) |
+| Observation Shape | (250, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/AirRaid-v5")` |
+
+For more AirRaid variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You control a ship that can move sideways. You must protect two buildings (one on the right and one on the left side of the screen) from flying saucers that are trying to drop bombs on them.

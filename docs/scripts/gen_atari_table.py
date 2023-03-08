@@ -3,19 +3,15 @@ import json
 
 import tabulate
 from ale_py.roms import utils as rom_utils
-from shimmy.utils.envs_configs import LEGACY_ATARI_GAMES as ALL_ATARI_GAMES
+from shimmy.utils.envs_configs import ALL_ATARI_GAMES
 from tqdm import tqdm
 
 import gymnasium
 
 
-# while part of the ale-py list of roms this is not part of the roms downloaded by AutoROM
-exclude_envs = ["TicTacToe3D", "Videochess", "Videocube"]
-
 # # Generate the list of all atari games on atari.md
 for rom_id in sorted(ALL_ATARI_GAMES):
-    if rom_utils.rom_id_to_name(rom_id) not in exclude_envs:
-        print(f"atari/{rom_id}")
+    print(f"atari/{rom_id}")
 
 
 def generate_value_ranges(values):
@@ -54,8 +50,6 @@ rows = []
 
 for rom_id in tqdm(ALL_ATARI_GAMES):
     env_name = rom_utils.rom_id_to_name(rom_id)
-    if env_name in exclude_envs:
-        continue
 
     env = gymnasium.make(f"ALE/{env_name}-v5")
 
@@ -64,10 +58,15 @@ for rom_id in tqdm(ALL_ATARI_GAMES):
     available_modes = env.ale.getAvailableModes()
     default_mode = env.ale.cloneState().getCurrentMode()
 
+    if env_name == "VideoCube":
+        available_modes = "[0, 1, 2, 100, 101, 102, ..., 5000, 5001, 5002]"
+    else:
+        available_modes = shortened_repr(available_modes)
+
     rows.append(
         [
             env_name,
-            shortened_repr(available_modes),
+            available_modes,
             default_mode,
             shortened_repr(available_difficulties),
             default_difficulty,
@@ -83,20 +82,24 @@ with open("atari-docs.json") as file:
 
 for rom_id in tqdm(ALL_ATARI_GAMES):
     env_name = rom_utils.rom_id_to_name(rom_id)
-    if env_name in exclude_envs:
-        continue
 
     env = gymnasium.make(f"ALE/{env_name}-v5")
-    env_data = atari_data[rom_id]
+    if rom_id in atari_data:
+        env_data = atari_data[rom_id]
 
-    env_description = env_data["env_description"]
-    if env_data["atariage_url"]:
-        env_url = f"""
-For a more detailed documentation, see [the AtariAge page]({env_data['atariage_url']})
-"""
+        env_description = env_data["env_description"]
+        if env_data["atariage_url"]:
+            env_url = f"""
+    For a more detailed documentation, see [the AtariAge page]({env_data['atariage_url']})
+    """
+        else:
+            env_url = ""
+        reward_description = env_data["reward_description"]
     else:
+        # Add the information to `atari_docs.json` and rerun this file to generate the new documentation
+        env_description = f"{env_name} is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github."
         env_url = ""
-    reward_description = env_data["reward_description"]
+        reward_description = ""
 
     default_action_table = tabulate.tabulate(
         [
@@ -120,7 +123,7 @@ initialization or by passing `full_action_space=True` to `gymnasium.make`."""
         [
             env_spec
             for env_spec in gymnasium.registry.values()
-            if env_name in env_spec.name
+            if env_name in env_spec.name and "shimmy" in env_spec.entry_point
         ],
         key=lambda env_spec: f"{env_spec.version}{env_spec.name}",
     )
@@ -178,6 +181,16 @@ title: {env_name}
 ```
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
+
+|   |   |
+|---|---|
+| Action Space | {env.action_space} |
+| Observation Shape | {env.observation_space.shape} |
+| Observation High | {env.observation_space.high.max()} |
+| Observation Low | {env.observation_space.low.min()}  |
+| Import | `gymnasium.make("{env.spec.id}")` |
+
+For more {env_name} variants with different observation and action spaces, see the variants section.
 
 ## Description
 

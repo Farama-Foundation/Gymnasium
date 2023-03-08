@@ -11,11 +11,21 @@ title: StarGunner
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(18) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/StarGunner-v5")` |
+
+For more StarGunner variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 Stop the alien invasion by shooting down alien saucers and creatures while avoiding bombs.
 
-For a more detailed documentation, see [the AtariAge page](http://www.atarimania.com/game-atari-2600-vcs-stargunner_16921.html)
+    For a more detailed documentation, see [the AtariAge page](http://www.atarimania.com/game-atari-2600-vcs-stargunner_16921.html)
 
 ## Actions
 
