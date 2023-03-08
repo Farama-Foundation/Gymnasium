@@ -1,6 +1,15 @@
 """Wrapper to enforce the proper ordering of environment operations."""
+from __future__ import annotations
+
+from copy import deepcopy
+from typing import TYPE_CHECKING
+
 import gymnasium as gym
 from gymnasium.error import ResetNeeded
+
+
+if TYPE_CHECKING:
+    from gymnasium.envs.registration import EnvSpec
 
 
 class OrderEnforcing(gym.Wrapper, gym.utils.RecordConstructorArgs):
@@ -64,3 +73,17 @@ class OrderEnforcing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     def has_reset(self):
         """Returns if the environment has been reset before."""
         return self._has_reset
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Modifies the environment spec to add the `order_enforce=True`."""
+        if self._cached_spec is not None:
+            return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            env_spec = deepcopy(env_spec)
+            env_spec.order_enforce = True
+
+        self._cached_spec = env_spec
+        return env_spec

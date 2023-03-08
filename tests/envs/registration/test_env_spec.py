@@ -1,4 +1,4 @@
-"""Example file showing usage of env.specstack."""
+"""Test for the `EnvSpec`, in particular, a full integration with `EnvSpec`."""
 import pickle
 
 import pytest
@@ -11,15 +11,16 @@ from gymnasium.utils.env_checker import data_equivalence
 
 def test_full_integration():
     # Create an environment to test with
-    env = gym.make("CartPole-v1", render_mode="rgb_array").unwrapped
+    env = gym.make("CartPole-v1", render_mode="rgb_array")
 
-    env = gym.wrappers.FlattenObservation(env)
     env = gym.wrappers.TimeAwareObservation(env)
     env = gym.wrappers.NormalizeReward(env, gamma=0.8)
 
     # Generate the spec_stack
     env_spec = env.spec
     assert isinstance(env_spec, EnvSpec)
+    # additional_wrappers = (TimeAwareObservation, NormalizeReward)
+    assert len(env_spec.additional_wrappers) == 2
     # env_spec.pprint()
 
     # Serialize the spec_stack
@@ -30,10 +31,7 @@ def test_full_integration():
     recreate_env_spec = EnvSpec.from_json(env_spec_json)
     # recreate_env_spec.pprint()
 
-    for wrapper_spec, recreated_wrapper_spec in zip(
-        env_spec.applied_wrappers, recreate_env_spec.applied_wrappers
-    ):
-        assert wrapper_spec == recreated_wrapper_spec
+    assert env_spec.additional_wrappers == recreate_env_spec.additional_wrappers
     assert recreate_env_spec == env_spec
 
     # Recreate the environment using the spec_stack
@@ -86,43 +84,6 @@ def test_env_spec_to_from_json(env_spec: EnvSpec):
     assert env_spec == recreated_env_spec
 
 
-def test_wrapped_env_entry_point():
-    def _create_env():
-        _env = gym.make("CartPole-v1", render_mode="rgb_array")
-        _env = gym.wrappers.FlattenObservation(_env)
-        return _env
-
-    gym.register("TestingEnv-v0", entry_point=_create_env)
-
-    env = gym.make("TestingEnv-v0")
-    env = gym.wrappers.TimeAwareObservation(env)
-    env = gym.wrappers.NormalizeReward(env, gamma=0.8)
-
-    recreated_env = gym.make(env.spec)
-
-    obs, info = env.reset(seed=42)
-    recreated_obs, recreated_info = recreated_env.reset(seed=42)
-    assert data_equivalence(obs, recreated_obs)
-    assert data_equivalence(info, recreated_info)
-
-    action = env.action_space.sample()
-    obs, reward, terminated, truncated, info = env.step(action)
-    (
-        recreated_obs,
-        recreated_reward,
-        recreated_terminated,
-        recreated_truncated,
-        recreated_info,
-    ) = recreated_env.step(action)
-    assert data_equivalence(obs, recreated_obs)
-    assert data_equivalence(reward, recreated_reward)
-    assert data_equivalence(terminated, recreated_terminated)
-    assert data_equivalence(truncated, recreated_truncated)
-    assert data_equivalence(info, recreated_info)
-
-    del gym.registry["TestingEnv-v0"]
-
-
 def test_pickling_env_stack():
     env = gym.make("CartPole-v1", render_mode="rgb_array")
 
@@ -163,6 +124,8 @@ def test_pickling_env_stack():
 
 def test_env_spec_pprint():
     env = gym.make("CartPole-v1")
+    env = gym.wrappers.TimeAwareObservation(env)
+
     env_spec = env.spec
     assert env_spec is not None
 
@@ -172,10 +135,8 @@ def test_env_spec_pprint():
         == """id=CartPole-v1
 reward_threshold=475.0
 max_episode_steps=500
-applied_wrappers=[
-	name=PassiveEnvChecker, kwargs={},
-	name=OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
-	name=TimeLimit, kwargs={'max_episode_steps': 500}
+additional_wrappers=[
+	name=TimeAwareObservation, kwargs={}
 ]"""
     )
 
@@ -186,10 +147,8 @@ applied_wrappers=[
 entry_point=gymnasium.envs.classic_control.cartpole:CartPoleEnv
 reward_threshold=475.0
 max_episode_steps=500
-applied_wrappers=[
-	name=PassiveEnvChecker, entry_point=gymnasium.wrappers.env_checker:PassiveEnvChecker, kwargs={},
-	name=OrderEnforcing, entry_point=gymnasium.wrappers.order_enforcing:OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
-	name=TimeLimit, entry_point=gymnasium.wrappers.time_limit:TimeLimit, kwargs={'max_episode_steps': 500}
+additional_wrappers=[
+	name=TimeAwareObservation, entry_point=gymnasium.wrappers.time_aware_observation:TimeAwareObservation, kwargs={}
 ]"""
     )
 
@@ -205,14 +164,12 @@ order_enforce=True
 autoreset=False
 disable_env_checker=False
 applied_api_compatibility=False
-applied_wrappers=[
-	name=PassiveEnvChecker, kwargs={},
-	name=OrderEnforcing, kwargs={'disable_render_order_enforcing': False},
-	name=TimeLimit, kwargs={'max_episode_steps': 500}
+additional_wrappers=[
+	name=TimeAwareObservation, kwargs={}
 ]"""
     )
 
-    env_spec.applied_wrappers = ()
+    env_spec.additional_wrappers = ()
     output = env_spec.pprint(disable_print=True)
     assert (
         output
@@ -233,5 +190,5 @@ order_enforce=True
 autoreset=False
 disable_env_checker=False
 applied_api_compatibility=False
-applied_wrappers=[]"""
+additional_wrappers=[]"""
     )
