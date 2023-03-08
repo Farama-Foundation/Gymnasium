@@ -11,7 +11,7 @@ from gymnasium.utils import RecordConstructorArgs, seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec
+    from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -266,6 +266,8 @@ class Wrapper(
         self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
         self._metadata: dict[str, Any] | None = None
 
+        self._cached_spec: EnvSpec | None = None
+
     def __getattr__(self, name: str) -> Any:
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
         if name == "_np_random":
@@ -279,11 +281,11 @@ class Wrapper(
     @property
     def spec(self) -> EnvSpec | None:
         """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""
+        if self._cached_spec is not None:
+            return self._cached_spec
+
         env_spec = self.env.spec
-
         if env_spec is not None:
-            from gymnasium.envs.registration import WrapperSpec
-
             # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
             if isinstance(self, RecordConstructorArgs):
                 kwargs = getattr(self, "_saved_kwargs")
@@ -293,6 +295,8 @@ class Wrapper(
             else:
                 kwargs = None
 
+            from gymnasium.envs.registration import WrapperSpec
+
             wrapper_spec = WrapperSpec(
                 name=self.class_name(),
                 entry_point=f"{self.__module__}:{type(self).__name__}",
@@ -301,9 +305,21 @@ class Wrapper(
 
             # to avoid reference issues we deepcopy the prior environments spec and add the new information
             env_spec = deepcopy(env_spec)
-            env_spec.applied_wrappers += (wrapper_spec,)
+            env_spec.additional_wrappers += (wrapper_spec,)
 
+        self._cached_spec = env_spec
         return env_spec
+
+    @classmethod
+    def wrapper_spec(cls, **kwargs: Any) -> WrapperSpec:
+        """Generates a `WrapperSpec` for the wrappers."""
+        from gymnasium.envs.registration import WrapperSpec
+
+        return WrapperSpec(
+            name=cls.class_name(),
+            entry_point=f"{cls.__module__}:{cls.__name__}",
+            kwargs=kwargs,
+        )
 
     @classmethod
     def class_name(cls) -> str:

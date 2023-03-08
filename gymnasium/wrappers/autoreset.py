@@ -1,5 +1,14 @@
 """Wrapper that autoreset environments when `terminated=True` or `truncated=True`."""
+from __future__ import annotations
+
+from copy import deepcopy
+from typing import TYPE_CHECKING
+
 import gymnasium as gym
+
+
+if TYPE_CHECKING:
+    from gymnasium.envs.registration import EnvSpec
 
 
 class AutoResetWrapper(gym.Wrapper, gym.utils.RecordConstructorArgs):
@@ -60,3 +69,17 @@ class AutoResetWrapper(gym.Wrapper, gym.utils.RecordConstructorArgs):
             info = new_info
 
         return obs, reward, terminated, truncated, info
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Modifies the environment spec to specify the `autoreset=True`."""
+        if self._cached_spec is not None:
+            return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            env_spec = deepcopy(env_spec)
+            env_spec.autoreset = True
+
+        self._cached_spec = env_spec
+        return env_spec

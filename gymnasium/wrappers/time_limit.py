@@ -1,7 +1,14 @@
 """Wrapper for limiting the time steps of an environment."""
-from typing import Optional
+from __future__ import annotations
+
+from copy import deepcopy
+from typing import TYPE_CHECKING
 
 import gymnasium as gym
+
+
+if TYPE_CHECKING:
+    from gymnasium.envs.registration import EnvSpec
 
 
 class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
@@ -20,7 +27,7 @@ class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
     def __init__(
         self,
         env: gym.Env,
-        max_episode_steps: Optional[int] = None,
+        max_episode_steps: int,
     ):
         """Initializes the :class:`TimeLimit` wrapper with an environment and the number of steps after which truncation will occur.
 
@@ -33,9 +40,6 @@ class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
         )
         gym.Wrapper.__init__(self, env)
 
-        if max_episode_steps is None and self.env.spec is not None:
-            assert env.spec is not None
-            max_episode_steps = env.spec.max_episode_steps
         self._max_episode_steps = max_episode_steps
         self._elapsed_steps = None
 
@@ -69,3 +73,17 @@ class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
         """
         self._elapsed_steps = 0
         return self.env.reset(**kwargs)
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Modifies the environment spec to include the `max_episode_steps=self._max_episode_steps`."""
+        if self._cached_spec is not None:
+            return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            env_spec = deepcopy(env_spec)
+            env_spec.max_episode_steps = self._max_episode_steps
+
+        self._cached_spec = env_spec
+        return env_spec
