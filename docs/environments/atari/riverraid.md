@@ -11,11 +11,21 @@ title: Riverraid
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(18) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/Riverraid-v5")` |
+
+For more Riverraid variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You control a jet that flies over a river: you can move it sideways and fire missiles to destroy enemy objects. Each time an enemy object is destroyed you score points (i.e. rewards).You lose a jet when you run out of fuel: fly over a fuel depot when you begin to run low.You lose a jet even when it collides with the river bank or one of the enemy objects (except fuel depots).The game begins with a squadron of three jets in reserve and you're given an additional jet (up to 9) for each 10,000 points you score.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=409)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=409)
 
 ## Actions
 

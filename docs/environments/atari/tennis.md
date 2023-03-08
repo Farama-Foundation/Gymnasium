@@ -11,11 +11,21 @@ title: Tennis
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(18) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/Tennis-v5")` |
+
+For more Tennis variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You control the orange player playing against a computer-controlled blue player. The game follows the rules of tennis.The first player to win at least 6 games with a margin of at least two games wins the match. If the score is tied at 6-6, the first player to go 2 games up wins the match.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555)
 
 ## Actions
 

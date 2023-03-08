@@ -11,11 +11,21 @@ title: Asterix
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(9) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/Asterix-v5")` |
+
+For more Asterix variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You are Asterix and can move horizontally (continuously) and vertically (discretely). Objects move horizontally across the screen: lyres and other (more useful) objects. Your goal is to guideAsterix in such a way as to avoid lyres and collect as many other objects as possible. You score points by collecting objects and lose a life whenever you collect a lyre. You have three lives available at the beginning. If you score sufficiently many points, you will be awarded additional points.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=3325)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=3325)
 
 ## Actions
 

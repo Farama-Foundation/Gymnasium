@@ -11,11 +11,21 @@ title: Hero
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(18) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/Hero-v5")` |
+
+For more Hero variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You need to rescue miners that are stuck in a mine shaft. You have access to various tools: A propeller backpack that allows you to fly wherever you want, sticks of dynamite that can be used to blast through walls, a laser beam to kill vermin, and a raft to float across stretches of lava.You have a limited amount of power. Once you run out, you lose a live.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=228)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=228)
 
 ## Actions
 
