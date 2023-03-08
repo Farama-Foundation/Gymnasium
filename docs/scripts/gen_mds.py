@@ -2,10 +2,9 @@ import os
 import re
 from collections import defaultdict
 
-from docs.scripts.utils import trim
-
 import gymnasium as gym
 from gymnasium.envs.registration import find_highest_version, get_env_id
+from utils import trim
 
 
 filtered_envs = defaultdict(list)
