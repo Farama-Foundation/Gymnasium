@@ -126,7 +126,7 @@ def test_vmap_BlackJack():
         assert reward.dtype == jnp.float32
         assert terminal.shape == (num_envs,)
         assert terminal.dtype == bool
-        assert isinstance(obs, jnp.ndarray)
+        assert isinstance(obs, jax.Array)
         assert obs[0].dtype == jnp.int32
         assert obs[1].dtype == jnp.int32
         assert obs[2].dtype == jnp.int32
