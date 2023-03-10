@@ -268,7 +268,7 @@ def _make_reset_results(results):
         [
             DeprecationWarning,
             _reset_no_seed,
-            "Future gymnasium versions will require that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator.",
+            "Current gymnasium version requires that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator.",
             {},
         ],
         [
@@ -280,7 +280,7 @@ def _make_reset_results(results):
         [
             DeprecationWarning,
             _reset_no_option,
-            "Future gymnasium versions will require that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information.",
+            "Current gymnasium version requires that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information.",
             {},
         ],
         [
