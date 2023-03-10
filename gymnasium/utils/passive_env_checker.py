@@ -194,7 +194,7 @@ def env_reset_passive_checker(env, **kwargs):
     """A passive check of the `Env.reset` function investigating the returning reset information and returning the data unchanged."""
     signature = inspect.signature(env.reset)
     if "seed" not in signature.parameters and "kwargs" not in signature.parameters:
-        logger.warn(
+        logger.deprecation(
             "Future gymnasium versions will require that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator."
         )
     else:
@@ -207,7 +207,7 @@ def env_reset_passive_checker(env, **kwargs):
             )
 
     if "options" not in signature.parameters and "kwargs" not in signature.parameters:
-        logger.warn(
+        logger.deprecation(
             "Future gymnasium versions will require that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information."
         )
 
