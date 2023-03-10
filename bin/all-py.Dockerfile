@@ -26,6 +26,6 @@ ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
-RUN pip install .[all,testing] --no-cache-dir
+RUN if [ "python:${PYTHON_VERSION}" = "python:3.7.16" ]; then pip install .[atari,box2d,classic_control,mujoco-py,mujoco,toy_text,other,testing] --no-cache-dir; else pip install .[all,testing] --no-cache-dir; fi
 
 ENTRYPOINT ["/usr/local/gymnasium/bin/docker_entrypoint"]
