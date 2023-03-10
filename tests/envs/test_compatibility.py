@@ -27,7 +27,7 @@ class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
 
     observation_space = Discrete(1)
     action_space = Discrete(1)
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render_modes": ["human", "rgb_array"]}
 
     def __init__(self):
         pass
@@ -56,7 +56,7 @@ class LegacyEnvImplicit(gymnasium.Env):
 
     observation_space = Discrete(1)
     action_space = Discrete(1)
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render_modes": ["human", "rgb_array"]}
 
     def __init__(self):
         pass
