@@ -77,7 +77,7 @@ p = Params(
     state_size=None,
     proba_frozen=0.9,  # probability that a tile is frozen
     savefig_folder=Path(
-        "../_static/img/tutorials/"
+        "../../_static/img/tutorials/"
     ),  # Root folder where plots are saved
 )
 rng = np.random.default_rng(p.seed)
@@ -415,8 +415,8 @@ for map_size in map_sizes:
 # %%
 # |States actions histogram 4x4 map| |Q-values 4x4 map|
 #
-# .. |States actions histogram 4x4 map| image:: ../_static/img/tutorials/frozenlake_states_actions_distrib_4x4.png
-# .. |Q-values 4x4 map| image:: ../_static/img/tutorials/frozenlake_q_values_4x4.png
+# .. |States actions histogram 4x4 map| image:: ../../_static/img/tutorials/frozenlake_states_actions_distrib_4x4.png
+# .. |Q-values 4x4 map| image:: ../../_static/img/tutorials/frozenlake_q_values_4x4.png
 #
 #
 
@@ -430,8 +430,8 @@ for map_size in map_sizes:
 # %%
 # |States actions histogram 7x7 map| |Q-values 7x7 map|
 #
-# .. |States actions histogram 7x7 map| image:: ../_static/img/tutorials/frozenlake_states_actions_distrib_7x7.png
-# .. |Q-values 7x7 map| image:: ../_static/img/tutorials/frozenlake_q_values_7x7.png
+# .. |States actions histogram 7x7 map| image:: ../../_static/img/tutorials/frozenlake_states_actions_distrib_7x7.png
+# .. |Q-values 7x7 map| image:: ../../_static/img/tutorials/frozenlake_q_values_7x7.png
 #
 #
 
@@ -445,8 +445,8 @@ for map_size in map_sizes:
 # %%
 # |States actions histogram 9x9 map| |Q-values 9x9 map|
 #
-# .. |States actions histogram 9x9 map| image:: ../_static/img/tutorials/frozenlake_states_actions_distrib_9x9.png
-# .. |Q-values 9x9 map| image:: ../_static/img/tutorials/frozenlake_q_values_9x9.png
+# .. |States actions histogram 9x9 map| image:: ../../_static/img/tutorials/frozenlake_states_actions_distrib_9x9.png
+# .. |Q-values 9x9 map| image:: ../../_static/img/tutorials/frozenlake_q_values_9x9.png
 #
 #
 
@@ -460,8 +460,8 @@ for map_size in map_sizes:
 # %%
 # |States actions histogram 11x11 map| |Q-values 11x11 map|
 #
-# .. |States actions histogram 11x11 map| image:: ../_static/img/tutorials/frozenlake_states_actions_distrib_11x11.png
-# .. |Q-values 11x11 map| image:: ../_static/img/tutorials/frozenlake_q_values_11x11.png
+# .. |States actions histogram 11x11 map| image:: ../../_static/img/tutorials/frozenlake_states_actions_distrib_11x11.png
+# .. |Q-values 11x11 map| image:: ../../_static/img/tutorials/frozenlake_q_values_11x11.png
 #
 #
 
@@ -508,7 +508,7 @@ plot_steps_and_rewards(res_all, st_all)
 # %%
 # |Steps and rewards|
 #
-# .. |Steps and rewards| image:: ../_static/img/tutorials/frozenlake_steps_and_rewards.png
+# .. |Steps and rewards| image:: ../../_static/img/tutorials/frozenlake_steps_and_rewards.png
 #
 #
 
