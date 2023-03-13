@@ -27,7 +27,7 @@ class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
 
     observation_space = Discrete(1)
     action_space = Discrete(1)
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 30}
 
     def __init__(self):
         pass
@@ -56,7 +56,7 @@ class LegacyEnvImplicit(gymnasium.Env):
 
     observation_space = Discrete(1)
     action_space = Discrete(1)
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 30}
 
     def __init__(self):
         pass
@@ -168,8 +168,7 @@ def test_shimmy_gym_compatibility():
                 "No module named 'gym' (Hint: You need to install gym with `pip install gym` to use gym environments"
             ),
         ):
-            # todo - update when shimmy is updated to v0.28
-            gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
+            gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
         with pytest.raises(
             DependencyNotInstalled,
             match=re.escape(
@@ -178,6 +177,5 @@ def test_shimmy_gym_compatibility():
         ):
             gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
     else:
-        # todo - update when shimmy is updated to v0.28
-        gymnasium.make("GymV22Environment-v0", env_id="CartPole-v1")
+        gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
         gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")

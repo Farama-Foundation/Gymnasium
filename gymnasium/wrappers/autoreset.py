@@ -1,8 +1,17 @@
 """Wrapper that autoreset environments when `terminated=True` or `truncated=True`."""
+from __future__ import annotations
+
+from copy import deepcopy
+from typing import TYPE_CHECKING
+
 import gymnasium as gym
 
 
-class AutoResetWrapper(gym.Wrapper):
+if TYPE_CHECKING:
+    from gymnasium.envs.registration import EnvSpec
+
+
+class AutoResetWrapper(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.
 
     When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,
@@ -31,7 +40,8 @@ class AutoResetWrapper(gym.Wrapper):
         Args:
             env (gym.Env): The environment to apply the wrapper
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
     def step(self, action):
         """Steps through the environment with action and resets the environment if a terminated or truncated signal is encountered.
@@ -44,7 +54,6 @@ class AutoResetWrapper(gym.Wrapper):
         """
         obs, reward, terminated, truncated, info = self.env.step(action)
         if terminated or truncated:
-
             new_obs, new_info = self.env.reset()
             assert (
                 "final_observation" not in new_info
@@ -60,3 +69,17 @@ class AutoResetWrapper(gym.Wrapper):
             info = new_info
 
         return obs, reward, terminated, truncated, info
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Modifies the environment spec to specify the `autoreset=True`."""
+        if self._cached_spec is not None:
+            return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            env_spec = deepcopy(env_spec)
+            env_spec.autoreset = True
+
+        self._cached_spec = env_spec
+        return env_spec

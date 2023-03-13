@@ -22,7 +22,7 @@ class InvertedDoublePendulumEnv(MuJocoPyEnv, utils.EzPickle):
             "inverted_double_pendulum.xml",
             5,
             observation_space=observation_space,
-            **kwargs
+            **kwargs,
         )
         utils.EzPickle.__init__(self, **kwargs)
 

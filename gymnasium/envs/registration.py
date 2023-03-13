@@ -3,9 +3,11 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import dataclasses
 import difflib
 import importlib
 import importlib.util
+import json
 import re
 import sys
 import traceback
@@ -17,13 +19,13 @@ from gymnasium import Env, Wrapper, error, logger
 from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv, VectorEnv
 from gymnasium.wrappers import (
     AutoResetWrapper,
+    EnvCompatibility,
     HumanRendering,
     OrderEnforcing,
+    PassiveEnvChecker,
     RenderCollection,
     TimeLimit,
 )
-from gymnasium.wrappers.compatibility import EnvCompatibility
-from gymnasium.wrappers.env_checker import PassiveEnvChecker
 
 
 if sys.version_info < (3, 10):
@@ -43,11 +45,14 @@ ENV_ID_RE = re.compile(
 
 
 __all__ = [
-    "EnvSpec",
     "registry",
     "current_namespace",
+    "EnvSpec",
+    "WrapperSpec",
+    # Functions
     "register",
     "make",
+    "make_vec",
     "spec",
     "pprint_registry",
 ]
@@ -68,6 +73,20 @@ class VectorEnvCreator(Protocol):
 
 
 @dataclass
+class WrapperSpec:
+    """A specification for recording wrapper configs.
+
+    * name: The name of the wrapper.
+    * entry_point: The location of the wrapper to create from.
+    * kwargs: Additional keyword arguments passed to the wrapper. If the wrapper doesn't inherit from EzPickle then this is ``None``
+    """
+
+    name: str
+    entry_point: str
+    kwargs: dict[str, Any] | None
+
+
+@dataclass
 class EnvSpec:
     """A specification for creating environments with :meth:`gymnasium.make`.
 
@@ -80,6 +99,7 @@ class EnvSpec:
     * **autoreset**: If to automatically reset the environment on episode end
     * **disable_env_checker**: If to disable the environment checker wrapper in :meth:`gymnasium.make`, by default False (runs the environment checker)
     * **kwargs**: Additional keyword arguments passed to the environment during initialisation
+    * **additional_wrappers**: A tuple of additional wrappers applied to the environment (WrapperSpec)
     * **vector_entry_point**: The location of the vectorized environment to create from
     """
 
@@ -97,26 +117,151 @@ class EnvSpec:
     disable_env_checker: bool = field(default=False)
     apply_api_compatibility: bool = field(default=False)
 
+    # Environment arguments
+    kwargs: dict = field(default_factory=dict)
+
     # post-init attributes
     namespace: str | None = field(init=False)
     name: str = field(init=False)
     version: int | None = field(init=False)
 
-    # Environment arguments
-    kwargs: dict = field(default_factory=dict)
+    # applied wrappers
+    additional_wrappers: tuple[WrapperSpec, ...] = field(default_factory=tuple)
 
-    # Vectorized environment
-    vector_entry_point: str | None = field(default=None)
+    # Vectorized environment entry point
+    vector_entry_point: VectorEnvCreator | str | None = field(default=None)
 
     def __post_init__(self):
-        """Calls after the spec is created to extract the namespace, name and version from the id."""
-        # Initialize namespace, name, version
+        """Calls after the spec is created to extract the namespace, name and version from the environment id."""
         self.namespace, self.name, self.version = parse_env_id(self.id)
 
     def make(self, **kwargs: Any) -> Env:
         """Calls ``make`` using the environment spec and any keyword arguments."""
-        # For compatibility purposes
         return make(self, **kwargs)
+
+    def to_json(self) -> str:
+        """Converts the environment spec into a json compatible string.
+
+        Returns:
+            A jsonifyied string for the environment spec
+        """
+        env_spec_dict = dataclasses.asdict(self)
+        # As the namespace, name and version are initialised after `init` then we remove the attributes
+        env_spec_dict.pop("namespace")
+        env_spec_dict.pop("name")
+        env_spec_dict.pop("version")
+
+        # To check that the environment spec can be transformed to a json compatible type
+        self._check_can_jsonify(env_spec_dict)
+
+        return json.dumps(env_spec_dict)
+
+    @staticmethod
+    def _check_can_jsonify(env_spec: dict[str, Any]):
+        """Warns the user about serialisation failing if the spec contains a callable.
+
+        Args:
+            env_spec: An environment or wrapper specification.
+
+        Returns: The specification with lambda functions converted to strings.
+
+        """
+        spec_name = env_spec["name"] if "name" in env_spec else env_spec["id"]
+
+        for key, value in env_spec.items():
+            if callable(value):
+                ValueError(
+                    f"Callable found in {spec_name} for {key} attribute with value={value}. Currently, Gymnasium does not support serialising callables."
+                )
+
+    @staticmethod
+    def from_json(json_env_spec: str) -> EnvSpec:
+        """Converts a JSON string into a specification stack.
+
+        Args:
+            json_env_spec: A JSON string representing the env specification.
+
+        Returns:
+            An environment spec
+        """
+        parsed_env_spec = json.loads(json_env_spec)
+
+        applied_wrapper_specs: list[WrapperSpec] = []
+        for wrapper_spec_json in parsed_env_spec.pop("additional_wrappers"):
+            try:
+                applied_wrapper_specs.append(WrapperSpec(**wrapper_spec_json))
+            except Exception as e:
+                raise ValueError(
+                    f"An issue occurred when trying to make {wrapper_spec_json} a WrapperSpec"
+                ) from e
+
+        try:
+            env_spec = EnvSpec(**parsed_env_spec)
+            env_spec.additional_wrappers = tuple(applied_wrapper_specs)
+        except Exception as e:
+            raise ValueError(
+                f"An issue occurred when trying to make {parsed_env_spec} an EnvSpec"
+            ) from e
+
+        return env_spec
+
+    def pprint(
+        self,
+        disable_print: bool = False,
+        include_entry_points: bool = False,
+        print_all: bool = False,
+    ) -> str | None:
+        """Pretty prints the environment spec.
+
+        Args:
+            disable_print: If to disable print and return the output
+            include_entry_points: If to include the entry_points in the output
+            print_all: If to print all information, including variables with default values
+
+        Returns:
+            If ``disable_print is True`` a string otherwise ``None``
+        """
+        output = f"id={self.id}"
+        if print_all or include_entry_points:
+            output += f"\nentry_point={self.entry_point}"
+
+        if print_all or self.reward_threshold is not None:
+            output += f"\nreward_threshold={self.reward_threshold}"
+        if print_all or self.nondeterministic is not False:
+            output += f"\nnondeterministic={self.nondeterministic}"
+
+        if print_all or self.max_episode_steps is not None:
+            output += f"\nmax_episode_steps={self.max_episode_steps}"
+        if print_all or self.order_enforce is not True:
+            output += f"\norder_enforce={self.order_enforce}"
+        if print_all or self.autoreset is not False:
+            output += f"\nautoreset={self.autoreset}"
+        if print_all or self.disable_env_checker is not False:
+            output += f"\ndisable_env_checker={self.disable_env_checker}"
+        if print_all or self.apply_api_compatibility is not False:
+            output += f"\napplied_api_compatibility={self.apply_api_compatibility}"
+
+        if print_all or self.additional_wrappers:
+            wrapper_output: list[str] = []
+            for wrapper_spec in self.additional_wrappers:
+                if include_entry_points:
+                    wrapper_output.append(
+                        f"\n\tname={wrapper_spec.name}, entry_point={wrapper_spec.entry_point}, kwargs={wrapper_spec.kwargs}"
+                    )
+                else:
+                    wrapper_output.append(
+                        f"\n\tname={wrapper_spec.name}, kwargs={wrapper_spec.kwargs}"
+                    )
+
+            if len(wrapper_output) == 0:
+                output += "\nadditional_wrappers=[]"
+            else:
+                output += f"\nadditional_wrappers=[{','.join(wrapper_output)}\n]"
+
+        if disable_print:
+            return output
+        else:
+            print(output)
 
 
 # Global registry of environments. Meant to be accessed through `register` and `make`
@@ -352,8 +497,12 @@ def _check_metadata(testing_metadata: dict[str, Any]):
         )
 
 
-def _find_spec(id: str) -> EnvSpec:
-    module, env_name = (None, id) if ":" not in id else id.split(":")
+def _find_spec(env_id: str) -> EnvSpec:
+    # For string id's, load the environment spec from the registry then make the environment spec
+    assert isinstance(env_id, str)
+
+    # The environment name can include an unloaded module in "module:env_name" style
+    module, env_name = (None, env_id) if ":" not in env_id else env_id.split(":")
     if module is not None:
         try:
             importlib.import_module(module)
@@ -371,7 +520,7 @@ def _find_spec(id: str) -> EnvSpec:
 
     latest_version = find_highest_version(ns, name)
     if version is not None and latest_version is not None and latest_version > version:
-        logger.warn(
+        logger.deprecation(
             f"The environment {env_name} is out of date. You should consider "
             f"upgrading to version `v{latest_version}`."
         )
@@ -391,7 +540,7 @@ def _find_spec(id: str) -> EnvSpec:
     return env_spec
 
 
-def load_env(name: str) -> EnvCreator:
+def load_env_creator(name: str) -> EnvCreator | VectorEnvCreator:
     """Loads an environment with name of style ``"(import path):(environment name)"`` and returns the environment creation function, normally the environment class type.
 
     Args:
@@ -437,10 +586,8 @@ def load_plugin_envs(entry_point: str = "gymnasium.envs"):
 
         context = namespace(plugin.name)
         if plugin.name.startswith("__") and plugin.name.endswith("__"):
-            # `__internal__` is an artifact of the plugin system when
-            # the root namespace had an allow-list. The allow-list is now
-            # removed and plugins can register environments in the root
-            # namespace with the `__root__` magic key.
+            # `__internal__` is an artifact of the plugin system when the root namespace had an allow-list.
+            # The allow-list is now removed and plugins can register environments in the root namespace with the `__root__` magic key.
             if plugin.name == "__root__" or plugin.name == "__internal__":
                 context = contextlib.nullcontext()
             else:
@@ -477,6 +624,7 @@ def register(
     autoreset: bool = False,
     disable_env_checker: bool = False,
     apply_api_compatibility: bool = False,
+    additional_wrappers: tuple[WrapperSpec, ...] = (),
     vector_entry_point: VectorEnvCreator | str | None = None,
     **kwargs: Any,
 ):
@@ -499,6 +647,7 @@ def register(
         disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.
         apply_api_compatibility: If to apply the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper to the environment.
             Use if the environment is implemented in the gym v0.21 environment API.
+        additional_wrappers: Additional wrappers to apply the environment.
         vector_entry_point: The entry point for creating the vector environment
         **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.
     """
@@ -534,8 +683,9 @@ def register(
         autoreset=autoreset,
         disable_env_checker=disable_env_checker,
         apply_api_compatibility=apply_api_compatibility,
-        vector_entry_point=vector_entry_point,
         **kwargs,
+        additional_wrappers=additional_wrappers,
+        vector_entry_point=vector_entry_point,
     )
     _check_spec_register(new_spec)
 
@@ -547,7 +697,7 @@ def register(
 def make(
     id: str | EnvSpec,
     max_episode_steps: int | None = None,
-    autoreset: bool = False,
+    autoreset: bool | None = None,
     apply_api_compatibility: bool | None = None,
     disable_env_checker: bool | None = None,
     **kwargs: Any,
@@ -577,16 +727,23 @@ def make(
     """
     if isinstance(id, EnvSpec):
         env_spec = id
+        if not hasattr(env_spec, "additional_wrappers"):
+            logger.warn(
+                f"The env spec passed to `make` does not have a `additional_wrappers`, set it to an empty tuple. Env_spec={env_spec}"
+            )
+            env_spec.additional_wrappers = ()
     else:
+        # For string id's, load the environment spec from the registry then make the environment spec
+        assert isinstance(id, str)
+
         # The environment name can include an unloaded module in "module:env_name" style
         env_spec = _find_spec(id)
 
-    assert isinstance(
-        env_spec, EnvSpec
-    ), f"We expected to collect an `EnvSpec`, actually collected a {type(env_spec)}"
-    # Extract the spec kwargs and append the make kwargs
-    spec_kwargs = env_spec.kwargs.copy()
-    spec_kwargs.update(kwargs)
+    assert isinstance(env_spec, EnvSpec)
+
+    # Update the env spec kwargs with the `make` kwargs
+    env_spec_kwargs = copy.deepcopy(env_spec.kwargs)
+    env_spec_kwargs.update(kwargs)
 
     # Load the environment creator
     if env_spec.entry_point is None:
@@ -595,33 +752,40 @@ def make(
         env_creator = env_spec.entry_point
     else:
         # Assume it's a string
-        env_creator = load_env(env_spec.entry_point)
+        env_creator = load_env_creator(env_spec.entry_point)
 
     # Determine if to use the rendering
     render_modes: list[str] | None = None
     if hasattr(env_creator, "metadata"):
         _check_metadata(env_creator.metadata)
         render_modes = env_creator.metadata.get("render_modes")
-    mode = spec_kwargs.get("render_mode")
+    render_mode = env_spec_kwargs.get("render_mode")
     apply_human_rendering = False
     apply_render_collection = False
 
     # If mode is not valid, try applying HumanRendering/RenderCollection wrappers
-    if mode is not None and render_modes is not None and mode not in render_modes:
+    if (
+        render_mode is not None
+        and render_modes is not None
+        and render_mode not in render_modes
+    ):
         displayable_modes = {"rgb_array", "rgb_array_list"}.intersection(render_modes)
-        if mode == "human" and len(displayable_modes) > 0:
+        if render_mode == "human" and len(displayable_modes) > 0:
             logger.warn(
                 "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
                 "The HumanRendering wrapper is being applied to your environment."
             )
-            spec_kwargs["render_mode"] = displayable_modes.pop()
+            env_spec_kwargs["render_mode"] = displayable_modes.pop()
             apply_human_rendering = True
-        elif mode.endswith("_list") and mode[: -len("_list")] in render_modes:
-            spec_kwargs["render_mode"] = mode[: -len("_list")]
+        elif (
+            render_mode.endswith("_list")
+            and render_mode[: -len("_list")] in render_modes
+        ):
+            env_spec_kwargs["render_mode"] = render_mode[: -len("_list")]
             apply_render_collection = True
         else:
             logger.warn(
-                f"The environment is being initialised with render_mode={mode!r} "
+                f"The environment is being initialised with render_mode={render_mode!r} "
                 f"that is not in the possible render_modes ({render_modes})."
             )
 
@@ -629,29 +793,54 @@ def make(
         apply_api_compatibility is None and env_spec.apply_api_compatibility
     ):
         # If we use the compatibility layer, we treat the render mode explicitly and don't pass it to the env creator
-        render_mode = spec_kwargs.pop("render_mode", None)
+        render_mode = env_spec_kwargs.pop("render_mode", None)
     else:
         render_mode = None
 
     try:
-        env = env_creator(**spec_kwargs)
+        env = env_creator(**env_spec_kwargs)
     except TypeError as e:
         if (
             str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
             and apply_human_rendering
         ):
             raise error.Error(
-                f"You passed render_mode='human' although {id} doesn't implement human-rendering natively. "
+                f"You passed render_mode='human' although {env_spec.id} doesn't implement human-rendering natively. "
                 "Gym tried to apply the HumanRendering wrapper but it looks like your environment is using the old "
                 "rendering API, which is not supported by the HumanRendering wrapper."
             ) from e
         else:
             raise e
 
-    # Copies the environment creation specification and kwargs to add to the environment specification details
-    env_spec = copy.deepcopy(env_spec)
-    env_spec.kwargs = spec_kwargs
-    env.unwrapped.spec = env_spec
+    # Set the minimal env spec for the environment.
+    env.unwrapped.spec = EnvSpec(
+        id=env_spec.id,
+        entry_point=env_spec.entry_point,
+        reward_threshold=env_spec.reward_threshold,
+        nondeterministic=env_spec.nondeterministic,
+        max_episode_steps=None,
+        order_enforce=False,
+        autoreset=False,
+        disable_env_checker=True,
+        apply_api_compatibility=False,
+        kwargs=env_spec_kwargs,
+        additional_wrappers=(),
+        vector_entry_point=env_spec.vector_entry_point,
+    )
+
+    # Check if pre-wrapped wrappers
+    assert env.spec is not None
+    num_prior_wrappers = len(env.spec.additional_wrappers)
+    if (
+        env_spec.additional_wrappers[:num_prior_wrappers]
+        != env.spec.additional_wrappers
+    ):
+        for env_spec_wrapper_spec, recreated_wrapper_spec in zip(
+            env_spec.additional_wrappers, env.spec.additional_wrappers
+        ):
+            raise ValueError(
+                f"The environment's wrapper spec {recreated_wrapper_spec} is different from the saved `EnvSpec` additional wrapper {env_spec_wrapper_spec}"
+            )
 
     # Add step API wrapper
     if apply_api_compatibility is True or (
@@ -675,9 +864,17 @@ def make(
     elif env_spec.max_episode_steps is not None:
         env = TimeLimit(env, env_spec.max_episode_steps)
 
-    # Add the autoreset wrapper
-    if autoreset:
+    # Add the auto-reset wrapper
+    if autoreset is True or (autoreset is None and env_spec.autoreset is True):
         env = AutoResetWrapper(env)
+
+    for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
+        if wrapper_spec.kwargs is None:
+            raise ValueError(
+                f"{wrapper_spec.name} wrapper does not inherit from `gymnasium.utils.RecordConstructorArgs`, therefore, the wrapper cannot be recreated."
+            )
+
+        env = load_env_creator(wrapper_spec.entry_point)(env=env, **wrapper_spec.kwargs)
 
     # Add human rendering wrapper
     if apply_human_rendering:
@@ -752,7 +949,7 @@ def make_vec(
         env_creator = entry_point
     else:
         # Assume it's a string
-        env_creator = load_env(entry_point)
+        env_creator = load_env_creator(entry_point)
 
     def _create_env():
         # Env creator for use with sync and async modes

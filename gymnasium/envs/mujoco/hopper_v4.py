@@ -161,7 +161,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         healthy_angle_range=(-0.2, 0.2),
         reset_noise_scale=5e-3,
         exclude_current_positions_from_observation=True,
-        **kwargs
+        **kwargs,
     ):
         utils.EzPickle.__init__(
             self,
@@ -174,7 +174,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
             healthy_angle_range,
             reset_noise_scale,
             exclude_current_positions_from_observation,
-            **kwargs
+            **kwargs,
         )
 
         self._forward_reward_weight = forward_reward_weight
@@ -209,7 +209,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
             4,
             observation_space=observation_space,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
-            **kwargs
+            **kwargs,
         )
 
     @property
