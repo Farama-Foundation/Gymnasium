@@ -266,9 +266,9 @@ def _make_reset_results(results):
     "test,func,message,kwargs",
     [
         [
-            UserWarning,
+            DeprecationWarning,
             _reset_no_seed,
-            "Future gymnasium versions will require that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator.",
+            "Current gymnasium version requires that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator.",
             {},
         ],
         [
@@ -278,9 +278,9 @@ def _make_reset_results(results):
             {},
         ],
         [
-            UserWarning,
+            DeprecationWarning,
             _reset_no_option,
-            "Future gymnasium versions will require that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information.",
+            "Current gymnasium version requires that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information.",
             {},
         ],
         [
@@ -302,6 +302,12 @@ def test_passive_env_reset_checker(test, func: Callable, message: str, kwargs: D
     if test is UserWarning:
         with pytest.warns(
             UserWarning, match=f"^\\x1b\\[33mWARN: {re.escape(message)}\\x1b\\[0m$"
+        ):
+            env_reset_passive_checker(GenericTestEnv(reset_func=func), **kwargs)
+    elif test is DeprecationWarning:
+        with pytest.warns(
+            DeprecationWarning,
+            match=f"^\\x1b\\[33mWARN: {re.escape(message)}\\x1b\\[0m$",
         ):
             env_reset_passive_checker(GenericTestEnv(reset_func=func), **kwargs)
     else:
