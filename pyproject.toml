@@ -113,6 +113,56 @@ gymnasium = [
 [tool.black]
 safe = true
 
+[tool.ruff]
+select = [
+    "F",    # Pyflakes
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "C90",  # mccabe
+    # "I",    # isort
+    # "D",    # pydocstyle
+    "UP"    # pyupgrade
+]
+ignore = ["E741"]
+
+src = ["gymnasium", "tests", "docs/scripts"]
+
+line-length = 459
+target-version = "py37"
+show-source = true
+show-fixes = true
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"docs/tutorials/*.py" = ["E402"]
+"gymnasium/experimental/wrappers/__init__.py" = ["E402"]
+
+# Saved ruff.pydocstyle configurations
+# "gymnasium/envs/registration.py" = ["D"]
+# "gymnasium/envs/box2d/*.py" = ["D"]
+# "gymnasium/envs/classic_control/*.py" = ["D"]
+# "gymnasium/envs/mujoco/*.py" = ["D"]
+# "gymnasium/envs/toy_text/*.py" = ["D"]
+# "tests/envs/*.py" = ["D"]
+# "tests/spaces/*.py" = ["D"]
+# "tests/utils/*.py" = ["D"]
+# "tests/vector/*.py" = ["D"]
+# "tests/wrappers/*.py" = ["D"]
+# "docs/*.py" = ["D"]
+
+[tool.ruff.mccabe]
+max-complexity = 30
+
+# Saved ruff.pydocstyle configurations
+# [tool.ruff.pydocstyle]
+# convention = "google"
+
+# Saved ruff.isort configurations
+# [tool.ruff.isort]
+# known-first-party = ["gymnasium", "tests", "docs/scripts"]
+# extra-standard-library = ["typing_extensions"]
+# lines-after-imports = 2
+
 [tool.isort]
 atomic = true
 profile = "black"

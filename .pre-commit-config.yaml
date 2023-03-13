@@ -23,22 +23,11 @@ repos:
       - id: codespell
         args:
           - --ignore-words-list=reacher,ure,referenc,wile
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.254'
     hooks:
-      - id: flake8
-        args:
-          - '--per-file-ignores=*/__init__.py:F401 gymnasium/envs/registration.py:E704 docs/tutorials/*.py:E402 gymnasium/experimental/wrappers/__init__.py:E402'
-          - --ignore=E203,W503,E741
-          - --max-complexity=30
-          - --max-line-length=456
-          - --show-source
-          - --statistics
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
-    hooks:
-      - id: pyupgrade
-        args: ["--py37-plus"]
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:

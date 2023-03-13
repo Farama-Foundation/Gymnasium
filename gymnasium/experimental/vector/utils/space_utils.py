@@ -50,7 +50,6 @@ def batch_space(space: Space[Any], n: int = 1) -> Space[Any]:
         ValueError: Cannot batch space does not have a registered function.
 
     Example:
-
         >>> from gymnasium.spaces import Box, Dict
         >>> import numpy as np
         >>> space = Dict({

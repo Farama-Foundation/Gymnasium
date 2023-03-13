@@ -38,7 +38,7 @@ def is_valid(board: List[List[str]], max_size: int) -> bool:
     frontier.append((0, 0))
     while frontier:
         r, c = frontier.pop()
-        if not (r, c) in discovered:
+        if (r, c) not in discovered:
             discovered.add((r, c))
             directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
             for x, y in directions:
