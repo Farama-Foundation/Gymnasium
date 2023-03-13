@@ -82,6 +82,9 @@ p = Params(
 )
 rng = np.random.default_rng(p.seed)
 
+# Create the figure folder if it doesn't exists
+p.savefig_folder.mkdir(parents=True, exist_ok=True)
+
 
 # %%
 # The FrozenLake environment
