@@ -520,7 +520,7 @@ def _find_spec(env_id: str) -> EnvSpec:
 
     latest_version = find_highest_version(ns, name)
     if version is not None and latest_version is not None and latest_version > version:
-        logger.warn(
+        logger.deprecation(
             f"The environment {env_name} is out of date. You should consider "
             f"upgrading to version `v{latest_version}`."
         )

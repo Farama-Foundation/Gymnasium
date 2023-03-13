@@ -64,7 +64,7 @@ class EnvCompatibility(gym.Env):
             old_env (LegacyEnv): the env to wrap, implemented with the old API
             render_mode (str): the render mode to use when rendering the environment, passed automatically to env.render
         """
-        logger.warn(
+        logger.deprecation(
             "The `gymnasium.make(..., apply_api_compatibility=...)` parameter is deprecated and will be removed in v0.29. "
             "Instead use `gym.make('GymV21Environment-v0', env_name=...)` or `from shimmy import GymV21CompatibilityV0`"
         )

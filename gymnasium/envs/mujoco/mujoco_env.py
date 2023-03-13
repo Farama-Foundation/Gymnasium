@@ -182,7 +182,7 @@ class MuJocoPyEnv(BaseMujocoEnv):
                 "here: https://github.com/openai/mujoco-py.)"
             )
 
-        logger.warn(
+        logger.deprecation(
             "This version of the mujoco environments depends "
             "on the mujoco-py bindings, which are no longer maintained "
             "and may stop working. Please upgrade to the v4 versions of "

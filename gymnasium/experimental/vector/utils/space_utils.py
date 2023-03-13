@@ -15,7 +15,6 @@ from typing import Any, Iterable, Iterator
 import numpy as np
 
 from gymnasium.error import CustomSpaceError
-from gymnasium.logger import warn
 from gymnasium.spaces import (
     Box,
     Dict,
@@ -306,10 +305,6 @@ def _concatenate_dict(
 @concatenate.register(Sequence)
 @concatenate.register(Space)
 def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
-    if out is not None:
-        warn(
-            f"For `vector.utils.concatenate({type(space)}, ...)`, `out` is not None ({out}) however the value is ignored."
-        )
     return tuple(items)
 
 

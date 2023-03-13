@@ -16,15 +16,21 @@ def basic_reset_func(
     *,
     seed: int | None = None,
     options: dict | None = None,
-) -> ObsType | tuple[ObsType, dict]:
+) -> tuple[ObsType, dict]:
     """A basic reset function that will pass the environment check using random actions from the observation space."""
     super(GenericTestEnv, self).reset(seed=seed)
     self.observation_space.seed(seed)
     return self.observation_space.sample(), {"options": options}
 
 
-def new_step_func(self, action: ActType) -> tuple[ObsType, float, bool, bool, dict]:
-    """A step function that follows the new step api that will pass the environment check using random actions from the observation space."""
+def old_reset_func(self) -> ObsType:
+    """An old reset function that will pass the environment check using random actions from the observation space."""
+    super(GenericTestEnv, self).reset()
+    return self.observation_space.sample()
+
+
+def basic_step_func(self, action: ActType) -> tuple[ObsType, float, bool, bool, dict]:
+    """A step function that follows the basic step api that will pass the environment check using random actions from the observation space."""
     return self.observation_space.sample(), 0, False, False, {}
 
 
@@ -47,7 +53,7 @@ class GenericTestEnv(gym.Env):
         action_space: spaces.Space = spaces.Box(0, 1, (1,)),
         observation_space: spaces.Space = spaces.Box(0, 1, (1,)),
         reset_func: Callable = basic_reset_func,
-        step_func: Callable = new_step_func,
+        step_func: Callable = basic_step_func,
         render_func: Callable = basic_render_func,
         metadata: dict[str, Any] = {"render_modes": []},
         render_mode: str | None = None,

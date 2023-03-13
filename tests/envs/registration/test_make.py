@@ -22,7 +22,7 @@ from gymnasium.wrappers import (
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.registration.utils_envs import ArgumentEnv
 from tests.envs.utils import all_testing_env_specs
-from tests.testing_env import GenericTestEnv, old_step_func
+from tests.testing_env import GenericTestEnv, old_reset_func, old_step_func
 from tests.wrappers.utils import has_wrapper
 
 
@@ -520,13 +520,13 @@ def register_parameter_envs():
 
     gym.register(
         "EnabledApplyApiComp-v0",
-        lambda: GenericTestEnv(step_func=old_step_func),
+        lambda: GenericTestEnv(step_func=old_step_func, reset_func=old_reset_func),
         apply_api_compatibility=True,
         max_episode_steps=3,
     )
     gym.register(
         "DisabledApplyApiComp-v0",
-        lambda: GenericTestEnv(step_func=old_step_func),
+        lambda: GenericTestEnv(step_func=old_step_func, reset_func=old_reset_func),
         apply_api_compatibility=False,
         max_episode_steps=3,
     )
