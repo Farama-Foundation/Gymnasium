@@ -24,8 +24,8 @@ Frozenlake benchmark
 # Let's first import a few dependencies we'll need.
 #
 
-from collections import namedtuple
 from pathlib import Path
+from typing import NamedTuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -47,43 +47,43 @@ sns.set_theme()
 # --------------------
 #
 
-Params = namedtuple(
-    "Params",
-    [
-        "total_episodes",
-        "learning_rate",
-        "gamma",
-        "epsilon",
-        "map_size",
-        "seed",
-        "is_slippery",
-        "n_runs",
-        "action_size",
-        "state_size",
-        "proba_frozen",
-        "savefig_folder",
-    ],
-)
-p = Params(
-    total_episodes=2000,  # Total episodes
-    learning_rate=0.8,  # Learning rate
-    gamma=0.95,  # Discounting rate
-    epsilon=0.1,  # Exploration probability
-    map_size=5,  # Number of tiles of one side of the squared environment
-    seed=123,  # Define a seed so that we get reproducible results
-    is_slippery=False,  # Frozenlake param
-    n_runs=20,  # Number of runs
+
+class Params(NamedTuple):
+    total_episodes: int  # Total episodes
+    learning_rate: float  # Learning rate
+    gamma: float  # Discounting rate
+    epsilon: float  # Exploration probability
+    map_size: int  # Number of tiles of one side of the squared environment
+    seed: int  # Define a seed so that we get reproducible results
+    is_slippery: bool  # If true the player will move in intended direction with probability of 1/3 else will move in either perpendicular direction with equal probability of 1/3 in both directions
+    n_runs: int  # Number of runs
+    action_size: int  # Number of possible actions
+    state_size: int  # Number of possible states
+    proba_frozen: float  # Probability that a tile is frozen
+    savefig_folder: Path  # Root folder where plots are saved
+
+
+params = Params(
+    total_episodes=2000,
+    learning_rate=0.8,
+    gamma=0.95,
+    epsilon=0.1,
+    map_size=5,
+    seed=123,
+    is_slippery=False,
+    n_runs=20,
     action_size=None,
     state_size=None,
-    proba_frozen=0.9,  # probability that a tile is frozen
-    savefig_folder=Path(
-        "../../_static/img/tutorials/"
-    ),  # Root folder where plots are saved
+    proba_frozen=0.9,
+    savefig_folder=Path("../../_static/img/tutorials/"),
 )
-rng = np.random.default_rng(p.seed)
+params
+
+# Set the seed
+rng = np.random.default_rng(params.seed)
 
 # Create the figure folder if it doesn't exists
-p.savefig_folder.mkdir(parents=True, exist_ok=True)
+params.savefig_folder.mkdir(parents=True, exist_ok=True)
 
 
 # %%
@@ -93,9 +93,11 @@ p.savefig_folder.mkdir(parents=True, exist_ok=True)
 
 env = gym.make(
     "FrozenLake-v1",
-    is_slippery=p.is_slippery,
+    is_slippery=params.is_slippery,
     render_mode="rgb_array",
-    desc=generate_random_map(size=p.map_size, p=p.proba_frozen, seed=p.seed),
+    desc=generate_random_map(
+        size=params.map_size, p=params.proba_frozen, seed=params.seed
+    ),
 )
 
 
@@ -110,10 +112,10 @@ env = gym.make(
 # zero with the states number as rows and the actions number as columns.
 #
 
-p = p._replace(action_size=env.action_space.n)
-p = p._replace(state_size=env.observation_space.n)
-print(f"Action size: {p.action_size}")
-print(f"State size: {p.state_size}")
+params = params._replace(action_size=env.action_space.n)
+params = params._replace(state_size=env.observation_space.n)
+print(f"Action size: {params.action_size}")
+print(f"State size: {params.state_size}")
 
 
 class Qlearning:
@@ -172,38 +174,38 @@ class EpsilonGreedy:
 #
 
 learner = Qlearning(
-    learning_rate=p.learning_rate,
-    gamma=p.gamma,
-    state_size=p.state_size,
-    action_size=p.action_size,
+    learning_rate=params.learning_rate,
+    gamma=params.gamma,
+    state_size=params.state_size,
+    action_size=params.action_size,
 )
 explorer = EpsilonGreedy(
-    epsilon=p.epsilon,
+    epsilon=params.epsilon,
 )
 
 
 # %%
 # This will be our main function to run our environment until the maximum
-# number of episodes ``p.total_episodes``. To account for stochasticity,
-# we will also run our environment a few times.
+# number of episodes ``params.total_episodes``. To account for
+# stochasticity, we will also run our environment a few times.
 #
 
 
 def run_env():
-    rewards = np.zeros((p.total_episodes, p.n_runs))
-    steps = np.zeros((p.total_episodes, p.n_runs))
-    episodes = np.arange(p.total_episodes)
-    qtables = np.zeros((p.n_runs, p.state_size, p.action_size))
+    rewards = np.zeros((params.total_episodes, params.n_runs))
+    steps = np.zeros((params.total_episodes, params.n_runs))
+    episodes = np.arange(params.total_episodes)
+    qtables = np.zeros((params.n_runs, params.state_size, params.action_size))
     all_states = []
     all_actions = []
 
-    for run in range(p.n_runs):  # Run several times to account for stochasticity
+    for run in range(params.n_runs):  # Run several times to account for stochasticity
         learner.reset_qtable()  # Reset the Q-table between runs
 
         for episode in tqdm(
-            episodes, desc=f"Run {run}/{p.n_runs} - Episodes", leave=False
+            episodes, desc=f"Run {run}/{params.n_runs} - Episodes", leave=False
         ):
-            state = env.reset(seed=p.seed)[0]  # Reset the environment
+            state = env.reset(seed=params.seed)[0]  # Reset the environment
             step = 0
             done = False
             total_rewards = 0
@@ -331,7 +333,7 @@ def plot_q_values_map(qtable, env, map_size):
         spine.set_linewidth(0.7)
         spine.set_color("black")
     img_title = f"frozenlake_q_values_{map_size}x{map_size}.png"
-    fig.savefig(p.savefig_folder / img_title, bbox_inches="tight")
+    fig.savefig(params.savefig_folder / img_title, bbox_inches="tight")
     plt.show()
 
 
@@ -353,7 +355,7 @@ def plot_states_actions_distribution(states, actions, map_size):
     ax[1].set_title("Actions")
     fig.tight_layout()
     img_title = f"frozenlake_states_actions_distrib_{map_size}x{map_size}.png"
-    fig.savefig(p.savefig_folder / img_title, bbox_inches="tight")
+    fig.savefig(params.savefig_folder / img_title, bbox_inches="tight")
     plt.show()
 
 
@@ -372,31 +374,33 @@ st_all = pd.DataFrame()
 for map_size in map_sizes:
     env = gym.make(
         "FrozenLake-v1",
-        is_slippery=p.is_slippery,
+        is_slippery=params.is_slippery,
         render_mode="rgb_array",
-        desc=generate_random_map(size=map_size, p=p.proba_frozen, seed=p.seed),
+        desc=generate_random_map(
+            size=map_size, p=params.proba_frozen, seed=params.seed
+        ),
     )
 
-    p = p._replace(action_size=env.action_space.n)
-    p = p._replace(state_size=env.observation_space.n)
+    params = params._replace(action_size=env.action_space.n)
+    params = params._replace(state_size=env.observation_space.n)
     env.action_space.seed(
-        p.seed
+        params.seed
     )  # Set the seed to get reproducible results when sampling the action space
     learner = Qlearning(
-        learning_rate=p.learning_rate,
-        gamma=p.gamma,
-        state_size=p.state_size,
-        action_size=p.action_size,
+        learning_rate=params.learning_rate,
+        gamma=params.gamma,
+        state_size=params.state_size,
+        action_size=params.action_size,
     )
     explorer = EpsilonGreedy(
-        epsilon=p.epsilon,
+        epsilon=params.epsilon,
     )
 
     print(f"Map size: {map_size}x{map_size}")
     rewards, steps, episodes, qtables, all_states, all_actions = run_env()
 
     # Save the results in dataframes
-    res, st = postprocess(episodes, p, rewards, steps, map_size)
+    res, st = postprocess(episodes, params, rewards, steps, map_size)
     res_all = pd.concat([res_all, res])
     st_all = pd.concat([st_all, st])
     qtable = qtables.mean(axis=0)  # Average the Q-table between runs
@@ -501,7 +505,7 @@ def plot_steps_and_rewards(rewards_df, steps_df):
         axi.legend(title="map size")
     fig.tight_layout()
     img_title = "frozenlake_steps_and_rewards.png"
-    fig.savefig(p.savefig_folder / img_title, bbox_inches="tight")
+    fig.savefig(params.savefig_folder / img_title, bbox_inches="tight")
     plt.show()
 
 
