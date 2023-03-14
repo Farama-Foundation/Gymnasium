@@ -86,8 +86,26 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     If version < `v4` or `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
     (external forces - force x, y, z and torque x, y, z) applied to the
-    center of mass of each of the links. The 14 links are: the ground link,
-    the torso link, and 3 links for each leg (1 + 1 + 12) with the 6 external forces.
+    center of mass of each of the objects. The 14 object are:
+
+    in `v4` or earlier: 
+    | id | object |
+    |  ---  |  ------------  |
+    | 0 | worldobject (note: forces are always full of zeros) |
+    | 1 | torso |
+    | 2 | front_left_leg | 
+    | 3 | aux_1 (front left leg) |
+    | 4 | ankle_1 (front left leg) |
+    | 5 | front_right_leg |
+    | 6 | aux_2 (front right leg) |
+    | 7 | ankle_2 (front right leg) |
+    | 8 | back_leg (back left leg) |
+    | 9 | aux_3 (back left leg) |
+    | 10 | ankle_3 (back left leg) |
+    | 11 | right_back_leg |
+    | 12 | aux_4 (back right leg) |
+    | 13 | ankle_4 (back right leg) |
+
 
     The (x,y,z) coordinates are translational DOFs while the orientations are rotational
     DOFs expressed as quaternions. One can read more about free joints on the [Mujoco Documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
