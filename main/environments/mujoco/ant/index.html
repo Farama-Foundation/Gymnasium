@@ -844,8 +844,61 @@ where the elements correspond to the following:</p>
 </div>
 <p>If version &lt; <code class="docutils literal notranslate"><span class="pre">v4</span></code> or <code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> then the observation space is extended by 14*6 = 84 elements, which are contact forces
 (external forces - force x, y, z and torque x, y, z) applied to the
-center of mass of each of the links. The 14 links are: the ground link,
-the torso link, and 3 links for each leg (1 + 1 + 12) with the 6 external forces.</p>
+center of mass of each of the objects. The 14 object are:</p>
+<p>in <code class="docutils literal notranslate"><span class="pre">v4</span></code> or earlier:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>object</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>worldObject (note: forces are always full of zeros)</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>torso</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>front_left_leg</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>aux_1 (front left leg)</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>ankle_1 (front left leg)</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>front_right_leg</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>aux_2 (front right leg)</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>ankle_2 (front right leg)</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>back_leg (back left leg)</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>aux_3 (back left leg)</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>ankle_3 (back left leg)</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>right_back_leg</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>aux_4 (back right leg)</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>ankle_4 (back right leg)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>The (x,y,z) coordinates are translational DOFs while the orientations are rotational
 DOFs expressed as quaternions. One can read more about free joints on the <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/XMLreference.html">Mujoco Documentation</a>.</p>
 <p><strong>Note:</strong> Ant-v4 environment no longer has the following contact forces issue.
