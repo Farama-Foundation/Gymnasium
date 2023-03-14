@@ -288,8 +288,8 @@ class LunarLander(gym.Env, EzPickle):
                 # these are bounds for position
                 # realistically the environment should have ended
                 # long before we reach more than 50% outside
-                -1.5,
-                -1.5,
+                -1.5 * SCALE * 2,
+                -1.5 * SCALE * 2,
                 # velocity bounds is 5x rated speed
                 -5.0,
                 -5.0,
@@ -304,8 +304,8 @@ class LunarLander(gym.Env, EzPickle):
                 # these are bounds for position
                 # realistically the environment should have ended
                 # long before we reach more than 50% outside
-                1.5,
-                1.5,
+                1.5 * SCALE * 2,
+                1.5 * SCALE * 2,
                 # velocity bounds is 5x rated speed
                 5.0,
                 5.0,
