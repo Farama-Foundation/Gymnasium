@@ -93,7 +93,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     |  ---  |  ------------  |
     | 0 | worldObject (note: forces are always full of zeros) |
     | 1 | torso |
-    | 2 | front_left_leg | 
+    | 2 | front_left_leg |
     | 3 | aux_1 (front left leg) |
     | 4 | ankle_1 (front left leg) |
     | 5 | front_right_leg |
