@@ -1,5 +1,5 @@
 """Contains methods for step compatibility, from old-to-new and new-to-old API."""
-from typing import Tuple, Union
+from typing import SupportsFloat, Tuple, Union
 
 import numpy as np
 
@@ -8,14 +8,14 @@ from gymnasium.core import ObsType
 
 DoneStepType = Tuple[
     Union[ObsType, np.ndarray],
-    Union[float, np.ndarray],
+    Union[SupportsFloat, np.ndarray],
     Union[bool, np.ndarray],
     Union[dict, list],
 ]
 
 TerminatedTruncatedStepType = Tuple[
     Union[ObsType, np.ndarray],
-    Union[float, np.ndarray],
+    Union[SupportsFloat, np.ndarray],
     Union[bool, np.ndarray],
     Union[bool, np.ndarray],
     Union[dict, list],
