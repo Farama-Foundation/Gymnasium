@@ -1,5 +1,5 @@
 """Contains methods for step compatibility, from old-to-new and new-to-old API."""
-from typing import Tuple, Union, SupportsFloat
+from typing import SupportsFloat, Tuple, Union
 
 import numpy as np
 
