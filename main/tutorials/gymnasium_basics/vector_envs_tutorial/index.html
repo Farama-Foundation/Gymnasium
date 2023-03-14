@@ -478,6 +478,12 @@
             
             <section class="sphx-glr-example-title" id="training-a2c-with-vector-envs-and-domain-randomization">
 <span id="sphx-glr-tutorials-gymnasium-basics-vector-envs-tutorial-py"></span><h1>Training A2C with Vector Envs and Domain Randomization<a class="headerlink" href="#training-a2c-with-vector-envs-and-domain-randomization" title="Permalink to this heading">#</a></h1>
+<section id="notice">
+<h2>Notice<a class="headerlink" href="#notice" title="Permalink to this heading">#</a></h2>
+<p>If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from <code class="docutils literal notranslate"><span class="pre">gym.vector.make=</span></code> or <code class="docutils literal notranslate"><span class="pre">gym.vector.AsyncVectorEnv</span></code> to the end of the code by <code class="docutils literal notranslate"><span class="pre">if__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">An</span> <span class="pre">attempt</span> <span class="pre">has</span> <span class="pre">been</span> <span class="pre">made</span> <span class="pre">to</span> <span class="pre">start</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">process</span> <span class="pre">before</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">process</span> <span class="pre">has</span> <span class="pre">finished</span> <span class="pre">its</span> <span class="pre">bootstrapping</span> <span class="pre">phase.</span></code></p>
+<hr class="docutils" />
+</section>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>In this tutorial, you’ll learn how to use vectorized environments to train an Advantage Actor-Critic agent.
@@ -1156,6 +1162,7 @@ parallel environments to achieve optimal performance.</p>
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Training A2C with Vector Envs and Domain Randomization</a><ul>
+<li><a class="reference internal" href="#notice">Notice</a></li>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#advantage-actor-critic-a2c">Advantage Actor-Critic (A2C)</a></li>
 <li><a class="reference internal" href="#using-vectorized-environments">Using Vectorized Environments</a></li>
