@@ -81,17 +81,17 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 23  | angular velocity of angle between torso and back left link   | -Inf   | Inf    | hip_3 (back_leg)                       | hinge | angle (rad)              |
     | 24  | angular velocity of the angle between back left links        | -Inf   | Inf    | ankle_3 (back_leg)                     | hinge | angle (rad)              |
     | 25  | angular velocity of angle between torso and back right link  | -Inf   | Inf    | hip_4 (right_back_leg)                 | hinge | angle (rad)              |
-    | 26  |angular velocity of the angle between back right links        | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angle (rad)              |
+    | 26  | angular velocity of the angle between back right links       | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angle (rad)              |
 
 
     If version < `v4` or `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
     (external forces - force x, y, z and torque x, y, z) applied to the
     center of mass of each of the objects. The 14 object are:
 
-    in `v4` or earlier: 
+    in `v4` or earlier:
     | id | object |
     |  ---  |  ------------  |
-    | 0 | worldobject (note: forces are always full of zeros) |
+    | 0 | worldObject (note: forces are always full of zeros) |
     | 1 | torso |
     | 2 | front_left_leg | 
     | 3 | aux_1 (front left leg) |
