@@ -869,7 +869,7 @@ use the rest of the timesteps to begin a new one).</p>
 
         <span class="c1"># perform the action A_{t} in the environment to get S_{t+1} and R_{t+1}</span>
         <span class="n">states</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs_wrapper</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
-            <span class="n">actions</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="n">actions</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="n">ep_value_preds</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">state_value_preds</span><span class="p">)</span>

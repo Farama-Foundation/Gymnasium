@@ -454,7 +454,7 @@ for sample_phase in tqdm(range(n_updates)):
 
         # perform the action A_{t} in the environment to get S_{t+1} and R_{t+1}
         states, rewards, terminated, truncated, infos = envs_wrapper.step(
-            actions.numpy()
+            actions.cpu().numpy()
         )
 
         ep_value_preds[step] = torch.squeeze(state_value_preds)
