@@ -4,7 +4,7 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
-from gymnasium.experimental.wrappers.conversion.jax_to_numpy import (
+from gymnasium.experimental.wrappers.jax_to_numpy import (
     JaxToNumpyV0,
     jax_to_numpy,
     numpy_to_jax,
