@@ -1,10 +1,17 @@
 """Wrapper for limiting the time steps of an environment."""
-from typing import Optional
+from __future__ import annotations
+
+from copy import deepcopy
+from typing import TYPE_CHECKING
 
 import gymnasium as gym
 
 
-class TimeLimit(gym.Wrapper):
+if TYPE_CHECKING:
+    from gymnasium.envs.registration import EnvSpec
+
+
+class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """This wrapper will issue a `truncated` signal if a maximum number of timesteps is exceeded.
 
     If a truncation is not defined inside the environment itself, this is the only place that the truncation signal is issued.
@@ -20,20 +27,19 @@ class TimeLimit(gym.Wrapper):
     def __init__(
         self,
         env: gym.Env,
-        max_episode_steps: Optional[int] = None,
+        max_episode_steps: int,
     ):
         """Initializes the :class:`TimeLimit` wrapper with an environment and the number of steps after which truncation will occur.
 
         Args:
             env: The environment to apply the wrapper
-            max_episode_steps: An optional max episode steps (if ``Ǹone``, ``env.spec.max_episode_steps`` is used)
+            max_episode_steps: An optional max episode steps (if ``None``, ``env.spec.max_episode_steps`` is used)
         """
-        super().__init__(env)
-        if max_episode_steps is None and self.env.spec is not None:
-            assert env.spec is not None
-            max_episode_steps = env.spec.max_episode_steps
-        if self.env.spec is not None:
-            self.env.spec.max_episode_steps = max_episode_steps
+        gym.utils.RecordConstructorArgs.__init__(
+            self, max_episode_steps=max_episode_steps
+        )
+        gym.Wrapper.__init__(self, env)
+
         self._max_episode_steps = max_episode_steps
         self._elapsed_steps = None
 
@@ -67,3 +73,17 @@ class TimeLimit(gym.Wrapper):
         """
         self._elapsed_steps = 0
         return self.env.reset(**kwargs)
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Modifies the environment spec to include the `max_episode_steps=self._max_episode_steps`."""
+        if self._cached_spec is not None:
+            return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            env_spec = deepcopy(env_spec)
+            env_spec.max_episode_steps = self._max_episode_steps
+
+        self._cached_spec = env_spec
+        return env_spec

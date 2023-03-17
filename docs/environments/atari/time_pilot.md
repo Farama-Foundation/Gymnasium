@@ -11,11 +11,21 @@ title: TimePilot
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(10) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/TimePilot-v5")` |
+
+For more TimePilot variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You control an aircraft. Use it to destroy your enemies. As you progress in the game, you encounter enemies with technology that is increasingly from the future.
 
-For a more detailed documentation, see [the AtariAge page](http://www.atarimania.com/game-atari-2600-vcs-time-pilot_8038.html)
+    For a more detailed documentation, see [the AtariAge page](http://www.atarimania.com/game-atari-2600-vcs-time-pilot_8038.html)
 
 ## Actions
 

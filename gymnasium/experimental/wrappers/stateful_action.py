@@ -4,11 +4,13 @@ from __future__ import annotations
 from typing import Any
 
 import gymnasium as gym
-from gymnasium.core import ActionWrapper, ActType, ObsType
+from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidProbability
 
 
-class StickyActionV0(ActionWrapper[ObsType, ActType, ActType]):
+class StickyActionV0(
+    gym.ActionWrapper[ObsType, ActType, ActType], gym.utils.RecordConstructorArgs
+):
     """Wrapper which adds a probability of repeating the previous action.
 
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_
@@ -29,7 +31,11 @@ class StickyActionV0(ActionWrapper[ObsType, ActType, ActType]):
                 f"repeat_action_probability should be in the interval [0,1). Received {repeat_action_probability}"
             )
 
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, repeat_action_probability=repeat_action_probability
+        )
+        gym.ActionWrapper.__init__(self, env)
+
         self.repeat_action_probability = repeat_action_probability
         self.last_action: ActType | None = None
 

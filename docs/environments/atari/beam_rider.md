@@ -11,11 +11,21 @@ title: BeamRider
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(9) |
+| Observation Shape | (210, 160, 3) |
+| Observation High | 255 |
+| Observation Low | 0  |
+| Import | `gymnasium.make("ALE/BeamRider-v5")` |
+
+For more BeamRider variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You control a space-ship that travels forward at a constant speed. You can only steer it sideways between discrete positions. Your goal is to destroy enemy ships, avoid their attacks and dodge space debris.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareID=860)
+    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareID=860)
 
 ## Actions
 

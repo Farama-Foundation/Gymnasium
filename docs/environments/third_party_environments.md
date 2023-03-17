@@ -12,7 +12,7 @@ There are a number of Reinforcement Learning environments built by authors not i
 
 Supported fork of gym-retro with additional games, states, scenarios, etc. Open to PRs of additional games, features, and platforms since gym-retro is no longer maintained
 
-### [flappy-bird-gym: A Flappy Bird environment for Gym](https://github.com/Talendar/flappy-bird-gym)
+### [flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium](https://github.com/markub3327/flappy-bird-gymnasium)
 
 A simple environment for single-agent reinforcement learning algorithms on a clone of [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.
 
