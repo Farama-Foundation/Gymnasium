@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 import torch
 
-from gymnasium.experimental.wrappers.conversion.jax_to_torch import (
+from gymnasium.experimental.wrappers.jax_to_torch import (
     JaxToTorchV0,
     jax_to_torch,
     torch_to_jax,
