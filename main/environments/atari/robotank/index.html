@@ -257,6 +257,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/experimental/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/experimental/vector/">Vectorizing Environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
 </ul>
 </li>
 </ul>
@@ -512,9 +513,7 @@
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
 <p>You control your Robot Tanks to destroy enemies and avoid enemy fire.Game ends when all of your Robot Tanks are destroyed or all 12 enemy squadrons are destroyed.The game begins with one active Robot Tank and three reserves.Your Robot Tank may get lost when it is hit by enemy    rocket fire - your video scrambles with static interference when this    happens - or just become damaged - sensors report the damage by flashing on your control panel (look at V/C/R/T squares).You earn one bonus Robot Tank for every enemy squadron destroyed. The maximum number of bonus Robot Tanks allowed at any one time is 12.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=416)
-</pre></div>
-</div>
+<p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=416">the AtariAge page</a></p>
 </section>
 <section id="actions">
 <h2>Actions<a class="headerlink" href="#actions" title="Permalink to this heading">#</a></h2>
@@ -525,61 +524,53 @@ As Robotank uses the full set of actions then specifying <code class="docutils l
 <thead>
 <tr class="row-odd"><th class="head"><p>Value</p></th>
 <th class="head"><p>Meaning</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Meaning</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">NOOP</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">FIRE</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">UP</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">RIGHT</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">LEFT</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">DOWN</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">6</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">UPRIGHT</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">7</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">7</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">UPLEFT</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">8</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">DOWNRIGHT</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">9</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">DOWNLEFT</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">UPFIRE</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">11</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">11</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">RIGHTFIRE</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">12</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">LEFTFIRE</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">13</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">13</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">DOWNFIRE</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">14</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">14</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">UPRIGHTFIRE</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">15</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">UPLEFTFIRE</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">16</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">16</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">DOWNRIGHTFIRE</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">17</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">17</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">DOWNLEFTFIRE</span></code></p></td>
 </tr>
 </tbody>
