@@ -24,6 +24,10 @@ Frozenlake benchmark
 # Let's first import a few dependencies we'll need.
 #
 
+# Author: Andrea Pierré
+# License: MIT License
+
+
 from pathlib import Path
 from typing import NamedTuple
 
