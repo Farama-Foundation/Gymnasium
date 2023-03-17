@@ -3,7 +3,10 @@
 import pytest
 
 import gymnasium
-from gymnasium.experimental.wrappers import __all__, _wrapper_to_class
+from gymnasium.experimental.wrappers import (
+    _wrapper_to_class,  # pyright: ignore[reportPrivateUsage]
+)
+from gymnasium.experimental.wrappers import __all__
 
 
 def test_all_wrapper_shorten():
