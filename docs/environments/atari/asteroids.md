@@ -25,7 +25,7 @@ For more Asteroids variants with different observation and action spaces, see th
 
 This is a well-known arcade game: You control a spaceship in an asteroid field and must break up asteroids by shooting them. Once all asteroids are destroyed, you enter a new level and new asteroids will appear. You will occasionally be attacked by a flying saucer.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=828)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=828)
 
 ## Actions
 
@@ -34,22 +34,13 @@ As Asteroids uses a reduced set of actions for `v0`, `v4` and `v5` versions of t
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning       |
-|---------|---------------|
-| `0`     | `NOOP`        |
-| `1`     | `FIRE`        |
-| `2`     | `UP`          |
-| `3`     | `RIGHT`       |
-| `4`     | `LEFT`        |
-| `5`     | `DOWN`        |
-| `6`     | `UPRIGHT`     |
-| `7`     | `UPLEFT`      |
-| `8`     | `UPFIRE`      |
-| `9`     | `RIGHTFIRE`   |
-| `10`    | `LEFTFIRE`    |
-| `11`    | `DOWNFIRE`    |
-| `12`    | `UPRIGHTFIRE` |
-| `13`    | `UPLEFTFIRE`  |
+| Value   | Meaning       | Value   | Meaning      | Value   | Meaning    |
+|---------|---------------|---------|--------------|---------|------------|
+| `0`     | `NOOP`        | `1`     | `FIRE`       | `2`     | `UP`       |
+| `3`     | `RIGHT`       | `4`     | `LEFT`       | `5`     | `DOWN`     |
+| `6`     | `UPRIGHT`     | `7`     | `UPLEFT`     | `8`     | `UPFIRE`   |
+| `9`     | `RIGHTFIRE`   | `10`    | `LEFTFIRE`   | `11`    | `DOWNFIRE` |
+| `12`    | `UPRIGHTFIRE` | `13`    | `UPLEFTFIRE` |         |            |
 
 ## Observations
 

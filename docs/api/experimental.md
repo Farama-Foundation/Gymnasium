@@ -10,6 +10,7 @@ experimental/functional
 experimental/wrappers
 experimental/vector
 experimental/vector_wrappers
+experimental/vector_utils
 ```
 
 ## Functional Environments

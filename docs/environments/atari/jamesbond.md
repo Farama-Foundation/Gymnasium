@@ -25,33 +25,21 @@ For more Jamesbond variants with different observation and action spaces, see th
 
 Your mission is to control Mr. Bond's specially designed multipurpose craft to complete a variety of missions.The craft moves forward with a right motion and slightly back with a left motion.An up or down motion causes the craft to jump or dive.You can also fire by either lobbing a bomb to the bottom of the screen or firing a fixed angle shot to the top of the screen.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=250)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=250)
 
 ## Actions
 
 Jamesbond has the action space `Discrete(18)` with the table below lists the meaning of each action's meanings.
 As Jamesbond uses the full set of actions then specifying `full_action_space=True` will not modify the action space of the environment if passed to `gymnasium.make`.
 
-| Value   | Meaning         |
-|---------|-----------------|
-| `0`     | `NOOP`          |
-| `1`     | `FIRE`          |
-| `2`     | `UP`            |
-| `3`     | `RIGHT`         |
-| `4`     | `LEFT`          |
-| `5`     | `DOWN`          |
-| `6`     | `UPRIGHT`       |
-| `7`     | `UPLEFT`        |
-| `8`     | `DOWNRIGHT`     |
-| `9`     | `DOWNLEFT`      |
-| `10`    | `UPFIRE`        |
-| `11`    | `RIGHTFIRE`     |
-| `12`    | `LEFTFIRE`      |
-| `13`    | `DOWNFIRE`      |
-| `14`    | `UPRIGHTFIRE`   |
-| `15`    | `UPLEFTFIRE`    |
-| `16`    | `DOWNRIGHTFIRE` |
-| `17`    | `DOWNLEFTFIRE`  |
+| Value   | Meaning      | Value   | Meaning         | Value   | Meaning        |
+|---------|--------------|---------|-----------------|---------|----------------|
+| `0`     | `NOOP`       | `1`     | `FIRE`          | `2`     | `UP`           |
+| `3`     | `RIGHT`      | `4`     | `LEFT`          | `5`     | `DOWN`         |
+| `6`     | `UPRIGHT`    | `7`     | `UPLEFT`        | `8`     | `DOWNRIGHT`    |
+| `9`     | `DOWNLEFT`   | `10`    | `UPFIRE`        | `11`    | `RIGHTFIRE`    |
+| `12`    | `LEFTFIRE`   | `13`    | `DOWNFIRE`      | `14`    | `UPRIGHTFIRE`  |
+| `15`    | `UPLEFTFIRE` | `16`    | `DOWNRIGHTFIRE` | `17`    | `DOWNLEFTFIRE` |
 
 ## Observations
 

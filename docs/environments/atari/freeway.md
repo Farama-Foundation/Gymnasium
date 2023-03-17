@@ -25,7 +25,7 @@ For more Freeway variants with different observation and action spaces, see the 
 
 your objective is to guide your chicken across lane after lane of busy rush hour traffic. You receive a point for every chicken that makes it to the top of the screen after crossing all the lanes of traffic.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=192)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=192)
 
 ## Actions
 
@@ -34,11 +34,9 @@ As Freeway uses a reduced set of actions for `v0`, `v4` and `v5` versions of the
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning   |
-|---------|-----------|
-| `0`     | `NOOP`    |
-| `1`     | `UP`      |
-| `2`     | `DOWN`    |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning   |
+|---------|-----------|---------|-----------|---------|-----------|
+| `0`     | `NOOP`    | `1`     | `UP`      | `2`     | `DOWN`    |
 
 ## Observations
 

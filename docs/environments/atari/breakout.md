@@ -25,7 +25,7 @@ For more Breakout variants with different observation and action spaces, see the
 
 Another famous Atari game. The dynamics are similar to pong: You move a paddle and hit the ball in a brick wall at the top of the screen. Your goal is to destroy the brick wall. You can try to break through the wall and let the ball wreak havoc on the other side, all on its own! You have five lives.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=889)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=889)
 
 ## Actions
 
@@ -34,12 +34,10 @@ As Breakout uses a reduced set of actions for `v0`, `v4` and `v5` versions of th
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning   |
-|---------|-----------|
-| `0`     | `NOOP`    |
-| `1`     | `FIRE`    |
-| `2`     | `RIGHT`   |
-| `3`     | `LEFT`    |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning   |
+|---------|-----------|---------|-----------|---------|-----------|
+| `0`     | `NOOP`    | `1`     | `FIRE`    | `2`     | `RIGHT`   |
+| `3`     | `LEFT`    |         |           |         |           |
 
 ## Observations
 

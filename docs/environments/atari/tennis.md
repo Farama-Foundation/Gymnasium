@@ -25,33 +25,21 @@ For more Tennis variants with different observation and action spaces, see the v
 
 You control the orange player playing against a computer-controlled blue player. The game follows the rules of tennis.The first player to win at least 6 games with a margin of at least two games wins the match. If the score is tied at 6-6, the first player to go 2 games up wins the match.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555)
 
 ## Actions
 
 Tennis has the action space `Discrete(18)` with the table below lists the meaning of each action's meanings.
 As Tennis uses the full set of actions then specifying `full_action_space=True` will not modify the action space of the environment if passed to `gymnasium.make`.
 
-| Value   | Meaning         |
-|---------|-----------------|
-| `0`     | `NOOP`          |
-| `1`     | `FIRE`          |
-| `2`     | `UP`            |
-| `3`     | `RIGHT`         |
-| `4`     | `LEFT`          |
-| `5`     | `DOWN`          |
-| `6`     | `UPRIGHT`       |
-| `7`     | `UPLEFT`        |
-| `8`     | `DOWNRIGHT`     |
-| `9`     | `DOWNLEFT`      |
-| `10`    | `UPFIRE`        |
-| `11`    | `RIGHTFIRE`     |
-| `12`    | `LEFTFIRE`      |
-| `13`    | `DOWNFIRE`      |
-| `14`    | `UPRIGHTFIRE`   |
-| `15`    | `UPLEFTFIRE`    |
-| `16`    | `DOWNRIGHTFIRE` |
-| `17`    | `DOWNLEFTFIRE`  |
+| Value   | Meaning      | Value   | Meaning         | Value   | Meaning        |
+|---------|--------------|---------|-----------------|---------|----------------|
+| `0`     | `NOOP`       | `1`     | `FIRE`          | `2`     | `UP`           |
+| `3`     | `RIGHT`      | `4`     | `LEFT`          | `5`     | `DOWN`         |
+| `6`     | `UPRIGHT`    | `7`     | `UPLEFT`        | `8`     | `DOWNRIGHT`    |
+| `9`     | `DOWNLEFT`   | `10`    | `UPFIRE`        | `11`    | `RIGHTFIRE`    |
+| `12`    | `LEFTFIRE`   | `13`    | `DOWNFIRE`      | `14`    | `UPRIGHTFIRE`  |
+| `15`    | `UPLEFTFIRE` | `16`    | `DOWNRIGHTFIRE` | `17`    | `DOWNLEFTFIRE` |
 
 ## Observations
 

@@ -32,11 +32,9 @@ As Backgammon uses a reduced set of actions for `v0`, `v4` and `v5` versions of 
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning   |
-|---------|-----------|
-| `0`     | `FIRE`    |
-| `1`     | `RIGHT`   |
-| `2`     | `LEFT`    |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning   |
+|---------|-----------|---------|-----------|---------|-----------|
+| `0`     | `FIRE`    | `1`     | `RIGHT`   | `2`     | `LEFT`    |
 
 ## Observations
 

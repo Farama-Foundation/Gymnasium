@@ -25,33 +25,21 @@ For more Solaris variants with different observation and action spaces, see the 
 
 You control a spaceship. Blast enemies before they can blast you. You can warp to different sectors. You have to defend Federation planets, and destroy Zylon forces. Keep track of your fuel, if you run out you lose a life. Warp to a Federation planet to refuel. The game ends if all your ships are destroyed or if you reach the Solaris planet.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=450)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=450)
 
 ## Actions
 
 Solaris has the action space `Discrete(18)` with the table below lists the meaning of each action's meanings.
 As Solaris uses the full set of actions then specifying `full_action_space=True` will not modify the action space of the environment if passed to `gymnasium.make`.
 
-| Value   | Meaning         |
-|---------|-----------------|
-| `0`     | `NOOP`          |
-| `1`     | `FIRE`          |
-| `2`     | `UP`            |
-| `3`     | `RIGHT`         |
-| `4`     | `LEFT`          |
-| `5`     | `DOWN`          |
-| `6`     | `UPRIGHT`       |
-| `7`     | `UPLEFT`        |
-| `8`     | `DOWNRIGHT`     |
-| `9`     | `DOWNLEFT`      |
-| `10`    | `UPFIRE`        |
-| `11`    | `RIGHTFIRE`     |
-| `12`    | `LEFTFIRE`      |
-| `13`    | `DOWNFIRE`      |
-| `14`    | `UPRIGHTFIRE`   |
-| `15`    | `UPLEFTFIRE`    |
-| `16`    | `DOWNRIGHTFIRE` |
-| `17`    | `DOWNLEFTFIRE`  |
+| Value   | Meaning      | Value   | Meaning         | Value   | Meaning        |
+|---------|--------------|---------|-----------------|---------|----------------|
+| `0`     | `NOOP`       | `1`     | `FIRE`          | `2`     | `UP`           |
+| `3`     | `RIGHT`      | `4`     | `LEFT`          | `5`     | `DOWN`         |
+| `6`     | `UPRIGHT`    | `7`     | `UPLEFT`        | `8`     | `DOWNRIGHT`    |
+| `9`     | `DOWNLEFT`   | `10`    | `UPFIRE`        | `11`    | `RIGHTFIRE`    |
+| `12`    | `LEFTFIRE`   | `13`    | `DOWNFIRE`      | `14`    | `UPRIGHTFIRE`  |
+| `15`    | `UPLEFTFIRE` | `16`    | `DOWNRIGHTFIRE` | `17`    | `DOWNLEFTFIRE` |
 
 ## Observations
 

@@ -25,7 +25,7 @@ For more CrazyClimber variants with different observation and action spaces, see
 
 You are a climber trying to reach the top of four buildings, while avoiding obstacles like closing windows and falling objects. When you receive damage (windows closing or objects) you will fall and lose one life; you have a total of 5 lives before the end games. At the top of each building, there's a helicopter which you need to catch to get to the next building. The goal is to climb as fast as possible while receiving the least amount of damage.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=113)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=113)
 
 ## Actions
 
@@ -34,17 +34,11 @@ As CrazyClimber uses a reduced set of actions for `v0`, `v4` and `v5` versions o
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `UP`        |
-| `2`     | `RIGHT`     |
-| `3`     | `LEFT`      |
-| `4`     | `DOWN`      |
-| `5`     | `UPRIGHT`   |
-| `6`     | `UPLEFT`    |
-| `7`     | `DOWNRIGHT` |
-| `8`     | `DOWNLEFT`  |
+| Value   | Meaning   | Value   | Meaning     | Value   | Meaning    |
+|---------|-----------|---------|-------------|---------|------------|
+| `0`     | `NOOP`    | `1`     | `UP`        | `2`     | `RIGHT`    |
+| `3`     | `LEFT`    | `4`     | `DOWN`      | `5`     | `UPRIGHT`  |
+| `6`     | `UPLEFT`  | `7`     | `DOWNRIGHT` | `8`     | `DOWNLEFT` |
 
 ## Observations
 

@@ -133,26 +133,16 @@ It is possible to install the ROMs in an alternative location, [AutoROM](https:/
 
 Each environment will use a sub-set of the full action space listed below:
 
-| Num | Action        |
-|-----|---------------|
-| 0   | NOOP          |
-| 1   | FIRE          |
-| 2   | UP            |
-| 3   | RIGHT         |
-| 4   | LEFT          |
-| 5   | DOWN          |
-| 6   | UPRIGHT       |
-| 7   | UPLEFT        |
-| 8   | DOWNRIGHT     |
-| 9   | DOWNLEFT      |
-| 10  | UPFIRE        |
-| 11  | RIGHTFIRE     |
-| 12  | LEFTFIRE      |
-| 13  | DOWNFIRE      |
-| 14  | UPRIGHTFIRE   |
-| 15  | UPLEFTFIRE    |
-| 16  | DOWNRIGHTFIRE |
-| 17  | DOWNLEFTFIRE  |
+| Value   | Meaning      | Value   | Meaning         | Value   | Meaning        |
+|---------|--------------|---------|-----------------|---------|----------------|
+| `0`     | `NOOP`       | `1`     | `FIRE`          | `2`     | `UP`           |
+| `3`     | `RIGHT`      | `4`     | `LEFT`          | `5`     | `DOWN`         |
+| `6`     | `UPRIGHT`    | `7`     | `UPLEFT`        | `8`     | `DOWNRIGHT`    |
+| `9`     | `DOWNLEFT`   | `10`    | `UPFIRE`        | `11`    | `RIGHTFIRE`    |
+| `12`    | `LEFTFIRE`   | `13`    | `DOWNFIRE`      | `14`    | `UPRIGHTFIRE`  |
+| `15`    | `UPLEFTFIRE` | `16`    | `DOWNRIGHTFIRE` | `17`    | `DOWNLEFTFIRE` |
+
+
 
 By default, most environments use a smaller subset of the legal actions excluding any actions that don't have an effect in the game.
 If users are interested in using all possible actions, pass the keyword argument `full_action_space=True` to `gymnasium.make`.

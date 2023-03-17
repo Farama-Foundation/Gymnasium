@@ -25,7 +25,7 @@ For more BeamRider variants with different observation and action spaces, see th
 
 You control a space-ship that travels forward at a constant speed. You can only steer it sideways between discrete positions. Your goal is to destroy enemy ships, avoid their attacks and dodge space debris.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareID=860)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareID=860)
 
 ## Actions
 
@@ -34,17 +34,11 @@ As BeamRider uses a reduced set of actions for `v0`, `v4` and `v5` versions of t
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `FIRE`      |
-| `2`     | `UP`        |
-| `3`     | `RIGHT`     |
-| `4`     | `LEFT`      |
-| `5`     | `UPRIGHT`   |
-| `6`     | `UPLEFT`    |
-| `7`     | `RIGHTFIRE` |
-| `8`     | `LEFTFIRE`  |
+| Value   | Meaning   | Value   | Meaning     | Value   | Meaning    |
+|---------|-----------|---------|-------------|---------|------------|
+| `0`     | `NOOP`    | `1`     | `FIRE`      | `2`     | `UP`       |
+| `3`     | `RIGHT`   | `4`     | `LEFT`      | `5`     | `UPRIGHT`  |
+| `6`     | `UPLEFT`  | `7`     | `RIGHTFIRE` | `8`     | `LEFTFIRE` |
 
 ## Observations
 

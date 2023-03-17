@@ -25,7 +25,7 @@ For more Qbert variants with different observation and action spaces, see the va
 
 You are Q*bert. Your goal is to change the color of all the cubes on the pyramid to the pyramid's 'destination' color. To do this, you must hop on each cube on the pyramid one at a time while avoiding nasty creatures that lurk there.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=1224)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=1224)
 
 ## Actions
 
@@ -34,14 +34,10 @@ As Qbert uses a reduced set of actions for `v0`, `v4` and `v5` versions of the e
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning   |
-|---------|-----------|
-| `0`     | `NOOP`    |
-| `1`     | `FIRE`    |
-| `2`     | `UP`      |
-| `3`     | `RIGHT`   |
-| `4`     | `LEFT`    |
-| `5`     | `DOWN`    |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning   |
+|---------|-----------|---------|-----------|---------|-----------|
+| `0`     | `NOOP`    | `1`     | `FIRE`    | `2`     | `UP`      |
+| `3`     | `RIGHT`   | `4`     | `LEFT`    | `5`     | `DOWN`    |
 
 ## Observations
 
