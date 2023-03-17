@@ -10,7 +10,7 @@ from typing import Callable
 
 
 try:
-    import jumpy as jp
+    import jumpy.numpy as jp
 except ImportError as e:
     raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
