@@ -11,11 +11,6 @@ from copy import deepcopy
 from typing import Any, SupportsFloat
 from typing_extensions import Final
 
-
-try:
-    import jumpy.numpy as jp
-except ImportError as e:
-    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym
