@@ -817,52 +817,6 @@ the same shape as the observation space.</p>
 </dl>
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.AtariPreprocessingV0">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">AtariPreprocessingV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">noop_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">84</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminal_on_life_loss</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale_newaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.AtariPreprocessingV0" title="Permalink to this definition">#</a></dt>
-<dd><p>Atari 2600 preprocessing wrapper.</p>
-<p>This class follows the guidelines in Machado et al. (2018),
-“Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents”.</p>
-<p>Specifically, the following preprocess stages applies to the atari environment:</p>
-<ul class="simple">
-<li><p>Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.</p></li>
-<li><p>Frame skipping: The number of frames skipped between steps, 4 by default</p></li>
-<li><p>Max-pooling: Pools over the most recent two observations from the frame skips</p></li>
-<li><dl class="simple">
-<dt>Termination signal when a life is lost: When the agent losses a life during the environment, then the environment is terminated.</dt><dd><p>Turned off by default. Not recommended by Machado et al. (2018).</p>
-</dd>
-</dl>
-</li>
-<li><p>Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default</p></li>
-<li><p>Grayscale observation: If the observation is colour or greyscale, by default, greyscale.</p></li>
-<li><p>Scale observation: If to scale the observation between [0, 1) or [0, 255), by default, not scaled.</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the preprocessing</p></li>
-<li><p><strong>noop_max</strong> (<em>int</em>) – For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.</p></li>
-<li><p><strong>frame_skip</strong> (<em>int</em>) – The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.</p></li>
-<li><p><strong>screen_size</strong> (<em>int</em>) – resize Atari frame</p></li>
-<li><p><strong>terminal_on_life_loss</strong> (<em>bool</em>) – <cite>if True</cite>, then <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> returns <cite>terminated=True</cite> whenever a
-life is lost.</p></li>
-<li><p><strong>grayscale_obs</strong> (<em>bool</em>) – if True, then gray scale observation is returned, otherwise, RGB observation
-is returned.</p></li>
-<li><p><strong>grayscale_newaxis</strong> (<em>bool</em>) – <cite>if True and grayscale_obs=True</cite>, then a channel axis is added to
-grayscale observations to make them 3-dimensional.</p></li>
-<li><p><strong>scale_obs</strong> (<em>bool</em>) – if True, then observation normalized in range [0,1) is returned. It also limits memory
-optimization benefits of FrameStack Wrapper.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>DependencyNotInstalled</strong> – opencv-python package not installed</p></li>
-<li><p><strong>ValueError</strong> – Disable frame-skipping in the original env</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 <section id="action-wrappers">
 <h2>Action Wrappers<a class="headerlink" href="#action-wrappers" title="Permalink to this heading">#</a></h2>
@@ -1279,7 +1233,6 @@ will always return an empty list:</p>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.TimeAwareObservationV0"><code class="docutils literal notranslate"><span class="pre">TimeAwareObservationV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.FrameStackObservationV0"><code class="docutils literal notranslate"><span class="pre">FrameStackObservationV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.DelayObservationV0"><code class="docutils literal notranslate"><span class="pre">DelayObservationV0</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.wrappers.AtariPreprocessingV0"><code class="docutils literal notranslate"><span class="pre">AtariPreprocessingV0</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#action-wrappers">Action Wrappers</a><ul>
