@@ -17,7 +17,7 @@ from typing import Any, Iterable, Mapping, SupportsFloat, Union
 import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.wrappers.conversion.jax_to_numpy import jax_to_numpy
+from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
 
 
 try:
@@ -33,6 +33,9 @@ try:
     Device = Union[str, torch.device]
 except ImportError:
     torch, torch_dlpack, Device = None, None, None
+
+
+__all__ = ["jax_to_torch", "torch_to_jax", "JaxToTorchV0"]
 
 
 @functools.singledispatch

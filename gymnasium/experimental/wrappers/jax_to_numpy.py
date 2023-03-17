@@ -20,6 +20,9 @@ except ImportError:
     jnp = None
 
 
+__all__ = ["jax_to_numpy", "numpy_to_jax", "JaxToNumpyV0"]
+
+
 @functools.singledispatch
 def numpy_to_jax(value: Any) -> Any:
     """Converts a value to a Jax DeviceArray."""
