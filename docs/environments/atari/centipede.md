@@ -25,33 +25,21 @@ For more Centipede variants with different observation and action spaces, see th
 
 You are an elf and must use your magic wands to fend off spiders, fleas and centipedes. Your goal is to protect mushrooms in an enchanted forest. If you are bitten by a spider, flea or centipede, you will be temporally paralyzed and you will lose a magic wand. The game ends once you have lost all wands. You may receive additional wands after scoring a sufficient number of points.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=911)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=911)
 
 ## Actions
 
 Centipede has the action space `Discrete(18)` with the table below lists the meaning of each action's meanings.
 As Centipede uses the full set of actions then specifying `full_action_space=True` will not modify the action space of the environment if passed to `gymnasium.make`.
 
-| Value   | Meaning         |
-|---------|-----------------|
-| `0`     | `NOOP`          |
-| `1`     | `FIRE`          |
-| `2`     | `UP`            |
-| `3`     | `RIGHT`         |
-| `4`     | `LEFT`          |
-| `5`     | `DOWN`          |
-| `6`     | `UPRIGHT`       |
-| `7`     | `UPLEFT`        |
-| `8`     | `DOWNRIGHT`     |
-| `9`     | `DOWNLEFT`      |
-| `10`    | `UPFIRE`        |
-| `11`    | `RIGHTFIRE`     |
-| `12`    | `LEFTFIRE`      |
-| `13`    | `DOWNFIRE`      |
-| `14`    | `UPRIGHTFIRE`   |
-| `15`    | `UPLEFTFIRE`    |
-| `16`    | `DOWNRIGHTFIRE` |
-| `17`    | `DOWNLEFTFIRE`  |
+| Value   | Meaning      | Value   | Meaning         | Value   | Meaning        |
+|---------|--------------|---------|-----------------|---------|----------------|
+| `0`     | `NOOP`       | `1`     | `FIRE`          | `2`     | `UP`           |
+| `3`     | `RIGHT`      | `4`     | `LEFT`          | `5`     | `DOWN`         |
+| `6`     | `UPRIGHT`    | `7`     | `UPLEFT`        | `8`     | `DOWNRIGHT`    |
+| `9`     | `DOWNLEFT`   | `10`    | `UPFIRE`        | `11`    | `RIGHTFIRE`    |
+| `12`    | `LEFTFIRE`   | `13`    | `DOWNFIRE`      | `14`    | `UPRIGHTFIRE`  |
+| `15`    | `UPLEFTFIRE` | `16`    | `DOWNRIGHTFIRE` | `17`    | `DOWNLEFTFIRE` |
 
 ## Observations
 

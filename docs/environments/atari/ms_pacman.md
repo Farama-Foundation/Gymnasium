@@ -25,7 +25,7 @@ For more MsPacman variants with different observation and action spaces, see the
 
 Your goal is to collect all of the pellets on the screen while avoiding the ghosts.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_page.php?SoftwareLabelID=924)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_page.php?SoftwareLabelID=924)
 
 ## Actions
 
@@ -34,17 +34,11 @@ As MsPacman uses a reduced set of actions for `v0`, `v4` and `v5` versions of th
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `UP`        |
-| `2`     | `RIGHT`     |
-| `3`     | `LEFT`      |
-| `4`     | `DOWN`      |
-| `5`     | `UPRIGHT`   |
-| `6`     | `UPLEFT`    |
-| `7`     | `DOWNRIGHT` |
-| `8`     | `DOWNLEFT`  |
+| Value   | Meaning   | Value   | Meaning     | Value   | Meaning    |
+|---------|-----------|---------|-------------|---------|------------|
+| `0`     | `NOOP`    | `1`     | `UP`        | `2`     | `RIGHT`    |
+| `3`     | `LEFT`    | `4`     | `DOWN`      | `5`     | `UPRIGHT`  |
+| `6`     | `UPLEFT`  | `7`     | `DOWNRIGHT` | `8`     | `DOWNLEFT` |
 
 ## Observations
 

@@ -25,7 +25,7 @@ For more NameThisGame variants with different observation and action spaces, see
 
 Your goal is to defend the treasure that you have discovered. You must fight off a shark and an octopus while keeping an eye on your oxygen supply.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=323)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=323)
 
 ## Actions
 
@@ -34,14 +34,10 @@ As NameThisGame uses a reduced set of actions for `v0`, `v4` and `v5` versions o
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `FIRE`      |
-| `2`     | `RIGHT`     |
-| `3`     | `LEFT`      |
-| `4`     | `RIGHTFIRE` |
-| `5`     | `LEFTFIRE`  |
+| Value   | Meaning   | Value   | Meaning     | Value   | Meaning    |
+|---------|-----------|---------|-------------|---------|------------|
+| `0`     | `NOOP`    | `1`     | `FIRE`      | `2`     | `RIGHT`    |
+| `3`     | `LEFT`    | `4`     | `RIGHTFIRE` | `5`     | `LEFTFIRE` |
 
 ## Observations
 

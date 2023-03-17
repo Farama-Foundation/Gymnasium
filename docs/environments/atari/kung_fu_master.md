@@ -25,7 +25,7 @@ For more KungFuMaster variants with different observation and action spaces, see
 
 You are a Kung-Fu Master fighting your way through the Evil Wizard's temple. Your goal is to rescue Princess Victoria, defeating various enemies along the way.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=268)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=268)
 
 ## Actions
 
@@ -34,22 +34,13 @@ As KungFuMaster uses a reduced set of actions for `v0`, `v4` and `v5` versions o
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning         |
-|---------|-----------------|
-| `0`     | `NOOP`          |
-| `1`     | `UP`            |
-| `2`     | `RIGHT`         |
-| `3`     | `LEFT`          |
-| `4`     | `DOWN`          |
-| `5`     | `DOWNRIGHT`     |
-| `6`     | `DOWNLEFT`      |
-| `7`     | `RIGHTFIRE`     |
-| `8`     | `LEFTFIRE`      |
-| `9`     | `DOWNFIRE`      |
-| `10`    | `UPRIGHTFIRE`   |
-| `11`    | `UPLEFTFIRE`    |
-| `12`    | `DOWNRIGHTFIRE` |
-| `13`    | `DOWNLEFTFIRE`  |
+| Value   | Meaning         | Value   | Meaning        | Value   | Meaning      |
+|---------|-----------------|---------|----------------|---------|--------------|
+| `0`     | `NOOP`          | `1`     | `UP`           | `2`     | `RIGHT`      |
+| `3`     | `LEFT`          | `4`     | `DOWN`         | `5`     | `DOWNRIGHT`  |
+| `6`     | `DOWNLEFT`      | `7`     | `RIGHTFIRE`    | `8`     | `LEFTFIRE`   |
+| `9`     | `DOWNFIRE`      | `10`    | `UPRIGHTFIRE`  | `11`    | `UPLEFTFIRE` |
+| `12`    | `DOWNRIGHTFIRE` | `13`    | `DOWNLEFTFIRE` |         |              |
 
 ## Observations
 

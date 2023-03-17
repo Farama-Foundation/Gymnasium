@@ -25,7 +25,7 @@ For more JourneyEscape variants with different observation and action spaces, se
 
 You must lead all 5 members of JOURNEY through waves of pesky characters and backstage obstacles to the Scarab Escape Vehicle before time runs out.You must also protect $50,000 in concert cash from grasping groupies, photographers, and promoters.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252)
 
 ## Actions
 
@@ -34,24 +34,14 @@ As JourneyEscape uses a reduced set of actions for `v0`, `v4` and `v5` versions 
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning         |
-|---------|-----------------|
-| `0`     | `NOOP`          |
-| `1`     | `UP`            |
-| `2`     | `RIGHT`         |
-| `3`     | `LEFT`          |
-| `4`     | `DOWN`          |
-| `5`     | `UPRIGHT`       |
-| `6`     | `UPLEFT`        |
-| `7`     | `DOWNRIGHT`     |
-| `8`     | `DOWNLEFT`      |
-| `9`     | `RIGHTFIRE`     |
-| `10`    | `LEFTFIRE`      |
-| `11`    | `DOWNFIRE`      |
-| `12`    | `UPRIGHTFIRE`   |
-| `13`    | `UPLEFTFIRE`    |
-| `14`    | `DOWNRIGHTFIRE` |
-| `15`    | `DOWNLEFTFIRE`  |
+| Value   | Meaning        | Value   | Meaning      | Value   | Meaning         |
+|---------|----------------|---------|--------------|---------|-----------------|
+| `0`     | `NOOP`         | `1`     | `UP`         | `2`     | `RIGHT`         |
+| `3`     | `LEFT`         | `4`     | `DOWN`       | `5`     | `UPRIGHT`       |
+| `6`     | `UPLEFT`       | `7`     | `DOWNRIGHT`  | `8`     | `DOWNLEFT`      |
+| `9`     | `RIGHTFIRE`    | `10`    | `LEFTFIRE`   | `11`    | `DOWNFIRE`      |
+| `12`    | `UPRIGHTFIRE`  | `13`    | `UPLEFTFIRE` | `14`    | `DOWNRIGHTFIRE` |
+| `15`    | `DOWNLEFTFIRE` |         |              |         |                 |
 
 ## Observations
 

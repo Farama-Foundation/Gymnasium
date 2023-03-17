@@ -25,7 +25,7 @@ For more Assault variants with different observation and action spaces, see the 
 
 You control a vehicle that can move sideways. A big mother ship circles overhead and continually deploys smaller drones.You must destroy these enemies and dodge their attacks.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=827)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=827)
 
 ## Actions
 
@@ -34,15 +34,11 @@ As Assault uses a reduced set of actions for `v0`, `v4` and `v5` versions of the
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `FIRE`      |
-| `2`     | `UP`        |
-| `3`     | `RIGHT`     |
-| `4`     | `LEFT`      |
-| `5`     | `RIGHTFIRE` |
-| `6`     | `LEFTFIRE`  |
+| Value   | Meaning    | Value   | Meaning   | Value   | Meaning     |
+|---------|------------|---------|-----------|---------|-------------|
+| `0`     | `NOOP`     | `1`     | `FIRE`    | `2`     | `UP`        |
+| `3`     | `RIGHT`    | `4`     | `LEFT`    | `5`     | `RIGHTFIRE` |
+| `6`     | `LEFTFIRE` |         |           |         |             |
 
 ## Observations
 
