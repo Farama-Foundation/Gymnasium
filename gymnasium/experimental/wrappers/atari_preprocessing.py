@@ -8,7 +8,9 @@ from gymnasium.spaces import Box
 try:
     import cv2
 except ImportError:
-    cv2 = None
+    raise gym.error.DependencyNotInstalled(
+        "opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari"
+    )
 
 
 class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
@@ -72,10 +74,6 @@ class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
         )
         gym.Wrapper.__init__(self, env)
 
-        if cv2 is None:
-            raise gym.error.DependencyNotInstalled(
-                "opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari"
-            )
         assert frame_skip > 0
         assert screen_size > 0
         assert noop_max >= 0
