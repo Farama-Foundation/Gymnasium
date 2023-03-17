@@ -25,33 +25,21 @@ For more Frostbite variants with different observation and action spaces, see th
 
 In Frostbite, the player controls "Frostbite Bailey" who hops back and forth across across an Arctic river, changing the color of the ice blocks from white to blue. Each time he does so, a block is added to his igloo.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=199)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=199)
 
 ## Actions
 
 Frostbite has the action space `Discrete(18)` with the table below lists the meaning of each action's meanings.
 As Frostbite uses the full set of actions then specifying `full_action_space=True` will not modify the action space of the environment if passed to `gymnasium.make`.
 
-| Value   | Meaning         |
-|---------|-----------------|
-| `0`     | `NOOP`          |
-| `1`     | `FIRE`          |
-| `2`     | `UP`            |
-| `3`     | `RIGHT`         |
-| `4`     | `LEFT`          |
-| `5`     | `DOWN`          |
-| `6`     | `UPRIGHT`       |
-| `7`     | `UPLEFT`        |
-| `8`     | `DOWNRIGHT`     |
-| `9`     | `DOWNLEFT`      |
-| `10`    | `UPFIRE`        |
-| `11`    | `RIGHTFIRE`     |
-| `12`    | `LEFTFIRE`      |
-| `13`    | `DOWNFIRE`      |
-| `14`    | `UPRIGHTFIRE`   |
-| `15`    | `UPLEFTFIRE`    |
-| `16`    | `DOWNRIGHTFIRE` |
-| `17`    | `DOWNLEFTFIRE`  |
+| Value   | Meaning      | Value   | Meaning         | Value   | Meaning        |
+|---------|--------------|---------|-----------------|---------|----------------|
+| `0`     | `NOOP`       | `1`     | `FIRE`          | `2`     | `UP`           |
+| `3`     | `RIGHT`      | `4`     | `LEFT`          | `5`     | `DOWN`         |
+| `6`     | `UPRIGHT`    | `7`     | `UPLEFT`        | `8`     | `DOWNRIGHT`    |
+| `9`     | `DOWNLEFT`   | `10`    | `UPFIRE`        | `11`    | `RIGHTFIRE`    |
+| `12`    | `LEFTFIRE`   | `13`    | `DOWNFIRE`      | `14`    | `UPRIGHTFIRE`  |
+| `15`    | `UPLEFTFIRE` | `16`    | `DOWNRIGHTFIRE` | `17`    | `DOWNLEFTFIRE` |
 
 ## Observations
 

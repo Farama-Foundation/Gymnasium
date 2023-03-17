@@ -32,13 +32,10 @@ As Tetris uses a reduced set of actions for `v0`, `v4` and `v5` versions of the 
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning   |
-|---------|-----------|
-| `0`     | `NOOP`    |
-| `1`     | `FIRE`    |
-| `2`     | `RIGHT`   |
-| `3`     | `LEFT`    |
-| `4`     | `DOWN`    |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning   |
+|---------|-----------|---------|-----------|---------|-----------|
+| `0`     | `NOOP`    | `1`     | `FIRE`    | `2`     | `RIGHT`   |
+| `3`     | `LEFT`    | `4`     | `DOWN`    |         |           |
 
 ## Observations
 

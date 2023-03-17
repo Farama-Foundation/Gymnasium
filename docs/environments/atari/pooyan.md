@@ -25,7 +25,7 @@ For more Pooyan variants with different observation and action spaces, see the v
 
 You are a mother pig protecting her piglets (Pooyans) from wolves. In the first scene, you can move up and down a rope. Try to shoot the worker's balloons, while guarding yourself from attacks. If the wolves reach the ground safely they will get behind and try to eat you. In the second scene, the wolves try to float up. You have to try and stop them using arrows and bait. You die if a wolf eats you, or a stone or rock hits you.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=372)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=372)
 
 ## Actions
 
@@ -34,14 +34,10 @@ As Pooyan uses a reduced set of actions for `v0`, `v4` and `v5` versions of the 
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning    |
-|---------|------------|
-| `0`     | `NOOP`     |
-| `1`     | `FIRE`     |
-| `2`     | `UP`       |
-| `3`     | `DOWN`     |
-| `4`     | `UPFIRE`   |
-| `5`     | `DOWNFIRE` |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning    |
+|---------|-----------|---------|-----------|---------|------------|
+| `0`     | `NOOP`    | `1`     | `FIRE`    | `2`     | `UP`       |
+| `3`     | `DOWN`    | `4`     | `UPFIRE`  | `5`     | `DOWNFIRE` |
 
 ## Observations
 
