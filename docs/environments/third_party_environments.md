@@ -11,7 +11,7 @@ gridworlds ([Minigrid](https://minigrid.farama.org/)),
 robotics ([Gymnasium-Robotics](https://robotics.farama.org/)),
 multi-objective RL ([MO-Gymnasium](https://mo-gymnasium.farama.org/))
 many-agent RL ([MAgent2](https://magent2.farama.org/)),
-3D navigation ([Miniworld](https://miniworld.farama.org/)), and more to come.
+3D navigation ([Miniworld](https://miniworld.farama.org/)), and many more.
 
 *This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.*
 
