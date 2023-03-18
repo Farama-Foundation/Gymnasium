@@ -4,9 +4,9 @@
 
 # Third-Party Environments
 
-The Farama Foundation maintains a number of other [projects](https://farama.org/projects), most of which use Gymnasium. Topics include: 
-multi-agent RL ([PettingZoo](https://pettingzoo.farama.org/)), 
-offline-RL ([Minari](https://minari.farama.org/)), 
+The Farama Foundation maintains a number of other [projects](https://farama.org/projects), most of which use Gymnasium. Topics include:
+multi-agent RL ([PettingZoo](https://pettingzoo.farama.org/)),
+offline-RL ([Minari](https://minari.farama.org/)),
 gridworlds ([Minigrid](https://minigrid.farama.org/)),
 robotics ([Gymnasium-Robotics](https://robotics.farama.org/)),
 multi-objective RL ([MO-Gymnasium](https://mo-gymnasium.farama.org/))
@@ -24,14 +24,14 @@ many-agent RL ([MAgent2](https://magent2.farama.org/)),
 
 An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control.
 
-### [sumo-rl: Reinforcement Learning using SUMO traffic simulator](https://github.com/LucasAlegre/sumo-rl) 
+### [sumo-rl: Reinforcement Learning using SUMO traffic simulator](https://github.com/LucasAlegre/sumo-rl)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
 [![GitHub stars](https://img.shields.io/github/stars/LucasAlegre/sumo-rl)]()
 
 Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using [pettingzoo](https://pettingzoo.farama.org/)).
 
-### [panda-gym: Robotics environments using the PyBullet physics engine](https://github.com/qgallouedec/panda-gym/) 
+### [panda-gym: Robotics environments using the PyBullet physics engine](https://github.com/qgallouedec/panda-gym/)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
 [![GitHub stars](https://img.shields.io/github/stars/qgallouedec/panda-gym)]()
@@ -45,14 +45,14 @@ PyBullet based simulations of a robotic arm moving objects.
 
 Highly scalable and customizable Safe Reinforcement Learning library.
 
-### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/MatPoliquin/stable-retro) 
+### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/MatPoliquin/stable-retro)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
 [![GitHub stars](https://img.shields.io/github/stars/MatPoliquin/stable-retro)]()
 
 Supported fork of gym-retro: turn classic video games into Gymnasium environments.
 
-### [flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium](https://github.com/markub3327/flappy-bird-gymnasium) 
+### [flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium](https://github.com/markub3327/flappy-bird-gymnasium)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
 [![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)]()
@@ -76,11 +76,11 @@ These environments can be adapted to work with gymnasium (see [Compatibility wit
 
 This is a 3v3 MOBA environment where you train creatures to fight each other. It runs entirely on the GPU so you can easily have hundreds of instances running in parallel. There are around 15 items for the creatures, 60 "senses", 5 actions, and roughly 23 tweakable rewards. It's also possible to benchmark an agent against other agents online. It's available for free for training for personal use, and otherwise costs money; see licensing details on the website
 
-### [SlimeVolleyGym: A simple environment for single and multi-agent reinforcement learning](https://github.com/hardmaru/slimevolleygym) 
+### [SlimeVolleyGym: A simple environment for single and multi-agent reinforcement learning](https://github.com/hardmaru/slimevolleygym)
 
 A simple environment for benchmarking single and multi-agent reinforcement learning algorithms on a clone of Slime Volleyball game. The only dependencies are gym and NumPy. Both state and pixel observation environments are available. The motivation of this environment is to easily enable trained agents to play against each other, and also facilitate the training of agents directly in a multi-agent setting, thus adding an extra dimension for evaluating an agent's performance.
 
-### [Unity ML Agents: Environments for Unity game engine](https://github.com/Unity-Technologies/ml-agents) 
+### [Unity ML Agents: Environments for Unity game engine](https://github.com/Unity-Technologies/ml-agents)
 
 Gym wrappers for arbitrary and premade environments with the Unity game engine.
 
