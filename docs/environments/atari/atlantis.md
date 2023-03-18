@@ -25,7 +25,7 @@ For more Atlantis variants with different observation and action spaces, see the
 
 Your job is to defend the submerged city of Atlantis. Your enemies slowly descend towards the city and you must destroy them before they reach striking distance. To this end, you control three defense posts.You lose if your enemies manage to destroy all seven of Atlantis' installations. You may rebuild installations after you have fought of a wave of enemies and scored a sufficient number of points.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=835)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=835)
 
 ## Actions
 
@@ -34,12 +34,10 @@ As Atlantis uses a reduced set of actions for `v0`, `v4` and `v5` versions of th
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `FIRE`      |
-| `2`     | `RIGHTFIRE` |
-| `3`     | `LEFTFIRE`  |
+| Value   | Meaning    | Value   | Meaning   | Value   | Meaning     |
+|---------|------------|---------|-----------|---------|-------------|
+| `0`     | `NOOP`     | `1`     | `FIRE`    | `2`     | `RIGHTFIRE` |
+| `3`     | `LEFTFIRE` |         |           |         |             |
 
 ## Observations
 

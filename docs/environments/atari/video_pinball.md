@@ -25,7 +25,7 @@ For more VideoPinball variants with different observation and action spaces, see
 
 Your goal is to keep the ball in play as long as possible and to score as many points as possible.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=588)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=588)
 
 ## Actions
 
@@ -34,17 +34,11 @@ As VideoPinball uses a reduced set of actions for `v0`, `v4` and `v5` versions o
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `FIRE`      |
-| `2`     | `UP`        |
-| `3`     | `RIGHT`     |
-| `4`     | `LEFT`      |
-| `5`     | `DOWN`      |
-| `6`     | `UPFIRE`    |
-| `7`     | `RIGHTFIRE` |
-| `8`     | `LEFTFIRE`  |
+| Value   | Meaning   | Value   | Meaning     | Value   | Meaning    |
+|---------|-----------|---------|-------------|---------|------------|
+| `0`     | `NOOP`    | `1`     | `FIRE`      | `2`     | `UP`       |
+| `3`     | `RIGHT`   | `4`     | `LEFT`      | `5`     | `DOWN`     |
+| `6`     | `UPFIRE`  | `7`     | `RIGHTFIRE` | `8`     | `LEFTFIRE` |
 
 ## Observations
 
