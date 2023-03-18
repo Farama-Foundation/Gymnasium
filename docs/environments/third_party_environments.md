@@ -72,7 +72,7 @@ These environments can be adapted to work with gymnasium (see [Compatibility wit
 
 ## Video Game environments
 
-### [gym-derk: GPU accelerated MOBA environment](https://gym.derkgame.com/) # made issue
+### [gym-derk: GPU accelerated MOBA environment](https://gym.derkgame.com/)
 
 This is a 3v3 MOBA environment where you train creatures to fight each other. It runs entirely on the GPU so you can easily have hundreds of instances running in parallel. There are around 15 items for the creatures, 60 "senses", 5 actions, and roughly 23 tweakable rewards. It's also possible to benchmark an agent against other agents online. It's available for free for training for personal use, and otherwise costs money; see licensing details on the website
 
