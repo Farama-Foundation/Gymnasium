@@ -68,7 +68,8 @@ An environment to easily implement discrete MDPs as gym environments. Turn a set
 
 # Third-Party Environments using Gym
 
-These environments can be adapted to work with gymnasium (see [Compatibility with Gym](https://gymnasium.farama.org/content/gym_compatibility/)), but are not guaranteed to be fully functional.
+There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
+Many of these can be adapted to work with gymnasium (see [Compatibility with Gym](https://gymnasium.farama.org/content/gym_compatibility/)), but are not guaranteed to be fully functional.
 
 ## Video Game environments
 
