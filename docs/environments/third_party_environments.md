@@ -38,6 +38,13 @@ Gymnasium wrapper for various environments in the SUMO traffic simulator. Suppor
 
 PyBullet based simulations of a robotic arm moving objects.
 
+### [tmrl: TrackMania 2020 through RL](https://github.com/trackmania-rl/tmrl/)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/trackmania-rl/tmrl)]()
+
+tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
+
 ### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
@@ -145,10 +152,6 @@ An environment for simulating a wide variety of electric drives taking into acco
 ### [CommonRoad-RL](https://commonroad.in.tum.de/tools/commonroad-rl)
 
 A Gym for solving motion planning problems for various traffic scenarios compatible with [CommonRoad benchmarks](https://commonroad.in.tum.de/scenarios), which provides configurable rewards, action spaces, and observation spaces.
-
-### [tmrl: TrackMania 2020 through RL](https://github.com/trackmania-rl/tmrl/)
-
-tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
 ### [racing_dreamer](https://github.com/CPS-TUWien/racing_dreamer/)
 
