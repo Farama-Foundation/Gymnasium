@@ -2,19 +2,83 @@
 :tocdepth: 2
 ```
 
-# Third-party Environments
+# Third-Party Environments
 
-There are a number of Reinforcement Learning environments built by authors not included with Gymnasium. The Farama Foundation maintains a number of projects for gridworlds, procedurally generated worlds, video games, robotics, these can be found at [projects](https://farama.org/projects).
+The Farama Foundation maintains a number of other [projects](https://farama.org/projects), most of which use Gymnasium. Topics include:
+multi-agent RL ([PettingZoo](https://pettingzoo.farama.org/)),
+offline-RL ([Minari](https://minari.farama.org/)),
+gridworlds ([Minigrid](https://minigrid.farama.org/)),
+robotics ([Gymnasium-Robotics](https://robotics.farama.org/)),
+multi-objective RL ([MO-Gymnasium](https://mo-gymnasium.farama.org/))
+many-agent RL ([MAgent2](https://magent2.farama.org/)),
+3D navigation ([Miniworld](https://miniworld.farama.org/)), and many more.
 
-## Video Game environments
+*This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.*
+
+*If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/nHg2JRN489).*
+
+### [highway-env: Autonomous driving and tactical decision-making tasks](https://github.com/eleurent/highway-env)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/eleurent/highway-env)]()
+
+An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control.
+
+### [sumo-rl: Reinforcement Learning using SUMO traffic simulator](https://github.com/LucasAlegre/sumo-rl)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/LucasAlegre/sumo-rl)]()
+
+Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using [pettingzoo](https://pettingzoo.farama.org/)).
+
+### [panda-gym: Robotics environments using the PyBullet physics engine](https://github.com/qgallouedec/panda-gym/)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/qgallouedec/panda-gym)]()
+
+PyBullet based simulations of a robotic arm moving objects.
+
+### [tmrl: TrackMania 2020 through RL](https://github.com/trackmania-rl/tmrl/)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/trackmania-rl/tmrl)]()
+
+tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
+
+### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium)]()
+
+Highly scalable and customizable Safe Reinforcement Learning library.
 
 ### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/MatPoliquin/stable-retro)
 
-Supported fork of gym-retro with additional games, states, scenarios, etc. Open to PRs of additional games, features, and platforms since gym-retro is no longer maintained
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/MatPoliquin/stable-retro)]()
+
+Supported fork of gym-retro: turn classic video games into Gymnasium environments.
 
 ### [flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium](https://github.com/markub3327/flappy-bird-gymnasium)
 
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)]()
+
 A simple environment for single-agent reinforcement learning algorithms on a clone of [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.
+
+### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.2-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/Paul-543NA/matrix-mdp-gym)]()
+
+An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (`P_0(s)`, `P(s'| s, a)` and `R(s', s, a)`) into a gym environment that represents the discrete MDP ruled by these dynamics.
+
+# Third-Party Environments using Gym
+
+There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
+Many of these can be adapted to work with gymnasium (see [Compatibility with Gym](https://gymnasium.farama.org/content/gym_compatibility/)), but are not guaranteed to be fully functional.
+
+## Video Game environments
 
 ### [gym-derk: GPU accelerated MOBA environment](https://gym.derkgame.com/)
 
@@ -46,9 +110,6 @@ A simple environment using [PyBullet](https://github.com/bulletphysics/bullet3) 
 
 Mars Explorer is a Gym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.
 
-### [panda-gym: Robotics environments using the PyBullet physics engine](https://github.com/qgallouedec/panda-gym/)
-
-PyBullet based simulations of a robotic arm moving objects.
 
 ### [robo-gym: Real-world and simulation robotics](https://github.com/jr-robotics/robo-gym)
 
@@ -80,10 +141,6 @@ Reinforcement Learning Environments for Omniverse Isaac Gym
 
 ## Autonomous Driving environments
 
-### [sumo-rl](https://github.com/LucasAlegre/sumo-rl)
-
-Gym wrapper for various environments in the Sumo traffic simulator
-
 ### [gym-duckietown](https://github.com/duckietown/gym-duckietown)
 
 A lane-following simulator built for the [Duckietown](http://duckietown.org/) project (small-scale self-driving car course).
@@ -92,17 +149,9 @@ A lane-following simulator built for the [Duckietown](http://duckietown.org/) pr
 
 An environment for simulating a wide variety of electric drives taking into account different types of electric motors and converters. Control schemes can be continuous, yielding a voltage duty cycle, or discrete, determining converter switching states directly.
 
-### [highway-env](https://github.com/eleurent/highway-env)
-
-An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control. The difficulty of the task lies in understanding the social interactions with other drivers, whose behaviors are uncertain. Several scenes are proposed, such as highway, merge, intersection and roundabout.
-
 ### [CommonRoad-RL](https://commonroad.in.tum.de/tools/commonroad-rl)
 
 A Gym for solving motion planning problems for various traffic scenarios compatible with [CommonRoad benchmarks](https://commonroad.in.tum.de/scenarios), which provides configurable rewards, action spaces, and observation spaces.
-
-### [tmrl: TrackMania 2020 through RL](https://github.com/trackmania-rl/tmrl/)
-
-tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
 ### [racing_dreamer](https://github.com/CPS-TUWien/racing_dreamer/)
 
@@ -125,14 +174,6 @@ Reinforcement learning environments for compiler optimization tasks, such as LLV
 ### [CARL: context adaptive RL](https://github.com/automl/CARL)
 
 Configurable reinforcement learning environments for testing generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.
-
-### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
-
-An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (`P_0(s)`, `P(s'| s, a)` and `R(s', s, a)`) into a gym environment that represents the discrete MDP ruled by these dynamics.
-
-### [mo-gym: Multi-objective Reinforcement Learning environments](https://github.com/LucasAlegre/mo-gym)
-
-Multi-objective RL (MORL) gym environments, where the reward is a NumPy array of different (possibly conflicting) objectives.
 
 ### [gym-cellular-automata: Cellular Automata environments](https://github.com/elbecerrasoto/gym-cellular-automata)
 
