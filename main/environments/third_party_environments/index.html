@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://gymnasium.farama.org/environments/third_party_environments.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
-        <title>Third-party Environments - Gymnasium Documentation</title>
+        <title>Third-Party Environments - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
@@ -405,7 +405,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Third-party Environments</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -478,18 +479,72 @@
           <article role="main">
             
             <section id="third-party-environments">
-<h1>Third-party Environments<a class="headerlink" href="#third-party-environments" title="Permalink to this heading">#</a></h1>
-<p>There are a number of Reinforcement Learning environments built by authors not included with Gymnasium. The Farama Foundation maintains a number of projects for gridworlds, procedurally generated worlds, video games, robotics, these can be found at <a class="reference external" href="https://farama.org/projects">projects</a>.</p>
-<section id="video-game-environments">
-<h2>Video Game environments<a class="headerlink" href="#video-game-environments" title="Permalink to this heading">#</a></h2>
+<h1>Third-Party Environments<a class="headerlink" href="#third-party-environments" title="Permalink to this heading">#</a></h1>
+<p>The Farama Foundation maintains a number of other <a class="reference external" href="https://farama.org/projects">projects</a>, most of which use Gymnasium. Topics include:
+multi-agent RL (<a class="reference external" href="https://pettingzoo.farama.org/">PettingZoo</a>),
+offline-RL (<a class="reference external" href="https://minari.farama.org/">Minari</a>),
+gridworlds (<a class="reference external" href="https://minigrid.farama.org/">Minigrid</a>),
+robotics (<a class="reference external" href="https://robotics.farama.org/">Gymnasium-Robotics</a>),
+multi-objective RL (<a class="reference external" href="https://mo-gymnasium.farama.org/">MO-Gymnasium</a>)
+many-agent RL (<a class="reference external" href="https://magent2.farama.org/">MAgent2</a>),
+3D navigation (<a class="reference external" href="https://miniworld.farama.org/">Miniworld</a>), and many more.</p>
+<p><em>This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.</em></p>
+<p><em>If you’d like to contribute an environment, please reach out on <a class="reference external" href="https://discord.gg/nHg2JRN489">Discord</a>.</em></p>
+<section id="highway-env-autonomous-driving-and-tactical-decision-making-tasks">
+<h2><a class="reference external" href="https://github.com/eleurent/highway-env">highway-env: Autonomous driving and tactical decision-making tasks</a><a class="headerlink" href="#highway-env-autonomous-driving-and-tactical-decision-making-tasks" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/eleurent/highway-env" /></span></a></p>
+<p>An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control.</p>
+</section>
+<section id="sumo-rl-reinforcement-learning-using-sumo-traffic-simulator">
+<h2><a class="reference external" href="https://github.com/LucasAlegre/sumo-rl">sumo-rl: Reinforcement Learning using SUMO traffic simulator</a><a class="headerlink" href="#sumo-rl-reinforcement-learning-using-sumo-traffic-simulator" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/LucasAlegre/sumo-rl" /></span></a></p>
+<p>Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using <a class="reference external" href="https://pettingzoo.farama.org/">pettingzoo</a>).</p>
+</section>
+<section id="panda-gym-robotics-environments-using-the-pybullet-physics-engine">
+<h2><a class="reference external" href="https://github.com/qgallouedec/panda-gym/">panda-gym: Robotics environments using the PyBullet physics engine</a><a class="headerlink" href="#panda-gym-robotics-environments-using-the-pybullet-physics-engine" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/qgallouedec/panda-gym" /></span></a></p>
+<p>PyBullet based simulations of a robotic arm moving objects.</p>
+</section>
+<section id="tmrl-trackmania-2020-through-rl">
+<h2><a class="reference external" href="https://github.com/trackmania-rl/tmrl/">tmrl: TrackMania 2020 through RL</a><a class="headerlink" href="#tmrl-trackmania-2020-through-rl" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/trackmania-rl/tmrl" /></span></a></p>
+<p>tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.</p>
+</section>
+<section id="safety-gymnasium-ensuring-safety-in-real-world-rl-scenarios">
+<h2><a class="reference external" href="https://github.com/PKU-MARL/safety-gymnasium">Safety-Gymnasium: Ensuring safety in real-world RL scenarios</a><a class="headerlink" href="#safety-gymnasium-ensuring-safety-in-real-world-rl-scenarios" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium" /></span></a></p>
+<p>Highly scalable and customizable Safe Reinforcement Learning library.</p>
+</section>
 <section id="stable-retro-classic-retro-games-a-maintained-version-of-openai-retro">
-<h3><a class="reference external" href="https://github.com/MatPoliquin/stable-retro">stable-retro: Classic retro games, a maintained version of OpenAI Retro</a><a class="headerlink" href="#stable-retro-classic-retro-games-a-maintained-version-of-openai-retro" title="Permalink to this heading">#</a></h3>
-<p>Supported fork of gym-retro with additional games, states, scenarios, etc. Open to PRs of additional games, features, and platforms since gym-retro is no longer maintained</p>
+<h2><a class="reference external" href="https://github.com/MatPoliquin/stable-retro">stable-retro: Classic retro games, a maintained version of OpenAI Retro</a><a class="headerlink" href="#stable-retro-classic-retro-games-a-maintained-version-of-openai-retro" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/MatPoliquin/stable-retro" /></span></a></p>
+<p>Supported fork of gym-retro: turn classic video games into Gymnasium environments.</p>
 </section>
 <section id="flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium">
-<h3><a class="reference external" href="https://github.com/markub3327/flappy-bird-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a><a class="headerlink" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium" title="Permalink to this heading">#</a></h3>
+<h2><a class="reference external" href="https://github.com/markub3327/flappy-bird-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a><a class="headerlink" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium" /></span></a></p>
 <p>A simple environment for single-agent reinforcement learning algorithms on a clone of <a class="reference external" href="https://en.wikipedia.org/wiki/Flappy_Bird">Flappy Bird</a>, the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.</p>
 </section>
+<section id="matrix-mdp-easily-create-discrete-mdps">
+<h2><a class="reference external" href="https://github.com/Paul-543NA/matrix-mdp-gym">matrix-mdp: Easily create discrete MDPs</a><a class="headerlink" href="#matrix-mdp-easily-create-discrete-mdps" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.2-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Paul-543NA/matrix-mdp-gym" /></span></a></p>
+<p>An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (<code class="docutils literal notranslate"><span class="pre">P_0(s)</span></code>, <code class="docutils literal notranslate"><span class="pre">P(s'|</span> <span class="pre">s,</span> <span class="pre">a)</span></code> and <code class="docutils literal notranslate"><span class="pre">R(s',</span> <span class="pre">s,</span> <span class="pre">a)</span></code>) into a gym environment that represents the discrete MDP ruled by these dynamics.</p>
+</section>
+</section>
+<section id="third-party-environments-using-gym">
+<h1>Third-Party Environments using Gym<a class="headerlink" href="#third-party-environments-using-gym" title="Permalink to this heading">#</a></h1>
+<p>There are a large number of third-party environments using various versions of <a class="reference external" href="https://github.com/openai/gym">Gym</a>.
+Many of these can be adapted to work with gymnasium (see <a class="reference external" href="https://gymnasium.farama.org/content/gym_compatibility/">Compatibility with Gym</a>), but are not guaranteed to be fully functional.</p>
+<section id="video-game-environments">
+<h2>Video Game environments<a class="headerlink" href="#video-game-environments" title="Permalink to this heading">#</a></h2>
 <section id="gym-derk-gpu-accelerated-moba-environment">
 <h3><a class="reference external" href="https://gym.derkgame.com/">gym-derk: GPU accelerated MOBA environment</a><a class="headerlink" href="#gym-derk-gpu-accelerated-moba-environment" title="Permalink to this heading">#</a></h3>
 <p>This is a 3v3 MOBA environment where you train creatures to fight each other. It runs entirely on the GPU so you can easily have hundreds of instances running in parallel. There are around 15 items for the creatures, 60 “senses”, 5 actions, and roughly 23 tweakable rewards. It’s also possible to benchmark an agent against other agents online. It’s available for free for training for personal use, and otherwise costs money; see licensing details on the website</p>
@@ -520,10 +575,6 @@
 <section id="marsexplorer-environments-for-controlling-robot-on-mars">
 <h3><a class="reference external" href="https://github.com/dimikout3/MarsExplorer">MarsExplorer: Environments for controlling robot on Mars</a><a class="headerlink" href="#marsexplorer-environments-for-controlling-robot-on-mars" title="Permalink to this heading">#</a></h3>
 <p>Mars Explorer is a Gym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.</p>
-</section>
-<section id="panda-gym-robotics-environments-using-the-pybullet-physics-engine">
-<h3><a class="reference external" href="https://github.com/qgallouedec/panda-gym/">panda-gym: Robotics environments using the PyBullet physics engine</a><a class="headerlink" href="#panda-gym-robotics-environments-using-the-pybullet-physics-engine" title="Permalink to this heading">#</a></h3>
-<p>PyBullet based simulations of a robotic arm moving objects.</p>
 </section>
 <section id="robo-gym-real-world-and-simulation-robotics">
 <h3><a class="reference external" href="https://github.com/jr-robotics/robo-gym">robo-gym: Real-world and simulation robotics</a><a class="headerlink" href="#robo-gym-real-world-and-simulation-robotics" title="Permalink to this heading">#</a></h3>
@@ -556,10 +607,6 @@
 </section>
 <section id="autonomous-driving-environments">
 <h2>Autonomous Driving environments<a class="headerlink" href="#autonomous-driving-environments" title="Permalink to this heading">#</a></h2>
-<section id="sumo-rl">
-<h3><a class="reference external" href="https://github.com/LucasAlegre/sumo-rl">sumo-rl</a><a class="headerlink" href="#sumo-rl" title="Permalink to this heading">#</a></h3>
-<p>Gym wrapper for various environments in the Sumo traffic simulator</p>
-</section>
 <section id="gym-duckietown">
 <h3><a class="reference external" href="https://github.com/duckietown/gym-duckietown">gym-duckietown</a><a class="headerlink" href="#gym-duckietown" title="Permalink to this heading">#</a></h3>
 <p>A lane-following simulator built for the <a class="reference external" href="http://duckietown.org/">Duckietown</a> project (small-scale self-driving car course).</p>
@@ -568,17 +615,9 @@
 <h3><a class="reference external" href="https://github.com/upb-lea/gym-electric-motor">gym-electric-motor</a><a class="headerlink" href="#gym-electric-motor" title="Permalink to this heading">#</a></h3>
 <p>An environment for simulating a wide variety of electric drives taking into account different types of electric motors and converters. Control schemes can be continuous, yielding a voltage duty cycle, or discrete, determining converter switching states directly.</p>
 </section>
-<section id="highway-env">
-<h3><a class="reference external" href="https://github.com/eleurent/highway-env">highway-env</a><a class="headerlink" href="#highway-env" title="Permalink to this heading">#</a></h3>
-<p>An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control. The difficulty of the task lies in understanding the social interactions with other drivers, whose behaviors are uncertain. Several scenes are proposed, such as highway, merge, intersection and roundabout.</p>
-</section>
 <section id="commonroad-rl">
 <h3><a class="reference external" href="https://commonroad.in.tum.de/tools/commonroad-rl">CommonRoad-RL</a><a class="headerlink" href="#commonroad-rl" title="Permalink to this heading">#</a></h3>
 <p>A Gym for solving motion planning problems for various traffic scenarios compatible with <a class="reference external" href="https://commonroad.in.tum.de/scenarios">CommonRoad benchmarks</a>, which provides configurable rewards, action spaces, and observation spaces.</p>
-</section>
-<section id="tmrl-trackmania-2020-through-rl">
-<h3><a class="reference external" href="https://github.com/trackmania-rl/tmrl/">tmrl: TrackMania 2020 through RL</a><a class="headerlink" href="#tmrl-trackmania-2020-through-rl" title="Permalink to this heading">#</a></h3>
-<p>tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.</p>
 </section>
 <section id="racing-dreamer">
 <h3><a class="reference external" href="https://github.com/CPS-TUWien/racing_dreamer/">racing_dreamer</a><a class="headerlink" href="#racing-dreamer" title="Permalink to this heading">#</a></h3>
@@ -602,14 +641,6 @@
 <section id="carl-context-adaptive-rl">
 <h3><a class="reference external" href="https://github.com/automl/CARL">CARL: context adaptive RL</a><a class="headerlink" href="#carl-context-adaptive-rl" title="Permalink to this heading">#</a></h3>
 <p>Configurable reinforcement learning environments for testing generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.</p>
-</section>
-<section id="matrix-mdp-easily-create-discrete-mdps">
-<h3><a class="reference external" href="https://github.com/Paul-543NA/matrix-mdp-gym">matrix-mdp: Easily create discrete MDPs</a><a class="headerlink" href="#matrix-mdp-easily-create-discrete-mdps" title="Permalink to this heading">#</a></h3>
-<p>An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (<code class="docutils literal notranslate"><span class="pre">P_0(s)</span></code>, <code class="docutils literal notranslate"><span class="pre">P(s'|</span> <span class="pre">s,</span> <span class="pre">a)</span></code> and <code class="docutils literal notranslate"><span class="pre">R(s',</span> <span class="pre">s,</span> <span class="pre">a)</span></code>) into a gym environment that represents the discrete MDP ruled by these dynamics.</p>
-</section>
-<section id="mo-gym-multi-objective-reinforcement-learning-environments">
-<h3><a class="reference external" href="https://github.com/LucasAlegre/mo-gym">mo-gym: Multi-objective Reinforcement Learning environments</a><a class="headerlink" href="#mo-gym-multi-objective-reinforcement-learning-environments" title="Permalink to this heading">#</a></h3>
-<p>Multi-objective RL (MORL) gym environments, where the reward is a NumPy array of different (possibly conflicting) objectives.</p>
 </section>
 <section id="gym-cellular-automata-cellular-automata-environments">
 <h3><a class="reference external" href="https://github.com/elbecerrasoto/gym-cellular-automata">gym-cellular-automata: Cellular Automata environments</a><a class="headerlink" href="#gym-cellular-automata-cellular-automata-environments" title="Permalink to this heading">#</a></h3>
@@ -724,7 +755,18 @@
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Third-party Environments</a><ul>
+<li><a class="reference internal" href="#">Third-Party Environments</a><ul>
+<li><a class="reference internal" href="#highway-env-autonomous-driving-and-tactical-decision-making-tasks">highway-env: Autonomous driving and tactical decision-making tasks</a></li>
+<li><a class="reference internal" href="#sumo-rl-reinforcement-learning-using-sumo-traffic-simulator">sumo-rl: Reinforcement Learning using SUMO traffic simulator</a></li>
+<li><a class="reference internal" href="#panda-gym-robotics-environments-using-the-pybullet-physics-engine">panda-gym: Robotics environments using the PyBullet physics engine</a></li>
+<li><a class="reference internal" href="#tmrl-trackmania-2020-through-rl">tmrl: TrackMania 2020 through RL</a></li>
+<li><a class="reference internal" href="#safety-gymnasium-ensuring-safety-in-real-world-rl-scenarios">Safety-Gymnasium: Ensuring safety in real-world RL scenarios</a></li>
+<li><a class="reference internal" href="#stable-retro-classic-retro-games-a-maintained-version-of-openai-retro">stable-retro: Classic retro games, a maintained version of OpenAI Retro</a></li>
+<li><a class="reference internal" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a></li>
+<li><a class="reference internal" href="#matrix-mdp-easily-create-discrete-mdps">matrix-mdp: Easily create discrete MDPs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#third-party-environments-using-gym">Third-Party Environments using Gym</a><ul>
 <li><a class="reference internal" href="#video-game-environments">Video Game environments</a></li>
 <li><a class="reference internal" href="#robotics-environments">Robotics environments</a></li>
 <li><a class="reference internal" href="#autonomous-driving-environments">Autonomous Driving environments</a></li>
