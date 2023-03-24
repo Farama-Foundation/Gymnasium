@@ -3,6 +3,19 @@ Training A2C with Vector Envs and Domain Randomization
 ======================================================
 
 """
+# %%
+# Notice
+# ------
+#
+# If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from ``gym.vector.make=`` or ``gym.vector.AsyncVectorEnv`` to the end of the code by ``if__name__ == '__main__'``.
+#
+# ``An attempt has been made to start a new process before the current process has finished its bootstrapping phase.``
+#
+
+# %%
+#
+# ------------------------------
+#
 
 
 # %%
@@ -419,7 +432,6 @@ entropies = []
 
 # use tqdm to get a progress bar for training
 for sample_phase in tqdm(range(n_updates)):
-
     # we don't have to reset the envs, they just continue playing
     # until the episode is over and then reset automatically
 
@@ -435,7 +447,6 @@ for sample_phase in tqdm(range(n_updates)):
 
     # play n steps in our parallel environments to collect data
     for step in range(n_steps_per_update):
-
         # select an action A_{t} using S_{t} as input for the agent
         actions, action_log_probs, state_value_preds, entropy = agent.select_action(
             states
@@ -443,7 +454,7 @@ for sample_phase in tqdm(range(n_updates)):
 
         # perform the action A_{t} in the environment to get S_{t+1} and R_{t+1}
         states, rewards, terminated, truncated, infos = envs_wrapper.step(
-            actions.numpy()
+            actions.cpu().numpy()
         )
 
         ep_value_preds[step] = torch.squeeze(state_value_preds)
@@ -674,7 +685,6 @@ for episode in range(n_showcase_episodes):
     # play one episode
     done = False
     while not done:
-
         # select an action A_{t} using S_{t} as input for the agent
         with torch.no_grad():
             action, _, _, _ = agent.select_action(state[None, :])

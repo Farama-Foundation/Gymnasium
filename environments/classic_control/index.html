@@ -8,18 +8,18 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/environments/classic_control.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Acrobot" href="acrobot/" /><link rel="prev" title="Vector Environment Wrappers" href="../../api/experimental/vector_wrappers/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Acrobot" href="acrobot/" /><link rel="prev" title="Utility functions for vectorisation" href="../../api/experimental/vector_utils/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/classic_control.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
         <title>Classic Control - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=3cf7b839e8c50b5f3a39bb99d90baa7b845de926" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=b332e145f118bbc5b181998bee244c1e810e1f8b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=b0c92cd440df7c18a0306b0433406327ff2c572f" />
     
     
 
@@ -81,7 +81,7 @@
         <div class="farama-header__right">
           <div class="farama-header-menu">
             <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
-              <img class="farama-white-logo-invert" src="../../_static/img/farama-logo-header.svg">
+              <img class="farama-black-logo-invert" src="../../_static/img/farama-logo-header.svg">
               <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
               </svg>
@@ -187,10 +187,8 @@
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
 
-
-
 <div class="page">
-   <!--<header class="mobile-header">
+  <!--<header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
         <div class="visually-hidden">Toggle site navigation sidebar</div>
@@ -223,7 +221,7 @@
       <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
     <span class="farama-header__title">Gymnasium Documentation</span>
   </a><form class="sidebar-search-container" method="get" action="../../search/" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -237,7 +235,7 @@
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Register and Make</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
@@ -259,6 +257,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/experimental/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/experimental/vector/">Vectorizing Environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
 </ul>
 </li>
 </ul>
@@ -301,69 +300,113 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../atari/adventure/">Adventure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/air_raid/">AirRaid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/alien/">Alien</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/amidar/">Amidar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/assault/">Assault</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/asterix/">Asterix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/asteroids/">Asteroids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/atlantis/">Atlantis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/bank_heist/">Bank Heist</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/battle_zone/">Battle Zone</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/atlantis2/">Atlantis2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/backgammon/">Backgammon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/bank_heist/">BankHeist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/basic_math/">BasicMath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/battle_zone/">BattleZone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/beam_rider/">BeamRider</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/blackjack/">Blackjack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/bowling/">Bowling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/boxing/">Boxing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/breakout/">Breakout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/casino/">Casino</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/centipede/">Centipede</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/chopper_command/">Chopper Command</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/chopper_command/">ChopperCommand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/crazy_climber/">CrazyClimber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/crossbow/">Crossbow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/darkchambers/">Darkchambers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/defender/">Defender</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/demon_attack/">Demon Attack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/double_dunk/">Double Dunk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/demon_attack/">DemonAttack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/donkey_kong/">DonkeyKong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/double_dunk/">DoubleDunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/earthworld/">Earthworld</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/elevator_action/">ElevatorAction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/entombed/">Entombed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/et/">Et</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/flag_capture/">FlagCapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/frogger/">Frogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/galaxian/">Galaxian</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/gopher/">Gopher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/hangman/">Hangman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/haunted_house/">HauntedHouse</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/human_cannonball/">HumanCannonball</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/ice_hockey/">IceHockey</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/jamesbond/">Jamesbond</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/kaboom/">Kaboom</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/keystone_kapers/">KeystoneKapers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/king_kong/">KingKong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/klax/">Klax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/koolaid/">Koolaid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/krull/">Krull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/kung_fu_master/">Kung Fu Master</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/montezuma_revenge/">Montezuma Revenge</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/ms_pacman/">Ms Pacman</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/kung_fu_master/">KungFuMaster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/laser_gates/">LaserGates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/lost_luggage/">LostLuggage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/mario_bros/">MarioBros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/miniature_golf/">MiniatureGolf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/montezuma_revenge/">MontezumaRevenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/mr_do/">MrDo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/ms_pacman/">MsPacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/name_this_game/">NameThisGame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/othello/">Othello</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/pacman/">Pacman</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/phoenix/">Phoenix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/pitfall2/">Pitfall2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/pong/">Pong</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/pooyan/">Pooyan</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/private_eye/">PrivateEye</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/qbert/">Qbert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/riverraid/">Riverraid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/road_runner/">Road Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/road_runner/">RoadRunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/robotank/">Robotank</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/seaquest/">Seaquest</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/sir_lancelot/">SirLancelot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/skiing/">Skiing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/solaris/">Solaris</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/space_war/">SpaceWar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/superman/">Superman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/surround/">Surround</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/tetris/">Tetris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/tic_tac_toe_3d/">TicTacToe3D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/trondead/">Trondead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/turmoil/">Turmoil</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/tutankham/">Tutankham</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/up_n_down/">UpNDown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/venture/">Venture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/video_pinball/">Video Pinball</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../atari/wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/video_checkers/">VideoCheckers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/video_chess/">VideoChess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/video_cube/">VideoCube</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/video_pinball/">VideoPinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/wizard_of_wor/">WizardOfWor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/word_zapper/">WordZapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atari/yars_revenge/">YarsRevenge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../third_party_environments/">Third-party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../third_party_environments/">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../third_party_environments/#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -377,8 +420,10 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/FrozenLake_tuto/">Frozenlake benchmark</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference external" href="https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasium/?utm_source=gymnasium&amp;utm_medium=partner&amp;utm_campaign=partner_gymnasium_2023&amp;utm_content=docs_gymnasium">Comet Tutorial</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -394,43 +439,46 @@
       
     </div>
   </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          
+  <div class="main-container">
+
     
-    <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/environments/classic_control.md" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container">
+            <div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
-        </div>
-        <article role="main">
-          
-          <section id="classic-control">
+          <article role="main">
+            
+            <section id="classic-control">
 <h1>Classic Control<a class="headerlink" href="#classic-control" title="Permalink to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
@@ -508,39 +556,40 @@
 <p>All environments are highly configurable via arguments specified in each environment’s documentation.</p>
 </section>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          
-            
+          </article>
         </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
+        <footer>
+          
+          <div class="related-pages">
+            
+            
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
                 Copyright &#169; 2022 Farama Foundation
-            </div>
-            <!--
+              </div>
+              <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             -->
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                
+              </div>
             </div>
           </div>
-        </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer no-toc">
         
-      </footer>
+        
+        
+      </aside>
     </div>
-    <aside class="toc-drawer no-toc">
-      
-      
-      
-    </aside>
   </div>
 </div>
     <script>
@@ -597,9 +646,6 @@
       </script>
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
@@ -740,5 +786,7 @@
             console.warn("Unable to load versioning menu", response);
         }
       });
-    </script></body>
+    </script>
+
+    </body>
 </html>
