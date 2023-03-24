@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Spaces Utils" href="../utils/" /><link rel="prev" title="Fundamental Spaces" href="../fundamental/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/spaces/composite.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
         <title>Composite Spaces - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=3cf7b839e8c50b5f3a39bb99d90baa7b845de926" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=b332e145f118bbc5b181998bee244c1e810e1f8b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=b0c92cd440df7c18a0306b0433406327ff2c572f" />
     
     
 
@@ -81,7 +81,7 @@
         <div class="farama-header__right">
           <div class="farama-header-menu">
             <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
-              <img class="farama-white-logo-invert" src="../../../_static/img/farama-logo-header.svg">
+              <img class="farama-black-logo-invert" src="../../../_static/img/farama-logo-header.svg">
               <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
               </svg>
@@ -187,10 +187,8 @@
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
 
-
-
 <div class="page">
-   <!--<header class="mobile-header">
+  <!--<header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
         <div class="visually-hidden">Toggle site navigation sidebar</div>
@@ -223,7 +221,7 @@
       <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
     <span class="farama-header__title">Gymnasium Documentation</span>
   </a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -237,7 +235,7 @@
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../registry/">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../registry/">Register and Make</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Spaces</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Composite Spaces</a></li>
@@ -259,6 +257,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../experimental/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../experimental/vector/">Vectorizing Environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector_utils/">Utility functions for vectorisation</a></li>
 </ul>
 </li>
 </ul>
@@ -301,69 +300,113 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/adventure/">Adventure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/air_raid/">AirRaid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/alien/">Alien</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/amidar/">Amidar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/assault/">Assault</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/asterix/">Asterix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/asteroids/">Asteroids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/atlantis/">Atlantis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/bank_heist/">Bank Heist</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/battle_zone/">Battle Zone</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/atlantis2/">Atlantis2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/backgammon/">Backgammon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/bank_heist/">BankHeist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/basic_math/">BasicMath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/battle_zone/">BattleZone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/beam_rider/">BeamRider</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/blackjack/">Blackjack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/bowling/">Bowling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/boxing/">Boxing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/breakout/">Breakout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/casino/">Casino</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/centipede/">Centipede</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/chopper_command/">Chopper Command</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/chopper_command/">ChopperCommand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/crazy_climber/">CrazyClimber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/crossbow/">Crossbow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/darkchambers/">Darkchambers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/defender/">Defender</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/demon_attack/">Demon Attack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/double_dunk/">Double Dunk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/demon_attack/">DemonAttack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/donkey_kong/">DonkeyKong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/double_dunk/">DoubleDunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/earthworld/">Earthworld</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/elevator_action/">ElevatorAction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/entombed/">Entombed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/et/">Et</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/flag_capture/">FlagCapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/frogger/">Frogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/galaxian/">Galaxian</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/gopher/">Gopher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/hangman/">Hangman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/haunted_house/">HauntedHouse</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/human_cannonball/">HumanCannonball</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/ice_hockey/">IceHockey</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/jamesbond/">Jamesbond</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/kaboom/">Kaboom</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/keystone_kapers/">KeystoneKapers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/king_kong/">KingKong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/klax/">Klax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/koolaid/">Koolaid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/krull/">Krull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/kung_fu_master/">Kung Fu Master</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/montezuma_revenge/">Montezuma Revenge</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/ms_pacman/">Ms Pacman</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/kung_fu_master/">KungFuMaster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/laser_gates/">LaserGates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/lost_luggage/">LostLuggage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/mario_bros/">MarioBros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/miniature_golf/">MiniatureGolf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/montezuma_revenge/">MontezumaRevenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/mr_do/">MrDo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/ms_pacman/">MsPacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/name_this_game/">NameThisGame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/othello/">Othello</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/pacman/">Pacman</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/phoenix/">Phoenix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/pitfall2/">Pitfall2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/pong/">Pong</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/pooyan/">Pooyan</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/private_eye/">PrivateEye</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/qbert/">Qbert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/riverraid/">Riverraid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/road_runner/">Road Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/road_runner/">RoadRunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/robotank/">Robotank</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/seaquest/">Seaquest</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/sir_lancelot/">SirLancelot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/skiing/">Skiing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/solaris/">Solaris</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/space_war/">SpaceWar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/superman/">Superman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/surround/">Surround</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/tetris/">Tetris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/tic_tac_toe_3d/">TicTacToe3D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/trondead/">Trondead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/turmoil/">Turmoil</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/tutankham/">Tutankham</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/up_n_down/">UpNDown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/venture/">Venture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/video_pinball/">Video Pinball</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/video_checkers/">VideoCheckers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/video_chess/">VideoChess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/video_cube/">VideoCube</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/video_pinball/">VideoPinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/wizard_of_wor/">WizardOfWor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/word_zapper/">WordZapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/yars_revenge/">YarsRevenge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/">Third-party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -377,8 +420,10 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/FrozenLake_tuto/">Frozenlake benchmark</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference external" href="https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasium/?utm_source=gymnasium&amp;utm_medium=partner&amp;utm_campaign=partner_gymnasium_2023&amp;utm_content=docs_gymnasium">Comet Tutorial</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -394,43 +439,46 @@
       
     </div>
   </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          
+  <div class="main-container">
+
     
-    <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/api/spaces/composite.md" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container">
+            <div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
-        </div>
-        <article role="main">
-          
-          <section id="composite-spaces">
+          <article role="main">
+            
+            <section id="composite-spaces">
 <h1>Composite Spaces<a class="headerlink" href="#composite-spaces" title="Permalink to this heading">#</a></h1>
 <section id="dict">
 <h2>Dict<a class="headerlink" href="#dict" title="Permalink to this heading">#</a></h2>
@@ -439,15 +487,15 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">spaces_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Dict" title="Permalink to this definition">#</a></dt>
 <dd><p>A dictionary of <a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a> instances.</p>
 <p>Elements of this space are (ordered) dictionaries of elements from the constituent spaces.</p>
-<p>Example usage:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-<span class="go">OrderedDict([(&#39;position&#39;, 0), (&#39;velocity&#39;, 2)])</span>
+<span class="go">OrderedDict([(&#39;color&#39;, 0), (&#39;position&#39;, array([-0.3991573 ,  0.21649833], dtype=float32))])</span>
 </pre></div>
 </div>
-<p>Example usage [nested]:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">MultiDiscrete</span>
+<p>With a nested dict:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">MultiDiscrete</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Dict</span><span class="p">(</span>  
 <span class="gp">... </span>    <span class="p">{</span>
 <span class="gp">... </span>        <span class="s2">&quot;ext_controller&quot;</span><span class="p">:</span> <span class="n">MultiDiscrete</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
@@ -471,18 +519,6 @@
 Usually, it will not be possible to use elements of this space directly in learning code. However, you can easily
 convert <cite>Dict</cite> observations to flat arrays by using a <a class="reference internal" href="../../wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.FlattenObservation</span></code></a> wrapper.
 Similar wrappers can be implemented to deal with <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> actions.</p>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> space.</p>
-<p>This space can be instantiated in one of two ways: Either you pass a dictionary
-of spaces to <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> via the <code class="docutils literal notranslate"><span class="pre">spaces</span></code> argument, or you pass the spaces as separate
-keyword arguments (where you will need to avoid the keys <code class="docutils literal notranslate"><span class="pre">spaces</span></code> and <code class="docutils literal notranslate"><span class="pre">seed</span></code>)</p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">)})</span>
-<span class="go">Dict(&#39;color&#39;: Discrete(3), &#39;position&#39;: Box(-1.0, 1.0, (2,), float32))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Dict</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">color</span><span class="o">=</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
-<span class="go">Dict(&#39;position&#39;: Box(-1.0, 1.0, (2,), float32), &#39;color&#39;: Discrete(3))</span>
-</pre></div>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -534,15 +570,13 @@ keyword arguments (where you will need to avoid the keys <code class="docutils l
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Tuple" title="Permalink to this definition">#</a></dt>
 <dd><p>A tuple (more precisely: the cartesian product) of <a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a> instances.</p>
 <p>Elements of this space are tuples of elements of the constituent spaces.</p>
-<p>Example usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">((</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="go">(0, array([-0.3991573 ,  0.21649833], dtype=float32))</span>
 </pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Tuple" title="gymnasium.spaces.Tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code></a> space.</p>
-<p>The generated instance will represent the cartesian product <span class="math notranslate nohighlight">\(\text{spaces}[0] \times ... \times \text{spaces}[-1]\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -591,27 +625,26 @@ expects the same number of masks as spaces</p>
 <h2>Sequence<a class="headerlink" href="#sequence" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Sequence">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Sequence" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Sequence" title="Permalink to this definition">#</a></dt>
 <dd><p>This space represent sets of finite-length sequences.</p>
 <p>This space represents the set of tuples of the form <span class="math notranslate nohighlight">\((a_0, \dots, a_n)\)</span> where the <span class="math notranslate nohighlight">\(a_i\)</span> belong
 to some space that is specified during initialization and the integer <span class="math notranslate nohighlight">\(n\)</span> is not fixed</p>
-<dl>
-<dt>Example::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">(</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>   
-<span class="go">(array([0.6369617], dtype=float32),)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>   
-<span class="go">(array([0.01652764], dtype=float32), array([0.8132702], dtype=float32),)</span>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Box</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">(</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="go">(array([0.26161215], dtype=float32),)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">(</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="go">(array([0.6369617], dtype=float32), array([0.26978672], dtype=float32), array([0.04097353], dtype=float32))</span>
 </pre></div>
 </div>
-</dd>
-</dl>
-<p>Constructor of the <a class="reference internal" href="#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a> space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>space</strong> – Elements in the sequences this space represent must belong to this space.</p></li>
 <li><p><strong>seed</strong> – Optionally, you can use this argument to seed the RNG that is used to sample from the space.</p></li>
+<li><p><strong>stack</strong> – If <cite>True</cite> then the resulting samples would be stacked.</p></li>
 </ul>
 </dd>
 </dl>
@@ -619,7 +652,7 @@ to some space that is specified during initialization and the integer <span clas
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Sequence.sample">
-<span class="sig-prename descclassname"><span class="pre">Sequence.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.integer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">npt.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Sequence.sample" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Sequence.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.integer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Any</span></span></span><a class="headerlink" href="#gymnasium.spaces.Sequence.sample" title="Permalink to this definition">#</a></dt>
 <dd><p>Generates a single random sample from this space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -654,15 +687,29 @@ sampling elements from the base space. The mask is applied for each feature spac
 <dt class="sig sig-object py" id="gymnasium.spaces.Graph">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><span class="pre">Box</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><span class="pre">Discrete</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><span class="pre">Box</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><span class="pre">Discrete</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.spaces.Graph" title="Permalink to this definition">#</a></dt>
 <dd><p>A space representing graph information as a series of <cite>nodes</cite> connected with <cite>edges</cite> according to an adjacency matrix represented as a series of <cite>edge_links</cite>.</p>
-<p>Example usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">node_space</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)),</span> <span class="n">edge_space</span><span class="o">=</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">node_space</span><span class="o">=</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)),</span> <span class="n">edge_space</span><span class="o">=</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="go">GraphInstance(nodes=array([[-12.224312 ,  71.71958  ,  39.473606 ],</span>
+<span class="go">       [-81.16453  ,  95.12447  ,  52.22794  ],</span>
+<span class="go">       [ 57.21286  , -74.37727  ,  -9.922812 ],</span>
+<span class="go">       [-25.840395 ,  85.353    ,  28.773024 ],</span>
+<span class="go">       [ 64.55232  , -11.317161 , -54.552258 ],</span>
+<span class="go">       [ 10.916958 , -87.23655  ,  65.52624  ],</span>
+<span class="go">       [ 26.33288  ,  51.61755  , -29.094807 ],</span>
+<span class="go">       [ 94.1396   ,  78.62422  ,  55.6767   ],</span>
+<span class="go">       [-61.072258 ,  -6.6557994, -91.23925  ],</span>
+<span class="go">       [-69.142105 ,  36.60979  ,  48.95243  ]], dtype=float32), edges=array([2, 0, 1, 1, 0, 0, 1, 0]), edge_links=array([[7, 5],</span>
+<span class="go">       [6, 9],</span>
+<span class="go">       [4, 1],</span>
+<span class="go">       [8, 6],</span>
+<span class="go">       [7, 0],</span>
+<span class="go">       [3, 7],</span>
+<span class="go">       [8, 4],</span>
+<span class="go">       [8, 8]]))</span>
 </pre></div>
 </div>
-<p>Constructor of <a class="reference internal" href="#gymnasium.spaces.Graph" title="gymnasium.spaces.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>.</p>
-<p>The argument <code class="docutils literal notranslate"><span class="pre">node_space</span></code> specifies the base space that each node feature will use.
-This argument must be either a Box or Discrete instance.</p>
-<p>The argument <code class="docutils literal notranslate"><span class="pre">edge_space</span></code> specifies the base space that each edge feature will use.
-This argument must be either a None, Box or Discrete instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -703,22 +750,26 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
 </section>
 </section>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="../utils/">
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../utils/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
                 <div class="title">Spaces Utils</div>
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
             </a>
             <a class="prev-page" href="../fundamental/">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -728,39 +779,39 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
                 
               </div>
             </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
                 Copyright &#169; 2022 Farama Foundation
-            </div>
-            <!--
+              </div>
+              <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             -->
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                
+              </div>
             </div>
           </div>
-        </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
         
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
 <li><a class="reference internal" href="#">Composite Spaces</a><ul>
 <li><a class="reference internal" href="#dict">Dict</a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.Dict"><code class="docutils literal notranslate"><span class="pre">Dict</span></code></a><ul>
@@ -798,12 +849,13 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
 </li>
 </ul>
 
+            </div>
           </div>
         </div>
-      </div>
-      
-      
-    </aside>
+        
+        
+      </aside>
+    </div>
   </div>
 </div>
     <script>
@@ -860,9 +912,6 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
       </script>
 
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
@@ -1004,5 +1053,7 @@ If no <cite>num_edges</cite> is provided then the <cite>edge_mask</cite> is mult
             console.warn("Unable to load versioning menu", response);
         }
       });
-    </script></body>
+    </script>
+
+    </body>
 </html>

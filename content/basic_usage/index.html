@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Compatibility with Gym" href="../gym_compatibility/" /><link rel="prev" title="Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments" href="../../" />
         <link rel="canonical" href="https://gymnasium.farama.org/content/basic_usage.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
         <title>Basic Usage - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=3cf7b839e8c50b5f3a39bb99d90baa7b845de926" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=b332e145f118bbc5b181998bee244c1e810e1f8b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=b0c92cd440df7c18a0306b0433406327ff2c572f" />
     
     
 
@@ -81,7 +81,7 @@
         <div class="farama-header__right">
           <div class="farama-header-menu">
             <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
-              <img class="farama-white-logo-invert" src="../../_static/img/farama-logo-header.svg">
+              <img class="farama-black-logo-invert" src="../../_static/img/farama-logo-header.svg">
               <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
               </svg>
@@ -187,10 +187,8 @@
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
 
-
-
 <div class="page">
-   <!--<header class="mobile-header">
+  <!--<header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
         <div class="visually-hidden">Toggle site navigation sidebar</div>
@@ -223,7 +221,7 @@
       <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
     <span class="farama-header__title">Gymnasium Documentation</span>
   </a><form class="sidebar-search-container" method="get" action="../../search/" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -237,7 +235,7 @@
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Register and Make</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
@@ -259,6 +257,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/experimental/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/experimental/vector/">Vectorizing Environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
 </ul>
 </li>
 </ul>
@@ -301,69 +300,113 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/adventure/">Adventure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/air_raid/">Air Raid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/air_raid/">AirRaid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/alien/">Alien</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/amidar/">Amidar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/assault/">Assault</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asterix/">Asterix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/asteroids/">Asteroids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/atlantis/">Atlantis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bank_heist/">Bank Heist</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/battle_zone/">Battle Zone</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/beam_rider/">Beam Rider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/atlantis2/">Atlantis2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/backgammon/">Backgammon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bank_heist/">BankHeist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/basic_math/">BasicMath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/battle_zone/">BattleZone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/beam_rider/">BeamRider</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/berzerk/">Berzerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/blackjack/">Blackjack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/bowling/">Bowling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/boxing/">Boxing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/breakout/">Breakout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/carnival/">Carnival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/casino/">Casino</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/centipede/">Centipede</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/chopper_command/">Chopper Command</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/crazy_climber/">Crazy Climber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/chopper_command/">ChopperCommand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/crazy_climber/">CrazyClimber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/crossbow/">Crossbow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/darkchambers/">Darkchambers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/defender/">Defender</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/demon_attack/">Demon Attack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/double_dunk/">Double Dunk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/elevator_action/">Elevator Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/demon_attack/">DemonAttack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/donkey_kong/">DonkeyKong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/double_dunk/">DoubleDunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/earthworld/">Earthworld</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/elevator_action/">ElevatorAction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/enduro/">Enduro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/entombed/">Entombed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/et/">Et</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/fishing_derby/">FishingDerby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/flag_capture/">FlagCapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/freeway/">Freeway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/frogger/">Frogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/frostbite/">Frostbite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/galaxian/">Galaxian</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gopher/">Gopher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/gravitar/">Gravitar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/hangman/">Hangman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/haunted_house/">HauntedHouse</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/hero/">Hero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/human_cannonball/">HumanCannonball</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ice_hockey/">IceHockey</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/jamesbond/">Jamesbond</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kaboom/">Kaboom</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kangaroo/">Kangaroo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/keystone_kapers/">KeystoneKapers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/king_kong/">KingKong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/klax/">Klax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/koolaid/">Koolaid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/krull/">Krull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kung_fu_master/">Kung Fu Master</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/montezuma_revenge/">Montezuma Revenge</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ms_pacman/">Ms Pacman</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/name_this_game/">Name This Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/kung_fu_master/">KungFuMaster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/laser_gates/">LaserGates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/lost_luggage/">LostLuggage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/mario_bros/">MarioBros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/miniature_golf/">MiniatureGolf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/montezuma_revenge/">MontezumaRevenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/mr_do/">MrDo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/ms_pacman/">MsPacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/name_this_game/">NameThisGame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/othello/">Othello</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pacman/">Pacman</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/phoenix/">Phoenix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pitfall/">Pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pitfall2/">Pitfall2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pong/">Pong</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/pooyan/">Pooyan</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/private_eye/">PrivateEye</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/qbert/">Qbert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/riverraid/">Riverraid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/road_runner/">Road Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/robotank/">Robot Tank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/road_runner/">RoadRunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/robotank/">Robotank</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/seaquest/">Seaquest</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/skiing/">Skiings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/sir_lancelot/">SirLancelot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/skiing/">Skiing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/solaris/">Solaris</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/space_invaders/">SpaceInvaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/space_war/">SpaceWar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/superman/">Superman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/surround/">Surround</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tennis/">Tennis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tetris/">Tetris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tic_tac_toe_3d/">TicTacToe3D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/trondead/">Trondead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/turmoil/">Turmoil</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/tutankham/">Tutankham</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/up_n_down/">Up n’ Down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/up_n_down/">UpNDown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/venture/">Venture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_pinball/">Video Pinball</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/wizard_of_wor/">Wizard of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_checkers/">VideoCheckers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_chess/">VideoChess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_cube/">VideoCube</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/video_pinball/">VideoPinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/wizard_of_wor/">WizardOfWor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/word_zapper/">WordZapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/atari/yars_revenge/">YarsRevenge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -377,8 +420,10 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/FrozenLake_tuto/">Frozenlake benchmark</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference external" href="https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasium/?utm_source=gymnasium&amp;utm_medium=partner&amp;utm_campaign=partner_gymnasium_2023&amp;utm_content=docs_gymnasium">Comet Tutorial</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -394,43 +439,46 @@
       
     </div>
   </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          
+  <div class="main-container">
+
     
-    <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/content/basic_usage.md" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container">
+            <div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
-        </div>
-        <article role="main">
-          
-          <section id="basic-usage">
+          <article role="main">
+            
+            <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h1>
 <p>Gymnasium is a project that provide an API for all single agent reinforcement learning environments that include implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.</p>
 <p>The API contains four key functions: <code class="docutils literal notranslate"><span class="pre">make</span></code>, <code class="docutils literal notranslate"><span class="pre">reset</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">render</span></code> that this basic usage will introduce you to. At the core of Gymnasium is <code class="docutils literal notranslate"><span class="pre">Env</span></code> which is a high level python class representing a markov decision process from reinforcement learning theory (this is not a perfect reconstruction missing several components of MDPs). Within gymnasium, environments (MDPs) are implements as <code class="docutils literal notranslate"><span class="pre">Env</span></code> along with <code class="docutils literal notranslate"><span class="pre">Wrappers</span></code> that can change the results passed to the user.</p>
@@ -479,7 +527,7 @@
 <h2>Action and observation spaces<a class="headerlink" href="#action-and-observation-spaces" title="Permalink to this heading">#</a></h2>
 <p>Every environment specifies the format of valid actions and observations with the <code class="docutils literal notranslate"><span class="pre">env.action_space</span></code> and <code class="docutils literal notranslate"><span class="pre">env.observation_space</span></code> attributes. This is helpful for both knowing the expected input and output of the environment as all valid actions and observation should be contained with the respective space.</p>
 <p>In the example, we sampled random actions via <code class="docutils literal notranslate"><span class="pre">env.action_space.sample()</span></code> instead of using an agent policy, mapping observations to actions which users will want to make. See one of the agent tutorials for an example of creating and training an agent policy.</p>
-<p>Every environment should have the attributes <code class="docutils literal notranslate"><span class="pre">action_space</span></code> and <code class="docutils literal notranslate"><span class="pre">observation_space</span></code>, both of which should be instances of classes that inherit from <code class="docutils literal notranslate"><span class="pre">Space</span></code>. Gymnasium has support for a major of possible spaces are users need:</p>
+<p>Every environment should have the attributes <code class="docutils literal notranslate"><span class="pre">action_space</span></code> and <code class="docutils literal notranslate"><span class="pre">observation_space</span></code>, both of which should be instances of classes that inherit from <code class="docutils literal notranslate"><span class="pre">Space</span></code>. Gymnasium has support for a majority of possible spaces users might need:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Box</span></code>: describes an n-dimensional continuous space. It’s a bounded space where we can define the upper and lower
 limits which describe the valid values our observations can take.</p></li>
@@ -496,14 +544,15 @@ Values can be shifted to {a, a+1, …, a+n-1} using an optional argument.</p></l
 <h2>Modifying the environment<a class="headerlink" href="#modifying-the-environment" title="Permalink to this heading">#</a></h2>
 <p>Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly. Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can also be chained to combine their effects. Most environments that are generated via <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> will already be wrapped by default using the <code class="docutils literal notranslate"><span class="pre">TimeLimit</span></code>, <code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code> and <code class="docutils literal notranslate"><span class="pre">PassiveEnvChecker</span></code>.</p>
 <p>In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along with (possibly optional) parameters to the wrapper’s constructor:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RescaleAction</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;BipedalWalker-v3&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">base_env</span><span class="o">.</span><span class="n">action_space</span>
-<span class="go">Box([-1. -1. -1. -1.], [1. 1. 1. 1.], (4,), float32)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RescaleAction</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">min_action</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_action</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span>
-<span class="go">Box([0. 0. 0. 0.], [1. 1. 1. 1.], (4,), float32)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">FlattenObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 96, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(27648,)</span>
+
 </pre></div>
 </div>
 <p>Gymnasium already provides many commonly used wrappers for you. Some examples:</p>
@@ -516,70 +565,73 @@ Values can be shifted to {a, a+1, …, a+n-1} using an optional argument.</p></l
 <p>For a full list of implemented wrappers in gymnasium, see <a class="reference internal" href="../../api/wrappers/"><span class="doc std std-doc">wrappers</span></a>.</p>
 <p>If you have a wrapped environment, and you want to get the unwrapped environment underneath all the layers of wrappers (so that you can manually call a function or change some underlying aspect of the environment), you can use the <code class="docutils literal notranslate"><span class="pre">.unwrapped</span></code> attribute. If the environment is already a base environment, the <code class="docutils literal notranslate"><span class="pre">.unwrapped</span></code> attribute will just return itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
-<span class="go">&lt;RescaleAction&lt;TimeLimit&lt;BipedalWalker&lt;BipedalWalker-v3&gt;&gt;&gt;&gt;</span>
+<span class="go">&lt;FlattenObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CarRacing&lt;CarRacing-v2&gt;&gt;&gt;&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">unwrapped</span>
-<span class="go">&lt;gymnasium.envs.box2d.bipedal_walker.BipedalWalker object at 0x7f87d70712d0&gt;</span>
+<span class="go">&lt;gymnasium.envs.box2d.car_racing.CarRacing object at 0x7f04efcb8850&gt;</span>
+
 </pre></div>
 </div>
 </section>
 <section id="more-information">
 <h2>More information<a class="headerlink" href="#more-information" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p><span class="xref myst">Making a Custom environment using the Gymnasium API</span></p></li>
-<li><p><span class="xref myst">Training an agent to play blackjack</span></p></li>
+<li><p><a class="reference internal" href="#/tutorials/environment_creation"><span class="xref myst">Making a Custom environment using the Gymnasium API</span></a></p></li>
+<li><p><a class="reference internal" href="#/tutorials/blackjack_tutorial"><span class="xref myst">Training an agent to play blackjack</span></a></p></li>
 <li><p><a class="reference internal" href="../gym_compatibility/"><span class="doc std std-doc">Compatibility with OpenAI Gym</span></a></p></li>
 </ul>
 </section>
 </section>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="../gym_compatibility/">
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../gym_compatibility/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
                 <div class="title">Compatibility with Gym</div>
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
             </a>
             
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
                 Copyright &#169; 2022 Farama Foundation
-            </div>
-            <!--
+              </div>
+              <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             -->
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                
+              </div>
             </div>
           </div>
-        </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
         
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
 <li><a class="reference internal" href="#">Basic Usage</a><ul>
 <li><a class="reference internal" href="#initializing-environments">Initializing Environments</a></li>
 <li><a class="reference internal" href="#interacting-with-the-environment">Interacting with the Environment</a><ul>
@@ -593,12 +645,13 @@ Values can be shifted to {a, a+1, …, a+n-1} using an optional argument.</p></l
 </li>
 </ul>
 
+            </div>
           </div>
         </div>
-      </div>
-      
-      
-    </aside>
+        
+        
+      </aside>
+    </div>
   </div>
 </div>
     <script>
@@ -655,9 +708,6 @@ Values can be shifted to {a, a+1, …, a+n-1} using an optional argument.</p></l
       </script>
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
@@ -798,5 +848,7 @@ Values can be shifted to {a, a+1, …, a+n-1} using an optional argument.</p></l
             console.warn("Unable to load versioning menu", response);
         }
       });
-    </script></body>
+    </script>
+
+    </body>
 </html>
