@@ -428,7 +428,8 @@
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gymnasium_release_notes/">Gymnasium Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gym_release_notes/">Gym Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
 </ul>
 
@@ -482,18 +483,459 @@
 <h1>Vectorizing Environment<a class="headerlink" href="#vectorizing-environment" title="Permalink to this heading">#</a></h1>
 <section id="gymnasium-experimental-vectorenv">
 <h2>gymnasium.experimental.VectorEnv<a class="headerlink" href="#gymnasium-experimental-vectorenv" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.VectorEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.</span></span><span class="sig-name descname"><span class="pre">VectorEnv</span></span><a class="headerlink" href="#gymnasium.experimental.vector.VectorEnv" title="Permalink to this definition">#</a></dt>
+<dd><p>Base class for vectorized environments to run multiple independent copies of the same environment in parallel.</p>
+<p>Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
+sub-environments at the same time. To prevent terminated environments waiting until all sub-environments have
+terminated or truncated, the vector environments autoreset sub-environments after they terminate or truncated.
+As a result, the final step’s observation and info are overwritten by the reset’s observation and info.
+Therefore, the observation and info for the final step of a sub-environment is stored in the info parameter,
+using <cite>“final_observation”</cite> and <cite>“final_info”</cite> respectively. See <a class="reference internal" href="#gymnasium.experimental.vector.VectorEnv.step" title="gymnasium.experimental.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> for more information.</p>
+<p>The vector environments batch <cite>observations</cite>, <cite>rewards</cite>, <cite>terminations</cite>, <cite>truncations</cite> and <cite>info</cite> for each
+parallel environment. In addition, <a class="reference internal" href="#gymnasium.experimental.vector.VectorEnv.step" title="gymnasium.experimental.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> expects to receive a batch of actions for each parallel environment.</p>
+<p>Gymnasium contains two types of Vector environments: <a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv" title="gymnasium.experimental.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></a> and <a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv" title="gymnasium.experimental.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></a>.</p>
+<p>The Vector Environments have the additional attributes for users to understand the implementation</p>
+<ul class="simple">
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_envs</span></code> - The number of sub-environment in the vector environment</p></li>
+<li><p><a class="reference internal" href="../../vector/#observation_space" title="observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> - The batched observation space of the vector environment</p></li>
+<li><p><a class="reference internal" href="../../vector/#single_observation_space" title="single_observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_observation_space</span></code></a> - The observation space of a single sub-environment</p></li>
+<li><p><a class="reference internal" href="../../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> - The batched action space of the vector environment</p></li>
+<li><p><a class="reference internal" href="../../vector/#single_action_space" title="single_action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_action_space</span></code></a> - The action space of a single sub-environment</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The info parameter of <a class="reference internal" href="#id0" title="gymnasium.experimental.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.experimental.vector.VectorEnv.step" title="gymnasium.experimental.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> was originally implemented before OpenAI Gym v25 was a list
+of dictionary for each sub-environment. However, this was modified in OpenAI Gym v25+ and in Gymnasium to a
+dictionary with a NumPy array for each key. To use the old info style using the <code class="xref py py-class docutils literal notranslate"><span class="pre">VectorListInfo</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To render the sub-environments, use <code class="xref py py-meth docutils literal notranslate"><span class="pre">call()</span></code> with “render” arguments. Remember to set the <cite>render_modes</cite>
+for all the sub-environments during initialization.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All parallel environments should share the identical observation and action spaces.
+In other words, a vector of multiple different environments is not supported.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.VectorEnv.reset">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.VectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.experimental.vector.VectorEnv.reset" title="Permalink to this definition">#</a></dt>
+<dd><p>Reset all parallel environments and return a batch of initial observations and info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> – The environment reset seeds</p></li>
+<li><p><strong>options</strong> – If to return the options</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>A batch of observations and info from the vectorized environment.</strong></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">(array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],</span>
+<span class="go">       [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],</span>
+<span class="go">       [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],</span>
+<span class="go">      dtype=float32), {})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.VectorEnv.step">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.VectorEnv.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.experimental.vector.VectorEnv.step" title="Permalink to this definition">#</a></dt>
+<dd><p>Take an action for each parallel environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>actions</strong> – element of <a class="reference internal" href="../../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> Batch of actions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Batch of</strong> (<em>observations, rewards, terminations, truncations, infos</em>)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As the vector environments autoreset for a terminating and truncating sub-environments,
+the returned observation and info is not the final step’s observation or info which is instead stored in
+info as <cite>“final_observation”</cite> and <cite>“final_info”</cite>.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
+<span class="go">array([[ 0.02727336,  0.18847767,  0.03625453, -0.26141977],</span>
+<span class="go">       [ 0.01431748, -0.24002443, -0.04731862,  0.3110827 ],</span>
+<span class="go">       [-0.03822722,  0.1710671 , -0.00848456, -0.2487226 ]],</span>
+<span class="go">      dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rewards</span>
+<span class="go">array([1., 1., 1.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">termination</span>
+<span class="go">array([False, False, False])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">termination</span>
+<span class="go">array([False, False, False])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
+<span class="go">{}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.VectorEnv.close">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.VectorEnv.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.VectorEnv.close" title="Permalink to this definition">#</a></dt>
+<dd><p>Close all parallel environments and release resources.</p>
+<p>It also closes all the existing image viewers, then calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code> and set
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">closed</span></code> as <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function itself does not close the environments, it should be handled
+in <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code>. This is generic for both synchronous and asynchronous
+vectorized environments.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This will be automatically called when garbage collected or program exited.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Keyword arguments passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.VectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
+<dd><p>Reset all parallel environments and return a batch of initial observations and info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> – The environment reset seeds</p></li>
+<li><p><strong>options</strong> – If to return the options</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>A batch of observations and info from the vectorized environment.</strong></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">(array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],</span>
+<span class="go">       [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],</span>
+<span class="go">       [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],</span>
+<span class="go">      dtype=float32), {})</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 <section id="gymnasium-experimental-vector-asyncvectorenv">
 <h2>gymnasium.experimental.vector.AsyncVectorEnv<a class="headerlink" href="#gymnasium-experimental-vector-asyncvectorenv" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.AsyncVectorEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.</span></span><span class="sig-name descname"><span class="pre">AsyncVectorEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_fns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daemon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.AsyncVectorEnv" title="Permalink to this definition">#</a></dt>
+<dd><p>Vectorized environment that runs multiple environments in parallel.</p>
+<p>It uses <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> processes, and pipes for communication.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">1.62</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">(array([[-0.14995256,  0.9886932 , -0.12224312],</span>
+<span class="go">       [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_fns</strong> – Functions that create the environments.</p></li>
+<li><p><strong>shared_memory</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the observations from the worker processes are communicated back through
+shared variables. This can improve the efficiency if the observations are large (e.g. images).</p></li>
+<li><p><strong>copy</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the <a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv.reset" title="gymnasium.experimental.vector.AsyncVectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv.step" title="gymnasium.experimental.vector.AsyncVectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> methods
+return a copy of the observations.</p></li>
+<li><p><strong>context</strong> – Context for <a href="#id1"><span class="problematic" id="id2">`multiprocessing`_</span></a>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the default context is used.</p></li>
+<li><p><strong>daemon</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then subprocesses have <code class="docutils literal notranslate"><span class="pre">daemon</span></code> flag turned on; that is, they will quit if
+the head process quits. However, <code class="docutils literal notranslate"><span class="pre">daemon=True</span></code> prevents subprocesses to spawn children,
+so for some environments you may want to have it set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>worker</strong> – If set, then use that worker in a subprocess instead of a default one.
+Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Warnings: worker is an advanced mode option. It provides a high degree of flexibility and a high chance</dt><dd><p>to shoot yourself in the foot; thus, if you are writing your own worker, it is recommended to start
+from the code for <code class="docutils literal notranslate"><span class="pre">_worker</span></code> (or <code class="docutils literal notranslate"><span class="pre">_worker_shared_memory</span></code>) method, and add changes.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the observation space of some sub-environment does not match observation_space
+    (or, by default, the observation space of the first sub-environment).</p></li>
+<li><p><strong>ValueError</strong> – If observation_space is a custom space (i.e. not a default space in Gym,
+    such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.AsyncVectorEnv.reset">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.AsyncVectorEnv.reset" title="Permalink to this definition">#</a></dt>
+<dd><p>Reset all parallel environments and return a batch of initial observations and info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> – The environment reset seeds</p></li>
+<li><p><strong>options</strong> – If to return the options</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>A batch of observations and info from the vectorized environment.</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.AsyncVectorEnv.step">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.AsyncVectorEnv.step" title="Permalink to this definition">#</a></dt>
+<dd><p>Take an action for each parallel environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>actions</strong> – element of <a class="reference internal" href="../../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> Batch of actions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Batch of</strong> (<em>observations, rewards, terminations, truncations, infos</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.AsyncVectorEnv.close">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.AsyncVectorEnv.close" title="Permalink to this definition">#</a></dt>
+<dd><p>Close all parallel environments and release resources.</p>
+<p>It also closes all the existing image viewers, then calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code> and set
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">closed</span></code> as <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function itself does not close the environments, it should be handled
+in <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code>. This is generic for both synchronous and asynchronous
+vectorized environments.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This will be automatically called when garbage collected or program exited.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Keyword arguments passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.AsyncVectorEnv.call">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.experimental.vector.AsyncVectorEnv.call" title="Permalink to this definition">#</a></dt>
+<dd><p>Call a method, or get a property, from each parallel environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the method or property to call.</p></li>
+<li><p><strong>*args</strong> – Arguments to apply to the method call.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to apply to the method call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>List of the results of the individual calls to the method or property for each environment.</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.AsyncVectorEnv.get_attr">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">get_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.AsyncVectorEnv.get_attr" title="Permalink to this definition">#</a></dt>
+<dd><p>Get a property from each parallel environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the property to be get from each individual environment.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>The property with name</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.AsyncVectorEnv.set_attr">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">set_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.AsyncVectorEnv.set_attr" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets an attribute of the sub-environments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of the property to be set in each individual environment.</p></li>
+<li><p><strong>values</strong> – Values of the property to be set to. If <code class="docutils literal notranslate"><span class="pre">values</span></code> is a list or
+tuple, then it corresponds to the values for each individual
+environment, otherwise a single value is set for all environments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – Values must be a list or tuple with length equal to the number of environments.</p></li>
+<li><p><strong>AlreadyPendingCallError</strong> – Calling <cite>set_attr</cite> while waiting for a pending call to complete.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="gymnasium-experimental-vector-syncvectorenv">
 <h2>gymnasium.experimental.vector.SyncVectorEnv<a class="headerlink" href="#gymnasium-experimental-vector-syncvectorenv" title="Permalink to this heading">#</a></h2>
-</section>
-<section id="custom-vector-environments">
-<h2>Custom Vector environments<a class="headerlink" href="#custom-vector-environments" title="Permalink to this heading">#</a></h2>
-</section>
-<section id="envpool">
-<h2>EnvPool<a class="headerlink" href="#envpool" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.SyncVectorEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.</span></span><span class="sig-name descname"><span class="pre">SyncVectorEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_fns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.SyncVectorEnv" title="Permalink to this definition">#</a></dt>
+<dd><p>Vectorized environment that serially runs multiple environments.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">SyncVectorEnv</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">1.62</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">(array([[-0.14995256,  0.9886932 , -0.12224312],</span>
+<span class="go">       [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_fns</strong> – iterable of callable functions that create the environments.</p></li>
+<li><p><strong>copy</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the <a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv.reset" title="gymnasium.experimental.vector.SyncVectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv.step" title="gymnasium.experimental.vector.SyncVectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> methods return a copy of the observations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the observation space of some sub-environment does not match observation_space
+    (or, by default, the observation space of the first sub-environment).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.SyncVectorEnv.reset">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.SyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.SyncVectorEnv.reset" title="Permalink to this definition">#</a></dt>
+<dd><p>Waits for the calls triggered by <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_async()</span></code> to finish and returns the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> – The reset environment seed</p></li>
+<li><p><strong>options</strong> – Option information for the environment reset</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>The reset observation of the environment and reset information</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.SyncVectorEnv.step">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.SyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.SyncVectorEnv.step" title="Permalink to this definition">#</a></dt>
+<dd><p>Steps through each of the environments returning the batched results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>The batched environment step results</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.SyncVectorEnv.close">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.SyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.SyncVectorEnv.close" title="Permalink to this definition">#</a></dt>
+<dd><p>Close all parallel environments and release resources.</p>
+<p>It also closes all the existing image viewers, then calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code> and set
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">closed</span></code> as <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function itself does not close the environments, it should be handled
+in <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code>. This is generic for both synchronous and asynchronous
+vectorized environments.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This will be automatically called when garbage collected or program exited.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Keyword arguments passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.SyncVectorEnv.call">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.SyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#gymnasium.experimental.vector.SyncVectorEnv.call" title="Permalink to this definition">#</a></dt>
+<dd><p>Calls the method with name and applies args and kwargs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The method name</p></li>
+<li><p><strong>*args</strong> – The method args</p></li>
+<li><p><strong>**kwargs</strong> – The method kwargs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Tuple of results</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.SyncVectorEnv.get_attr">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.SyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">get_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.SyncVectorEnv.get_attr" title="Permalink to this definition">#</a></dt>
+<dd><p>Get a property from each parallel environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the property to be get from each individual environment.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>The property with name</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.experimental.vector.SyncVectorEnv.set_attr">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.vector.SyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">set_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.vector.SyncVectorEnv.set_attr" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets an attribute of the sub-environments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The property name to change</p></li>
+<li><p><strong>values</strong> – Values of the property to be set to. If <code class="docutils literal notranslate"><span class="pre">values</span></code> is a list or
+tuple, then it corresponds to the values for each individual
+environment, otherwise, a single value is set for all environments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Values must be a list or tuple with length equal to the number of environments.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -560,11 +1002,34 @@
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Vectorizing Environment</a><ul>
-<li><a class="reference internal" href="#gymnasium-experimental-vectorenv">gymnasium.experimental.VectorEnv</a></li>
-<li><a class="reference internal" href="#gymnasium-experimental-vector-asyncvectorenv">gymnasium.experimental.vector.AsyncVectorEnv</a></li>
-<li><a class="reference internal" href="#gymnasium-experimental-vector-syncvectorenv">gymnasium.experimental.vector.SyncVectorEnv</a></li>
-<li><a class="reference internal" href="#custom-vector-environments">Custom Vector environments</a></li>
-<li><a class="reference internal" href="#envpool">EnvPool</a></li>
+<li><a class="reference internal" href="#gymnasium-experimental-vectorenv">gymnasium.experimental.VectorEnv</a><ul>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.VectorEnv"><code class="docutils literal notranslate"><span class="pre">VectorEnv</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.VectorEnv.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.VectorEnv.step"><code class="docutils literal notranslate"><span class="pre">step()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.VectorEnv.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium-experimental-vector-asyncvectorenv">gymnasium.experimental.vector.AsyncVectorEnv</a><ul>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv.step"><code class="docutils literal notranslate"><span class="pre">step()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv.call"><code class="docutils literal notranslate"><span class="pre">call()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv.get_attr"><code class="docutils literal notranslate"><span class="pre">get_attr()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.AsyncVectorEnv.set_attr"><code class="docutils literal notranslate"><span class="pre">set_attr()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium-experimental-vector-syncvectorenv">gymnasium.experimental.vector.SyncVectorEnv</a><ul>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv"><code class="docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv.step"><code class="docutils literal notranslate"><span class="pre">step()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv.call"><code class="docutils literal notranslate"><span class="pre">call()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv.get_attr"><code class="docutils literal notranslate"><span class="pre">get_attr()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.vector.SyncVectorEnv.set_attr"><code class="docutils literal notranslate"><span class="pre">set_attr()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
