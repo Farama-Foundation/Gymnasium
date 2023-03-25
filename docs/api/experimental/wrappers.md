@@ -1,3 +1,7 @@
+---
+title: Wrappers
+---
+
 # Wrappers
 
 ## Observation Wrappers

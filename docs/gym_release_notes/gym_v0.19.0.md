@@ -15,7 +15,7 @@ Gym 0.19.0 is a large maintenance release, and the first since [@jkterry1](https
 
 ## Bug fixes
 
-* Removed unused dependencies, removed unnescesary dependency version requirements that caused installation issues on newer machines, added full requirements.txt and moved general dependencies to extras. Notably, "toy_text" is not a used extra. atari-py is now pegged to a precise working version pending the switch to ale-py ([@jkterry1](https://github.com/jkterry1))
+* Removed unused dependencies, removed unnecessary dependency version requirements that caused installation issues on newer machines, added full requirements.txt and moved general dependencies to extras. Notably, "toy_text" is not a used extra. atari-py is now pegged to a precise working version pending the switch to ale-py ([@jkterry1](https://github.com/jkterry1))
 * Bug fixes to rewards in FrozenLake and FrozenLake8x8; versions bumped to v1 ([@ZhiqingXiao](https://github.com/ZhiqingXiao))
 * Removed remaining numpy depreciation warnings ([@super-pirata](https://github.com/super-pirata))
 * Fixes to video recording ([@mahiuchun](https://github.com/mahiuchun), [@zlig](https://github.com/zlig))

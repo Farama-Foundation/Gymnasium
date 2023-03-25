@@ -6,7 +6,7 @@ lastpage:
 
 # Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
 
-```{figure} _static/videos/box2d/lunar_lander_continuous.gif
+```{figure} _static/videos/box2d/lunar_lander.gif
    :alt: Lunar Lander
    :width: 500
 ```
@@ -76,6 +76,7 @@ Comet Tutorial <https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasi
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
-release_notes/index
+gymnasium_release_notes/index
+gym_release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```

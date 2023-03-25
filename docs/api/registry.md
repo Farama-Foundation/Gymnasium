@@ -35,6 +35,6 @@ Gymnasium allows users to automatically load environments, pre-wrapped with seve
 .. autofunction:: gymnasium.envs.registration.parse_env_id
 .. autofunction:: gymnasium.envs.registration.find_highest_version
 .. autofunction:: gymnasium.envs.registration.namespace
-.. autofunction:: gymnasium.envs.registration.load_env
+.. autofunction:: gymnasium.envs.registration.load_env_creator
 .. autofunction:: gymnasium.envs.registration.load_plugin_envs
 ```
