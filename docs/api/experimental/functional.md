@@ -29,9 +29,9 @@ title: Functional
 ## gymnasium.experimental.func2env.FunctionalJaxCompatibilityEnv
 
 ```{eval-rst}
-.. autoclass:: gymnasium.experimental.func_jax_env.FunctionalJaxEnv
+.. autoclass:: gymnasium.experimental.functional_jax_env.FunctionalJaxEnv
 
-.. autofunction:: gymnasium.experimental.func_jax_env.FunctionalJaxEnv.reset
-.. autofunction:: gymnasium.experimental.func_jax_env.FunctionalJaxEnv.step
-.. autofunction:: gymnasium.experimental.func_jax_env.FunctionalJaxEnv.render
+.. autofunction:: gymnasium.experimental.functional_jax_env.FunctionalJaxEnv.reset
+.. autofunction:: gymnasium.experimental.functional_jax_env.FunctionalJaxEnv.step
+.. autofunction:: gymnasium.experimental.functional_jax_env.FunctionalJaxEnv.render
 ```
