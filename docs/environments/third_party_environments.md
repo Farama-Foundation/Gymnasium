@@ -157,7 +157,7 @@ A lane-following simulator built for the [Duckietown](http://duckietown.org/) pr
 
 ### [gym-electric-motor: Gym environments for electric motor simulations](https://github.com/upb-lea/gym-electric-motor)
 
-An environment for simulating a wide variety of electric drives taking into account different types of electric motors and converters. 
+An environment for simulating a wide variety of electric drives taking into account different types of electric motors and converters.
 
 ### [CommonRoad-RL: Motion planning for traffic scenarios ](https://commonroad.in.tum.de/tools/commonroad-rl)
 
@@ -191,7 +191,7 @@ Environments where the agent interacts with _Cellular Automata_ by changing its 
 
 ### [gym-sokoban: 2D Transportation Puzzles](https://github.com/mpSchrader/gym-sokoban)
 
-The environment consists of transportation puzzles in which the player's goal is to push all boxes to the warehouse's storage locations. 
+The environment consists of transportation puzzles in which the player's goal is to push all boxes to the warehouse's storage locations.
 
 ### [DACBench: Benchmark Library for Dynamic Algorithm configuration](https://github.com/automl/DACBench)
 
@@ -215,7 +215,7 @@ AnyTrading is a collection of Gym environments for reinforcement learning-based 
 
 ### [gym-mtsim: Financial trading for MetaTrader 5 platform](https://github.com/AminHP/gym-mtsim)
 
-MtSim is a simulator for the [MetaTrader 5](https://www.metatrader5.com/) trading platform for reinforcement learning-based trading algorithms. 
+MtSim is a simulator for the [MetaTrader 5](https://www.metatrader5.com/) trading platform for reinforcement learning-based trading algorithms.
 
 ### [openmodelica-microgrid-gym: Environments for controlling power electronic converters in microgrids](https://github.com/upb-lea/openmodelica-microgrid-gym)
 
