@@ -45,6 +45,13 @@ PyBullet based simulations of a robotic arm moving objects.
 
 tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
+### [gym-jiminy: Training Robots in Jiminy](https://github.com/duburcqa/jiminy)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.0-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/duburcqa/jiminy)]()
+
+gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](https://github.com/duburcqa/jiminy), an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.
+
 ### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
@@ -65,6 +72,13 @@ Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn class
 [![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)]()
 
 A simple environment for single-agent reinforcement learning algorithms on a clone of [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.
+
+### [gym-saturation: Environments used to prove theorems](https://github.com/inpefess/gym-saturation)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/inpefess/gym-saturation)]()
+
+An environment for guiding automated theorem provers based on saturation algorithms (e.g. [Vampire](https://github.com/vprover/vampire)).
 
 ### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 
@@ -97,10 +111,6 @@ Gym (and PettingZoo) wrappers for arbitrary and premade environments with the Un
 Uses The [Open 3D Engine](https://www.o3de.org/) for AI simulations and can interoperate with the Gym. Uses [PyBullet](https://github.com/bulletphysics/bullet3) physics.
 
 ## Robotics environments
-
-### [gym-jiminy: Training Robots in Jiminy](https://github.com/duburcqa/jiminy)
-
-gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](https://github.com/duburcqa/jiminy), an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.
 
 ### [gym-pybullet-drones: Environments for quadcopter control](https://github.com/JacopoPan/gym-pybullet-drones)
 
@@ -189,11 +199,7 @@ Environments for hyperparameter configuration using RL. Includes cheap surrogate
 
 ### [NLPGym: A toolkit to develop RL agents to solve NLP tasks](https://github.com/rajcscw/nlp-gym)
 
-[NLPGym](https://arxiv.org/pdf/2011.08272v1.pdf) provides interactive environments for standard NLP tasks such as sequence tagging, question answering, and sequence classification. 
-
-### [gym-saturation: Environments used to prove theorems](https://github.com/inpefess/gym-saturation)
-
-An environment for guiding automated theorem provers based on saturation algorithms (e.g. [Vampire](https://github.com/vprover/vampire)).
+[NLPGym](https://arxiv.org/pdf/2011.08272v1.pdf) provides interactive environments for standard NLP tasks such as sequence tagging, question answering, and sequence classification.
 
 ### [ShinRL: Environments for evaluating RL algorithms](https://github.com/omron-sinicx/ShinRL/)
 
