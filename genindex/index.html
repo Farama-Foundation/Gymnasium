@@ -426,7 +426,8 @@
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gymnasium_release_notes/">Gymnasium Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gym_release_notes/">Gym Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
 </ul>
 
@@ -495,12 +496,16 @@
           <li><a href="../api/wrappers/#gymnasium.Wrapper.action_space">(gymnasium.Wrapper property)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/action_wrappers/#gymnasium.ActionWrapper">ActionWrapper (class in gymnasium)</a>
 </li>
-        <li><a href="../api/vector/#gymnasium.vector.AsyncVectorEnv">AsyncVectorEnv (class in gymnasium.vector)</a>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.AsyncVectorEnv">AsyncVectorEnv (class in gymnasium.experimental.vector)</a>
+
+        <ul>
+          <li><a href="../api/vector/#gymnasium.vector.AsyncVectorEnv">(class in gymnasium.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.AtariPreprocessing">AtariPreprocessing (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.AutoresetV0">AutoresetV0 (class in gymnasium.experimental.wrappers)</a>
@@ -533,11 +538,19 @@
   <h2>C</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.AsyncVectorEnv.call">call() (in module gymnasium.experimental.vector.AsyncVectorEnv)</a>
+
+        <ul>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.SyncVectorEnv.call">(in module gymnasium.experimental.vector.SyncVectorEnv)</a>
+</li>
+        </ul></li>
         <li><a href="../api/utils/#gymnasium.utils.play.PlayPlot.callback">callback() (gymnasium.utils.play.PlayPlot method)</a>
 </li>
         <li><a href="../api/utils/#gymnasium.utils.save_video.capped_cubic_video_schedule">capped_cubic_video_schedule() (in module gymnasium.utils.save_video)</a>
 </li>
         <li><a href="../api/utils/#gymnasium.utils.env_checker.check_env">check_env() (in module gymnasium.utils.env_checker)</a>
+</li>
+        <li><a href="../api/experimental/vector_utils/#gymnasium.experimental.vector.utils.clear_mpi_env_vars">clear_mpi_env_vars() (in module gymnasium.experimental.vector.utils)</a>
 </li>
         <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.ClipAction">ClipAction (class in gymnasium.wrappers)</a>
 </li>
@@ -550,11 +563,19 @@
         <ul>
           <li><a href="../api/env/#gymnasium.Env.close">(in module gymnasium.Env)</a>
 </li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.AsyncVectorEnv.close">(in module gymnasium.experimental.vector.AsyncVectorEnv)</a>
+</li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.SyncVectorEnv.close">(in module gymnasium.experimental.vector.SyncVectorEnv)</a>
+</li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.VectorEnv.close">(in module gymnasium.experimental.vector.VectorEnv)</a>
+</li>
           <li><a href="../api/wrappers/#gymnasium.Wrapper.close">(in module gymnasium.Wrapper)</a>
 </li>
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/vector_utils/#gymnasium.experimental.vector.utils.CloudpickleWrapper">CloudpickleWrapper() (in module gymnasium.experimental.vector.utils)</a>
+</li>
         <li><a href="../api/experimental/vector_utils/#gymnasium.experimental.vector.utils.concatenate">concatenate() (in module gymnasium.experimental.vector.utils)</a>
 
         <ul>
@@ -573,8 +594,12 @@
           <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.create_empty_array">(in module gymnasium.vector.utils)</a>
 </li>
         </ul></li>
-        <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.create_shared_memory">create_shared_memory() (in module gymnasium.vector.utils)</a>
+        <li><a href="../api/experimental/vector_utils/#gymnasium.experimental.vector.utils.create_shared_memory">create_shared_memory() (in module gymnasium.experimental.vector.utils)</a>
+
+        <ul>
+          <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.create_shared_memory">(in module gymnasium.vector.utils)</a>
 </li>
+        </ul></li>
         <li><a href="../api/registry/#gymnasium.envs.registration.current_namespace">current_namespace (gymnasium.envs.registration attribute)</a>
 </li>
     </ul></td>
@@ -657,16 +682,22 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.AsyncVectorEnv.get_attr">get_attr() (in module gymnasium.experimental.vector.AsyncVectorEnv)</a>
+
+        <ul>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.SyncVectorEnv.get_attr">(in module gymnasium.experimental.vector.SyncVectorEnv)</a>
+</li>
+        </ul></li>
         <li><a href="../api/registry/#gymnasium.envs.registration.get_env_id">get_env_id() (in module gymnasium.envs.registration)</a>
 </li>
         <li><a href="../api/spaces/composite/#gymnasium.spaces.Graph">Graph (class in gymnasium.spaces)</a>
 </li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.GrayScaleObservation">GrayScaleObservation (class in gymnasium.wrappers)</a>
 </li>
-        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.GrayscaleObservationV0">GrayscaleObservationV0 (class in gymnasium.experimental.wrappers)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.GrayscaleObservationV0">GrayscaleObservationV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
         <li>
     gymnasium.spaces
 
@@ -732,6 +763,8 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.LambdaRewardV0">LambdaRewardV0 (class in gymnasium.experimental.wrappers)</a>
+</li>
+        <li><a href="../api/registry/#gymnasium.envs.registration.load_env_creator">load_env_creator() (in module gymnasium.envs.registration)</a>
 </li>
         <li><a href="../api/registry/#gymnasium.envs.registration.load_plugin_envs">load_plugin_envs() (in module gymnasium.envs.registration)</a>
 </li>
@@ -866,8 +899,12 @@
   <h2>R</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.read_from_shared_memory">read_from_shared_memory() (in module gymnasium.vector.utils)</a>
+        <li><a href="../api/experimental/vector_utils/#gymnasium.experimental.vector.utils.read_from_shared_memory">read_from_shared_memory() (in module gymnasium.experimental.vector.utils)</a>
+
+        <ul>
+          <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.read_from_shared_memory">(in module gymnasium.vector.utils)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics">RecordEpisodeStatistics (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0">RecordEpisodeStatisticsV0 (class in gymnasium.experimental.wrappers)</a>
@@ -894,10 +931,10 @@
 </li>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RenderCollectionV0">RenderCollectionV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.RescaleAction">RescaleAction (class in gymnasium.wrappers)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RescaleActionV0">RescaleActionV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.RescaleObservationV0">RescaleObservationV0 (class in gymnasium.experimental.wrappers)</a>
@@ -906,6 +943,12 @@
 
         <ul>
           <li><a href="../api/env/#gymnasium.Env.reset">(in module gymnasium.Env)</a>
+</li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.AsyncVectorEnv.reset">(in module gymnasium.experimental.vector.AsyncVectorEnv)</a>
+</li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.SyncVectorEnv.reset">(in module gymnasium.experimental.vector.SyncVectorEnv)</a>
+</li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.VectorEnv.reset">(in module gymnasium.experimental.vector.VectorEnv)</a>, <a href="../api/experimental/vector/#id0">[1]</a>
 </li>
           <li><a href="../api/wrappers/#gymnasium.Wrapper.reset">(in module gymnasium.Wrapper)</a>
 </li>
@@ -984,10 +1027,16 @@
           <li><a href="../api/spaces/#gymnasium.spaces.space.Space.seed">(in module gymnasium.spaces.space.Space)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/spaces/composite/#gymnasium.spaces.Sequence">Sequence (class in gymnasium.spaces)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.AsyncVectorEnv.set_attr">set_attr() (in module gymnasium.experimental.vector.AsyncVectorEnv)</a>
+
+        <ul>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.SyncVectorEnv.set_attr">(in module gymnasium.experimental.vector.SyncVectorEnv)</a>
+</li>
+        </ul></li>
         <li><a href="../api/spaces/#gymnasium.spaces.space.Space.shape">shape (gymnasium.spaces.space.Space property)</a>
 </li>
         <li><a href="../api/vector/#single_action_space">single_action_space</a>
@@ -1011,6 +1060,12 @@
         <ul>
           <li><a href="../api/env/#gymnasium.Env.step">(in module gymnasium.Env)</a>
 </li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.AsyncVectorEnv.step">(in module gymnasium.experimental.vector.AsyncVectorEnv)</a>
+</li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.SyncVectorEnv.step">(in module gymnasium.experimental.vector.SyncVectorEnv)</a>
+</li>
+          <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.VectorEnv.step">(in module gymnasium.experimental.vector.VectorEnv)</a>
+</li>
           <li><a href="../api/wrappers/#gymnasium.Wrapper.step">(in module gymnasium.Wrapper)</a>
 </li>
         </ul></li>
@@ -1022,8 +1077,12 @@
 </li>
         <li><a href="../api/experimental/wrappers/#gymnasium.experimental.wrappers.StickyActionV0">StickyActionV0 (class in gymnasium.experimental.wrappers)</a>
 </li>
-        <li><a href="../api/vector/#gymnasium.vector.SyncVectorEnv">SyncVectorEnv (class in gymnasium.vector)</a>
+        <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.SyncVectorEnv">SyncVectorEnv (class in gymnasium.experimental.vector)</a>
+
+        <ul>
+          <li><a href="../api/vector/#gymnasium.vector.SyncVectorEnv">(class in gymnasium.vector)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -1082,11 +1141,29 @@
   <h2>V</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/vector/#gymnasium.vector.VectorEnv">VectorEnv (class in gymnasium.vector)</a>
+        <li><a href="../api/experimental/vector_wrappers/#gymnasium.experimental.vector.VectorActionWrapper">VectorActionWrapper (class in gymnasium.experimental.vector)</a>
 </li>
+        <li><a href="../api/experimental/vector/#gymnasium.experimental.vector.VectorEnv">VectorEnv (class in gymnasium.experimental.vector)</a>
+
+        <ul>
+          <li><a href="../api/vector/#gymnasium.vector.VectorEnv">(class in gymnasium.vector)</a>
+</li>
+        </ul></li>
+        <li><a href="../api/experimental/vector_wrappers/#gymnasium.experimental.wrappers.vector.VectorListInfo">VectorListInfo (class in gymnasium.experimental.wrappers.vector)</a>
+
+        <ul>
+          <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.VectorListInfo">(class in gymnasium.wrappers)</a>
+</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.VectorListInfo">VectorListInfo (class in gymnasium.wrappers)</a>
+        <li><a href="../api/experimental/vector_wrappers/#gymnasium.experimental.vector.VectorObservationWrapper">VectorObservationWrapper (class in gymnasium.experimental.vector)</a>
+</li>
+        <li><a href="../api/experimental/vector_wrappers/#gymnasium.experimental.wrappers.vector.VectorRecordEpisodeStatistics">VectorRecordEpisodeStatistics (class in gymnasium.experimental.wrappers.vector)</a>
+</li>
+        <li><a href="../api/experimental/vector_wrappers/#gymnasium.experimental.vector.VectorRewardWrapper">VectorRewardWrapper (class in gymnasium.experimental.vector)</a>
+</li>
+        <li><a href="../api/experimental/vector_wrappers/#gymnasium.experimental.vector.VectorWrapper">VectorWrapper (class in gymnasium.experimental.vector)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -1100,8 +1177,12 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.write_to_shared_memory">write_to_shared_memory() (in module gymnasium.vector.utils)</a>
+        <li><a href="../api/experimental/vector_utils/#gymnasium.experimental.vector.utils.write_to_shared_memory">write_to_shared_memory() (in module gymnasium.experimental.vector.utils)</a>
+
+        <ul>
+          <li><a href="../api/spaces/vector_utils/#gymnasium.vector.utils.write_to_shared_memory">(in module gymnasium.vector.utils)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
