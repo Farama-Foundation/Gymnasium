@@ -155,11 +155,3 @@ We aimed to replace the wrappers in gymnasium v0.30.0 with these experimental wr
 * :class:`experimental.wrappers.JaxToTorchV0`
 * :class:`experimental.wrappers.NumpyToTorchV0`
 ```
-
-## Vector Environment
-
-These changes will be made in v0.28
-
-## Wrappers for Vector Environments
-
-These changes will be made in v0.28
