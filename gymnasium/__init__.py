@@ -1,6 +1,5 @@
 """Root `__init__` of the gymnasium module setting the `__all__` of gymnasium modules."""
 # isort: skip_file
-# pyright: reportUnsupportedDunderAll=false
 
 from gymnasium.core import (
     Env,
@@ -20,7 +19,8 @@ from gymnasium.envs.registration import (
 )
 
 # necessary for `envs.__init__` which registers all gymnasium environments and loads plugins
-from gymnasium import envs, vector
+from gymnasium import envs
+from gymnasium import experimental, spaces, utils, vector, wrappers, error, logger
 
 
 __all__ = [
