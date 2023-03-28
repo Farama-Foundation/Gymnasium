@@ -578,7 +578,7 @@ end and its angular velocity.</p>
 <h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
 <p>The reward function is defined as:</p>
 <p><em>r = -(theta<sup>2</sup> + 0.1 * theta_dt<sup>2</sup> + 0.001 * torque<sup>2</sup>)</em></p>
-<p>where <code class="docutils literal notranslate"><span class="pre">$</span>&#160;&#160;&#160; <span class="pre">heta$</span></code> is the pendulum’s angle normalized between <em>[-pi, pi]</em> (with 0 being in the upright position).
+<p>where <code class="docutils literal notranslate"><span class="pre">theta</span></code> is the pendulum’s angle normalized between <em>[-pi, pi]</em> (with 0 being in the upright position).
 Based on the above equation, the minimum reward that can be obtained is
 <em>-(pi<sup>2</sup> + 0.1 * 8<sup>2</sup> + 0.001 * 2<sup>2</sup>) = -16.2736044</em>,
 while the maximum reward is zero (pendulum is upright with zero velocity and no torque applied).</p>
