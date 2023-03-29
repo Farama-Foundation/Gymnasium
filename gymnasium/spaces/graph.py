@@ -69,7 +69,7 @@ class Graph(Space[GraphInstance]):
 
         Args:
             node_space (Union[Box, Discrete]): space of the node features.
-            edge_space (Union[None, Box, Discrete]): space of the node features.
+            edge_space (Union[None, Box, Discrete]): space of the edge features.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
         """
         assert isinstance(
