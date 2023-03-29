@@ -14,9 +14,9 @@ exclude_env_names = [
     "FrozenLake8x8",
     "LunarLanderContinuous",
     "BipedalWalkerHardcore",
-    "CartPoleJax",
-    "PendulumJax",
-    "Jax-Blackjack",
+    "phys2d/CartPole",
+    "phys2d/PendulumJax",
+    "tabular/Blackjack",
 ]
 for env_spec in gym.registry.values():
     if env_spec.name not in exclude_env_names:
