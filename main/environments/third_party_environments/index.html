@@ -532,11 +532,11 @@ many-agent RL (<a class="reference external" href="https://magent2.farama.org/">
 <a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/MatPoliquin/stable-retro" /></span></a></p>
 <p>Supported fork of <a class="reference external" href="https://openai.com/research/gym-retro">gym-retro</a>: turn classic video games into Gymnasium environments.</p>
 </section>
-<section id="flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium">
-<h2><a class="reference external" href="https://github.com/markub3327/flappy-bird-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a><a class="headerlink" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium" title="Permalink to this heading">#</a></h2>
-<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" /></span></a>
-<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium" /></span></a></p>
-<p>A simple environment for single-agent reinforcement learning algorithms on a clone of <a class="reference external" href="https://en.wikipedia.org/wiki/Flappy_Bird">Flappy Bird</a>, the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.</p>
+<section id="gym-cellular-automata-cellular-automata-environments">
+<h2><a class="reference external" href="https://github.com/elbecerrasoto/gym-cellular-automata">gym-cellular-automata: Cellular Automata environments</a><a class="headerlink" href="#gym-cellular-automata-cellular-automata-environments" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata" /></span></a></p>
+<p>Environments where the agent interacts with <em>Cellular Automata</em> by changing its cell states.</p>
 </section>
 <section id="gym-saturation-environments-used-to-prove-theorems">
 <h2><a class="reference external" href="https://github.com/inpefess/gym-saturation">gym-saturation: Environments used to prove theorems</a><a class="headerlink" href="#gym-saturation-environments-used-to-prove-theorems" title="Permalink to this heading">#</a></h2>
@@ -549,6 +549,12 @@ many-agent RL (<a class="reference external" href="https://magent2.farama.org/">
 <p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.2-blue" /></span></a>
 <a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Paul-543NA/matrix-mdp-gym" /></span></a></p>
 <p>An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (<code class="docutils literal notranslate"><span class="pre">P_0(s)</span></code>, <code class="docutils literal notranslate"><span class="pre">P(s'|</span> <span class="pre">s,</span> <span class="pre">a)</span></code> and <code class="docutils literal notranslate"><span class="pre">R(s',</span> <span class="pre">s,</span> <span class="pre">a)</span></code>) into a gym environment that represents the discrete MDP ruled by these dynamics.</p>
+</section>
+<section id="flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium">
+<h2><a class="reference external" href="https://github.com/markub3327/flappy-bird-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a><a class="headerlink" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="#"><span class="xref myst"><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" /></span></a>
+<a class="reference internal" href="#"><span class="xref myst"><img alt="GitHub stars" src="https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium" /></span></a></p>
+<p>A simple environment for single-agent reinforcement learning algorithms on a clone of <a class="reference external" href="https://en.wikipedia.org/wiki/Flappy_Bird">Flappy Bird</a>, the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.</p>
 </section>
 <section id="third-party-environments-using-gym">
 <h2>Third-Party Environments using Gym<a class="headerlink" href="#third-party-environments-using-gym" title="Permalink to this heading">#</a></h2>
@@ -649,10 +655,6 @@ Many of these can be adapted to work with gymnasium (see <a class="reference ext
 <section id="carl-context-adaptive-rl">
 <h3><a class="reference external" href="https://github.com/automl/CARL">CARL: context adaptive RL</a><a class="headerlink" href="#carl-context-adaptive-rl" title="Permalink to this heading">#</a></h3>
 <p>Configurable reinforcement learning environments for testing generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.</p>
-</section>
-<section id="gym-cellular-automata-cellular-automata-environments">
-<h3><a class="reference external" href="https://github.com/elbecerrasoto/gym-cellular-automata">gym-cellular-automata: Cellular Automata environments</a><a class="headerlink" href="#gym-cellular-automata-cellular-automata-environments" title="Permalink to this heading">#</a></h3>
-<p>Environments where the agent interacts with <em>Cellular Automata</em> by changing its cell states.</p>
 </section>
 <section id="gym-sokoban-2d-transportation-puzzles">
 <h3><a class="reference external" href="https://github.com/mpSchrader/gym-sokoban">gym-sokoban: 2D Transportation Puzzles</a><a class="headerlink" href="#gym-sokoban-2d-transportation-puzzles" title="Permalink to this heading">#</a></h3>
@@ -767,9 +769,10 @@ Many of these can be adapted to work with gymnasium (see <a class="reference ext
 <li><a class="reference internal" href="#gym-jiminy-training-robots-in-jiminy">gym-jiminy: Training Robots in Jiminy</a></li>
 <li><a class="reference internal" href="#safety-gymnasium-ensuring-safety-in-real-world-rl-scenarios">Safety-Gymnasium: Ensuring safety in real-world RL scenarios</a></li>
 <li><a class="reference internal" href="#stable-retro-classic-retro-games-a-maintained-version-of-openai-retro">stable-retro: Classic retro games, a maintained version of OpenAI Retro</a></li>
-<li><a class="reference internal" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a></li>
+<li><a class="reference internal" href="#gym-cellular-automata-cellular-automata-environments">gym-cellular-automata: Cellular Automata environments</a></li>
 <li><a class="reference internal" href="#gym-saturation-environments-used-to-prove-theorems">gym-saturation: Environments used to prove theorems</a></li>
 <li><a class="reference internal" href="#matrix-mdp-easily-create-discrete-mdps">matrix-mdp: Easily create discrete MDPs</a></li>
+<li><a class="reference internal" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a></li>
 <li><a class="reference internal" href="#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
 <li><a class="reference internal" href="#video-game-environments">Video Game environments</a></li>
 <li><a class="reference internal" href="#robotics-environments">Robotics environments</a></li>
