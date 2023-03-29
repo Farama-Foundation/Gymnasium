@@ -66,12 +66,12 @@ Highly scalable and customizable Safe Reinforcement Learning library.
 
 Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
 
-### [flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium](https://github.com/markub3327/flappy-bird-gymnasium)
+### [gym-cellular-automata: Cellular Automata environments](https://github.com/elbecerrasoto/gym-cellular-automata)
 
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)]()
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata)]()
 
-A simple environment for single-agent reinforcement learning algorithms on a clone of [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.
+Environments where the agent interacts with _Cellular Automata_ by changing its cell states.
 
 ### [gym-saturation: Environments used to prove theorems](https://github.com/inpefess/gym-saturation)
 
@@ -86,6 +86,13 @@ An environment for guiding automated theorem provers based on saturation algorit
 [![GitHub stars](https://img.shields.io/github/stars/Paul-543NA/matrix-mdp-gym)]()
 
 An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (`P_0(s)`, `P(s'| s, a)` and `R(s', s, a)`) into a gym environment that represents the discrete MDP ruled by these dynamics.
+
+### [flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium](https://github.com/markub3327/flappy-bird-gymnasium)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)]()
+
+A simple environment for single-agent reinforcement learning algorithms on a clone of [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.
 
 ## Third-Party Environments using Gym
 
@@ -184,10 +191,6 @@ Reinforcement learning environments for compiler optimization tasks, such as LLV
 ### [CARL: context adaptive RL](https://github.com/automl/CARL)
 
 Configurable reinforcement learning environments for testing generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.
-
-### [gym-cellular-automata: Cellular Automata environments](https://github.com/elbecerrasoto/gym-cellular-automata)
-
-Environments where the agent interacts with _Cellular Automata_ by changing its cell states.
 
 ### [gym-sokoban: 2D Transportation Puzzles](https://github.com/mpSchrader/gym-sokoban)
 
