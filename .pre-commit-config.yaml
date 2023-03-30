@@ -18,7 +18,7 @@ repos:
       - id: detect-private-key
       - id: debug-statements
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.2
+    rev: v2.2.4
     hooks:
       - id: codespell
         args:
@@ -44,7 +44,7 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/python/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
   - repo: https://github.com/pycqa/pydocstyle
