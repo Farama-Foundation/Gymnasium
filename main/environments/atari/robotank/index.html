@@ -495,14 +495,8 @@
 <tr class="row-even"><td><p>Action Space</p></td>
 <td><p>Discrete(18)</p></td>
 </tr>
-<tr class="row-odd"><td><p>Observation Shape</p></td>
-<td><p>(210, 160, 3)</p></td>
-</tr>
-<tr class="row-even"><td><p>Observation High</p></td>
-<td><p>255</p></td>
-</tr>
-<tr class="row-odd"><td><p>Observation Low</p></td>
-<td><p>0</p></td>
+<tr class="row-odd"><td><p>Observation Space</p></td>
+<td><p>Box(0, 255, (210, 160, 3), uint8)</p></td>
 </tr>
 <tr class="row-even"><td><p>Import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;ALE/Robotank-v5&quot;)</span></code></p></td>
@@ -518,7 +512,7 @@
 </section>
 <section id="actions">
 <h2>Actions<a class="headerlink" href="#actions" title="Permalink to this heading">#</a></h2>
-<p>Robotank has the action space <code class="docutils literal notranslate"><span class="pre">Discrete(18)</span></code> with the table below lists the meaning of each action’s meanings.
+<p>Robotank has the action space <code class="docutils literal notranslate"><span class="pre">Discrete(18)</span></code> with the table below listing the meaning of each action’s meanings.
 As Robotank uses the full set of actions then specifying <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> will not modify the action space of the environment if passed to <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -580,13 +574,13 @@ As Robotank uses the full set of actions then specifying <code class="docutils l
 </section>
 <section id="observations">
 <h2>Observations<a class="headerlink" href="#observations" title="Permalink to this heading">#</a></h2>
-<p>Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.</p>
+<p>Atari environments have three possible observation types: <code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;grayscale&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code>.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;rgb&quot;</span> <span class="pre">-&gt;</span> <span class="pre">observation_space=Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160,</span> <span class="pre">3),</span> <span class="pre">np.uint8)</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;ram&quot;</span> <span class="pre">-&gt;</span> <span class="pre">observation_space=Box(0,</span> <span class="pre">255,</span> <span class="pre">(128,),</span> <span class="pre">np.uint8)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;grayscale&quot;</span> <span class="pre">-&gt;</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160),</span> <span class="pre">np.uint8)</span></code>, a grayscale version of the “rgb” type</p></li>
 </ul>
-<p>Additionally, <code class="docutils literal notranslate"><span class="pre">obs_type=&quot;grayscale&quot;</span></code> cause the environment return a grayscale version of the rgb array for observations with the observation space being <code class="docutils literal notranslate"><span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160),</span> <span class="pre">np.uint8)</span></code></p>
+<p>See variants section for the type of observation used by each environment id by default.</p>
 <section id="rewards">
 <h3>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h3>
 <p>The number of enemies destroyed is the only reward.</p>

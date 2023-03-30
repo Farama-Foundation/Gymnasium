@@ -495,14 +495,8 @@
 <tr class="row-even"><td><p>Action Space</p></td>
 <td><p>Discrete(10)</p></td>
 </tr>
-<tr class="row-odd"><td><p>Observation Shape</p></td>
-<td><p>(250, 160, 3)</p></td>
-</tr>
-<tr class="row-even"><td><p>Observation High</p></td>
-<td><p>255</p></td>
-</tr>
-<tr class="row-odd"><td><p>Observation Low</p></td>
-<td><p>0</p></td>
+<tr class="row-odd"><td><p>Observation Space</p></td>
+<td><p>Box(0, 255, (250, 160, 3), uint8)</p></td>
 </tr>
 <tr class="row-even"><td><p>Import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;ALE/MrDo-v5&quot;)</span></code></p></td>
@@ -517,8 +511,7 @@
 </section>
 <section id="actions">
 <h2>Actions<a class="headerlink" href="#actions" title="Permalink to this heading">#</a></h2>
-<p>MrDo has the action space <code class="docutils literal notranslate"><span class="pre">Discrete(10)</span></code> with the table below lists the meaning of each action’s meanings.
-As MrDo uses a reduced set of actions for <code class="docutils literal notranslate"><span class="pre">v0</span></code>, <code class="docutils literal notranslate"><span class="pre">v4</span></code> and <code class="docutils literal notranslate"><span class="pre">v5</span></code> versions of the environment.
+<p>MrDo has the action space of <code class="docutils literal notranslate"><span class="pre">Discrete(10)</span></code> with the table below listing the meaning of each action’s meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> during
 initialization or by passing <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> to <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -567,13 +560,13 @@ initialization or by passing <code class="docutils literal notranslate"><span cl
 </section>
 <section id="observations">
 <h2>Observations<a class="headerlink" href="#observations" title="Permalink to this heading">#</a></h2>
-<p>Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.</p>
+<p>Atari environments have three possible observation types: <code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;grayscale&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code>.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;rgb&quot;</span> <span class="pre">-&gt;</span> <span class="pre">observation_space=Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160,</span> <span class="pre">3),</span> <span class="pre">np.uint8)</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;ram&quot;</span> <span class="pre">-&gt;</span> <span class="pre">observation_space=Box(0,</span> <span class="pre">255,</span> <span class="pre">(128,),</span> <span class="pre">np.uint8)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;grayscale&quot;</span> <span class="pre">-&gt;</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160),</span> <span class="pre">np.uint8)</span></code>, a grayscale version of the “rgb” type</p></li>
 </ul>
-<p>Additionally, <code class="docutils literal notranslate"><span class="pre">obs_type=&quot;grayscale&quot;</span></code> cause the environment return a grayscale version of the rgb array for observations with the observation space being <code class="docutils literal notranslate"><span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160),</span> <span class="pre">np.uint8)</span></code></p>
+<p>See variants section for the type of observation used by each environment id by default.</p>
 </section>
 <section id="variants">
 <h2>Variants<a class="headerlink" href="#variants" title="Permalink to this heading">#</a></h2>
