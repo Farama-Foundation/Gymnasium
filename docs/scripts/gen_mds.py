@@ -19,7 +19,7 @@ exclude_env_names = [
     "tabular/Blackjack",
 ]
 for env_spec in gym.registry.values():
-    if env_spec.name not in exclude_env_names:
+    if get_env_id(env_spec.namespace, env_spec.name, None) not in exclude_env_names:
         highest_version = find_highest_version(env_spec.namespace, env_spec.name)
         env_id = get_env_id(env_spec.namespace, env_spec.name, highest_version)
 
