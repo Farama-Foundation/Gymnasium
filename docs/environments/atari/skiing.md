@@ -31,11 +31,9 @@ Skiing has the action space of `Discrete(3)` with the table below listing the me
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning   |
-|---------|-----------|
-| `0`     | `NOOP`    |
-| `1`     | `RIGHT`   |
-| `2`     | `LEFT`    |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning   |
+|---------|-----------|---------|-----------|---------|-----------|
+| `0`     | `NOOP`    | `1`     | `RIGHT`   | `2`     | `LEFT`    |
 
 ## Observations
 

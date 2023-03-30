@@ -29,13 +29,10 @@ VideoCheckers has the action space of `Discrete(5)` with the table below listing
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `FIRE`      |
-| `1`     | `UPRIGHT`   |
-| `2`     | `UPLEFT`    |
-| `3`     | `DOWNRIGHT` |
-| `4`     | `DOWNLEFT`  |
+| Value   | Meaning     | Value   | Meaning    | Value   | Meaning   |
+|---------|-------------|---------|------------|---------|-----------|
+| `0`     | `FIRE`      | `1`     | `UPRIGHT`  | `2`     | `UPLEFT`  |
+| `3`     | `DOWNRIGHT` | `4`     | `DOWNLEFT` |         |           |
 
 ## Observations
 

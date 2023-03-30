@@ -31,15 +31,11 @@ Assault has the action space of `Discrete(7)` with the table below listing the m
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `FIRE`      |
-| `2`     | `UP`        |
-| `3`     | `RIGHT`     |
-| `4`     | `LEFT`      |
-| `5`     | `RIGHTFIRE` |
-| `6`     | `LEFTFIRE`  |
+| Value   | Meaning    | Value   | Meaning   | Value   | Meaning     |
+|---------|------------|---------|-----------|---------|-------------|
+| `0`     | `NOOP`     | `1`     | `FIRE`    | `2`     | `UP`        |
+| `3`     | `RIGHT`    | `4`     | `LEFT`    | `5`     | `RIGHTFIRE` |
+| `6`     | `LEFTFIRE` |         |           |         |             |
 
 ## Observations
 

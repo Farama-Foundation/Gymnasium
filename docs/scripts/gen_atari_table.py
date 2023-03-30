@@ -101,12 +101,13 @@ For a more detailed documentation, see [the AtariAge page]({env_data['atariage_u
         env_url = ""
         reward_description = ""
 
+    table_values = map(
+        lambda s: f"`{s}`",
+        itertools.chain(*zip(range(env.action_space.n), env.get_action_meanings())),
+    )
     default_action_table = tabulate.tabulate(
-        [
-            [f"`{num}`", f"`{meaning}`"]
-            for num, meaning in enumerate(env.get_action_meanings())
-        ],
-        headers=["Value", "Meaning"],
+        list(itertools.zip_longest(*([iter(table_values)] * 6), fillvalue="")),
+        headers=["Value", "Meaning", "Value", "Meaning", "Value", "Meaning"],
         tablefmt="github",
     )
     if env.action_space.n == 18:
