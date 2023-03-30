@@ -688,7 +688,16 @@ newly instantiated or the policy was changed recently.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.TimeAwareObservationV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">TimeAwareObservationV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_time_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.TimeAwareObservationV0" title="Permalink to this definition">#</a></dt>
-<dd><p><a class="reference internal" href="../../spaces/utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.spaces.utils.flatten()</span></code></a> function.</p>
+<dd><p>Augment the observation with time information of the episode.</p>
+<p>The <code class="xref py py-attr docutils literal notranslate"><span class="pre">normalize_time</span></code> if <code class="docutils literal notranslate"><span class="pre">True</span></code> represents time as a normalized value between [0,1]
+otherwise if <code class="docutils literal notranslate"><span class="pre">False</span></code>, the number of timesteps remaining before truncation occurs is an integer.</p>
+<p>For environments with <code class="docutils literal notranslate"><span class="pre">Dict</span></code> observation spaces, the time information is automatically
+added in the key <cite>“time”</cite> (can be changed through <code class="xref py py-attr docutils literal notranslate"><span class="pre">dict_time_key</span></code>) and for environments with <code class="docutils literal notranslate"><span class="pre">Tuple</span></code>
+observation space, the time information is added as the final element in the tuple.
+Otherwise, the observation space is transformed into a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> observation space with two keys,
+<cite>“obs”</cite> for the base environment’s observation and <cite>“time”</cite> for the time information.</p>
+<p>To flatten the observation, use the <code class="xref py py-attr docutils literal notranslate"><span class="pre">flatten</span></code> parameter which will use the
+<a class="reference internal" href="../../spaces/utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.spaces.utils.flatten()</span></code></a> function.</p>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.experimental.wrappers</span> <span class="kn">import</span> <span class="n">TimeAwareObservationV0</span>
@@ -1045,7 +1054,38 @@ instantiated or the policy was changed recently.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordEpisodeStatisticsV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gym.Env</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'episode'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0" title="Permalink to this definition">#</a></dt>
-<dd><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively.</p>
+<dd><p>This wrapper will keep track of cumulative rewards and episode lengths.</p>
+<p>At the end of an episode, the statistics of the episode will be added to <code class="docutils literal notranslate"><span class="pre">info</span></code>
+using the key <code class="docutils literal notranslate"><span class="pre">episode</span></code>. If using a vectorized environment also the key
+<code class="docutils literal notranslate"><span class="pre">_episode</span></code> is used which indicates whether the env at the respective index has
+the episode statistics.</p>
+<p>After the completion of an episode, <code class="docutils literal notranslate"><span class="pre">info</span></code> will look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;cumulative reward&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;episode length&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>For a vectorized environments the output will be in the form of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;final_observation&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of length num-envs&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;_final_observation&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;final_info&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of length num-envs&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;_final_info&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of cumulative reward&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of episode length&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of elapsed time since beginning of episode&gt;&quot;</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;_episode&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

@@ -572,7 +572,26 @@ for last 150 steps.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.utils.play.PlayPlot">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.utils.play.</span></span><span class="sig-name descname"><span class="pre">PlayPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon_timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.utils.play.PlayPlot" title="Permalink to this definition">#</a></dt>
-<dd><p><a class="reference internal" href="#gymnasium.utils.play.PlayPlot" title="gymnasium.utils.play.PlayPlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlayPlot</span></code></a> provides the method <a class="reference internal" href="#gymnasium.utils.play.PlayPlot.callback" title="gymnasium.utils.play.PlayPlot.callback"><code class="xref py py-meth docutils literal notranslate"><span class="pre">callback()</span></code></a> which will pass its arguments along to that function
+<dd><p>Provides a callback to create live plots of arbitrary metrics when using <a class="reference internal" href="#gymnasium.utils.play.play" title="gymnasium.utils.play.play"><code class="xref py py-func docutils literal notranslate"><span class="pre">play()</span></code></a>.</p>
+<dl class="simple">
+<dt>This class is instantiated with a function that accepts information about a single environment transition:</dt><dd><ul class="simple">
+<li><p>obs_t: observation before performing action</p></li>
+<li><p>obs_tp1: observation after performing action</p></li>
+<li><p>action: action that was executed</p></li>
+<li><p>rew: reward that was received</p></li>
+<li><p>terminated: whether the environment is terminated or not</p></li>
+<li><p>truncated: whether the environment is truncated or not</p></li>
+<li><p>info: debug info</p></li>
+</ul>
+</dd>
+</dl>
+<p>It should return a list of metrics that are computed from this data.
+For instance, the function may look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">obs_t</span><span class="p">,</span> <span class="n">obs_tp</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">[</span><span class="n">reward</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;cumulative_reward&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">action</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#gymnasium.utils.play.PlayPlot" title="gymnasium.utils.play.PlayPlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlayPlot</span></code></a> provides the method <a class="reference internal" href="#gymnasium.utils.play.PlayPlot.callback" title="gymnasium.utils.play.PlayPlot.callback"><code class="xref py py-meth docutils literal notranslate"><span class="pre">callback()</span></code></a> which will pass its arguments along to that function
 and uses the returned values to update live plots of the metrics.</p>
 <p>Typically, this <a class="reference internal" href="#gymnasium.utils.play.PlayPlot.callback" title="gymnasium.utils.play.PlayPlot.callback"><code class="xref py py-meth docutils literal notranslate"><span class="pre">callback()</span></code></a> will be used in conjunction with <a class="reference internal" href="#gymnasium.utils.play.play" title="gymnasium.utils.play.play"><code class="xref py py-func docutils literal notranslate"><span class="pre">play()</span></code></a> to see how the metrics evolve as you play:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plotter</span> <span class="o">=</span> <span class="n">PlayPlot</span><span class="p">(</span><span class="n">compute_metrics</span><span class="p">,</span> <span class="n">horizon_timesteps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>                               
