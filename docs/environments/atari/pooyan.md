@@ -14,9 +14,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 |   |   |
 |---|---|
 | Action Space | Discrete(6) |
-| Observation Shape | (220, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0  |
+| Observation Space | Box(0, 255, (220, 160, 3), uint8) |
 | Import | `gymnasium.make("ALE/Pooyan-v5")` |
 
 For more Pooyan variants with different observation and action spaces, see the variants section.
@@ -25,12 +23,11 @@ For more Pooyan variants with different observation and action spaces, see the v
 
 You are a mother pig protecting her piglets (Pooyans) from wolves. In the first scene, you can move up and down a rope. Try to shoot the worker's balloons, while guarding yourself from attacks. If the wolves reach the ground safely they will get behind and try to eat you. In the second scene, the wolves try to float up. You have to try and stop them using arrows and bait. You die if a wolf eats you, or a stone or rock hits you.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=372)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=372)
 
 ## Actions
 
-Pooyan has the action space `Discrete(6)` with the table below lists the meaning of each action's meanings.
-As Pooyan uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+Pooyan has the action space of `Discrete(6)` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
@@ -45,13 +42,14 @@ initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 ### Rewards
 
 If you hit a balloon, wolf or stone with an arrow you score points.

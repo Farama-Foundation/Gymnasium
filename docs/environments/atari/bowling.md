@@ -14,9 +14,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 |   |   |
 |---|---|
 | Action Space | Discrete(6) |
-| Observation Shape | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0  |
+| Observation Space | Box(0, 255, (210, 160, 3), uint8) |
 | Import | `gymnasium.make("ALE/Bowling-v5")` |
 
 For more Bowling variants with different observation and action spaces, see the variants section.
@@ -25,12 +23,11 @@ For more Bowling variants with different observation and action spaces, see the 
 
 Your goal is to score as many points as possible in the game of Bowling. A game consists of 10 frames and you have two tries per frame. Knocking down all pins on the first try is called a "strike". Knocking down all pins on the second roll is called a "spar". Otherwise, the frame is called "open".
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=879)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=879)
 
 ## Actions
 
-Bowling has the action space `Discrete(6)` with the table below lists the meaning of each action's meanings.
-As Bowling uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+Bowling has the action space of `Discrete(6)` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
@@ -45,13 +42,14 @@ initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 ### Rewards
 
 You receive points for knocking down pins. The exact score depends on whether you manage a "strike", "spare" or "open"

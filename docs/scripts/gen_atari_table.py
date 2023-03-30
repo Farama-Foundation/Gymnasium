@@ -90,8 +90,8 @@ for rom_id in tqdm(ALL_ATARI_GAMES):
         env_description = env_data["env_description"]
         if env_data["atariage_url"]:
             env_url = f"""
-    For a more detailed documentation, see [the AtariAge page]({env_data['atariage_url']})
-    """
+For a more detailed documentation, see [the AtariAge page]({env_data['atariage_url']})
+"""
         else:
             env_url = ""
         reward_description = env_data["reward_description"]
@@ -110,11 +110,10 @@ for rom_id in tqdm(ALL_ATARI_GAMES):
         tablefmt="github",
     )
     if env.action_space.n == 18:
-        action_description = f"""{env_name} has the action space `{env.action_space}` with the table below lists the meaning of each action's meanings.
+        action_description = f"""{env_name} has the action space `{env.action_space}` with the table below listing the meaning of each action's meanings.
 As {env_name} uses the full set of actions then specifying `full_action_space=True` will not modify the action space of the environment if passed to `gymnasium.make`."""
     else:
-        action_description = f"""{env_name} has the action space `{env.action_space}` with the table below lists the meaning of each action's meanings.
-As {env_name} uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+        action_description = f"""{env_name} has the action space of `{env.action_space}` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`."""
 
@@ -185,9 +184,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 |   |   |
 |---|---|
 | Action Space | {env.action_space} |
-| Observation Shape | {env.observation_space.shape} |
-| Observation High | {env.observation_space.high.max()} |
-| Observation Low | {env.observation_space.low.min()}  |
+| Observation Space | {env.observation_space} |
 | Import | `gymnasium.make("{env.spec.id}")` |
 
 For more {env_name} variants with different observation and action spaces, see the variants section.
@@ -204,13 +201,14 @@ For more {env_name} variants with different observation and action spaces, see t
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 {reward_description}
 ## Variants
 

@@ -14,9 +14,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 |   |   |
 |---|---|
 | Action Space | Discrete(3) |
-| Observation Shape | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0  |
+| Observation Space | Box(0, 255, (210, 160, 3), uint8) |
 | Import | `gymnasium.make("ALE/Backgammon-v5")` |
 
 For more Backgammon variants with different observation and action spaces, see the variants section.
@@ -27,8 +25,7 @@ Backgammon is missing description documentation. If you are interested in writin
 
 ## Actions
 
-Backgammon has the action space `Discrete(3)` with the table below lists the meaning of each action's meanings.
-As Backgammon uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+Backgammon has the action space of `Discrete(3)` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
@@ -40,13 +37,14 @@ initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 
 ## Variants
 
