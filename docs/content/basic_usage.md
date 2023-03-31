@@ -129,6 +129,6 @@ If you have a wrapped environment, and you want to get the unwrapped environment
 
 ## More information
 
-* [Making a Custom environment using the Gymnasium API](/tutorials/environment_creation)
-* [Training an agent to play blackjack](/tutorials/blackjack_tutorial)
+* [Making a Custom environment using the Gymnasium API](/tutorials/gymnasium_basics/environment_creation/)
+* [Training an agent to play blackjack](/tutorials/training_agents/blackjack_tutorial)
 * [Compatibility with OpenAI Gym](/content/gym_compatibility)
