@@ -705,79 +705,105 @@ Therefore, install pygame using <code>pip install gym[box2d]</code> or <code>pip
 <section id="release-0-22-0">
 <h2>0.22.0<a class="headerlink" href="#release-0-22-0" title="Permalink to this heading">#</a></h2>
 <p><em>Released on 2022-02-17 - <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.22.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gym/0.22.0/">PyPI</a></em></p>
-<p>This release represents the largest set of changes ever to Gym, and represents a huge step towards the plans for 1.0 outlined here: <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1077867019" data-permission-text="Title is private" data-url="https://github.com/openai/gym/issues/2524" data-hovercard-type="issue" data-hovercard-url="/openai/gym/issues/2524/hovercard" href="https://github.com/openai/gym/issues/2524">#2524</a></p>
+<h1>v0.22 Release Notes</h1>
+<p>This release represents the largest set of changes ever to Gym, and represents a huge step towards the plans for 1.0 outlined here: <a href="https://github.com/openai/gym/pull/2524" data-hovercard-type="issue" data-hovercard-url="/openai/gym/issues/2524/hovercard">#2524</a></p>
 <p>Gym now has a new comprehensive documentation site: <a href="https://www.gymlibrary.ml/" rel="nofollow">https://www.gymlibrary.ml/</a> !</p>
-<p>API changes:</p>
-<p>-<code>env.reset</code> now accepts three new arguments:</p>
-<p><code>options</code>- Usable for things like controlling curriculum learning without reinitializing the environment, which can be expensive (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)<br>
-<code>seed</code>- Environment seeds can be passed to this reset argument in the future. The old <code>.seed()</code> method is being deprecated in favor of this, though it will continue to function as before until the 1.0 release for backwards compatibility purposes (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)<br>
-<code>infos</code>- when set to <code>True</code>, reset will return obs, info. This currently defaults to <code>False</code>, but will become the default behavior in Gym 1.0 (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)</p>
-<p>-Environment names no longer require a version during registration and will suggest intelligent similar names (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/kir0ul/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/kir0ul">@kir0ul</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>)</p>
-<p>-Vector environments now support terminal_observation in <code>info</code> and support batch action spaces (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/vwxyzjn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/vwxyzjn">@vwxyzjn</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/tristandeleu/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/tristandeleu">@tristandeleu</a>)</p>
-<p>Environment changes:<br>
--The blackjack and frozen lake toy_text environments now have nice graphical rendering using PyGame (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/1b15/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/1b15">@1b15</a>)<br>
--Moved robotics environments to gym-robotics package (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/seungjaeryanlee/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/seungjaeryanlee">@seungjaeryanlee</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Rohan138/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Rohan138">@Rohan138</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/vwxyzjn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/vwxyzjn">@vwxyzjn</a>) (per discussion in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1032765998" data-permission-text="Title is private" data-url="https://github.com/openai/gym/issues/2456" data-hovercard-type="issue" data-hovercard-url="/openai/gym/issues/2456/hovercard" href="https://github.com/openai/gym/issues/2456#issue-1032765998">#2456 (comment)</a>)<br>
--The bipedal walker and lunar lander environments were consolidated into one class (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/andrewtanJS/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/andrewtanJS">@andrewtanJS</a>)<br>
--Atari environments now use standard seeding API (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>)<br>
--Fixed large bug fixes in car_racing box2d environment, bumped version (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/carlosluis/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/carlosluis">@carlosluis</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/araffin/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/araffin">@araffin</a>)<br>
--Refactored all box2d and classic_control environments to use PyGame instead of Pyglet as issues with pyglet has been one of the most frequent sources of GitHub issues over the life of the gym project (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/andrewtanJS/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/andrewtanJS">@andrewtanJS</a>)</p>
-<p>Other changes:<br>
--Removed DiscreteEnv class, built in environments no longer use it (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/carlosluis/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/carlosluis">@carlosluis</a>)<br>
--Large numbers of type hints added (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/ikamensh/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/ikamensh">@ikamensh</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)<br>
--Python 3.10 support<br>
--Tons of additional code refactoring, cleanup, error message improvements and small bug fixes (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/vwxyzjn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/vwxyzjn">@vwxyzjn</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Markus28/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Markus28">@Markus28</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RushivArora/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RushivArora">@RushivArora</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jjshoots/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jjshoots">@jjshoots</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/XuehaiPan/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/XuehaiPan">@XuehaiPan</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Rohan138/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Rohan138">@Rohan138</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Ericonaldo/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Ericonaldo">@Ericonaldo</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/AdilZouitine/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/AdilZouitine">@AdilZouitine</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)<br>
--All environment files now have dramatically improved readmes at the top (that the documentation website automatically pulls from)<br>
--As part of the seeding changes, Gym's RNG has been modified to use the np.random.Generator  as the RandomState API has been deprecated. The methods randint, rand, randn are replaced by integers, random and standard_normal respectively. As a consequence, the random number generator has changed from MT19937 to PCG64.</p></section>
+<h2>API changes</h2>
+<ul>
+<li>
+<p><code>Env.reset</code> now accepts three new arguments:</p>
+</li>
+<li>
+<p><code>options</code>: Usable for things like controlling curriculum learning without reinitializing the environment, which can be expensive (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</p>
+</li>
+<li>
+<p><code>seed</code>: Environment seeds can be passed to this reset argument in the future. The old <code>.seed()</code> method is being deprecated in favor of this, though it will continue to function as before until the 1.0 release for backwards compatibility purposes (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</p>
+</li>
+<li>
+<p><code>return_info</code>: when set to <code>True</code>, reset will return obs, info. This currently defaults to <code>False</code>, but will become the default behavior in Gym 1.0 (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</p>
+</li>
+<li>
+<p>Environment names no longer require a version during registration and will suggest intelligent similar names (<a href="https://github.com/kir0ul">@kir0ul</a>, <a href="https://github.com/JesseFarebro">@JesseFarebro</a>)</p>
+</li>
+<li>
+<p>Vector environments now support terminal_observation in <code>info</code> and support batch action spaces (<a href="https://github.com/vwxyzjn">@vwxyzjn</a>, <a href="https://github.com/tristandeleu">@tristandeleu</a>)</p>
+</li>
+</ul>
+<h2>Environment changes</h2>
+<ul>
+<li>The blackjack and frozen lake toy_text environments now have nice graphical rendering using PyGame (<a href="https://github.com/1b15">@1b15</a>)</li>
+<li>Moved robotics environments to gym-robotics package (<a href="https://github.com/seungjaeryanlee">@seungjaeryanlee</a>, <a href="https://github.com/Rohan138">@Rohan138</a>, <a href="https://github.com/vwxyzjn">@vwxyzjn</a>) (per discussion in <a href="https://github.com/openai/gym/pull/2456" data-hovercard-type="issue" data-hovercard-url="/openai/gym/issues/2456/hovercard">#2456</a> (comment))</li>
+<li>The bipedal walker and lunar lander environments were consolidated into one class (<a href="https://github.com/andrewtanJS">@andrewtanJS</a>)</li>
+<li>Atari environments now use standard seeding API (<a href="https://github.com/JesseFarebro">@JesseFarebro</a>)</li>
+<li>Fixed large bug fixes in car_racing box2d environment, bumped version (<a href="https://github.com/carlosluis">@carlosluis</a>, <a href="https://github.com/araffin">@araffin</a>)</li>
+<li>Refactored all box2d and classic_control environments to use PyGame instead of Pyglet as issues with pyglet has been one of the most frequent sources of GitHub issues over the life of the gym project (<a href="https://github.com/andrewtanJS">@andrewtanJS</a>)</li>
+</ul>
+<h2>Other changes</h2>
+<ul>
+<li>Removed DiscreteEnv class, built in environments no longer use it (<a href="https://github.com/carlosluis">@carlosluis</a>)</li>
+<li>Large numbers of type hints added (<a href="https://github.com/ikamensh">@ikamensh</a>, <a href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
+<li>Python 3.10 support</li>
+<li>Tons of additional code refactoring, cleanup, error message improvements and small bug fixes (<a href="https://github.com/vwxyzjn">@vwxyzjn</a>, <a href="https://github.com/Markus28">@Markus28</a>, <a href="https://github.com/RushivArora">@RushivArora</a>, <a href="https://github.com/jjshoots">@jjshoots</a>, <a href="https://github.com/XuehaiPan">@XuehaiPan</a>, <a href="https://github.com/Rohan138">@Rohan138</a>, <a href="https://github.com/JesseFarebro">@JesseFarebro</a>, <a href="https://github.com/Ericonaldo">@Ericonaldo</a>, <a href="https://github.com/AdilZouitine">@AdilZouitine</a>, <a href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
+<li>All environment files now have dramatically improved readmes at the top (that the documentation website automatically pulls from)</li>
+<li>As part of the seeding changes, Gym's RNG has been modified to use the <code>np.random.Generator</code> as the RandomState API has been deprecated. The methods <code>randint</code>, <code>rand</code>, <code>randn</code> are replaced by <code>integers</code>, <code>random</code> and <code>standard_normal</code> respectively. As a consequence, the random number generator has changed from <code>MT19937</code> to <code>PCG64</code>.</li>
+</ul>
+<p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/openai/gym/compare/v0.21.0...0.22.0"><tt>v0.21.0...0.22.0</tt></a></p></section>
 <section id="release-v0-21-0">
-<h2>v0.21.0: 0.21.0<a class="headerlink" href="#release-v0-21-0" title="Permalink to this heading">#</a></h2>
+<h2>v0.21.0<a class="headerlink" href="#release-v0-21-0" title="Permalink to this heading">#</a></h2>
 <p><em>Released on 2021-10-02 - <a class="reference external" href="https://github.com/openai/gym/releases/tag/v0.21.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gym/v0.21.0/">PyPI</a></em></p>
-<p>-The old Atari entry point that was broken with the last release and the upgrade to ALE-Py is fixed (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>)<br>
--Atari environments now give much clearer error messages and warnings (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>)<br>
--A new plugin system to enable an easier inclusion of third party environments has been added (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>)<br>
--Atari environments now use the new plugin system to prevent clobbered names and other issues (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>)<br>
--<code>pip install gym[atari]</code> no longer distributes Atari ROMs that the ALE (the Atari emulator used) needs to run the various games. The easiest way to install ROMs into the ALE has been to use <a href="https://github.com/PettingZoo-Team/AutoROM">AutoROM</a>. Gym now has a hook to AutoROM for easier CI automation so that using <code>pip install gym[accept-rom-license]</code> calls AutoROM to add ROMs to the ALE. You can install the entire suite with the shorthand <code>gym[atari, accept-rom-license]</code>. Note that as described in the name name, by installing <code>gym[accept-rom-license]</code> you are confirming that you have the relevant license to install the ROMs. (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>)<br>
--An accidental breaking change when loading saved policies trained on old versions of Gym with environments using the box action space have been fixed. (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)<br>
--Pendulum has had a minor fix to it's physics logic made and the version has been bumped to v1 (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)<br>
--Tests have been refactored into an orderly manner (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)<br>
--Dict spaces now have standard dict helper methods (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Rohan138/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Rohan138">@Rohan138</a>)<br>
--Environment properties are now forwarded to the wrapper (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/tristandeleu/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/tristandeleu">@tristandeleu</a>)<br>
--Gym now <em>properly</em> enforces calling reset before stepping for the first time (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/ahmedo42/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/ahmedo42">@ahmedo42</a>)<br>
--Proper piping of error messages to stderr (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/XuehaiPan/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/XuehaiPan">@XuehaiPan</a>)<br>
--Fix video saving issues (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/zlig/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/zlig">@zlig</a>)</p>
-<p>Also, Gym is compiling a list of third party environments to into the new documentation website we're working on. Please submit PRs for ones that are missing: <a href="https://github.com/openai/gym/blob/master/docs/third_party_environments.md">https://github.com/openai/gym/blob/master/docs/third_party_environments.md</a></p></section>
+<h1>v0.21.0 Release Notes</h1>
+<ul>
+<li>The old Atari entry point that was broken with the last release and the upgrade to ALE-Py is fixed (<a href="https://github.com/JesseFarebro">@JesseFarebro</a>)</li>
+<li>Atari environments now give much clearer error messages and warnings (<a href="https://github.com/JesseFarebro">@JesseFarebro</a>)</li>
+<li>A new plugin system to enable an easier inclusion of third party environments has been added (<a href="https://github.com/JesseFarebro">@JesseFarebro</a>)</li>
+<li>Atari environments now use the new plugin system to prevent clobbered names and other issues (<a href="https://github.com/JesseFarebro">@JesseFarebro</a>)</li>
+<li><code>pip install gym[atari]</code> no longer distributes Atari ROMs that the ALE (the Atari emulator used) needs to run the various games. The easiest way to install ROMs into the ALE has been to use <a href="https://github.com/Farama-Foundation/AutoROM">AutoROM</a>. Gym now has a hook to AutoROM for easier CI automation so that using <code>pip install gym[accept-rom-license]</code> calls AutoROM to add ROMs to the ALE. You can install the entire suite with the shorthand <code>gym[atari, accept-rom-license]</code>. Note that as described in the name name, by installing <code>gym[accept-rom-license]</code> you are confirming that you have the relevant license to install the ROMs. (<a href="https://github.com/JesseFarebro">@JesseFarebro</a>)</li>
+<li>An accidental breaking change when loading saved policies trained on old versions of Gym with environments using the box action space have been fixed. (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
+<li>Pendulum has had a minor fix to it's physics logic made and the version has been bumped to v1 (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
+<li>Tests have been refactored into an orderly manner (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
+<li>Dict spaces now have standard dict helper methods (<a href="https://github.com/Rohan138">@Rohan138</a>)</li>
+<li>Environment properties are now forwarded to the wrapper (<a href="https://github.com/tristandeleu">@tristandeleu</a>)</li>
+<li>Gym now properly enforces calling reset before stepping for the first time (<a href="https://github.com/ahmedo42">@ahmedo42</a>)</li>
+<li>Proper piping of error messages to stderr (<a href="https://github.com/XuehaiPan">@XuehaiPan</a>)</li>
+<li>Fix video saving issues (<a href="https://github.com/zlig">@zlig</a>)</li>
+</ul>
+<p>Also, Gym is compiling a list of third party environments to into the new documentation website we're working on. Please submit PRs for ones that are missing: <a href="https://github.com/openai/gym/blob/master/docs/third_party_environments.md">https://github.com/openai/gym/blob/master/docs/third_party_environments.md</a></p>
+<p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/openai/gym/compare/v0.20.0...v0.21.0"><tt>v0.20.0...v0.21.0</tt></a></p></section>
 <section id="release-v0-20-0">
-<h2>v0.20.0: 0.20.0<a class="headerlink" href="#release-v0-20-0" title="Permalink to this heading">#</a></h2>
+<h2>v0.20.0<a class="headerlink" href="#release-v0-20-0" title="Permalink to this heading">#</a></h2>
 <p><em>Released on 2021-09-14 - <a class="reference external" href="https://github.com/openai/gym/releases/tag/v0.20.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gym/v0.20.0/">PyPI</a></em></p>
-<p>Major Change:</p>
+<h1>v0.20.0 Release Notes</h1>
+<h2>Major Change</h2>
 <ul>
-<li>Replaced Atari-Py dependency with ALE-Py and bumped all versions. <em>This is a massive upgrade with many changes, please see the <a href="https://brosa.ca/blog/ale-release-v0.7" rel="nofollow">full explainer</a></em> (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JesseFarebro/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JesseFarebro">@JesseFarebro</a>)</li>
-<li>Note that ALE-Py does not include ROMs. You can install ROMs in two lines of bash with AutoROM though (<code>pip3 install autorom</code> and then <code>autorom</code>), see <a href="https://github.com/PettingZoo-Team/AutoROM">https://github.com/PettingZoo-Team/AutoROM</a>. This is the recommended approach for CI, etc.</li>
+<li>Replaced Atari-Py dependency with ALE-Py and bumped all versions. This is a massive upgrade with many changes, please see the <a href="https://brosa.ca/blog/ale-release-v0.7" rel="nofollow">full explainer</a> (<a href="https://github.com/JesseFarebro">@JesseFarebro</a>)</li>
+<li>Note that ALE-Py does not include ROMs. You can install ROMs in two lines of bash with <code>AutoROM</code> though (<code>pip3 install autorom and then autorom</code>), see <a href="https://github.com/PettingZoo-Team/AutoROM">https://github.com/PettingZoo-Team/AutoROM</a>. This is the recommended approach for CI, etc.</li>
 </ul>
-<p>Breaking changes and new features:</p>
+<h2>Breaking changes and new features:</h2>
 <ul>
-<li>Add <code>RecordVideo</code> wrapper, deprecate monitor wrapper in favor of it and <code>RecordEpisodeStatistics</code> wrapper (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/vwxyzjn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/vwxyzjn">@vwxyzjn</a>)</li>
-<li>Dependencies used outside of environments (e.g. for wrappers) are now in 'other' extra' (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jkterry1/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jkterry1">@jkterry1</a>)</li>
-<li>Moved algorithmic and unused toytext envs (guessing game, hotter colder, nchain, roulette, kellycoinflip) to third party repos (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jkterry1/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jkterry1">@jkterry1</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Rohan138/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Rohan138">@Rohan138</a>)</li>
-<li>Fixed flatten utility and flatdim in MultiDiscrete sapce (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/tristandeleu/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/tristandeleu">@tristandeleu</a>)</li>
-<li>Add <code>__setitem__</code> to dict space (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jfpettit/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jfpettit">@jfpettit</a>)</li>
-<li>Large fixes to .contains method for box space (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/FirefoxMetzger/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/FirefoxMetzger">@FirefoxMetzger</a>)</li>
-<li>Made blackjack environment properly comply with Barto and Sutton book standard, bumped to v1 (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
-<li>Added <code>NormalizeObservation</code> and <code>NormalizeReward</code> wrappers (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/vwxyzjn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/vwxyzjn">@vwxyzjn</a>)</li>
-<li>Add <code>__getitem__</code> and  <code>__len__</code> to MultiDiscrete space (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/XuehaiPan/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/XuehaiPan">@XuehaiPan</a>)</li>
-<li>Changed .shape to be a property of box space to prevent unexpected behaviors (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
+<li>Add <code>RecordVideo</code> wrapper, deprecate <code>monitor</code> wrapper in favor of it and <code>RecordEpisodeStatistics</code> wrapper (<a href="https://github.com/vwxyzjn">@vwxyzjn</a>)</li>
+<li>Dependencies used outside of environments (e.g. for wrappers) are now in <code>gym[other]</code> (<a href="https://github.com/jkterry1">@jkterry1</a>)</li>
+<li>Moved algorithmic and unused toy-text envs (guessing game, hotter colder, nchain, roulette, kellycoinflip) to third party repos (<a href="https://github.com/jkterry1">@jkterry1</a>, <a href="https://github.com/Rohan138">@Rohan138</a>)</li>
+<li>Fixed flatten utility and flatdim in MultiDiscrete space (<a href="https://github.com/tristandeleu">@tristandeleu</a>)</li>
+<li>Add <code>__setitem__</code> to dict space (<a href="https://github.com/jfpettit">@jfpettit</a>)</li>
+<li>Large fixes to <code>.contains</code> method for box space (<a href="https://github.com/FirefoxMetzger">@FirefoxMetzger</a>)</li>
+<li>Made blackjack environment properly comply with Barto and Sutton book standard, bumped to v1 (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
+<li>Added <code>NormalizeObservation</code> and <code>NormalizeReward</code> wrappers (<a href="https://github.com/vwxyzjn">@vwxyzjn</a>)</li>
+<li>Add <code>__getitem__</code> and <code>__len__</code> to MultiDiscrete space (<a href="https://github.com/XuehaiPan">@XuehaiPan</a>)</li>
+<li>Changed <code>.shape</code> to be a property of box space to prevent unexpected behaviors (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
 </ul>
-<p>Bug fixes and upgrades:</p>
+<h2>Bug fixes and upgrades</h2>
 <ul>
-<li>Video recorder gracefully handles closing (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/XuehaiPan/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/XuehaiPan">@XuehaiPan</a>)</li>
-<li>Remaining unnecessary dependencies in setup.py are resolved (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jkterry1/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jkterry1">@jkterry1</a>)</li>
-<li>Minor acrobot performance improvements (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/TuckerBMorgan/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/TuckerBMorgan">@TuckerBMorgan</a>)</li>
-<li>Pendulum properly renders when 0 force is sent (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Olimoyo/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Olimoyo">@Olimoyo</a>)</li>
-<li>Make observations dtypes be consistent with observation space dtypes for all classic control envs and bipedalwalker (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
-<li>Removed unused and long depricated features in registration (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Rohan138/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Rohan138">@Rohan138</a>)</li>
-<li>Framestack wrapper now inherits from obswrapper (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jfpettit/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jfpettit">@jfpettit</a>)</li>
-<li>Seed method for <code>spaces.Tuple</code> and <code>spaces.Dict</code> now properly function, are fully stochastic, are fully featured and behave in the expected manner (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/XuehaiPan/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/XuehaiPan">@XuehaiPan</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RaghuSpaceRajan/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RaghuSpaceRajan">@RaghuSpaceRajan</a>)</li>
-<li>Replace <code>time()</code> with <code>perf_counter()</code> for better measurements of short duration (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/zuoxingdong/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/zuoxingdong">@zuoxingdong</a>)</li>
-</ul></section>
+<li>Video recorder gracefully handles closing (<a href="https://github.com/XuehaiPan">@XuehaiPan</a>)</li>
+<li>Remaining unnecessary dependencies in setup.py are resolved (<a href="https://github.com/jkterry1">@jkterry1</a>)</li>
+<li>Minor acrobot performance improvements (<a href="https://github.com/TuckerBMorgan">@TuckerBMorgan</a>)</li>
+<li>Pendulum properly renders when 0 force is sent (<a href="https://github.com/Olimoyo">@Olimoyo</a>)</li>
+<li>Make observations dtypes be consistent with observation space dtypes for all classic control envs and bipedal-walker (<a href="https://github.com/RedTachyon">@RedTachyon</a>)</li>
+<li>Removed unused and long deprecated features in registration (<a href="https://github.com/Rohan138">@Rohan138</a>)</li>
+<li>Framestack wrapper now inherits from obswrapper (<a href="https://github.com/jfpettit">@jfpettit</a>)</li>
+<li>Seed method for <code>spaces.Tuple</code> and <code>spaces.Dict</code> now properly function, are fully stochastic, are fully featured and behave in the expected manner (<a href="https://github.com/XuehaiPan">@XuehaiPan</a>, <a href="https://github.com/RaghuSpaceRajan">@RaghuSpaceRajan</a>)</li>
+<li>Replace <code>time()</code> with <code>perf_counter()</code> for better measurements of short duration (<a href="https://github.com/zuoxingdong">@zuoxingdong</a>)</li>
+</ul>
+<p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/openai/gym/compare/0.19.0...v0.20.0"><tt>0.19.0...v0.20.0</tt></a></p></section>
 <section id="release-0-19-0">
 <h2>0.19.0<a class="headerlink" href="#release-0-19-0" title="Permalink to this heading">#</a></h2>
 <p><em>Released on 2021-08-13 - <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.19.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gym/0.19.0/">PyPI</a></em></p>
@@ -805,11 +831,11 @@ Therefore, install pygame using <code>pip install gym[box2d]</code> or <code>pip
 <li>Code is now all flake8 compliant through black (<a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/cclauss/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/cclauss">@cclauss</a>)</li>
 </ul></section>
 <section id="release-0-12-5">
-<h2>0.12.5: Fixed fetch/slide<a class="headerlink" href="#release-0-12-5" title="Permalink to this heading">#</a></h2>
+<h2>0.12.5<a class="headerlink" href="#release-0-12-5" title="Permalink to this heading">#</a></h2>
 <p><em>Released on 2019-05-29 - <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.12.5">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gym/0.12.5/">PyPI</a></em></p>
 </section>
 <section id="release-v0-9-6">
-<h2>v0.9.6: Cleanup + Remove Unmaintained Code<a class="headerlink" href="#release-v0-9-6" title="Permalink to this heading">#</a></h2>
+<h2>v0.9.6<a class="headerlink" href="#release-v0-9-6" title="Permalink to this heading">#</a></h2>
 <p><em>Released on 2018-02-01 - <a class="reference external" href="https://github.com/openai/gym/releases/tag/v0.9.6">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gym/v0.9.6/">PyPI</a></em></p>
 <ul>
 <li>Now your <code>Env</code> and <code>Wrapper</code> subclasses should define <code>step</code>, <code>reset</code>, <code>render</code>, <code>close</code>, <code>seed</code> rather than underscored method names.</li>
@@ -887,11 +913,11 @@ Therefore, install pygame using <code>pip install gym[box2d]</code> or <code>pip
 <li><a class="reference internal" href="#release-0-23-1">0.23.1</a></li>
 <li><a class="reference internal" href="#release-0-23-0">0.23.0</a></li>
 <li><a class="reference internal" href="#release-0-22-0">0.22.0</a></li>
-<li><a class="reference internal" href="#release-v0-21-0">v0.21.0: 0.21.0</a></li>
-<li><a class="reference internal" href="#release-v0-20-0">v0.20.0: 0.20.0</a></li>
+<li><a class="reference internal" href="#release-v0-21-0">v0.21.0</a></li>
+<li><a class="reference internal" href="#release-v0-20-0">v0.20.0</a></li>
 <li><a class="reference internal" href="#release-0-19-0">0.19.0</a></li>
-<li><a class="reference internal" href="#release-0-12-5">0.12.5: Fixed fetch/slide</a></li>
-<li><a class="reference internal" href="#release-v0-9-6">v0.9.6: Cleanup + Remove Unmaintained Code</a></li>
+<li><a class="reference internal" href="#release-0-12-5">0.12.5</a></li>
+<li><a class="reference internal" href="#release-v0-9-6">v0.9.6</a></li>
 <li><a class="reference internal" href="#release-v0-9-5">v0.9.5</a></li>
 <li><a class="reference internal" href="#release-v0-7-4">v0.7.4</a></li>
 <li><a class="reference internal" href="#release-v0-7-3">v0.7.3: </a></li>
