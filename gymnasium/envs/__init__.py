@@ -172,7 +172,7 @@ register(
 )
 
 register(
-    id="Jax-CliffWalking-v0",
+    id="tablular/CliffWalking-v0",
     entry_point="gymnasium.envs.tabular.cliffwalking:CliffWalkingJaxEnv",
 )
 

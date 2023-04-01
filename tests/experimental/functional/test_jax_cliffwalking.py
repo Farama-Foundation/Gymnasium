@@ -42,11 +42,9 @@ def test_normal_CliffWalkingFunctional():
         assert next_state[0].dtype == jnp.int32
         assert next_state[1].dtype == jnp.int32
         assert next_state[2].dtype == bool
-        
 
         assert rng.dtype == jnp.uint32
         assert obs.dtype == jnp.int32
-
 
         state = next_state
 
@@ -83,7 +81,6 @@ def test_jit_CliffWalkingFunctional():
         assert next_state[0].dtype == jnp.int32
         assert next_state[1].dtype == jnp.int32
         assert next_state[2].dtype == bool
-        
 
         assert rng.dtype == jnp.uint32
         assert obs.dtype == jnp.int32

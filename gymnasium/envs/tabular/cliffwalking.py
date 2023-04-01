@@ -1,45 +1,46 @@
 """This module provides a CliffWalking functional environment and Gymnasium environment wrapper CliffWalkingJaxEnv."""
 
 
-import math
-import os
 from os import path
-
 from typing import NamedTuple, Optional, Tuple, Union
 
 import jax
 import jax.numpy as jnp
 import numpy as np
-from jax import random
 from jax.random import PRNGKey
 
 from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
-from gymnasium.utils import EzPickle, seeding
+from gymnasium.utils import EzPickle
 from gymnasium.wrappers import HumanRendering
 
 
 RenderStateType = Tuple["pygame.Surface"]  # type: ignore  # noqa: F821
 
+
 class EnvState(NamedTuple):
     """A named tuple which contains the full state of the Cliffwalking game."""
+
     player_position: jnp.array
     last_action: int
     fallen: bool
 
 
 def fell_off(player_position):
-    return (player_position[0] == 3) * (player_position[1] >= 1) * (player_position[1] <= 10)
-
+    """Checks to see if the player_position means the player has fallen of the cliff."""
+    return (
+        (player_position[0] == 3)
+        * (player_position[1] >= 1)
+        * (player_position[1] <= 10)
+    )
 
 
 class CliffWalkingFunctional(
     FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
 ):
-    """
-    Cliff walking involves crossing a gridworld from start to goal while avoiding falling off a cliff.
+    """Cliff walking involves crossing a gridworld from start to goal while avoiding falling off a cliff.
 
     ## Description
     The game starts with the player at location [3, 0] of the 4x12 grid world with the
@@ -110,81 +111,82 @@ class CliffWalkingFunctional(
 
     """
 
-
-    action_space = spaces.Box(low = 0, high = 3,dtype=np.int32) #  4 directions
-    observation_space = spaces.Box(low = 0, high = (12*4)-1, shape = (1,),dtype=np.int32) # A discrete state corresponds to each possible location
+    action_space = spaces.Box(low=0, high=3, dtype=np.int32)  # 4 directions
+    observation_space = spaces.Box(
+        low=0, high=(12 * 4) - 1, shape=(1,), dtype=np.int32
+    )  # A discrete state corresponds to each possible location
 
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 4,
     }
-     
 
     def transition(
-        self,
-         state: EnvState, action: Union[int, jnp.ndarray], key: PRNGKey
+        self, state: EnvState, action: Union[int, jnp.ndarray], key: PRNGKey
     ):
         """The Cliffwalking environment's state transition function."""
         new_position = state.player_position
-        
-        #where is the agent trying to go?
-        new_position = jnp.array([
-            new_position[0] + (1 * (action == 2)) + (-1 * (action == 0)),
-            new_position[1] + (1 * (action == 1)) + (-1 * (action == 3))
-        ])
 
-        #prevent out of bounds
-        new_position = jnp.array([
-            jnp.maximum(jnp.minimum(new_position[0], 3),0),
-            jnp.maximum(jnp.minimum(new_position[1], 11),0)
-        ])
-    
-        #if we fell off, we have to start over from scratch from (3,0)
+        # where is the agent trying to go?
+        new_position = jnp.array(
+            [
+                new_position[0] + (1 * (action == 2)) + (-1 * (action == 0)),
+                new_position[1] + (1 * (action == 1)) + (-1 * (action == 3)),
+            ]
+        )
+
+        # prevent out of bounds
+        new_position = jnp.array(
+            [
+                jnp.maximum(jnp.minimum(new_position[0], 3), 0),
+                jnp.maximum(jnp.minimum(new_position[1], 11), 0),
+            ]
+        )
+
+        # if we fell off, we have to start over from scratch from (3,0)
         fallen = fell_off(new_position)
-        new_position = jnp.array([
-            new_position[0] * (1-fallen) + 3 * fallen, 
-            new_position[1] * (1-fallen)
-        ])
+        new_position = jnp.array(
+            [
+                new_position[0] * (1 - fallen) + 3 * fallen,
+                new_position[1] * (1 - fallen),
+            ]
+        )
         new_state = EnvState(
-            player_position = new_position.reshape((2,)),
-            last_action = action[0],
-            fallen = fallen
+            player_position=new_position.reshape((2,)),
+            last_action=action[0],
+            fallen=fallen,
         )
 
         return new_state
 
-    def initial( self, rng: PRNGKey):
+    def initial(self, rng: PRNGKey):
         """Cliffwalking initial observation function."""
+        player_position = jnp.array([3, 0])
 
-        player_position = jnp.array([3,0])
-
-
-        state = EnvState(
-            player_position = player_position,
-            last_action = -1,
-            fallen = False
-        )
+        state = EnvState(player_position=player_position, last_action=-1, fallen=False)
 
         return state
 
     def observation(self, state: EnvState) -> int:
         """Cliffwalking observation."""
-        return jnp.array(state.player_position[0] * 12 + state.player_position[1]).reshape((1,))
+        return jnp.array(
+            state.player_position[0] * 12 + state.player_position[1]
+        ).reshape((1,))
 
     def terminal(self, state: EnvState) -> jnp.ndarray:
         """Determines if a particular Cliffwalking observation is terminal."""
-        return jnp.array_equal(state.player_position, jnp.array([3,11]))
+        return jnp.array_equal(state.player_position, jnp.array([3, 11]))
 
-    def reward(self,
-         state: EnvState, action: ActType, next_state: StateType
+    def reward(
+        self, state: EnvState, action: ActType, next_state: StateType
     ) -> jnp.ndarray:
         """Calculates reward from a state."""
         state = next_state
-        reward = -1  + (-99 * state.fallen[0])
+        reward = -1 + (-99 * state.fallen[0])
         return jax.lax.convert_element_type(reward, jnp.float32)
 
-    def render_init(self,
-         screen_width: int = 600, screen_height: int = 500
+    def render_init(
+        self, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
         """Returns an initial render state."""
         try:
@@ -193,8 +195,6 @@ class CliffWalkingFunctional(
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic_control]`"
             )
-
-        rng = seeding.np_random(0)[0]
 
         cell_size = (60, 60)
         window_size = (
@@ -205,95 +205,120 @@ class CliffWalkingFunctional(
         pygame.init()
         screen = pygame.Surface((window_size[1], window_size[0]))
 
-        return screen
+        shape = (4, 12)
+        nS = 4 * 12
+        # Cliff Location
+        cliff = np.zeros(shape, dtype=bool)
+        cliff[3, 1:-1] = True
+
+        hikers = [
+            path.join(path.dirname(__file__), "../toy_text/img/elf_up.png"),
+            path.join(path.dirname(__file__), "../toy_text/img/elf_right.png"),
+            path.join(path.dirname(__file__), "../toy_text/img/elf_down.png"),
+            path.join(path.dirname(__file__), "../toy_text/img/elf_left.png"),
+        ]
+
+        cell_size = (60, 60)
+
+        elf_images = [
+            pygame.transform.scale(pygame.image.load(f_name), cell_size)
+            for f_name in hikers
+        ]
+        file_name = path.join(path.dirname(__file__), "../toy_text/img/stool.png")
+        start_img = pygame.transform.scale(pygame.image.load(file_name), cell_size)
+        file_name = path.join(path.dirname(__file__), "../toy_text/img/cookie.png")
+        goal_img = pygame.transform.scale(pygame.image.load(file_name), cell_size)
+        bg_imgs = [
+            path.join(path.dirname(__file__), "../toy_text/img/mountain_bg1.png"),
+            path.join(path.dirname(__file__), "../toy_text/img/mountain_bg2.png"),
+        ]
+        mountain_bg_img = [
+            pygame.transform.scale(pygame.image.load(f_name), cell_size)
+            for f_name in bg_imgs
+        ]
+        near_cliff_imgs = [
+            path.join(
+                path.dirname(__file__), "../toy_text/img/mountain_near-cliff1.png"
+            ),
+            path.join(
+                path.dirname(__file__), "../toy_text/img/mountain_near-cliff2.png"
+            ),
+        ]
+        near_cliff_img = [
+            pygame.transform.scale(pygame.image.load(f_name), cell_size)
+            for f_name in near_cliff_imgs
+        ]
+        file_name = path.join(
+            path.dirname(__file__), "../toy_text/img/mountain_cliff.png"
+        )
+        cliff_img = pygame.transform.scale(pygame.image.load(file_name), cell_size)
+
+        return (
+            screen,
+            shape,
+            nS,
+            cell_size,
+            cliff,
+            elf_images,
+            start_img,
+            goal_img,
+            bg_imgs,
+            mountain_bg_img,
+            near_cliff_imgs,
+            near_cliff_img,
+            cliff_img,
+        )
 
     def render_image(
         self,
         state: StateType,
         render_state: RenderStateType,
     ) -> Tuple[RenderStateType, np.ndarray]:
-            """Renders an image from a state."""
-            try:
-                import pygame
-            except ImportError:
-                raise DependencyNotInstalled(
-                    "pygame is not installed, run `pip install gymnasium[toy_text]`"
-                )
-            window_surface = render_state
-
-
-
-            shape = (4,12)
-            nS = 4 * 12
-                    # Cliff Location
-            cliff = np.zeros(shape, dtype=bool)
-            cliff[3, 1:-1] = True
-
-            
-            hikers = [
-                path.join(path.dirname(__file__), "../toy_text/img/elf_up.png"),
-                path.join(path.dirname(__file__), "../toy_text/img/elf_right.png"),
-                path.join(path.dirname(__file__), "../toy_text/img/elf_down.png"),
-                path.join(path.dirname(__file__), "../toy_text/img/elf_left.png"),
-            ]
-
-            cell_size = (60, 60)
-
-
-            
-            elf_images = [
-                pygame.transform.scale(pygame.image.load(f_name), cell_size)
-                for f_name in hikers
-            ]
-            file_name = path.join(path.dirname(__file__), "../toy_text/img/stool.png")
-            start_img = pygame.transform.scale(
-                pygame.image.load(file_name), cell_size
+        """Renders an image from a state."""
+        try:
+            import pygame
+        except ImportError:
+            raise DependencyNotInstalled(
+                "pygame is not installed, run `pip install gymnasium[toy_text]`"
             )
-            file_name = path.join(path.dirname(__file__), "../toy_text/img/cookie.png")
-            goal_img = pygame.transform.scale(
-                pygame.image.load(file_name), cell_size
-            )
-            bg_imgs = [
-                path.join(path.dirname(__file__), "../toy_text/img/mountain_bg1.png"),
-                path.join(path.dirname(__file__), "../toy_text/img/mountain_bg2.png"),
-            ]
-            mountain_bg_img = [
-                pygame.transform.scale(pygame.image.load(f_name), cell_size)
-                for f_name in bg_imgs
-            ]
-            near_cliff_imgs = [
-                path.join(path.dirname(__file__), "../toy_text/img/mountain_near-cliff1.png"),
-                path.join(path.dirname(__file__), "../toy_text/img/mountain_near-cliff2.png"),
-            ]
-            near_cliff_img = [
-                pygame.transform.scale(pygame.image.load(f_name), cell_size)
-                for f_name in near_cliff_imgs
-            ]
-            file_name = path.join(path.dirname(__file__), "../toy_text/img/mountain_cliff.png")
-            cliff_img = pygame.transform.scale(
-                pygame.image.load(file_name), cell_size
-            )
+        (
+            window_surface,
+            shape,
+            nS,
+            cell_size,
+            cliff,
+            elf_images,
+            start_img,
+            goal_img,
+            bg_imgs,
+            mountain_bg_img,
+            near_cliff_imgs,
+            near_cliff_img,
+            cliff_img,
+        ) = render_state
 
-            for s in range(nS):
-                row, col = np.unravel_index(s, shape)
-                pos = (col * cell_size[0], row * cell_size[1])
-                check_board_mask = row % 2 ^ col % 2
-                window_surface.blit(mountain_bg_img[check_board_mask], pos)
+        for s in range(nS):
+            row, col = np.unravel_index(s, shape)
+            pos = (col * cell_size[0], row * cell_size[1])
+            check_board_mask = row % 2 ^ col % 2
+            window_surface.blit(mountain_bg_img[check_board_mask], pos)
 
-                if cliff[row, col]:
-                    window_surface.blit(cliff_img, pos)
-                if row < shape[0] - 1 and cliff[row + 1, col]:
-                    window_surface.blit(near_cliff_img[check_board_mask], pos)
-                if s == 36:
-                    window_surface.blit(start_img, pos)
-                if s == nS - 1:
-                    window_surface.blit(goal_img, pos)
-                if s == state.player_position[0] * 12 + state.player_position[1]:
-                    elf_pos = (pos[0], pos[1] - 0.1 * cell_size[1])
-                    last_action = state.last_action if state.last_action != -1 else 2
-                    window_surface.blit(elf_images[last_action], elf_pos)
+            if cliff[row, col]:
+                window_surface.blit(cliff_img, pos)
+            if row < shape[0] - 1 and cliff[row + 1, col]:
+                window_surface.blit(near_cliff_img[check_board_mask], pos)
+            if s == 36:
+                window_surface.blit(start_img, pos)
+            if s == nS - 1:
+                window_surface.blit(goal_img, pos)
+            if s == state.player_position[0] * 12 + state.player_position[1]:
+                elf_pos = (pos[0], pos[1] - 0.1 * cell_size[1])
+                last_action = state.last_action if state.last_action != -1 else 2
+                window_surface.blit(elf_images[last_action], elf_pos)
 
-            return render_state, np.transpose(np.array(pygame.surfarray.pixels3d(window_surface)),axes=(1, 0, 2))
+        return render_state, np.transpose(
+            np.array(pygame.surfarray.pixels3d(window_surface)), axes=(1, 0, 2)
+        )
 
     def render_close(self, render_state: RenderStateType) -> None:
         """Closes the render state."""
@@ -301,7 +326,7 @@ class CliffWalkingFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                "pygame is not installed, run `pip install gymnasium[toy-text]`"
             ) from e
         pygame.display.quit()
         pygame.quit()
@@ -323,7 +348,6 @@ class CliffWalkingJaxEnv(FunctionalJaxEnv, EzPickle):
             metadata=self.metadata,
             render_mode=render_mode,
         )
-
 
 
 if __name__ == "__main__":
