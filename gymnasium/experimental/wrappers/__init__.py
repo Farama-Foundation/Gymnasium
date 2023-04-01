@@ -1,7 +1,9 @@
 """`__init__` for experimental wrappers, to avoid loading the wrappers if unnecessary, we can hack python."""
 # pyright: reportUnsupportedDunderAll=false
-
 import importlib
+import re
+
+from gymnasium.error import DeprecatedWrapper, InvalidVersionWrapper
 
 
 __all__ = [
@@ -66,7 +68,7 @@ _wrapper_to_class = {
     # lambda_reward.py
     "ClipRewardV0": "lambda_reward",
     "LambdaRewardV0": "lambda_reward",
-    "NormalizeRewardV0": "lambda_reward",
+    "NormalizeRewardV1": "lambda_reward",
     # stateful_action
     "StickyActionV0": "stateful_action",
     # stateful_observation
@@ -99,21 +101,65 @@ _wrapper_to_class = {
 }
 
 
-def __getattr__(name: str):
+def __getattr__(wrapper_name: str):
     """To avoid having to load all wrappers on `import gymnasium` with all of their extra modules.
 
-    This optimises the loading of gymnasium.
+    This optimizes the loading of gymnasium.
 
     Args:
-        name: The name of a wrapper to load
+        wrapper_name: The name of a wrapper to load.
+        version: The version of the wrapper to load. Defaults to -1.
 
     Returns:
-        Wrapper
+        The specified wrapper.
+
+    Raises:
+        AttributeError: If the wrapper does not exist.
+        InvalidVersionWrapper: If the version is not a digit or is greater than the latest version.
+        DeprecatedWrapper: If the version is not the latest.
     """
-    if name in _wrapper_to_class:
-        import_stmt = f"gymnasium.experimental.wrappers.{_wrapper_to_class[name]}"
-        module = importlib.import_module(import_stmt)
-        return getattr(module, name)
-    # add helpful error message if version number has changed
-    else:
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    try:
+        version_str = re.findall(r"\d+", wrapper_name)[-1]
+        num_digits = len(version_str)
+        version = int(version_str)
+    except IndexError:
+        version = -1
+        num_digits = 2
+
+    base_name = wrapper_name[:-num_digits]
+
+    # Get all wrappers that start with the base wrapper name
+    wrappers = [name for name in _wrapper_to_class if name.startswith(base_name)]
+
+    # If the wrapper does not exist, raise an AttributeError
+    if not wrappers:
+        raise AttributeError(
+            f"cannot import name '{wrapper_name}' from 'gymnasium.experimental.wrappers'"
+        )
+
+    # Get the latest version of the wrapper
+    latest_version = max([int(re.findall(r"\d+", name)[-1]) for name in wrappers])
+    latest_wrapper_name = f"{base_name}{latest_version}"
+
+    # Raise an InvalidVersionWrapper exception if the version is not a digit
+    if version < 0:
+        raise InvalidVersionWrapper(
+            f"{wrapper_name} is not a valid version number, use {latest_wrapper_name} instead."
+        )
+
+    # Raise a DeprecatedWrapper exception if the version is not the latest
+    if version < latest_version:
+        raise DeprecatedWrapper(
+            f"{wrapper_name} is now deprecated, use {latest_wrapper_name} instead.\n"
+            f"To see the changes made, go to "
+            f"https://gymnasium.farama.org/api/experimental/wrappers/#gymnasium.experimental.wrappers.{latest_wrapper_name}."
+        )
+    # Raise an InvalidVersionWrapper exception if the version is greater than the latest
+    elif version > latest_version:
+        raise InvalidVersionWrapper(
+            f"{wrapper_name} is the wrong version number, use {latest_wrapper_name} instead."
+        )
+
+    import_stmt = f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
+    module = importlib.import_module(import_stmt)
+    return getattr(module, wrapper_name)
