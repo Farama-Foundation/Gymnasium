@@ -129,7 +129,7 @@ def __getattr__(wrapper_name: str):
     base_name = wrapper_name[:-num_digits]
 
     # Get all wrappers that start with the base wrapper name
-    wrappers = [name for name in _wrapper_to_class if name.startswith(base_name)]
+    wrappers = [name for name in __all__ if name.startswith(base_name)]
 
     # If the wrapper does not exist, raise an AttributeError
     if not wrappers:
