@@ -102,13 +102,13 @@ _wrapper_to_class = {
 
 
 def __getattr__(wrapper_name: str):
-    """To avoid having to load all wrappers on `import gymnasium` with all of their extra modules.
+    """Load a wrapper by name.
 
-    This optimizes the loading of gymnasium.
+    This optimises the loading of gymnasium wrappers by only loading the wrapper if it is used.
+    Errors will be raised if the wrapper does not exist or if the version is not the latest.
 
     Args:
         wrapper_name: The name of a wrapper to load.
-        version: The version of the wrapper to load. Defaults to -1.
 
     Returns:
         The specified wrapper.
