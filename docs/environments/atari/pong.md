@@ -11,6 +11,14 @@ title: Pong
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(6) |
+| Observation Space | Box(0, 255, (210, 160, 3), uint8) |
+| Import | `gymnasium.make("ALE/Pong-v5")` |
+
+For more Pong variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You control the right paddle, you compete against the left paddle controlled by the computer. You each try to keep deflecting the ball away from your goal and into your opponent's goal.
@@ -19,29 +27,25 @@ For a more detailed documentation, see [the AtariAge page](https://atariage.com/
 
 ## Actions
 
-Pong has the action space `Discrete(6)` with the table below lists the meaning of each action's meanings.
-As Pong uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+Pong has the action space of `Discrete(6)` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `FIRE`      |
-| `2`     | `RIGHT`     |
-| `3`     | `LEFT`      |
-| `4`     | `RIGHTFIRE` |
-| `5`     | `LEFTFIRE`  |
+| Value   | Meaning   | Value   | Meaning     | Value   | Meaning    |
+|---------|-----------|---------|-------------|---------|------------|
+| `0`     | `NOOP`    | `1`     | `FIRE`      | `2`     | `RIGHT`    |
+| `3`     | `LEFT`    | `4`     | `RIGHTFIRE` | `5`     | `LEFTFIRE` |
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 ### Rewards
 
 You get score points for getting the ball to pass the opponent's paddle. You lose points if the ball passes your paddle.

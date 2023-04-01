@@ -14,11 +14,13 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium import error, logger
-from gymnasium.core import ActType, ObsType, RenderFrame, WrapperActType, WrapperObsType
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 
 
-class RenderCollectionV0(gym.Wrapper):
+class RenderCollectionV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``."""
 
     def __init__(
@@ -34,7 +36,11 @@ class RenderCollectionV0(gym.Wrapper):
             pop_frames (bool): If true, clear the collection frames after ``meth:render`` is called. Default value is ``True``.
             reset_clean (bool): If true, clear the collection frames when ``meth:reset`` is called. Default value is ``True``.
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, pop_frames=pop_frames, reset_clean=reset_clean
+        )
+        gym.Wrapper.__init__(self, env)
+
         assert env.render_mode is not None
         assert not env.render_mode.endswith("_list")
 
@@ -52,8 +58,8 @@ class RenderCollectionV0(gym.Wrapper):
         return f"{self.env.render_mode}_list"
 
     def step(
-        self, action: WrapperActType
-    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict]:
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Perform a step in the base environment and collect a frame."""
         output = super().step(action)
         self.frame_list.append(super().render())
@@ -61,7 +67,7 @@ class RenderCollectionV0(gym.Wrapper):
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the base environment, eventually clear the frame_list, and collect a frame."""
         output = super().reset(seed=seed, options=options)
 
@@ -71,7 +77,7 @@ class RenderCollectionV0(gym.Wrapper):
 
         return output
 
-    def render(self) -> RenderFrame | list[RenderFrame] | None:
+    def render(self) -> list[RenderFrame]:
         """Returns the collection of frames and, if pop_frames = True, clears it."""
         frames = self.frame_list
         if self.pop_frames:
@@ -80,7 +86,9 @@ class RenderCollectionV0(gym.Wrapper):
         return frames
 
 
-class RecordVideoV0(gym.Wrapper):
+class RecordVideoV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """This wrapper records videos of rollouts.
 
     Usually, you only want to record episodes intermittently, say every hundredth episode.
@@ -98,10 +106,10 @@ class RecordVideoV0(gym.Wrapper):
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         video_folder: str,
-        episode_trigger: Callable[[int], bool] = None,
-        step_trigger: Callable[[int], bool] = None,
+        episode_trigger: Callable[[int], bool] | None = None,
+        step_trigger: Callable[[int], bool] | None = None,
         video_length: int = 0,
         name_prefix: str = "rl-video",
         disable_logger: bool = False,
@@ -117,9 +125,18 @@ class RecordVideoV0(gym.Wrapper):
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
             disable_logger (bool): Whether to disable moviepy logger or not
-
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self,
+            video_folder=video_folder,
+            episode_trigger=episode_trigger,
+            step_trigger=step_trigger,
+            video_length=video_length,
+            name_prefix=name_prefix,
+            disable_logger=disable_logger,
+        )
+        gym.Wrapper.__init__(self, env)
+
         try:
             import moviepy  # noqa: F401
         except ImportError as e:
@@ -155,13 +172,13 @@ class RecordVideoV0(gym.Wrapper):
             )
         os.makedirs(self.video_folder, exist_ok=True)
 
-        self.name_prefix = name_prefix
-        self._video_name = None
-        self.frames_per_sec = self.metadata.get("render_fps", 30)
-        self.video_length = video_length if video_length != 0 else float("inf")
-        self.recording = False
-        self.recorded_frames = []
-        self.render_history = []
+        self.name_prefix: str = name_prefix
+        self._video_name: str | None = None
+        self.frames_per_sec: int = self.metadata.get("render_fps", 30)
+        self.video_length: int = video_length if video_length != 0 else float("inf")
+        self.recording: bool = False
+        self.recorded_frames: list[RenderFrame] = []
+        self.render_history: list[RenderFrame] = []
 
         self.step_id = -1
         self.episode_id = -1
@@ -187,7 +204,7 @@ class RecordVideoV0(gym.Wrapper):
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the environment and eventually starts a new recording."""
         obs, info = super().reset(seed=seed, options=options)
         self.episode_id += 1
@@ -205,8 +222,8 @@ class RecordVideoV0(gym.Wrapper):
         return obs, info
 
     def step(
-        self, action: WrapperActType
-    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment using action, recording observations if :attr:`self.recording`."""
         obs, rew, terminated, truncated, info = self.env.step(action)
         self.step_id += 1
@@ -221,7 +238,7 @@ class RecordVideoV0(gym.Wrapper):
 
         return obs, rew, terminated, truncated, info
 
-    def start_recording(self, video_name):
+    def start_recording(self, video_name: str):
         """Start a new recording. If it is already recording, stops the current recording before starting the new one."""
         if self.recording:
             self.stop_recording()
@@ -252,7 +269,7 @@ class RecordVideoV0(gym.Wrapper):
         self.recording = False
         self._video_name = None
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame]:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment."""
         render_out = super().render()
         if self.recording and isinstance(render_out, List):
@@ -277,7 +294,9 @@ class RecordVideoV0(gym.Wrapper):
             logger.warn("Unable to save last video! Did you call close()?")
 
 
-class HumanRenderingV0(gym.Wrapper):
+class HumanRenderingV0(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """Performs human rendering for an environment that only supports "rgb_array"rendering.
 
     This wrapper is particularly useful when you have implemented an environment that can produce
@@ -298,6 +317,9 @@ class HumanRenderingV0(gym.Wrapper):
         ``render_mode="human"`` to ``make``. The wrapper will only be applied if the environment does not
         implement human-rendering natively (i.e. ``render_mode`` does not contain ``"human"``).
 
+        >>> env = gym.make("phys2d/CartPole-v1", render_mode="human")      # CartPoleJax-v1 doesn't implement human-rendering natively
+        >>> obs, _ = env.reset()     # This will start rendering to the screen
+
         Warning: If the base environment uses ``render_mode="rgb_array_list"``, its (i.e. the *base environment's*) render method
         will always return an empty list:
 
@@ -308,13 +330,15 @@ class HumanRenderingV0(gym.Wrapper):
         []
     """
 
-    def __init__(self, env):
+    def __init__(self, env: gym.Env[ObsType, ActType]):
         """Initialize a :class:`HumanRendering` instance.
 
         Args:
             env: The environment that is being wrapped
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
+
         assert env.render_mode in [
             "rgb_array",
             "rgb_array_list",
@@ -336,9 +360,7 @@ class HumanRenderingV0(gym.Wrapper):
         """Always returns ``'human'``."""
         return "human"
 
-    def step(
-        self, action: WrapperActType
-    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict]:
+    def step(self, action: ActType) -> tuple[ObsType, SupportsFloat, bool, bool, dict]:
         """Perform a step in the base environment and render a frame to the screen."""
         result = super().step(action)
         self._render_frame()
@@ -346,13 +368,13 @@ class HumanRenderingV0(gym.Wrapper):
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the base environment and render a frame to the screen."""
         result = super().reset(seed=seed, options=options)
         self._render_frame()
         return result
 
-    def render(self):
+    def render(self) -> None:
         """This method doesn't do much, actual rendering is performed in :meth:`step` and :meth:`reset`."""
         return None
 

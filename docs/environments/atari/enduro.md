@@ -11,6 +11,14 @@ title: Enduro
 
 This environment is part of the <a href='..'>Atari environments</a>. Please read that page first for general information.
 
+|   |   |
+|---|---|
+| Action Space | Discrete(9) |
+| Observation Space | Box(0, 255, (210, 160, 3), uint8) |
+| Import | `gymnasium.make("ALE/Enduro-v5")` |
+
+For more Enduro variants with different observation and action spaces, see the variants section.
+
 ## Description
 
 You are a racer in the National Enduro, a long-distance endurance race. You must overtake a certain amount of cars each day to stay on the race. The first day you need to pass 200 cars, and 300 foreach following day. The game ends if you do not meet your overtake quota for the day.
@@ -19,32 +27,26 @@ For a more detailed documentation, see [the AtariAge page](https://atariage.com/
 
 ## Actions
 
-Enduro has the action space `Discrete(9)` with the table below lists the meaning of each action's meanings.
-As Enduro uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+Enduro has the action space of `Discrete(9)` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `FIRE`      |
-| `2`     | `RIGHT`     |
-| `3`     | `LEFT`      |
-| `4`     | `DOWN`      |
-| `5`     | `DOWNRIGHT` |
-| `6`     | `DOWNLEFT`  |
-| `7`     | `RIGHTFIRE` |
-| `8`     | `LEFTFIRE`  |
+| Value   | Meaning    | Value   | Meaning     | Value   | Meaning     |
+|---------|------------|---------|-------------|---------|-------------|
+| `0`     | `NOOP`     | `1`     | `FIRE`      | `2`     | `RIGHT`     |
+| `3`     | `LEFT`     | `4`     | `DOWN`      | `5`     | `DOWNRIGHT` |
+| `6`     | `DOWNLEFT` | `7`     | `RIGHTFIRE` | `8`     | `LEFTFIRE`  |
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 ### Rewards
 
 You get 1 point for each vehicle you overtake.

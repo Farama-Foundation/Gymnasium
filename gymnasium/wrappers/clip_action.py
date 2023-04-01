@@ -2,11 +2,10 @@
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import ActionWrapper
 from gymnasium.spaces import Box
 
 
-class ClipAction(ActionWrapper):
+class ClipAction(gym.ActionWrapper, gym.utils.RecordConstructorArgs):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -28,7 +27,9 @@ class ClipAction(ActionWrapper):
             env: The environment to apply the wrapper
         """
         assert isinstance(env.action_space, Box)
-        super().__init__(env)
+
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.ActionWrapper.__init__(self, env)
 
     def action(self, action):
         """Clips the action within the valid bounds.

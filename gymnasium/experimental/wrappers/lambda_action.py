@@ -10,24 +10,26 @@ from typing import Callable
 
 
 try:
-    import jumpy as jp
+    import jumpy.numpy as jp
 except ImportError as e:
     raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType, WrapperActType
+from gymnasium.core import ActType, ObsType, WrapperActType
 from gymnasium.spaces import Box, Space
 
 
-class LambdaActionV0(gym.ActionWrapper):
+class LambdaActionV0(
+    gym.ActionWrapper[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
+):
     """A wrapper that provides a function to modify the action passed to :meth:`step`."""
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         func: Callable[[WrapperActType], ActType],
-        action_space: Space | None,
+        action_space: Space[WrapperActType] | None,
     ):
         """Initialize LambdaAction.
 
@@ -36,7 +38,11 @@ class LambdaActionV0(gym.ActionWrapper):
             func: Function to apply to ``step`` ``action``
             action_space: The updated action space of the wrapper given the function.
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, func=func, action_space=action_space
+        )
+        gym.Wrapper.__init__(self, env)
+
         if action_space is not None:
             self.action_space = action_space
 
@@ -47,7 +53,9 @@ class LambdaActionV0(gym.ActionWrapper):
         return self.func(action)
 
 
-class ClipActionV0(LambdaActionV0):
+class ClipActionV0(
+    LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
+):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example:
@@ -59,11 +67,11 @@ class ClipActionV0(LambdaActionV0):
         >>> env.action_space
         Box(-inf, inf, (3,), float32)
         >>> _ = env.reset(seed=42)
-        >>> _ = env.step(np.array([5.0, -2.0, 0.0]))
+        >>> _ = env.step(np.array([5.0, -2.0, 0.0], dtype=np.float32))
         ... # Executes the action np.array([1.0, -1.0, 0]) in the base environment
     """
 
-    def __init__(self, env: gym.Env):
+    def __init__(self, env: gym.Env[ObsType, ActType]):
         """A wrapper for clipping continuous actions within the valid bound.
 
         Args:
@@ -71,10 +79,14 @@ class ClipActionV0(LambdaActionV0):
         """
         assert isinstance(env.action_space, Box)
 
-        super().__init__(
-            env,
-            lambda action: jp.clip(action, env.action_space.low, env.action_space.high),
-            Box(
+        gym.utils.RecordConstructorArgs.__init__(self)
+        LambdaActionV0.__init__(
+            self,
+            env=env,
+            func=lambda action: jp.clip(
+                action, env.action_space.low, env.action_space.high
+            ),
+            action_space=Box(
                 -np.inf,
                 np.inf,
                 shape=env.action_space.shape,
@@ -83,7 +95,9 @@ class ClipActionV0(LambdaActionV0):
         )
 
 
-class RescaleActionV0(LambdaActionV0):
+class RescaleActionV0(
+    LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
+):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
@@ -95,10 +109,10 @@ class RescaleActionV0(LambdaActionV0):
         >>> import numpy as np
         >>> env = gym.make("Hopper-v4", disable_env_checker=True)
         >>> _ = env.reset(seed=42)
-        >>> obs, _, _, _, _ = env.step(np.array([1,1,1]))
+        >>> obs, _, _, _, _ = env.step(np.array([1, 1, 1], dtype=np.float32))
         >>> _ = env.reset(seed=42)
         >>> min_action = -0.5
-        >>> max_action = np.array([0.0, 0.5, 0.75])
+        >>> max_action = np.array([0.0, 0.5, 0.75], dtype=np.float32)
         >>> wrapped_env = RescaleActionV0(env, min_action=min_action, max_action=max_action)
         >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
         >>> np.alltrue(obs == wrapped_env_obs)
@@ -107,7 +121,7 @@ class RescaleActionV0(LambdaActionV0):
 
     def __init__(
         self,
-        env: gym.Env,
+        env: gym.Env[ObsType, ActType],
         min_action: float | int | np.ndarray,
         max_action: float | int | np.ndarray,
     ):
@@ -118,6 +132,10 @@ class RescaleActionV0(LambdaActionV0):
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
+        gym.utils.RecordConstructorArgs.__init__(
+            self, min_action=min_action, max_action=max_action
+        )
+
         assert isinstance(env.action_space, Box)
         assert not np.any(env.action_space.low == np.inf) and not np.any(
             env.action_space.high == np.inf
@@ -149,10 +167,11 @@ class RescaleActionV0(LambdaActionV0):
         )
         intercept = gradient * -min_action + env.action_space.low
 
-        super().__init__(
-            env,
-            lambda action: gradient * action + intercept,
-            Box(
+        LambdaActionV0.__init__(
+            self,
+            env=env,
+            func=lambda action: gradient * action + intercept,
+            action_space=Box(
                 low=min_action,
                 high=max_action,
                 shape=env.action_space.shape,

@@ -47,8 +47,11 @@ LEG_DOWN = 18
 LEG_W, LEG_H = 2, 8
 LEG_SPRING_TORQUE = 40
 
-SIDE_ENGINE_HEIGHT = 14.0
-SIDE_ENGINE_AWAY = 12.0
+SIDE_ENGINE_HEIGHT = 14
+SIDE_ENGINE_AWAY = 12
+MAIN_ENGINE_Y_LOCATION = (
+    4  # The Y location of the main engine on the body of the Lander.
+)
 
 VIEWPORT_W = 600
 VIEWPORT_H = 400
@@ -183,6 +186,34 @@ class LunarLander(gym.Env, EzPickle):
         renormalized to 200; harder initial random push.
     - v0: Initial version
 
+
+    ## Notes
+
+    There are several unexpected bugs with the implementation of the environment.
+
+    1. The position of the side thursters on the body of the lander changes, depending on the orientation of the lander.
+    This in turn results in an orientation depentant torque being applied to the lander.
+
+    2. The units of the state are not consistent. I.e.
+    * The angular velocity is in units of 0.4 radians per second. In order to convert to radians per second, the value needs to be multiplied by a factor of 2.5.
+
+    For the default values of VIEWPORT_W, VIEWPORT_H, SCALE, and FPS, the scale factors equal:
+    'x': 10
+    'y': 6.666
+    'vx': 5
+    'vy': 7.5
+    'angle': 1
+    'angular velocity': 2.5
+
+    After the correction has been made, the units of the state are as follows:
+    'x': (units)
+    'y': (units)
+    'vx': (units/second)
+    'vy': (units/second)
+    'angle': (radians)
+    'angular velocity': (radians/second)
+
+
     <!-- ## References -->
 
     ## Credits
@@ -257,8 +288,8 @@ class LunarLander(gym.Env, EzPickle):
                 # these are bounds for position
                 # realistically the environment should have ended
                 # long before we reach more than 50% outside
-                -1.5,
-                -1.5,
+                -1.5 * SCALE * 2,
+                -1.5 * SCALE * 2,
                 # velocity bounds is 5x rated speed
                 -5.0,
                 -5.0,
@@ -273,8 +304,8 @@ class LunarLander(gym.Env, EzPickle):
                 # these are bounds for position
                 # realistically the environment should have ended
                 # long before we reach more than 50% outside
-                1.5,
-                1.5,
+                1.5 * SCALE * 2,
+                1.5 * SCALE * 2,
                 # velocity bounds is 5x rated speed
                 5.0,
                 5.0,
@@ -327,7 +358,7 @@ class LunarLander(gym.Env, EzPickle):
         W = VIEWPORT_W / SCALE
         H = VIEWPORT_H / SCALE
 
-        # terrain
+        # Create Terrain
         CHUNKS = 11
         height = self.np_random.uniform(0, H / 2, size=(CHUNKS + 1,))
         chunk_x = [W / (CHUNKS - 1) * i for i in range(CHUNKS)]
@@ -357,9 +388,11 @@ class LunarLander(gym.Env, EzPickle):
         self.moon.color1 = (0.0, 0.0, 0.0)
         self.moon.color2 = (0.0, 0.0, 0.0)
 
+        # Create Lander body
         initial_y = VIEWPORT_H / SCALE
+        initial_x = VIEWPORT_W / SCALE / 2
         self.lander: Box2D.b2Body = self.world.CreateDynamicBody(
-            position=(VIEWPORT_W / SCALE / 2, initial_y),
+            position=(initial_x, initial_y),
             angle=0.0,
             fixtures=fixtureDef(
                 shape=polygonShape(
@@ -374,6 +407,8 @@ class LunarLander(gym.Env, EzPickle):
         )
         self.lander.color1 = (128, 102, 230)
         self.lander.color2 = (77, 77, 128)
+
+        # Apply the initial random impulse to the lander
         self.lander.ApplyForceToCenter(
             (
                 self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
@@ -382,10 +417,11 @@ class LunarLander(gym.Env, EzPickle):
             True,
         )
 
+        # Create Lander Legs
         self.legs = []
         for i in [-1, +1]:
             leg = self.world.CreateDynamicBody(
-                position=(VIEWPORT_W / SCALE / 2 - i * LEG_AWAY / SCALE, initial_y),
+                position=(initial_x - i * LEG_AWAY / SCALE, initial_y),
                 angle=(i * 0.05),
                 fixtures=fixtureDef(
                     shape=polygonShape(box=(LEG_W / SCALE, LEG_H / SCALE)),
@@ -450,7 +486,7 @@ class LunarLander(gym.Env, EzPickle):
     def step(self, action):
         assert self.lander is not None
 
-        # Update wind
+        # Update wind and apply to the lander
         assert self.lander is not None, "You forgot to call reset()"
         if self.enable_wind and not (
             self.legs[0].ground_contact or self.legs[1].ground_contact
@@ -489,9 +525,15 @@ class LunarLander(gym.Env, EzPickle):
                 action
             ), f"{action!r} ({type(action)}) invalid "
 
-        # Engines
+        # Apply Engine Impulses
+
+        # Tip is a the (X and Y) components of the rotation of the lander.
         tip = (math.sin(self.lander.angle), math.cos(self.lander.angle))
+
+        # Side is the (-Y and X) components of the rotation of the lander.
         side = (-tip[1], tip[0])
+
+        # Generate two random numbers between -1/SCALE and 1/SCALE.
         dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
         m_power = 0.0
@@ -504,12 +546,21 @@ class LunarLander(gym.Env, EzPickle):
                 assert m_power >= 0.5 and m_power <= 1.0
             else:
                 m_power = 1.0
+
             # 4 is move a bit downwards, +-2 for randomness
-            ox = tip[0] * (4 / SCALE + 2 * dispersion[0]) + side[0] * dispersion[1]
-            oy = -tip[1] * (4 / SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
+            # The components of the impulse to be applied by the main engine.
+            ox = (
+                tip[0] * (MAIN_ENGINE_Y_LOCATION / SCALE + 2 * dispersion[0])
+                + side[0] * dispersion[1]
+            )
+            oy = (
+                -tip[1] * (MAIN_ENGINE_Y_LOCATION / SCALE + 2 * dispersion[0])
+                - side[1] * dispersion[1]
+            )
+
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
             if self.render_mode is not None:
-                # particles are just a decoration, so don't add them when not rendering
+                # particles are just a decoration, with no impact on the physics, so don't add them when not rendering
                 p = self._create_particle(
                     3.5,  # 3.5 is here to make particle speed adequate
                     impulse_pos[0],
@@ -534,30 +585,43 @@ class LunarLander(gym.Env, EzPickle):
         if (self.continuous and np.abs(action[1]) > 0.5) or (
             not self.continuous and action in [1, 3]
         ):
-            # Orientation engines
+            # Orientation/Side engines
             if self.continuous:
                 direction = np.sign(action[1])
                 s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
                 assert s_power >= 0.5 and s_power <= 1.0
             else:
+                # action = 1 is left, action = 3 is right
                 direction = action - 2
                 s_power = 1.0
+
+            # The components of the impulse to be applied by the side engines.
             ox = tip[0] * dispersion[0] + side[0] * (
                 3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
             )
             oy = -tip[1] * dispersion[0] - side[1] * (
                 3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
             )
+
+            # The constant 17 is a constant, that is presumably meant to be SIDE_ENGINE_HEIGHT.
+            # However, SIDE_ENGINE_HEIGHT is defined as 14
+            # This casuses the position of the thurst on the body of the lander to change, depending on the orientation of the lander.
+            # This in turn results in an orientation depentant torque being applied to the lander.
             impulse_pos = (
                 self.lander.position[0] + ox - tip[0] * 17 / SCALE,
                 self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
             )
-            p = self._create_particle(0.7, impulse_pos[0], impulse_pos[1], s_power)
-            p.ApplyLinearImpulse(
-                (ox * SIDE_ENGINE_POWER * s_power, oy * SIDE_ENGINE_POWER * s_power),
-                impulse_pos,
-                True,
-            )
+            if self.render_mode is not None:
+                # particles are just a decoration, with no impact on the physics, so don't add them when not rendering
+                p = self._create_particle(0.7, impulse_pos[0], impulse_pos[1], s_power)
+                p.ApplyLinearImpulse(
+                    (
+                        ox * SIDE_ENGINE_POWER * s_power,
+                        oy * SIDE_ENGINE_POWER * s_power,
+                    ),
+                    impulse_pos,
+                    True,
+                )
             self.lander.ApplyLinearImpulse(
                 (-ox * SIDE_ENGINE_POWER * s_power, -oy * SIDE_ENGINE_POWER * s_power),
                 impulse_pos,
@@ -568,6 +632,7 @@ class LunarLander(gym.Env, EzPickle):
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
+
         state = [
             (pos.x - VIEWPORT_W / SCALE / 2) / (VIEWPORT_W / SCALE / 2),
             (pos.y - (self.helipad_y + LEG_DOWN / SCALE)) / (VIEWPORT_H / SCALE / 2),
@@ -790,7 +855,6 @@ def heuristic(env, s):
 
 
 def demo_heuristic_lander(env, seed=None, render=False):
-
     total_reward = 0
     steps = 0
     s, info = env.reset(seed=seed)

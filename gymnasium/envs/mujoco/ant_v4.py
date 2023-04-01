@@ -81,13 +81,31 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 23  | angular velocity of angle between torso and back left link   | -Inf   | Inf    | hip_3 (back_leg)                       | hinge | angle (rad)              |
     | 24  | angular velocity of the angle between back left links        | -Inf   | Inf    | ankle_3 (back_leg)                     | hinge | angle (rad)              |
     | 25  | angular velocity of angle between torso and back right link  | -Inf   | Inf    | hip_4 (right_back_leg)                 | hinge | angle (rad)              |
-    | 26  |angular velocity of the angle between back right links        | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angle (rad)              |
+    | 26  | angular velocity of the angle between back right links       | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angle (rad)              |
 
 
-    If `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
+    If version < `v4` or `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
     (external forces - force x, y, z and torque x, y, z) applied to the
-    center of mass of each of the links. The 14 links are: the ground link,
-    the torso link, and 3 links for each leg (1 + 1 + 12) with the 6 external forces.
+    center of mass of each of the objects. The 14 object are:
+
+    in `v4` or earlier:
+    | id | object |
+    |  ---  |  ------------  |
+    | 0 | worldObject (note: forces are always full of zeros) |
+    | 1 | torso |
+    | 2 | front_left_leg |
+    | 3 | aux_1 (front left leg) |
+    | 4 | ankle_1 (front left leg) |
+    | 5 | front_right_leg |
+    | 6 | aux_2 (front right leg) |
+    | 7 | ankle_2 (front right leg) |
+    | 8 | back_leg (back left leg) |
+    | 9 | aux_3 (back left leg) |
+    | 10 | ankle_3 (back left leg) |
+    | 11 | right_back_leg |
+    | 12 | aux_4 (back right leg) |
+    | 13 | ankle_4 (back right leg) |
+
 
     The (x,y,z) coordinates are translational DOFs while the orientations are rotational
     DOFs expressed as quaternions. One can read more about free joints on the [Mujoco Documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
@@ -116,7 +134,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*.
 
-    But if `use_contact_forces=True`
+    But if `use_contact_forces=True` or version < `v4`
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
 
     In either case `info` will also contain the individual reward terms.
@@ -202,7 +220,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         contact_force_range=(-1.0, 1.0),
         reset_noise_scale=0.1,
         exclude_current_positions_from_observation=True,
-        **kwargs
+        **kwargs,
     ):
         utils.EzPickle.__init__(
             self,
@@ -216,7 +234,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             contact_force_range,
             reset_noise_scale,
             exclude_current_positions_from_observation,
-            **kwargs
+            **kwargs,
         )
 
         self._ctrl_cost_weight = ctrl_cost_weight
@@ -252,7 +270,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             5,
             observation_space=observation_space,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
-            **kwargs
+            **kwargs,
         )
 
     @property

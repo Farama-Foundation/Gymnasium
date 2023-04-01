@@ -1,4 +1,9 @@
 """A passive environment checker wrapper for an environment's observation and action space along with the reset, step and render functions."""
+from __future__ import annotations
+
+from copy import deepcopy
+from typing import TYPE_CHECKING
+
 import gymnasium as gym
 from gymnasium.core import ActType
 from gymnasium.utils.passive_env_checker import (
@@ -10,12 +15,17 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-class PassiveEnvChecker(gym.Wrapper):
+if TYPE_CHECKING:
+    from gymnasium.envs.registration import EnvSpec
+
+
+class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API."""
 
     def __init__(self, env):
         """Initialises the wrapper with the environments, run the observation and action space tests."""
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
 
         assert hasattr(
             env, "action_space"
@@ -53,3 +63,17 @@ class PassiveEnvChecker(gym.Wrapper):
             return env_render_passive_checker(self.env, *args, **kwargs)
         else:
             return self.env.render(*args, **kwargs)
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Modifies the environment spec to such that `disable_env_checker=False`."""
+        if self._cached_spec is not None:
+            return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            env_spec = deepcopy(env_spec)
+            env_spec.disable_env_checker = False
+
+        self._cached_spec = env_spec
+        return env_spec

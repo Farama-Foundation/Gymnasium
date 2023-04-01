@@ -62,7 +62,7 @@ register(
 # ----------------------------------------
 
 register(
-    id="CartPoleJax-v0",
+    id="phys2d/CartPole-v0",
     entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=200,
@@ -70,7 +70,7 @@ register(
 )
 
 register(
-    id="CartPoleJax-v1",
+    id="phys2d/CartPole-v1",
     entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=500,
@@ -78,7 +78,7 @@ register(
 )
 
 register(
-    id="PendulumJax-v0",
+    id="phys2d/Pendulum-v0",
     entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxVectorEnv",
     max_episode_steps=200,
@@ -160,6 +160,17 @@ register(
     reward_threshold=8,  # optimum = 8.46
     max_episode_steps=200,
 )
+
+
+# Tabular
+# ----------------------------------------
+
+register(
+    id="tabular/Blackjack-v0",
+    entry_point="gymnasium.envs.tabular.blackjack:BlackJackJaxEnv",
+    kwargs={"sutton_and_barto": True, "natural": False},
+)
+
 
 # Mujoco
 # ----------------------------------------

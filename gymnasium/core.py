@@ -1,16 +1,17 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
 from gymnasium import spaces
-from gymnasium.utils import seeding
+from gymnasium.utils import RecordConstructorArgs, seeding
 
 
 if TYPE_CHECKING:
-    from gymnasium.envs.registration import EnvSpec
+    from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -44,6 +45,9 @@ class Env(Generic[ObsType, ActType]):
       ``super().reset(seed=seed)`` and when assessing ``self.np_random``.
 
     .. seealso:: For modifying or extending environments use the :py:class:`gymnasium.Wrapper` class
+
+    Note:
+        To get reproducible sampling of actions, a seed can be set with ``env.action_space.seed(123)``.
     """
 
     # Set this in SOME subclasses
@@ -201,7 +205,7 @@ class Env(Generic[ObsType, ActType]):
             Instances of `np.random.Generator`
         """
         if self._np_random is None:
-            self._np_random, seed = seeding.np_random()
+            self._np_random, _ = seeding.np_random()
         return self._np_random
 
     @np_random.setter
@@ -234,7 +238,10 @@ WrapperObsType = TypeVar("WrapperObsType")
 WrapperActType = TypeVar("WrapperActType")
 
 
-class Wrapper(Env[WrapperObsType, WrapperActType]):
+class Wrapper(
+    Env[WrapperObsType, WrapperActType],
+    Generic[WrapperObsType, WrapperActType, ObsType, ActType],
+):
     """Wraps a :class:`gymnasium.Env` to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.
 
     This class is the base class of all wrappers to change the behavior of the underlying environment.
@@ -262,6 +269,8 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
         self._metadata: dict[str, Any] | None = None
 
+        self._cached_spec: EnvSpec | None = None
+
     def __getattr__(self, name: str) -> Any:
         """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
         if name == "_np_random":
@@ -274,8 +283,46 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
 
     @property
     def spec(self) -> EnvSpec | None:
-        """Returns the :attr:`Env` :attr:`spec` attribute."""
-        return self.env.spec
+        """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""
+        if self._cached_spec is not None:
+            return self._cached_spec
+
+        env_spec = self.env.spec
+        if env_spec is not None:
+            # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
+            if isinstance(self, RecordConstructorArgs):
+                kwargs = getattr(self, "_saved_kwargs")
+                if "env" in kwargs:
+                    kwargs = deepcopy(kwargs)
+                    kwargs.pop("env")
+            else:
+                kwargs = None
+
+            from gymnasium.envs.registration import WrapperSpec
+
+            wrapper_spec = WrapperSpec(
+                name=self.class_name(),
+                entry_point=f"{self.__module__}:{type(self).__name__}",
+                kwargs=kwargs,
+            )
+
+            # to avoid reference issues we deepcopy the prior environments spec and add the new information
+            env_spec = deepcopy(env_spec)
+            env_spec.additional_wrappers += (wrapper_spec,)
+
+        self._cached_spec = env_spec
+        return env_spec
+
+    @classmethod
+    def wrapper_spec(cls, **kwargs: Any) -> WrapperSpec:
+        """Generates a `WrapperSpec` for the wrappers."""
+        from gymnasium.envs.registration import WrapperSpec
+
+        return WrapperSpec(
+            name=cls.class_name(),
+            entry_point=f"{cls.__module__}:{cls.__name__}",
+            kwargs=kwargs,
+        )
 
     @classmethod
     def class_name(cls) -> str:
@@ -391,7 +438,7 @@ class Wrapper(Env[WrapperObsType, WrapperActType]):
         return self.env.unwrapped
 
 
-class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
+class ObservationWrapper(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
     """Superclass of wrappers that can modify observations using :meth:`observation` for :meth:`reset` and :meth:`step`.
 
     If you would like to apply a function to only the observation before
@@ -406,7 +453,7 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
 
     def __init__(self, env: Env[ObsType, ActType]):
         """Constructor for the observation wrapper."""
-        super().__init__(env)
+        Wrapper.__init__(self, env)
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -434,7 +481,7 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType]):
         raise NotImplementedError
 
 
-class RewardWrapper(Wrapper[ObsType, ActType]):
+class RewardWrapper(Wrapper[ObsType, ActType, ObsType, ActType]):
     """Superclass of wrappers that can modify the returning reward from a step.
 
     If you would like to apply a function to the reward that is returned by the base environment before
@@ -446,7 +493,7 @@ class RewardWrapper(Wrapper[ObsType, ActType]):
 
     def __init__(self, env: Env[ObsType, ActType]):
         """Constructor for the Reward wrapper."""
-        super().__init__(env)
+        Wrapper.__init__(self, env)
 
     def step(
         self, action: ActType
@@ -467,7 +514,7 @@ class RewardWrapper(Wrapper[ObsType, ActType]):
         raise NotImplementedError
 
 
-class ActionWrapper(Wrapper[ObsType, WrapperActType]):
+class ActionWrapper(Wrapper[ObsType, WrapperActType, ObsType, ActType]):
     """Superclass of wrappers that can modify the action before :meth:`env.step`.
 
     If you would like to apply a function to the action before passing it to the base environment,
@@ -482,7 +529,7 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType]):
 
     def __init__(self, env: Env[ObsType, ActType]):
         """Constructor for the action wrapper."""
-        super().__init__(env)
+        Wrapper.__init__(self, env)
 
     def step(
         self, action: WrapperActType

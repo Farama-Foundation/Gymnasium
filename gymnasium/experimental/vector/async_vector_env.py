@@ -1,7 +1,7 @@
 """An async vector environment."""
 from __future__ import annotations
 
-import multiprocessing as mp
+import multiprocessing
 import sys
 import time
 from copy import deepcopy
@@ -96,7 +96,7 @@ class AsyncVectorEnv(VectorEnv):
         """
         super().__init__()
 
-        ctx = mp.get_context(context)
+        ctx = multiprocessing.get_context(context)
         self.env_fns = env_fns
         self.num_envs = len(env_fns)
         self.shared_memory = shared_memory
@@ -238,7 +238,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `reset_wait` has timed out after {timeout} second(s)."
             )
 
@@ -326,7 +326,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `step_wait` has timed out after {timeout} second(s)."
             )
 
@@ -421,7 +421,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `call_wait` has timed out after {timeout} second(s)."
             )
 
@@ -511,7 +511,7 @@ class AsyncVectorEnv(VectorEnv):
                 )
                 function = getattr(self, f"{self._state.value}_wait")
                 function(timeout)
-        except mp.TimeoutError:
+        except multiprocessing.TimeoutError:
             terminate = True
 
         if terminate:

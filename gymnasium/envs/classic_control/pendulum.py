@@ -59,7 +59,7 @@ class PendulumEnv(gym.Env):
 
     *r = -(theta<sup>2</sup> + 0.1 * theta_dt<sup>2</sup> + 0.001 * torque<sup>2</sup>)*
 
-    where `$\theta$` is the pendulum's angle normalized between *[-pi, pi]* (with 0 being in the upright position).
+    where `theta` is the pendulum's angle normalized between *[-pi, pi]* (with 0 being in the upright position).
     Based on the above equation, the minimum reward that can be obtained is
     *-(pi<sup>2</sup> + 0.1 * 8<sup>2</sup> + 0.001 * 2<sup>2</sup>) = -16.2736044*,
     while the maximum reward is zero (pendulum is upright with zero velocity and no torque applied).

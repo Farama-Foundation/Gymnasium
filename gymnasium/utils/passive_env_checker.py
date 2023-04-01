@@ -8,6 +8,13 @@ import numpy as np
 from gymnasium import Space, error, logger, spaces
 
 
+__all__ = [
+    "env_render_passive_checker",
+    "env_reset_passive_checker",
+    "env_step_passive_checker",
+]
+
+
 def _check_box_observation_space(observation_space: spaces.Box):
     """Checks that a :class:`Box` observation space is defined in a sensible way.
 
@@ -187,8 +194,8 @@ def env_reset_passive_checker(env, **kwargs):
     """A passive check of the `Env.reset` function investigating the returning reset information and returning the data unchanged."""
     signature = inspect.signature(env.reset)
     if "seed" not in signature.parameters and "kwargs" not in signature.parameters:
-        logger.warn(
-            "Future gymnasium versions will require that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator."
+        logger.deprecation(
+            "Current gymnasium version requires that `Env.reset` can be passed a `seed` instead of using `Env.seed` for resetting the environment random number generator."
         )
     else:
         seed_param = signature.parameters.get("seed")
@@ -200,8 +207,8 @@ def env_reset_passive_checker(env, **kwargs):
             )
 
     if "options" not in signature.parameters and "kwargs" not in signature.parameters:
-        logger.warn(
-            "Future gymnasium versions will require that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information."
+        logger.deprecation(
+            "Current gymnasium version requires that `Env.reset` can be passed `options` to allow the environment initialisation to be passed additional information."
         )
 
     # Checks the result of env.reset with kwargs
