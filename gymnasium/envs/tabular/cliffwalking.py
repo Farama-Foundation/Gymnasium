@@ -76,7 +76,7 @@ class CliffWalkingFunctional(
 
     For example, the stating position can be calculated as follows: 3 * 12 + 0 = 36.
 
-    The observation is returned as an `int()`.
+    The observation is returned as an `numpy.ndarray` with shape `(1,)` and dtype `numpy.int32` .
 
     ## Starting State
     The episode starts with the player in state `[36]` (location [3, 0]).
@@ -88,18 +88,12 @@ class CliffWalkingFunctional(
     ## Episode End
     The episode terminates when the player enters state `[47]` (location [3, 11]).
 
-    ## Information
-
-    `step()` and `reset()` return a dict with the following keys:
-    - "p" - transition probability for the state.
-
-    As cliff walking is not stochastic, the transition probability returned always 1.0.
 
     ## Arguments
 
     ```python
     import gymnasium as gym
-    gym.make('CliffWalking-v0')
+    gym.make('tablular/CliffWalking-v0')
     ```
 
     ## References
