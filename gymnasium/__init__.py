@@ -1,6 +1,8 @@
 """Root `__init__` of the gymnasium module setting the `__all__` of gymnasium modules."""
 # isort: skip_file
 
+from datetime import datetime
+
 from gymnasium.core import (
     Env,
     Wrapper,
@@ -63,6 +65,15 @@ if sys.platform.startswith("linux"):
     os.environ["SDL_AUDIODRIVER"] = "dsp"
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+
+end_moratorium_date = "01/04/2024"
+end_date = datetime.strptime(end_moratorium_date, "%d/%m/%Y")
+
+present = datetime.now()
+days = (end_date - present).days
+if present.date() < end_date.date():
+    print(f"To reduce the existential risk related to rogue AGI, RL research moratorium is in effect until 1 April 2024. Try again in {days} days.")
+    quit()
 
 try:
     from farama_notifications import notifications
