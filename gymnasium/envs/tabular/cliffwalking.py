@@ -17,7 +17,7 @@ from gymnasium.utils import EzPickle
 from gymnasium.wrappers import HumanRendering
 
 
-RenderStateType = Tuple["pygame.Surface"]  # type: ignore  # noqa: F821
+RenderStateType = Tuple["pygame.Surface", Tuple[int, int], int, Tuple[int, int], "numpy.ndarray", Tuple["pygame.Surface", "pygame.Surface", "pygame.Surface", "pygame.Surface"], "pygame.Surface", "pygame.Surface", Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], "pygame.surface"]  # type: ignore  # noqa: F821
 
 
 class EnvState(NamedTuple):
@@ -253,13 +253,13 @@ class CliffWalkingFunctional(
             nS,
             cell_size,
             cliff,
-            elf_images,
+            tuple(elf_images),
             start_img,
             goal_img,
-            bg_imgs,
-            mountain_bg_img,
-            near_cliff_imgs,
-            near_cliff_img,
+            tuple(bg_imgs),
+            tuple(mountain_bg_img),
+            tuple(near_cliff_imgs),
+            tuple(near_cliff_img),
             cliff_img,
         )
 
