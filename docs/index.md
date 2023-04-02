@@ -4,27 +4,36 @@ firstpage:
 lastpage:
 ---
 
-# Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
+<center>
+	<h1>
+		Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments.
+	</h1>
+</center>
 
-```{figure} _static/videos/box2d/lunar_lander.gif
-   :alt: Lunar Lander
-   :width: 500
-```
+<center>
+	<p>Note: The video includes clips with trained agents from Stable Baselines3. (<a href="https://huggingface.co/sb3">Link</a>)</p>
+	<video autoplay loop muted inline width="450" src="_static/videos/environments-demo.mp4" type="video/mp4"></video>
+</center>
 
-**Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility
-) for old Gym environments:**
+Gymnasium is a maintained fork of OpenAI’s Gym library. It provides a user-friendly, pythonic interface for creating and interacting with reinforcement learning environments. With Gymnasium, you can access a diverse collection of environments, as well as represent your own custom RL environments. If you require an environment that is only available in the old Gym, you can use the [compatibility wrapper](content/gym_compatibility).
+
+Here is a minimal code example to run an environment:
 
 ```{code-block} python
-
 import gymnasium as gym
-env = gym.make("LunarLander-v2", render_mode="human")
-observation, info = env.reset(seed=42)
-for _ in range(1000):
-   action = env.action_space.sample()  # this is where you would insert your policy
-   observation, reward, terminated, truncated, info = env.step(action)
 
-   if terminated or truncated:
-      observation, info = env.reset()
+env = gym.make("CartPole-v1", render_mode="human")
+observation, info = env.reset(seed=42) # get the first observation
+
+for step in range(1000):
+	# here you can use your policy to get an action based on the observation
+	action = env.action_space.sample()
+
+	# execute the action in the environment
+	observation, reward, terminated, truncated, info = env.step(action)
+
+	if terminated or truncated:
+		observation, info = env.reset()
 env.close()
 ```
 
