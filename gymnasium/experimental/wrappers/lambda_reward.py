@@ -111,9 +111,9 @@ class NormalizeRewardV1(
     statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.
     If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 
-    Version history:
-        * v1: Fixed forward discounted return estimation. (https://github.com/openai/gym/pull/3152)
-        * v0: Initial version
+    Note:
+        In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrect computed in Gym v0.25+.
+        For more detail, read [#3154](https://github.com/openai/gym/pull/3152).
 
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
