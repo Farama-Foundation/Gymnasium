@@ -100,14 +100,10 @@ html_theme_options = {
     "description": "A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
     "image": "img/gymnasium-github.png",
     "versioning": True,
+    "source_repository": "https://github.com/Farama-Foundation/Gymnasium/",
+    "source_branch": "main",
+    "source_directory": "docs/",
 }
-html_context: Dict[str, Any] = {}
-html_context["conf_py_path"] = "/docs/"
-html_context["display_github"] = False
-html_context["github_user"] = "Farama-Foundation"
-html_context["github_repo"] = "Gymnasium"
-html_context["github_version"] = "main"
-html_context["slug"] = "gymnasium"
 
 html_static_path = ["_static"]
 html_css_files = []
