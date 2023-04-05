@@ -17,7 +17,27 @@ from gymnasium.utils import EzPickle
 from gymnasium.wrappers import HumanRendering
 
 
-RenderStateType = Tuple["pygame.Surface", Tuple[int, int], int, Tuple[int, int], "numpy.ndarray", Tuple["pygame.Surface", "pygame.Surface", "pygame.Surface", "pygame.Surface"], "pygame.Surface", "pygame.Surface", Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], "pygame.surface"]  # type: ignore  # noqa: F821
+class RenderStateType(NamedTuple):  # type: ignore  # noqa: F821
+    """A named tuple which contains the full render state of the Cliffwalking Env. This is static during the episode."""
+
+    screen: "pygame.surface"  # type: ignore  # noqa: F821
+    shape: Tuple[int, int]
+    nS: int
+    cell_size: Tuple[int, int]
+    cliff: "numpy.ndarray"  # type: ignore  # noqa: F821
+    elf_images: Tuple[
+        "pygame.Surface", "pygame.Surface", "pygame.Surface", "pygame.Surface"  # type: ignore  # noqa: F821
+    ]
+    start_img: "pygame.Surface"  # type: ignore  # noqa: F821
+    goal_img: "pygame.Surface"  # type: ignore  # noqa: F821
+    bg_imgs: Tuple[str, str]
+    mountain_bg_img: Tuple["pygame.surface", "pygame.surface"]  # type: ignore  # noqa: F821
+    near_cliff_imgs: Tuple[str, str]
+    near_cliff_img: Tuple["pygame.surface", "pygame.surface"]  # type: ignore  # noqa: F821
+    cliff_img: "pygame.surface"  # type: ignore  # noqa: F821
+
+
+# RenderStateType =RenderState #Tuple["pygame.Surface", Tuple[int, int], int, Tuple[int, int], "numpy.ndarray", Tuple["pygame.Surface", "pygame.Surface", "pygame.Surface", "pygame.Surface"], "pygame.Surface", "pygame.Surface", Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], "pygame.surface"]  # type: ignore  # noqa: F821
 
 
 class EnvState(NamedTuple):
@@ -247,20 +267,20 @@ class CliffWalkingFunctional(
         )
         cliff_img = pygame.transform.scale(pygame.image.load(file_name), cell_size)
 
-        return (
-            screen,
-            shape,
-            nS,
-            cell_size,
-            cliff,
-            tuple(elf_images),
-            start_img,
-            goal_img,
-            tuple(bg_imgs),
-            tuple(mountain_bg_img),
-            tuple(near_cliff_imgs),
-            tuple(near_cliff_img),
-            cliff_img,
+        return RenderStateType(
+            screen=screen,
+            shape=shape,
+            nS=nS,
+            cell_size=cell_size,
+            cliff=cliff,
+            elf_images=tuple(elf_images),
+            start_img=start_img,
+            goal_img=goal_img,
+            bg_imgs=tuple(bg_imgs),
+            mountain_bg_img=tuple(mountain_bg_img),
+            near_cliff_imgs=tuple(near_cliff_imgs),
+            near_cliff_img=tuple(near_cliff_img),
+            cliff_img=cliff_img,
         )
 
     def render_image(
