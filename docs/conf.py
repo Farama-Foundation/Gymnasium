@@ -17,7 +17,6 @@
 # -- Project information -----------------------------------------------------
 import os
 import re
-from typing import Any, Dict
 
 import sphinx_gallery.gen_rst
 
