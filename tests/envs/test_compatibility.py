@@ -150,14 +150,14 @@ def test_shimmy_gym_compatibility():
         with pytest.raises(
             ImportError,
             match=re.escape(
-                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+                "To use the gym compatibility environments, run `pip install shimmy[gym-v21]` or `pip install shimmy[gym-v26]`"
             ),
         ):
             gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
         with pytest.raises(
             ImportError,
             match=re.escape(
-                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+                "To use the gym compatibility environments, run `pip install shimmy[gym-v21]` or `pip install shimmy[gym-v26]`"
             ),
         ):
             gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
