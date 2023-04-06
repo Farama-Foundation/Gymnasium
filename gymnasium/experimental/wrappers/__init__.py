@@ -2,7 +2,6 @@
 # pyright: reportUnsupportedDunderAll=false
 import importlib
 import re
-from typing import Any
 
 from gymnasium.error import DeprecatedWrapper
 
@@ -102,7 +101,7 @@ _wrapper_to_class = {
 }
 
 
-def __getattr__(wrapper_name: str) -> Any:
+def __getattr__(wrapper_name: str):
     """Load a wrapper by name.
 
     This optimizes the loading of gymnasium wrappers by only loading the wrapper if it is used.
@@ -139,7 +138,7 @@ def __getattr__(wrapper_name: str) -> Any:
     latest_wrapper = sorted(wrappers, key=lambda s: int(re.findall(r"\d+", s)[-1]))[-1]
 
     # If the wrapper is the latest version, import it
-    if wrapper_name is latest_wrapper:
+    if wrapper_name == latest_wrapper:
         import_stmt = (
             f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
         )
