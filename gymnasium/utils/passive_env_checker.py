@@ -21,7 +21,6 @@ def _check_box_observation_space(observation_space: spaces.Box):
     Args:
         observation_space: A box observation space
     """
-
     assert (
         observation_space.low.shape == observation_space.shape
     ), f"The Box observation space shape and low shape have different shapes, low shape: {observation_space.low.shape}, box shape: {observation_space.shape}"
