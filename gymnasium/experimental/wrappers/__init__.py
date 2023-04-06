@@ -123,7 +123,7 @@ def __getattr__(wrapper_name: str) -> Any:
         num_digits = len(version_str)
         version = int(version_str)
     except IndexError:
-        version = -1
+        version = float("inf")
         num_digits = 2
 
     base_name = wrapper_name[:-num_digits]
@@ -136,29 +136,27 @@ def __getattr__(wrapper_name: str) -> Any:
         raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")
 
     # Get the latest version of the wrapper
-    latest_wrapper_name = sorted(
-        wrappers, key=lambda s: int(re.findall(r"\d+", s)[-1])
-    )[-1]
-    latest_version = int(re.findall(r"\d+", latest_wrapper_name)[-1])
+    latest_wrapper = sorted(wrappers, key=lambda s: int(re.findall(r"\d+", s)[-1]))[-1]
 
     # If the wrapper is the latest version, import it
-    if wrapper_name is latest_wrapper_name:
+    if wrapper_name is latest_wrapper:
         import_stmt = (
             f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
         )
         module = importlib.import_module(import_stmt)
         return getattr(module, wrapper_name)
 
-    # Raise an AttributeError exception if the version is wrong
-    if version < 0 or version > latest_version:
-        raise AttributeError(
-            f"module {__name__!r} has no attribute {wrapper_name!r}, did you mean {latest_wrapper_name!r}"
-        )
+    latest_version = int(re.findall(r"\d+", latest_wrapper)[-1])
 
     # Raise a DeprecatedWrapper exception if the version is not the latest
     if version < latest_version:
         raise DeprecatedWrapper(
-            f"{wrapper_name!r} is now deprecated, use {latest_wrapper_name!r} instead.\n"
+            f"{wrapper_name!r} is now deprecated, use {latest_wrapper!r} instead.\n"
             f"To see the changes made, go to "
-            f"https://gymnasium.farama.org/api/experimental/wrappers/#gymnasium.experimental.wrappers.{latest_wrapper_name}"
+            f"https://gymnasium.farama.org/api/experimental/wrappers/#gymnasium.experimental.wrappers.{latest_wrapper}"
+        )
+    # Raise an AttributeError if the version is invalid
+    else:
+        raise AttributeError(
+            f"module {__name__!r} has no attribute {wrapper_name!r}, did you mean {latest_wrapper!r}"
         )
