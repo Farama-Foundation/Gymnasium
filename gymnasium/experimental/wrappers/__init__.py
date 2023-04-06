@@ -117,44 +117,47 @@ def __getattr__(wrapper_name: str):
         AttributeError: If the wrapper does not exist.
         DeprecatedWrapper: If the version is not the latest.
     """
-    try:
-        version_str = re.findall(r"\d+", wrapper_name)[-1]
-        num_digits = len(version_str)
-        version = int(version_str)
-    except IndexError:
+    # Define a regex pattern to match the integer suffix (version number) of the wrapper
+    int_suffix_pattern = r"(\d+)$"
+    version_match = re.search(int_suffix_pattern, wrapper_name)
+
+    # If a version number is found, extract it and the base wrapper name
+    if version_match:
+        version = int(version_match.group())
+        base_name = wrapper_name[: -len(version_match.group())]
+    else:
         version = float("inf")
-        num_digits = 2
+        base_name = wrapper_name[:-2]
 
-    base_name = wrapper_name[:-num_digits]
+    # Filter the list of all wrappers to include only those with the same base name
+    matching_wrappers = [name for name in __all__ if name.startswith(base_name)]
 
-    # Get all wrappers that start with the base wrapper name
-    wrappers = [name for name in __all__ if name.startswith(base_name)]
-
-    # If the wrapper does not exist, raise an AttributeError
-    if not wrappers:
+    # If no matching wrappers are found, raise an AttributeError
+    if not matching_wrappers:
         raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")
 
-    # Get the latest version of the wrapper
-    latest_wrapper = sorted(wrappers, key=lambda s: int(re.findall(r"\d+", s)[-1]))[-1]
+    # Find the latest version of the matching wrappers
+    latest_wrapper = max(
+        matching_wrappers, key=lambda s: int(re.findall(int_suffix_pattern, s)[0])
+    )
+    latest_version = int(re.findall(int_suffix_pattern, latest_wrapper)[0])
 
-    # If the wrapper is the latest version, import it
+    # If the requested wrapper is the latest version, import and return it
     if wrapper_name == latest_wrapper:
-        import_stmt = (
+        import_statement = (
             f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
         )
-        module = importlib.import_module(import_stmt)
-        return getattr(module, wrapper_name)
+        wrapper_module = importlib.import_module(import_statement)
+        return getattr(wrapper_module, wrapper_name)
 
-    latest_version = int(re.findall(r"\d+", latest_wrapper)[-1])
-
-    # Raise a DeprecatedWrapper exception if the version is not the latest
+    # If the requested wrapper is an older version, raise a DeprecatedWrapper exception
     if version < latest_version:
         raise DeprecatedWrapper(
             f"{wrapper_name!r} is now deprecated, use {latest_wrapper!r} instead.\n"
             f"To see the changes made, go to "
             f"https://gymnasium.farama.org/api/experimental/wrappers/#gymnasium.experimental.wrappers.{latest_wrapper}"
         )
-    # Raise an AttributeError if the version is invalid
+    # If the requested version is invalid, raise an AttributeError
     else:
         raise AttributeError(
             f"module {__name__!r} has no attribute {wrapper_name!r}, did you mean {latest_wrapper!r}"
