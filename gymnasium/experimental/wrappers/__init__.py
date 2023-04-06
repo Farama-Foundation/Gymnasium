@@ -130,16 +130,18 @@ def __getattr__(wrapper_name: str) -> Any:
 
     # Get all wrappers that start with the base wrapper name
     wrappers = [name for name in __all__ if name.startswith(base_name)]
-    sorted_wrappers = sorted(wrappers, key=lambda s: int(re.findall(r"\d+", s)[-1]))
 
     # If the wrapper does not exist, raise an AttributeError
     if not wrappers:
         raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")
 
     # Get the latest version of the wrapper
-    latest_wrapper_name = sorted_wrappers[-1]
+    latest_wrapper_name = sorted(
+        wrappers, key=lambda s: int(re.findall(r"\d+", s)[-1])
+    )[-1]
     latest_version = int(re.findall(r"\d+", latest_wrapper_name)[-1])
 
+    # If the wrapper is the latest version, import it
     if wrapper_name is latest_wrapper_name:
         import_stmt = (
             f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
