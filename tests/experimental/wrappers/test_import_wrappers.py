@@ -12,19 +12,24 @@ def test_import_wrappers():
     # Test that a deprecated wrapper raises a DeprecatedWrapper
     with pytest.raises(
         wrappers.DeprecatedWrapper,
-        match=re.escape("NormalizeRewardV0 is now deprecated"),
+        match=re.escape("'NormalizeRewardV0' is now deprecated"),
     ):
         getattr(wrappers, "NormalizeRewardV0")
 
-    # Test that an invalid version raises an InvalidVersionWrapper
+    # Test that an invalid version raises an AttributeError
     with pytest.raises(
-        wrappers.InvalidVersionWrapper,
-        match=re.escape("ClipRewardVT is not a valid version number"),
+        AttributeError,
+        match=re.escape(
+            "module 'gymnasium.experimental.wrappers' has no attribute 'ClipRewardVT', did you mean"
+        ),
     ):
         getattr(wrappers, "ClipRewardVT")
 
     # Test that an invalid wrapper raises an AttributeError
     with pytest.raises(
-        AttributeError, match=re.escape("cannot import name 'NonexistentWrapper'")
+        AttributeError,
+        match=re.escape(
+            "module 'gymnasium.experimental.wrappers' has no attribute 'NonexistentWrapper'"
+        ),
     ):
         getattr(wrappers, "NonexistentWrapper")

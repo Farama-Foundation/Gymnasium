@@ -185,10 +185,6 @@ class DeprecatedWrapper(ImportError):
     """Error message for importing an old version of a wrapper."""
 
 
-class InvalidVersionWrapper(ImportError):
-    """Error message for importing an invalid version of a wrapper."""
-
-
 # Vectorized environments errors
 
 

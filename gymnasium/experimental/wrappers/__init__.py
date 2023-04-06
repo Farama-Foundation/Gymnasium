@@ -2,8 +2,9 @@
 # pyright: reportUnsupportedDunderAll=false
 import importlib
 import re
+from typing import Any
 
-from gymnasium.error import DeprecatedWrapper, InvalidVersionWrapper
+from gymnasium.error import DeprecatedWrapper
 
 
 __all__ = [
@@ -101,10 +102,10 @@ _wrapper_to_class = {
 }
 
 
-def __getattr__(wrapper_name: str):
+def __getattr__(wrapper_name: str) -> Any:
     """Load a wrapper by name.
 
-    This optimises the loading of gymnasium wrappers by only loading the wrapper if it is used.
+    This optimizes the loading of gymnasium wrappers by only loading the wrapper if it is used.
     Errors will be raised if the wrapper does not exist or if the version is not the latest.
 
     Args:
@@ -115,7 +116,6 @@ def __getattr__(wrapper_name: str):
 
     Raises:
         AttributeError: If the wrapper does not exist.
-        InvalidVersionWrapper: If the version is not a digit or is greater than the latest version.
         DeprecatedWrapper: If the version is not the latest.
     """
     try:
@@ -130,36 +130,33 @@ def __getattr__(wrapper_name: str):
 
     # Get all wrappers that start with the base wrapper name
     wrappers = [name for name in __all__ if name.startswith(base_name)]
+    sorted_wrappers = sorted(wrappers, key=lambda s: int(re.findall(r"\d+", s)[-1]))
 
     # If the wrapper does not exist, raise an AttributeError
     if not wrappers:
-        raise AttributeError(
-            f"cannot import name '{wrapper_name}' from 'gymnasium.experimental.wrappers'"
-        )
+        raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")
 
     # Get the latest version of the wrapper
-    latest_version = max([int(re.findall(r"\d+", name)[-1]) for name in wrappers])
-    latest_wrapper_name = f"{base_name}{latest_version}"
+    latest_wrapper_name = sorted_wrappers[-1]
+    latest_version = int(re.findall(r"\d+", latest_wrapper_name)[-1])
 
-    # Raise an InvalidVersionWrapper exception if the version is not a digit
-    if version < 0:
-        raise InvalidVersionWrapper(
-            f"{wrapper_name} is not a valid version number, use {latest_wrapper_name} instead."
+    if wrapper_name is latest_wrapper_name:
+        import_stmt = (
+            f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
+        )
+        module = importlib.import_module(import_stmt)
+        return getattr(module, wrapper_name)
+
+    # Raise an AttributeError exception if the version is wrong
+    if version < 0 or version > latest_version:
+        raise AttributeError(
+            f"module {__name__!r} has no attribute {wrapper_name!r}, did you mean {latest_wrapper_name!r}"
         )
 
     # Raise a DeprecatedWrapper exception if the version is not the latest
     if version < latest_version:
         raise DeprecatedWrapper(
-            f"{wrapper_name} is now deprecated, use {latest_wrapper_name} instead.\n"
+            f"{wrapper_name!r} is now deprecated, use {latest_wrapper_name!r} instead.\n"
             f"To see the changes made, go to "
-            f"https://gymnasium.farama.org/api/experimental/wrappers/#gymnasium.experimental.wrappers.{latest_wrapper_name}."
+            f"https://gymnasium.farama.org/api/experimental/wrappers/#gymnasium.experimental.wrappers.{latest_wrapper_name}"
         )
-    # Raise an InvalidVersionWrapper exception if the version is greater than the latest
-    elif version > latest_version:
-        raise InvalidVersionWrapper(
-            f"{wrapper_name} is the wrong version number, use {latest_wrapper_name} instead."
-        )
-
-    import_stmt = f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
-    module = importlib.import_module(import_stmt)
-    return getattr(module, wrapper_name)
