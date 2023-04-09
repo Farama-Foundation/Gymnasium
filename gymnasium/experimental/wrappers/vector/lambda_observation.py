@@ -44,8 +44,8 @@ class LambdaObservationV0(VectorObservationWrapper):
 
         Args:
             env: The vector environment to wrap
-            func: A function that will transform an observation. If this transformed observation is outside the observation space of `env.observation_space` then provide an `observation_space`.
-            observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as `env.observation_space`.
+            func: A function that will transform an observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.
+            observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as ``env.observation_space``.
         """
         super().__init__(env)
 
@@ -60,7 +60,7 @@ class LambdaObservationV0(VectorObservationWrapper):
 
 
 class VectoriseLambdaObservationV0(VectorObservationWrapper):
-    """Vectorises a single-agent lambda action wrapper for vector environments."""
+    """Vectorises a single-agent lambda observation wrapper for vector environments."""
 
     class VectorisedEnv(Env):
         """Fake single-agent environment uses for the single-agent wrapper."""
@@ -96,7 +96,7 @@ class VectoriseLambdaObservationV0(VectorObservationWrapper):
             concatenate(
                 self.single_observation_space,
                 (
-                    self.wrapper.observation(obs)
+                    self.wrapper.func(obs)
                     for obs in iterate(self.observation_space, observation)
                 ),
                 self.out,

@@ -38,7 +38,7 @@ class LambdaRewardV0(
         """Initialize LambdaRewardV0 wrapper.
 
         Args:
-            env (Env): The environment to apply the wrapper
+            env (Env): The environment to wrap
             func: (Callable): The function to apply to reward
         """
         gym.utils.RecordConstructorArgs.__init__(self, func=func)
@@ -78,7 +78,7 @@ class ClipRewardV0(LambdaRewardV0[ObsType, ActType], gym.utils.RecordConstructor
         """Initialize ClipRewardsV0 wrapper.
 
         Args:
-            env (Env): The environment to apply the wrapper
+            env (Env): The environment to wrap
             min_reward (Union[float, np.ndarray]): lower bound to apply
             max_reward (Union[float, np.ndarray]): higher bound to apply
         """
