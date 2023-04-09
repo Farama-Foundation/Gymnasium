@@ -1,14 +1,16 @@
 """Wrapper that tracks the cumulative rewards and episode lengths."""
+from __future__ import annotations
+
 import time
 from collections import deque
-from typing import List, Optional, Union
 
 import numpy as np
 
-from gymnasium.experimental.vector.vector_env import VectorEnv, VectorWrapper
+from gymnasium.core import ActType, ObsType
+from gymnasium.experimental.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 
 
-class VectorRecordEpisodeStatistics(VectorWrapper):
+class RecordEpisodeStatisticsV0(VectorWrapper):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of an episode, the statistics of the episode will be added to ``info``
@@ -58,16 +60,16 @@ class VectorRecordEpisodeStatistics(VectorWrapper):
         self.num_envs = getattr(env, "num_envs", 1)
         self.episode_count = 0
         self.episode_start_times: np.ndarray = None
-        self.episode_returns: Optional[np.ndarray] = None
-        self.episode_lengths: Optional[np.ndarray] = None
+        self.episode_returns: np.ndarray | None = None
+        self.episode_lengths: np.ndarray | None = None
         self.return_queue = deque(maxlen=deque_size)
         self.length_queue = deque(maxlen=deque_size)
         self.is_vector_env = True
 
     def reset(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
     ):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
         obs, info = super().reset(seed=seed, options=options)
@@ -78,7 +80,9 @@ class VectorRecordEpisodeStatistics(VectorWrapper):
         self.episode_lengths = np.zeros(self.num_envs, dtype=np.int32)
         return obs, info
 
-    def step(self, action):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Steps through the environment, recording the episode statistics."""
         (
             observations,
@@ -86,7 +90,7 @@ class VectorRecordEpisodeStatistics(VectorWrapper):
             terminations,
             truncations,
             infos,
-        ) = self.env.step(action)
+        ) = self.env.step(actions)
         assert isinstance(
             infos, dict
         ), f"`info` dtype is {type(infos)} while supported dtype is `dict`. This may be due to usage of other wrappers in the wrong order."

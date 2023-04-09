@@ -52,27 +52,28 @@ _wrapper_to_class = {
     "LambdaActionV0": "lambda_action",
     "ClipActionV0": "lambda_action",
     "RescaleActionV0": "lambda_action",
-    # lambda_observations.py
-    "LambdaObservationV0": "lambda_observations",
-    "FilterObservationV0": "lambda_observations",
-    "FlattenObservationV0": "lambda_observations",
-    "GrayscaleObservationV0": "lambda_observations",
-    "ResizeObservationV0": "lambda_observations",
-    "ReshapeObservationV0": "lambda_observations",
-    "RescaleObservationV0": "lambda_observations",
-    "DtypeObservationV0": "lambda_observations",
-    "PixelObservationV0": "lambda_observations",
-    "NormalizeObservationV0": "lambda_observations",
+    # lambda_observation.py
+    "LambdaObservationV0": "lambda_observation",
+    "FilterObservationV0": "lambda_observation",
+    "FlattenObservationV0": "lambda_observation",
+    "GrayscaleObservationV0": "lambda_observation",
+    "ResizeObservationV0": "lambda_observation",
+    "ReshapeObservationV0": "lambda_observation",
+    "RescaleObservationV0": "lambda_observation",
+    "DtypeObservationV0": "lambda_observation",
+    "PixelObservationV0": "lambda_observation",
     # lambda_reward.py
     "ClipRewardV0": "lambda_reward",
     "LambdaRewardV0": "lambda_reward",
-    "NormalizeRewardV0": "lambda_reward",
     # stateful_action
     "StickyActionV0": "stateful_action",
     # stateful_observation
     "TimeAwareObservationV0": "stateful_observation",
     "DelayObservationV0": "stateful_observation",
     "FrameStackObservationV0": "stateful_observation",
+    "NormalizeObservationV0": "stateful_observation",
+    # stateful_reward
+    "NormalizeRewardV0": "stateful_reward",
     # atari_preprocessing
     "AtariPreprocessingV0": "atari_preprocessing",
     # common
