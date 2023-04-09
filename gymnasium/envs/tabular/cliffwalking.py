@@ -1,8 +1,10 @@
 """This module provides a CliffWalking functional environment and Gymnasium environment wrapper CliffWalkingJaxEnv."""
 
 
+from __future__ import annotations
+
 from os import path
-from typing import NamedTuple, Optional, Tuple, Union
+from typing import TYPE_CHECKING, NamedTuple
 
 import jax
 import jax.numpy as jnp
@@ -17,27 +19,30 @@ from gymnasium.utils import EzPickle
 from gymnasium.wrappers import HumanRendering
 
 
-class RenderStateType(NamedTuple):  # type: ignore  # noqa: F821
+if TYPE_CHECKING:
+    import numpy
+    import pygame
+
+
+class RenderStateType(NamedTuple):
     """A named tuple which contains the full render state of the Cliffwalking Env. This is static during the episode."""
 
-    screen: "pygame.surface"  # type: ignore  # noqa: F821
-    shape: Tuple[int, int]
+    screen: pygame.surface
+    shape: tuple[int, int]
     nS: int
-    cell_size: Tuple[int, int]
-    cliff: "numpy.ndarray"  # type: ignore  # noqa: F821
-    elf_images: Tuple[
-        "pygame.Surface", "pygame.Surface", "pygame.Surface", "pygame.Surface"  # type: ignore  # noqa: F821
-    ]
-    start_img: "pygame.Surface"  # type: ignore  # noqa: F821
-    goal_img: "pygame.Surface"  # type: ignore  # noqa: F821
-    bg_imgs: Tuple[str, str]
-    mountain_bg_img: Tuple["pygame.surface", "pygame.surface"]  # type: ignore  # noqa: F821
-    near_cliff_imgs: Tuple[str, str]
-    near_cliff_img: Tuple["pygame.surface", "pygame.surface"]  # type: ignore  # noqa: F821
-    cliff_img: "pygame.surface"  # type: ignore  # noqa: F821
+    cell_size: tuple[int, int]
+    cliff: numpy.ndarray
+    elf_images: tuple[pygame.Surface, pygame.Surface, pygame.Surface, pygame.Surface]
+    start_img: pygame.Surface
+    goal_img: pygame.Surface
+    bg_imgs: tuple[str, str]
+    mountain_bg_img: tuple[pygame.Surface, pygame.Surface]
+    near_cliff_imgs: tuple[str, str]
+    near_cliff_img: tuple[pygame.Surface, pygame.Surface]
+    cliff_img: pygame.Surface
 
 
-# RenderStateType =RenderState #Tuple["pygame.Surface", Tuple[int, int], int, Tuple[int, int], "numpy.ndarray", Tuple["pygame.Surface", "pygame.Surface", "pygame.Surface", "pygame.Surface"], "pygame.Surface", "pygame.Surface", Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], "pygame.surface"]  # type: ignore  # noqa: F821
+# RenderStateType =RenderState #Tuple["pygame.Surface", Tuple[int, int], int, Tuple[int, int], "numpy.ndarray", Tuple["pygame.Surface", "pygame.Surface", "pygame.Surface", "pygame.Surface"], "pygame.Surface", "pygame.Surface", Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], "pygame.surface"]
 
 
 class EnvState(NamedTuple):
@@ -135,9 +140,7 @@ class CliffWalkingFunctional(
         "render_fps": 4,
     }
 
-    def transition(
-        self, state: EnvState, action: Union[int, jnp.ndarray], key: PRNGKey
-    ):
+    def transition(self, state: EnvState, action: int | jnp.ndarray, key: PRNGKey):
         """The Cliffwalking environment's state transition function."""
         new_position = state.player_position
 
@@ -287,7 +290,7 @@ class CliffWalkingFunctional(
         self,
         state: StateType,
         render_state: RenderStateType,
-    ) -> Tuple[RenderStateType, np.ndarray]:
+    ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:
             import pygame
@@ -351,7 +354,7 @@ class CliffWalkingJaxEnv(FunctionalJaxEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
-    def __init__(self, render_mode: Optional[str] = None, **kwargs):
+    def __init__(self, render_mode: str | None = None, **kwargs):
         """Initializes Gym wrapper for cliffwalking functional env."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         env = CliffWalkingFunctional(**kwargs)
