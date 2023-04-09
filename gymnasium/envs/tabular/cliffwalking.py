@@ -20,7 +20,6 @@ from gymnasium.wrappers import HumanRendering
 
 
 if TYPE_CHECKING:
-    import numpy
     import pygame
 
 
@@ -31,7 +30,7 @@ class RenderStateType(NamedTuple):
     shape: tuple[int, int]
     nS: int
     cell_size: tuple[int, int]
-    cliff: numpy.ndarray
+    cliff: np.ndarray
     elf_images: tuple[pygame.Surface, pygame.Surface, pygame.Surface, pygame.Surface]
     start_img: pygame.Surface
     goal_img: pygame.Surface
@@ -176,12 +175,11 @@ class CliffWalkingFunctional(
 
         return new_state
 
-    def initial(self, rng: PRNGKey):
+    def initial(self, rng: PRNGKey) -> EnvState:
         """Cliffwalking initial observation function."""
         player_position = jnp.array([3, 0])
 
         state = EnvState(player_position=player_position, last_action=-1, fallen=False)
-
         return state
 
     def observation(self, state: EnvState) -> int:
