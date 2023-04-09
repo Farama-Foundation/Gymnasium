@@ -171,6 +171,11 @@ register(
     kwargs={"sutton_and_barto": True, "natural": False},
 )
 
+register(
+    id="tablular/CliffWalking-v0",
+    entry_point="gymnasium.envs.tabular.cliffwalking:CliffWalkingJaxEnv",
+)
+
 
 # Mujoco
 # ----------------------------------------
