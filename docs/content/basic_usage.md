@@ -6,9 +6,9 @@ firstpage:
 
 # Basic Usage
 
-Gymnasium is a project that provide an API for all single agent reinforcement learning environments that include implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.
+Gymnasium is a project that provides an API for all single agent reinforcement learning environments, and includes implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.
 
-The API contains four key functions: ``make``, ``reset``, ``step`` and ``render`` that this basic usage will introduce you to. At the core of Gymnasium is ``Env`` which is a high level python class representing a markov decision process from reinforcement learning theory (this is not a perfect reconstruction missing several components of MDPs). Within gymnasium, environments (MDPs) are implements as ``Env`` along with ``Wrappers`` that can change the results passed to the user.
+The API contains four key functions: ``make``, ``reset``, ``step`` and ``render``, that this basic usage will introduce you to. At the core of Gymnasium is ``Env``, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (this is not a perfect reconstruction, and is missing several components of MDPs). Within gymnasium, environments (MDPs) are implemented as ``Env`` classes, along with ``Wrappers``, which provide helpful utilities and can change the results passed to the user. 
 
 ## Initializing Environments
 
