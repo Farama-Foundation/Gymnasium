@@ -25,6 +25,14 @@ def test_import_wrappers():
     ):
         getattr(wrappers, "ClipRewardVT")
 
+    with pytest.raises(
+        AttributeError,
+        match=re.escape(
+            "module 'gymnasium.experimental.wrappers' has no attribute 'ClipRewardV99', did you mean"
+        ),
+    ):
+        getattr(wrappers, "ClipRewardV99")
+
     # Test that an invalid wrapper raises an AttributeError
     with pytest.raises(
         AttributeError,

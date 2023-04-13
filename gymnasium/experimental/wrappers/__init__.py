@@ -117,6 +117,14 @@ def __getattr__(wrapper_name: str):
         AttributeError: If the wrapper does not exist.
         DeprecatedWrapper: If the version is not the latest.
     """
+    # Check if the requested wrapper is in the _wrapper_to_class dictionary
+    if wrapper_name in _wrapper_to_class:
+        import_stmt = (
+            f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
+        )
+        module = importlib.import_module(import_stmt)
+        return getattr(module, wrapper_name)
+
     # Define a regex pattern to match the integer suffix (version number) of the wrapper
     int_suffix_pattern = r"(\d+)$"
     version_match = re.search(int_suffix_pattern, wrapper_name)
@@ -141,14 +149,6 @@ def __getattr__(wrapper_name: str):
         matching_wrappers, key=lambda s: int(re.findall(int_suffix_pattern, s)[0])
     )
     latest_version = int(re.findall(int_suffix_pattern, latest_wrapper)[0])
-
-    # If the requested wrapper is the latest version, import and return it
-    if wrapper_name == latest_wrapper:
-        import_statement = (
-            f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
-        )
-        wrapper_module = importlib.import_module(import_statement)
-        return getattr(wrapper_module, wrapper_name)
 
     # If the requested wrapper is an older version, raise a DeprecatedWrapper exception
     if version < latest_version:
