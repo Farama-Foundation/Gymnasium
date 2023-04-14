@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=b0c92cd440df7c18a0306b0433406327ff2c572f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=4297ed78bc2370ec4493f1a6639f04addebc5da5" />
     
     
 
@@ -488,8 +488,8 @@
             
             <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h1>
-<p>Gymnasium is a project that provide an API for all single agent reinforcement learning environments that include implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.</p>
-<p>The API contains four key functions: <code class="docutils literal notranslate"><span class="pre">make</span></code>, <code class="docutils literal notranslate"><span class="pre">reset</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">render</span></code> that this basic usage will introduce you to. At the core of Gymnasium is <code class="docutils literal notranslate"><span class="pre">Env</span></code> which is a high level python class representing a markov decision process from reinforcement learning theory (this is not a perfect reconstruction missing several components of MDPs). Within gymnasium, environments (MDPs) are implements as <code class="docutils literal notranslate"><span class="pre">Env</span></code> along with <code class="docutils literal notranslate"><span class="pre">Wrappers</span></code> that can change the results passed to the user.</p>
+<p>Gymnasium is a project that provides an API for all single agent reinforcement learning environments, and includes implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.</p>
+<p>The API contains four key functions: <code class="docutils literal notranslate"><span class="pre">make</span></code>, <code class="docutils literal notranslate"><span class="pre">reset</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">render</span></code>, that this basic usage will introduce you to. At the core of Gymnasium is <code class="docutils literal notranslate"><span class="pre">Env</span></code>, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (this is not a perfect reconstruction, and is missing several components of MDPs). Within gymnasium, environments (MDPs) are implemented as <code class="docutils literal notranslate"><span class="pre">Env</span></code> classes, along with <code class="docutils literal notranslate"><span class="pre">Wrappers</span></code>, which provide helpful utilities and can change the results passed to the user.</p>
 <section id="initializing-environments">
 <h2>Initializing Environments<a class="headerlink" href="#initializing-environments" title="Permalink to this heading">#</a></h2>
 <p>Initializing environments is very easy in Gymnasium and can be done via the <code class="docutils literal notranslate"><span class="pre">make</span></code> function:</p>
