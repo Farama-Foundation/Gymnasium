@@ -54,7 +54,7 @@ gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](
 
 ### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
 
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
 [![GitHub stars](https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium)]()
 
 Highly scalable and customizable Safe Reinforcement Learning library.
