@@ -21,11 +21,12 @@ class DictInfoToListV0(VectorWrapper):
 
     Example::
 
+        >>> import numpy as np
         >>> dict_info = {
         ...      "k": np.array([0., 0., 0.5, 0.3]),
         ...      "_k": np.array([False, False, True, True])
         ...  }
-        >>> list_info = [{}, {}, {k: 0.5}, {k: 0.3}]
+        >>> list_info = [{}, {}, {"k": 0.5}, {"k": 0.3}]
     """
 
     def __init__(self, env: VectorEnv):
@@ -54,6 +55,7 @@ class DictInfoToListV0(VectorWrapper):
         """Resets the environment using kwargs."""
         obs, infos = self.env.reset(seed=seed, options=options)
         list_info = self._convert_info_to_list(infos)
+
         return obs, list_info
 
     def _convert_info_to_list(self, infos: dict) -> list[dict[str, Any]]:

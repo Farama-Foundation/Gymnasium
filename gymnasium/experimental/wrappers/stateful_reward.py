@@ -13,7 +13,7 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
-class NormalizeRewardV0(
+class NormalizeRewardV1(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
@@ -23,6 +23,10 @@ class NormalizeRewardV0(
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
     statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.
     If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+
+    Note:
+        In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrect computed in Gym v0.25+.
+        For more detail, read [#3154](https://github.com/openai/gym/pull/3152).
 
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
