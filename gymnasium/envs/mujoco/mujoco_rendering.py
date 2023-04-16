@@ -327,8 +327,8 @@ class WindowViewer(BaseRender):
         if self.window:
             if glfw.get_current_context() == self.window:
                 glfw.make_context_current(None)
-        glfw.destroy_window(self.window)
-        self.window = None
+            glfw.destroy_window(self.window)
+            self.window = None
 
     def __del__(self):
         """Eliminate all of the OpenGL glfw contexts and windows"""

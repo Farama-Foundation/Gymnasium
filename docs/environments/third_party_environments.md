@@ -54,7 +54,7 @@ gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](
 
 ### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
 
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
 [![GitHub stars](https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium)]()
 
 Highly scalable and customizable Safe Reinforcement Learning library.
@@ -72,6 +72,13 @@ Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn class
 [![GitHub stars](https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata)]()
 
 Environments where the agent interacts with _Cellular Automata_ by changing its cell states.
+
+### [DACBench: a benchmark for Dynamic Algorithm Configuration](https://github.com/automl/DACBench)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/automl/DACBench)]()
+
+A benchmark library for [Dynamic Algorithm Configuration](https://www.automl.org/dynamic-algorithm-configuration/). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
 ### [gym-saturation: Environments used to prove theorems](https://github.com/inpefess/gym-saturation)
 
@@ -126,7 +133,6 @@ A simple environment using [PyBullet](https://github.com/bulletphysics/bullet3) 
 ### [MarsExplorer: Environments for controlling robot on Mars](https://github.com/dimikout3/MarsExplorer)
 
 Mars Explorer is a Gym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.
-
 
 ### [robo-gym: Real-world and simulation robotics](https://github.com/jr-robotics/robo-gym)
 

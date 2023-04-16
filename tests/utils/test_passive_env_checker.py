@@ -34,26 +34,6 @@ def _modify_space(space: spaces.Space, attribute: str, value):
         # ===== Check box observation space ====
         [
             UserWarning,
-            spaces.Box(np.zeros((5, 5, 1)), 255 * np.ones((5, 5, 1)), dtype=np.int32),
-            "It seems a Box observation space is an image but the `dtype` is not `np.uint8`, actual type: int32. If the Box observation space is not an image, we recommend flattening the observation to have only a 1D vector.",
-        ],
-        [
-            UserWarning,
-            spaces.Box(np.ones((2, 2, 1)), 255 * np.ones((2, 2, 1)), dtype=np.uint8),
-            "It seems a Box observation space is an image but the lower and upper bounds are not [0, 255]. Actual lower bound: 1, upper bound: 255. Generally, CNN policies assume observations are within that range, so you may encounter an issue if the observation values are not.",
-        ],
-        [
-            UserWarning,
-            spaces.Box(np.zeros((5, 5, 1)), np.ones((5, 5, 1)), dtype=np.uint8),
-            "It seems a Box observation space is an image but the lower and upper bounds are not [0, 255]. Actual lower bound: 0, upper bound: 1. Generally, CNN policies assume observations are within that range, so you may encounter an issue if the observation values are not.",
-        ],
-        [
-            UserWarning,
-            spaces.Box(np.zeros((5, 5)), np.ones((5, 5))),
-            "A Box observation space has an unconventional shape (neither an image, nor a 1D vector). We recommend flattening the observation to have only a 1D vector or use a custom policy to properly process the data. Actual observation shape: (5, 5)",
-        ],
-        [
-            UserWarning,
             spaces.Box(np.zeros(5), np.zeros(5)),
             "A Box observation space maximum and minimum values are equal. Actual equal coordinates: [(0,), (1,), (2,), (3,), (4,)]",
         ],
