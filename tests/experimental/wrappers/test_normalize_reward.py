@@ -1,8 +1,8 @@
-"""Test suite for NormalizeRewardV0."""
+"""Test suite for NormalizeRewardV1."""
 import numpy as np
 
 from gymnasium.core import ActType
-from gymnasium.experimental.wrappers import NormalizeRewardV0
+from gymnasium.experimental.wrappers import NormalizeRewardV1
 from tests.testing_env import GenericTestEnv
 
 
@@ -18,7 +18,7 @@ def _make_reward_env():
 def test_running_mean_normalize_reward_wrapper():
     """Tests that the property `_update_running_mean` freezes/continues the running statistics updating."""
     env = _make_reward_env()
-    wrapped_env = NormalizeRewardV0(env)
+    wrapped_env = NormalizeRewardV1(env)
 
     # Default value is True
     assert wrapped_env.update_running_mean
@@ -48,7 +48,7 @@ def test_normalize_reward_wrapper():
     """Tests that the NormalizeReward does not throw an error."""
     # TODO: Functional correctness should be tested
     env = _make_reward_env()
-    wrapped_env = NormalizeRewardV0(env)
+    wrapped_env = NormalizeRewardV1(env)
     wrapped_env.reset()
     _, reward, _, _, _ = wrapped_env.step(None)
     assert np.ndim(reward) == 0
