@@ -982,13 +982,18 @@ in Section 5.2 on page 12.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.NormalizeRewardV0">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeRewardV0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.NormalizeRewardV0" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.NormalizeRewardV1">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeRewardV1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.wrappers.NormalizeRewardV1" title="Permalink to this definition">#</a></dt>
 <dd><p>This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.</p>
 <p>The exponential moving average will have variance <span class="math notranslate nohighlight">\((1 - \gamma)^2\)</span>.</p>
 <p>The property <cite>_update_running_mean</cite> allows to freeze/continue the running mean calculation of the reward
 statistics. If <cite>True</cite> (default), the <cite>RunningMeanStd</cite> will get updated every time <cite>self.normalize()</cite> is called.
 If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrect computed in Gym v0.25+.
+For more detail, read [#3154](<a class="reference external" href="https://github.com/openai/gym/pull/3152">https://github.com/openai/gym/pull/3152</a>).</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
@@ -1295,7 +1300,7 @@ will always return an empty list:</p>
 <li><a class="reference internal" href="#reward-wrappers">Reward Wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.LambdaRewardV0"><code class="docutils literal notranslate"><span class="pre">LambdaRewardV0</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.experimental.wrappers.ClipRewardV0"><code class="docutils literal notranslate"><span class="pre">ClipRewardV0</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.wrappers.NormalizeRewardV0"><code class="docutils literal notranslate"><span class="pre">NormalizeRewardV0</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.experimental.wrappers.NormalizeRewardV1"><code class="docutils literal notranslate"><span class="pre">NormalizeRewardV1</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#other-wrappers">Other Wrappers</a><ul>
