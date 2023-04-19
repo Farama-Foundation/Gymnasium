@@ -103,6 +103,7 @@ include = ["gymnasium", "gymnasium.*"]
 gymnasium = [
     "envs/mujoco/assets/*.xml",
     "envs/classic_control/assets/*.png",
+    "envs/phys2d/assets/*.png",
     "envs/toy_text/font/*.ttf",
     "envs/toy_text/img/*.png",
     "py.typed",
