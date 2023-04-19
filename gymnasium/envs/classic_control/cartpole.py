@@ -362,10 +362,10 @@ class CartPoleVectorEnv(VectorEnv):
         self.low = -0.05
         self.high = 0.05
 
-        self.action_space = batch_space(spaces.Discrete(2), num_envs)
-        self.observation_space = batch_space(
-            spaces.Box(-high, high, dtype=np.float32), num_envs
-        )
+        self.single_action_space = spaces.Discrete(2)
+        self.action_space = batch_space(self.single_action_space, num_envs)
+        self.single_observation_space = spaces.Box(-high, high, dtype=np.float32)
+        self.observation_space = batch_space(self.single_observation_space, num_envs)
 
         self.render_mode = render_mode
 
