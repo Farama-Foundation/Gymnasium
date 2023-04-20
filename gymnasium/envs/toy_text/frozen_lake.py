@@ -230,8 +230,8 @@ class FrozenLakeEnv(Env):
         self.nrow, self.ncol = nrow, ncol = desc.shape
         self.reward_range = (0, 1)
 
-        if self.nrow > 4:
-            self.max_episode_steps = 200
+        if self.spec and self.nrow > 4:
+            self.spec.max_episode_steps = 200
 
         nA = 4
         nS = nrow * ncol
