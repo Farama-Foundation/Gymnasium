@@ -5,6 +5,7 @@
 .cache
 .pytest_cache/
 __pycache__/
+.npmrc
 
 # Setuptools distribution and build folders.
 /dist/
@@ -37,6 +38,7 @@ tutorial/*.html
 # IDE files
 .eggs
 .tox
+.vscode
 
 # PyCharm project files
 .idea
