@@ -1,12 +1,14 @@
 """Tests for Jax Blackjack functional env."""
 
 
-import jax
-import jax.numpy as jnp
-import jax.random as jrng
 import pytest
 
-from gymnasium.envs.tabular.blackjack import BlackjackFunctional
+
+jax = pytest.importorskip("jax")
+import jax.numpy as jnp  # noqa: E402
+import jax.random as jrng  # noqa: E402
+
+from gymnasium.envs.tabular.blackjack import BlackjackFunctional  # noqa: E402
 
 
 def test_normal_BlackjackFunctional():

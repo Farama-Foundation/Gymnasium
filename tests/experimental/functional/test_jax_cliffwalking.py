@@ -1,12 +1,14 @@
 """Tests for Jax cliffwalking functional env."""
 
 
-import jax
-import jax.numpy as jnp
-import jax.random as jrng
 import pytest
 
-from gymnasium.envs.tabular.cliffwalking import CliffWalkingFunctional
+
+jax = pytest.importorskip("jax")
+import jax.numpy as jnp  # noqa: E402
+import jax.random as jrng  # noqa: E402
+
+from gymnasium.envs.tabular.cliffwalking import CliffWalkingFunctional  # noqa: E402
 
 
 def test_normal_CliffWalkingFunctional():
