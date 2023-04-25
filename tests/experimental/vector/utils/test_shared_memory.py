@@ -23,6 +23,11 @@ from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 )
 def test_shared_memory_create_read_write(space, num, ctx):
     """Test the shared memory functions, create, read and write for all of the testing spaces."""
+    if ctx not in mp.get_all_start_methods():
+        pytest.skip(
+            f"Multiprocessing start method {ctx} not available on this platform."
+        )
+
     ctx = mp if ctx is None else mp.get_context(ctx)
     samples = [space.sample() for _ in range(num)]
 
