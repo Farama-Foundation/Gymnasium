@@ -66,6 +66,13 @@ Highly scalable and customizable Safe Reinforcement Learning library.
 
 Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
 
+### [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/stefanbschneider/mobile-env)]()
+
+An open, minimalist Gymnasium environment for autonomous coordination in wireless mobile networks.
+
 ### [gym-cellular-automata: Cellular Automata environments](https://github.com/elbecerrasoto/gym-cellular-automata)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
@@ -229,10 +236,6 @@ MtSim is a simulator for the [MetaTrader 5](https://www.metatrader5.com/) tradin
 ### [openmodelica-microgrid-gym: Environments for controlling power electronic converters in microgrids](https://github.com/upb-lea/openmodelica-microgrid-gym)
 
 The OpenModelica Microgrid Gym (OMG) package is a software toolbox for the simulation and control optimization of microgrids based on energy conversion by power electronic converters.
-
-### [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env/)
-
-An open, minimalist Gym environment for autonomous coordination in wireless mobile networks.
 
 ### [GymFC: A flight control tuning and training framework](https://github.com/wil3/gymfc/)
 
