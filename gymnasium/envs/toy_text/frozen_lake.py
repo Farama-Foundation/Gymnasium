@@ -139,7 +139,7 @@ class FrozenLakeEnv(Env):
         2. The player reaches the goal at `max(nrow) * max(ncol) - 1` (location `[max(nrow)-1, max(ncol)-1]`).
 
     - Truncation (when using the time_limit wrapper):
-        1. The length of the episode is 100 for 4x4 environment, 200 for 8x8 environment.
+        1. The length of the episode is 100 for 4x4 environment, 200 for FrozenLake8x8-v1 environment.
 
     ## Information
 
