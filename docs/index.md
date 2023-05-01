@@ -10,10 +10,10 @@ lastpage:
 	</h1>
 </center>
 
-<center>
-	<p>Note: The video includes clips with trained agents from Stable Baselines3. (<a href="https://huggingface.co/sb3">Link</a>)</p>
-	<video autoplay loop muted inline width="450" src="_static/videos/environments-demo.mp4" type="video/mp4"></video>
-</center>
+```{figure} _static/videos/box2d/lunar_lander.gif
+   :alt: Lunar Lander
+   :width: 500
+```
 
 Gymnasium is a maintained fork of OpenAI’s Gym library. It provides a user-friendly, pythonic interface for creating and interacting with reinforcement learning environments. With Gymnasium, you can access a diverse collection of environments, as well as represent your own custom RL environments. If you require an environment that is only available in the old Gym, you can use the [compatibility wrapper](content/gym_compatibility).
 
