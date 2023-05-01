@@ -6,9 +6,10 @@ lastpage:
 
 # Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments.
 
-```{figure} _static/videos/environments-demo.gif
-    :alt: Gymnasium environments
-    :width: 500px    
+
+```{figure} _static/videos/box2d/lunar_lander.gif
+   :alt: Lunar Lander
+   :width: 500
 ```
 
 **Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility) for old Gym environments:**
@@ -24,6 +25,7 @@ for _ in range(1000):
 
    if terminated or truncated:
       observation, info = env.reset()
+
 env.close()
 ```
 
