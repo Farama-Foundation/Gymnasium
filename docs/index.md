@@ -5,9 +5,9 @@ lastpage:
 ---
 
 <center>
-<img src="../gymnasium-text.png" width="65%" alt="Gymnasium Logo">
+<img src="_static/img/gymnasium-text.png" width="65%" alt="Gymnasium Logo">
 
-<h2>The API standard for reinforcement learning, and a diverse collection of reference environments</h2>
+<h2>A standard API for reinforcement learning with a diverse collection of reference environments</h2>
 </center>
 
 ```{figure} _static/videos/box2d/lunar_lander.gif
