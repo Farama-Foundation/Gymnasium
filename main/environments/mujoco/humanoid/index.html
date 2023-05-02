@@ -508,7 +508,7 @@
 <p>This environment is based on the environment introduced by Tassa, Erez and Todorov
 in <a class="reference external" href="https://ieeexplore.ieee.org/document/6386025">“Synthesis and stabilization of complex behaviors through online trajectory optimization”</a>.
 The 3D bipedal robot is designed to simulate a human. It has a torso (abdomen) with a pair of
-legs and arms. The legs each consist of two links, and so the arms (representing the knees and
+legs and arms. The legs each consist of three body parts, and the arms 2 body parts (representing the knees and
 elbows respectively). The goal of the environment is to walk forward as fast as possible without falling over.</p>
 </section>
 <section id="action-space">
@@ -674,11 +674,11 @@ followed by the velocities of those individual parts (their derivatives) with al
 positions ordered before all the velocities.</p>
 <p>By default, observations do not include the x- and y-coordinates of the torso. These may
 be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-In that case, the observation space will have 378 dimensions where the first two dimensions
+In that case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(378,),</span> <span class="pre">float64)</span></code> where the first two observations
 represent the x- and y-coordinates of the torso.
 Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x- and y-coordinates
 will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
-<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(376,)</span></code> where the elements correspond to the following:</p>
+<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(376,),</span> <span class="pre">float64)</span></code>. The elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -772,7 +772,7 @@ will be returned in <code class="docutils literal notranslate"><span class="pre"
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
-<tr class="row-even"><td><p>19</p></td>
+<tr class="row-even"><td><p>10</p></td>
 <td><p>y-coordinate of angle between pelvis and right hip (in right_thigh)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -1045,7 +1045,7 @@ will be returned in <code class="docutils literal notranslate"><span class="pre"
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
 <tr class="row-even"><td><p>44</p></td>
-<td><p>angular velocitty of the angle between left upper arm and left_lower_arm</p></td>
+<td><p>angular velocity of the angle between left upper arm and left_lower_arm</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>left_elbow</p></td>
@@ -1070,6 +1070,141 @@ adds another 84 elements in the state space</p></li>
 where <em>nbody</em> stands for the number of bodies in the robot and <em>nv</em> stands for the
 number of degrees of freedom (<em>= dim(qvel)</em>)</p></li>
 </ul>
+<p>The body parts are:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>id (for <code class="docutils literal notranslate"><span class="pre">v2</span></code>,<code class="docutils literal notranslate"><span class="pre">v3</span></code>,<code class="docutils literal notranslate"><span class="pre">v4</span></code>)</p></th>
+<th class="head"><p>body part</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>worldBody (note: all values are constant 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>torso</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>lwaist</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>pelvis</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>right_thigh</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>right_sin</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>right_foot</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>left_thigh</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>left_sin</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>left_foot</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>right_upper_arm</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>right_lower_arm</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>left_upper_arm</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>left_lower_arm</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The joints are:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>id (for <code class="docutils literal notranslate"><span class="pre">v2</span></code>,<code class="docutils literal notranslate"><span class="pre">v3</span></code>,<code class="docutils literal notranslate"><span class="pre">v4</span></code>)</p></th>
+<th class="head"><p>joint</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>abdomen_z</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>abdomen_y</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>abdomen_x</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>right_hip_x</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>right_hip_z</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>right_hip_y</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>right_knee</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>left_hip_x</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>left_hiz_z</p></td>
+</tr>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>left_hip_y</p></td>
+</tr>
+<tr class="row-even"><td><p>16</p></td>
+<td><p>left_knee</p></td>
+</tr>
+<tr class="row-odd"><td><p>17</p></td>
+<td><p>right_shoulder1</p></td>
+</tr>
+<tr class="row-even"><td><p>18</p></td>
+<td><p>right_shoulder2</p></td>
+</tr>
+<tr class="row-odd"><td><p>19</p></td>
+<td><p>right_elbow</p></td>
+</tr>
+<tr class="row-even"><td><p>20</p></td>
+<td><p>left_shoulder1</p></td>
+</tr>
+<tr class="row-odd"><td><p>21</p></td>
+<td><p>left_shoulder2</p></td>
+</tr>
+<tr class="row-even"><td><p>22</p></td>
+<td><p>left_elfbow</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>The (x,y,z) coordinates are translational DOFs while the orientations are rotational
 DOFs expressed as quaternions. One can read more about free joints on the
 <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/XMLreference.html">Mujoco Documentation</a>.</p>
