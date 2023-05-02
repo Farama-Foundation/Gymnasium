@@ -7,7 +7,7 @@ lastpage:
 <center>
 <img src="https://raw.githubusercontent.com/Farama-Foundation/Gymnasium/master/gymnasium-text.png" width="60%" alt="Gymnasium Logo">
 
-<h2>A standard API for reinforcement learning, and a diverse collection of reference environments</h2>
+<h2>The API standard for reinforcement learning, and a diverse collection of reference environments</h2>
 </center>
 
 ```{figure} _static/videos/box2d/lunar_lander.gif
