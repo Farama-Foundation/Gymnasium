@@ -5,9 +5,10 @@ lastpage:
 ---
 
 <center>
-<img src="_static/img/gymnasium-text.png" width="65%" alt="Gymnasium Logo">
-
-<h2>A standard API for reinforcement learning with a diverse collection of reference environments</h2>
+    <div class="logo">
+        <img src="_static/img/gymnasium-text.png" width="65%" alt="Gymnasium Logo">
+    </div>
+    <h2>An API standard for reinforcement learning with a diverse collection of reference environments</h2>
 </center>
 
 ```{figure} _static/videos/box2d/lunar_lander.gif
@@ -45,6 +46,9 @@ img{
   padding-bottom: 0;
   padding-top: 0
  }
+.logo{
+  padding-left: 7%;
+}
 </style>
 
 ```{toctree}
