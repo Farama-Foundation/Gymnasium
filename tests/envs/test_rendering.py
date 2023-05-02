@@ -5,6 +5,26 @@ from gymnasium.logger import warn
 from tests.envs.utils import all_testing_env_specs
 
 
+try:
+    # raises an ImportError on egl and osmesa, if not available
+    import mujoco
+
+    from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
+
+    model = mujoco.MjModel.from_xml_string(
+        '<mujoco><worldbody><geom size="1"/></worldbody></mujoco>'
+    )
+    data = mujoco.MjData(model)
+
+    mjr = MujocoRenderer(model, data)
+    # raises a mujoco.FatalError on glfw, if not available
+    mjr.render('rgb_array')
+    mjr.close()
+    skip_mujoco = False
+except:  # noqa: E722 (cannot catch mujoco.FatalError explicitly)
+    skip_mujoco = True
+
+
 def check_rendered(rendered_frame, mode: str):
     """Check that the rendered frame is as expected."""
     if mode == "rgb_array_list":
@@ -40,7 +60,12 @@ def check_rendered(rendered_frame, mode: str):
 
 # We do not check render_mode for some mujoco envs and any old Gym environment wrapped by `GymEnvironment`
 render_mode_env_specs = [
-    spec
+    pytest.param(
+        spec,
+        marks=pytest.mark.skipif(
+            skip_mujoco and "mujoco" in spec.entry_point, reason="OpenGL not available"
+        ),
+    )
     for spec in all_testing_env_specs
     if "mujoco" not in spec.entry_point or "v4" in spec.id
 ]
