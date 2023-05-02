@@ -17,16 +17,15 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     """
     ## Description
 
-    This environment builds on the hopper environment based on the work done by Erez, Tassa, and Todorov
-    in ["Infinite Horizon Model Predictive Control for Nonlinear Periodic Tasks"](http://www.roboticsproceedings.org/rss07/p10.pdf)
-    by adding another set of legs making it possible for the robot to walker forward instead of
+    This environment builds on the [hopper](https://gymnasium.farama.org/environments/mujoco/hopper/) environment
+    by adding another set of legs making it possible for the robot to walk forward instead of
     hop. Like other Mujoco environments, this environment aims to increase the number of independent state
     and control variables as compared to the classic control environments. The walker is a
-    two-dimensional two-legged figure that consist of four main body parts - a single torso at the top
+    two-dimensional two-legged figure that consist of seven main body parts - a single torso at the top
     (with the two legs splitting after the torso), two thighs in the middle below the torso, two legs
     in the bottom below the thighs, and two feet attached to the legs on which the entire body rests.
-    The goal is to make coordinate both sets of feet, legs, and thighs to move in the forward (right)
-    direction by applying torques on the six hinges connecting the six body parts.
+    The goal is to walk in the in the forward (right)
+    direction by applying torques on the six hinges connecting the seven body parts.
 
     ## Action Space
     The action space is a `Box(-1, 1, (6,), float32)`. An action represents the torques applied at the hinge joints.
@@ -41,7 +40,6 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     | 5   | Torque applied on the left foot rotor  | -1          | 1           | foot_left_joint                  | hinge | torque (N m) |
 
     ## Observation Space
-
     Observations consist of positional values of different body parts of the walker,
     followed by the velocities of those individual parts (their derivatives) with all the positions ordered before all the velocities.
 
@@ -54,25 +52,26 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
 
     By default, observation is a `ndarray` with shape `(17,)` where the elements correspond to the following:
 
-    | Num | Observation                                      | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
-    | --- | ------------------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
-    | 0   | z-coordinate of the top (height of hopper)       | -Inf | Inf | rootz (torso)                    | slide | position (m)             |
-    | 1   | angle of the top                                 | -Inf | Inf | rooty (torso)                    | hinge | angle (rad)              |
-    | 2   | angle of the thigh joint                         | -Inf | Inf | thigh_joint                      | hinge | angle (rad)              |
-    | 3   | angle of the leg joint                           | -Inf | Inf | leg_joint                        | hinge | angle (rad)              |
-    | 4   | angle of the foot joint                          | -Inf | Inf | foot_joint                       | hinge | angle (rad)              |
-    | 5   | angle of the left thigh joint                    | -Inf | Inf | thigh_left_joint                 | hinge | angle (rad)              |
-    | 6   | angle of the left leg joint                      | -Inf | Inf | leg_left_joint                   | hinge | angle (rad)              |
-    | 7   | angle of the left foot joint                     | -Inf | Inf | foot_left_joint                  | hinge | angle (rad)              |
-    | 8   | velocity of the x-coordinate of the top          | -Inf | Inf | rootx                            | slide | velocity (m/s)           |
-    | 9   | velocity of the z-coordinate (height) of the top | -Inf | Inf | rootz                            | slide | velocity (m/s)           |
-    | 10  | angular velocity of the angle of the top         | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
-    | 11  | angular velocity of the thigh hinge              | -Inf | Inf | thigh_joint                      | hinge | angular velocity (rad/s) |
-    | 12  | angular velocity of the leg hinge                | -Inf | Inf | leg_joint                        | hinge | angular velocity (rad/s) |
-    | 13  | angular velocity of the foot hinge               | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
-    | 14  | angular velocity of the thigh hinge              | -Inf | Inf | thigh_left_joint                 | hinge | angular velocity (rad/s) |
-    | 15  | angular velocity of the leg hinge                | -Inf | Inf | leg_left_joint                   | hinge | angular velocity (rad/s) |
-    | 16  | angular velocity of the foot hinge               | -Inf | Inf | foot_left_joint                  | hinge | angular velocity (rad/s) |
+    | Num | Observation                                        | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
+    | --- | -------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
+    | 0   | z-coordinate of the torso (height of hopper)       | -Inf | Inf | rootz                            | slide | position (m)             |
+    | 1   | angle of the torso                                 | -Inf | Inf | rooty                            | hinge | angle (rad)              |
+    | 2   | angle of the thigh joint                           | -Inf | Inf | thigh_joint                      | hinge | angle (rad)              |
+    | 3   | angle of the leg joint                             | -Inf | Inf | leg_joint                        | hinge | angle (rad)              |
+    | 4   | angle of the foot joint                            | -Inf | Inf | foot_joint                       | hinge | angle (rad)              |
+    | 5   | angle of the left thigh joint                      | -Inf | Inf | thigh_left_joint                 | hinge | angle (rad)              |
+    | 6   | angle of the left leg joint                        | -Inf | Inf | leg_left_joint                   | hinge | angle (rad)              |
+    | 7   | angle of the left foot joint                       | -Inf | Inf | foot_left_joint                  | hinge | angle (rad)              |
+    | 8   | velocity of the x-coordinate of the torso          | -Inf | Inf | rootx                            | slide | velocity (m/s)           |
+    | 9   | velocity of the z-coordinate (height) of the rorso | -Inf | Inf | rootz                            | slide | velocity (m/s)           |
+    | 10  | angular velocity of the angle of the top           | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
+    | 11  | angular velocity of the thigh hinge                | -Inf | Inf | thigh_joint                      | hinge | angular velocity (rad/s) |
+    | 12  | angular velocity of the leg hinge                  | -Inf | Inf | leg_joint                        | hinge | angular velocity (rad/s) |
+    | 13  | angular velocity of the foot hinge                 | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
+    | 14  | angular velocity of the thigh hinge                | -Inf | Inf | thigh_left_joint                 | hinge | angular velocity (rad/s) |
+    | 15  | angular velocity of the leg hinge                  | -Inf | Inf | leg_left_joint                   | hinge | angular velocity (rad/s) |
+    | 16  | angular velocity of the foot hinge                 | -Inf | Inf | foot_left_joint                  | hinge | angular velocity (rad/s) |
+    
     ## Rewards
     The reward consists of three parts:
     - *healthy_reward*: Every timestep that the walker is alive, it receives a fixed reward of value `healthy_reward`,
@@ -80,7 +79,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     *`forward_reward_weight` * (x-coordinate before action - x-coordinate after action)/dt*.
     *dt* is the time between actions and is dependeent on the frame_skip parameter
     (default is 4), where the frametime is 0.002 - making the default
-    *dt = 4 * 0.002 = 0.008*. This reward would be positive if the walker walks forward (right) desired.
+    *dt = 4 * 0.002 = 0.008*. This reward would be positive if the walker walks forward (positive x direction).
     - *ctrl_cost*: A cost for penalising the walker if it
     takes actions that are too large. It is measured as
     *`ctrl_cost_weight` * sum(action<sup>2</sup>)* where *`ctrl_cost_weight`* is
