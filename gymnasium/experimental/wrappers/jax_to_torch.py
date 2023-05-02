@@ -91,9 +91,7 @@ def _devicearray_jax_to_torch(
     """Converts a Jax DeviceArray into a PyTorch Tensor."""
     assert jax_dlpack is not None and torch_dlpack is not None
     dlpack = jax_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
-    tensor = torch_dlpack.from_dlpack(
-        dlpack
-    )  # pyright: ignore[reportPrivateImportUsage]
+    tensor = torch_dlpack.from_dlpack(dlpack)
     if device:
         return tensor.to(device=device)
     return tensor
