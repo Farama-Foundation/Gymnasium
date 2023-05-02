@@ -5,7 +5,7 @@ lastpage:
 ---
 
 <center>
-<img src="_static/img/gymnasium-text.png" width="65%" alt="Gymnasium Logo">
+<img src="../gymnasium-text.png" width="65%" alt="Gymnasium Logo">
 
 <h2>The API standard for reinforcement learning, and a diverse collection of reference environments</h2>
 </center>
