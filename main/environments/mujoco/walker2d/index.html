@@ -505,16 +505,15 @@
 </div>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
-<p>This environment builds on the hopper environment based on the work done by Erez, Tassa, and Todorov
-in <a class="reference external" href="http://www.roboticsproceedings.org/rss07/p10.pdf">“Infinite Horizon Model Predictive Control for Nonlinear Periodic Tasks”</a>
-by adding another set of legs making it possible for the robot to walker forward instead of
+<p>This environment builds on the <a class="reference external" href="https://gymnasium.farama.org/environments/mujoco/hopper/">hopper</a> environment
+by adding another set of legs making it possible for the robot to walk forward instead of
 hop. Like other Mujoco environments, this environment aims to increase the number of independent state
 and control variables as compared to the classic control environments. The walker is a
-two-dimensional two-legged figure that consist of four main body parts - a single torso at the top
+two-dimensional two-legged figure that consist of seven main body parts - a single torso at the top
 (with the two legs splitting after the torso), two thighs in the middle below the torso, two legs
 in the bottom below the thighs, and two feet attached to the legs on which the entire body rests.
-The goal is to make coordinate both sets of feet, legs, and thighs to move in the forward (right)
-direction by applying torques on the six hinges connecting the six body parts.</p>
+The goal is to walk in the in the forward (right)
+direction by applying torques on the six hinges connecting the seven body parts.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
@@ -609,18 +608,18 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 </thead>
 <tbody>
 <tr class="row-even"><td><p>0</p></td>
-<td><p>z-coordinate of the top (height of hopper)</p></td>
+<td><p>z-coordinate of the torso (height of hopper)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
-<td><p>rootz (torso)</p></td>
+<td><p>rootz</p></td>
 <td><p>slide</p></td>
 <td><p>position (m)</p></td>
 </tr>
 <tr class="row-odd"><td><p>1</p></td>
-<td><p>angle of the top</p></td>
+<td><p>angle of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
-<td><p>rooty (torso)</p></td>
+<td><p>rooty</p></td>
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
@@ -673,7 +672,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>angle (rad)</p></td>
 </tr>
 <tr class="row-even"><td><p>8</p></td>
-<td><p>velocity of the x-coordinate of the top</p></td>
+<td><p>velocity of the x-coordinate of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rootx</p></td>
@@ -681,7 +680,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>velocity (m/s)</p></td>
 </tr>
 <tr class="row-odd"><td><p>9</p></td>
-<td><p>velocity of the z-coordinate (height) of the top</p></td>
+<td><p>velocity of the z-coordinate (height) of the rorso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rootz</p></td>
@@ -757,7 +756,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <em><code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code> * (x-coordinate before action - x-coordinate after action)/dt</em>.
 <em>dt</em> is the time between actions and is dependeent on the frame_skip parameter
 (default is 4), where the frametime is 0.002 - making the default
-<em>dt = 4 * 0.002 = 0.008</em>. This reward would be positive if the walker walks forward (right) desired.</p></li>
+<em>dt = 4 * 0.002 = 0.008</em>. This reward would be positive if the walker walks forward (positive x direction).</p></li>
 <li><p><em>ctrl_cost</em>: A cost for penalising the walker if it
 takes actions that are too large. It is measured as
 <em><code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> * sum(action<sup>2</sup>)</em> where <em><code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code></em> is
