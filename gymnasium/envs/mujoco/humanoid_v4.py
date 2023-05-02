@@ -158,7 +158,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | 3 | root |
     | 4 | root |
     | 5 | root |
-    | 6 | abdomen_z | 
+    | 6 | abdomen_z |
     | 7 | abdomen_y |
     | 8 | abdomen_x |
     | 9 | right_hip_x |
