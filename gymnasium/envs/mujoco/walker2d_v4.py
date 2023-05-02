@@ -71,7 +71,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     | 14  | angular velocity of the thigh hinge                | -Inf | Inf | thigh_left_joint                 | hinge | angular velocity (rad/s) |
     | 15  | angular velocity of the leg hinge                  | -Inf | Inf | leg_left_joint                   | hinge | angular velocity (rad/s) |
     | 16  | angular velocity of the foot hinge                 | -Inf | Inf | foot_left_joint                  | hinge | angular velocity (rad/s) |
-    
+
     ## Rewards
     The reward consists of three parts:
     - *healthy_reward*: Every timestep that the walker is alive, it receives a fixed reward of value `healthy_reward`,
