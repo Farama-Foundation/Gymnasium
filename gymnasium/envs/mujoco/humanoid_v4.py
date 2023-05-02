@@ -127,8 +127,8 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     - *cfrc_ext:* This is the center of mass based external force on the body.  It has shape
     14 * 6 (*nbody * 6*) and hence adds to another 84 elements in the state space.
     where *nbody* stands for the number of bodies in the robot and *nv* stands for the
-    number of degrees of freedom (*= dim(qvel)*) 
-    
+    number of degrees of freedom (*= dim(qvel)*)
+
     The body parts are:
 
     | id (for `v2`,`v3`,`v4`) | body part |
