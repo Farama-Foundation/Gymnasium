@@ -60,12 +60,12 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
     By default, observations do not include the x- and y-coordinates of the torso. These may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will have 378 dimensions where the first two dimensions
+    In that case, the observation space will be a `Box(-1, 1, (378,), float64)` where the first two observations
     represent the x- and y-coordinates of the torso.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x- and y-coordinates
     will be returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
-    However, by default, the observation is a `ndarray` with shape `(376,)` where the elements correspond to the following:
+    However, by default, the observation is a `Box(-1, 1, (376,), float64)`. The elements correspond to the following:
 
     | Num | Observation                                                                                                     | Min  | Max | Name (in corresponding XML file) | Joint | Unit                       |
     | --- | --------------------------------------------------------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | -------------------------- |
@@ -133,7 +133,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
     | id (for `v2`,`v3`,`v4`) | body part |
     |  ---  |  ------------  |
-    | 0 | worldBody (note: all values are contant 0) |
+    | 0 | worldBody (note: all values are constant 0) |
     | 1 | torso |
     | 2 | lwaist |
     | 3 | pelvis |
