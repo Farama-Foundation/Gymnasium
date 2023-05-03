@@ -16,10 +16,10 @@ try:
     )
     data = mujoco.MjData(model)
 
-    # mjr = MujocoRenderer(model, data)
+    mjr = MujocoRenderer(model, data)
     # # raises a mujoco.FatalError on glfw, if not available
     # mjr.render("rgb_array")
-    # mjr.close()
+    mjr.close()
     #
     # del mjr
     # del data
