@@ -14,8 +14,8 @@ try:
     model = mujoco.MjModel.from_xml_string(
         '<mujoco><worldbody><geom size="1"/></worldbody></mujoco>'
     )
-    # data = mujoco.MjData(model)
-    #
+    data = mujoco.MjData(model)
+
     # mjr = MujocoRenderer(model, data)
     # # raises a mujoco.FatalError on glfw, if not available
     # mjr.render("rgb_array")
