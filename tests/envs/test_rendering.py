@@ -14,16 +14,16 @@ try:
     model = mujoco.MjModel.from_xml_string(
         '<mujoco><worldbody><geom size="1"/></worldbody></mujoco>'
     )
-    data = mujoco.MjData(model)
-
-    mjr = MujocoRenderer(model, data)
-    # raises a mujoco.FatalError on glfw, if not available
-    mjr.render("rgb_array")
-    mjr.close()
-
-    del mjr
-    del data
-    del model
+    # data = mujoco.MjData(model)
+    #
+    # mjr = MujocoRenderer(model, data)
+    # # raises a mujoco.FatalError on glfw, if not available
+    # mjr.render("rgb_array")
+    # mjr.close()
+    #
+    # del mjr
+    # del data
+    # del model
 
     skip_mujoco = False
 except:  # noqa: E722 (cannot catch mujoco.FatalError explicitly)
