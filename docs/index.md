@@ -50,19 +50,15 @@ img{
     padding-top: 0
  }
 .logo{
-    padding-left: 7%;
+    padding-left: 8%;
+    padding-top: 10px
 }
-@media (min-width: 1072px) {
+@media (min-width: 455px) {
     .header-text{
         text-align: center;
     }
 }
-@media (min-width: 450px) and (max-width: 1072px) {
-    .header-text{
-        text-align: center;
-    }
-}
-@media (max-width: 450px) {
+@media (max-width: 455px) {
     .header-text{
         text-align: left;
     }
