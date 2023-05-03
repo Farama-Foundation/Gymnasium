@@ -18,8 +18,13 @@ try:
 
     mjr = MujocoRenderer(model, data)
     # raises a mujoco.FatalError on glfw, if not available
-    mjr.render('rgb_array')
+    mjr.render("rgb_array")
     mjr.close()
+
+    del mjr
+    del data
+    del model
+
     skip_mujoco = False
 except:  # noqa: E722 (cannot catch mujoco.FatalError explicitly)
     skip_mujoco = True
