@@ -8,8 +8,11 @@ lastpage:
     <div class="logo">
         <img src="_static/img/gymnasium-text.png" width="65%" alt="Gymnasium Logo">
     </div>
-    <h2>An API standard for reinforcement learning with a diverse collection of reference environments</h2>
 </center>
+
+<div class="header-text">
+    <h2>An API standard for reinforcement learning with a diverse collection of reference environments</h2>
+</div>
 
 ```{figure} _static/videos/box2d/lunar_lander.gif
    :alt: Lunar Lander
@@ -42,12 +45,27 @@ h2 {
     overflow: auto;
 }
 img{
-  vertical-align:bottom;
-  padding-bottom: 0;
-  padding-top: 0
+    vertical-align:bottom;
+    padding-bottom: 0;
+    padding-top: 0
  }
 .logo{
-  padding-left: 7%;
+    padding-left: 7%;
+}
+@media (min-width: 1072px) {
+    .header-text{
+        text-align: center;
+    }
+}
+@media (min-width: 450px) and (max-width: 1072px) {
+    .header-text{
+        text-align: center;
+    }
+}
+@media (max-width: 450px) {
+    .header-text{
+        text-align: left;
+    }
 }
 </style>
 
