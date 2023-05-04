@@ -59,10 +59,10 @@ gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](
 
 Highly scalable and customizable Safe Reinforcement Learning library.
 
-### [gym-trading-env: Trading Environment]([https://github.com/ClementPerroud/Gym-Trading-Env](https://gym-trading-env.readthedocs.io/))
+### [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/))
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
-[![Github stars]([https://gym-trading-env.readthedocs.io/](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)]()
+[![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)]()
 
 Gym Trading Env simulates stock (or crypto) market on historical data. It was designed to be fast and easily customizable for easy RL trading algorithms implementation.
 
