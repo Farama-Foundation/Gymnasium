@@ -3,6 +3,19 @@ Training A2C with Vector Envs and Domain Randomization
 ======================================================
 
 """
+# %%
+# Notice
+# ------
+#
+# If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from ``gym.vector.make=`` or ``gym.vector.AsyncVectorEnv`` to the end of the code by ``if__name__ == '__main__'``.
+#
+# ``An attempt has been made to start a new process before the current process has finished its bootstrapping phase.``
+#
+
+# %%
+#
+# ------------------------------
+#
 
 
 # %%
@@ -441,7 +454,7 @@ for sample_phase in tqdm(range(n_updates)):
 
         # perform the action A_{t} in the environment to get S_{t+1} and R_{t+1}
         states, rewards, terminated, truncated, infos = envs_wrapper.step(
-            actions.numpy()
+            actions.cpu().numpy()
         )
 
         ep_value_preds[step] = torch.squeeze(state_value_preds)

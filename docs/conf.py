@@ -17,7 +17,6 @@
 # -- Project information -----------------------------------------------------
 import os
 import re
-from typing import Any, Dict
 
 import sphinx_gallery.gen_rst
 
@@ -72,9 +71,9 @@ autodoc_preserve_defaults = True
 # the class docstring.
 def remove_lines_before_parameters(app, what, name, obj, options, lines):
     if what == "class":
-        # ":" represents args values such as :param: or :raises:
+        # ":param" represents args values
         first_idx_to_keep = next(
-            (i for i, line in enumerate(lines) if line.startswith(":")), 0
+            (i for i, line in enumerate(lines) if line.startswith(":param")), 0
         )
         lines[:] = lines[first_idx_to_keep:]
 
@@ -100,14 +99,10 @@ html_theme_options = {
     "description": "A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)",
     "image": "img/gymnasium-github.png",
     "versioning": True,
+    "source_repository": "https://github.com/Farama-Foundation/Gymnasium/",
+    "source_branch": "main",
+    "source_directory": "docs/",
 }
-html_context: Dict[str, Any] = {}
-html_context["conf_py_path"] = "/docs/"
-html_context["display_github"] = False
-html_context["github_user"] = "Farama-Foundation"
-html_context["github_repo"] = "Gymnasium"
-html_context["github_version"] = "main"
-html_context["slug"] = "gymnasium"
 
 html_static_path = ["_static"]
 html_css_files = []

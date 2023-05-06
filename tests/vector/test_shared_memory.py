@@ -50,6 +50,11 @@ expected_types = [
     "ctx", [None, "fork", "spawn"], ids=["default", "fork", "spawn"]
 )
 def test_create_shared_memory(space, expected_type, n, ctx):
+    if ctx not in mp.get_all_start_methods():
+        pytest.skip(
+            f"Multiprocessing start method {ctx} not available on this platform."
+        )
+
     def assert_nested_type(lhs, rhs, n):
         assert type(lhs) == type(rhs)
         if isinstance(lhs, (list, tuple)):
@@ -81,6 +86,11 @@ def test_create_shared_memory(space, expected_type, n, ctx):
 )
 @pytest.mark.parametrize("space", custom_spaces)
 def test_create_shared_memory_custom_space(n, ctx, space):
+    if ctx not in mp.get_all_start_methods():
+        pytest.skip(
+            f"Multiprocessing start method {ctx} not available on this platform."
+        )
+
     ctx = mp if (ctx is None) else mp.get_context(ctx)
     with pytest.raises(CustomSpaceError):
         create_shared_memory(space, n=n, ctx=ctx)

@@ -1,16 +1,18 @@
 """Test suite for JaxToNumpyV0."""
 
-import jax.numpy as jnp
 import numpy as np
 import pytest
 
-from gymnasium.experimental.wrappers.conversion.jax_to_numpy import (
+
+jnp = pytest.importorskip("jax.numpy")
+
+from gymnasium.experimental.wrappers.jax_to_numpy import (  # noqa: E402
     JaxToNumpyV0,
     jax_to_numpy,
     numpy_to_jax,
 )
-from gymnasium.utils.env_checker import data_equivalence
-from tests.testing_env import GenericTestEnv
+from gymnasium.utils.env_checker import data_equivalence  # noqa: E402
+from tests.testing_env import GenericTestEnv  # noqa: E402
 
 
 @pytest.mark.parametrize(

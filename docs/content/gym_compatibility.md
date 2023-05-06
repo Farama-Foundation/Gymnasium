@@ -44,7 +44,7 @@ Additionally, in Gymnasium we provide specialist environments for compatibility 
 ```python
 import gymnasium
 
-env = gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1", make_kwargs={"length": 1}, render_mode="human")
+env = gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1", render_mode="human")
 # or
 env = gymnasium.make("GymV21Environment-v0", env=OldV21Env())
 

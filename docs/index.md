@@ -4,15 +4,22 @@ firstpage:
 lastpage:
 ---
 
-# Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
+<center>
+    <div class="logo">
+        <img src="_static/img/gymnasium-text.png" width="65%" alt="Gymnasium Logo">
+    </div>
+</center>
 
-```{figure} _static/videos/box2d/lunar_lander_continuous.gif
+<div class="header-text">
+    <h2>An API standard for reinforcement learning with a diverse collection of reference environments</h2>
+</div>
+
+```{figure} _static/videos/box2d/lunar_lander.gif
    :alt: Lunar Lander
    :width: 500
 ```
 
-**Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility
-) for old Gym environments:**
+**Gymnasium is a maintained fork of OpenAI’s Gym library.** The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility) for old Gym environments:
 
 ```{code-block} python
 
@@ -25,8 +32,38 @@ for _ in range(1000):
 
    if terminated or truncated:
       observation, info = env.reset()
+
 env.close()
 ```
+
+<style>
+h2 {
+    padding-top: 0;
+    padding-bottom: 20px;
+    font-size: 28px;
+    margin: 0;
+    overflow: auto;
+}
+img{
+    vertical-align:bottom;
+    padding-bottom: 0;
+    padding-top: 0
+ }
+.logo{
+    padding-left: 8%;
+    padding-top: 10px
+}
+@media (min-width: 455px) {
+    .header-text{
+        text-align: center;
+    }
+}
+@media (max-width: 455px) {
+    .header-text{
+        text-align: left;
+    }
+}
+</style>
 
 ```{toctree}
 :hidden:
@@ -76,6 +113,7 @@ Comet Tutorial <https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasi
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
-release_notes/index
+gymnasium_release_notes/index
+gym_release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```
