@@ -1,17 +1,13 @@
 """Implementation of a space that represents textual strings."""
 from __future__ import annotations
 
+import string
 from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 
 from gymnasium.spaces.space import Space
-
-
-alphanumeric: frozenset[str] = frozenset(
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-)
 
 
 class Text(Space[str]):
@@ -21,7 +17,7 @@ class Text(Space[str]):
         >>> from gymnasium.spaces import Text
         >>> # {"", "B5", "hello", ...}
         >>> Text(5)
-        Text(1, 5, characters=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)
+        Text(1, 5, charset=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)
         >>> # {"0", "42", "0123456789", ...}
         >>> import string
         >>> Text(min_length = 1,
@@ -35,7 +31,7 @@ class Text(Space[str]):
         max_length: int,
         *,
         min_length: int = 1,
-        charset: frozenset[str] | str = alphanumeric,
+        charset: frozenset[str] | str = string.printable,
         seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Text` space.
