@@ -17,7 +17,7 @@ class Text(Space[str]):
         >>> from gymnasium.spaces import Text
         >>> # {"", "B5", "hello", ...}
         >>> Text(5)
-        Text(1, 5, charset=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)
+        Text(1, 5, charset=0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r\x0b\x0c)
         >>> # {"0", "42", "0123456789", ...}
         >>> import string
         >>> Text(min_length = 1,
