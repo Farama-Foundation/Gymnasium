@@ -30,7 +30,7 @@ class Text(Space[str]):
         self,
         max_length: int,
         *,
-        min_length: int = 1,
+        min_length: int = 0,
         charset: frozenset[str] | str = string.printable,
         seed: int | np.random.Generator | None = None,
     ):
