@@ -27,7 +27,7 @@ class Text(Space[str]):
         >>> Text(min_length = 1,
         ...      max_length = 10,
         ...      charset = string.digits)
-        Text(1, 10, characters=0123456789)
+        Text(1, 10, charset=0123456789)
     """
 
     def __init__(
