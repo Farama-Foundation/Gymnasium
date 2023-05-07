@@ -335,8 +335,8 @@ SAMPLE_MASK_RNG, _ = seeding.np_random(1)
             np.array([0, 1, 0, 1, 0, 2, 1, 1], dtype=np.int8),
             np.array([[0, 1, 2], [0, 2, 1]], dtype=np.int8),
             # Text
-            (None, SAMPLE_MASK_RNG.integers(low=0, high=2, size=100, dtype=np.int8)),
-            (4, SAMPLE_MASK_RNG.integers(low=0, high=2, size=100, dtype=np.int8)),
+            (None, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
+            (4, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
             (None, np.array([1, 1, 0, 1, 0, 0], dtype=np.int8)),
         ],
     ),

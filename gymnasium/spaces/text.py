@@ -1,13 +1,17 @@
 """Implementation of a space that represents textual strings."""
 from __future__ import annotations
 
-import string
 from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 
 from gymnasium.spaces.space import Space
+
+
+alphanumeric: frozenset[str] = frozenset(
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+)
 
 
 class Text(Space[str]):
@@ -17,7 +21,7 @@ class Text(Space[str]):
         >>> from gymnasium.spaces import Text
         >>> # {"", "B5", "hello", ...}
         >>> Text(5)
-        Text(1, 5, charset=0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r\x0b\x0c)
+        Text(1, 5, charset=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)
         >>> # {"0", "42", "0123456789", ...}
         >>> import string
         >>> Text(min_length = 1,
@@ -30,8 +34,8 @@ class Text(Space[str]):
         self,
         max_length: int,
         *,
-        min_length: int = 0,
-        charset: frozenset[str] | str = string.printable,
+        min_length: int = 1,
+        charset: frozenset[str] | str = alphanumeric,
         seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Text` space.
@@ -152,7 +156,7 @@ class Text(Space[str]):
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
         return (
-            f"Text({self.min_length}, {self.max_length}, characters={self.characters})"
+            f"Text({self.min_length}, {self.max_length}, charset={self.characters})"
         )
 
     def __eq__(self, other: Any) -> bool:
