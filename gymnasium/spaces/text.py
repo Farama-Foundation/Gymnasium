@@ -155,9 +155,7 @@ class Text(Space[str]):
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
-        return (
-            f"Text({self.min_length}, {self.max_length}, charset={self.characters})"
-        )
+        return f"Text({self.min_length}, {self.max_length}, charset={self.characters})"
 
     def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
