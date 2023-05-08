@@ -18,10 +18,10 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     Moritz, Levine, Jordan and Abbeel in ["High-Dimensional Continuous Control
     Using Generalized Advantage Estimation"](https://arxiv.org/abs/1506.02438).
     The ant is a 3D robot consisting of one torso (free rotational body) with
-    four legs attached to it with each leg having two links. The goal is to
+    four legs attached to it with each leg having two body parts. The goal is to
     coordinate the four legs to move in the forward (right) direction by applying
-    torques on the eight hinges connecting the two links of each leg and the torso
-    (nine parts and eight hinges).
+    torques on the eight hinges connecting the two body parts of each leg and the torso
+    (nine body parts and eight hinges).
 
     ## Action Space
     The action space is a `Box(-1, 1, (8,), float32)`. An action represents the torques applied at the hinge joints.
@@ -45,16 +45,17 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     By default, observations do not include the x- and y-coordinates of the ant's torso. These may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will have 29 dimensions where the first two dimensions
+    In that case, the observation space will be a `Box(-Inf, Inf, (29,), float64)` where the first two observations
     represent the x- and y- coordinates of the ant's torso.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x- and y-coordinates
     of the torso will be returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
-    However, by default, an observation is a `ndarray` with shape `(27,)`
-    where the elements correspond to the following:
+    However, by default, observation Space is a `Box(-Inf, Inf, (27,), float64)` where the elements correspond to the following:
 
     | Num | Observation                                                  | Min    | Max    | Name (in corresponding XML file)       | Joint | Unit                     |
     |-----|--------------------------------------------------------------|--------|--------|----------------------------------------|-------|--------------------------|
+    | excluded | x-coordinate of the torso (centre)                      | -Inf   | Inf    | torso                                  | free  | position (m)             |
+    | excluded | y-coordinate of the torso (centre)                      | -Inf   | Inf    | torso                                  | free  | position (m)             |
     | 0   | z-coordinate of the torso (centre)                           | -Inf   | Inf    | torso                                  | free  | position (m)             |
     | 1   | x-orientation of the torso (centre)                          | -Inf   | Inf    | torso                                  | free  | angle (rad)              |
     | 2   | y-orientation of the torso (centre)                          | -Inf   | Inf    | torso                                  | free  | angle (rad)              |
@@ -86,12 +87,11 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     If version < `v4` or `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
     (external forces - force x, y, z and torque x, y, z) applied to the
-    center of mass of each of the objects. The 14 object are:
+    center of mass of each of the body parts. The 14 body parts are:
 
-    in `v4` or earlier:
-    | id | object |
+    | id (for `v2`, `v3`, `v4)` | body parts |
     |  ---  |  ------------  |
-    | 0 | worldObject (note: forces are always full of zeros) |
+    | 0 | worldBody (note: forces are always full of zeros) |
     | 1 | torso |
     | 2 | front_left_leg |
     | 3 | aux_1 (front left leg) |
