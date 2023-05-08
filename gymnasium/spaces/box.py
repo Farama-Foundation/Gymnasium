@@ -109,8 +109,8 @@ class Box(Space[NDArray[Any]]):
         _high = np.full(shape, high, dtype=float) if is_float_integer(high) else high
         self.bounded_above: NDArray[np.bool_] = np.inf > _high
 
-        low = _broadcast(low, self.dtype, shape, inf_sign="-")
-        high = _broadcast(high, self.dtype, shape, inf_sign="+")
+        low = _broadcast(low, self.dtype, shape, inf_sign=np.sign(low))
+        high = _broadcast(high, self.dtype, shape, inf_sign=np.sign(high))
 
         assert isinstance(low, np.ndarray)
         assert (
@@ -281,34 +281,33 @@ class Box(Space[NDArray[Any]]):
             self.high_repr = _short_repr(self.high)
 
 
-def get_inf(dtype: np.dtype, sign: str) -> int | float:
+def get_inf(dtype: np.dtype, sign: float) -> int | float:
     """Returns an infinite that doesn't break things.
 
     Args:
         dtype: An `np.dtype`
-        sign (str): must be either `"+"` or `"-"`
+        sign (float): must be either `1.0` or `-1.0`
 
     Returns:
         Gets an infinite value with the sign and dtype
 
     Raises:
-        TypeError: Unknown sign, use either '+' or '-'
+        TypeError: Unknown sign, use either '1.0' or '-1.0'
         ValueError: Unknown dtype for infinite bounds
     """
     if np.dtype(dtype).kind == "f":
-        if sign == "+":
-            return np.inf
-        elif sign == "-":
-            return -np.inf
+        if sign == 1.0 or sign == -1.0:
+            return np.inf * sign
         else:
-            raise TypeError(f"Unknown sign {sign}, use either '+' or '-'")
+            print(sign)
+            raise TypeError(f"Unknown sign {sign}, use either '1.0' or '-1.0'")
     elif np.dtype(dtype).kind == "i":
-        if sign == "+":
+        if sign == 1.0:
             return np.iinfo(dtype).max - 2
-        elif sign == "-":
+        elif sign == -1.0:
             return np.iinfo(dtype).min + 2
         else:
-            raise TypeError(f"Unknown sign {sign}, use either '+' or '-'")
+            raise TypeError(f"Unknown sign {sign}, use either '1.0' or '-1.0'")
     else:
         raise ValueError(f"Unknown dtype {dtype} for infinite bounds")
 
@@ -325,7 +324,7 @@ def _broadcast(
     value: SupportsFloat | NDArray[Any],
     dtype: np.dtype,
     shape: tuple[int, ...],
-    inf_sign: str,
+    inf_sign: float,
 ) -> NDArray[Any]:
     """Handle infinite bounds and broadcast at the same time if needed."""
     if is_float_integer(value):
@@ -336,6 +335,7 @@ def _broadcast(
         if np.any(np.isinf(value)):
             # create new array with dtype, but maintain old one to preserve np.inf
             temp = value.astype(dtype)
-            temp[np.isinf(value)] = get_inf(dtype, inf_sign)
+            temp[(np.isinf(value)) & (inf_sign == 1.0)] = get_inf(dtype, 1.0)
+            temp[(np.isinf(value)) & (inf_sign == -1.0)] = get_inf(dtype, -1.0)
             value = temp
     return value

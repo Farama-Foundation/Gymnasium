@@ -166,6 +166,22 @@ def test_dtype_check():
 @pytest.mark.parametrize(
     "space",
     [
+        Box(low=np.inf, high=np.inf, dtype=np.int32),
+        Box(low=np.inf, high=np.inf, dtype=np.float32),
+        Box(low=np.inf, high=np.inf, dtype=np.int64),
+        Box(low=np.inf, high=np.inf, dtype=np.float64),
+        Box(low=-np.inf, high=-np.inf, dtype=np.int32),
+        Box(low=-np.inf, high=-np.inf, dtype=np.float32),
+        Box(low=-np.inf, high=-np.inf, dtype=np.int64),
+        Box(low=-np.inf, high=-np.inf, dtype=np.float64),
+        Box(low=np.inf, high=np.inf, shape=(2,), dtype=np.int32),
+        Box(low=np.inf, high=np.inf, shape=(2,), dtype=np.float32),
+        Box(low=np.inf, high=np.inf, shape=(2,), dtype=np.int64),
+        Box(low=np.inf, high=np.inf, shape=(2,), dtype=np.float64),
+        Box(low=-np.inf, high=-np.inf, shape=(2,), dtype=np.int32),
+        Box(low=-np.inf, high=-np.inf, shape=(2,), dtype=np.float32),
+        Box(low=-np.inf, high=-np.inf, shape=(2,), dtype=np.int64),
+        Box(low=-np.inf, high=-np.inf, shape=(2,), dtype=np.float64),
         Box(low=0, high=np.inf, shape=(2,), dtype=np.int32),
         Box(low=0, high=np.inf, shape=(2,), dtype=np.float32),
         Box(low=0, high=np.inf, shape=(2,), dtype=np.int64),
@@ -203,7 +219,7 @@ def test_infinite_space(space):
     """
 
     assert np.all(
-        space.low < space.high
+        space.low <= space.high
     ), f"Box low bound ({space.low}) is not lower than the high bound ({space.high})"
 
     space.seed(0)
@@ -285,25 +301,25 @@ def test_legacy_state_pickling():
 
 def test_get_inf():
     """Tests that get inf function works as expected, primarily for coverage."""
-    assert get_inf(np.float32, "+") == np.inf
-    assert get_inf(np.float16, "-") == -np.inf
+    assert get_inf(np.float32,1.0) == np.inf
+    assert get_inf(np.float16, -1.0) == -np.inf
     with pytest.raises(
-        TypeError, match=re.escape("Unknown sign *, use either '+' or '-'")
+        TypeError, match=re.escape("Unknown sign *, use either '1.0' or '-1.0'")
     ):
         get_inf(np.float32, "*")
 
-    assert get_inf(np.int16, "+") == 32765
-    assert get_inf(np.int8, "-") == -126
+    assert get_inf(np.int16,1.0) == 32765
+    assert get_inf(np.int8, -1.0) == -126
     with pytest.raises(
-        TypeError, match=re.escape("Unknown sign *, use either '+' or '-'")
+        TypeError, match=re.escape("Unknown sign 3.0, use either '1.0' or '-1.0'")
     ):
-        get_inf(np.int32, "*")
+        get_inf(np.int32, "3.0")
 
     with pytest.raises(
         ValueError,
         match=re.escape("Unknown dtype <class 'numpy.complex128'> for infinite bounds"),
     ):
-        get_inf(np.complex_, "+")
+        get_inf(np.complex_, 1.0)
 
 
 def test_sample_mask():
