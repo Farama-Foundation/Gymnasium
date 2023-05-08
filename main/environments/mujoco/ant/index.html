@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=4297ed78bc2370ec4493f1a6639f04addebc5da5" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=67ddc8aaa908fff6a8eb5c854d313935a27431d3" />
     
     
 
@@ -509,10 +509,10 @@
 Moritz, Levine, Jordan and Abbeel in <a class="reference external" href="https://arxiv.org/abs/1506.02438">“High-Dimensional Continuous Control
 Using Generalized Advantage Estimation”</a>.
 The ant is a 3D robot consisting of one torso (free rotational body) with
-four legs attached to it with each leg having two links. The goal is to
+four legs attached to it with each leg having two body parts. The goal is to
 coordinate the four legs to move in the forward (right) direction by applying
-torques on the eight hinges connecting the two links of each leg and the torso
-(nine parts and eight hinges).</p>
+torques on the eight hinges connecting the two body parts of each leg and the torso
+(nine body parts and eight hinges).</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
@@ -605,12 +605,11 @@ followed by the velocities of those individual parts (their derivatives) with al
 the positions ordered before all the velocities.</p>
 <p>By default, observations do not include the x- and y-coordinates of the ant’s torso. These may
 be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-In that case, the observation space will have 29 dimensions where the first two dimensions
+In that case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(29,),</span> <span class="pre">float64)</span></code> where the first two observations
 represent the x- and y- coordinates of the ant’s torso.
 Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x- and y-coordinates
 of the torso will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
-<p>However, by default, an observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(27,)</span></code>
-where the elements correspond to the following:</p>
+<p>However, by default, observation Space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(27,),</span> <span class="pre">float64)</span></code> where the elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -624,6 +623,22 @@ where the elements correspond to the following:</p>
 </tr>
 </thead>
 <tbody>
+<tr class="row-even"><td><p>excluded</p></td>
+<td><p>x-coordinate of the torso (centre)</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>torso</p></td>
+<td><p>free</p></td>
+<td><p>position (m)</p></td>
+</tr>
+<tr class="row-odd"><td><p>excluded</p></td>
+<td><p>y-coordinate of the torso (centre)</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>torso</p></td>
+<td><p>free</p></td>
+<td><p>position (m)</p></td>
+</tr>
 <tr class="row-even"><td><p>0</p></td>
 <td><p>z-coordinate of the torso (centre)</p></td>
 <td><p>-Inf</p></td>
@@ -845,18 +860,17 @@ where the elements correspond to the following:</p>
 </div>
 <p>If version &lt; <code class="docutils literal notranslate"><span class="pre">v4</span></code> or <code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> then the observation space is extended by 14*6 = 84 elements, which are contact forces
 (external forces - force x, y, z and torque x, y, z) applied to the
-center of mass of each of the objects. The 14 object are:</p>
-<p>in <code class="docutils literal notranslate"><span class="pre">v4</span></code> or earlier:</p>
+center of mass of each of the body parts. The 14 body parts are:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>id</p></th>
-<th class="head"><p>object</p></th>
+<tr class="row-odd"><th class="head"><p>id (for <code class="docutils literal notranslate"><span class="pre">v2</span></code>, <code class="docutils literal notranslate"><span class="pre">v3</span></code>, <code class="docutils literal notranslate"><span class="pre">v4)</span></code></p></th>
+<th class="head"><p>body parts</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>0</p></td>
-<td><p>worldObject (note: forces are always full of zeros)</p></td>
+<td><p>worldBody (note: forces are always full of zeros)</p></td>
 </tr>
 <tr class="row-odd"><td><p>1</p></td>
 <td><p>torso</p></td>
@@ -1074,7 +1088,14 @@ the episode ends when any of the following happens:</p>
             </div>
             <div class="right-details">
               <div class="icons">
-                
+                <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/"
+                  aria-label="On GitHub">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
@@ -1174,6 +1195,7 @@ the episode ends when any of the following happens:</p>
     <script src="../../../_static/scripts/furo.js"></script>
     
     <script>
+      // Create menu with Farama projects by using the API at farama.org/api/projects.json
       const createCORSRequest = (method, url) => {
         let xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
@@ -1288,8 +1310,8 @@ the episode ends when any of the following happens:</p>
     
     <script>
       const versioningConfig = {
-        githubUser: '',
-        githubRepo: '',
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
       };
       fetch('/main/_static/versioning/versioning_menu.html').then(response => {
         if (response.status === 200) {
