@@ -52,7 +52,7 @@ title: Vector
     The observation space of an environment copy.::
 
         >>> envs = gymnasium.vector.make("CartPole-v1", num_envs=3)
-        >>> envs.single_action_space
+        >>> envs.single_observation_space
         Box([-4.8 ...], [4.8 ...], (4,), float32)
 ```
 
