@@ -61,7 +61,7 @@ def test_low_high_values(value, valid: bool):
     """Test what `low` and `high` values are valid for `Box` space."""
     if valid:
         with warnings.catch_warnings(record=True) as caught_warnings:
-            Box(low=value, high=value)
+            Box(low=-np.inf, high=value)
         assert len(caught_warnings) == 0, tuple(
             warning.message for warning in caught_warnings
         )
@@ -72,7 +72,7 @@ def test_low_high_values(value, valid: bool):
                 "expect their types to be np.ndarray, an integer or a float"
             ),
         ):
-            Box(low=value, high=value)
+            Box(low=-np.inf, high=value)
 
 
 @pytest.mark.parametrize(
@@ -314,3 +314,23 @@ def test_sample_mask():
         match=re.escape("Box.sample cannot be provided a mask, actual value: "),
     ):
         space.sample(mask=np.array([0, 1, 0], dtype=np.int8))
+
+
+@pytest.mark.parametrize(
+    "low, high",
+    [
+        (np.inf, np.inf),
+        (-np.inf, -np.inf),
+        (3.0, 3.0),
+        (np.array([-np.inf, 0]), np.array([-np.inf, np.inf])),
+    ],
+)
+def test_disallow_degenerate_spaces(low, high):
+    """Tests that we don't allow spaces with degenerate bounds, such as `Box(-np.inf, -np.inf)`."""
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            f"Some elements in low: {low} are equal to some elements in high: {high}, this will lead to a degenerate space and is not allowed"
+        ),
+    ):
+        Box(low, high, dtype=np.float32)

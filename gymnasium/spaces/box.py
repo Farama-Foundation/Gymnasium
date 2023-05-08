@@ -102,6 +102,11 @@ class Box(Space[NDArray[Any]]):
                 f"Box shape is inferred from low and high, expect their types to be np.ndarray, an integer or a float, actual type low: {type(low)}, high: {type(high)}"
             )
 
+        # check that we don't have a degenerate space
+        assert np.array(
+            low != high
+        ).all(), f"Some elements in low: {low} are equal to some elements in high: {high}, this will lead to a degenerate space and is not allowed"
+
         # Capture the boundedness information before replacing np.inf with get_inf
         _low = np.full(shape, low, dtype=float) if is_float_integer(low) else low
         self.bounded_below: NDArray[np.bool_] = -np.inf < _low
