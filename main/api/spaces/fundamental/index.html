@@ -756,13 +756,13 @@ Only mask values == 1 are possible to sample unless all mask values for an actio
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Text</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># {&quot;&quot;, &quot;B5&quot;, &quot;hello&quot;, ...}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Text</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="go">Text(1, 5, characters=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)</span>
+<span class="go">Text(1, 5, charset=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># {&quot;0&quot;, &quot;42&quot;, &quot;0123456789&quot;, ...}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">string</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Text</span><span class="p">(</span><span class="n">min_length</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 <span class="gp">... </span>     <span class="n">max_length</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
 <span class="gp">... </span>     <span class="n">charset</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span>
-<span class="go">Text(1, 10, characters=0123456789)</span>
+<span class="go">Text(1, 10, charset=0123456789)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
