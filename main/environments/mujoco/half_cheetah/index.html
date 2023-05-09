@@ -507,7 +507,7 @@
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
 <p>This environment is based on the work by P. Wawrzyński in
 <a class="reference external" href="http://staff.elka.pw.edu.pl/~pwawrzyn/pub-s/0812_LSCLRR.pdf">“A Cat-Like Robot Real-Time Learning to Run”</a>.
-The HalfCheetah is a 2-dimensional robot consisting of 9 links and 8
+The HalfCheetah is a 2-dimensional robot consisting of 9 body parts and 8
 joints connecting them (including two paws). The goal is to apply a torque
 on the joints to make the cheetah run forward (right) as fast as possible,
 with a positive reward allocated based on the distance moved forward and a
@@ -518,7 +518,7 @@ over the front and back thighs (connecting to the torso), shins
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
-<p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(6,),</span> <span class="pre">float32)</span></code>. An action represents the torques applied between <em>links</em>.</p>
+<p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(6,),</span> <span class="pre">float32)</span></code>. An action represents the torques applied at the hinge joints.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -588,13 +588,13 @@ over the front and back thighs (connecting to the torso), shins
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
 <p>Observations consist of positional values of different body parts of the
 cheetah, followed by the velocities of those individual parts (their derivatives) with all the positions ordered before all the velocities.</p>
-<p>By default, observations do not include the x-coordinate of the cheetah’s center of mass. It may
+<p>By default, observations do not include the cheetah’s <code class="docutils literal notranslate"><span class="pre">rootx</span></code>. It may
 be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-In that case, the observation space will have 18 dimensions where the first dimension
-represents the x-coordinate of the cheetah’s center of mass.
-Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x-coordinate
+In that case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(18,),</span> <span class="pre">float64)</span></code> where the first element
+represents the <code class="docutils literal notranslate"><span class="pre">rootx</span></code>.
+Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the
 will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with key <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code>.</p>
-<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(17,)</span></code> where the elements correspond to the following:</p>
+<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(17,),</span> <span class="pre">float64)</span></code> where the elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -743,6 +743,14 @@ will be returned in <code class="docutils literal notranslate"><span class="pre"
 <td><p>ffoot</p></td>
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p>excluded</p></td>
+<td><p>x-coordinate of the front tip</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>rootx</p></td>
+<td><p>slide</p></td>
+<td><p>position (m)</p></td>
 </tr>
 </tbody>
 </table>

@@ -587,13 +587,13 @@ direction by applying torques on the six hinges connecting the seven body parts.
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
 <p>Observations consist of positional values of different body parts of the walker,
 followed by the velocities of those individual parts (their derivatives) with all the positions ordered before all the velocities.</p>
-<p>By default, observations do not include the x-coordinate of the top. It may
+<p>By default, observations do not include the x-coordinate of the torso. It may
 be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-In that case, the observation space will have 18 dimensions where the first dimension
-represent the x-coordinates of the top of the walker.
+In that case, the observation space will be <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(18,),</span> <span class="pre">float64)</span></code> where the first observation
+represent the x-coordinates of the torso of the walker.
 Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x-coordinate
-of the top will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with key <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code>.</p>
-<p>By default, observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(17,)</span></code> where the elements correspond to the following:</p>
+of the torso will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with key <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code>.</p>
+<p>By default, observation is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(17,),</span> <span class="pre">float64)</span></code> where the elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -607,15 +607,23 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>0</p></td>
-<td><p>z-coordinate of the torso (height of hopper)</p></td>
+<tr class="row-even"><td><p>excluded</p></td>
+<td><p>x-coordinate of the torso</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>rootx</p></td>
+<td><p>slide</p></td>
+<td><p>position (m)</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>z-coordinate of the torso (height of Walker2d)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rootz</p></td>
 <td><p>slide</p></td>
 <td><p>position (m)</p></td>
 </tr>
-<tr class="row-odd"><td><p>1</p></td>
+<tr class="row-even"><td><p>1</p></td>
 <td><p>angle of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -623,7 +631,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
-<tr class="row-even"><td><p>2</p></td>
+<tr class="row-odd"><td><p>2</p></td>
 <td><p>angle of the thigh joint</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -631,7 +639,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
-<tr class="row-odd"><td><p>3</p></td>
+<tr class="row-even"><td><p>3</p></td>
 <td><p>angle of the leg joint</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -639,7 +647,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
-<tr class="row-even"><td><p>4</p></td>
+<tr class="row-odd"><td><p>4</p></td>
 <td><p>angle of the foot joint</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -647,7 +655,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
-<tr class="row-odd"><td><p>5</p></td>
+<tr class="row-even"><td><p>5</p></td>
 <td><p>angle of the left thigh joint</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -655,7 +663,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
-<tr class="row-even"><td><p>6</p></td>
+<tr class="row-odd"><td><p>6</p></td>
 <td><p>angle of the left leg joint</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -663,7 +671,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
-<tr class="row-odd"><td><p>7</p></td>
+<tr class="row-even"><td><p>7</p></td>
 <td><p>angle of the left foot joint</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -671,7 +679,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angle (rad)</p></td>
 </tr>
-<tr class="row-even"><td><p>8</p></td>
+<tr class="row-odd"><td><p>8</p></td>
 <td><p>velocity of the x-coordinate of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -679,23 +687,23 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>slide</p></td>
 <td><p>velocity (m/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>9</p></td>
-<td><p>velocity of the z-coordinate (height) of the rorso</p></td>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>velocity of the z-coordinate (height) of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rootz</p></td>
 <td><p>slide</p></td>
 <td><p>velocity (m/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>10</p></td>
-<td><p>angular velocity of the angle of the top</p></td>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>angular velocity of the angle of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rooty</p></td>
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>11</p></td>
+<tr class="row-even"><td><p>11</p></td>
 <td><p>angular velocity of the thigh hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -703,7 +711,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>12</p></td>
+<tr class="row-odd"><td><p>12</p></td>
 <td><p>angular velocity of the leg hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -711,7 +719,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>13</p></td>
+<tr class="row-even"><td><p>13</p></td>
 <td><p>angular velocity of the foot hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -719,7 +727,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>14</p></td>
+<tr class="row-odd"><td><p>14</p></td>
 <td><p>angular velocity of the thigh hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -727,7 +735,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>15</p></td>
+<tr class="row-even"><td><p>15</p></td>
 <td><p>angular velocity of the leg hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -735,7 +743,7 @@ of the top will be returned in <code class="docutils literal notranslate"><span 
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>16</p></td>
+<tr class="row-odd"><td><p>16</p></td>
 <td><p>angular velocity of the foot hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -836,7 +844,7 @@ the episode ends when any of the following happens:</p>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code></p></td>
 <td><p><strong>tuple</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(0.8,</span> <span class="pre">2)</span></code></p></td>
-<td><p>The z-coordinate of the top of the walker must be in this range to be considered healthy</p></td>
+<td><p>The z-coordinate of the torso of the walker must be in this range to be considered healthy</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">healthy_angle_range</span></code></p></td>
 <td><p><strong>tuple</strong></p></td>

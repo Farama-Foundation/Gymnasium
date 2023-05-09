@@ -673,10 +673,16 @@ represents the numerical torques applied at the hinge joints.</p>
 </section>
 <section id="observation-space">
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
-<p>The state space consists of positional values of different body parts of the Humanoid,
-followed by the velocities of those individual parts (their derivatives) with all the positions ordered before all the velocities.</p>
-<p><strong>Note:</strong> The x- and y-coordinates of the torso are being omitted to produce position-agnostic behavior in policies</p>
-<p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(376,)</span></code> where the elements correspond to the following:</p>
+<p>Observations consist of positional values of different body parts of the Humanoid,
+followed by the velocities of those individual parts (their derivatives) with all the
+positions ordered before all the velocities.</p>
+<p>By default, observations do not include the x- and y-coordinates of the torso. These may
+be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
+In that case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(378,),</span> <span class="pre">float64)</span></code> where the first two observations
+represent the x- and y-coordinates of the torso.
+Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x- and y-coordinates
+will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
+<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(376,),</span> <span class="pre">float64)</span></code>. The elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -962,7 +968,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>35</p></td>
+<tr class="row-even"><td><p>34</p></td>
 <td><p>angular velocity of the angle between right hip and the right shin (in right_knee)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -970,7 +976,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>36</p></td>
+<tr class="row-odd"><td><p>35</p></td>
 <td><p>x-coordinate of the angular velocity of the angle between pelvis and left hip (in left_thigh)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -978,7 +984,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>37</p></td>
+<tr class="row-even"><td><p>36</p></td>
 <td><p>z-coordinate of the angular velocity of the angle between pelvis and left hip (in left_thigh)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -986,7 +992,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>38</p></td>
+<tr class="row-odd"><td><p>37</p></td>
 <td><p>y-coordinate of the angular velocity of the angle between pelvis and left hip (in left_thigh)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -994,7 +1000,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>39</p></td>
+<tr class="row-even"><td><p>38</p></td>
 <td><p>angular velocity of the angle between left hip and the left shin (in left_knee)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -1002,7 +1008,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>40</p></td>
+<tr class="row-odd"><td><p>39</p></td>
 <td><p>coordinate-1 (multi-axis) of the angular velocity of the angle between torso and right arm (in right_upper_arm)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -1010,7 +1016,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>41</p></td>
+<tr class="row-even"><td><p>40</p></td>
 <td><p>coordinate-2 (multi-axis) of the angular velocity of the angle between torso and right arm (in right_upper_arm)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -1018,7 +1024,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>42</p></td>
+<tr class="row-odd"><td><p>41</p></td>
 <td><p>angular velocity of the angle between right upper arm and right_lower_arm</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -1026,7 +1032,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>43</p></td>
+<tr class="row-even"><td><p>42</p></td>
 <td><p>coordinate-1 (multi-axis) of the angular velocity of the angle between torso and left arm (in left_upper_arm)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -1034,7 +1040,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-odd"><td><p>44</p></td>
+<tr class="row-odd"><td><p>43</p></td>
 <td><p>coordinate-2 (multi-axis) of the angular velocity of the angle between torso and left arm (in left_upper_arm)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -1042,7 +1048,7 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
-<tr class="row-even"><td><p>45</p></td>
+<tr class="row-even"><td><p>44</p></td>
 <td><p>angular velocity of the angle between left upper arm and left_lower_arm</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
@@ -1050,11 +1056,27 @@ followed by the velocities of those individual parts (their derivatives) with al
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
 </tr>
+<tr class="row-odd"><td><p>excluded</p></td>
+<td><p>x-coordinate of the torso (centre)</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>root</p></td>
+<td><p>free</p></td>
+<td><p>position (m)</p></td>
+</tr>
+<tr class="row-even"><td><p>excluded</p></td>
+<td><p>y-coordinate of the torso (centre)</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>root</p></td>
+<td><p>free</p></td>
+<td><p>position (m)</p></td>
+</tr>
 </tbody>
 </table>
 </div>
 <p>Additionally, after all the positional and velocity based values in the table,
-the state_space consists of (in order):</p>
+the observation contains (in order):</p>
 <ul class="simple">
 <li><p><em>cinert:</em> Mass and inertia of a single rigid body relative to the center of mass
 (this is an intermediate result of transition). It has shape 14*10 (<em>nbody * 10</em>)
@@ -1065,9 +1087,144 @@ adds another 84 elements in the state space</p></li>
 <code class="docutils literal notranslate"><span class="pre">(23,)</span></code>  <em>(nv * 1)</em> and hence adds another 23 elements to the state space.</p></li>
 <li><p><em>cfrc_ext:</em> This is the center of mass based external force on the body.  It has shape
 14 * 6 (<em>nbody * 6</em>) and hence adds to another 84 elements in the state space.
-where <em>nbody</em> stands for the number of bodies in the robot and <em>nv</em> stands for the number
-of degrees of freedom (<em>= dim(qvel)</em>)</p></li>
+where <em>nbody</em> stands for the number of bodies in the robot and <em>nv</em> stands for the
+number of degrees of freedom (<em>= dim(qvel)</em>)</p></li>
 </ul>
+<p>The body parts are:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>id (for <code class="docutils literal notranslate"><span class="pre">v2</span></code>,<code class="docutils literal notranslate"><span class="pre">v3</span></code>,<code class="docutils literal notranslate"><span class="pre">v4</span></code>)</p></th>
+<th class="head"><p>body part</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>worldBody (note: all values are constant 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>torso</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>lwaist</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>pelvis</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>right_thigh</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>right_sin</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>right_foot</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>left_thigh</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>left_sin</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>left_foot</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>right_upper_arm</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>right_lower_arm</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>left_upper_arm</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>left_lower_arm</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The joints are:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>id (for <code class="docutils literal notranslate"><span class="pre">v2</span></code>,<code class="docutils literal notranslate"><span class="pre">v3</span></code>,<code class="docutils literal notranslate"><span class="pre">v4</span></code>)</p></th>
+<th class="head"><p>joint</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>root</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>abdomen_z</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>abdomen_y</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>abdomen_x</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>right_hip_x</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>right_hip_z</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>right_hip_y</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>right_knee</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>left_hip_x</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>left_hiz_z</p></td>
+</tr>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>left_hip_y</p></td>
+</tr>
+<tr class="row-even"><td><p>16</p></td>
+<td><p>left_knee</p></td>
+</tr>
+<tr class="row-odd"><td><p>17</p></td>
+<td><p>right_shoulder1</p></td>
+</tr>
+<tr class="row-even"><td><p>18</p></td>
+<td><p>right_shoulder2</p></td>
+</tr>
+<tr class="row-odd"><td><p>19</p></td>
+<td><p>right_elbow</p></td>
+</tr>
+<tr class="row-even"><td><p>20</p></td>
+<td><p>left_shoulder1</p></td>
+</tr>
+<tr class="row-odd"><td><p>21</p></td>
+<td><p>left_shoulder2</p></td>
+</tr>
+<tr class="row-even"><td><p>22</p></td>
+<td><p>left_elfbow</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>The (x,y,z) coordinates are translational DOFs while the orientations are rotational
 DOFs expressed as quaternions. One can read more about free joints on the
 <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/XMLreference.html">Mujoco Documentation</a>.</p>

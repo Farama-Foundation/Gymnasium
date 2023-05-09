@@ -575,11 +575,11 @@ number of links, or to tweak any of the parameters.</p>
 </ul>
 <p>In the default case, observations do not include the x- and y-coordinates of the front tip. These may
 be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-Then, the observation space will have 10 dimensions where the first two dimensions
+Then, the observation space will be <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(10,),</span> <span class="pre">float64)</span></code> where the first two observations
 represent the x- and y-coordinates of the front tip.
 Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x- and y-coordinates
 will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
-<p>By default, the observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(8,)</span></code> where the elements correspond to the following:</p>
+<p>By default, the observation is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(8,),</span> <span class="pre">float64)</span></code> where the elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -656,6 +656,22 @@ will be returned in <code class="docutils literal notranslate"><span class="pre"
 <td><p>motor2_rot</p></td>
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
+</tr>
+<tr class="row-even"><td><p>excluded</p></td>
+<td><p>position of the tip along the x-axis</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>slider1</p></td>
+<td><p>slide</p></td>
+<td><p>position (m)</p></td>
+</tr>
+<tr class="row-odd"><td><p>excluded</p></td>
+<td><p>position of the tip along the y-axis</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>slider2</p></td>
+<td><p>slide</p></td>
+<td><p>position (m)</p></td>
 </tr>
 </tbody>
 </table>
