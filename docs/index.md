@@ -5,37 +5,65 @@ lastpage:
 ---
 
 <center>
-	<h1>
-		Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments.
-	</h1>
+    <div class="logo">
+        <img src="_static/img/gymnasium-text.png" width="65%" alt="Gymnasium Logo">
+    </div>
 </center>
+
+<div class="header-text">
+    <h2>An API standard for reinforcement learning with a diverse collection of reference environments</h2>
+</div>
 
 ```{figure} _static/videos/box2d/lunar_lander.gif
    :alt: Lunar Lander
    :width: 500
 ```
 
-Gymnasium is a maintained fork of OpenAI’s Gym library. It provides a user-friendly, pythonic interface for creating and interacting with reinforcement learning environments. With Gymnasium, you can access a diverse collection of environments, as well as represent your own custom RL environments. If you require an environment that is only available in the old Gym, you can use the [compatibility wrapper](content/gym_compatibility).
-
-Here is a minimal code example to run an environment:
+**Gymnasium is a maintained fork of OpenAI’s Gym library.** The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility) for old Gym environments:
 
 ```{code-block} python
+
 import gymnasium as gym
+env = gym.make("LunarLander-v2", render_mode="human")
+observation, info = env.reset(seed=42)
+for _ in range(1000):
+   action = env.action_space.sample()  # this is where you would insert your policy
+   observation, reward, terminated, truncated, info = env.step(action)
 
-env = gym.make("CartPole-v1", render_mode="human")
-observation, info = env.reset(seed=42) # get the first observation
+   if terminated or truncated:
+      observation, info = env.reset()
 
-for step in range(1000):
-    # here you can use your policy to get an action based on the observation
-    action = env.action_space.sample()
-
-    # execute the action in the environment
-    observation, reward, terminated, truncated, info = env.step(action)
-
-    if terminated or truncated:
-        observation, info = env.reset()
 env.close()
 ```
+
+<style>
+h2 {
+    padding-top: 0;
+    padding-bottom: 20px;
+    font-size: 28px;
+    margin: 0;
+    overflow: auto;
+}
+img{
+    vertical-align:bottom;
+    padding-bottom: 0;
+    padding-top: 0
+ }
+.logo{
+    padding-left: 8%;
+    padding-top: 10px
+}
+@media (min-width: 455px) {
+    .header-text{
+        text-align: center;
+    }
+}
+@media (max-width: 455px) {
+    .header-text{
+        text-align: left;
+    }
+}
+</style>
 
 ```{toctree}
 :hidden:

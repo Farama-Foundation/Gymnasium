@@ -26,7 +26,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     This environment is based on the environment introduced by Tassa, Erez and Todorov
     in ["Synthesis and stabilization of complex behaviors through online trajectory optimization"](https://ieeexplore.ieee.org/document/6386025).
     The 3D bipedal robot is designed to simulate a human. It has a torso (abdomen) with a pair of
-    legs and arms. The legs each consist of two links, and so the arms (representing the knees and
+    legs and arms. The legs each consist of three body parts, and the arms 2 body parts (representing the knees and
     elbows respectively). The goal of the environment is to walk forward as fast as possible without falling over.
 
     ## Action Space
@@ -60,12 +60,12 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
     By default, observations do not include the x- and y-coordinates of the torso. These may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will have 378 dimensions where the first two dimensions
+    In that case, the observation space will be a `Box(-1, 1, (378,), float64)` where the first two observations
     represent the x- and y-coordinates of the torso.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x- and y-coordinates
     will be returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
-    However, by default, the observation is a `ndarray` with shape `(376,)` where the elements correspond to the following:
+    However, by default, the observation is a `Box(-1, 1, (376,), float64)`. The elements correspond to the following:
 
     | Num | Observation                                                                                                     | Min  | Max | Name (in corresponding XML file) | Joint | Unit                       |
     | --- | --------------------------------------------------------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | -------------------------- |
@@ -79,7 +79,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | 7   | x-angle of the abdomen (in pelvis)                                                                              | -Inf | Inf | abdomen_x                        | hinge | angle (rad)                |
     | 8   | x-coordinate of angle between pelvis and right hip (in right_thigh)                                             | -Inf | Inf | right_hip_x                      | hinge | angle (rad)                |
     | 9   | z-coordinate of angle between pelvis and right hip (in right_thigh)                                             | -Inf | Inf | right_hip_z                      | hinge | angle (rad)                |
-    | 19  | y-coordinate of angle between pelvis and right hip (in right_thigh)                                             | -Inf | Inf | right_hip_y                      | hinge | angle (rad)                |
+    | 10  | y-coordinate of angle between pelvis and right hip (in right_thigh)                                             | -Inf | Inf | right_hip_y                      | hinge | angle (rad)                |
     | 11  | angle between right hip and the right shin (in right_knee)                                                      | -Inf | Inf | right_knee                       | hinge | angle (rad)                |
     | 12  | x-coordinate of angle between pelvis and left hip (in left_thigh)                                               | -Inf | Inf | left_hip_x                       | hinge | angle (rad)                |
     | 13  | z-coordinate of angle between pelvis and left hip (in left_thigh)                                               | -Inf | Inf | left_hip_z                       | hinge | angle (rad)                |
@@ -113,7 +113,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | 41  | angular velocity of the angle between right upper arm and right_lower_arm                                       | -Inf | Inf | right_elbow                      | hinge | anglular velocity (rad/s)  |
     | 42  | coordinate-1 (multi-axis) of the angular velocity of the angle between torso and left arm (in left_upper_arm)   | -Inf | Inf | left_shoulder1                   | hinge | anglular velocity (rad/s)  |
     | 43  | coordinate-2 (multi-axis) of the angular velocity of the angle between torso and left arm (in left_upper_arm)   | -Inf | Inf | left_shoulder2                   | hinge | anglular velocity (rad/s)  |
-    | 44  | angular velocitty of the angle between left upper arm and left_lower_arm                                        | -Inf | Inf | left_elbow                       | hinge | anglular velocity (rad/s)  |
+    | 44  | angular velocity of the angle between left upper arm and left_lower_arm                                         | -Inf | Inf | left_elbow                       | hinge | anglular velocity (rad/s)  |
 
     Additionally, after all the positional and velocity based values in the table,
     the observation contains (in order):
@@ -128,6 +128,53 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     14 * 6 (*nbody * 6*) and hence adds to another 84 elements in the state space.
     where *nbody* stands for the number of bodies in the robot and *nv* stands for the
     number of degrees of freedom (*= dim(qvel)*)
+
+    The body parts are:
+
+    | id (for `v2`,`v3`,`v4`) | body part |
+    |  ---  |  ------------  |
+    | 0 | worldBody (note: all values are constant 0) |
+    | 1 | torso |
+    | 2 | lwaist |
+    | 3 | pelvis |
+    | 4 | right_thigh |
+    | 5 | right_sin |
+    | 6 | right_foot |
+    | 7 | left_thigh |
+    | 8 | left_sin |
+    | 9 | left_foot |
+    | 10 | right_upper_arm |
+    | 11 | right_lower_arm |
+    | 12 | left_upper_arm |
+    | 13 | left_lower_arm |
+
+    The joints are:
+
+    | id (for `v2`,`v3`,`v4`) | joint |
+    |  ---  |  ------------  |
+    | 0 | root |
+    | 1 | root |
+    | 2 | root |
+    | 3 | root |
+    | 4 | root |
+    | 5 | root |
+    | 6 | abdomen_z |
+    | 7 | abdomen_y |
+    | 8 | abdomen_x |
+    | 9 | right_hip_x |
+    | 10 | right_hip_z |
+    | 11 | right_hip_y |
+    | 12 | right_knee |
+    | 13 | left_hip_x |
+    | 14 | left_hiz_z |
+    | 15 | left_hip_y |
+    | 16 | left_knee |
+    | 17 | right_shoulder1 |
+    | 18 | right_shoulder2 |
+    | 19 | right_elbow|
+    | 20 | left_shoulder1 |
+    | 21 | left_shoulder2 |
+    | 22 | left_elfbow |
 
     The (x,y,z) coordinates are translational DOFs while the orientations are rotational
     DOFs expressed as quaternions. One can read more about free joints on the
