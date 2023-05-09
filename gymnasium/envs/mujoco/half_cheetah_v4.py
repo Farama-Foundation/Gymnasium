@@ -46,7 +46,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
     By default, observations do not include the cheetah's `rootx`. It may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation will be a `Box(-Inf, Inf, (18,), float64)` where the first element
+    In that case, the observation space will be a `Box(-Inf, Inf, (18,), float64)` where the first element
     represents the `rootx`/
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the
     will be returned in `info` with key `"x_position"`.
