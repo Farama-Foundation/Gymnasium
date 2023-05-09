@@ -517,7 +517,7 @@ connecting the four body parts.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
-<p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(3,),</span> <span class="pre">float32)</span></code>. An action represents the torques applied between <em>links</em></p>
+<p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(3,),</span> <span class="pre">float32)</span></code>. An action represents the torques applied at the hinge joints.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -566,11 +566,11 @@ hopper, followed by the velocities of those individual parts
 (their derivatives) with all the positions ordered before all the velocities.</p>
 <p>By default, observations do not include the x-coordinate of the hopper. It may
 be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-In that case, the observation space will have 12 dimensions where the first dimension
+In that case, the observation space will be <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(12,),</span> <span class="pre">float64)</span></code> where the first observation
 represents the x-coordinate of the hopper.
 Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x-coordinate
 will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with key <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code>.</p>
-<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(11,)</span></code> where the elements
+<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(11,),</span> <span class="pre">float64)</span></code> where the elements
 correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -586,7 +586,7 @@ correspond to the following:</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>0</p></td>
-<td><p>z-coordinate of the top (height of hopper)</p></td>
+<td><p>z-coordinate of the torso (height of hopper)</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rootz</p></td>
@@ -594,7 +594,7 @@ correspond to the following:</p>
 <td><p>position (m)</p></td>
 </tr>
 <tr class="row-odd"><td><p>1</p></td>
-<td><p>angle of the top</p></td>
+<td><p>angle of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rooty</p></td>
@@ -626,7 +626,7 @@ correspond to the following:</p>
 <td><p>angle (rad)</p></td>
 </tr>
 <tr class="row-odd"><td><p>5</p></td>
-<td><p>velocity of the x-coordinate of the top</p></td>
+<td><p>velocity of the x-coordinate of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rootx</p></td>
@@ -634,7 +634,7 @@ correspond to the following:</p>
 <td><p>velocity (m/s)</p></td>
 </tr>
 <tr class="row-even"><td><p>6</p></td>
-<td><p>velocity of the z-coordinate (height) of the top</p></td>
+<td><p>velocity of the z-coordinate (height) of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rootz</p></td>
@@ -642,7 +642,7 @@ correspond to the following:</p>
 <td><p>velocity (m/s)</p></td>
 </tr>
 <tr class="row-odd"><td><p>7</p></td>
-<td><p>angular velocity of the angle of the top</p></td>
+<td><p>angular velocity of the angle of the torso</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>rooty</p></td>
@@ -672,6 +672,14 @@ correspond to the following:</p>
 <td><p>foot_joint</p></td>
 <td><p>hinge</p></td>
 <td><p>angular velocity (rad/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p>excluded</p></td>
+<td><p>x-coordinate of the torso</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>rootx</p></td>
+<td><p>slide</p></td>
+<td><p>position (m)</p></td>
 </tr>
 </tbody>
 </table>

@@ -674,11 +674,11 @@ followed by the velocities of those individual parts (their derivatives) with al
 positions ordered before all the velocities.</p>
 <p>By default, observations do not include the x- and y-coordinates of the torso. These may
 be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-In that case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(378,),</span> <span class="pre">float64)</span></code> where the first two observations
+In that case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(378,),</span> <span class="pre">float64)</span></code> where the first two observations
 represent the x- and y-coordinates of the torso.
 Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x- and y-coordinates
 will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
-<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(376,),</span> <span class="pre">float64)</span></code>. The elements correspond to the following:</p>
+<p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(376,),</span> <span class="pre">float64)</span></code>. The elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -1051,6 +1051,22 @@ will be returned in <code class="docutils literal notranslate"><span class="pre"
 <td><p>left_elbow</p></td>
 <td><p>hinge</p></td>
 <td><p>anglular velocity (rad/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p>excluded</p></td>
+<td><p>x-coordinate of the torso (centre)</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>root</p></td>
+<td><p>free</p></td>
+<td><p>position (m)</p></td>
+</tr>
+<tr class="row-even"><td><p>excluded</p></td>
+<td><p>y-coordinate of the torso (centre)</p></td>
+<td><p>-Inf</p></td>
+<td><p>Inf</p></td>
+<td><p>root</p></td>
+<td><p>free</p></td>
+<td><p>position (m)</p></td>
 </tr>
 </tbody>
 </table>
