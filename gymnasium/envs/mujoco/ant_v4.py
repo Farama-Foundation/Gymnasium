@@ -38,7 +38,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 7   | Torque applied on the rotor between the back left two links       | -1          | 1           | angle_3 (back_leg)               | hinge | torque (N m) |
 
     ## Observation Space
-
     Observations consist of positional values of different body parts of the ant,
     followed by the velocities of those individual parts (their derivatives) with all
     the positions ordered before all the velocities.
@@ -54,8 +53,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     | Num | Observation                                                  | Min    | Max    | Name (in corresponding XML file)       | Joint | Unit                     |
     |-----|--------------------------------------------------------------|--------|--------|----------------------------------------|-------|--------------------------|
-    | excluded | x-coordinate of the torso (centre)                      | -Inf   | Inf    | torso                                  | free  | position (m)             |
-    | excluded | y-coordinate of the torso (centre)                      | -Inf   | Inf    | torso                                  | free  | position (m)             |
     | 0   | z-coordinate of the torso (centre)                           | -Inf   | Inf    | torso                                  | free  | position (m)             |
     | 1   | x-orientation of the torso (centre)                          | -Inf   | Inf    | torso                                  | free  | angle (rad)              |
     | 2   | y-orientation of the torso (centre)                          | -Inf   | Inf    | torso                                  | free  | angle (rad)              |
@@ -83,6 +80,8 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 24  | angular velocity of the angle between back left links        | -Inf   | Inf    | ankle_3 (back_leg)                     | hinge | angle (rad)              |
     | 25  | angular velocity of angle between torso and back right link  | -Inf   | Inf    | hip_4 (right_back_leg)                 | hinge | angle (rad)              |
     | 26  | angular velocity of the angle between back right links       | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angle (rad)              |
+    | excluded | x-coordinate of the torso (centre)                      | -Inf   | Inf    | torso                                  | free  | position (m)             |
+    | excluded | y-coordinate of the torso (centre)                      | -Inf   | Inf    | torso                                  | free  | position (m)             |
 
 
     If version < `v4` or `use_contact_forces` is `True` then the observation space is extended by 14*6 = 84 elements, which are contact forces
@@ -91,16 +90,16 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     | id (for `v2`, `v3`, `v4)` | body parts |
     |  ---  |  ------------  |
-    | 0 | worldBody (note: forces are always full of zeros) |
-    | 1 | torso |
-    | 2 | front_left_leg |
-    | 3 | aux_1 (front left leg) |
-    | 4 | ankle_1 (front left leg) |
-    | 5 | front_right_leg |
-    | 6 | aux_2 (front right leg) |
-    | 7 | ankle_2 (front right leg) |
-    | 8 | back_leg (back left leg) |
-    | 9 | aux_3 (back left leg) |
+    | 0  | worldbody (note: forces are always full of zeros) |
+    | 1  | torso |
+    | 2  | front_left_leg |
+    | 3  | aux_1 (front left leg) |
+    | 4  | ankle_1 (front left leg) |
+    | 5  | front_right_leg |
+    | 6  | aux_2 (front right leg) |
+    | 7  | ankle_2 (front right leg) |
+    | 8  | back_leg (back left leg) |
+    | 9  | aux_3 (back left leg) |
     | 10 | ankle_3 (back left leg) |
     | 11 | right_back_leg |
     | 12 | aux_4 (back right leg) |
