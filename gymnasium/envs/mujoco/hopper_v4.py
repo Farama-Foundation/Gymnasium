@@ -51,20 +51,20 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     However, by default, the observation is a `Box(-Inf, Inf, (11,), float64)` where the elements
     correspond to the following:
 
-    | Num | Observation                                      | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
-    | --- | ------------------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
-    | excluded | x-coordinate of the torso                   | -Inf | Inf | rootx                            | slide | position (m)             |
-    | 0   | z-coordinate of the torso (height of hopper)     | -Inf | Inf | rootz                            | slide | position (m)             |
-    | 1   | angle of the torso                               | -Inf | Inf | rooty                            | hinge | angle (rad)              |
-    | 2   | angle of the thigh joint                         | -Inf | Inf | thigh_joint                      | hinge | angle (rad)              |
-    | 3   | angle of the leg joint                           | -Inf | Inf | leg_joint                        | hinge | angle (rad)              |
-    | 4   | angle of the foot joint                          | -Inf | Inf | foot_joint                       | hinge | angle (rad)              |
+    | Num | Observation                                        | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
+    | --- | -------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
+    | 0   | z-coordinate of the torso (height of hopper)       | -Inf | Inf | rootz                            | slide | position (m)             |
+    | 1   | angle of the torso                                 | -Inf | Inf | rooty                            | hinge | angle (rad)              |
+    | 2   | angle of the thigh joint                           | -Inf | Inf | thigh_joint                      | hinge | angle (rad)              |
+    | 3   | angle of the leg joint                             | -Inf | Inf | leg_joint                        | hinge | angle (rad)              |
+    | 4   | angle of the foot joint                            | -Inf | Inf | foot_joint                       | hinge | angle (rad)              |
     | 5   | velocity of the x-coordinate of the torso          | -Inf | Inf | rootx                          | slide | velocity (m/s)           |
     | 6   | velocity of the z-coordinate (height) of the torso | -Inf | Inf | rootz                          | slide | velocity (m/s)           |
     | 7   | angular velocity of the angle of the torso         | -Inf | Inf | rooty                          | hinge | angular velocity (rad/s) |
-    | 8   | angular velocity of the thigh hinge              | -Inf | Inf | thigh_joint                      | hinge | angular velocity (rad/s) |
-    | 9   | angular velocity of the leg hinge                | -Inf | Inf | leg_joint                        | hinge | angular velocity (rad/s) |
-    | 10  | angular velocity of the foot hinge               | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
+    | 8   | angular velocity of the thigh hinge                | -Inf | Inf | thigh_joint                      | hinge | angular velocity (rad/s) |
+    | 9   | angular velocity of the leg hinge                  | -Inf | Inf | leg_joint                        | hinge | angular velocity (rad/s) |
+    | 10  | angular velocity of the foot hinge                 | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
+    | excluded | x-coordinate of the torso                     | -Inf | Inf | rootx                            | slide | position (m)             |
 
 
     ## Rewards

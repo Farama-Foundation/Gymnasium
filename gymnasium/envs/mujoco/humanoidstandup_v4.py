@@ -53,8 +53,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
     ## Observation Space
     Observations consist of positional values of different body parts of the Humanoid,
-     followed by the velocities of those individual parts (their derivatives) with all the
-     positions ordered before all the velocities.
+    followed by the velocities of those individual parts (their derivatives) with all the
+    positions ordered before all the velocities.
 
     By default, observations do not include the x- and y-coordinates of the torso. These may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
@@ -67,8 +67,6 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
     | Num | Observation                                                                                                     | Min  | Max | Name (in corresponding XML file) | Joint | Unit                       |
     | --- | --------------------------------------------------------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | -------------------------- |
-    | excluded | x-coordinate of the torso (centre)                                                                         | -Inf | Inf | root                             | free  | position (m)               |
-    | excluded | y-coordinate of the torso (centre)                                                                         | -Inf | Inf | root                             | free  | position (m)               |
     | 0   | z-coordinate of the torso (centre)                                                                              | -Inf | Inf | root                             | free  | position (m)               |
     | 1   | x-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
     | 2   | y-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
@@ -114,6 +112,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     | 42  | coordinate-1 (multi-axis) of the angular velocity of the angle between torso and left arm (in left_upper_arm)   | -Inf | Inf | left_shoulder1                   | hinge | anglular velocity (rad/s)  |
     | 43  | coordinate-2 (multi-axis) of the angular velocity of the angle between torso and left arm (in left_upper_arm)   | -Inf | Inf | left_shoulder2                   | hinge | anglular velocity (rad/s)  |
     | 44  | angular velocity of the angle between left upper arm and left_lower_arm                                         | -Inf | Inf | left_elbow                       | hinge | anglular velocity (rad/s)  |
+    | excluded | x-coordinate of the torso (centre)                                                                         | -Inf | Inf | root                             | free  | position (m)               |
+    | excluded | y-coordinate of the torso (centre)                                                                         | -Inf | Inf | root                             | free  | position (m)               |
 
     Additionally, after all the positional and velocity based values in the table,
     the observation contains (in order):
@@ -132,49 +132,49 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     The body parts are:
 
     | id (for `v2`,`v3`,`v4`) | body part |
-    |  ---  |  ------------  |
-    | 0 | worldBody (note: all values are constant 0) |
-    | 1 | torso |
-    | 2 | lwaist |
-    | 3 | pelvis |
-    | 4 | right_thigh |
-    | 5 | right_sin |
-    | 6 | right_foot |
-    | 7 | left_thigh |
-    | 8 | left_sin |
-    | 9 | left_foot |
-    | 10 | right_upper_arm |
-    | 11 | right_lower_arm |
-    | 12 | left_upper_arm |
-    | 13 | left_lower_arm |
+    | --- |  ------------  |
+    | 0   | worldBody (note: all values are constant 0) |
+    | 1   | torso |
+    | 2   | lwaist |
+    | 3   | pelvis |
+    | 4   | right_thigh |
+    | 5   | right_sin |
+    | 6   | right_foot |
+    | 7   | left_thigh |
+    | 8   | left_sin |
+    | 9   | left_foot |
+    | 10  | right_upper_arm |
+    | 11  | right_lower_arm |
+    | 12  | left_upper_arm |
+    | 13  | left_lower_arm |
 
     The joints are:
 
     | id (for `v2`,`v3`,`v4`) | joint |
-    |  ---  |  ------------  |
-    | 0 | root |
-    | 1 | root |
-    | 2 | root |
-    | 3 | root |
-    | 4 | root |
-    | 5 | root |
-    | 6 | abdomen_z |
-    | 7 | abdomen_y |
-    | 8 | abdomen_x |
-    | 9 | right_hip_x |
-    | 10 | right_hip_z |
-    | 11 | right_hip_y |
-    | 12 | right_knee |
-    | 13 | left_hip_x |
-    | 14 | left_hiz_z |
-    | 15 | left_hip_y |
-    | 16 | left_knee |
-    | 17 | right_shoulder1 |
-    | 18 | right_shoulder2 |
-    | 19 | right_elbow|
-    | 20 | left_shoulder1 |
-    | 21 | left_shoulder2 |
-    | 22 | left_elfbow |
+    | --- |  ------------  |
+    | 0   | root |
+    | 1   | root |
+    | 2   | root |
+    | 3   | root |
+    | 4   | root |
+    | 5   | root |
+    | 6   | abdomen_z |
+    | 7   | abdomen_y |
+    | 8   | abdomen_x |
+    | 9   | right_hip_x |
+    | 10  | right_hip_z |
+    | 11  | right_hip_y |
+    | 12  | right_knee |
+    | 13  | left_hip_x |
+    | 14  | left_hiz_z |
+    | 15  | left_hip_y |
+    | 16  | left_knee |
+    | 17  | right_shoulder1 |
+    | 18  | right_shoulder2 |
+    | 19  | right_elbow|
+    | 20  | left_shoulder1 |
+    | 21  | left_shoulder2 |
+    | 22  | left_elfbow |
 
     The (x,y,z) coordinates are translational DOFs while the orientations are rotational
     DOFs expressed as quaternions. One can read more about free joints on the

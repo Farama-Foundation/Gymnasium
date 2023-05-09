@@ -67,6 +67,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     | 5   | angular velocity of front tip        | -Inf | Inf | free_body_rot                    | hinge | angular velocity (rad/s) |
     | 6   | angular velocity of first rotor      | -Inf | Inf | motor1_rot                       | hinge | angular velocity (rad/s) |
     | 7   | angular velocity of second rotor     | -Inf | Inf | motor2_rot                       | hinge | angular velocity (rad/s) |
+    | excluded | position of the tip along the x-axis | -Inf | Inf | slider1                          | slide | position (m)           |
+    | excluded | position of the tip along the y-axis | -Inf | Inf | slider2                          | slide | position (m)           |
 
     ## Rewards
     The reward consists of two parts:

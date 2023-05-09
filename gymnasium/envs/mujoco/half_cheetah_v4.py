@@ -55,7 +55,6 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
     | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
     | --- | ------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
-    | excluded |  x-coordinate of the front tip  | -Inf | Inf | rootx                            | slide | position (m)             |
     | 0   | z-coordinate of the front tip        | -Inf | Inf | rootz                            | slide | position (m)             |
     | 1   | angle of the front tip               | -Inf | Inf | rooty                            | hinge | angle (rad)              |
     | 2   | angle of the second rotor            | -Inf | Inf | bthigh                           | hinge | angle (rad)              |
@@ -73,6 +72,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     | 14  | velocity of the tip along the y-axis | -Inf | Inf | fthigh                           | hinge | angular velocity (rad/s) |
     | 15  | angular velocity of front tip        | -Inf | Inf | fshin                            | hinge | angular velocity (rad/s) |
     | 16  | angular velocity of second rotor     | -Inf | Inf | ffoot                            | hinge | angular velocity (rad/s) |
+    | excluded |  x-coordinate of the front tip  | -Inf | Inf | rootx                            | slide | position (m)             |
 
     ## Rewards
     The reward consists of two parts:
