@@ -85,18 +85,6 @@ class Box(Space[NDArray[Any]]):
         ), "Box dtype must be explicitly provided, cannot be None."
         self.dtype = np.dtype(dtype)
 
-        # check that we don't have inverted infinite for bounds
-        assert np.array(
-            low != np.inf
-        ).all(), (
-            f"Some elements in low: {low} are positive infinity, this is not allowed"
-        )
-        assert np.array(
-            high != -np.inf
-        ).all(), (
-            f"Some elements in high: {high} are negative infinity, this is not allowed"
-        )
-
         # determine shape if it isn't provided directly
         if shape is not None:
             assert all(
@@ -133,10 +121,14 @@ class Box(Space[NDArray[Any]]):
             high.shape == shape
         ), f"high.shape doesn't match provided shape, high.shape: {high.shape}, shape: {shape}"
 
-        # check that we don't have a degenerate space
-        assert (
-            np.array(low < high) | np.array(np.isnan(low)) | np.array(np.isnan(high))
-        ).all(), f"Some elements in low: {low} are more than some elements in high: {high}, this will lead to a degenerate space and is not allowed"
+        # check that we don't have invalid low or high
+        assert np.all(
+            low <= high
+        ), f"Some low values are greater than high, low={low}, high={high}"
+        assert np.all(low != np.inf), f"No low value is equal to `np.inf`, low={low}"
+        assert np.all(
+            high != -np.inf
+        ), f"No high value is equal to `-np.inf`, high={high}"
 
         self._shape: tuple[int, ...] = shape
 
