@@ -38,7 +38,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 7   | Torque applied on the rotor between the back left two links       | -1          | 1           | angle_3 (back_leg)               | hinge | torque (N m) |
 
     ## Observation Space
-
     Observations consist of positional values of different body parts of the ant,
     followed by the velocities of those individual parts (their derivatives) with all
     the positions ordered before all the velocities.

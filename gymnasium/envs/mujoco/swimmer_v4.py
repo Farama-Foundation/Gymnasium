@@ -44,19 +44,18 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     | 1   | Torque applied on the second rotor | -1          | 1           | motor2_rot                       | hinge | torque (N m) |
 
     ## Observation Space
-
     By default, observations consists of:
     * θ<sub>i</sub>: angle of part *i* with respect to the *x* axis
     * θ<sub>i</sub>': its derivative with respect to time (angular velocity)
 
     In the default case, observations do not include the x- and y-coordinates of the front tip. These may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    Then, the observation space will have 10 dimensions where the first two dimensions
+    Then, the observation space will be `Box(-Inf, Inf, (10,), float64)` where the first two observations
     represent the x- and y-coordinates of the front tip.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x- and y-coordinates
     will be returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
-    By default, the observation is a `ndarray` with shape `(8,)` where the elements correspond to the following:
+    By default, the observation is a `Box(-Inf, Inf, (8,), float64)` where the elements correspond to the following:
 
     | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
     | --- | ------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
@@ -67,7 +66,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     | 4   | velocity of the tip along the y-axis | -Inf | Inf | slider2                          | slide | velocity (m/s)           |
     | 5   | angular velocity of front tip        | -Inf | Inf | free_body_rot                    | hinge | angular velocity (rad/s) |
     | 6   | angular velocity of first rotor      | -Inf | Inf | motor1_rot                       | hinge | angular velocity (rad/s) |
-    | 7   | angular velocity of second rotor     | -Inf | Inf | motor2_rot                             | hinge | angular velocity (rad/s) |
+    | 7   | angular velocity of second rotor     | -Inf | Inf | motor2_rot                       | hinge | angular velocity (rad/s) |
 
     ## Rewards
     The reward consists of two parts:
