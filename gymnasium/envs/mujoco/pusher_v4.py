@@ -41,7 +41,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     - The coordinates of the object to be moved
     - The coordinates of the goal position
 
-    The observation is a `ndarray` with shape `(23,)` where the elements correspond to the table below.
+    The observation is a `Box(-Inf, Inf, (23,), float64)` where the elements correspond to the table below.
     An analogy can be drawn to a human arm in order to help understand the state space, with the words flex and roll meaning the
     same as human joints.
 

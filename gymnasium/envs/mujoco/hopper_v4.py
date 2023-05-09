@@ -28,7 +28,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     connecting the four body parts.
 
     ## Action Space
-    The action space is a `Box(-1, 1, (3,), float32)`. An action represents the torques applied between *links*
+    The action space is a `Box(-1, 1, (3,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
     |-----|------------------------------------|-------------|-------------|----------------------------------|-------|--------------|
@@ -37,34 +37,34 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     | 2   | Torque applied on the foot rotor   | -1          | 1           | foot_joint                       | hinge | torque (N m) |
 
     ## Observation Space
-
     Observations consist of positional values of different body parts of the
     hopper, followed by the velocities of those individual parts
     (their derivatives) with all the positions ordered before all the velocities.
 
     By default, observations do not include the x-coordinate of the hopper. It may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will have 12 dimensions where the first dimension
+    In that case, the observation space will be `Box(-Inf, Inf, (12,), float64)` where the first observation
     represents the x-coordinate of the hopper.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x-coordinate
     will be returned in `info` with key `"x_position"`.
 
-    However, by default, the observation is a `ndarray` with shape `(11,)` where the elements
+    However, by default, the observation is a `Box(-Inf, Inf, (11,), float64)` where the elements
     correspond to the following:
 
-    | Num | Observation                                      | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
-    | --- | ------------------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
-    | 0   | z-coordinate of the top (height of hopper)       | -Inf | Inf | rootz                            | slide | position (m)             |
-    | 1   | angle of the top                                 | -Inf | Inf | rooty                            | hinge | angle (rad)              |
-    | 2   | angle of the thigh joint                         | -Inf | Inf | thigh_joint                      | hinge | angle (rad)              |
-    | 3   | angle of the leg joint                           | -Inf | Inf | leg_joint                        | hinge | angle (rad)              |
-    | 4   | angle of the foot joint                          | -Inf | Inf | foot_joint                       | hinge | angle (rad)              |
-    | 5   | velocity of the x-coordinate of the top          | -Inf | Inf | rootx                            | slide | velocity (m/s)           |
-    | 6   | velocity of the z-coordinate (height) of the top | -Inf | Inf | rootz                            | slide | velocity (m/s)           |
-    | 7   | angular velocity of the angle of the top         | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
-    | 8   | angular velocity of the thigh hinge              | -Inf | Inf | thigh_joint                      | hinge | angular velocity (rad/s) |
-    | 9   | angular velocity of the leg hinge                | -Inf | Inf | leg_joint                        | hinge | angular velocity (rad/s) |
-    | 10  | angular velocity of the foot hinge               | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
+    | Num | Observation                                        | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
+    | --- | -------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
+    | 0   | z-coordinate of the torso (height of hopper)       | -Inf | Inf | rootz                            | slide | position (m)             |
+    | 1   | angle of the torso                                 | -Inf | Inf | rooty                            | hinge | angle (rad)              |
+    | 2   | angle of the thigh joint                           | -Inf | Inf | thigh_joint                      | hinge | angle (rad)              |
+    | 3   | angle of the leg joint                             | -Inf | Inf | leg_joint                        | hinge | angle (rad)              |
+    | 4   | angle of the foot joint                            | -Inf | Inf | foot_joint                       | hinge | angle (rad)              |
+    | 5   | velocity of the x-coordinate of the torso          | -Inf | Inf | rootx                          | slide | velocity (m/s)           |
+    | 6   | velocity of the z-coordinate (height) of the torso | -Inf | Inf | rootz                          | slide | velocity (m/s)           |
+    | 7   | angular velocity of the angle of the torso         | -Inf | Inf | rooty                          | hinge | angular velocity (rad/s) |
+    | 8   | angular velocity of the thigh hinge                | -Inf | Inf | thigh_joint                      | hinge | angular velocity (rad/s) |
+    | 9   | angular velocity of the leg hinge                  | -Inf | Inf | leg_joint                        | hinge | angular velocity (rad/s) |
+    | 10  | angular velocity of the foot hinge                 | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
+    | excluded | x-coordinate of the torso                     | -Inf | Inf | rootx                            | slide | position (m)             |
 
 
     ## Rewards
