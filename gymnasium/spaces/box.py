@@ -104,8 +104,20 @@ class Box(Space[NDArray[Any]]):
 
         # check that we don't have a degenerate space
         assert np.array(
-            low != high
-        ).all(), f"Some elements in low: {low} are equal to some elements in high: {high}, this will lead to a degenerate space and is not allowed"
+            low <= high
+        ).all(), f"Some elements in low: {low} are less than some elements in high: {high}, this will lead to a degenerate space and is not allowed"
+
+        # check that we don't have inverted infinite for bounds
+        assert np.array(
+            low != np.inf
+        ).all(), (
+            f"Some elements in low: {low} are positive infinity, this is not allowed"
+        )
+        assert np.array(
+            high != -np.inf
+        ).all(), (
+            f"Some elements in high: {high} are negative infinity, this is not allowed"
+        )
 
         # Capture the boundedness information before replacing np.inf with get_inf
         _low = np.full(shape, low, dtype=float) if is_float_integer(low) else low
