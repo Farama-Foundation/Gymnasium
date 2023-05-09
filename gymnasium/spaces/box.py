@@ -85,6 +85,18 @@ class Box(Space[NDArray[Any]]):
         ), "Box dtype must be explicitly provided, cannot be None."
         self.dtype = np.dtype(dtype)
 
+        # check that we don't have inverted infinite for bounds
+        assert np.array(
+            low != np.inf
+        ).all(), (
+            f"Some elements in low: {low} are positive infinity, this is not allowed"
+        )
+        assert np.array(
+            high != -np.inf
+        ).all(), (
+            f"Some elements in high: {high} are negative infinity, this is not allowed"
+        )
+
         # determine shape if it isn't provided directly
         if shape is not None:
             assert all(
@@ -101,23 +113,6 @@ class Box(Space[NDArray[Any]]):
             raise ValueError(
                 f"Box shape is inferred from low and high, expect their types to be np.ndarray, an integer or a float, actual type low: {type(low)}, high: {type(high)}"
             )
-
-        # check that we don't have a degenerate space
-        assert np.array(
-            low <= high
-        ).all(), f"Some elements in low: {low} are less than some elements in high: {high}, this will lead to a degenerate space and is not allowed"
-
-        # check that we don't have inverted infinite for bounds
-        assert np.array(
-            low != np.inf
-        ).all(), (
-            f"Some elements in low: {low} are positive infinity, this is not allowed"
-        )
-        assert np.array(
-            high != -np.inf
-        ).all(), (
-            f"Some elements in high: {high} are negative infinity, this is not allowed"
-        )
 
         # Capture the boundedness information before replacing np.inf with get_inf
         _low = np.full(shape, low, dtype=float) if is_float_integer(low) else low
@@ -137,6 +132,11 @@ class Box(Space[NDArray[Any]]):
         assert (
             high.shape == shape
         ), f"high.shape doesn't match provided shape, high.shape: {high.shape}, shape: {shape}"
+
+        # check that we don't have a degenerate space
+        assert (
+            np.array(low < high) | np.array(np.isnan(low)) | np.array(np.isnan(high))
+        ).all(), f"Some elements in low: {low} are more than some elements in high: {high}, this will lead to a degenerate space and is not allowed"
 
         self._shape: tuple[int, ...] = shape
 

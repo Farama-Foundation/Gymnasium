@@ -1,5 +1,6 @@
 import re
 import warnings
+from collections.abc import Iterable
 
 import numpy as np
 import pytest
@@ -317,20 +318,47 @@ def test_sample_mask():
 
 
 @pytest.mark.parametrize(
-    "low, high",
+    "low, high, reason",
     [
-        (np.inf, np.inf),
-        (-np.inf, -np.inf),
-        (3.0, 3.0),
-        (np.array([-np.inf, 0]), np.array([-np.inf, np.inf])),
+        (np.inf, np.inf, "positive_inf_below"),
+        (np.array([0, np.inf]), np.array([np.inf, np.inf]), "positive_inf_below"),
+        (-np.inf, -np.inf, "negative_inf_above"),
+        (np.array([-np.inf, -np.inf]), np.array([0, -np.inf]), "negative_inf_above"),
+        (5.0, 3.0, "reverse_bounded"),
+        (np.array([5.0, 6.0]), np.array([1.0, 5.99]), "reverse_bounded"),
     ],
 )
-def test_disallow_degenerate_spaces(low, high):
-    """Tests that we don't allow spaces with degenerate bounds, such as `Box(-np.inf, -np.inf)`."""
-    with pytest.raises(
-        AssertionError,
-        match=re.escape(
-            f"Some elements in low: {low} are equal to some elements in high: {high}, this will lead to a degenerate space and is not allowed"
-        ),
-    ):
-        Box(low, high, dtype=np.float32)
+def test_disallow_degenerate_spaces(low, high, reason):
+    """Tests that we don't allow spaces with degenerate bounds, such as `Box(np.inf, -np.inf)`."""
+    if reason == "positive_inf_below":
+        with pytest.raises(
+            AssertionError,
+            match=re.escape(
+                f"Some elements in low: {low} are positive infinity, this is not allowed"
+            ),
+        ):
+            Box(low, high, dtype=np.float32)
+    elif reason == "negative_inf_above":
+        with pytest.raises(
+            AssertionError,
+            match=re.escape(
+                f"Some elements in high: {high} are negative infinity, this is not allowed"
+            ),
+        ):
+            Box(low, high, dtype=np.float32)
+    elif reason == "reverse_bounded":
+        if not isinstance(low, Iterable):
+            print_low = np.array([low])
+            print_high = np.array([high])
+        else:
+            print_low = low
+            print_high = high
+        with pytest.raises(
+            AssertionError,
+            match=re.escape(
+                f"Some elements in low: {print_low} are more than some elements in high: {print_high}, this will lead to a degenerate space and is not allowed"
+            ),
+        ):
+            Box(low, high, dtype=np.float32)
+    else:
+        raise AssertionError(f"Unknown reason: {reason}.")
