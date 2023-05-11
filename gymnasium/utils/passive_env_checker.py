@@ -58,12 +58,6 @@ def _check_box_action_space(action_space: spaces.Box):
             "A Box action space maximum and minimum values are equal. "
             f"Actual equal coordinates: {[x for x in zip(*np.where(action_space.low == action_space.high))]}"
         )
-    elif np.any(action_space.high < action_space.low):
-        logger.warn(
-            "A Box action space low value is greater than a high value. "
-            f"Actual less than coordinates: {[x for x in zip(*np.where(action_space.high < action_space.low))]}"
-        )
-
 
 def check_space(
     space: Space, space_type: str, check_box_space_fn: Callable[[spaces.Box], None]
