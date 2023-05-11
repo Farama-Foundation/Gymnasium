@@ -286,25 +286,25 @@ def test_legacy_state_pickling():
 
 def test_get_inf():
     """Tests that get inf function works as expected, primarily for coverage."""
-    assert get_inf(np.float32, "+") == np.inf
-    assert get_inf(np.float16, "-") == -np.inf
+    assert get_inf(np.float32, 1.0) == np.inf
+    assert get_inf(np.float16, -1.0) == -np.inf
     with pytest.raises(
-        TypeError, match=re.escape("Unknown sign *, use either '+' or '-'")
+        AssertionError, match=re.escape("Unknown sign 3.0, use either -1.0 or 1.0")
     ):
-        get_inf(np.float32, "*")
+        get_inf(np.float32, 3.0)
 
-    assert get_inf(np.int16, "+") == 32765
-    assert get_inf(np.int8, "-") == -126
+    assert get_inf(np.int16, 1.0) == 32765
+    assert get_inf(np.int8, -1.0) == -126
     with pytest.raises(
-        TypeError, match=re.escape("Unknown sign *, use either '+' or '-'")
+        AssertionError, match=re.escape("Unknown sign 3.0, use either -1.0 or 1.0")
     ):
-        get_inf(np.int32, "*")
+        get_inf(np.int32, 3.0)
 
     with pytest.raises(
         ValueError,
         match=re.escape("Unknown dtype <class 'numpy.complex128'> for infinite bounds"),
     ):
-        get_inf(np.complex_, "+")
+        get_inf(np.complex_, 1.0)
 
 
 def test_sample_mask():
@@ -330,33 +330,33 @@ def test_sample_mask():
 )
 def test_disallow_degenerate_spaces(low, high, reason):
     """Tests that we don't allow spaces with degenerate bounds, such as `Box(np.inf, -np.inf)`."""
+
+    if not isinstance(low, Iterable):
+        print_low = np.array([low])
+        print_high = np.array([high])
+    else:
+        print_low = low
+        print_high = high
+
     if reason == "positive_inf_below":
         with pytest.raises(
             AssertionError,
-            match=re.escape(
-                f"Some elements in low: {low} are positive infinity, this is not allowed"
-            ),
+            match=re.escape(f"No low value can be equal to `np.inf`, low={print_low}"),
         ):
             Box(low, high, dtype=np.float32)
     elif reason == "negative_inf_above":
         with pytest.raises(
             AssertionError,
             match=re.escape(
-                f"Some elements in high: {high} are negative infinity, this is not allowed"
+                f"No high value can be equal to `-np.inf`, high={print_high}"
             ),
         ):
             Box(low, high, dtype=np.float32)
     elif reason == "reverse_bounded":
-        if not isinstance(low, Iterable):
-            print_low = np.array([low])
-            print_high = np.array([high])
-        else:
-            print_low = low
-            print_high = high
         with pytest.raises(
             AssertionError,
             match=re.escape(
-                f"Some elements in low: {print_low} are more than some elements in high: {print_high}, this will lead to a degenerate space and is not allowed"
+                f"Some low values are greater than high, low={print_low}, high={print_high}"
             ),
         ):
             Box(low, high, dtype=np.float32)
