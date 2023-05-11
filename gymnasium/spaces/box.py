@@ -89,7 +89,7 @@ class Box(Space[NDArray[Any]]):
         if shape is not None:
             assert all(
                 np.issubdtype(type(dim), np.integer) for dim in shape
-            ), f"Expect all shape elements to be an integer, actual type: {tuple(type(dim) for dim in shape)}"
+            ), f"Expected all shape elements to be an integer, actual type: {tuple(type(dim) for dim in shape)}"
             shape = tuple(int(dim) for dim in shape)  # This changes any np types to int
         elif isinstance(low, np.ndarray):
             shape = low.shape
@@ -99,7 +99,7 @@ class Box(Space[NDArray[Any]]):
             shape = (1,)
         else:
             raise ValueError(
-                f"Box shape is inferred from low and high, expect their types to be np.ndarray, an integer or a float, actual type low: {type(low)}, high: {type(high)}"
+                f"Box shape is inferred from low and high, expected their types to be np.ndarray, an integer or a float, actual type low: {type(low)}, high: {type(high)}"
             )
 
         # Capture the boundedness information before replacing np.inf with get_inf

@@ -70,7 +70,7 @@ def test_low_high_values(value, valid: bool):
         with pytest.raises(
             ValueError,
             match=re.escape(
-                "expect their types to be np.ndarray, an integer or a float"
+                "expected their types to be np.ndarray, an integer or a float"
             ),
         ):
             Box(low=-np.inf, high=value)
@@ -91,7 +91,7 @@ def test_low_high_values(value, valid: bool):
             1,
             {"shape": (None,)},
             AssertionError,
-            "Expect all shape elements to be an integer, actual type: (<class 'NoneType'>,)",
+            "Expected all shape elements to be an integer, actual type: (<class 'NoneType'>,)",
         ),
         (
             0,
@@ -103,7 +103,7 @@ def test_low_high_values(value, valid: bool):
                 )
             },
             AssertionError,
-            "Expect all shape elements to be an integer, actual type: (<class 'int'>, <class 'NoneType'>)",
+            "Expected all shape elements to be an integer, actual type: (<class 'int'>, <class 'NoneType'>)",
         ),
         (
             0,
@@ -115,21 +115,21 @@ def test_low_high_values(value, valid: bool):
                 )
             },
             AssertionError,
-            "Expect all shape elements to be an integer, actual type: (<class 'numpy.int64'>, <class 'NoneType'>)",
+            "Expected all shape elements to be an integer, actual type: (<class 'numpy.int64'>, <class 'NoneType'>)",
         ),
         (
             None,
             None,
             {},
             ValueError,
-            "Box shape is inferred from low and high, expect their types to be np.ndarray, an integer or a float, actual type low: <class 'NoneType'>, high: <class 'NoneType'>",
+            "Box shape is inferred from low and high, expected their types to be np.ndarray, an integer or a float, actual type low: <class 'NoneType'>, high: <class 'NoneType'>",
         ),
         (
             0,
             None,
             {},
             ValueError,
-            "Box shape is inferred from low and high, expect their types to be np.ndarray, an integer or a float, actual type low: <class 'int'>, high: <class 'NoneType'>",
+            "Box shape is inferred from low and high, expected their types to be np.ndarray, an integer or a float, actual type low: <class 'int'>, high: <class 'NoneType'>",
         ),
         (
             np.zeros(3),
