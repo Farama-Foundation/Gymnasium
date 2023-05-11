@@ -59,6 +59,7 @@ def _check_box_action_space(action_space: spaces.Box):
             f"Actual equal coordinates: {[x for x in zip(*np.where(action_space.low == action_space.high))]}"
         )
 
+
 def check_space(
     space: Space, space_type: str, check_box_space_fn: Callable[[spaces.Box], None]
 ):
