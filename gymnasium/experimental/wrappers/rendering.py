@@ -124,7 +124,7 @@ class RecordVideoV0(
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
             fps (int): The frame per second in the video. The default value is the one specified in the environment metadata.
-                If the environment metadata doesn't specify `render_fps`, the value 30 is used. 
+                If the environment metadata doesn't specify `render_fps`, the value 30 is used.
             disable_logger (bool): Whether to disable moviepy logger or not
         """
         gym.utils.RecordConstructorArgs.__init__(
