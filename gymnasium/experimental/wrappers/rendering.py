@@ -173,7 +173,6 @@ class RecordVideoV0(
             )
         os.makedirs(self.video_folder, exist_ok=True)
 
-
         if fps is None:
             fps = self.metadata.get("render_fps", 30)
         self.frames_per_sec: int = fps
