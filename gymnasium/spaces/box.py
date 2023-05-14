@@ -293,11 +293,11 @@ class Box(Space[NDArray[Any]]):
             self.high_repr = _short_repr(self.high)
 
 
-def get_inf(dtype: np.dtype, sign: float) -> int | float:
-    """Returns an infinite that doesn't break things.
+def get_integer_infinite(dtype: np.dtype, sign: float) -> int | float:
+    """Returns an infinite for the dtype int that doesn't break things.
 
     Args:
-        dtype: An `np.dtype`
+        dtype (np.dtype): needed to see the number of bits required
         sign (float): must be either `-1.0` or `1.0`
 
     Returns:
@@ -305,19 +305,12 @@ def get_inf(dtype: np.dtype, sign: float) -> int | float:
 
     Raises:
         TypeError: Unknown sign, use either '+' or '-'
-        ValueError: Unknown dtype for infinite bounds
     """
     assert np.all(abs(sign) == 1.0), f"Unknown sign {sign}, use either -1.0 or 1.0"
-
-    if np.dtype(dtype).kind == "f":
-        return np.inf * sign
-    elif np.dtype(dtype).kind == "i":
-        if sign > 0.0:
-            return np.iinfo(dtype).max - 2
-        elif sign < 0.0:
-            return np.iinfo(dtype).min + 2
-    else:
-        raise ValueError(f"Unknown dtype {dtype} for infinite bounds")
+    assert (
+        np.dtype(dtype).kind == "i"
+    ), f"`get_inf` is only needed for integer values, got {np.dtype(dtype).kind}"
+    return (np.iinfo(dtype).max - 2) if (sign > 0.0) else (np.iinfo(dtype).min + 2)
 
 
 def get_precision(dtype: np.dtype) -> SupportsFloat:
@@ -335,14 +328,26 @@ def _broadcast(
 ) -> NDArray[Any]:
     """Handle infinite bounds and broadcast at the same time if needed."""
     if is_float_integer(value):
-        value = get_inf(dtype, np.sign(value)) if np.isinf(value) else value
+        if np.isinf(value) and np.dtype(dtype).kind == "i":
+            value = (
+                get_integer_infinite(dtype, np.sign(value))
+                if np.isinf(value)
+                else value
+            )
+
         value = np.full(shape, value, dtype=dtype)
-    else:
-        assert isinstance(value, np.ndarray)
-        if np.any(np.isinf(value)):
+
+    elif isinstance(value, np.ndarray):
+        if np.any(np.isinf(value)) and np.dtype(dtype).kind == "i":
             # create new array with dtype, but maintain old one to preserve np.inf
-            temp = value.astype(dtype)
-            temp[np.isinf(value) & (value > 0.0)] = get_inf(dtype, 1.0)
-            temp[np.isinf(value) & (value < 0.0)] = get_inf(dtype, -1.0)
-            value = temp
+            bounded_value = value.astype(dtype)
+            bounded_value[np.isposinf(value)] = get_integer_infinite(dtype, 1.0)
+            bounded_value[np.isneginf(value)] = get_integer_infinite(dtype, -1.0)
+            value = bounded_value
+
+    else:
+        raise TypeError(
+            f"Unknown dtype for `value`, expected `np.ndarray` or float/integer, got {type(value)}"
+        )
+
     return value
