@@ -294,47 +294,54 @@ def test_sample_mask():
 
 
 @pytest.mark.parametrize(
-    "low, high, reason",
+    "low, high, shape, dtype, reason",
     [
-        (np.inf, np.inf, "positive_inf_below"),
-        (np.array([0, np.inf]), np.array([np.inf, np.inf]), "positive_inf_below"),
-        (-np.inf, -np.inf, "negative_inf_above"),
-        (np.array([-np.inf, -np.inf]), np.array([0, -np.inf]), "negative_inf_above"),
-        (5.0, 3.0, "reverse_bounded"),
-        (np.array([5.0, 6.0]), np.array([1.0, 5.99]), "reverse_bounded"),
+        (
+            5.0,
+            3.0,
+            (),
+            np.float32,
+            "Some low values are greater than high, low=5.0, high=3.0",
+        ),
+        (
+            np.array([5.0, 6.0]),
+            np.array([1.0, 5.99]),
+            (2,),
+            np.float32,
+            "Some low values are greater than high, low=[5. 6.], high=[1.   5.99]",
+        ),
+        (
+            np.inf,
+            np.inf,
+            (),
+            np.float32,
+            "No low value can be equal to `np.inf`, low=inf",
+        ),
+        (
+            np.array([0, np.inf]),
+            np.array([np.inf, np.inf]),
+            (2,),
+            np.float32,
+            "No low value can be equal to `np.inf`, low=[ 0. inf]",
+        ),
+        (
+            -np.inf,
+            -np.inf,
+            (),
+            np.float32,
+            "No high value can be equal to `-np.inf`, high=-inf",
+        ),
+        (
+            np.array([-np.inf, -np.inf]),
+            np.array([0, -np.inf]),
+            (2,),
+            np.float32,
+            "No high value can be equal to `-np.inf`, high=[  0. -inf]",
+        ),
     ],
 )
-def test_invalid_low_high(low, high, reason):
+def test_invalid_low_high(low, high, dtype, shape, reason):
     """Tests that we don't allow spaces with degenerate bounds, such as `Box(np.inf, -np.inf)`."""
+    with pytest.raises(ValueError, match=re.escape(reason)):
+        Box(low=low, high=high, dtype=dtype, shape=shape)
 
-    if not isinstance(low, Iterable):
-        print_low = np.array([low])
-        print_high = np.array([high])
-    else:
-        print_low = low
-        print_high = high
-
-    if reason == "positive_inf_below":
-        with pytest.raises(
-            AssertionError,
-            match=re.escape(f"No low value can be equal to `np.inf`, low={print_low}"),
-        ):
-            Box(low, high, dtype=np.float32)
-    elif reason == "negative_inf_above":
-        with pytest.raises(
-            AssertionError,
-            match=re.escape(
-                f"No high value can be equal to `-np.inf`, high={print_high}"
-            ),
-        ):
-            Box(low, high, dtype=np.float32)
-    elif reason == "reverse_bounded":
-        with pytest.raises(
-            AssertionError,
-            match=re.escape(
-                f"Some low values are greater than high, low={print_low}, high={print_high}"
-            ),
-        ):
-            Box(low, high, dtype=np.float32)
-    else:
-        raise AssertionError(f"Unknown reason: {reason}.")
