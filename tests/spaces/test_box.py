@@ -1,6 +1,5 @@
 import re
 import warnings
-from collections.abc import Iterable
 
 import numpy as np
 import pytest
@@ -344,4 +343,3 @@ def test_invalid_low_high(low, high, dtype, shape, reason):
     """Tests that we don't allow spaces with degenerate bounds, such as `Box(np.inf, -np.inf)`."""
     with pytest.raises(ValueError, match=re.escape(reason)):
         Box(low=low, high=high, dtype=dtype, shape=shape)
-
