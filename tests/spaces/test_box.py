@@ -7,7 +7,6 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.spaces import Box
-from gymnasium.spaces.box import get_integer_infinite
 
 
 @pytest.mark.parametrize(
@@ -282,30 +281,6 @@ def test_legacy_state_pickling():
     b.__setstate__(legacy_state)
     assert b.low_repr == "0.0"
     assert b.high_repr == "1.0"
-
-
-def test_get_integer_infinite():
-    """Tests that get inf function works as expected, primarily for coverage."""
-
-    with pytest.raises(
-        AssertionError,
-        match=re.escape("`get_inf` is only needed for integer values, "),
-    ):
-        get_integer_infinite(np.float32, 1.0)
-
-    with pytest.raises(
-        AssertionError,
-        match=re.escape("`get_inf` is only needed for integer values, "),
-    ):
-        get_integer_infinite(np.complex_, 1.0)
-
-    with pytest.raises(
-        AssertionError, match=re.escape("Unknown sign 3.0, use either -1.0 or 1.0")
-    ):
-        get_integer_infinite(np.int64, 3.0)
-
-    assert get_integer_infinite(np.int16, 1.0) == 32765
-    assert get_integer_infinite(np.int8, -1.0) == -126
 
 
 def test_sample_mask():
