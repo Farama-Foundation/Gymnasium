@@ -122,16 +122,14 @@ class Box(Space[NDArray[Any]]):
         ), f"high.shape doesn't match provided shape, high.shape: {high.shape}, shape: {shape}"
 
         # check that we don't have invalid low or high
-        if not np.any(np.isnan(low) | np.isnan(high)):
-            assert np.all(
-                low <= high
-            ), f"Some low values are greater than high, low={low}, high={high}"
-        assert not np.any(
-            np.isinf(low) & (low > 0.0)
-        ), f"No low value can be equal to `np.inf`, low={low}"
-        assert not np.any(
-            np.isinf(high) & (high < 0.0)
-        ), f"No high value can be equal to `-np.inf`, high={high}"
+        if np.any(low > high):
+            raise ValueError(
+                f"Some low values are greater than high, low={low}, high={high}"
+            )
+        if np.any(np.isposinf(low)):
+            raise ValueError(f"No low value can be equal to `np.inf`, low={low}")
+        if np.any(np.isneginf(high)):
+            raise ValueError(f"No high value can be equal to `-np.inf`, high={high}")
 
         self._shape: tuple[int, ...] = shape
 
