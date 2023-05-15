@@ -306,7 +306,13 @@ def _broadcast(
     dtype: np.dtype,
     shape: tuple[int, ...],
 ) -> NDArray[Any]:
-    """Handle infinite bounds and broadcast at the same time if needed."""
+    """Handle infinite bounds and broadcast at the same time if needed.
+
+    This is needed primarily because:
+        >>> import numpy as np
+        >>> np.full((2,), np.inf, dtype=np.int32)
+        array([-2147483648, -2147483648], dtype=int32)
+    """
     if is_float_integer(value):
         if np.isneginf(value) and np.dtype(dtype).kind == "i":
             value = np.iinfo(dtype).min + 2
@@ -316,8 +322,10 @@ def _broadcast(
         return np.full(shape, value, dtype=dtype)
 
     elif isinstance(value, np.ndarray):
-        # change values for integer infinites
+        # this is needed because we can't stuff np.iinfo(int).min into an array of dtype float
         casted_value = value.astype(dtype)
+
+        # change bounds only if values are negative or positive infinite
         if np.dtype(dtype).kind == "i":
             casted_value[np.isneginf(value)] = np.iinfo(dtype).min + 2
             casted_value[np.isposinf(value)] = np.iinfo(dtype).max - 2
