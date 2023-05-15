@@ -89,7 +89,7 @@ class Box(Space[NDArray[Any]]):
         if shape is not None:
             assert all(
                 np.issubdtype(type(dim), np.integer) for dim in shape
-            ), f"Expect all shape elements to be an integer, actual type: {tuple(type(dim) for dim in shape)}"
+            ), f"Expected all shape elements to be an integer, actual type: {tuple(type(dim) for dim in shape)}"
             shape = tuple(int(dim) for dim in shape)  # This changes any np types to int
         elif isinstance(low, np.ndarray):
             shape = low.shape
@@ -99,7 +99,7 @@ class Box(Space[NDArray[Any]]):
             shape = (1,)
         else:
             raise ValueError(
-                f"Box shape is inferred from low and high, expect their types to be np.ndarray, an integer or a float, actual type low: {type(low)}, high: {type(high)}"
+                f"Box shape is inferred from low and high, expected their types to be np.ndarray, an integer or a float, actual type low: {type(low)}, high: {type(high)}"
             )
 
         # Capture the boundedness information before replacing np.inf with get_inf
@@ -109,8 +109,8 @@ class Box(Space[NDArray[Any]]):
         _high = np.full(shape, high, dtype=float) if is_float_integer(high) else high
         self.bounded_above: NDArray[np.bool_] = np.inf > _high
 
-        low = _broadcast(low, self.dtype, shape, inf_sign="-")
-        high = _broadcast(high, self.dtype, shape, inf_sign="+")
+        low = _broadcast(low, self.dtype, shape)
+        high = _broadcast(high, self.dtype, shape)
 
         assert isinstance(low, np.ndarray)
         assert (
@@ -120,6 +120,16 @@ class Box(Space[NDArray[Any]]):
         assert (
             high.shape == shape
         ), f"high.shape doesn't match provided shape, high.shape: {high.shape}, shape: {shape}"
+
+        # check that we don't have invalid low or high
+        if np.any(low > high):
+            raise ValueError(
+                f"Some low values are greater than high, low={low}, high={high}"
+            )
+        if np.any(np.isposinf(low)):
+            raise ValueError(f"No low value can be equal to `np.inf`, low={low}")
+        if np.any(np.isneginf(high)):
+            raise ValueError(f"No high value can be equal to `-np.inf`, high={high}")
 
         self._shape: tuple[int, ...] = shape
 
@@ -281,38 +291,6 @@ class Box(Space[NDArray[Any]]):
             self.high_repr = _short_repr(self.high)
 
 
-def get_inf(dtype: np.dtype, sign: str) -> int | float:
-    """Returns an infinite that doesn't break things.
-
-    Args:
-        dtype: An `np.dtype`
-        sign (str): must be either `"+"` or `"-"`
-
-    Returns:
-        Gets an infinite value with the sign and dtype
-
-    Raises:
-        TypeError: Unknown sign, use either '+' or '-'
-        ValueError: Unknown dtype for infinite bounds
-    """
-    if np.dtype(dtype).kind == "f":
-        if sign == "+":
-            return np.inf
-        elif sign == "-":
-            return -np.inf
-        else:
-            raise TypeError(f"Unknown sign {sign}, use either '+' or '-'")
-    elif np.dtype(dtype).kind == "i":
-        if sign == "+":
-            return np.iinfo(dtype).max - 2
-        elif sign == "-":
-            return np.iinfo(dtype).min + 2
-        else:
-            raise TypeError(f"Unknown sign {sign}, use either '+' or '-'")
-    else:
-        raise ValueError(f"Unknown dtype {dtype} for infinite bounds")
-
-
 def get_precision(dtype: np.dtype) -> SupportsFloat:
     """Get precision of a data type."""
     if np.issubdtype(dtype, np.floating):
@@ -325,17 +303,35 @@ def _broadcast(
     value: SupportsFloat | NDArray[Any],
     dtype: np.dtype,
     shape: tuple[int, ...],
-    inf_sign: str,
 ) -> NDArray[Any]:
-    """Handle infinite bounds and broadcast at the same time if needed."""
+    """Handle infinite bounds and broadcast at the same time if needed.
+
+    This is needed primarily because:
+        >>> import numpy as np
+        >>> np.full((2,), np.inf, dtype=np.int32)
+        array([-2147483648, -2147483648], dtype=int32)
+    """
     if is_float_integer(value):
-        value = get_inf(dtype, inf_sign) if np.isinf(value) else value
-        value = np.full(shape, value, dtype=dtype)
+        if np.isneginf(value) and np.dtype(dtype).kind == "i":
+            value = np.iinfo(dtype).min + 2
+        elif np.isposinf(value) and np.dtype(dtype).kind == "i":
+            value = np.iinfo(dtype).max - 2
+
+        return np.full(shape, value, dtype=dtype)
+
+    elif isinstance(value, np.ndarray):
+        # this is needed because we can't stuff np.iinfo(int).min into an array of dtype float
+        casted_value = value.astype(dtype)
+
+        # change bounds only if values are negative or positive infinite
+        if np.dtype(dtype).kind == "i":
+            casted_value[np.isneginf(value)] = np.iinfo(dtype).min + 2
+            casted_value[np.isposinf(value)] = np.iinfo(dtype).max - 2
+
+        return casted_value
+
     else:
-        assert isinstance(value, np.ndarray)
-        if np.any(np.isinf(value)):
-            # create new array with dtype, but maintain old one to preserve np.inf
-            temp = value.astype(dtype)
-            temp[np.isinf(value)] = get_inf(dtype, inf_sign)
-            value = temp
-    return value
+        # only np.ndarray allowed beyond this point
+        raise TypeError(
+            f"Unknown dtype for `value`, expected `np.ndarray` or float/integer, got {type(value)}"
+        )

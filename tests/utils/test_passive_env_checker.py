@@ -38,11 +38,6 @@ def _modify_space(space: spaces.Space, attribute: str, value):
             "A Box observation space maximum and minimum values are equal. Actual equal coordinates: [(0,), (1,), (2,), (3,), (4,)]",
         ],
         [
-            UserWarning,
-            spaces.Box(np.ones(5), np.zeros(5)),
-            "A Box observation space low value is greater than a high value. Actual less than coordinates: [(0,), (1,), (2,), (3,), (4,)]",
-        ],
-        [
             AssertionError,
             _modify_space(spaces.Box(np.zeros(2), np.ones(2)), "low", np.zeros(3)),
             "The Box observation space shape and low shape have different shapes, low shape: (3,), box shape: (2,)",
@@ -112,11 +107,6 @@ def test_check_observation_space(test, space, message: str):
             UserWarning,
             spaces.Box(np.zeros(5), np.zeros(5)),
             "A Box action space maximum and minimum values are equal. Actual equal coordinates: [(0,), (1,), (2,), (3,), (4,)]",
-        ],
-        [
-            UserWarning,
-            spaces.Box(np.ones(5), np.zeros(5)),
-            "A Box action space low value is greater than a high value. Actual less than coordinates: [(0,), (1,), (2,), (3,), (4,)]",
         ],
         [
             AssertionError,

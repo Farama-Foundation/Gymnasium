@@ -6,7 +6,6 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.spaces import Box
-from gymnasium.spaces.box import get_inf
 
 
 @pytest.mark.parametrize(
@@ -61,7 +60,7 @@ def test_low_high_values(value, valid: bool):
     """Test what `low` and `high` values are valid for `Box` space."""
     if valid:
         with warnings.catch_warnings(record=True) as caught_warnings:
-            Box(low=value, high=value)
+            Box(low=-np.inf, high=value)
         assert len(caught_warnings) == 0, tuple(
             warning.message for warning in caught_warnings
         )
@@ -69,10 +68,10 @@ def test_low_high_values(value, valid: bool):
         with pytest.raises(
             ValueError,
             match=re.escape(
-                "expect their types to be np.ndarray, an integer or a float"
+                "expected their types to be np.ndarray, an integer or a float"
             ),
         ):
-            Box(low=value, high=value)
+            Box(low=-np.inf, high=value)
 
 
 @pytest.mark.parametrize(
@@ -90,7 +89,7 @@ def test_low_high_values(value, valid: bool):
             1,
             {"shape": (None,)},
             AssertionError,
-            "Expect all shape elements to be an integer, actual type: (<class 'NoneType'>,)",
+            "Expected all shape elements to be an integer, actual type: (<class 'NoneType'>,)",
         ),
         (
             0,
@@ -102,7 +101,7 @@ def test_low_high_values(value, valid: bool):
                 )
             },
             AssertionError,
-            "Expect all shape elements to be an integer, actual type: (<class 'int'>, <class 'NoneType'>)",
+            "Expected all shape elements to be an integer, actual type: (<class 'int'>, <class 'NoneType'>)",
         ),
         (
             0,
@@ -114,21 +113,21 @@ def test_low_high_values(value, valid: bool):
                 )
             },
             AssertionError,
-            "Expect all shape elements to be an integer, actual type: (<class 'numpy.int64'>, <class 'NoneType'>)",
+            "Expected all shape elements to be an integer, actual type: (<class 'numpy.int64'>, <class 'NoneType'>)",
         ),
         (
             None,
             None,
             {},
             ValueError,
-            "Box shape is inferred from low and high, expect their types to be np.ndarray, an integer or a float, actual type low: <class 'NoneType'>, high: <class 'NoneType'>",
+            "Box shape is inferred from low and high, expected their types to be np.ndarray, an integer or a float, actual type low: <class 'NoneType'>, high: <class 'NoneType'>",
         ),
         (
             0,
             None,
             {},
             ValueError,
-            "Box shape is inferred from low and high, expect their types to be np.ndarray, an integer or a float, actual type low: <class 'int'>, high: <class 'NoneType'>",
+            "Box shape is inferred from low and high, expected their types to be np.ndarray, an integer or a float, actual type low: <class 'int'>, high: <class 'NoneType'>",
         ),
         (
             np.zeros(3),
@@ -283,29 +282,6 @@ def test_legacy_state_pickling():
     assert b.high_repr == "1.0"
 
 
-def test_get_inf():
-    """Tests that get inf function works as expected, primarily for coverage."""
-    assert get_inf(np.float32, "+") == np.inf
-    assert get_inf(np.float16, "-") == -np.inf
-    with pytest.raises(
-        TypeError, match=re.escape("Unknown sign *, use either '+' or '-'")
-    ):
-        get_inf(np.float32, "*")
-
-    assert get_inf(np.int16, "+") == 32765
-    assert get_inf(np.int8, "-") == -126
-    with pytest.raises(
-        TypeError, match=re.escape("Unknown sign *, use either '+' or '-'")
-    ):
-        get_inf(np.int32, "*")
-
-    with pytest.raises(
-        ValueError,
-        match=re.escape("Unknown dtype <class 'numpy.complex128'> for infinite bounds"),
-    ):
-        get_inf(np.complex_, "+")
-
-
 def test_sample_mask():
     """Box cannot have a mask applied."""
     space = Box(0, 1)
@@ -314,3 +290,56 @@ def test_sample_mask():
         match=re.escape("Box.sample cannot be provided a mask, actual value: "),
     ):
         space.sample(mask=np.array([0, 1, 0], dtype=np.int8))
+
+
+@pytest.mark.parametrize(
+    "low, high, shape, dtype, reason",
+    [
+        (
+            5.0,
+            3.0,
+            (),
+            np.float32,
+            "Some low values are greater than high, low=5.0, high=3.0",
+        ),
+        (
+            np.array([5.0, 6.0]),
+            np.array([1.0, 5.99]),
+            (2,),
+            np.float32,
+            "Some low values are greater than high, low=[5. 6.], high=[1.   5.99]",
+        ),
+        (
+            np.inf,
+            np.inf,
+            (),
+            np.float32,
+            "No low value can be equal to `np.inf`, low=inf",
+        ),
+        (
+            np.array([0, np.inf]),
+            np.array([np.inf, np.inf]),
+            (2,),
+            np.float32,
+            "No low value can be equal to `np.inf`, low=[ 0. inf]",
+        ),
+        (
+            -np.inf,
+            -np.inf,
+            (),
+            np.float32,
+            "No high value can be equal to `-np.inf`, high=-inf",
+        ),
+        (
+            np.array([-np.inf, -np.inf]),
+            np.array([0, -np.inf]),
+            (2,),
+            np.float32,
+            "No high value can be equal to `-np.inf`, high=[  0. -inf]",
+        ),
+    ],
+)
+def test_invalid_low_high(low, high, dtype, shape, reason):
+    """Tests that we don't allow spaces with degenerate bounds, such as `Box(np.inf, -np.inf)`."""
+    with pytest.raises(ValueError, match=re.escape(reason)):
+        Box(low=low, high=high, dtype=dtype, shape=shape)
