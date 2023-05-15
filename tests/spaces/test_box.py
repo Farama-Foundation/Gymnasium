@@ -304,7 +304,7 @@ def test_sample_mask():
         (np.array([5.0, 6.0]), np.array([1.0, 5.99]), "reverse_bounded"),
     ],
 )
-def test_disallow_degenerate_spaces(low, high, reason):
+def test_invalid_low_high(low, high, reason):
     """Tests that we don't allow spaces with degenerate bounds, such as `Box(np.inf, -np.inf)`."""
 
     if not isinstance(low, Iterable):
