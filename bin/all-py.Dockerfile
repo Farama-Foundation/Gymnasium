@@ -26,6 +26,7 @@ ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
-RUN pip install .[all,testing] --no-cache-dir
+# Test with PyTorch CPU build, since CUDA is not available in CI anyway
+RUN pip install .[all,testing] --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu
 
 ENTRYPOINT ["/usr/local/gymnasium/bin/docker_entrypoint"]

@@ -22,6 +22,7 @@ def try_make_env(env_spec: EnvSpec) -> Optional[gym.Env]:
             return env_spec.make(disable_env_checker=True).unwrapped
         except (
             ImportError,
+            AttributeError,
             gym.error.DependencyNotInstalled,
             gym.error.MissingArgument,
         ) as e:
