@@ -18,7 +18,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
     This environment is based on the work by P. Wawrzyński in
     ["A Cat-Like Robot Real-Time Learning to Run"](http://staff.elka.pw.edu.pl/~pwawrzyn/pub-s/0812_LSCLRR.pdf).
-    The HalfCheetah is a 2-dimensional robot consisting of 9 links and 8
+    The HalfCheetah is a 2-dimensional robot consisting of 9 body parts and 8
     joints connecting them (including two paws). The goal is to apply a torque
     on the joints to make the cheetah run forward (right) as fast as possible,
     with a positive reward allocated based on the distance moved forward and a
@@ -28,7 +28,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     (connecting to the thighs) and feet (connecting to the shins).
 
     ## Action Space
-    The action space is a `Box(-1, 1, (6,), float32)`. An action represents the torques applied between *links*.
+    The action space is a `Box(-1, 1, (6,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                                  | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
     | --- | --------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
@@ -41,19 +41,17 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-
     Observations consist of positional values of different body parts of the
     cheetah, followed by the velocities of those individual parts (their derivatives) with all the positions ordered before all the velocities.
 
-    By default, observations do not include the x-coordinate of the cheetah's center of mass. It may
+    By default, observations do not include the cheetah's `rootx`. It may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will have 18 dimensions where the first dimension
-    represents the x-coordinate of the cheetah's center of mass.
-    Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x-coordinate
+    In that case, the observation space will be a `Box(-Inf, Inf, (18,), float64)` where the first element
+    represents the `rootx`.
+    Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the
     will be returned in `info` with key `"x_position"`.
 
-    However, by default, the observation is a `ndarray` with shape `(17,)` where the elements correspond to the following:
-
+    However, by default, the observation is a `Box(-Inf, Inf, (17,), float64)` where the elements correspond to the following:
 
     | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
     | --- | ------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
@@ -74,6 +72,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     | 14  | velocity of the tip along the y-axis | -Inf | Inf | fthigh                           | hinge | angular velocity (rad/s) |
     | 15  | angular velocity of front tip        | -Inf | Inf | fshin                            | hinge | angular velocity (rad/s) |
     | 16  | angular velocity of second rotor     | -Inf | Inf | ffoot                            | hinge | angular velocity (rad/s) |
+    | excluded |  x-coordinate of the front tip  | -Inf | Inf | rootx                            | slide | position (m)             |
 
     ## Rewards
     The reward consists of two parts:

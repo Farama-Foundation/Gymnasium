@@ -23,7 +23,6 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     | 1   |  Torque applied at the second hinge (connecting the two links)                  | -1 | 1 | joint1  | hinge | torque (N m) |
 
     ## Observation Space
-
     Observations consist of
 
     - The cosine of the angles of the two arms
@@ -32,7 +31,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     - The angular velocities of the arms
     - The vector between the target and the reacher's fingertip (3 dimensional with the last element being 0)
 
-    The observation is a `ndarray` with shape `(11,)` where the elements correspond to the following:
+    The observation is a `Box(-Inf, Inf, (11,), float64)` where the elements correspond to the following:
 
     | Num | Observation                                                                                    | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
     | --- | ---------------------------------------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
@@ -40,8 +39,8 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     | 1   | cosine of the angle of the second arm                                                          | -Inf | Inf | cos(joint1)                      | hinge | unitless                 |
     | 2   | sine of the angle of the first arm                                                             | -Inf | Inf | sin(joint0)                      | hinge | unitless                 |
     | 3   | sine of the angle of the second arm                                                            | -Inf | Inf | sin(joint1)                      | hinge | unitless                 |
-    | 4   | x-coordinate of the target                                                                    | -Inf | Inf | target_x                         | slide | position (m)             |
-    | 5   | y-coordinate of the target                                                                    | -Inf | Inf | target_y                         | slide | position (m)             |
+    | 4   | x-coordinate of the target                                                                     | -Inf | Inf | target_x                         | slide | position (m)             |
+    | 5   | y-coordinate of the target                                                                     | -Inf | Inf | target_y                         | slide | position (m)             |
     | 6   | angular velocity of the first arm                                                              | -Inf | Inf | joint0                           | hinge | angular velocity (rad/s) |
     | 7   | angular velocity of the second arm                                                             | -Inf | Inf | joint1                           | hinge | angular velocity (rad/s) |
     | 8   | x-value of position_fingertip - position_target                                                | -Inf | Inf | NA                               | slide | position (m)             |
