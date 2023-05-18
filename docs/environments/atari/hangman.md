@@ -21,7 +21,9 @@ For more Hangman variants with different observation and action spaces, see the 
 
 ## Description
 
-Hangman is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Guess the hidden word one letter at a time, and don't make too many incorrect guesses or you will lose. Word difficulty increases as you traverse through the games.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=231).
 
 ## Actions
 

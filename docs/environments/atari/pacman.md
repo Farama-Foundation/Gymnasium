@@ -21,7 +21,7 @@ For more Pacman variants with different observation and action spaces, see the v
 
 ## Description
 
-Pacman is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+A classic arcade game. Move Pac Man around a maze collecting food and avoiding ghosts- unless you eat a Power Pellet, then you can eat the ghosts too!
 
 ## Actions
 

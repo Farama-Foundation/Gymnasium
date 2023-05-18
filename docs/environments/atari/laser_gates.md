@@ -21,7 +21,9 @@ For more LaserGates variants with different observation and action spaces, see t
 
 ## Description
 
-LaserGates is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+The Cryptic Computer is malfunctioning! Use your Dante Dart to navigate through the computer and deestroy the four Failsafe Detonators.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=271).
 
 ## Actions
 

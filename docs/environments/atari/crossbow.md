@@ -21,7 +21,9 @@ For more Crossbow variants with different observation and action spaces, see the
 
 ## Description
 
-Crossbow is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+You must retrieve stolen treasures from the Evil Master's castle. Along the way you face enemies who you can shoot at with a crossbow.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=115).
 
 ## Actions
 

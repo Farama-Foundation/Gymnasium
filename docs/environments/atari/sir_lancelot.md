@@ -21,7 +21,9 @@ For more SirLancelot variants with different observation and action spaces, see 
 
 ## Description
 
-SirLancelot is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+You control Sir Lancelot, riding atop Pegasus, and your goal is to save a prisoner locked in a castle and protected by a fire-breathing dragon.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=431).
 
 ## Actions
 

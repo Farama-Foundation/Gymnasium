@@ -21,7 +21,9 @@ For more MarioBros variants with different observation and action spaces, see th
 
 ## Description
 
-MarioBros is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Help Mario and Luigi knock pipe pests into a puddle of water.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=286).
 
 ## Actions
 

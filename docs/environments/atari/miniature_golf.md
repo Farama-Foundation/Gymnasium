@@ -21,7 +21,9 @@ For more MiniatureGolf variants with different observation and action spaces, se
 
 ## Description
 
-MiniatureGolf is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Hit a golf ball as few times as possible in order to get it into the hole, avoiding obstacles.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=305).
 
 ## Actions
 

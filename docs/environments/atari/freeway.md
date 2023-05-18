@@ -21,9 +21,9 @@ For more Freeway variants with different observation and action spaces, see the 
 
 ## Description
 
-your objective is to guide your chicken across lane after lane of busy rush hour traffic. You receive a point for every chicken that makes it to the top of the screen after crossing all the lanes of traffic.
+Your objective is to guide your chicken across lane after lane of busy rush hour traffic. You receive a point for every chicken that makes it to the top of the screen after crossing all the lanes of traffic.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=192)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=192)
 
 ## Actions
 
@@ -48,7 +48,7 @@ See variants section for the type of observation used by each environment id by 
 ### Rewards
 
 The exact reward dynamics depend on the environment and are usually documented in the game's manual. You can
-find these manuals on [AtariAge](https://atariage.com/manual_thumbs.php?SoftwareLabelID=192).
+find these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=192).
 
 Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1).
 

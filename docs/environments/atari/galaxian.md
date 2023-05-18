@@ -21,7 +21,9 @@ For more Galaxian variants with different observation and action spaces, see the
 
 ## Description
 
-Galaxian is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Protect your laser base from a Galaxian invasion. Defeat each wave by firing lasers at the attackers.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=202).
 
 ## Actions
 

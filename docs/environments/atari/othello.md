@@ -21,7 +21,9 @@ For more Othello variants with different observation and action spaces, see the 
 
 ## Description
 
-Othello is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Take turns placing tiles of your color (white or black) on a grid. You can surround an opponents tiles to change their color to yours. The goals is to end the game with the most tiles of your color on the board.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=335).
 
 ## Actions
 

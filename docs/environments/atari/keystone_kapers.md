@@ -21,7 +21,9 @@ For more KeystoneKapers variants with different observation and action spaces, s
 
 ## Description
 
-KeystoneKapers is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+You are a police officer (or 'Kop') trying to catch a 'Krook' as quickly as you can.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=261).
 
 ## Actions
 

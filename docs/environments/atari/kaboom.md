@@ -21,7 +21,9 @@ For more Kaboom variants with different observation and action spaces, see the v
 
 ## Description
 
-Kaboom is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+A mad bomber is dropping bombs! Try to catch each of them in a bucket of water before they hit the ground.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=257).
 
 ## Actions
 

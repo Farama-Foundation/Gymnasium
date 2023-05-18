@@ -21,7 +21,7 @@ For more FishingDerby variants with different observation and action spaces, see
 
 ## Description
 
-your objective is to catch more sunfish than your opponent.
+Your objective is to catch more sunfish than your opponent.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=182)
 

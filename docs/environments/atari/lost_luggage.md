@@ -21,7 +21,9 @@ For more LostLuggage variants with different observation and action spaces, see 
 
 ## Description
 
-LostLuggage is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Catch falling luggage before it spills open on the ground.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=276).
 
 ## Actions
 

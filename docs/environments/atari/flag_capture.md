@@ -21,7 +21,9 @@ For more FlagCapture variants with different observation and action spaces, see 
 
 ## Description
 
-FlagCapture is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+You are an explorer navigating from square to square, collecting clues, and looking for a flag.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=183).
 
 ## Actions
 

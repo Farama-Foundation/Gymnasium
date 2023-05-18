@@ -21,7 +21,9 @@ For more Pitfall2 variants with different observation and action spaces, see the
 
 ## Description
 
-Pitfall2 is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Navigate Peruvian caves searching for niece Rhonda and cat Quicklaw as well as the lost Raj diamond.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=359).
 
 ## Actions
 

@@ -21,7 +21,9 @@ For more Trondead variants with different observation and action spaces, see the
 
 ## Description
 
-Trondead is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Use your deadly saucer to knock out encroaching opponents before they get to you.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=569).
 
 ## Actions
 

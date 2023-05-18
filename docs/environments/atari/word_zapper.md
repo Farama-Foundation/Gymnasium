@@ -21,7 +21,9 @@ For more WordZapper variants with different observation and action spaces, see t
 
 ## Description
 
-WordZapper is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Shoot letters under time pressure in the prescribed order as they scroll across the screen.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=599).
 
 ## Actions
 

@@ -21,7 +21,9 @@ For more HumanCannonball variants with different observation and action spaces, 
 
 ## Description
 
-HumanCannonball is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Shoot a person out of a cannonball and try to get them into the water tower.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=238).
 
 ## Actions
 

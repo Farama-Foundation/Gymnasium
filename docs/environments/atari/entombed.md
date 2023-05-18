@@ -21,7 +21,9 @@ For more Entombed variants with different observation and action spaces, see the
 
 ## Description
 
-Entombed is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+You and your team of archeologists must navigate a maze filled with zombies.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=165).
 
 ## Actions
 
