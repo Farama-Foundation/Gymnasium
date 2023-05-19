@@ -194,7 +194,7 @@ class VectorEnv(gym.Env):
             array([1., 1., 1.])
             >>> termination
             array([False, False, False])
-            >>> termination
+            >>> truncation
             array([False, False, False])
             >>> infos
             {}

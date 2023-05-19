@@ -43,18 +43,19 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     Observations consist of positional values of different body parts of the walker,
     followed by the velocities of those individual parts (their derivatives) with all the positions ordered before all the velocities.
 
-    By default, observations do not include the x-coordinate of the top. It may
+    By default, observations do not include the x-coordinate of the torso. It may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will have 18 dimensions where the first dimension
-    represent the x-coordinates of the top of the walker.
+    In that case, the observation space will be `Box(-Inf, Inf, (18,), float64)` where the first observation
+    represent the x-coordinates of the torso of the walker.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x-coordinate
-    of the top will be returned in `info` with key `"x_position"`.
+    of the torso will be returned in `info` with key `"x_position"`.
 
-    By default, observation is a `ndarray` with shape `(17,)` where the elements correspond to the following:
+    By default, observation is a `Box(-Inf, Inf, (17,), float64)` where the elements correspond to the following:
 
     | Num | Observation                                        | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
     | --- | -------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
-    | 0   | z-coordinate of the torso (height of hopper)       | -Inf | Inf | rootz                            | slide | position (m)             |
+    | excluded | x-coordinate of the torso                     | -Inf | Inf | rootx                            | slide | position (m)             |
+    | 0   | z-coordinate of the torso (height of Walker2d)     | -Inf | Inf | rootz                            | slide | position (m)             |
     | 1   | angle of the torso                                 | -Inf | Inf | rooty                            | hinge | angle (rad)              |
     | 2   | angle of the thigh joint                           | -Inf | Inf | thigh_joint                      | hinge | angle (rad)              |
     | 3   | angle of the leg joint                             | -Inf | Inf | leg_joint                        | hinge | angle (rad)              |
@@ -63,8 +64,8 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     | 6   | angle of the left leg joint                        | -Inf | Inf | leg_left_joint                   | hinge | angle (rad)              |
     | 7   | angle of the left foot joint                       | -Inf | Inf | foot_left_joint                  | hinge | angle (rad)              |
     | 8   | velocity of the x-coordinate of the torso          | -Inf | Inf | rootx                            | slide | velocity (m/s)           |
-    | 9   | velocity of the z-coordinate (height) of the rorso | -Inf | Inf | rootz                            | slide | velocity (m/s)           |
-    | 10  | angular velocity of the angle of the top           | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
+    | 9   | velocity of the z-coordinate (height) of the torso | -Inf | Inf | rootz                            | slide | velocity (m/s)           |
+    | 10  | angular velocity of the angle of the torso         | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
     | 11  | angular velocity of the thigh hinge                | -Inf | Inf | thigh_joint                      | hinge | angular velocity (rad/s) |
     | 12  | angular velocity of the leg hinge                  | -Inf | Inf | leg_joint                        | hinge | angular velocity (rad/s) |
     | 13  | angular velocity of the foot hinge                 | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
@@ -130,7 +131,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     | `ctrl_cost_weight`                           | **float** | `1e-3`           | Weight for _ctr_cost_ term (see section on reward)                                                                                                                |
     | `healthy_reward`                             | **float** | `1.0`            | Constant reward given if the ant is "healthy" after timestep                                                                                                      |
     | `terminate_when_unhealthy`                   | **bool**  | `True`           | If true, issue a done signal if the z-coordinate of the walker is no longer healthy                                                                               |
-    | `healthy_z_range`                            | **tuple** | `(0.8, 2)`       | The z-coordinate of the top of the walker must be in this range to be considered healthy                                                                          |
+    | `healthy_z_range`                            | **tuple** | `(0.8, 2)`       | The z-coordinate of the torso of the walker must be in this range to be considered healthy                                                                        |
     | `healthy_angle_range`                        | **tuple** | `(-1, 1)`        | The angle must be in this range to be considered healthy                                                                                                          |
     | `reset_noise_scale`                          | **float** | `5e-3`           | Scale of random perturbations of initial position and velocity (see section on Starting State)                                                                    |
     | `exclude_current_positions_from_observation` | **bool**  | `True`           | Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
