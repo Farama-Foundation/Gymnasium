@@ -55,6 +55,7 @@ You score points by shooting the puck into your opponent's goal. Your opponent s
 There are no limits to how many points you can get per game, other than the time limit of 3-minute games.
 For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=241).
 
+
 ## Variants
 
 IceHockey has the following variants of the environment id which have the following differences in observation,

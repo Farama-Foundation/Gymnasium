@@ -23,7 +23,7 @@ For more KingKong variants with different observation and action spaces, see the
 
 Climb the Empire State Building to save the person that King Kong kidnapped and placed there. Beware the bombs that King Kong throws at you as you climb!
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=265).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=265)
 
 ## Actions
 

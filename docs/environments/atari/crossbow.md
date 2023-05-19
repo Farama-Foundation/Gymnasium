@@ -23,7 +23,7 @@ For more Crossbow variants with different observation and action spaces, see the
 
 You must retrieve stolen treasures from the Evil Master's castle. Along the way you face enemies who you can shoot at with a crossbow.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=115).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=115)
 
 ## Actions
 

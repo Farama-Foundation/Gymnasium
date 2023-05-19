@@ -51,6 +51,7 @@ See variants section for the type of observation used by each environment id by 
 If you hit a balloon, wolf or stone with an arrow you score points.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=372).
 
+
 ## Variants
 
 Pooyan has the following variants of the environment id which have the following differences in observation,

@@ -23,7 +23,7 @@ For more Klax variants with different observation and action spaces, see the var
 
 Flip tumbling tiles into bins to create rows of three or more matching-colored tiles (such a row is called a Klax).
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=1130).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=1130)
 
 ## Actions
 

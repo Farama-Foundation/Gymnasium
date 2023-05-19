@@ -24,7 +24,7 @@ For more BasicMath variants with different observation and action spaces, see th
 You must solve basic math problems using a joystick
 to scroll to the correct numeric answer.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=14).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=14)
 
 ## Actions
 

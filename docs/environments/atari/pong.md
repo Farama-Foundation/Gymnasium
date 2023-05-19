@@ -51,6 +51,7 @@ See variants section for the type of observation used by each environment id by 
 You get score points for getting the ball to pass the opponent's paddle. You lose points if the ball passes your paddle.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=587).
 
+
 ## Variants
 
 Pong has the following variants of the environment id which have the following differences in observation,

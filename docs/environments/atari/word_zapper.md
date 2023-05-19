@@ -23,7 +23,7 @@ For more WordZapper variants with different observation and action spaces, see t
 
 Shoot letters under time pressure in the prescribed order as they scroll across the screen.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=599).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=599)
 
 ## Actions
 

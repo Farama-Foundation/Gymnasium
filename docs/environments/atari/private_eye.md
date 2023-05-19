@@ -54,6 +54,7 @@ See variants section for the type of observation used by each environment id by 
 You score points for completing your tasks like gathering evidence, nabbing questionable characters or closing cases etc. You lose points if you get hit or if your auto is on a pothole.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=376).
 
+
 ## Variants
 
 PrivateEye has the following variants of the environment id which have the following differences in observation,

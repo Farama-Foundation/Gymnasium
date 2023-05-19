@@ -23,7 +23,7 @@ For more VideoCheckers variants with different observation and action spaces, se
 
 Classic checkers: move your color pieces towards the opposite end of the board, jumping over opponents pieces to remove them from the board and gaining a king when you reach the other side.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=579).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=579)
 
 ## Actions
 

@@ -51,6 +51,7 @@ See variants section for the type of observation used by each environment id by 
 
 A table of scores awarded for completing each row of a building is provided on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=113).
 
+
 ## Variants
 
 CrazyClimber has the following variants of the environment id which have the following differences in observation,

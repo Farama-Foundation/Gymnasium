@@ -55,6 +55,7 @@ You score points for destroying asteroids, satellites and UFOs. The smaller the 
 for destroying it.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=828&itemTypeID=HTMLMANUAL).
 
+
 ## Variants
 
 Asteroids has the following variants of the environment id which have the following differences in observation,

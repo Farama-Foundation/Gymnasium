@@ -55,6 +55,7 @@ Your score will be shown at the top right corner of the game.
 Your end game score with be dependent on how much time you have remaining and who you encounter along the way.
 For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=923).
 
+
 ## Variants
 
 Kangaroo has the following variants of the environment id which have the following differences in observation,

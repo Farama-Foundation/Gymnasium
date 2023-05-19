@@ -21,9 +21,9 @@ For more Casino variants with different observation and action spaces, see the v
 
 ## Description
 
-This is actually several games packaged together. Games 1 and 2 are Blackjack, where the second allows card splitting (which is when a player splits their cards into two groups and plays two hands simultaneously). Game 3 is stud poker, which involves drawing cards, betting, and attempting to get the highest scoring poker hand. Game 4 is poker solitaire, which involves filling a 5 by 5 matrix with cards and scoring the poker hands formed by the rows. 
+This is actually several games packaged together. Games 1 and 2 are Blackjack, where the second allows card splitting (which is when a player splits their cards into two groups and plays two hands simultaneously). Game 3 is stud poker, which involves drawing cards, betting, and attempting to get the highest scoring poker hand. Game 4 is poker solitaire, which involves filling a 5 by 5 matrix with cards and scoring the poker hands formed by the rows.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=70).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=70)
 
 ## Actions
 

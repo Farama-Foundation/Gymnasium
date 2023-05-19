@@ -23,7 +23,7 @@ For more Surround variants with different observation and action spaces, see the
 
 Surround your opponent without running into anything yourself.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=537).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=537)
 
 ## Actions
 

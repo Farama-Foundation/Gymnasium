@@ -50,6 +50,7 @@ See variants section for the type of observation used by each environment id by 
 
 You gain points for destroying space invaders. The invaders in the back rows are worth more points. For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=460).
 
+
 ## Variants
 
 SpaceInvaders has the following variants of the environment id which have the following differences in observation,

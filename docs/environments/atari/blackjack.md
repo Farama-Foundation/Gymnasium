@@ -23,7 +23,7 @@ For more Blackjack variants with different observation and action spaces, see th
 
 Compete against a dealer to draw cards and score as close to 21 as possible without going over ('bust').
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=34).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=34)
 
 ## Actions
 

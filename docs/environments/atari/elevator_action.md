@@ -55,6 +55,7 @@ You start with 4 lives and are awarded 100 points for each enemy shot, and 500 p
 secret document collected (visiting a red door). Each time you get shot you lose one life and the
 game ends when losing all lives.
 
+
 ## Variants
 
 ElevatorAction has the following variants of the environment id which have the following differences in observation,

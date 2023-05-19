@@ -17,13 +17,13 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Space | Box(0, 255, (210, 160, 3), uint8) |
 | Import | `gymnasium.make("ALE/Et-v5")` |
 
-For more E.T. variants with different observation and action spaces, see the variants section.
+For more Et variants with different observation and action spaces, see the variants section.
 
 ## Description
 
 Help E.T. (the extra-terrestrial) get home! He has to collect pieces of a telephone, call his ship, and get to the landing pad.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=157).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=157)
 
 ## Actions
 

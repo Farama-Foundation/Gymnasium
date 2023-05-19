@@ -23,7 +23,7 @@ For more Darkchambers variants with different observation and action spaces, see
 
 You must survive 26 levels of enemies and curses and collect as much treasure as you can along the way.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=122).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=122)
 
 ## Actions
 

@@ -52,6 +52,7 @@ Each enemy you slay gives you points. The amount of points depends on the type o
 wave you are in. A detailed table of scores is provided on [the AtariAge
 page](https://atariage.com/manual_html_page.php?SoftwareLabelID=135).
 
+
 ## Variants
 
 DemonAttack has the following variants of the environment id which have the following differences in observation,

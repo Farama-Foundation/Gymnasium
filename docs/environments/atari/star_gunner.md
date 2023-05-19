@@ -53,6 +53,7 @@ See variants section for the type of observation used by each environment id by 
 
 You score points for destroying enemies. You get bonus points for clearing a wave and a level. For a more detailed documentation, see [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-stargunner_16921.html).
 
+
 ## Variants
 
 StarGunner has the following variants of the environment id which have the following differences in observation,

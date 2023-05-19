@@ -23,7 +23,7 @@ For more KeystoneKapers variants with different observation and action spaces, s
 
 You are a police officer (or 'Kop') trying to catch a 'Krook' as quickly as you can.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=261).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=261)
 
 ## Actions
 

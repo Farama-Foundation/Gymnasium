@@ -23,7 +23,7 @@ For more MrDo variants with different observation and action spaces, see the var
 
 Help Mr. Do harvest apples before the bad guys get to him.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=318).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=318)
 
 ## Actions
 

@@ -23,7 +23,7 @@ For more MarioBros variants with different observation and action spaces, see th
 
 Help Mario and Luigi knock pipe pests into a puddle of water.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=286).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=286)
 
 ## Actions
 

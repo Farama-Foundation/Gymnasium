@@ -23,7 +23,7 @@ For more VideoChess variants with different observation and action spaces, see t
 
 This is the usual game of chess: capture the opponents king.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=581).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=581)
 
 ## Actions
 

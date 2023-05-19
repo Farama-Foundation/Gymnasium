@@ -23,7 +23,7 @@ For more LostLuggage variants with different observation and action spaces, see 
 
 Catch falling luggage before it spills open on the ground.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=276).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=276)
 
 ## Actions
 

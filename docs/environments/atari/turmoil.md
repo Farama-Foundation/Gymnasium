@@ -23,7 +23,7 @@ For more Turmoil variants with different observation and action spaces, see the 
 
 Blast aliens while avoiding deadly collisions.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=571).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=571)
 
 ## Actions
 

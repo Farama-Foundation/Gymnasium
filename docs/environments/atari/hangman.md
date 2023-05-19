@@ -23,7 +23,7 @@ For more Hangman variants with different observation and action spaces, see the 
 
 Guess the hidden word one letter at a time, and don't make too many incorrect guesses or you will lose. Word difficulty increases as you traverse through the games.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=231).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=231)
 
 ## Actions
 

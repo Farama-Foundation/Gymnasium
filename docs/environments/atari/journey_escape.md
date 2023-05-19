@@ -56,6 +56,7 @@ At the start of the game, you will have $50,000 and 60 units of time.
 Your end game score with be dependent on how much time you have remaining and who you encounter along the way.
 For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252).
 
+
 ## Variants
 
 JourneyEscape has the following variants of the environment id which have the following differences in observation,

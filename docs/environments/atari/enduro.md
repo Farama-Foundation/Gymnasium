@@ -51,6 +51,7 @@ See variants section for the type of observation used by each environment id by 
 
 You get 1 point for each vehicle you overtake.
 
+
 ## Variants
 
 Enduro has the following variants of the environment id which have the following differences in observation,

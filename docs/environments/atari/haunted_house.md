@@ -23,7 +23,7 @@ For more HauntedHouse variants with different observation and action spaces, see
 
 Explore a mansion haunted by the ghost of mean, old Samuel Graves. Your goal is to find three pieces of a magic urn and leave the mansion before losing your 9 lives.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=233).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=233)
 
 ## Actions
 

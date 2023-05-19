@@ -23,7 +23,7 @@ For more MiniatureGolf variants with different observation and action spaces, se
 
 Hit a golf ball as few times as possible in order to get it into the hole, avoiding obstacles.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=305).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=305)
 
 ## Actions
 

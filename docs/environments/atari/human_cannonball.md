@@ -23,7 +23,7 @@ For more HumanCannonball variants with different observation and action spaces, 
 
 Shoot a person out of a cannonball and try to get them into the water tower.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=238).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=238)
 
 ## Actions
 

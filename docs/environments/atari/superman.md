@@ -23,7 +23,7 @@ For more Superman variants with different observation and action spaces, see the
 
 Play as Superman trying to capture Lex Luther and avoid the kryptonite satellites along the way.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=533).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=533)
 
 ## Actions
 

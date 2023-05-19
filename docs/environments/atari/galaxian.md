@@ -23,7 +23,7 @@ For more Galaxian variants with different observation and action spaces, see the
 
 Protect your laser base from a Galaxian invasion. Defeat each wave by firing lasers at the attackers.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=202).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=202)
 
 ## Actions
 

@@ -23,7 +23,7 @@ For more Trondead variants with different observation and action spaces, see the
 
 Use your deadly saucer to knock out encroaching opponents before they get to you.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=569).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=569)
 
 ## Actions
 

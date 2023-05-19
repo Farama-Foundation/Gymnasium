@@ -23,7 +23,7 @@ For more Frogger variants with different observation and action spaces, see the 
 
 You are a frog trying to make their way home. Cross a highway and a perilous river without being crushed or eaten.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=194).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=194)
 
 ## Actions
 

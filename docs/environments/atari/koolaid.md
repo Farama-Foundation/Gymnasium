@@ -23,7 +23,7 @@ For more Koolaid variants with different observation and action spaces, see the 
 
 You are the Kool-Aid Man and you are trying to stop Thirsties from drinking your pool water by running into them.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=266).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=266)
 
 ## Actions
 
