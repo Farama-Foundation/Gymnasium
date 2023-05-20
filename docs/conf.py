@@ -41,6 +41,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
+    "sphinx.ext.viewcode",
     "myst_parser",
     "furo.gen_tutorials",
     "sphinx_gallery.gen_gallery",

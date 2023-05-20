@@ -1,4 +1,4 @@
-"""Tests for Jax Blackjack functional env."""
+"""Tests for Jax cliffwalking functional env."""
 
 
 import pytest
@@ -8,12 +8,12 @@ jax = pytest.importorskip("jax")
 import jax.numpy as jnp  # noqa: E402
 import jax.random as jrng  # noqa: E402
 
-from gymnasium.envs.tabular.blackjack import BlackjackFunctional  # noqa: E402
+from gymnasium.envs.tabular.cliffwalking import CliffWalkingFunctional  # noqa: E402
 
 
-def test_normal_BlackjackFunctional():
-    """Tests to ensure that blackjack env step and reset functions return the correct types."""
-    env = BlackjackFunctional()
+def test_normal_CliffWalkingFunctional():
+    """Tests to ensure that cliffwalking env step and reset functions return the correct types."""
+    env = CliffWalkingFunctional()
     rng = jrng.PRNGKey(0)
 
     split_rng, rng = jrng.split(rng)
@@ -41,23 +41,19 @@ def test_normal_BlackjackFunctional():
         except ValueError:
             pytest.fail("Terminal is not castable to bool")
 
-        assert next_state[0].dtype == jnp.float32
-        assert next_state[1].dtype == jnp.float32
-        assert next_state[2].dtype == jnp.int32
-        assert next_state[3].dtype == jnp.int32
-        assert next_state[4].dtype == jnp.int32
+        assert next_state[0].dtype == jnp.int32
+        assert next_state[1].dtype == jnp.int32
+        assert next_state[2].dtype == bool
 
         assert rng.dtype == jnp.uint32
-        assert obs[0].dtype == jnp.int32
-        assert obs[1].dtype == jnp.int32
-        assert obs[2].dtype == jnp.int32
+        assert obs.dtype == jnp.int32
 
         state = next_state
 
 
-def test_jit_BlackjackFunctional():
-    """Tests the Jax BlackJack env, but in a jitted context."""
-    env = BlackjackFunctional()
+def test_jit_CliffWalkingFunctional():
+    """Tests the Jax CliffWalkingFunctional env, but in a jitted context."""
+    env = CliffWalkingFunctional()
     rng = jrng.PRNGKey(0)
     env.transform(jax.jit)
 
@@ -84,23 +80,19 @@ def test_jit_BlackjackFunctional():
         except ValueError:
             pytest.fail("Terminal is not castable to bool")
 
-        assert next_state[0].dtype == jnp.float32
-        assert next_state[1].dtype == jnp.float32
-        assert next_state[2].dtype == jnp.int32
-        assert next_state[3].dtype == jnp.int32
-        assert next_state[4].dtype == jnp.int32
+        assert next_state[0].dtype == jnp.int32
+        assert next_state[1].dtype == jnp.int32
+        assert next_state[2].dtype == bool
 
         assert rng.dtype == jnp.uint32
-        assert obs[0].dtype == jnp.int32
-        assert obs[1].dtype == jnp.int32
-        assert obs[2].dtype == jnp.int32
+        assert obs.dtype == jnp.int32
 
         state = next_state
 
 
 def test_vmap_BlackJack():
-    """Tests the Jax Blackjack env with vmap."""
-    env = BlackjackFunctional()
+    """Tests the Jax CliffWalking env with vmap."""
+    env = CliffWalkingFunctional()
     num_envs = 10
     rng, *split_rng = jrng.split(
         jrng.PRNGKey(0), num_envs + 1
@@ -123,7 +115,6 @@ def test_vmap_BlackJack():
         reward = env.reward(state, action, next_state)
 
         assert len(next_state) == len(state)
-        # assert next_state.dtype == jnp.float32
         assert reward.shape == (num_envs,)
         assert reward.dtype == jnp.float32
         assert terminal.shape == (num_envs,)

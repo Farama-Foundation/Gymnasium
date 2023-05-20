@@ -54,10 +54,17 @@ gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](
 
 ### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
 
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
 [![GitHub stars](https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium)]()
 
 Highly scalable and customizable Safe Reinforcement Learning library.
+
+### [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
+[![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)]()
+
+Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
 
 ### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/MatPoliquin/stable-retro)
 
@@ -66,12 +73,26 @@ Highly scalable and customizable Safe Reinforcement Learning library.
 
 Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
 
+### [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/stefanbschneider/mobile-env)]()
+
+An open, minimalist Gymnasium environment for autonomous coordination in wireless mobile networks.
+
 ### [gym-cellular-automata: Cellular Automata environments](https://github.com/elbecerrasoto/gym-cellular-automata)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
 [![GitHub stars](https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata)]()
 
 Environments where the agent interacts with _Cellular Automata_ by changing its cell states.
+
+### [DACBench: a benchmark for Dynamic Algorithm Configuration](https://github.com/automl/DACBench)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/automl/DACBench)]()
+
+A benchmark library for [Dynamic Algorithm Configuration](https://www.automl.org/dynamic-algorithm-configuration/). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
 ### [gym-saturation: Environments used to prove theorems](https://github.com/inpefess/gym-saturation)
 
@@ -126,7 +147,6 @@ A simple environment using [PyBullet](https://github.com/bulletphysics/bullet3) 
 ### [MarsExplorer: Environments for controlling robot on Mars](https://github.com/dimikout3/MarsExplorer)
 
 Mars Explorer is a Gym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.
-
 
 ### [robo-gym: Real-world and simulation robotics](https://github.com/jr-robotics/robo-gym)
 
@@ -223,10 +243,6 @@ MtSim is a simulator for the [MetaTrader 5](https://www.metatrader5.com/) tradin
 ### [openmodelica-microgrid-gym: Environments for controlling power electronic converters in microgrids](https://github.com/upb-lea/openmodelica-microgrid-gym)
 
 The OpenModelica Microgrid Gym (OMG) package is a software toolbox for the simulation and control optimization of microgrids based on energy conversion by power electronic converters.
-
-### [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env/)
-
-An open, minimalist Gym environment for autonomous coordination in wireless mobile networks.
 
 ### [GymFC: A flight control tuning and training framework](https://github.com/wil3/gymfc/)
 

@@ -135,9 +135,9 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
             metadata = {}
         self.func_env = func_env
         self.num_envs = num_envs
+
         self.single_observation_space = func_env.observation_space
         self.single_action_space = func_env.action_space
-
         self.observation_space = batch_space(
             self.single_observation_space, self.num_envs
         )

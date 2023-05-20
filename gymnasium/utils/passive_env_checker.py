@@ -21,30 +21,6 @@ def _check_box_observation_space(observation_space: spaces.Box):
     Args:
         observation_space: A box observation space
     """
-    # Check if the box is an image
-    if (len(observation_space.shape) == 3 and observation_space.shape[0] != 1) or (
-        len(observation_space.shape) == 4 and observation_space.shape[0] == 1
-    ):
-        if observation_space.dtype != np.uint8:
-            logger.warn(
-                f"It seems a Box observation space is an image but the `dtype` is not `np.uint8`, actual type: {observation_space.dtype}. "
-                "If the Box observation space is not an image, we recommend flattening the observation to have only a 1D vector."
-            )
-        if np.any(observation_space.low != 0) or np.any(observation_space.high != 255):
-            logger.warn(
-                "It seems a Box observation space is an image but the lower and upper bounds are not [0, 255]. "
-                f"Actual lower bound: {np.min(observation_space.low)}, upper bound: {np.max(observation_space.high)}. "
-                "Generally, CNN policies assume observations are within that range, so you may encounter an issue if the observation values are not."
-            )
-
-    if len(observation_space.shape) not in [1, 3]:
-        if not (len(observation_space.shape) == 2 and observation_space.shape[0] == 1):
-            logger.warn(
-                "A Box observation space has an unconventional shape (neither an image, nor a 1D vector). "
-                "We recommend flattening the observation to have only a 1D vector or use a custom policy to properly process the data. "
-                f"Actual observation shape: {observation_space.shape}"
-            )
-
     assert (
         observation_space.low.shape == observation_space.shape
     ), f"The Box observation space shape and low shape have different shapes, low shape: {observation_space.low.shape}, box shape: {observation_space.shape}"
@@ -81,11 +57,6 @@ def _check_box_action_space(action_space: spaces.Box):
         logger.warn(
             "A Box action space maximum and minimum values are equal. "
             f"Actual equal coordinates: {[x for x in zip(*np.where(action_space.low == action_space.high))]}"
-        )
-    elif np.any(action_space.high < action_space.low):
-        logger.warn(
-            "A Box action space low value is greater than a high value. "
-            f"Actual less than coordinates: {[x for x in zip(*np.where(action_space.high < action_space.low))]}"
         )
 
 
