@@ -35,7 +35,7 @@ repos:
           - --show-source
           - --statistics
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.3.2
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
@@ -65,6 +65,6 @@ repos:
         language: node
         pass_filenames: false
         types: [python]
-        additional_dependencies: ["pyright"]
+        additional_dependencies: ["pyright@1.1.308"]
         args:
           - --project=pyproject.toml

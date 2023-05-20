@@ -67,6 +67,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     observation_space: gym.Space
     action_space: gym.Space
+    single_observation_space: gym.Space
+    single_action_space: gym.Space
 
     num_envs: int
 
@@ -267,6 +269,11 @@ class VectorWrapper(VectorEnv):
         Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.
     """
 
+    _observation_space: gym.Space | None = None
+    _action_space: gym.Space | None = None
+    _single_observation_space: gym.Space | None = None
+    _single_action_space: gym.Space | None = None
+
     def __init__(self, env: VectorEnv):
         """Initialize the vectorized environment wrapper."""
         super().__init__()
@@ -319,6 +326,64 @@ class VectorWrapper(VectorEnv):
     def __del__(self):
         """Close the vectorized environment."""
         self.env.__del__()
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Gets the specification of the wrapped environment."""
+        return self.env.spec
+
+    @property
+    def observation_space(self) -> gym.Space:
+        """Gets the observation space of the vector environment."""
+        if self._observation_space is None:
+            return self.env.observation_space
+        return self._observation_space
+
+    @observation_space.setter
+    def observation_space(self, space: gym.Space):
+        """Sets the observation space of the vector environment."""
+        self._observation_space = space
+
+    @property
+    def action_space(self) -> gym.Space:
+        """Gets the action space of the vector environment."""
+        if self._action_space is None:
+            return self.env.action_space
+        return self._action_space
+
+    @action_space.setter
+    def action_space(self, space: gym.Space):
+        """Sets the action space of the vector environment."""
+        self._action_space = space
+
+    @property
+    def single_observation_space(self) -> gym.Space:
+        """Gets the single observation space of the vector environment."""
+        if self._single_observation_space is None:
+            return self.env.single_observation_space
+        return self._single_observation_space
+
+    @single_observation_space.setter
+    def single_observation_space(self, space: gym.Space):
+        """Sets the single observation space of the vector environment."""
+        self._single_observation_space = space
+
+    @property
+    def single_action_space(self) -> gym.Space:
+        """Gets the single action space of the vector environment."""
+        if self._single_action_space is None:
+            return self.env.single_action_space
+        return self._single_action_space
+
+    @single_action_space.setter
+    def single_action_space(self, space):
+        """Sets the single action space of the vector environment."""
+        self._single_action_space = space
+
+    @property
+    def num_envs(self) -> int:
+        """Gets the wrapped vector environment's num of the sub-environments."""
+        return self.env.num_envs
 
 
 class VectorObservationWrapper(VectorWrapper):
