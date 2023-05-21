@@ -59,7 +59,6 @@ A small tank appears at the top of your screen for each enemy
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=416).
 
-
 ## Variants
 
 Robotank has the following variants of the environment id which have the following differences in observation,

@@ -52,7 +52,6 @@ You score points by destroying targets. Points (or bullets) may be subtracted if
 You will score extra points if it shows a plus sign!
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=908).
 
-
 ## Variants
 
 Carnival has the following variants of the environment id which have the following differences in observation,

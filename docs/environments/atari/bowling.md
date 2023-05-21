@@ -53,7 +53,6 @@ frame. Moreover, the points you score for one frame may depend on following fram
 You can score up to 300 points in one game (if you manage to do 12 strikes).
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=879).
 
-
 ## Variants
 
 Bowling has the following variants of the environment id which have the following differences in observation,

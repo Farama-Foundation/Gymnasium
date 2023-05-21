@@ -55,7 +55,6 @@ You score points by destroying planes and other helicopters. You score extra poi
 of trucks that have survived.
 Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=921).
 
-
 ## Variants
 
 ChopperCommand has the following variants of the environment id which have the following differences in observation,

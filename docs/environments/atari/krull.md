@@ -55,7 +55,6 @@ You will receive various scores for each monster you kill.
 You can play the game until you have lost all your lives.
 For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=267).
 
-
 ## Variants
 
 Krull has the following variants of the environment id which have the following differences in observation,

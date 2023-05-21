@@ -53,7 +53,6 @@ See variants section for the type of observation used by each environment id by 
 You score points by traversing new parts of the grid. Coloring an entire box in the maze or catching chickens gives extra points.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=817).
 
-
 ## Variants
 
 Amidar has the following variants of the environment id which have the following differences in observation,

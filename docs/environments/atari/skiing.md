@@ -51,7 +51,6 @@ Seconds are your only rewards - negative rewards and penalties (e.g. missing a g
 
 For a more detailed documentation, see [the AtariAge page [SLALOM RACING section]](https://atariage.com/manual_html_page.php?SoftwareLabelID=434).
 
-
 ## Variants
 
 Skiing has the following variants of the environment id which have the following differences in observation,

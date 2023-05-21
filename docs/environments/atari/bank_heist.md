@@ -55,7 +55,6 @@ You score points for robbing banks and destroying police cars. If you rob nine o
 you will score extra points.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=1008).
 
-
 ## Variants
 
 BankHeist has the following variants of the environment id which have the following differences in observation,

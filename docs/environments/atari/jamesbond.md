@@ -55,7 +55,6 @@ The game ends when you complete the last mission or when you lose the last craft
 There will be a rating based on your score. The highest rating in NOVICE is 006. The highest rating in AGENT is 007.
 For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=250).
 
-
 ## Variants
 
 Jamesbond has the following variants of the environment id which have the following differences in observation,

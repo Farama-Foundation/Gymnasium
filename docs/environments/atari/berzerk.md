@@ -54,7 +54,6 @@ See variants section for the type of observation used by each environment id by 
 You score points for destroying robots.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=866&itemTypeID=HTMLMANUAL).
 
-
 ## Variants
 
 Berzerk has the following variants of the environment id which have the following differences in observation,

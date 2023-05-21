@@ -55,7 +55,6 @@ Scores follow the rules of basketball. You can get either 3 points, 2 points fou
 from where you shoot. After a defensive foul, a successful shot from the foul line gives you 1
 point.
 
-
 ## Variants
 
 DoubleDunk has the following variants of the environment id which have the following differences in observation,

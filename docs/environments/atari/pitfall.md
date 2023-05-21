@@ -54,7 +54,6 @@ See variants section for the type of observation used by each environment id by 
 You get score points for collecting treasure, you lose points through some misfortunes like falling down a hole.
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=360).
 
-
 ## Variants
 
 Pitfall has the following variants of the environment id which have the following differences in observation,
