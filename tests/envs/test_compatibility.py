@@ -146,7 +146,17 @@ def test_make_compatibility_in_make():
 @pytest.mark.parametrize(
     "env",
     (
-        "GymV21Environment-v0",
+        pytest.param(
+            "GymV21Environment-v0",
+            marks=pytest.mark.skipif(
+                gym is not None
+                and (
+                    version.parse(gym.version.VERSION) < version.parse("0.21.0")
+                    or version.parse(gym.version.VERSION) >= version.parse("0.26.0")
+                ),
+                reason="Cannot test GymV21Environment-v0 compatibility env with gym < 0.21.0 or gym >= 0.26.0",
+            ),
+        ),
         pytest.param(
             "GymV26Environment-v0",
             marks=pytest.mark.skipif(
@@ -164,7 +174,7 @@ def test_shimmy_gym_compatibility(env):
         with pytest.raises(
             ImportError,
             match=re.escape(
-                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+                "To use the gym compatibility environments, run `pip install shimmy[gym-v21]` or `pip install shimmy[gym-v26]`"
             ),
         ):
             gymnasium.make(env)
