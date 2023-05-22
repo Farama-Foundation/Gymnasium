@@ -21,7 +21,7 @@ For more SpaceWar variants with different observation and action spaces, see the
 
 ## Description
 
-Use your Star Ship to compete in a sequence of games wher eyou try to shoot your opponent as many times as possible without being hit yourself.
+Use your Star Ship to compete in a sequence of games where you try to shoot your opponent as many times as possible without being hit yourself.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=470)
 
