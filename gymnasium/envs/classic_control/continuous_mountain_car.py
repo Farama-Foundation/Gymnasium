@@ -143,10 +143,10 @@ class Continuous_MountainCarEnv(gym.Env):
             low=self.low_state, high=self.high_state, dtype=np.float32
         )
 
-    def step(self, action: np.ndarray):
+    def step(self, action):
         position = self.state[0]
         velocity = self.state[1]
-        force = min(max(action[0], self.min_action), self.max_action)
+        force = min(max(action, self.min_action), self.max_action)
 
         velocity += force * self.power - 0.0025 * math.cos(3 * position)
         if velocity > self.max_speed:
