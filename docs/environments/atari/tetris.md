@@ -21,7 +21,7 @@ For more Tetris variants with different observation and action spaces, see the v
 
 ## Description
 
-Tetris is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Direct falling tile-based shapes to try and perfectly fill the board without leaving empty space.
 
 ## Actions
 

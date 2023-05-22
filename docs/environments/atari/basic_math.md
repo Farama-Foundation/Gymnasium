@@ -21,7 +21,10 @@ For more BasicMath variants with different observation and action spaces, see th
 
 ## Description
 
-BasicMath is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+You must solve basic math problems using a joystick
+to scroll to the correct numeric answer.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=14)
 
 ## Actions
 

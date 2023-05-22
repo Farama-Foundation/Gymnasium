@@ -21,7 +21,9 @@ For more VideoChess variants with different observation and action spaces, see t
 
 ## Description
 
-VideoChess is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+This is the usual game of chess: capture the opponents king.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=581)
 
 ## Actions
 

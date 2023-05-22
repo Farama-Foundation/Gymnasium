@@ -51,7 +51,8 @@ See variants section for the type of observation used by each environment id by 
 
 ### Rewards
 
-You gain points for destroying enemies, rescuing cadets, making it through a corridor, destroying enemy planets etc. For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=450).
+You gain points for destroying enemies, rescuing cadets, making it through a corridor, destroying enemy planets etc.
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=450).
 
 ## Variants
 
