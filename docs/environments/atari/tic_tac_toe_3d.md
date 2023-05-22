@@ -21,7 +21,9 @@ For more TicTacToe3D variants with different observation and action spaces, see 
 
 ## Description
 
-TicTacToe3D is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Players take turns placing their mark (an X or an O) on a 3-dimensional, 4 x 4 x 4 grid in an attempt to get 4 in a row before their opponent does.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=521)
 
 ## Actions
 

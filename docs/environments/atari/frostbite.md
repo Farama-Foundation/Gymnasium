@@ -55,7 +55,6 @@ The exact reward dynamics depend on the environment and are usually documented i
 find these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=199).
 
 Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1).
-
 ## Variants
 
 Frostbite has the following variants of the environment id which have the following differences in observation,

@@ -21,7 +21,9 @@ For more Darkchambers variants with different observation and action spaces, see
 
 ## Description
 
-Darkchambers is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+You must survive 26 levels of enemies and curses and collect as much treasure as you can along the way.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=122)
 
 ## Actions
 

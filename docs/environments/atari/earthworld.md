@@ -21,7 +21,9 @@ For more Earthworld variants with different observation and action spaces, see t
 
 ## Description
 
-Earthworld is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+A quest to find the sword of Ultimate Sorcery. You must navigate through 12 zodiac-themed rooms in order to solve a puzzle.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=541)
 
 ## Actions
 
