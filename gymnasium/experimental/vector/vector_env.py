@@ -396,8 +396,8 @@ class VectorObservationWrapper(VectorWrapper):
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
-        observation = self.env.reset(seed=seed, options=options)
-        return self.observation(observation)
+        obs, info = self.env.reset(seed=seed, options=options)
+        return self.observation(obs), info
 
     def step(
         self, actions: ActType
@@ -431,7 +431,7 @@ class VectorActionWrapper(VectorWrapper):
         self, actions: ActType
     ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Steps through the environment using a modified action by :meth:`action`."""
-        return self.env.step(self.action(actions))
+        return self.env.step(self.actions(actions))
 
     def actions(self, actions: ActType) -> ActType:
         """Transform the actions before sending them to the environment.

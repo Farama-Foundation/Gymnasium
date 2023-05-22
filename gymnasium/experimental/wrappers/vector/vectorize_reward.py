@@ -1,17 +1,14 @@
-"""A collection of wrappers for modifying the reward.
-
-* ``LambdaRewardV0`` - Transforms the reward by a function
-* ``VectoriseLambdaRewardV0`` - Vectorises a lambda reward wrapper
-* ``ClipRewardV0`` - Clips the reward between a minimum and maximum value
-"""
+"""Vectorizes reward function to work with `VectorEnv`."""
 from __future__ import annotations
 
 from typing import Any, Callable
 
+import numpy as np
+
 from gymnasium import Env
-from gymnasium.experimental import wrappers
 from gymnasium.experimental.vector import VectorEnv, VectorRewardWrapper
 from gymnasium.experimental.vector.vector_env import ArrayType
+from gymnasium.experimental.wrappers import lambda_reward
 
 
 class LambdaRewardV0(VectorRewardWrapper):
@@ -37,7 +34,7 @@ class VectoriseLambdaRewardV0(VectorRewardWrapper):
     """Vectorises a single-agent lambda reward wrapper for vector environments."""
 
     def __init__(
-        self, env: VectorEnv, wrapper: type[wrappers.LambdaRewardV0], **kwargs: Any
+        self, env: VectorEnv, wrapper: type[lambda_reward.LambdaRewardV0], **kwargs: Any
     ):
         """Constructor for the vectorised lambda reward wrapper.
 
@@ -60,10 +57,22 @@ class VectoriseLambdaRewardV0(VectorRewardWrapper):
 class ClipRewardV0(VectoriseLambdaRewardV0):
     """A wrapper that clips the rewards for an environment between an upper and lower bound."""
 
-    def __init__(self, env: VectorEnv):
+    def __init__(
+        self,
+        env: VectorEnv,
+        min_reward: float | np.ndarray | None = None,
+        max_reward: float | np.ndarray | None = None,
+    ):
         """Constructor for ClipReward wrapper.
 
         Args:
             env: The vector environment to wrap
+            min_reward: The min reward for each step
+            max_reward: the max reward for each step
         """
-        super().__init__(env, wrappers.ClipRewardV0)
+        super().__init__(
+            env,
+            lambda_reward.ClipRewardV0,
+            min_reward=min_reward,
+            max_reward=max_reward,
+        )

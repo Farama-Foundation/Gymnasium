@@ -1,16 +1,4 @@
-"""A collection of vector based lambda observation wrappers.
-
-* ``LambdaObservationV0`` - Transforms the observation with a function
-* ``VectoriseLambdaObservationV0`` - Vectorises a single agent lambda observation wrapper
-* ``FilterObservationV0`` - Filters a ``Tuple`` or ``Dict`` to only include certain keys
-* ``FlattenObservationV0`` - Flattens the observations
-* ``GrayscaleObservationV0`` - Converts a RGB observation to a grayscale observation
-* ``ResizeObservationV0`` - Resizes an array-based observation (normally a RGB observation)
-* ``ReshapeObservationV0`` - Reshapes an array-based observation
-* ``RescaleObservationV0`` - Rescales an observation to between a minimum and maximum value
-* ``DtypeObservationV0`` - Convert an observation to a dtype
-"""
-
+"""Vectorizes observation wrappers to works for `VectorEnv`."""
 from __future__ import annotations
 
 from copy import deepcopy
@@ -20,7 +8,7 @@ import numpy as np
 
 from gymnasium import Space
 from gymnasium.core import Env, ObsType
-from gymnasium.experimental import VectorEnv, wrappers
+from gymnasium.experimental import VectorEnv
 from gymnasium.experimental.vector import VectorObservationWrapper
 from gymnasium.experimental.vector.utils import batch_space, concatenate, iterate
 from gymnasium.experimental.wrappers import lambda_observation
@@ -70,7 +58,10 @@ class VectoriseLambdaObservationV0(VectorObservationWrapper):
             self.observation_space = observation_space
 
     def __init__(
-        self, env: VectorEnv, wrapper: type[wrappers.LambdaObservationV0], **kwargs: Any
+        self,
+        env: VectorEnv,
+        wrapper: type[lambda_observation.LambdaObservationV0],
+        **kwargs: Any,
     ):
         """Constructor for the vectorised lambda observation wrapper.
 
@@ -95,7 +86,7 @@ class VectoriseLambdaObservationV0(VectorObservationWrapper):
         return deepcopy(
             concatenate(
                 self.single_observation_space,
-                (
+                tuple(
                     self.wrapper.func(obs)
                     for obs in iterate(self.observation_space, observation)
                 ),
@@ -207,20 +198,3 @@ class DtypeObservationV0(VectoriseLambdaObservationV0):
             dtype: The new dtype of the observation
         """
         super().__init__(env, lambda_observation.DtypeObservationV0, dtype=dtype)
-
-
-# class PixelObservationV0(VectoriseLambdaObservationV0):
-#     def __init__(
-#         self,
-#         env: VectorEnv,
-#         pixels_only: bool = True,
-#         pixels_key: str = "pixels",
-#         obs_key: str = "state",
-#     ):
-#         super().__init__(
-#             env,
-#             lambda_observation.PixelObservationV0,
-#             pixels_only=pixels_only,
-#             pixels_key=pixels_key,
-#             obs_key=obs_key,
-#         )

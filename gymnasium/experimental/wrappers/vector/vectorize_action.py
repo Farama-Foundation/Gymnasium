@@ -1,11 +1,4 @@
-"""A collection of vector based lambda action wrappers.
-
-* ``LambdaActionV0`` - Transforms the actions based on a function
-* ``VectoriseLambdaObservationV0`` - Vectorises a single agent lambda action wrapper
-* ``ClipActionV0`` - Clips the action within a bounds
-* ``RescaleActionV0`` - Rescales the action within a minimum and maximum actions
-"""
-
+"""Vectorizes action wrappers to work for `VectorEnv`."""
 from __future__ import annotations
 
 from copy import deepcopy
@@ -15,8 +8,9 @@ import numpy as np
 
 from gymnasium import Space
 from gymnasium.core import ActType, Env
-from gymnasium.experimental import VectorEnv, wrappers
+from gymnasium.experimental import VectorEnv
 from gymnasium.experimental.vector import VectorActionWrapper
+from gymnasium.experimental.wrappers import lambda_action
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 
 
@@ -63,7 +57,7 @@ class VectoriseLambdaActionV0(VectorActionWrapper):
             self.action_space = action_space
 
     def __init__(
-        self, env: VectorEnv, wrapper: type[wrappers.LambdaActionV0], **kwargs: Any
+        self, env: VectorEnv, wrapper: type[lambda_action.LambdaActionV0], **kwargs: Any
     ):
         """Constructor for the vectorised lambda action wrapper.
 
@@ -77,7 +71,7 @@ class VectoriseLambdaActionV0(VectorActionWrapper):
         self.wrapper = wrapper(
             self.VectorisedEnv(self.env.single_action_space), **kwargs
         )
-        self.single_action_space = self.wrapper.action
+        self.single_action_space = self.wrapper.action_space
         self.action_space = batch_space(self.single_action_space, self.num_envs)
         self.out = create_empty_array(self.single_action_space, self.num_envs)
 
@@ -111,7 +105,7 @@ class ClipActionV0(VectoriseLambdaActionV0):
         Args:
             env: The vector environment to wrap
         """
-        super().__init__(env, wrappers.ClipActionV0)
+        super().__init__(env, lambda_action.ClipActionV0)
 
 
 class RescaleActionV0(VectoriseLambdaActionV0):
@@ -131,5 +125,8 @@ class RescaleActionV0(VectoriseLambdaActionV0):
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
         super().__init__(
-            env, wrappers.RescaleActionV0, min_action=min_action, max_action=max_action
+            env,
+            lambda_action.RescaleActionV0,
+            min_action=min_action,
+            max_action=max_action,
         )

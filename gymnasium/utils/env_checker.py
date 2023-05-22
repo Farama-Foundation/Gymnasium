@@ -50,9 +50,11 @@ def data_equivalence(data_1, data_2) -> bool:
                 data_equivalence(o_1, o_2) for o_1, o_2 in zip(data_1, data_2)
             )
         elif isinstance(data_1, np.ndarray):
-            return data_1.shape == data_2.shape and np.allclose(
-                data_1, data_2, atol=0.00001
-            )
+            if data_1.shape == data_2.shape and data_1.dtype == data_2.dtype:
+                if data_1.dtype == object:
+                    return all(data_equivalence(a, b) for a, b in zip(data_1, data_2))
+                else:
+                    return np.allclose(data_1, data_2, atol=0.00001)
         else:
             return data_1 == data_2
     else:

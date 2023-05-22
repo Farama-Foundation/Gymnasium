@@ -87,18 +87,10 @@ _wrapper_to_class = {
     "RenderCollectionV0": "rendering",
     "RecordVideoV0": "rendering",
     "HumanRenderingV0": "rendering",
-    # jax_to_numpy
+    # data converters
     "JaxToNumpyV0": "jax_to_numpy",
-    # "jax_to_numpy": "jax_to_numpy",
-    # "numpy_to_jax": "jax_to_numpy",
-    # jax_to_torch
     "JaxToTorchV0": "jax_to_torch",
-    # "jax_to_torch": "jax_to_torch",
-    # "torch_to_jax": "jax_to_torch",
-    # numpy_to_torch
     "NumpyToTorchV0": "numpy_to_torch",
-    # "torch_to_numpy": "numpy_to_torch",
-    # "numpy_to_torch": "numpy_to_torch",
 }
 
 
@@ -118,8 +110,10 @@ def __getattr__(wrapper_name: str):
         AttributeError: If the wrapper does not exist.
         DeprecatedWrapper: If the version is not the latest.
     """
+    if wrapper_name == "vector":
+        return importlib.import_module("gymnasium.experimental.wrappers.vector")
     # Check if the requested wrapper is in the _wrapper_to_class dictionary
-    if wrapper_name in _wrapper_to_class:
+    elif wrapper_name in _wrapper_to_class:
         import_stmt = (
             f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
         )

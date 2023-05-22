@@ -340,7 +340,10 @@ class ResizeObservationV0(
         self.shape: Final[tuple[int, ...]] = tuple(shape)
 
         new_observation_space = spaces.Box(
-            low=0, high=255, shape=self.shape + env.observation_space.shape[2:]
+            low=0,
+            high=255,
+            shape=self.shape + env.observation_space.shape[2:],
+            dtype=np.uint8,
         )
 
         gym.utils.RecordConstructorArgs.__init__(self, shape=shape)

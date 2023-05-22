@@ -18,8 +18,8 @@ __all__ = [
     "ReshapeObservationV0",
     "RescaleObservationV0",
     "DtypeObservationV0",
-    # "PixelObservationV0",
-    # "NormalizeObservationV0",
+    "PixelObservationV0",
+    "NormalizeObservationV0",
     # "TimeAwareObservationV0",
     # "FrameStackObservationV0",
     # "DelayObservationV0",
@@ -27,11 +27,10 @@ __all__ = [
     "LambdaActionV0",
     "ClipActionV0",
     "RescaleActionV0",
-    # "NanAction",
     # --- Reward wrappers ---
     "LambdaRewardV0",
     "ClipRewardV0",
-    # "NormalizeRewardV0",
+    "NormalizeRewardV1",
     # --- Common ---
     "RecordEpisodeStatisticsV0",
     # --- Rendering ---
@@ -48,34 +47,34 @@ __all__ = [
 _wrapper_to_class = {
     # --- dict_info_to_list
     "DictInfoToListV0": "dict_info_to_list",
-    # --- lambda_action.py
-    "VectoriseLambdaActionV0": "lambda_action",
-    "LambdaActionV0": "lambda_action",
-    "ClipActionV0": "lambda_action",
-    "RescaleActionV0": "lambda_action",
-    # --- lambda_observation.py
-    "VectoriseLambdaObservationV0": "lambda_observation",
-    "LambdaObservationV0": "lambda_observation",
-    "FilterObservationV0": "lambda_observation",
-    "FlattenObservationV0": "lambda_observation",
-    "GrayscaleObservationV0": "lambda_observation",
-    "ResizeObservationV0": "lambda_observation",
-    "ReshapeObservationV0": "lambda_observation",
-    "RescaleObservationV0": "lambda_observation",
-    "DtypeObservationV0": "lambda_observation",
-    # "PixelObservationV0": "lambda_observation",
-    # --- lambda_reward.py
-    "VectoriseLambdaRewardV0": "lambda_reward",
-    "ClipRewardV0": "lambda_reward",
-    "LambdaRewardV0": "lambda_reward",
+    # --- vectorize_action.py
+    "VectoriseLambdaActionV0": "vectorize_action",
+    "LambdaActionV0": "vectorize_action",
+    "ClipActionV0": "vectorize_action",
+    "RescaleActionV0": "vectorize_action",
+    # --- vectorize_observation.py
+    "VectoriseLambdaObservationV0": "vectorize_observation",
+    "LambdaObservationV0": "vectorize_observation",
+    "FilterObservationV0": "vectorize_observation",
+    "FlattenObservationV0": "vectorize_observation",
+    "GrayscaleObservationV0": "vectorize_observation",
+    "ResizeObservationV0": "vectorize_observation",
+    "ReshapeObservationV0": "vectorize_observation",
+    "RescaleObservationV0": "vectorize_observation",
+    "DtypeObservationV0": "vectorize_observation",
+    # --- vectorize_reward.py
+    "VectoriseLambdaRewardV0": "vectorize_reward",
+    "ClipRewardV0": "vectorize_reward",
+    "LambdaRewardV0": "vectorize_reward",
     # --- stateful_action
     # --- stateful_observation
     # "TimeAwareObservationV0": "stateful_observation",
     # "DelayObservationV0": "stateful_observation",
     # "FrameStackObservationV0": "stateful_observation",
     # "NormalizeObservationV0": "stateful_observation",
+    # "PixelObservationV0": "stateful_observation",
     # --- stateful_reward
-    # "NormalizeRewardV0": "stateful_reward",
+    # "NormalizeRewardV1": "stateful_reward",
     # --- common
     "RecordEpisodeStatisticsV0": "common",
     # --- rendering
