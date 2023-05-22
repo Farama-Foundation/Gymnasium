@@ -24,7 +24,7 @@ from tests.testing_env import GenericTestEnv
             step_func=record_random_obs_step,
         ),
         GenericTestEnv(
-            observation_space=Box(0, 255, shape=(60, 60, 3), dtype=np.uint8),
+            observation_space=Box(0, 255, shape=(60, 60), dtype=np.uint8),
             reset_func=record_random_obs_reset,
             step_func=record_random_obs_step,
         ),
