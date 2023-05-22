@@ -55,7 +55,6 @@ def custom_environments():
         # ("CartPole-v1", "StickyActionV0", {}),
         ("CartPole-v1", "ClipRewardV0", {"min_reward": 0.25, "max_reward": 0.75}),
         # ("CartPole-v1", "NormalizeRewardV1", {}),
-        ("CartPole-v1", "RecordEpisodeStatisticsV0", {}),
     ),
 )
 def test_vector_wrapper_equivalence(
@@ -120,3 +119,4 @@ def test_vector_wrapper_equivalence(
 # (vector.JaxToNumpyV0, {}, {}),
 # (vector.JaxToTorchV0, {}, {}),
 # (vector.NumpyToTorchV0, {}, {}),
+# ("CartPole-v1", "RecordEpisodeStatisticsV0", {}),  # for the time taken in info, this is not equivalent for two instances
