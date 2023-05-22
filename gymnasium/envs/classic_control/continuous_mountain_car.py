@@ -146,6 +146,8 @@ class Continuous_MountainCarEnv(gym.Env):
     def step(self, action):
         position = self.state[0]
         velocity = self.state[1]
+        if len(action.shape) == 1:
+            action = action[0]
         force = min(max(action, self.min_action), self.max_action)
 
         velocity += force * self.power - 0.0025 * math.cos(3 * position)
