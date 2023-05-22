@@ -248,6 +248,7 @@ class Graph(Space[GraphInstance]):
         ret: list[GraphInstance] = []
         for sample in sample_n:
             if "edges" in sample:
+                assert self.edge_space is not None
                 ret_n = GraphInstance(
                     np.asarray(sample["nodes"], dtype=self.node_space.dtype),
                     np.asarray(sample["edges"], dtype=self.edge_space.dtype),
