@@ -96,8 +96,6 @@ def test_vector_wrapper_equivalence(
 
     wrapper_vector_obs, wrapper_vector_info = wrapper_vector_env.reset(seed=123)
     vector_wrapper_obs, vector_wrapper_info = vector_wrapper_env.reset(seed=123)
-    print(f'{wrapper_vector_info=}')
-    print(f'{vector_wrapper_info=}')
 
     assert data_equivalence(wrapper_vector_obs, vector_wrapper_obs)
     assert data_equivalence(wrapper_vector_info, vector_wrapper_info)
