@@ -55,6 +55,8 @@ def data_equivalence(data_1, data_2) -> bool:
                     return all(data_equivalence(a, b) for a, b in zip(data_1, data_2))
                 else:
                     return np.allclose(data_1, data_2, atol=0.00001)
+            else:
+                return False
         else:
             return data_1 == data_2
     else:

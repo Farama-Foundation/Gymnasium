@@ -16,9 +16,7 @@ def test_flatten_observation_wrapper():
         reset_func=record_random_obs_reset,
         step_func=record_random_obs_step,
     )
-    print(env.observation_space)
     wrapped_env = FlattenObservationV0(env)
-    print(wrapped_env.observation_space)
 
     obs, info = wrapped_env.reset()
     check_obs(env, wrapped_env, obs, info["obs"])

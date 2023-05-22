@@ -382,7 +382,6 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
         expected_frequency = (
             np.ones(space.shape) * np.where(mask == 2, 0.5, mask) * n_trials
         )
-        print(expected_frequency)
         observed_frequency = np.sum(samples, axis=0)
         assert space.shape == expected_frequency.shape == observed_frequency.shape
 
