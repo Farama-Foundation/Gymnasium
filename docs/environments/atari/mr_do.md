@@ -21,7 +21,9 @@ For more MrDo variants with different observation and action spaces, see the var
 
 ## Description
 
-MrDo is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Help Mr. Do harvest apples before the bad guys get to him.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=318)
 
 ## Actions
 

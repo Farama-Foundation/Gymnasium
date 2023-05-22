@@ -51,7 +51,8 @@ See variants section for the type of observation used by each environment id by 
 
 ### Rewards
 
-The scoring is as per the sport of tennis, played till one set. For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555).
+The scoring is as per the sport of tennis, played till one set.
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555).
 
 ## Variants
 

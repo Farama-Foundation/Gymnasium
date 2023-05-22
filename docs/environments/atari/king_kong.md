@@ -21,7 +21,9 @@ For more KingKong variants with different observation and action spaces, see the
 
 ## Description
 
-KingKong is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Climb the Empire State Building to save the person that King Kong kidnapped and placed there. Beware the bombs that King Kong throws at you as you climb!
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=265)
 
 ## Actions
 

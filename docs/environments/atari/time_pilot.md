@@ -50,7 +50,8 @@ See variants section for the type of observation used by each environment id by 
 
 ### Rewards
 
-You score points for destroying enemies, gaining more points for difficult enemies. For a more detailed documentation, see [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-time-pilot_8038.html).
+You score points for destroying enemies, gaining more points for difficult enemies.
+For a more detailed documentation, see [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-time-pilot_8038.html).
 
 ## Variants
 

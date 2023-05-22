@@ -21,7 +21,9 @@ For more Backgammon variants with different observation and action spaces, see t
 
 ## Description
 
-Backgammon is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+Your goal is to move all your pieces off the board (called 'bearing off'). Players take turns rolling dice and moving their pieces.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=12)
 
 ## Actions
 

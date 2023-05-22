@@ -23,7 +23,7 @@ For more Tutankham variants with different observation and action spaces, see th
 
 Your goal is to rack up points by finding treasures in the mazes of the tomb while eliminating its guardians.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=572)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=572)
 
 ## Actions
 

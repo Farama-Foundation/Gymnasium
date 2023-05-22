@@ -23,7 +23,7 @@ For more BeamRider variants with different observation and action spaces, see th
 
 You control a space-ship that travels forward at a constant speed. You can only steer it sideways between discrete positions. Your goal is to destroy enemy ships, avoid their attacks and dodge space debris.
 
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareID=860)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=860)
 
 ## Actions
 
@@ -50,7 +50,7 @@ See variants section for the type of observation used by each environment id by 
 ### Rewards
 
 You score points for destroying enemies.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SystemID=2600&SoftwareID=860&itemTypeID=MANUAL).
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=860&itemTypeID=MANUAL).
 
 ## Variants
 

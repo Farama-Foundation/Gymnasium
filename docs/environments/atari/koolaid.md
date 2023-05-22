@@ -21,7 +21,9 @@ For more Koolaid variants with different observation and action spaces, see the 
 
 ## Description
 
-Koolaid is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+You are the Kool-Aid Man and you are trying to stop Thirsties from drinking your pool water by running into them.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=266)
 
 ## Actions
 
