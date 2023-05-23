@@ -284,11 +284,18 @@ class VectorWrapper(VectorEnv):
     # explicitly forward the methods defined in VectorEnv
     # to self.env (instead of the base class)
 
-    def reset(self, **kwargs):
-        """Reset all environments."""
-        return self.env.reset(**kwargs)
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Reset all environment using seed and options."""
+        return self.env.reset(seed=seed, options=options)
 
-    def step(self, actions):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Step all environments."""
         return self.env.step(actions)
 
@@ -301,7 +308,7 @@ class VectorWrapper(VectorEnv):
         return self.env.close_extras(**kwargs)
 
     # implicitly forward all other methods and attributes to self.env
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         """Forward all other attributes to the base environment."""
         if name.startswith("_"):
             raise AttributeError(f"attempted to get missing private attribute '{name}'")
@@ -382,17 +389,23 @@ class VectorWrapper(VectorEnv):
 class VectorObservationWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the observation. Equivalent to :class:`gym.ObservationWrapper` for vectorized environments."""
 
-    def reset(self, **kwargs):
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
-        observation = self.env.reset(**kwargs)
-        return self.observation(observation)
+        obs, info = self.env.reset(seed=seed, options=options)
+        return self.observation(obs), info
 
-    def step(self, actions):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return (
             self.observation(observation),
-            observation,
             reward,
             termination,
             truncation,
@@ -414,9 +427,11 @@ class VectorObservationWrapper(VectorWrapper):
 class VectorActionWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the actions. Equivalent of :class:`~gym.ActionWrapper` for vectorized environments."""
 
-    def step(self, actions: ActType):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Steps through the environment using a modified action by :meth:`action`."""
-        return self.env.step(self.action(actions))
+        return self.env.step(self.actions(actions))
 
     def actions(self, actions: ActType) -> ActType:
         """Transform the actions before sending them to the environment.
@@ -433,7 +448,9 @@ class VectorActionWrapper(VectorWrapper):
 class VectorRewardWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the reward. Equivalent of :class:`~gym.RewardWrapper` for vectorized environments."""
 
-    def step(self, actions):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Steps through the environment returning a reward modified by :meth:`reward`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return observation, self.reward(reward), termination, truncation, info
