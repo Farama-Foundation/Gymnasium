@@ -76,7 +76,7 @@ _wrapper_to_class = {
     # --- stateful_reward
     # "NormalizeRewardV1": "stateful_reward",
     # --- common
-    "RecordEpisodeStatisticsV0": "common",
+    "RecordEpisodeStatisticsV0": "record_episode_statistics",
     # --- rendering
     # "RenderCollectionV0": "rendering",
     # "RecordVideoV0": "rendering",

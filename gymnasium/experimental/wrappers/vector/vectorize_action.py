@@ -73,6 +73,8 @@ class VectoriseLambdaActionV0(VectorActionWrapper):
         )
         self.single_action_space = self.wrapper.action_space
         self.action_space = batch_space(self.single_action_space, self.num_envs)
+
+        self.same_out = self.action_space == self.env.action_space
         self.out = create_empty_array(self.single_action_space, self.num_envs)
 
     def actions(self, actions: ActType) -> ActType:
@@ -84,16 +86,26 @@ class VectoriseLambdaActionV0(VectorActionWrapper):
         Returns:
             The updated actions using the wrapper func
         """
-        return deepcopy(
-            concatenate(
+        if self.same_out:
+            return concatenate(
                 self.single_action_space,
-                (
+                tuple(
                     self.wrapper.func(action)
                     for action in iterate(self.action_space, actions)
                 ),
-                self.out,
+                actions,
             )
-        )
+        else:
+            return deepcopy(
+                concatenate(
+                    self.single_action_space,
+                    tuple(
+                        self.wrapper.func(action)
+                        for action in iterate(self.action_space, actions)
+                    ),
+                    self.out,
+                )
+            )
 
 
 class ClipActionV0(VectoriseLambdaActionV0):

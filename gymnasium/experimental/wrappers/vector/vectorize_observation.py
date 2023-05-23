@@ -42,7 +42,7 @@ class LambdaObservationV0(VectorObservationWrapper):
 
         self.func = func
 
-    def observation(self, observation: ObsType) -> ObsType:
+    def vector_observation(self, observation: ObsType) -> ObsType:
         """Apply function to the observation."""
         return self.func(observation)
 
@@ -79,20 +79,36 @@ class VectoriseLambdaObservationV0(VectorObservationWrapper):
         self.observation_space = batch_space(
             self.single_observation_space, self.num_envs
         )
+
+        self.same_out = self.observation_space == self.env.observation_space
         self.out = create_empty_array(self.single_observation_space, self.num_envs)
 
-    def observation(self, observation: ObsType) -> ObsType:
+    def vector_observation(self, observation: ObsType) -> ObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""
-        return deepcopy(
-            concatenate(
+        if self.same_out:
+            return concatenate(
                 self.single_observation_space,
                 tuple(
                     self.wrapper.func(obs)
                     for obs in iterate(self.observation_space, observation)
                 ),
-                self.out,
+                observation,
             )
-        )
+        else:
+            return deepcopy(
+                concatenate(
+                    self.single_observation_space,
+                    tuple(
+                        self.wrapper.func(obs)
+                        for obs in iterate(self.observation_space, observation)
+                    ),
+                    self.out,
+                )
+            )
+
+    def single_observation(self, observation: ObsType) -> ObsType:
+        """Transforms a single observation using the wrapper transformation function."""
+        return self.wrapper.func(observation)
 
 
 class FilterObservationV0(VectoriseLambdaObservationV0):

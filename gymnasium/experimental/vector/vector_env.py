@@ -397,7 +397,7 @@ class VectorObservationWrapper(VectorWrapper):
     ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
         obs, info = self.env.reset(seed=seed, options=options)
-        return self.observation(obs), info
+        return self.vector_observation(obs), info
 
     def step(
         self, actions: ActType
@@ -405,23 +405,46 @@ class VectorObservationWrapper(VectorWrapper):
         """Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return (
-            self.observation(observation),
+            self.vector_observation(observation),
             reward,
             termination,
             truncation,
-            info,
+            self.update_final_obs(info),
         )
 
-    def observation(self, observation: ObsType) -> ObsType:
-        """Defines the observation transformation.
+    def vector_observation(self, observation: ObsType) -> ObsType:
+        """Defines the vector observation transformation.
 
         Args:
-            observation (object): the observation from the environment
+            observation: A vector observation from the environment
 
         Returns:
-            observation (object): the transformed observation
+            the transformed observation
         """
         raise NotImplementedError
+
+    def single_observation(self, observation: ObsType) -> ObsType:
+        """Defines the single observation transformation.
+
+        Args:
+            observation: A single observation from the environment
+
+        Returns:
+            The transformed observation
+        """
+        raise NotImplementedError
+
+    def update_final_obs(self, info: dict[str, Any]) -> dict[str, Any]:
+        """Updates the `final_obs` in the info using `single_observation`."""
+        if "final_observation" in info:
+            info["final_observation"] = np.array(
+                [
+                    self.single_observation(obs) if obs is not None else None
+                    for obs in info["final_observation"]
+                ],
+                dtype=object,
+            )
+        return info
 
 
 class VectorActionWrapper(VectorWrapper):
