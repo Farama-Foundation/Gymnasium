@@ -117,8 +117,10 @@ def __getattr__(wrapper_name: str):
         AttributeError: If the wrapper does not exist.
         DeprecatedWrapper: If the version is not the latest.
     """
+    if wrapper_name == "vector":
+        return importlib.import_module("gymnasium.experimental.wrappers.vector")
     # Check if the requested wrapper is in the _wrapper_to_class dictionary
-    if wrapper_name in _wrapper_to_class:
+    elif wrapper_name in _wrapper_to_class:
         import_stmt = (
             f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
         )
