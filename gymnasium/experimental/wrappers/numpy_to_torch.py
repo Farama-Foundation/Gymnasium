@@ -111,13 +111,13 @@ class NumpyToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     def step(
         self, action: WrapperActType
     ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict]:
-        """Performs the given action within the environment.
+        """Using a PyTorch based action that is converted to NumPy to be used by the environment.
 
         Args:
-            action: The action to perform as a PyTorch Tensor
+            action: A PyTorch-based action
 
         Returns:
-            The next observation, reward, termination, truncation, and extra info
+            The PyTorch-based Tensor next observation, reward, termination, truncation, and extra info
         """
         jax_action = torch_to_numpy(action)
         obs, reward, terminated, truncated, info = self.env.step(jax_action)

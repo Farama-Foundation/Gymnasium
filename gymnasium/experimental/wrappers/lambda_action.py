@@ -1,8 +1,8 @@
 """A collection of wrappers that all use the LambdaAction class.
 
-* ``LambdaAction`` - Transforms the actions based on a function
-* ``ClipAction`` - Clips the action within a bounds
-* ``RescaleAction`` - Rescales the action within a minimum and maximum actions
+* ``LambdaActionV0`` - Transforms the actions based on a function
+* ``ClipActionV0`` - Clips the action within a bounds
+* ``RescaleActionV0`` - Rescales the action within a minimum and maximum actions
 """
 from __future__ import annotations
 
@@ -34,8 +34,8 @@ class LambdaActionV0(
         """Initialize LambdaAction.
 
         Args:
-            env: The gymnasium environment
-            func: Function to apply to ``step`` ``action``
+            env: The environment to wrap
+            func: Function to apply to the :meth:`step`'s ``action``
             action_space: The updated action space of the wrapper given the function.
         """
         gym.utils.RecordConstructorArgs.__init__(
@@ -75,7 +75,7 @@ class ClipActionV0(
         """A wrapper for clipping continuous actions within the valid bound.
 
         Args:
-            env: The environment to apply the wrapper
+            env: The environment to wrap
         """
         assert isinstance(env.action_space, Box)
 
@@ -125,10 +125,10 @@ class RescaleActionV0(
         min_action: float | int | np.ndarray,
         max_action: float | int | np.ndarray,
     ):
-        """Initializes the :class:`RescaleAction` wrapper.
+        """Constructor for the Rescale Action wrapper.
 
         Args:
-            env (Env): The environment to apply the wrapper
+            env (Env): The environment to wrap
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """

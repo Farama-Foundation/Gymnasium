@@ -39,7 +39,7 @@ except ImportError:
     )
 
 
-__all__ = ["jax_to_torch", "torch_to_jax", "JaxToTorchV0"]
+__all__ = ["JaxToTorchV0", "jax_to_torch", "torch_to_jax", "Device"]
 
 
 @functools.singledispatch
@@ -114,7 +114,7 @@ def _jax_iterable_to_torch(
 
 
 class JaxToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """Wraps a jax-based environment so that it can be interacted with through PyTorch Tensors.
+    """Wraps a Jax-based environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
 
