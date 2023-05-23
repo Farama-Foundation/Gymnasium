@@ -482,6 +482,7 @@
 <span class="sd">* ``DelayObservationV0`` - A wrapper for delaying the returned observation</span>
 <span class="sd">* ``TimeAwareObservationV0`` - A wrapper for adding time aware observations to environment observation</span>
 <span class="sd">* ``FrameStackObservationV0`` - Frame stack the observations</span>
+<span class="sd">* ``NormalizeObservationV0`` - Normalized the observations to a mean and</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
@@ -500,7 +501,7 @@
     <span class="n">concatenate</span><span class="p">,</span>
     <span class="n">create_empty_array</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">gymnasium.experimental.wrappers.utils</span> <span class="kn">import</span> <span class="n">create_zero_array</span>
+<span class="kn">from</span> <span class="nn">gymnasium.experimental.wrappers.utils</span> <span class="kn">import</span> <span class="n">RunningMeanStd</span><span class="p">,</span> <span class="n">create_zero_array</span>
 <span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
 
 
@@ -861,6 +862,54 @@
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">updated_obs</span><span class="p">,</span> <span class="n">info</span></div>
+
+
+<div class="viewcode-block" id="NormalizeObservationV0"><a class="viewcode-back" href="../../../../../api/experimental/wrappers/#gymnasium.experimental.wrappers.NormalizeObservationV0">[docs]</a><span class="k">class</span> <span class="nc">NormalizeObservationV0</span><span class="p">(</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</span>
+
+<span class="sd">    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation</span>
+<span class="sd">    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.observation()` is called.</span>
+<span class="sd">    If `False`, the calculated statistics are used but not updated anymore; this may be used during evaluation.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was</span>
+<span class="sd">        newly instantiated or the policy was changed recently.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env (Env): The environment to apply the wrapper</span>
+<span class="sd">            epsilon: A stability parameter that is used when scaling the observations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span> <span class="o">=</span> <span class="n">RunningMeanStd</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">update_running_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property to freeze/continue the running mean calculation of the observation statistics.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span>
+
+    <span class="nd">@update_running_mean</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">update_running_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setting</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the property to freeze/continue the running mean calculation of the observation statistics.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span> <span class="o">=</span> <span class="n">setting</span>
+
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WrapperObsType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalises the observation using the running mean and variance of the observations.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">observation</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">var</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
+        <span class="p">)</span></div>
 </pre></div>
           </article>
         </div>

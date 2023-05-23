@@ -479,9 +479,9 @@
             <h1>Source code for gymnasium.experimental.wrappers.lambda_action</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;A collection of wrappers that all use the LambdaAction class.</span>
 
-<span class="sd">* ``LambdaAction`` - Transforms the actions based on a function</span>
-<span class="sd">* ``ClipAction`` - Clips the action within a bounds</span>
-<span class="sd">* ``RescaleAction`` - Rescales the action within a minimum and maximum actions</span>
+<span class="sd">* ``LambdaActionV0`` - Transforms the actions based on a function</span>
+<span class="sd">* ``ClipActionV0`` - Clips the action within a bounds</span>
+<span class="sd">* ``RescaleActionV0`` - Rescales the action within a minimum and maximum actions</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
@@ -513,8 +513,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize LambdaAction.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            env: The gymnasium environment</span>
-<span class="sd">            func: Function to apply to ``step`` ``action``</span>
+<span class="sd">            env: The environment to wrap</span>
+<span class="sd">            func: Function to apply to the :meth:`step`&#39;s ``action``</span>
 <span class="sd">            action_space: The updated action space of the wrapper given the function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -554,7 +554,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A wrapper for clipping continuous actions within the valid bound.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            env: The environment to apply the wrapper</span>
+<span class="sd">            env: The environment to wrap</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">)</span>
 
@@ -604,10 +604,10 @@
         <span class="n">min_action</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">max_action</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the :class:`RescaleAction` wrapper.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the Rescale Action wrapper.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            env (Env): The environment to apply the wrapper</span>
+<span class="sd">            env (Env): The environment to wrap</span>
 <span class="sd">            min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.</span>
 <span class="sd">            max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

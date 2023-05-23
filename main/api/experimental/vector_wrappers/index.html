@@ -534,86 +534,9 @@ without touching the original code.</p>
 </section>
 <section id="vector-common-wrappers">
 <h2>Vector Common Wrappers<a class="headerlink" href="#vector-common-wrappers" title="Permalink to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.vector.VectorRecordEpisodeStatistics">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">VectorRecordEpisodeStatistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../vector/#gymnasium.experimental.vector.VectorEnv" title="gymnasium.experimental.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">deque_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/experimental/wrappers/vector/record_episode_statistics/#VectorRecordEpisodeStatistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.experimental.wrappers.vector.VectorRecordEpisodeStatistics" title="Permalink to this definition">#</a></dt>
-<dd><p>This wrapper will keep track of cumulative rewards and episode lengths.</p>
-<p>At the end of an episode, the statistics of the episode will be added to <code class="docutils literal notranslate"><span class="pre">info</span></code>
-using the key <code class="docutils literal notranslate"><span class="pre">episode</span></code>. If using a vectorized environment also the key
-<code class="docutils literal notranslate"><span class="pre">_episode</span></code> is used which indicates whether the env at the respective index has
-the episode statistics.</p>
-<p>After the completion of an episode, <code class="docutils literal notranslate"><span class="pre">info</span></code> will look like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span>  
-<span class="gp">... </span>    <span class="o">...</span>
-<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;cumulative reward&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;episode length&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
-<span class="gp">... </span>    <span class="p">},</span>
-<span class="gp">... </span><span class="p">}</span>
-</pre></div>
-</div>
-<p>For a vectorized environments the output will be in the form of:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span> <span class="o">=</span> <span class="p">{</span>  
-<span class="gp">... </span>    <span class="o">...</span>
-<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of cumulative reward&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of episode length&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of elapsed time since beginning of episode&gt;&quot;</span>
-<span class="gp">... </span>    <span class="p">},</span>
-<span class="gp">... </span>    <span class="s2">&quot;_episode&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span>
-<span class="gp">... </span><span class="p">}</span>
-</pre></div>
-</div>
-<p>Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>return_queue</strong> – The cumulative rewards of the last <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>-many episodes</p></li>
-<li><p><strong>length_queue</strong> – The lengths of the last <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>-many episodes</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the wrapper</p></li>
-<li><p><strong>deque_size</strong> – The size of the buffers <code class="xref py py-attr docutils literal notranslate"><span class="pre">return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">length_queue</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 <section id="vector-only-wrappers">
 <h2>Vector Only Wrappers<a class="headerlink" href="#vector-only-wrappers" title="Permalink to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.experimental.wrappers.vector.VectorListInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">VectorListInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../vector/#gymnasium.experimental.vector.VectorEnv" title="gymnasium.experimental.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/experimental/wrappers/vector/vector_list_info/#VectorListInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.experimental.wrappers.vector.VectorListInfo" title="Permalink to this definition">#</a></dt>
-<dd><p>Converts infos of vectorized environments from dict to List[dict].</p>
-<p>This wrapper converts the info format of a
-vector environment from a dictionary to a list of dictionaries.
-This wrapper is intended to be used around vectorized
-environments. If using other wrappers that perform
-operation on info like <cite>RecordEpisodeStatistics</cite> this
-need to be the outermost wrapper.</p>
-<p>i.e. <cite>VectorListInfo(RecordEpisodeStatistics(envs))</cite></p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># actual</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>  
-<span class="gp">... </span>     <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]),</span>
-<span class="gp">... </span>     <span class="s2">&quot;_k&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
-<span class="gp">... </span> <span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># classic</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">[{},</span> <span class="p">{},</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">}]</span>  
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the wrapper</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 </section>
 
@@ -700,14 +623,8 @@ need to be the outermost wrapper.</p>
 <li><a class="reference internal" href="#gymnasium.experimental.vector.VectorRewardWrapper"><code class="docutils literal notranslate"><span class="pre">VectorRewardWrapper</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#vector-common-wrappers">Vector Common Wrappers</a><ul>
-<li><a class="reference internal" href="#gymnasium.experimental.wrappers.vector.VectorRecordEpisodeStatistics"><code class="docutils literal notranslate"><span class="pre">VectorRecordEpisodeStatistics</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#vector-only-wrappers">Vector Only Wrappers</a><ul>
-<li><a class="reference internal" href="#gymnasium.experimental.wrappers.vector.VectorListInfo"><code class="docutils literal notranslate"><span class="pre">VectorListInfo</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#vector-common-wrappers">Vector Common Wrappers</a></li>
+<li><a class="reference internal" href="#vector-only-wrappers">Vector Only Wrappers</a></li>
 </ul>
 </li>
 </ul>
