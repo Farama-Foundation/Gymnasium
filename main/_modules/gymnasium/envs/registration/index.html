@@ -1383,7 +1383,6 @@
 <span class="sd">        id: Name of the environment. Optionally, a module to import can be included, eg. &#39;module:Env-v0&#39;</span>
 <span class="sd">        num_envs: Number of environments to create</span>
 <span class="sd">        vectorization_mode: How to vectorize the environment. Can be either &quot;async&quot;, &quot;sync&quot; or &quot;custom&quot;</span>
-<span class="sd">        kwargs: Additional arguments to pass to the environment constructor.</span>
 <span class="sd">        vector_kwargs: Additional arguments to pass to the vectorized environment constructor.</span>
 <span class="sd">        wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in &quot;sync&quot; or &quot;async&quot; mode.</span>
 <span class="sd">        **kwargs: Additional arguments to pass to the environment constructor.</span>
@@ -1432,14 +1431,16 @@
 
     <span class="k">def</span> <span class="nf">_create_env</span><span class="p">():</span>
         <span class="c1"># Env creator for use with sync and async modes</span>
-        <span class="n">render_mode</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_mode&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">inner_render_mode</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">render_mode</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">)]</span>
-            <span class="k">if</span> <span class="n">render_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">render_mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">)</span>
-            <span class="k">else</span> <span class="n">render_mode</span>
-        <span class="p">)</span>
         <span class="n">_kwargs_copy</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">_kwargs_copy</span><span class="p">[</span><span class="s2">&quot;render_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inner_render_mode</span>
+
+        <span class="n">render_mode</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_mode&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">render_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">inner_render_mode</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">render_mode</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">render_mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">)</span>
+                <span class="k">else</span> <span class="n">render_mode</span>
+            <span class="p">)</span>
+            <span class="n">_kwargs_copy</span><span class="p">[</span><span class="s2">&quot;render_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inner_render_mode</span>
 
         <span class="n">_env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs_copy</span><span class="p">)</span>
         <span class="n">_env</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">spec_</span>
