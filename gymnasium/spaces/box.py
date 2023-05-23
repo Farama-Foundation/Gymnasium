@@ -256,7 +256,7 @@ class Box(Space[NDArray[Any]]):
 
     def from_jsonable(self, sample_n: Sequence[float | int]) -> list[NDArray[Any]]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        return [np.asarray(sample) for sample in sample_n]
+        return [np.asarray(sample, dtype=self.dtype) for sample in sample_n]
 
     def __repr__(self) -> str:
         """A string representation of this space.
