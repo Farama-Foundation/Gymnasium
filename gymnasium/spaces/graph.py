@@ -49,8 +49,7 @@ class Graph(Space[GraphInstance]):
                [7, 0],
                [3, 7],
                [8, 4],
-               [8, 8]]))
-
+               [8, 8]], dtype=int32))
     """
 
     def __init__(
