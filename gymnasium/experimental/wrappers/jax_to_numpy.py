@@ -99,10 +99,10 @@ class JaxToNumpyV0(
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
-        """Wraps an environment such that the input and outputs are numpy arrays.
+        """Wraps a jax environment such that the input and outputs are numpy arrays.
 
         Args:
-            env: the environment to wrap
+            env: the jax environment to wrap
         """
         if jnp is None:
             raise DependencyNotInstalled(
@@ -120,7 +120,7 @@ class JaxToNumpyV0(
             action: the action to perform as a numpy array
 
         Returns:
-            A tuple containing the next observation, reward, termination, truncation, and extra info.
+            A tuple containing numpy versions of the next observation, reward, termination, truncation, and extra info.
         """
         jax_action = numpy_to_jax(action)
         obs, reward, terminated, truncated, info = self.env.step(jax_action)
