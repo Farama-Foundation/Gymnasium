@@ -26,7 +26,8 @@ class AutoResetWrapper(gym.Wrapper, gym.utils.RecordConstructorArgs):
        with an additional key "final_observation" containing the observation returned by the last call to :meth:`self.env.step`
        and "final_info" containing the info dict returned by the last call to :meth:`self.env.step`.
 
-    Warning: When using this wrapper to collect rollouts, note that when :meth:`Env.step` returns `terminated` or `truncated`, a
+    Warning: 
+        When using this wrapper to collect rollouts, note that when :meth:`Env.step` returns `terminated` or `truncated`, a
         new observation from after calling :meth:`Env.reset` is returned by :meth:`Env.step` alongside the
         final reward, terminated and truncated state from the previous episode.
         If you need the final state from the previous episode, you need to retrieve it via the
