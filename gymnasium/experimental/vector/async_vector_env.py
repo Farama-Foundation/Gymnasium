@@ -84,7 +84,7 @@ class AsyncVectorEnv(VectorEnv):
             worker: If set, then use that worker in a subprocess instead of a default one.
                 Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.
 
-        Warnings: 
+        Warnings:
             worker is an advanced mode option. It provides a high degree of flexibility and a high chance
             to shoot yourself in the foot; thus, if you are writing your own worker, it is recommended to start
             from the code for ``_worker`` (or ``_worker_shared_memory``) method, and add changes.
