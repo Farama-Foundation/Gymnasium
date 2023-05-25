@@ -41,17 +41,17 @@ class BaseMujocoEnv(gym.Env):
         camera_name: Optional[str] = None,
     ):
         """Base abstract class for mujoco based environments.
-        
+
         Args:
             model_path: Path to the MuJoCo Model.
             frame_skip: Number of mujoco simulation steps per gym `step()`.
             observation_space: The observation space of the environment.
             render_mode: The `render_mode` used.
-            widht: The width of the render window.
+            width: The width of the render window.
             height: The height of the render window.
             camera_id: The Default camera used.
             camera_name: The name for the default camera.
-            
+
         Raises:
             OSError: when the `model_path` does not exist.
             error.DependencyNotInstalled: When `mujoco` is not installed.
