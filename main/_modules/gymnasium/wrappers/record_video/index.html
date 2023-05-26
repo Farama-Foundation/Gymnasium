@@ -587,7 +587,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_recorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">video_recorder</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_recorder</span><span class="o">.</span><span class="n">recorded_frames</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">video_recorder</span><span class="o">.</span><span class="n">capture_frame</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
