@@ -108,7 +108,7 @@ class RecordVideo(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.truncated = False
         if self.recording:
             assert self.video_recorder is not None
-            self.video_recorder.frames = []
+            self.video_recorder.recorded_frames = []
             self.video_recorder.capture_frame()
             self.recorded_frames += 1
             if self.video_length > 0:
