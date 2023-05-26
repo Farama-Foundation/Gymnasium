@@ -552,14 +552,15 @@ with an additional key “final_observation” containing the observation return
 and “final_info” containing the info dict returned by the last call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.step()</span></code>.</p></li>
 </ul>
 </div></blockquote>
-<dl class="simple">
-<dt>Warning: When using this wrapper to collect rollouts, note that when <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> returns <cite>terminated</cite> or <cite>truncated</cite>, a</dt><dd><p>new observation from after calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code> is returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> alongside the
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When using this wrapper to collect rollouts, note that when <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> returns <cite>terminated</cite> or <cite>truncated</cite>, a
+new observation from after calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code> is returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> alongside the
 final reward, terminated and truncated state from the previous episode.
 If you need the final state from the previous episode, you need to retrieve it via the
 “final_observation” key in the info dict.
 Make sure you know what you’re doing if you use this wrapper!</p>
-</dd>
-</dl>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> (<em>gym.Env</em>) – The environment to apply the wrapper</p>

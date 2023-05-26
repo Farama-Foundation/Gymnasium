@@ -505,7 +505,8 @@
 <span class="sd">       with an additional key &quot;final_observation&quot; containing the observation returned by the last call to :meth:`self.env.step`</span>
 <span class="sd">       and &quot;final_info&quot; containing the info dict returned by the last call to :meth:`self.env.step`.</span>
 
-<span class="sd">    Warning: When using this wrapper to collect rollouts, note that when :meth:`Env.step` returns `terminated` or `truncated`, a</span>
+<span class="sd">    Warning:</span>
+<span class="sd">        When using this wrapper to collect rollouts, note that when :meth:`Env.step` returns `terminated` or `truncated`, a</span>
 <span class="sd">        new observation from after calling :meth:`Env.reset` is returned by :meth:`Env.step` alongside the</span>
 <span class="sd">        final reward, terminated and truncated state from the previous episode.</span>
 <span class="sd">        If you need the final state from the previous episode, you need to retrieve it via the</span>
