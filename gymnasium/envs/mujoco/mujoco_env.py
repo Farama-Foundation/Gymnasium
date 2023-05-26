@@ -49,8 +49,8 @@ class BaseMujocoEnv(gym.Env):
             render_mode: The `render_mode` used.
             width: The width of the render window.
             height: The height of the render window.
-            camera_id: The Default camera used.
-            camera_name: The name for the default camera.
+            camera_id: The camera id used.
+            camera_name: The name of the camera used (can not be used in conjuction with `camera_id`).
 
         Raises:
             OSError: when the `model_path` does not exist.
