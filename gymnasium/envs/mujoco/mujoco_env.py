@@ -44,13 +44,13 @@ class BaseMujocoEnv(gym.Env):
 
         Args:
             model_path: Path to the MuJoCo Model.
-            frame_skip: Number of mujoco simulation steps per gym `step()`.
+            frame_skip: Number of MuJoCo simulation steps per gym `step()`.
             observation_space: The observation space of the environment.
             render_mode: The `render_mode` used.
             width: The width of the render window.
             height: The height of the render window.
-            camera_id: The Default camera used.
-            camera_name: The name for the default camera.
+            camera_id: The camera ID used.
+            camera_name: The name of the camera used (can not be used in conjunction with `camera_id`).
 
         Raises:
             OSError: when the `model_path` does not exist.
