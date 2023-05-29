@@ -11,13 +11,13 @@ lastpage:
 mujoco/ant
 mujoco/half_cheetah
 mujoco/hopper
-mujoco/humanoid_standup
 mujoco/humanoid
+mujoco/humanoid_standup
 mujoco/inverted_double_pendulum
 mujoco/inverted_pendulum
+mujoco/pusher
 mujoco/reacher
 mujoco/swimmer
-mujoco/pusher
 mujoco/walker2d
 ```
 
