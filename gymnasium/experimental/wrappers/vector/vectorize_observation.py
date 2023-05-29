@@ -25,7 +25,8 @@ class LambdaObservationV0(VectorObservationWrapper):
     def __init__(
         self,
         env: VectorEnv,
-        func: Callable[[ObsType], Any],
+        vector_func: Callable[[ObsType], Any],
+        single_func: Callable[[ObsType], Any],
         observation_space: Space | None = None,
     ):
         """Constructor for the lambda observation wrapper.
@@ -40,11 +41,15 @@ class LambdaObservationV0(VectorObservationWrapper):
         if observation_space is not None:
             self.observation_space = observation_space
 
-        self.func = func
+        self.vector_func = vector_func
+        self.single_func = single_func
 
     def vector_observation(self, observation: ObsType) -> ObsType:
         """Apply function to the observation."""
-        return self.func(observation)
+        return self.vector_func(observation)
+
+    def single_observation(self, observation: ObsType) -> ObsType:
+        return self.single_func(observation)
 
 
 class VectoriseLambdaObservationV0(VectorObservationWrapper):
