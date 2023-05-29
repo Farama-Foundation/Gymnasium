@@ -64,7 +64,7 @@ def test_vector_wrapper_equivalence(
     num_envs: int,
     custom_environments,
     vectorization_mode: str = "sync",
-    num_steps: int = 10,
+    num_steps: int = 50,
 ):
     vector_wrapper = getattr(wrappers.vector, wrapper_name)
     wrapper_vector_env: VectorEnv = vector_wrapper(
