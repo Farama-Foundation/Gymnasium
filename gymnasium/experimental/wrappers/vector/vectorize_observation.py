@@ -45,17 +45,18 @@ class LambdaObservationV0(VectorObservationWrapper):
         self.single_func = single_func
 
     def vector_observation(self, observation: ObsType) -> ObsType:
-        """Apply function to the observation."""
+        """Apply function to the vector observation."""
         return self.vector_func(observation)
 
     def single_observation(self, observation: ObsType) -> ObsType:
+        """Apply function to the single observation."""
         return self.single_func(observation)
 
 
-class VectoriseLambdaObservationV0(VectorObservationWrapper):
-    """Vectorises a single-agent lambda observation wrapper for vector environments."""
+class VectorizeLambdaObservationV0(VectorObservationWrapper):
+    """Vectori`es a single-agent lambda observation wrapper for vector environments."""
 
-    class VectorisedEnv(Env):
+    class VectorizedEnv(Env):
         """Fake single-agent environment uses for the single-agent wrapper."""
 
         def __init__(self, observation_space: Space):
@@ -68,17 +69,17 @@ class VectoriseLambdaObservationV0(VectorObservationWrapper):
         wrapper: type[lambda_observation.LambdaObservationV0],
         **kwargs: Any,
     ):
-        """Constructor for the vectorised lambda observation wrapper.
+        """Constructor for the vectorized lambda observation wrapper.
 
         Args:
             env: The vector environment to wrap.
-            wrapper: The wrapper to vectorise
+            wrapper: The wrapper to vectorize
             **kwargs: Keyword argument for the wrapper
         """
         super().__init__(env)
 
         self.wrapper = wrapper(
-            self.VectorisedEnv(self.env.single_observation_space), **kwargs
+            self.VectorizedEnv(self.env.single_observation_space), **kwargs
         )
         self.single_observation_space = self.wrapper.observation_space
         self.observation_space = batch_space(
@@ -116,7 +117,7 @@ class VectoriseLambdaObservationV0(VectorObservationWrapper):
         return self.wrapper.func(observation)
 
 
-class FilterObservationV0(VectoriseLambdaObservationV0):
+class FilterObservationV0(VectorizeLambdaObservationV0):
     """Vector wrapper for filtering dict or tuple observation spaces."""
 
     def __init__(self, env: VectorEnv, filter_keys: Sequence[str | int]):
@@ -131,7 +132,7 @@ class FilterObservationV0(VectoriseLambdaObservationV0):
         )
 
 
-class FlattenObservationV0(VectoriseLambdaObservationV0):
+class FlattenObservationV0(VectorizeLambdaObservationV0):
     """Observation wrapper that flattens the observation."""
 
     def __init__(self, env: VectorEnv):
@@ -143,7 +144,7 @@ class FlattenObservationV0(VectoriseLambdaObservationV0):
         super().__init__(env, lambda_observation.FlattenObservationV0)
 
 
-class GrayscaleObservationV0(VectoriseLambdaObservationV0):
+class GrayscaleObservationV0(VectorizeLambdaObservationV0):
     """Observation wrapper that converts an RGB image to grayscale."""
 
     def __init__(self, env: VectorEnv, keep_dim: bool = False):
@@ -158,7 +159,7 @@ class GrayscaleObservationV0(VectoriseLambdaObservationV0):
         )
 
 
-class ResizeObservationV0(VectoriseLambdaObservationV0):
+class ResizeObservationV0(VectorizeLambdaObservationV0):
     """Resizes image observations using OpenCV to shape."""
 
     def __init__(self, env: VectorEnv, shape: tuple[int, ...]):
@@ -171,7 +172,7 @@ class ResizeObservationV0(VectoriseLambdaObservationV0):
         super().__init__(env, lambda_observation.ResizeObservationV0, shape=shape)
 
 
-class ReshapeObservationV0(VectoriseLambdaObservationV0):
+class ReshapeObservationV0(VectorizeLambdaObservationV0):
     """Reshapes array based observations to shapes."""
 
     def __init__(self, env: VectorEnv, shape: int | tuple[int, ...]):
@@ -184,7 +185,7 @@ class ReshapeObservationV0(VectoriseLambdaObservationV0):
         super().__init__(env, lambda_observation.ReshapeObservationV0, shape=shape)
 
 
-class RescaleObservationV0(VectoriseLambdaObservationV0):
+class RescaleObservationV0(VectorizeLambdaObservationV0):
     """Linearly rescales observation to between a minimum and maximum value."""
 
     def __init__(
@@ -208,7 +209,7 @@ class RescaleObservationV0(VectoriseLambdaObservationV0):
         )
 
 
-class DtypeObservationV0(VectoriseLambdaObservationV0):
+class DtypeObservationV0(VectorizeLambdaObservationV0):
     """Observation wrapper for transforming the dtype of an observation."""
 
     def __init__(self, env: VectorEnv, dtype: Any):

@@ -437,13 +437,9 @@ class VectorObservationWrapper(VectorWrapper):
     def update_final_obs(self, info: dict[str, Any]) -> dict[str, Any]:
         """Updates the `final_obs` in the info using `single_observation`."""
         if "final_observation" in info:
-            info["final_observation"] = np.array(
-                [
-                    self.single_observation(obs) if obs is not None else None
-                    for obs in info["final_observation"]
-                ],
-                dtype=object,
-            )
+            for i, obs in enumerate(info["final_observation"]):
+                if obs is not None:
+                    info["final_observation"][i] = self.single_observation(obs)
         return info
 
 

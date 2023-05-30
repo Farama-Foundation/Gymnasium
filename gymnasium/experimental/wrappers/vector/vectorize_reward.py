@@ -30,17 +30,17 @@ class LambdaRewardV0(VectorRewardWrapper):
         return self.func(reward)
 
 
-class VectoriseLambdaRewardV0(VectorRewardWrapper):
-    """Vectorises a single-agent lambda reward wrapper for vector environments."""
+class VectorizeLambdaRewardV0(VectorRewardWrapper):
+    """Vectorizes a single-agent lambda reward wrapper for vector environments."""
 
     def __init__(
         self, env: VectorEnv, wrapper: type[lambda_reward.LambdaRewardV0], **kwargs: Any
     ):
-        """Constructor for the vectorised lambda reward wrapper.
+        """Constructor for the vectorized lambda reward wrapper.
 
         Args:
             env: The vector environment to wrap.
-            wrapper: The wrapper to vectorise
+            wrapper: The wrapper to vectorize
             **kwargs: Keyword argument for the wrapper
         """
         super().__init__(env)
@@ -54,7 +54,7 @@ class VectoriseLambdaRewardV0(VectorRewardWrapper):
         return reward
 
 
-class ClipRewardV0(VectoriseLambdaRewardV0):
+class ClipRewardV0(VectorizeLambdaRewardV0):
     """A wrapper that clips the rewards for an environment between an upper and lower bound."""
 
     def __init__(

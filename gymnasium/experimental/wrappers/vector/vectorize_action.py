@@ -46,10 +46,10 @@ class LambdaActionV0(VectorActionWrapper):
         return self.func(actions)
 
 
-class VectoriseLambdaActionV0(VectorActionWrapper):
-    """Vectorises a single-agent lambda action wrapper for vector environments."""
+class VectorizeLambdaActionV0(VectorActionWrapper):
+    """Vectorizes a single-agent lambda action wrapper for vector environments."""
 
-    class VectorisedEnv(Env):
+    class VectorizedEnv(Env):
         """Fake single-agent environment uses for the single-agent wrapper."""
 
         def __init__(self, action_space: Space):
@@ -59,17 +59,17 @@ class VectoriseLambdaActionV0(VectorActionWrapper):
     def __init__(
         self, env: VectorEnv, wrapper: type[lambda_action.LambdaActionV0], **kwargs: Any
     ):
-        """Constructor for the vectorised lambda action wrapper.
+        """Constructor for the vectorized lambda action wrapper.
 
         Args:
             env: The vector environment to wrap
-            wrapper: The wrapper to vectorise
+            wrapper: The wrapper to vectorize
             **kwargs: Arguments for the LambdaActionV0 wrapper
         """
         super().__init__(env)
 
         self.wrapper = wrapper(
-            self.VectorisedEnv(self.env.single_action_space), **kwargs
+            self.VectorizedEnv(self.env.single_action_space), **kwargs
         )
         self.single_action_space = self.wrapper.action_space
         self.action_space = batch_space(self.single_action_space, self.num_envs)
@@ -108,7 +108,7 @@ class VectoriseLambdaActionV0(VectorActionWrapper):
             )
 
 
-class ClipActionV0(VectoriseLambdaActionV0):
+class ClipActionV0(VectorizeLambdaActionV0):
     """Clip the continuous action within the valid :class:`Box` observation space bound."""
 
     def __init__(self, env: VectorEnv):
@@ -120,7 +120,7 @@ class ClipActionV0(VectoriseLambdaActionV0):
         super().__init__(env, lambda_action.ClipActionV0)
 
 
-class RescaleActionV0(VectoriseLambdaActionV0):
+class RescaleActionV0(VectorizeLambdaActionV0):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action]."""
 
     def __init__(

@@ -5,9 +5,9 @@ import importlib
 
 __all__ = [
     # --- Vector only wrappers
-    "VectoriseLambdaObservationV0",
-    "VectoriseLambdaActionV0",
-    "VectoriseLambdaRewardV0",
+    "VectorizeLambdaObservationV0",
+    "VectorizeLambdaActionV0",
+    "VectorizeLambdaRewardV0",
     "DictInfoToListV0",
     # --- Observation wrappers ---
     "LambdaObservationV0",
@@ -48,12 +48,12 @@ _wrapper_to_class = {
     # --- dict_info_to_list
     "DictInfoToListV0": "dict_info_to_list",
     # --- vectorize_action.py
-    "VectoriseLambdaActionV0": "vectorize_action",
+    "VectorizeLambdaActionV0": "vectorize_action",
     "LambdaActionV0": "vectorize_action",
     "ClipActionV0": "vectorize_action",
     "RescaleActionV0": "vectorize_action",
     # --- vectorize_observation.py
-    "VectoriseLambdaObservationV0": "vectorize_observation",
+    "VectorizeLambdaObservationV0": "vectorize_observation",
     "LambdaObservationV0": "vectorize_observation",
     "FilterObservationV0": "vectorize_observation",
     "FlattenObservationV0": "vectorize_observation",
@@ -63,7 +63,7 @@ _wrapper_to_class = {
     "RescaleObservationV0": "vectorize_observation",
     "DtypeObservationV0": "vectorize_observation",
     # --- vectorize_reward.py
-    "VectoriseLambdaRewardV0": "vectorize_reward",
+    "VectorizeLambdaRewardV0": "vectorize_reward",
     "ClipRewardV0": "vectorize_reward",
     "LambdaRewardV0": "vectorize_reward",
     # --- stateful_action

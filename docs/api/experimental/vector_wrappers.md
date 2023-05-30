@@ -44,9 +44,9 @@ title: Vector Wrappers
 ```{eval-rst}
 .. autoclass:: gymnasium.experimental.wrappers.vector.RecordEpisodeStatisticsV0
 .. autoclass:: gymnasium.experimental.wrappers.vector.DictInfoToListV0
-.. autoclass:: gymnasium.experimental.wrappers.vector.VectoriseLambdaObservationV0
-.. autoclass:: gymnasium.experimental.wrappers.vector.VectoriseLambdaActionV0
-.. autoclass:: gymnasium.experimental.wrappers.vector.VectoriseLambdaRewardV0
+.. autoclass:: gymnasium.experimental.wrappers.vector.VectorizeLambdaObservationV0
+.. autoclass:: gymnasium.experimental.wrappers.vector.VectorizeLambdaActionV0
+.. autoclass:: gymnasium.experimental.wrappers.vector.VectorizeLambdaRewardV0
 .. autoclass:: gymnasium.experimental.wrappers.vector.JaxToNumpyV0
 .. autoclass:: gymnasium.experimental.wrappers.vector.JaxToTorchV0
 .. autoclass:: gymnasium.experimental.wrappers.vector.NumpyToTorchV0
