@@ -16,10 +16,6 @@ from typing import Any, Callable, Sequence
 from typing_extensions import Final
 
 
-try:
-    import jumpy.numpy as jp
-except ImportError as e:
-    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym
@@ -273,9 +269,9 @@ class GrayscaleObservationV0(
             LambdaObservationV0.__init__(
                 self,
                 env=env,
-                func=lambda obs: jp.expand_dims(
-                    jp.sum(
-                        jp.multiply(obs, jp.array([0.2125, 0.7154, 0.0721])), axis=-1
+                func=lambda obs: np.expand_dims(
+                    np.sum(
+                        np.multiply(obs, np.array([0.2125, 0.7154, 0.0721])), axis=-1
                     ).astype(np.uint8),
                     axis=-1,
                 ),
@@ -288,8 +284,8 @@ class GrayscaleObservationV0(
             LambdaObservationV0.__init__(
                 self,
                 env=env,
-                func=lambda obs: jp.sum(
-                    jp.multiply(obs, jp.array([0.2125, 0.7154, 0.0721])), axis=-1
+                func=lambda obs: np.sum(
+                    np.multiply(obs, np.array([0.2125, 0.7154, 0.0721])), axis=-1
                 ).astype(np.uint8),
                 observation_space=new_observation_space,
             )
@@ -398,7 +394,7 @@ class ReshapeObservationV0(
         LambdaObservationV0.__init__(
             self,
             env=env,
-            func=lambda obs: jp.reshape(obs, shape),
+            func=lambda obs: np.reshape(obs, shape),
             observation_space=new_observation_space,
         )
 
