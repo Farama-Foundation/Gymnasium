@@ -33,7 +33,8 @@ class LambdaObservationV0(VectorObservationWrapper):
 
         Args:
             env: The vector environment to wrap
-            func: A function that will transform an observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.
+            vector_func: A function that will transform the vector observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.
+            single_func: A function that will transform an individual observation.
             observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as ``env.observation_space``.
         """
         super().__init__(env)
