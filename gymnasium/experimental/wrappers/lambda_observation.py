@@ -28,6 +28,19 @@ from gymnasium.core import ActType, ObsType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
 
+__all__ = [
+    "LambdaObservationV0",
+    "FilterObservationV0",
+    "FlattenObservationV0",
+    "GrayscaleObservationV0",
+    "ResizeObservationV0",
+    "ReshapeObservationV0",
+    "RescaleObservationV0",
+    "DtypeObservationV0",
+    "PixelObservationV0",
+]
+
+
 class LambdaObservationV0(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,

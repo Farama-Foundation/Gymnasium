@@ -13,6 +13,9 @@ except ImportError:
     )
 
 
+__all__ = ["AtariPreprocessingV0"]
+
+
 class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Atari 2600 preprocessing wrapper.
 

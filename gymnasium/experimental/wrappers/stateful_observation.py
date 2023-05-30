@@ -26,6 +26,14 @@ from gymnasium.experimental.wrappers.utils import RunningMeanStd, create_zero_ar
 from gymnasium.spaces import Box, Dict, Tuple
 
 
+__all__ = [
+    "DelayObservationV0",
+    "TimeAwareObservationV0",
+    "FrameStackObservationV0",
+    "NormalizeObservationV0",
+]
+
+
 class DelayObservationV0(
     gym.ObservationWrapper[ObsType, ActType, ObsType], gym.utils.RecordConstructorArgs
 ):

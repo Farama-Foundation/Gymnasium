@@ -18,6 +18,9 @@ from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 
 
+__all__ = ["RenderCollectionV0", "RecordVideoV0", "HumanRenderingV0"]
+
+
 class RenderCollectionV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
