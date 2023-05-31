@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar, Union, Type
 
 import numpy as np
 
-from gymnasium import spaces
+from gymnasium import spaces, logger
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 
@@ -233,6 +233,9 @@ class Env(Generic[ObsType, ActType]):
         # propagate exception
         return False
 
+    def get_attr(self, name: str) -> Any:
+        return getattr(self, name)
+
 
 WrapperObsType = TypeVar("WrapperObsType")
 WrapperActType = TypeVar("WrapperActType")
@@ -272,14 +275,34 @@ class Wrapper(
         self._cached_spec: EnvSpec | None = None
 
     def __getattr__(self, name: str) -> Any:
-        """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
+        """Returns an attribute with ``name``, unless ``name`` starts with an underscore.
+
+        Args:
+            name: The variable name
+
+        Returns:
+            The value of the variable in the wrapper stack
+
+        Warnings:
+            This feature is deprecated and removed in v1.0 and replaced with `env.get_attr(name})`
+        """
         if name == "_np_random":
             raise AttributeError(
                 "Can't access `_np_random` of a wrapper, use `self.unwrapped._np_random` or `self.np_random`."
             )
         elif name.startswith("_"):
             raise AttributeError(f"accessing private attribute '{name}' is prohibited")
+        logger.warn(f"This feature is deprecated and will be removed in v1.0 and replaced with `env.get_attr('{name}')`.")
         return getattr(self.env, name)
+
+    def get_attr(self, name: str) -> Any:
+        if name in self.__dict__:
+            return self.__dict__[name]
+        else:
+            try:
+                return self.env.get_attr(name)
+            except AttributeError as e:
+                raise AttributeError(f"wrapper {self.class_name()} has no attribute {name!r}") from e
 
     @property
     def spec(self) -> EnvSpec | None:
@@ -360,6 +383,7 @@ class Wrapper(
         """Return the :attr:`Env` :attr:`reward_range` unless overwritten then the wrapper :attr:`reward_range` is used."""
         if self._reward_range is None:
             return self.env.reward_range
+        logger.warn("The `reward_range` is deprecated and will be removed in v1.0")
         return self._reward_range
 
     @reward_range.setter
