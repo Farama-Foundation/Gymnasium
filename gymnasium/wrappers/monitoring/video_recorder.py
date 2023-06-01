@@ -144,9 +144,6 @@ class VideoRecorder:
         if not self.enabled or self._closed:
             return
 
-        # First close the environment
-        self.env.close()
-
         # Close the encoder
         if len(self.recorded_frames) > 0:
             try:
