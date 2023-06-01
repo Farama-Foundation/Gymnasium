@@ -5,6 +5,7 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 import gymnasium as gym
+from gymnasium import logger
 from gymnasium.core import ActType
 from gymnasium.utils.passive_env_checker import (
     check_action_space,
@@ -39,6 +40,7 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.checked_reset = False
         self.checked_step = False
         self.checked_render = False
+        self.close_called = False
 
     def step(self, action: ActType):
         """Steps through the environment that on the first call will run the `passive_env_step_check`."""
@@ -77,3 +79,17 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
         self._cached_spec = env_spec
         return env_spec
+
+    def close(self):
+        """Warns if calling close on a closed environment fails."""
+        if self.close_called is False:
+            self.close_called = True
+            return self.env.close()
+        else:
+            try:
+                return self.env.close()
+            except Exception as e:
+                logger.warn(
+                    "Calling `env.close()` on the closed environment should be allowed, but it raised the following exception."
+                )
+                raise e
