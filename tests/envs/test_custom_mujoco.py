@@ -3,7 +3,7 @@ __credits__ = ["Kallinteris-Andreas"]
 import numpy as np
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
-import gymansium as gym
+import gymnasium as gym
 from gymnasium.spaces import Box
 import pytest
 from gymnasium.error import Error
