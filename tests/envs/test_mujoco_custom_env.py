@@ -1,32 +1,24 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+import warnings
+
 import numpy as np
+import pytest
+
+import gymnasium as gym
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
-import gymnasium as gym
-from gymnasium.spaces import Box
-import pytest
 from gymnasium.error import Error
-import warnings
+from gymnasium.spaces import Box
 
 
 class PointEnv(MujocoEnv, utils.EzPickle):
     """
-    A simple mujuco env to test thrid party mujoco env, using the `Gymansium.MujocoEnv` environment API.
+    A simple mujuco env to test third party mujoco env, using the `Gymansium.MujocoEnv` environment API.
     """
 
-    def __init__(
-        self,
-        xml_file="point.xml",
-        frame_skip=1,
-        **kwargs
-    ):
-        utils.EzPickle.__init__(
-            self,
-            xml_file,
-            frame_skip,
-            **kwargs
-        )
+    def __init__(self, xml_file="point.xml", frame_skip=1, **kwargs):
+        utils.EzPickle.__init__(self, xml_file, frame_skip, **kwargs)
 
         self.metadata = {
             "render_modes": [
@@ -43,7 +35,7 @@ class PointEnv(MujocoEnv, utils.EzPickle):
             frame_skip=frame_skip,
             observation_space=None,  # needs to be defined after
             default_camera_config={},
-            **kwargs
+            **kwargs,
         )
 
         obs_size = self.data.qpos.size + self.data.qvel.size
@@ -92,7 +84,7 @@ CHECK_ENV_IGNORE_WARNINGS = [
 
 @pytest.mark.parametrize("frame_skip", [1, 2, 3, 4, 5])
 def test_frame_skip(frame_skip):
-    """verify that cusstom envs work with different `frame_skip` values"""
+    """verify that custom envs work with different `frame_skip` values"""
     env = PointEnv(frame_skip=frame_skip)
 
     # Test if env adheres to Gym API
@@ -102,4 +94,3 @@ def test_frame_skip(frame_skip):
     for warning in w:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
             raise Error(f"Unexpected warning: {warning.message}")
-
