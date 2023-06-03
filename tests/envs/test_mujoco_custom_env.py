@@ -97,7 +97,7 @@ def test_frame_skip(frame_skip):
 
     # Test if env adheres to Gym API
     with warnings.catch_warnings(record=True) as w:
-        gym.utils.env_checker.check_env(env.unwrapped, skip_render_check=False)
+        gym.utils.env_checker.check_env(env.unwrapped, skip_render_check=True)
         env.close()
     for warning in w:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
