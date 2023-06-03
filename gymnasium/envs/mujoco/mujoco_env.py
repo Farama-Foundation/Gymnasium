@@ -81,8 +81,6 @@ class BaseMujocoEnv(gym.Env):
             assert (
                 int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
             ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
-        else:
-            self.metadata["render_fps"] = int(np.round(1.0 / self.dt))
 
         self.observation_space = observation_space
         self._set_action_space()
