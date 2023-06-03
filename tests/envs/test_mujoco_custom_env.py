@@ -17,17 +17,16 @@ class PointEnv(MujocoEnv, utils.EzPickle):
     A simple mujuco env to test third party mujoco env, using the `Gymansium.MujocoEnv` environment API.
     """
 
+    metadata = {
+        "render_modes": [
+            "human",
+            "rgb_array",
+            "depth_array",
+        ],
+    }
+
     def __init__(self, xml_file="point.xml", frame_skip=1, **kwargs):
         utils.EzPickle.__init__(self, xml_file, frame_skip, **kwargs)
-
-        self.metadata = {
-            "render_modes": [
-                "human",
-                "rgb_array",
-                "depth_array",
-            ],
-            # "render_fps": 100 / frame_skip,  # do not compute it
-        }
 
         MujocoEnv.__init__(
             self,
@@ -37,6 +36,15 @@ class PointEnv(MujocoEnv, utils.EzPickle):
             default_camera_config={},
             **kwargs,
         )
+
+        self.metadata = {
+            "render_modes": [
+                "human",
+                "rgb_array",
+                "depth_array",
+            ],
+            "render_fps": int(np.round(1.0 / self.dt)),
+        }
 
         obs_size = self.data.qpos.size + self.data.qvel.size
 
