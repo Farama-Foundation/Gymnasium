@@ -140,6 +140,11 @@ Uses The [Open 3D Engine](https://www.o3de.org/) for AI simulations and can inte
 
 ## Robotics environments
 
+### [PyFlyt: UAV Flight Simulator Environments for Reinforcement Learning Research](https://jjshoots.github.io/PyFlyt/index.html#)
+
+A library for testing reinforcement learning algorithms on various UAVs.
+It is built on the [Bullet](https://github.com/bulletphysics/bullet3) physics engine, offers flexible rendering options, time-discrete steppable physics, Python bindings, and support for custom drones of any configuration, be it biplanes, quadcopters, rockets, and anything you can think of.
+
 ### [gym-pybullet-drones: Environments for quadcopter control](https://github.com/JacopoPan/gym-pybullet-drones)
 
 A simple environment using [PyBullet](https://github.com/bulletphysics/bullet3) to simulate the dynamics of a [Bitcraze Crazyflie 2.x](https://www.bitcraze.io/documentation/hardware/crazyflie_2_1/crazyflie_2_1-datasheet.pdf) nanoquadrotor.
