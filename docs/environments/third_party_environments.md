@@ -66,10 +66,10 @@ Highly scalable and customizable Safe Reinforcement Learning library.
 
 Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
 
-### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/MatPoliquin/stable-retro)
+### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/Farama-Foundation/stable-retro)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/MatPoliquin/stable-retro)]()
+[![GitHub stars](https://img.shields.io/github/stars/Farama-Foundation/stable-retro)]()
 
 Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
 
