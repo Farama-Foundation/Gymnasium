@@ -114,5 +114,5 @@ def test_xml_file():
     full_path = os.getcwd() + "/tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
     env = PointEnv(xml_file=full_path)
     assert env.unwrapped.data.qpos.size == 9
-    
+
     # note can not test user home path (with '~') because github CI does not have a home folder
