@@ -7,6 +7,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import utils
+from gymnasium.utils.env_checker import check_env
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.error import Error
 from gymnasium.spaces import Box
@@ -97,8 +98,16 @@ def test_frame_skip(frame_skip):
 
     # Test if env adheres to Gym API
     with warnings.catch_warnings(record=True) as w:
-        gym.utils.env_checker.check_env(env.unwrapped, skip_render_check=True)
+        # gym.utils.env_checker.check_env(env.unwrapped, skip_render_check=True)
+        check_env(env.unwrapped, skip_render_check=True)
         env.close()
     for warning in w:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
             raise Error(f"Unexpected warning: {warning.message}")
+
+
+def test_xml_file():
+    """Verify that the loading of a custom XML file works """
+    env = PointEnv(xml_file="./envs/mujoco/assets/walker2d_v5_uneven_feet.xml")
+    assert env.unwrapped.data.qpos.size == 9
+
