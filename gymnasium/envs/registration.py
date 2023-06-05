@@ -904,7 +904,6 @@ def make_vec(
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
         vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom"
-        kwargs: Additional arguments to pass to the environment constructor.
         vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
         wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
         **kwargs: Additional arguments to pass to the environment constructor.
@@ -953,14 +952,16 @@ def make_vec(
 
     def _create_env():
         # Env creator for use with sync and async modes
-        render_mode = _kwargs.get("render_mode", None)
-        inner_render_mode = (
-            render_mode[: -len("_list")]
-            if render_mode is not None and render_mode.endswith("_list")
-            else render_mode
-        )
         _kwargs_copy = _kwargs.copy()
-        _kwargs_copy["render_mode"] = inner_render_mode
+
+        render_mode = _kwargs.get("render_mode", None)
+        if render_mode is not None:
+            inner_render_mode = (
+                render_mode[: -len("_list")]
+                if render_mode.endswith("_list")
+                else render_mode
+            )
+            _kwargs_copy["render_mode"] = inner_render_mode
 
         _env = env_creator(**_kwargs_copy)
         _env.spec = spec_

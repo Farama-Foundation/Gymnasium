@@ -59,10 +59,17 @@ gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](
 
 Highly scalable and customizable Safe Reinforcement Learning library.
 
-### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/MatPoliquin/stable-retro)
+### [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
+[![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)]()
+
+Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
+
+### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/Farama-Foundation/stable-retro)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/MatPoliquin/stable-retro)]()
+[![GitHub stars](https://img.shields.io/github/stars/Farama-Foundation/stable-retro)]()
 
 Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
 
@@ -132,6 +139,11 @@ Gym (and PettingZoo) wrappers for arbitrary and premade environments with the Un
 Uses The [Open 3D Engine](https://www.o3de.org/) for AI simulations and can interoperate with the Gym. Uses [PyBullet](https://github.com/bulletphysics/bullet3) physics.
 
 ## Robotics environments
+
+### [PyFlyt: UAV Flight Simulator Environments for Reinforcement Learning Research](https://jjshoots.github.io/PyFlyt/index.html#)
+
+A library for testing reinforcement learning algorithms on various UAVs.
+It is built on the [Bullet](https://github.com/bulletphysics/bullet3) physics engine, offers flexible rendering options, time-discrete steppable physics, Python bindings, and support for custom drones of any configuration, be it biplanes, quadcopters, rockets, and anything you can think of.
 
 ### [gym-pybullet-drones: Environments for quadcopter control](https://github.com/JacopoPan/gym-pybullet-drones)
 

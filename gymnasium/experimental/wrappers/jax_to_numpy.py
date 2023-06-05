@@ -32,13 +32,19 @@ def numpy_to_jax(value: Any) -> Any:
 
 
 @numpy_to_jax.register(numbers.Number)
-@numpy_to_jax.register(np.ndarray)
-def _number_ndarray_numpy_to_jax(
-    value: np.ndarray | numbers.Number,
+def _number_to_jax(
+    value: numbers.Number,
 ) -> jnp.DeviceArray:
-    """Converts a numpy array or  number (int, float, etc.) to a Jax DeviceArray."""
+    """Converts a number (int, float, etc.) to a Jax DeviceArray."""
     assert jnp is not None
     return jnp.array(value)
+
+
+@numpy_to_jax.register(np.ndarray)
+def _numpy_array_to_jax(value: np.ndarray) -> jnp.DeviceArray:
+    """Converts a NumPy Array to a Jax DeviceArray with the same dtype (excluding float64 without being enabled)."""
+    assert jnp is not None
+    return jnp.array(value, dtype=value.dtype)
 
 
 @numpy_to_jax.register(abc.Mapping)
@@ -99,10 +105,10 @@ class JaxToNumpyV0(
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
-        """Wraps an environment such that the input and outputs are numpy arrays.
+        """Wraps a jax environment such that the input and outputs are numpy arrays.
 
         Args:
-            env: the environment to wrap
+            env: the jax environment to wrap
         """
         if jnp is None:
             raise DependencyNotInstalled(
@@ -120,7 +126,7 @@ class JaxToNumpyV0(
             action: the action to perform as a numpy array
 
         Returns:
-            A tuple containing the next observation, reward, termination, truncation, and extra info.
+            A tuple containing numpy versions of the next observation, reward, termination, truncation, and extra info.
         """
         jax_action = numpy_to_jax(action)
         obs, reward, terminated, truncated, info = self.env.step(jax_action)

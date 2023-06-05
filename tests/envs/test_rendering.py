@@ -62,13 +62,19 @@ def test_render_modes(spec):
         if mode != "human":
             new_env = spec.make(render_mode=mode)
 
-            new_env.reset()
-            rendered = new_env.render()
-            check_rendered(rendered, mode)
+            try:
+                new_env.reset()
+                rendered = new_env.render()
+                check_rendered(rendered, mode)
 
-            new_env.step(new_env.action_space.sample())
-            rendered = new_env.render()
-            check_rendered(rendered, mode)
-
-            new_env.close()
+                new_env.step(new_env.action_space.sample())
+                rendered = new_env.render()
+                check_rendered(rendered, mode)
+            except Exception as e:
+                if "gladLoadGL error" in str(e):
+                    pytest.skip("OpenGL not available")
+                else:
+                    raise
+            finally:
+                new_env.close()
     env.close()
