@@ -1,8 +1,8 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+import os
 import warnings
 
-import os
 import numpy as np
 import pytest
 
@@ -110,7 +110,8 @@ def test_xml_file():
     relative_path = "./tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
     env = PointEnv(xml_file=relative_path)
     assert env.unwrapped.data.qpos.size == 9
-    
+
+    assert os.getcwd() is None
     full_path = os.getcwd() + "tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
-    env = PointEnv(xml_file=os.path.abspath(full_path)
+    env = PointEnv(xml_file=full_path)
     assert env.unwrapped.data.qpos.size == 9
