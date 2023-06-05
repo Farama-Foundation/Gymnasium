@@ -3,6 +3,7 @@ __credits__ = ["Kallinteris-Andreas"]
 import warnings
 
 import numpy as np
+import os
 import pytest
 
 from gymnasium import utils
@@ -107,5 +108,6 @@ def test_frame_skip(frame_skip):
 
 def test_xml_file():
     """Verify that the loading of a custom XML file works"""
+    env = PointEnv(xml_file=os.path.abspath(os.getcwd()))
     env = PointEnv(xml_file=".tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml")
     assert env.unwrapped.data.qpos.size == 9
