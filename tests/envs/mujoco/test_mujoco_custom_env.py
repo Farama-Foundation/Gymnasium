@@ -5,7 +5,6 @@ import warnings
 
 import numpy as np
 import pytest
-
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.error import Error
@@ -80,6 +79,9 @@ class PointEnv(MujocoEnv, utils.EzPickle):
 
         return observation
 
+    def reset_info():
+        return {"works": True}
+
 
 CHECK_ENV_IGNORE_WARNINGS = [
     f"\x1b[33mWARN: {message}\x1b[0m"
@@ -116,3 +118,11 @@ def test_xml_file():
     assert env.unwrapped.data.qpos.size == 9
 
     # note can not test user home path (with '~') because github CI does not have a home folder
+
+
+def test_reset_info():
+    """Verify that the environment returns info at `reset()`"""
+    env = PointEnv()
+
+    _, info = env.reset()
+    assert info["works"]
