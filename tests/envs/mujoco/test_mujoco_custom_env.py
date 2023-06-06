@@ -79,7 +79,7 @@ class PointEnv(MujocoEnv, utils.EzPickle):
 
         return observation
 
-    def _get_reset_info():
+    def _get_reset_info(self):
         return {"works": True}
 
 
