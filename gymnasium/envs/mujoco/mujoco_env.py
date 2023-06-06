@@ -153,7 +153,6 @@ class BaseMujocoEnv(gym.Env):
             self.render()
         return ob, info
 
-
     def set_state(self, qpos, qvel):
         """
         Set the joints position qpos and velocity qvel of the model. Override this method depending on the MuJoCo bindings used.

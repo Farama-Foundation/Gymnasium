@@ -5,6 +5,7 @@ import warnings
 
 import numpy as np
 import pytest
+
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.error import Error
