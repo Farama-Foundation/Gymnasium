@@ -126,4 +126,4 @@ def test_reset_info():
     env = PointEnv()
 
     _, info = env.reset()
-    assert info["works"]
+    assert info["works"] is True
