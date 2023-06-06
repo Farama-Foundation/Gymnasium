@@ -132,6 +132,9 @@ class BaseMujocoEnv(gym.Env):
         raise NotImplementedError
 
     # -----------------------------
+    def _get_reset_info(self) -> Dict:
+        """Function that generates the `info` that is returned during a `reset()`."""
+        return {}
 
     def reset(
         self,
@@ -144,9 +147,12 @@ class BaseMujocoEnv(gym.Env):
         self._reset_simulation()
 
         ob = self.reset_model()
+        info = self._get_reset_info()
+
         if self.render_mode == "human":
             self.render()
-        return ob, {}
+        return ob, info
+
 
     def set_state(self, qpos, qvel):
         """
