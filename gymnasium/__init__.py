@@ -16,6 +16,7 @@ from gymnasium.envs.registration import (
     registry,
     pprint_registry,
     make_vec,
+    register_envs,
 )
 
 # necessary for `envs.__init__` which registers all gymnasium environments and loads plugins
@@ -38,6 +39,7 @@ __all__ = [
     "register",
     "registry",
     "pprint_registry",
+    "register_envs",
     # module folders
     "envs",
     "experimental",

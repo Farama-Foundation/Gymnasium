@@ -13,6 +13,7 @@ import sys
 import traceback
 from collections import defaultdict
 from dataclasses import dataclass, field
+from types import ModuleType
 from typing import Any, Callable, Iterable, Sequence
 
 from gymnasium import Env, Wrapper, error, logger
@@ -55,6 +56,7 @@ __all__ = [
     "make_vec",
     "spec",
     "pprint_registry",
+    "register_envs",
 ]
 
 
@@ -600,12 +602,14 @@ def load_plugin_envs(entry_point: str = "gymnasium.envs"):
             fn = plugin.load()
             try:
                 fn()
-                logger.warn(f"The environment registration system on `import gymnasium` is deprecated and will be removed in v1.0 ({plugin.value}), please update code to `import {plugin.value}` separately or use to load the module `gym.make('{plugin.value}:env_name-v0')`")
+                logger.warn(
+                    f"The environment registration system on `import gymnasium` is deprecated and will be removed in v1.0 ({plugin.value}), please update code to `import {plugin.value}` separately or use to load the module `gym.make('{plugin.value}:env_name-v0')`"
+                )
             except Exception:
                 logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
 
 
-def register_envs(env_module):
+def register_envs(env_module: ModuleType):
     """A No-op function such that it can appear to IDEs that a module is used."""
     pass
 

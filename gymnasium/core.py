@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar, Union, Type
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
-from gymnasium import spaces, logger
+from gymnasium import logger, spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 
@@ -234,6 +234,7 @@ class Env(Generic[ObsType, ActType]):
         return False
 
     def get_attr(self, name: str) -> Any:
+        """Gets the attribute `name` from the environment."""
         return getattr(self, name)
 
 
@@ -292,17 +293,30 @@ class Wrapper(
             )
         elif name.startswith("_"):
             raise AttributeError(f"accessing private attribute '{name}' is prohibited")
-        logger.warn(f"This feature is deprecated and will be removed in v1.0 and replaced with `env.get_attr('{name}')`.")
+        logger.warn(
+            f"env.{name} to get variables from other wrappers is deprecated and will be removed in v1.0, "
+            f"to get this variable you can do `env.unwrapped.{name}` for environment variables or `env.get_attr('{name}')` that will search the reminding wrappers."
+        )
         return getattr(self.env, name)
 
     def get_attr(self, name: str) -> Any:
-        if name in self.__dict__:
-            return self.__dict__[name]
+        """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.
+
+        Args:
+            name: The variable name to get
+
+        Returns:
+            The variable with name in wrapper or lower environments
+        """
+        if hasattr(self, name):
+            return getattr(self, name)
         else:
             try:
                 return self.env.get_attr(name)
             except AttributeError as e:
-                raise AttributeError(f"wrapper {self.class_name()} has no attribute {name!r}") from e
+                raise AttributeError(
+                    f"wrapper {self.class_name()} has no attribute {name!r}"
+                ) from e
 
     @property
     def spec(self) -> EnvSpec | None:
