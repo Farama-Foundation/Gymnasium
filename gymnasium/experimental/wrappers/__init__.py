@@ -90,7 +90,7 @@ __all__ = [
 ]
 
 
-# As these wrappers requires `jax` or `torch`, they are loaded by runtime on users trying to access them
+# As these wrappers requires `jax` or `torch`, they are loaded by runtime for users trying to access them
 #   to avoid `import jax` or `import torch` on `import gymnasium`.
 _wrapper_to_class = {
     # data converters
