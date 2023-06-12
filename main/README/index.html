@@ -495,7 +495,7 @@
 <section id="editing-an-environment-page">
 <h3>Editing an environment page<a class="headerlink" href="#editing-an-environment-page" title="Permalink to this heading">#</a></h3>
 <p>If you are editing an Atari environment, directly edit the Markdown file in this repository.</p>
-<p>Otherwise, fork Gymnasium and edit the docstring in the environment’s Python file. Then, pip install your Gymnasium fork and run <code class="docutils literal notranslate"><span class="pre">docs/scripts/gen_mds.py</span></code> in this repo. This will automatically generate a Markdown documentation file for the environment.</p>
+<p>Otherwise, fork Gymnasium and edit the docstring in the environment’s Python file. Then, pip install your Gymnasium fork and run <code class="docutils literal notranslate"><span class="pre">docs/_scripts/gen_mds.py</span></code> in this repo. This will automatically generate a Markdown documentation file for the environment.</p>
 </section>
 <section id="adding-a-new-environment">
 <h3>Adding a new environment<a class="headerlink" href="#adding-a-new-environment" title="Permalink to this heading">#</a></h3>
@@ -505,12 +505,12 @@
 </section>
 <section id="non-atari-env">
 <h4>Non-Atari env<a class="headerlink" href="#non-atari-env" title="Permalink to this heading">#</a></h4>
-<p>Ensure the environment is in Gymnasium (or your fork). Ensure that the environment’s Python file has a properly formatted markdown docstring. Install using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> and then run <code class="docutils literal notranslate"><span class="pre">docs/scripts/gen_mds.py</span></code>. This will automatically generate a md page for the environment. Then complete the <a class="reference internal" href="#other-steps"><span class="xref myst">other steps</span></a>.</p>
+<p>Ensure the environment is in Gymnasium (or your fork). Ensure that the environment’s Python file has a properly formatted markdown docstring. Install using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> and then run <code class="docutils literal notranslate"><span class="pre">docs/_scripts/gen_mds.py</span></code>. This will automatically generate a md page for the environment. Then complete the <a class="reference internal" href="#other-steps"><span class="xref myst">other steps</span></a>.</p>
 </section>
 <section id="other-steps">
 <h4>Other steps<a class="headerlink" href="#other-steps" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
-<li><p>Add the corresponding gif into the <code class="docutils literal notranslate"><span class="pre">docs/_static/videos/{ENV_TYPE}</span></code> folder, where <code class="docutils literal notranslate"><span class="pre">ENV_TYPE</span></code> is the category of your new environment (e.g. mujoco). Follow snake_case naming convention. Alternatively, run <code class="docutils literal notranslate"><span class="pre">docs/scripts/gen_gifs.py</span></code>.</p></li>
+<li><p>Add the corresponding gif into the <code class="docutils literal notranslate"><span class="pre">docs/_static/videos/{ENV_TYPE}</span></code> folder, where <code class="docutils literal notranslate"><span class="pre">ENV_TYPE</span></code> is the category of your new environment (e.g. mujoco). Follow snake_case naming convention. Alternatively, run <code class="docutils literal notranslate"><span class="pre">docs/_scripts/gen_gifs.py</span></code>.</p></li>
 <li><p>Edit <code class="docutils literal notranslate"><span class="pre">docs/environments/{ENV_TYPE}/index.md</span></code>, and add the name of the file corresponding to your new environment to the <code class="docutils literal notranslate"><span class="pre">toctree</span></code>.</p></li>
 </ul>
 </section>
@@ -553,7 +553,7 @@
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2022 Farama Foundation
+                Copyright &#169; 2023 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
