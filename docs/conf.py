@@ -16,7 +16,6 @@
 
 # -- Project information -----------------------------------------------------
 import os
-import re
 
 import sphinx_gallery.gen_rst
 
@@ -122,19 +121,6 @@ sphinx_gallery.gen_rst.EXAMPLE_HEADER = """
 .. _sphx_glr_{1}:
 
 """
-
-sphinx_gallery_conf = {
-    "ignore_pattern": r"__init__\.py",
-    "examples_dirs": "./tutorials",
-    "gallery_dirs": "./tutorials",
-    "show_signature": False,
-    "show_memory": False,
-    "min_reported_time": float("inf"),
-    "filename_pattern": f"{re.escape(os.sep)}run_",
-    "default_thumb_file": os.path.join(
-        os.path.dirname(__file__), "_static/img/gymnasium-github.png"
-    ),
-}
 
 # -- Generate Changelog -------------------------------------------------
 

@@ -117,7 +117,7 @@ safe = true
 [tool.isort]
 atomic = true
 profile = "black"
-src_paths = ["gymnasium", "tests", "docs/scripts"]
+src_paths = ["gymnasium", "tests", "docs/_scripts"]
 extra_standard_library = ["typing_extensions"]
 indent = 4
 lines_after_imports = 2
