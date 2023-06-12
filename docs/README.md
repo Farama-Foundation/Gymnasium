@@ -10,7 +10,7 @@ If you are modifying an atari environment page, please follow the instructions b
 
 If you are editing an Atari environment, directly edit the Markdown file in this repository.
 
-Otherwise, fork Gymnasium and edit the docstring in the environment's Python file. Then, pip install your Gymnasium fork and run `docs/scripts/gen_mds.py` in this repo. This will automatically generate a Markdown documentation file for the environment.
+Otherwise, fork Gymnasium and edit the docstring in the environment's Python file. Then, pip install your Gymnasium fork and run `docs/_scripts/gen_mds.py` in this repo. This will automatically generate a Markdown documentation file for the environment.
 
 ### Adding a new environment
 
@@ -20,11 +20,11 @@ For Atari envs, add a Markdown file into `docs/environments/atari` then complete
 
 #### Non-Atari env
 
-Ensure the environment is in Gymnasium (or your fork). Ensure that the environment's Python file has a properly formatted markdown docstring. Install using `pip install -e .` and then run `docs/scripts/gen_mds.py`. This will automatically generate a md page for the environment. Then complete the [other steps](#other-steps).
+Ensure the environment is in Gymnasium (or your fork). Ensure that the environment's Python file has a properly formatted markdown docstring. Install using `pip install -e .` and then run `docs/_scripts/gen_mds.py`. This will automatically generate a md page for the environment. Then complete the [other steps](#other-steps).
 
 #### Other steps
 
-- Add the corresponding gif into the `docs/_static/videos/{ENV_TYPE}` folder, where `ENV_TYPE` is the category of your new environment (e.g. mujoco). Follow snake_case naming convention. Alternatively, run `docs/scripts/gen_gifs.py`.
+- Add the corresponding gif into the `docs/_static/videos/{ENV_TYPE}` folder, where `ENV_TYPE` is the category of your new environment (e.g. mujoco). Follow snake_case naming convention. Alternatively, run `docs/_scripts/gen_gifs.py`.
 - Edit `docs/environments/{ENV_TYPE}/index.md`, and add the name of the file corresponding to your new environment to the `toctree`.
 
 ## Build the Documentation
