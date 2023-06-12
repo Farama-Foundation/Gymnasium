@@ -40,14 +40,6 @@ class VideoRecorder:
             Error: You can pass at most one of `path` or `base_path`
             Error: Invalid path given that must have a particular file extension
         """
-        try:
-            # check that moviepy is now installed
-            import moviepy  # noqa: F401
-        except ImportError as e:
-            raise error.DependencyNotInstalled(
-                "moviepy is not installed, run `pip install moviepy`"
-            ) from e
-
         self._async = env.metadata.get("semantics.async")
         self.enabled = enabled
         self.disable_logger = disable_logger
@@ -57,6 +49,14 @@ class VideoRecorder:
         self.env = env
 
         self.render_mode = env.render_mode
+
+        try:
+            # check that moviepy is now installed
+            import moviepy  # noqa: F401
+        except ImportError as e:
+            raise error.DependencyNotInstalled(
+                "moviepy is not installed, run `pip install moviepy`"
+            ) from e
 
         if "rgb_array_list" != self.render_mode and "rgb_array" != self.render_mode:
             logger.warn(
