@@ -244,15 +244,15 @@ def test_check_reset_options():
     [
         [
             "Error",
-            "The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/content/environment_creation/ for more info.",
+            "The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
         ],
         [
             GenericTestEnv(action_space=None),
-            "The environment must specify an action space. See https://gymnasium.farama.org/content/environment_creation/ for more info.",
+            "The environment must specify an action space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
         ],
         [
             GenericTestEnv(observation_space=None),
-            "The environment must specify an observation space. See https://gymnasium.farama.org/content/environment_creation/ for more info.",
+            "The environment must specify an observation space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
         ],
     ],
 )

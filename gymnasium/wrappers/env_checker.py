@@ -29,11 +29,11 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
         assert hasattr(
             env, "action_space"
-        ), "The environment must specify an action space. https://gymnasium.farama.org/content/environment_creation/"
+        ), "The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
         check_action_space(env.action_space)
         assert hasattr(
             env, "observation_space"
-        ), "The environment must specify an observation space. https://gymnasium.farama.org/content/environment_creation/"
+        ), "The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
         check_observation_space(env.observation_space)
 
         self.checked_reset = False
