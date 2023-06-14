@@ -741,7 +741,7 @@
 <span class="sd">    This is an invasive function that calls the environment&#39;s reset and step.</span>
 
 <span class="sd">    This is particularly useful when using a custom environment.</span>
-<span class="sd">    Please take a look at https://gymnasium.farama.org/content/environment_creation/</span>
+<span class="sd">    Please take a look at https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/</span>
 <span class="sd">    for more information about the API.</span>
 
 <span class="sd">    Args:</span>
@@ -754,7 +754,7 @@
 
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
         <span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span>
-    <span class="p">),</span> <span class="s2">&quot;The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/content/environment_creation/ for more info.&quot;</span>
+    <span class="p">),</span> <span class="s2">&quot;The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.&quot;</span>
 
     <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">env</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -764,13 +764,13 @@
     <span class="c1"># ============= Check the spaces (observation and action) ================</span>
     <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
         <span class="n">env</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span>
-    <span class="p">),</span> <span class="s2">&quot;The environment must specify an action space. See https://gymnasium.farama.org/content/environment_creation/ for more info.&quot;</span>
+    <span class="p">),</span> <span class="s2">&quot;The environment must specify an action space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.&quot;</span>
     <span class="n">check_action_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
     <span class="n">check_space_limit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
         <span class="n">env</span><span class="p">,</span> <span class="s2">&quot;observation_space&quot;</span>
-    <span class="p">),</span> <span class="s2">&quot;The environment must specify an observation space. See https://gymnasium.farama.org/content/environment_creation/ for more info.&quot;</span>
+    <span class="p">),</span> <span class="s2">&quot;The environment must specify an observation space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.&quot;</span>
     <span class="n">check_observation_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
     <span class="n">check_space_limit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="s2">&quot;observation&quot;</span><span class="p">)</span>
 
