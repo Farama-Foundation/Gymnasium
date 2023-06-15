@@ -59,17 +59,13 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             start: Optionally, the starting value the element of each class will take.
         """
         self.nvec = np.array(nvec, dtype=dtype, copy=True)
-        self.start = start
-        if self.start is not None:
-            assert len(start) == len(
-                nvec
-            ), "start and nvec (counts) should have the same length"
-            if isinstance(nvec, np.ndarray):
-                assert (
-                    isinstance(self.start, np.ndarray)
-                    and self.start.shape == self.nvec.shape
-                ), "start and nvec (counts) should have the same shape"
+        if start is not None:
             self.start = np.array(start, dtype=dtype, copy=True)
+            assert (
+                self.start.shape == self.nvec.shape
+            ), "start and nvec (counts) should have the same shape"
+        else:
+            self.start = None
 
         assert (self.nvec > 0).all(), "nvec (counts) have to be positive"
 
@@ -143,7 +139,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
         if self.start is not None:
             return (
-                self.np_random.random(self.nvec.shape) * self.nvec - self.start
+                self.np_random.random(self.nvec.shape) * self.nvec + self.start
             ).astype(self.dtype)
         return (self.np_random.random(self.nvec.shape) * self.nvec).astype(self.dtype)
 
@@ -162,7 +158,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             and (
                 np.all(x < self.nvec)
                 if self.start is None
-                else np.all(x + self.start < self.nvec)
+                else np.all(x - self.start < self.nvec)
             )
         )
 
@@ -189,9 +185,9 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         nvec = self.nvec[index]
         start = self.start[index] if self.start is not None else None
         if nvec.ndim == 0:
-            subspace = Discrete(nvec, start=start)
+            subspace = Discrete(nvec) if start is None else Discrete(nvec, start=start)
         else:
-            subspace = MultiDiscrete(nvec, self.dtype, start=self.start)
+            subspace = MultiDiscrete(nvec, self.dtype, start=start)
 
         # you don't need to deepcopy as np random generator call replaces the state not the data
         subspace.np_random.bit_generator.state = self.np_random.bit_generator.state
