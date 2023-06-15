@@ -61,12 +61,12 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         self.nvec = np.array(nvec, dtype=dtype, copy=True)
         if start is not None:
             self.start = np.array(start, dtype=dtype, copy=True)
-            assert (
-                self.start.shape == self.nvec.shape
-            ), "start and nvec (counts) should have the same shape"
         else:
-            self.start = None
+            self.start = np.zeros(self.nvec.shape, dtype=dtype)
 
+        assert (
+            self.start.shape == self.nvec.shape
+        ), "start and nvec (counts) should have the same shape"
         assert (self.nvec > 0).all(), "nvec (counts) have to be positive"
 
         super().__init__(self.nvec.shape, dtype, seed)
@@ -137,11 +137,9 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
             return np.array(_apply_mask(mask, self.nvec), dtype=self.dtype)
 
-        if self.start is not None:
-            return (
-                self.np_random.random(self.nvec.shape) * self.nvec + self.start
-            ).astype(self.dtype)
-        return (self.np_random.random(self.nvec.shape) * self.nvec).astype(self.dtype)
+        return (self.np_random.random(self.nvec.shape) * self.nvec + self.start).astype(
+            self.dtype
+        )
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
@@ -154,12 +152,8 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             isinstance(x, np.ndarray)
             and x.shape == self.shape
             and x.dtype != object
-            and (np.all(0 <= x) if self.start is None else np.all(self.start <= x))
-            and (
-                np.all(x < self.nvec)
-                if self.start is None
-                else np.all(x - self.start < self.nvec)
-            )
+            and np.all(self.start <= x)
+            and np.all(x - self.start < self.nvec)
         )
 
     def to_jsonable(
@@ -176,16 +170,16 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
     def __repr__(self):
         """Gives a string representation of this space."""
-        if self.start is not None:
+        if np.any(self.start != 0):
             return f"MultiDiscrete({self.nvec}, start={self.start})"
         return f"MultiDiscrete({self.nvec})"
 
     def __getitem__(self, index: int):
         """Extract a subspace from this ``MultiDiscrete`` space."""
         nvec = self.nvec[index]
-        start = self.start[index] if self.start is not None else None
+        start = self.start[index]
         if nvec.ndim == 0:
-            subspace = Discrete(nvec) if start is None else Discrete(nvec, start=start)
+            subspace = Discrete(nvec, start=start)
         else:
             subspace = MultiDiscrete(nvec, self.dtype, start=start)
 
