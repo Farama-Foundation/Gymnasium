@@ -811,7 +811,7 @@ def make(
             ) from e
         else:
             raise type(e)(
-                f"The environment creator for {env_spec.id} with kwargs ({env_spec_kwargs}) raised the following error: {e}"
+                f"{e} was raised from the environment creator for {env_spec.id} with kwargs ({env_spec_kwargs})"
             )
 
     # Set the minimal env spec for the environment.
