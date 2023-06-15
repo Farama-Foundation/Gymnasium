@@ -44,18 +44,33 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         nvec: NDArray[np.integer[Any]] | list[int],
         dtype: str | type[np.integer[Any]] = np.int64,
         seed: int | np.random.Generator | None = None,
+        start: NDArray[np.integer[Any]] | list[int] | None = None,
     ):
         """Constructor of :class:`MultiDiscrete` space.
 
-        The argument ``nvec`` will determine the number of values each categorical variable can take.
+        The argument ``nvec`` will determine the number of values each categorical variable can take. If
+        ``start`` is provided, it will define the minimal values corresponding to each categorical variable.
 
         Args:
             nvec: vector of counts of each categorical variable. This will usually be a list of integers. However,
                 you may also pass a more complicated numpy array if you'd like the space to have several axes.
             dtype: This should be some kind of integer type.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
+            start: Optionally, the starting value the element of each class will take.
         """
         self.nvec = np.array(nvec, dtype=dtype, copy=True)
+        self.start = start
+        if self.start is not None:
+            assert len(start) == len(
+                nvec
+            ), "start and nvec (counts) should have the same length"
+            if isinstance(nvec, np.ndarray):
+                assert (
+                    isinstance(self.start, np.ndarray)
+                    and self.start.shape == self.nvec.shape
+                ), "start and nvec (counts) should have the same shape"
+            self.start = np.array(start, dtype=dtype, copy=True)
+
         assert (self.nvec > 0).all(), "nvec (counts) have to be positive"
 
         super().__init__(self.nvec.shape, dtype, seed)
@@ -126,6 +141,10 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
             return np.array(_apply_mask(mask, self.nvec), dtype=self.dtype)
 
+        if self.start is not None:
+            return (
+                self.np_random.random(self.nvec.shape) * self.nvec - self.start
+            ).astype(self.dtype)
         return (self.np_random.random(self.nvec.shape) * self.nvec).astype(self.dtype)
 
     def contains(self, x: Any) -> bool:
@@ -139,8 +158,12 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             isinstance(x, np.ndarray)
             and x.shape == self.shape
             and x.dtype != object
-            and np.all(0 <= x)
-            and np.all(x < self.nvec)
+            and (np.all(0 <= x) if self.start is None else np.all(self.start <= x))
+            and (
+                np.all(x < self.nvec)
+                if self.start is None
+                else np.all(x + self.start < self.nvec)
+            )
         )
 
     def to_jsonable(
@@ -157,15 +180,18 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
     def __repr__(self):
         """Gives a string representation of this space."""
+        if self.start is not None:
+            return f"MultiDiscrete({self.nvec}, start={self.start})"
         return f"MultiDiscrete({self.nvec})"
 
     def __getitem__(self, index: int):
         """Extract a subspace from this ``MultiDiscrete`` space."""
         nvec = self.nvec[index]
+        start = self.start[index] if self.start is not None else None
         if nvec.ndim == 0:
-            subspace = Discrete(nvec)
+            subspace = Discrete(nvec, start=start)
         else:
-            subspace = MultiDiscrete(nvec, self.dtype)  # type: ignore
+            subspace = MultiDiscrete(nvec, self.dtype, start=self.start)
 
         # you don't need to deepcopy as np random generator call replaces the state not the data
         subspace.np_random.bit_generator.state = self.np_random.bit_generator.state
@@ -183,5 +209,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
     def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return bool(
-            isinstance(other, MultiDiscrete) and np.all(self.nvec == other.nvec)
+            isinstance(other, MultiDiscrete)
+            and np.all(self.nvec == other.nvec)
+            and np.all(self.start == other.start)
         )
