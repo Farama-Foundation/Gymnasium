@@ -1,5 +1,5 @@
 from os import path
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 import numpy as np
 
@@ -56,8 +56,10 @@ class BaseMujocoEnv(gym.Env):
             OSError: when the `model_path` does not exist.
             error.DependencyNotInstalled: When `mujoco` is not installed.
         """
-        if model_path.startswith("/"):
+        if model_path.startswith(".") or model_path.startswith("/"):
             self.fullpath = model_path
+        elif model_path.startswith("~"):
+            self.fullpath = path.expanduser(model_path)
         else:
             self.fullpath = path.join(path.dirname(__file__), "assets", model_path)
         if not path.exists(self.fullpath):
@@ -130,6 +132,9 @@ class BaseMujocoEnv(gym.Env):
         raise NotImplementedError
 
     # -----------------------------
+    def _get_reset_info(self) -> Dict:
+        """Function that generates the `info` that is returned during a `reset()`."""
+        return {}
 
     def reset(
         self,
@@ -142,9 +147,11 @@ class BaseMujocoEnv(gym.Env):
         self._reset_simulation()
 
         ob = self.reset_model()
+        info = self._get_reset_info()
+
         if self.render_mode == "human":
             self.render()
-        return ob, {}
+        return ob, info
 
     def set_state(self, qpos, qvel):
         """

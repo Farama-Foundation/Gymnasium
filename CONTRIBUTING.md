@@ -66,7 +66,7 @@ pip install -r requirements.txt
 Then run
 
 ```shell
-python scripts/gen_mds.py
+python _scripts/gen_mds.py
 make dirhtml
 ```
 

@@ -1,15 +1,16 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+import os
 import warnings
 
 import numpy as np
 import pytest
 
-import gymnasium as gym
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.error import Error
 from gymnasium.spaces import Box
+from gymnasium.utils.env_checker import check_env
 
 
 class PointEnv(MujocoEnv, utils.EzPickle):
@@ -79,6 +80,9 @@ class PointEnv(MujocoEnv, utils.EzPickle):
 
         return observation
 
+    def _get_reset_info(self):
+        return {"works": True}
+
 
 CHECK_ENV_IGNORE_WARNINGS = [
     f"\x1b[33mWARN: {message}\x1b[0m"
@@ -97,8 +101,29 @@ def test_frame_skip(frame_skip):
 
     # Test if env adheres to Gym API
     with warnings.catch_warnings(record=True) as w:
-        gym.utils.env_checker.check_env(env.unwrapped, skip_render_check=True)
+        check_env(env.unwrapped, skip_render_check=True)
         env.close()
     for warning in w:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
             raise Error(f"Unexpected warning: {warning.message}")
+
+
+def test_xml_file():
+    """Verify that the loading of a custom XML file works"""
+    relative_path = "./tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
+    env = PointEnv(xml_file=relative_path)
+    assert env.unwrapped.data.qpos.size == 9
+
+    full_path = os.getcwd() + "/tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
+    env = PointEnv(xml_file=full_path)
+    assert env.unwrapped.data.qpos.size == 9
+
+    # note can not test user home path (with '~') because github CI does not have a home folder
+
+
+def test_reset_info():
+    """Verify that the environment returns info at `reset()`"""
+    env = PointEnv()
+
+    _, info = env.reset()
+    assert info["works"] is True
