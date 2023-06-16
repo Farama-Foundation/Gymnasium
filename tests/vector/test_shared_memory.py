@@ -29,6 +29,7 @@ expected_types = [
     (Array("i", 1), Array("i", 1)),
     (Array("i", 1), Array("f", 2)),
     Array("B", 3),
+    Array("B", 3),
     Array("B", 19),
     OrderedDict([("position", Array("i", 1)), ("velocity", Array("f", 1))]),
     OrderedDict(

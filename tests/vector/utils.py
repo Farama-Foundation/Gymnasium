@@ -29,6 +29,7 @@ spaces = [
         )
     ),
     MultiDiscrete([11, 13, 17]),
+    MultiDiscrete([10, 14, 18], start=[-5, -7, -9]),
     MultiBinary(19),
     Dict(
         {

@@ -176,7 +176,7 @@ def _flatten_multidiscrete(
     offsets[1:] = np.cumsum(space.nvec.flatten())
 
     onehot = np.zeros((offsets[-1],), dtype=space.dtype)
-    onehot[offsets[:-1] + x.flatten()] = 1
+    onehot[offsets[:-1] + (x - space.start).flatten()] = 1
     return onehot
 
 
@@ -308,7 +308,10 @@ def _unflatten_multidiscrete(
             "Not all valid samples in a flattened space can be unflattened."
         )
     (indices,) = cast(type(offsets[:-1]), nonzero)
-    return np.asarray(indices - offsets[:-1], dtype=space.dtype).reshape(space.shape)
+    return (
+        np.asarray(indices - offsets[:-1], dtype=space.dtype).reshape(space.shape)
+        + space.start
+    )
 
 
 @unflatten.register(Tuple)

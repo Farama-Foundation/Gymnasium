@@ -99,8 +99,12 @@ def _create_discrete_zero_array(space: Discrete):
 
 
 @create_zero_array.register(MultiDiscrete)
+def _create_multidiscrete_zero_array(space: MultiDiscrete):
+    return np.array(space.start, copy=True, dtype=space.dtype)
+
+
 @create_zero_array.register(MultiBinary)
-def _create_array_zero_array(space: Discrete):
+def _create_array_zero_array(space: MultiBinary):
     return np.zeros(space.shape, dtype=space.dtype)
 
 

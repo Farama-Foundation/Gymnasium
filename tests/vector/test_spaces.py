@@ -36,7 +36,7 @@ expected_batch_spaces_4 = [
     Box(low=0, high=255, shape=(4,), dtype=np.uint8),
     Box(low=0, high=255, shape=(4, 32, 32, 3), dtype=np.uint8),
     MultiDiscrete([2, 2, 2, 2]),
-    Box(low=-2, high=2, shape=(4,), dtype=np.int64),
+    MultiDiscrete([5, 5, 5, 5], start=[-2, -2, -2, -2]),
     Tuple((MultiDiscrete([3, 3, 3, 3]), MultiDiscrete([5, 5, 5, 5]))),
     Tuple(
         (
@@ -51,6 +51,11 @@ expected_batch_spaces_4 = [
     Box(
         low=np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]),
         high=np.array([[10, 12, 16], [10, 12, 16], [10, 12, 16], [10, 12, 16]]),
+        dtype=np.int64,
+    ),
+    Box(
+        low=np.array([[-5, -7, -9], [-5, -7, -9], [-5, -7, -9], [-5, -7, -9]]),
+        high=np.array([[4, 6, 8], [4, 6, 8], [4, 6, 8], [4, 6, 8]]),
         dtype=np.int64,
     ),
     Box(low=0, high=1, shape=(4, 19), dtype=np.int8),
