@@ -433,7 +433,7 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
             space.nvec, mask, lambda dim, _: np.zeros(dim)
         )
         for sample in samples:
-            _update_observed_frequency(sample, observed_frequency)
+            _update_observed_frequency(sample - space.start, observed_frequency)
 
         def _chi_squared_test(dim, _mask, exp_freq, obs_freq):
             if isinstance(dim, np.ndarray):

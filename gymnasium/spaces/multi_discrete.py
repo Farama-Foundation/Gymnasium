@@ -56,7 +56,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
                 you may also pass a more complicated numpy array if you'd like the space to have several axes.
             dtype: This should be some kind of integer type.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
-            start: Optionally, the starting value the element of each class will take.
+            start: Optionally, the starting value the element of each class will take (defaults to 0).
         """
         self.nvec = np.array(nvec, dtype=dtype, copy=True)
         if start is not None:
@@ -89,7 +89,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         Args:
             mask: An optional mask for multi-discrete, expects tuples with a `np.ndarray` mask in the position of each
                 action with shape `(n,)` where `n` is the number of actions and `dtype=np.int8`.
-                Only mask values == 1 are possible to sample unless all mask values for an action are 0 then the default action 0 is sampled.
+                Only mask values == 1 are possible to sample unless all mask values for an action are 0 then the default action `self.start` (the smallest element) is sampled.
 
         Returns:
             An `np.ndarray` of shape `space.shape`
@@ -99,6 +99,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             def _apply_mask(
                 sub_mask: MaskNDArray | tuple[MaskNDArray, ...],
                 sub_nvec: MaskNDArray | np.integer[Any],
+                sub_start: MaskNDArray | np.integer[Any],
             ) -> int | list[Any]:
                 if isinstance(sub_nvec, np.ndarray):
                     assert isinstance(
@@ -108,8 +109,10 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
                         sub_nvec
                     ), f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, nvec length: {len(sub_nvec)}"
                     return [
-                        _apply_mask(new_mask, new_nvec)
-                        for new_mask, new_nvec in zip(sub_mask, sub_nvec)
+                        _apply_mask(new_mask, new_nvec, new_start)
+                        for new_mask, new_nvec, new_start in zip(
+                            sub_mask, sub_nvec, sub_start
+                        )
                     ]
                 else:
                     assert np.issubdtype(
@@ -131,11 +134,14 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
                     ), f"Expects all masks values to 0 or 1, actual values: {sub_mask}"
 
                     if np.any(valid_action_mask):
-                        return self.np_random.choice(np.where(valid_action_mask)[0])
+                        return (
+                            self.np_random.choice(np.where(valid_action_mask)[0])
+                            + sub_start
+                        )
                     else:
-                        return 0
+                        return sub_start
 
-            return np.array(_apply_mask(mask, self.nvec), dtype=self.dtype)
+            return np.array(_apply_mask(mask, self.nvec, self.start), dtype=self.dtype)
 
         return (self.np_random.random(self.nvec.shape) * self.nvec + self.start).astype(
             self.dtype
