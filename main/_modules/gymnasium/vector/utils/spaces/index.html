@@ -540,28 +540,21 @@
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_batch_space_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">MultiDiscrete</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,),</span> <span class="n">space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-            <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">),</span>
-        <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
-            <span class="n">low</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
-            <span class="n">high</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,),</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-            <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">),</span>
-        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">MultiDiscrete</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,),</span> <span class="n">space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">),</span>
+        <span class="n">start</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,),</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
+    <span class="p">)</span>
 
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_batch_space_multidiscrete</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">repeats</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
-    <span class="n">high</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="p">,</span> <span class="n">repeats</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">repeats</span><span class="p">)</span>
+    <span class="n">high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="p">,</span> <span class="n">repeats</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
-        <span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">high</span><span class="p">),</span>
+        <span class="n">low</span><span class="o">=</span><span class="n">low</span><span class="p">,</span>
         <span class="n">high</span><span class="o">=</span><span class="n">high</span><span class="p">,</span>
         <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
         <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">),</span>

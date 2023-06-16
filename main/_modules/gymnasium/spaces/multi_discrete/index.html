@@ -523,18 +523,29 @@
         <span class="n">nvec</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of :class:`MultiDiscrete` space.</span>
 
-<span class="sd">        The argument ``nvec`` will determine the number of values each categorical variable can take.</span>
+<span class="sd">        The argument ``nvec`` will determine the number of values each categorical variable can take. If</span>
+<span class="sd">        ``start`` is provided, it will define the minimal values corresponding to each categorical variable.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            nvec: vector of counts of each categorical variable. This will usually be a list of integers. However,</span>
 <span class="sd">                you may also pass a more complicated numpy array if you&#39;d like the space to have several axes.</span>
 <span class="sd">            dtype: This should be some kind of integer type.</span>
 <span class="sd">            seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.</span>
+<span class="sd">            start: Optionally, the starting value the element of each class will take (defaults to 0).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nvec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">),</span> <span class="s2">&quot;start and nvec (counts) should have the same shape&quot;</span>
         <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;nvec (counts) have to be positive&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
@@ -557,7 +568,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            mask: An optional mask for multi-discrete, expects tuples with a `np.ndarray` mask in the position of each</span>
 <span class="sd">                action with shape `(n,)` where `n` is the number of actions and `dtype=np.int8`.</span>
-<span class="sd">                Only mask values == 1 are possible to sample unless all mask values for an action are 0 then the default action 0 is sampled.</span>
+<span class="sd">                Only mask values == 1 are possible to sample unless all mask values for an action are 0 then the default action `self.start` (the smallest element) is sampled.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An `np.ndarray` of shape `space.shape`</span>
@@ -567,6 +578,7 @@
             <span class="k">def</span> <span class="nf">_apply_mask</span><span class="p">(</span>
                 <span class="n">sub_mask</span><span class="p">:</span> <span class="n">MaskNDArray</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MaskNDArray</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
                 <span class="n">sub_nvec</span><span class="p">:</span> <span class="n">MaskNDArray</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+                <span class="n">sub_start</span><span class="p">:</span> <span class="n">MaskNDArray</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
             <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sub_nvec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -576,8 +588,10 @@
                         <span class="n">sub_nvec</span>
                     <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the mask length to be equal to the number of actions, mask length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sub_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">, nvec length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sub_nvec</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="k">return</span> <span class="p">[</span>
-                        <span class="n">_apply_mask</span><span class="p">(</span><span class="n">new_mask</span><span class="p">,</span> <span class="n">new_nvec</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">new_mask</span><span class="p">,</span> <span class="n">new_nvec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sub_mask</span><span class="p">,</span> <span class="n">sub_nvec</span><span class="p">)</span>
+                        <span class="n">_apply_mask</span><span class="p">(</span><span class="n">new_mask</span><span class="p">,</span> <span class="n">new_nvec</span><span class="p">,</span> <span class="n">new_start</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">new_mask</span><span class="p">,</span> <span class="n">new_nvec</span><span class="p">,</span> <span class="n">new_start</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                            <span class="n">sub_mask</span><span class="p">,</span> <span class="n">sub_nvec</span><span class="p">,</span> <span class="n">sub_start</span>
+                        <span class="p">)</span>
                     <span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span>
@@ -599,13 +613,18 @@
                     <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects all masks values to 0 or 1, actual values: </span><span class="si">{</span><span class="n">sub_mask</span><span class="si">}</span><span class="s2">&quot;</span>
 
                     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">valid_action_mask</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_action_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="k">return</span> <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_action_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                            <span class="o">+</span> <span class="n">sub_start</span>
+                        <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mi">0</span>
+                        <span class="k">return</span> <span class="n">sub_start</span>
 
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_apply_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_apply_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return boolean specifying if x is a valid member of this space.&quot;&quot;&quot;</span>
@@ -618,8 +637,8 @@
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
             <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
             <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span>
-            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">to_jsonable</span><span class="p">(</span>
@@ -636,15 +655,18 @@
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gives a string representation of this space.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;MultiDiscrete(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="si">}</span><span class="s2">, start=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;MultiDiscrete(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract a subspace from this ``MultiDiscrete`` space.&quot;&quot;&quot;</span>
         <span class="n">nvec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">nvec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">subspace</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="n">nvec</span><span class="p">)</span>
+            <span class="n">subspace</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="n">nvec</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">subspace</span> <span class="o">=</span> <span class="n">MultiDiscrete</span><span class="p">(</span><span class="n">nvec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">subspace</span> <span class="o">=</span> <span class="n">MultiDiscrete</span><span class="p">(</span><span class="n">nvec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">)</span>
 
         <span class="c1"># you don&#39;t need to deepcopy as np random generator call replaces the state not the data</span>
         <span class="n">subspace</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
@@ -662,7 +684,9 @@
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether ``other`` is equivalent to this instance.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">MultiDiscrete</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">nvec</span><span class="p">)</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">MultiDiscrete</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">nvec</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
         <span class="p">)</span></div>
 </pre></div>
           </article>

@@ -655,7 +655,7 @@
     <span class="n">offsets</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
 
     <span class="n">onehot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">offsets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="n">onehot</span><span class="p">[</span><span class="n">offsets</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">()]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">onehot</span><span class="p">[</span><span class="n">offsets</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">onehot</span>
 
 
@@ -787,7 +787,10 @@
             <span class="s2">&quot;Not all valid samples in a flattened space can be unflattened.&quot;</span>
         <span class="p">)</span>
     <span class="p">(</span><span class="n">indices</span><span class="p">,)</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">offsets</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">nonzero</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">indices</span> <span class="o">-</span> <span class="n">offsets</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">indices</span> <span class="o">-</span> <span class="n">offsets</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span>
+    <span class="p">)</span>
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
