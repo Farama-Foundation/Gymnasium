@@ -461,6 +461,8 @@ class MaxAndSkipObservationV0(
             raise ValueError(
                 f"The skip value needs to be equal or greater than two, actual value: {skip}"
             )
+        if env.observation_space.shape is None:
+            raise ValueError(f"The observation space must have the shape attribute.")
 
         self._skip = skip
         self._obs_buffer = np.zeros(
@@ -481,6 +483,7 @@ class MaxAndSkipObservationV0(
         """
         total_reward = 0.0
         terminated = truncated = False
+        info = {}
         for i in range(self._skip):
             obs, reward, terminated, truncated, info = self.env.step(action)
             done = terminated or truncated
