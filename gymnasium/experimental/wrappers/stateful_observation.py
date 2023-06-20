@@ -462,7 +462,7 @@ class MaxAndSkipObservationV0(
                 f"The skip value needs to be equal or greater than two, actual value: {skip}"
             )
         if env.observation_space.shape is None:
-            raise ValueError(f"The observation space must have the shape attribute.")
+            raise ValueError("The observation space must have the shape attribute.")
 
         self._skip = skip
         self._obs_buffer = np.zeros(
