@@ -21,6 +21,7 @@ __all__ = [
     "NormalizeObservationV0",
     "TimeAwareObservationV0",
     "FrameStackObservationV0",
+    "MaxAndSkipObservationV0",
     "DelayObservationV0",
     "AtariPreprocessingV0",
     # --- Action Wrappers ---
@@ -74,6 +75,7 @@ _wrapper_to_class = {
     "DelayObservationV0": "stateful_observation",
     "FrameStackObservationV0": "stateful_observation",
     "NormalizeObservationV0": "stateful_observation",
+    "MaxAndSkipObservationV0": "stateful_observation",
     # stateful_reward
     "NormalizeRewardV1": "stateful_reward",
     # atari_preprocessing
