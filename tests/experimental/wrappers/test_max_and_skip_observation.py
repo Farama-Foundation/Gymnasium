@@ -35,6 +35,8 @@ def test_skip_size_failures():
 
     with pytest.raises(
         ValueError,
-        match=re.escape("The skip value needs to be equal or greater than two, actual value: 0"),
+        match=re.escape(
+            "The skip value needs to be equal or greater than two, actual value: 0"
+        ),
     ):
         MaxAndSkipObservationV0(env, skip=0)
