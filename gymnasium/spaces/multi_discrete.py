@@ -143,9 +143,9 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
             return np.array(_apply_mask(mask, self.nvec, self.start), dtype=self.dtype)
 
-        return (self.np_random.random(self.nvec.shape) * self.nvec + self.start).astype(
-            self.dtype
-        )
+        return np.floor(
+            self.np_random.random(self.nvec.shape) * self.nvec + self.start
+        ).astype(self.dtype)
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
