@@ -15,6 +15,9 @@ from gymnasium.core import ActType, ObsType, WrapperActType
 from gymnasium.spaces import Box, Space
 
 
+__all__ = ["LambdaActionV0", "ClipActionV0", "RescaleActionV0"]
+
+
 class LambdaActionV0(
     gym.ActionWrapper[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
 ):

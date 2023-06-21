@@ -34,6 +34,7 @@ def test_resize_observation_wrapper(env):
     """Test the ``ResizeObservation`` that the observation has changed size."""
 
     wrapped_env = ResizeObservationV0(env, (25, 25))
+    assert isinstance(wrapped_env.observation_space, Box)
     assert wrapped_env.observation_space.shape[:2] == (25, 25)
 
     obs, info = wrapped_env.reset()

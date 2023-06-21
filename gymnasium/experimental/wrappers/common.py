@@ -25,6 +25,14 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
+__all__ = [
+    "AutoresetV0",
+    "PassiveEnvCheckerV0",
+    "OrderEnforcingV0",
+    "RecordEpisodeStatisticsV0",
+]
+
+
 class AutoresetV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):

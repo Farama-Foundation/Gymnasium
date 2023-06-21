@@ -8,6 +8,9 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidProbability
 
 
+__all__ = ["StickyActionV0"]
+
+
 class StickyActionV0(
     gym.ActionWrapper[ObsType, ActType, ActType], gym.utils.RecordConstructorArgs
 ):

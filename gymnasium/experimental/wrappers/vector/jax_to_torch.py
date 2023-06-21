@@ -13,6 +13,9 @@ from gymnasium.experimental.wrappers.jax_to_torch import (
 )
 
 
+__all__ = ["JaxToTorchV0"]
+
+
 class JaxToTorchV0(VectorWrapper):
     """Wraps a Jax-based vector environment so that it can be interacted with through PyTorch Tensors.
 
