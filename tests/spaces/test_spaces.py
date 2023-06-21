@@ -165,7 +165,7 @@ def test_sample(space: Space, n_trials: int = 1_000):
         )
         observed_frequency = _generate_frequency(space.nvec, lambda dim: np.zeros(dim))
         for sample in samples:
-            _update_observed_frequency(sample, observed_frequency)
+            _update_observed_frequency(sample - space.start, observed_frequency)
 
         def _chi_squared_test(dim, exp_freq, obs_freq):
             if isinstance(dim, np.ndarray):
@@ -331,6 +331,11 @@ SAMPLE_MASK_RNG, _ = seeding.np_random(1)
                 (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
                 (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
             ),
+            (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
+            (
+                (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
+                (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
+            ),
             # Multi-binary
             np.array([0, 1, 0, 1, 0, 2, 1, 1], dtype=np.int8),
             np.array([[0, 1, 2], [0, 2, 1]], dtype=np.int8),
@@ -428,7 +433,7 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
             space.nvec, mask, lambda dim, _: np.zeros(dim)
         )
         for sample in samples:
-            _update_observed_frequency(sample, observed_frequency)
+            _update_observed_frequency(sample - space.start, observed_frequency)
 
         def _chi_squared_test(dim, _mask, exp_freq, obs_freq):
             if isinstance(dim, np.ndarray):
