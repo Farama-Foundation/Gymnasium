@@ -664,6 +664,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;After the user has finished using the environment, close contains the code necessary to &quot;clean up&quot; the environment.</span>
 
 <span class="sd">        This is critical for closing rendering windows, database or HTTP connections.</span>
+<span class="sd">        Calling ``close`` on an already closed environment has no effect and won&#39;t raise an error.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
