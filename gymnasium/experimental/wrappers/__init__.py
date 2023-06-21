@@ -38,6 +38,7 @@ from gymnasium.experimental.wrappers.stateful_action import StickyActionV0
 from gymnasium.experimental.wrappers.stateful_observation import (
     DelayObservationV0,
     FrameStackObservationV0,
+    MaxAndSkipObservationV0,
     NormalizeObservationV0,
     TimeAwareObservationV0,
 )
@@ -50,30 +51,30 @@ from gymnasium.experimental.wrappers.stateful_reward import NormalizeRewardV1
 __all__ = [
     "vector",
     # --- Observation wrappers ---
-    "LambdaObservationV0",
+    "AtariPreprocessingV0",
+    "DelayObservationV0",
+    "DtypeObservationV0",
     "FilterObservationV0",
     "FlattenObservationV0",
+    "FrameStackObservationV0",
     "GrayscaleObservationV0",
+    "LambdaObservationV0",
+    "MaxAndSkipObservationV0",
+    "NormalizeObservationV0",
+    "PixelObservationV0",
     "ResizeObservationV0",
     "ReshapeObservationV0",
     "RescaleObservationV0",
-    "DtypeObservationV0",
-    "PixelObservationV0",
-    "NormalizeObservationV0",
     "TimeAwareObservationV0",
-    "FrameStackObservationV0",
-    "MaxAndSkipObservationV0",
-    "DelayObservationV0",
-    "AtariPreprocessingV0",
     # --- Action Wrappers ---
-    "LambdaActionV0",
     "ClipActionV0",
+    "LambdaActionV0",
     "RescaleActionV0",
     # "NanAction",
     "StickyActionV0",
     # --- Reward wrappers ---
-    "LambdaRewardV0",
     "ClipRewardV0",
+    "LambdaRewardV0",
     "NormalizeRewardV1",
     # --- Common ---
     "AutoresetV0",
@@ -89,7 +90,6 @@ __all__ = [
     "JaxToTorchV0",
     "NumpyToTorchV0",
 ]
-
 
 # As these wrappers requires `jax` or `torch`, they are loaded by runtime for users trying to access them
 #   to avoid `import jax` or `import torch` on `import gymnasium`.
