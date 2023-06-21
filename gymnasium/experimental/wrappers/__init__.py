@@ -62,6 +62,7 @@ __all__ = [
     "NormalizeObservationV0",
     "TimeAwareObservationV0",
     "FrameStackObservationV0",
+    "MaxAndSkipObservationV0",
     "DelayObservationV0",
     "AtariPreprocessingV0",
     # --- Action Wrappers ---
