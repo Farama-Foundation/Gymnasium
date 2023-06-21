@@ -7,11 +7,11 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/common.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/common.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/atari_preprocessing.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/atari_preprocessing.html" />
 
     <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
-        <title>gymnasium.experimental.wrappers.common - Gymnasium Documentation</title>
+        <title>gymnasium.experimental.wrappers.atari_preprocessing - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css" />
@@ -476,322 +476,213 @@
           </div>
           <article role="main">
             
-            <h1>Source code for gymnasium.experimental.wrappers.common</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of common wrappers.</span>
-
-<span class="sd">* ``AutoresetV0`` - Auto-resets the environment</span>
-<span class="sd">* ``PassiveEnvCheckerV0`` - Passive environment checker that does not modify any environment data</span>
-<span class="sd">* ``OrderEnforcingV0`` - Enforces the order of function calls to environments</span>
-<span class="sd">* ``RecordEpisodeStatisticsV0`` - Records the episode statistics</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">SupportsFloat</span>
-
+            <h1>Source code for gymnasium.experimental.wrappers.atari_preprocessing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implementation of Atari 2600 Preprocessing following the guidelines of Machado et al., 2018.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">RenderFrame</span>
-<span class="kn">from</span> <span class="nn">gymnasium.error</span> <span class="kn">import</span> <span class="n">ResetNeeded</span>
-<span class="kn">from</span> <span class="nn">gymnasium.utils.passive_env_checker</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">check_action_space</span><span class="p">,</span>
-    <span class="n">check_observation_space</span><span class="p">,</span>
-    <span class="n">env_render_passive_checker</span><span class="p">,</span>
-    <span class="n">env_reset_passive_checker</span><span class="p">,</span>
-    <span class="n">env_step_passive_checker</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;AutoresetV0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PassiveEnvCheckerV0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;OrderEnforcingV0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;RecordEpisodeStatisticsV0&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtariPreprocessingV0&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="AutoresetV0"><a class="viewcode-back" href="../../../../../api/experimental/wrappers/#gymnasium.experimental.wrappers.AutoresetV0">[docs]</a><span class="k">class</span> <span class="nc">AutoresetV0</span><span class="p">(</span>
-    <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AtariPreprocessingV0"><a class="viewcode-back" href="../../../../../api/experimental/wrappers/#gymnasium.experimental.wrappers.AtariPreprocessingV0">[docs]</a><span class="k">class</span> <span class="nc">AtariPreprocessingV0</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Atari 2600 preprocessing wrapper.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.</span>
+<span class="sd">    This class follows the guidelines in Machado et al. (2018),</span>
+<span class="sd">    &quot;Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents&quot;.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            env (gym.Env): The environment to apply the wrapper</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+<span class="sd">    Specifically, the following preprocess stages applies to the atari environment:</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_ended</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment with action and resets the environment if a terminated or truncated signal is encountered in the previous step.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            action: The action to take</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The autoreset environment :meth:`step`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_ended</span><span class="p">:</span>
-            <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset_options</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_ended</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">info</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_ended</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
-            <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
-
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment, saving the options used.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_ended</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_options</span> <span class="o">=</span> <span class="n">options</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset_options</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="PassiveEnvCheckerV0"><a class="viewcode-back" href="../../../../../api/experimental/wrappers/#gymnasium.experimental.wrappers.PassiveEnvCheckerV0">[docs]</a><span class="k">class</span> <span class="nc">PassiveEnvCheckerV0</span><span class="p">(</span>
-    <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialises the wrapper with the environments, run the observation and action space tests.&quot;&quot;&quot;</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
-
-        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
-            <span class="n">env</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span>
-        <span class="p">),</span> <span class="s2">&quot;The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/&quot;</span>
-        <span class="n">check_action_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
-            <span class="n">env</span><span class="p">,</span> <span class="s2">&quot;observation_space&quot;</span>
-        <span class="p">),</span> <span class="s2">&quot;The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/&quot;</span>
-        <span class="n">check_observation_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_checked_reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_checked_step</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_checked_render</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment that on the first call will run the `passive_env_step_check`.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checked_step</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_checked_step</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">return</span> <span class="n">env_step_passive_checker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment that on the first call will run the `passive_env_reset_check`.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checked_reset</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_checked_reset</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">return</span> <span class="n">env_reset_passive_checker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renders the environment that on the first call will run the `passive_env_render_check`.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checked_render</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_checked_render</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">return</span> <span class="n">env_render_passive_checker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="OrderEnforcingV0"><a class="viewcode-back" href="../../../../../api/experimental/wrappers/#gymnasium.experimental.wrappers.OrderEnforcingV0">[docs]</a><span class="k">class</span> <span class="nc">OrderEnforcingV0</span><span class="p">(</span>
-    <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; from gymnasium.experimental.wrappers import OrderEnforcingV0</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;, render_mode=&quot;human&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; env = OrderEnforcingV0(env)</span>
-<span class="sd">        &gt;&gt;&gt; env.step(0)</span>
-<span class="sd">        Traceback (most recent call last):</span>
-<span class="sd">            ...</span>
-<span class="sd">        gymnasium.error.ResetNeeded: Cannot call env.step() before calling env.reset()</span>
-<span class="sd">        &gt;&gt;&gt; env.render()</span>
-<span class="sd">        Traceback (most recent call last):</span>
-<span class="sd">            ...</span>
-<span class="sd">        gymnasium.error.ResetNeeded: Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.</span>
-<span class="sd">        &gt;&gt;&gt; _ = env.reset()</span>
-<span class="sd">        &gt;&gt;&gt; env.render()</span>
-<span class="sd">        &gt;&gt;&gt; _ = env.step(0)</span>
-<span class="sd">        &gt;&gt;&gt; env.close()</span>
+<span class="sd">    - Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.</span>
+<span class="sd">    - Frame skipping: The number of frames skipped between steps, 4 by default</span>
+<span class="sd">    - Max-pooling: Pools over the most recent two observations from the frame skips</span>
+<span class="sd">    - Termination signal when a life is lost: When the agent losses a life during the environment, then the environment is terminated.</span>
+<span class="sd">        Turned off by default. Not recommended by Machado et al. (2018).</span>
+<span class="sd">    - Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default</span>
+<span class="sd">    - Grayscale observation: If the observation is colour or greyscale, by default, greyscale.</span>
+<span class="sd">    - Scale observation: If to scale the observation between [0, 1) or [0, 255), by default, not scaled.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
-        <span class="n">disable_render_order_enforcing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
+        <span class="n">noop_max</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">frame_skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">screen_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">84</span><span class="p">,</span>
+        <span class="n">terminal_on_life_loss</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">grayscale_obs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">grayscale_newaxis</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">scale_obs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for Atari 2600 preprocessing.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            env: The environment to wrap</span>
-<span class="sd">            disable_render_order_enforcing: If to disable render order enforcing</span>
+<span class="sd">            env (Env): The environment to apply the preprocessing</span>
+<span class="sd">            noop_max (int): For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.</span>
+<span class="sd">            frame_skip (int): The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.</span>
+<span class="sd">            screen_size (int): resize Atari frame</span>
+<span class="sd">            terminal_on_life_loss (bool): `if True`, then :meth:`step()` returns `terminated=True` whenever a</span>
+<span class="sd">                life is lost.</span>
+<span class="sd">            grayscale_obs (bool): if True, then gray scale observation is returned, otherwise, RGB observation</span>
+<span class="sd">                is returned.</span>
+<span class="sd">            grayscale_newaxis (bool): `if True and grayscale_obs=True`, then a channel axis is added to</span>
+<span class="sd">                grayscale observations to make them 3-dimensional.</span>
+<span class="sd">            scale_obs (bool): if True, then observation normalized in range [0,1) is returned. It also limits memory</span>
+<span class="sd">                optimization benefits of FrameStack Wrapper.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            DependencyNotInstalled: opencv-python package not installed</span>
+<span class="sd">            ValueError: Disable frame-skipping in the original env</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">disable_render_order_enforcing</span><span class="o">=</span><span class="n">disable_render_order_enforcing</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">noop_max</span><span class="o">=</span><span class="n">noop_max</span><span class="p">,</span>
+            <span class="n">frame_skip</span><span class="o">=</span><span class="n">frame_skip</span><span class="p">,</span>
+            <span class="n">screen_size</span><span class="o">=</span><span class="n">screen_size</span><span class="p">,</span>
+            <span class="n">terminal_on_life_loss</span><span class="o">=</span><span class="n">terminal_on_life_loss</span><span class="p">,</span>
+            <span class="n">grayscale_obs</span><span class="o">=</span><span class="n">grayscale_obs</span><span class="p">,</span>
+            <span class="n">grayscale_newaxis</span><span class="o">=</span><span class="n">grayscale_newaxis</span><span class="p">,</span>
+            <span class="n">scale_obs</span><span class="o">=</span><span class="n">scale_obs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_disable_render_order_enforcing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">disable_render_order_enforcing</span>
-
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ResetNeeded</span><span class="p">(</span><span class="s2">&quot;Cannot call env.step() before calling env.reset()&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment with `kwargs`.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renders the environment with `kwargs`.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_render_order_enforcing</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ResetNeeded</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, &quot;</span>
-                <span class="s2">&quot;set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">cv2</span>  <span class="c1"># noqa: F401</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">DependencyNotInstalled</span><span class="p">(</span>
+                <span class="s2">&quot;opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="n">frame_skip</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">screen_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">noop_max</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">frame_skip</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="s2">&quot;NoFrameskip&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span>
+                <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="p">,</span> <span class="s2">&quot;_frameskip&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Disable frame-skipping in the original env. Otherwise, more than one &quot;</span>
+                    <span class="s2">&quot;frame-skip will happen as through this wrapper&quot;</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noop_max</span> <span class="o">=</span> <span class="n">noop_max</span>
+        <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">get_action_meanings</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NOOP&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_skip</span> <span class="o">=</span> <span class="n">frame_skip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span> <span class="o">=</span> <span class="n">screen_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_on_life_loss</span> <span class="o">=</span> <span class="n">terminal_on_life_loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_obs</span> <span class="o">=</span> <span class="n">grayscale_obs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_newaxis</span> <span class="o">=</span> <span class="n">grayscale_newaxis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_obs</span> <span class="o">=</span> <span class="n">scale_obs</span>
+
+        <span class="c1"># buffer of most recent two observations for max pooling</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">grayscale_obs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+            <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_over</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">_low</span><span class="p">,</span> <span class="n">_high</span><span class="p">,</span> <span class="n">_obs_dtype</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">scale_obs</span> <span class="k">else</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">screen_size</span><span class="p">,</span> <span class="n">screen_size</span><span class="p">,</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">grayscale_obs</span> <span class="k">else</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">grayscale_obs</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">grayscale_newaxis</span><span class="p">:</span>
+            <span class="n">_shape</span> <span class="o">=</span> <span class="n">_shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Remove channel axis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span>
+            <span class="n">low</span><span class="o">=</span><span class="n">_low</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">_high</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_obs_dtype</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">has_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns if the environment has been reset before.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span></div>
+    <span class="k">def</span> <span class="nf">ale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make ale as a class property to avoid serialization error.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">ale</span>
 
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies the preprocessing for an :meth:`env.step`.&quot;&quot;&quot;</span>
+        <span class="n">total_reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="RecordEpisodeStatisticsV0"><a class="viewcode-back" href="../../../../../api/experimental/wrappers/#gymnasium.experimental.wrappers.RecordEpisodeStatisticsV0">[docs]</a><span class="k">class</span> <span class="nc">RecordEpisodeStatisticsV0</span><span class="p">(</span>
-    <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This wrapper will keep track of cumulative rewards and episode lengths.</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_skip</span><span class="p">):</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="n">total_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game_over</span> <span class="o">=</span> <span class="n">terminated</span>
 
-<span class="sd">    At the end of an episode, the statistics of the episode will be added to ``info``</span>
-<span class="sd">    using the key ``episode``. If using a vectorized environment also the key</span>
-<span class="sd">    ``_episode`` is used which indicates whether the env at the respective index has</span>
-<span class="sd">    the episode statistics.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_on_life_loss</span><span class="p">:</span>
+                <span class="n">new_lives</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ale</span><span class="o">.</span><span class="n">lives</span><span class="p">()</span>
+                <span class="n">terminated</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">new_lives</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">lives</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">game_over</span> <span class="o">=</span> <span class="n">terminated</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lives</span> <span class="o">=</span> <span class="n">new_lives</span>
 
-<span class="sd">    After the completion of an episode, ``info`` will look like this::</span>
+            <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_skip</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_obs</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ale</span><span class="o">.</span><span class="n">getScreenGrayscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ale</span><span class="o">.</span><span class="n">getScreenRGB</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_skip</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_obs</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ale</span><span class="o">.</span><span class="n">getScreenGrayscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ale</span><span class="o">.</span><span class="n">getScreenRGB</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">(),</span> <span class="n">total_reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
-<span class="sd">        &gt;&gt;&gt; info = {</span>
-<span class="sd">        ...     &quot;episode&quot;: {</span>
-<span class="sd">        ...         &quot;r&quot;: &quot;&lt;cumulative reward&gt;&quot;,</span>
-<span class="sd">        ...         &quot;l&quot;: &quot;&lt;episode length&gt;&quot;,</span>
-<span class="sd">        ...         &quot;t&quot;: &quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
-<span class="sd">        ...     },</span>
-<span class="sd">        ... }</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using preprocessing.&quot;&quot;&quot;</span>
+        <span class="c1"># NoopReset</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">reset_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="sd">    For a vectorized environments the output will be in the form of::</span>
+        <span class="n">noops</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noop_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noop_max</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="mi">0</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">noops</span><span class="p">):</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">step_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">reset_info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">step_info</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">reset_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="sd">        &gt;&gt;&gt; infos = {</span>
-<span class="sd">        ...     &quot;final_observation&quot;: &quot;&lt;array of length num-envs&gt;&quot;,</span>
-<span class="sd">        ...     &quot;_final_observation&quot;: &quot;&lt;boolean array of length num-envs&gt;&quot;,</span>
-<span class="sd">        ...     &quot;final_info&quot;: &quot;&lt;array of length num-envs&gt;&quot;,</span>
-<span class="sd">        ...     &quot;_final_info&quot;: &quot;&lt;boolean array of length num-envs&gt;&quot;,</span>
-<span class="sd">        ...     &quot;episode&quot;: {</span>
-<span class="sd">        ...         &quot;r&quot;: &quot;&lt;array of cumulative reward&gt;&quot;,</span>
-<span class="sd">        ...         &quot;l&quot;: &quot;&lt;array of episode length&gt;&quot;,</span>
-<span class="sd">        ...         &quot;t&quot;: &quot;&lt;array of elapsed time since beginning of episode&gt;&quot;</span>
-<span class="sd">        ...     },</span>
-<span class="sd">        ...     &quot;_episode&quot;: &quot;&lt;boolean array of length num-envs&gt;&quot;</span>
-<span class="sd">        ... }</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lives</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ale</span><span class="o">.</span><span class="n">lives</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_obs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ale</span><span class="o">.</span><span class="n">getScreenGrayscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ale</span><span class="o">.</span><span class="n">getScreenRGB</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">(),</span> <span class="n">reset_info</span>
 
-<span class="sd">    Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via</span>
-<span class="sd">    :attr:`wrapped_env.return_queue` and :attr:`wrapped_env.length_queue` respectively.</span>
+    <span class="k">def</span> <span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_skip</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># more efficient in-place pooling</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        episode_reward_buffer: The cumulative rewards of the last ``deque_size``-many episodes</span>
-<span class="sd">        episode_length_buffer: The lengths of the last ``deque_size``-many episodes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">cv2</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
-        <span class="n">buffer_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="n">stats_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;episode&quot;</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will keep track of cumulative rewards and episode lengths.</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="p">),</span>
+            <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">,</span>
+        <span class="p">)</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            env (Env): The environment to apply the wrapper</span>
-<span class="sd">            buffer_length: The size of the buffers :attr:`return_queue` and :attr:`length_queue`</span>
-<span class="sd">            stats_key: The info key for the episode statistics</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_obs</span><span class="p">:</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stats_key</span> <span class="o">=</span> <span class="n">stats_key</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_count</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_time_length_buffer</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">buffer_length</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_reward_buffer</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">buffer_length</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_length_buffer</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">buffer_length</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, recording the episode statistics.&quot;&quot;&quot;</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_length</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">info</span>
-
-            <span class="n">episode_time_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span><span class="p">,</span> <span class="mi">6</span>
-            <span class="p">)</span>
-            <span class="n">info</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_stats_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_reward</span><span class="p">,</span>
-                <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_length</span><span class="p">,</span>
-                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">episode_time_length</span><span class="p">,</span>
-            <span class="p">}</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_time_length_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">episode_time_length</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_reward_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_reward</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_length_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_length</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_count</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
-
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using seed and options and resets the episode rewards and lengths.&quot;&quot;&quot;</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_length</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_obs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_newaxis</span><span class="p">:</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Add a channel axis</span>
+        <span class="k">return</span> <span class="n">obs</span></div>
 </pre></div>
           </article>
         </div>
