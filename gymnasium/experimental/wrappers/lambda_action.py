@@ -8,11 +8,6 @@ from __future__ import annotations
 
 from typing import Callable
 
-
-try:
-    import jumpy.numpy as jp
-except ImportError as e:
-    raise ImportError("Jumpy is not installed, run `pip install jax-jumpy`") from e
 import numpy as np
 
 import gymnasium as gym
@@ -83,7 +78,7 @@ class ClipActionV0(
         LambdaActionV0.__init__(
             self,
             env=env,
-            func=lambda action: jp.clip(
+            func=lambda action: np.clip(
                 action, env.action_space.low, env.action_space.high
             ),
             action_space=Box(

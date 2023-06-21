@@ -299,11 +299,11 @@ class VectorWrapper(VectorEnv):
         """Step all environments."""
         return self.env.step(actions)
 
-    def close(self, **kwargs):
+    def close(self, **kwargs: Any):
         """Close all environments."""
         return self.env.close(**kwargs)
 
-    def close_extras(self, **kwargs):
+    def close_extras(self, **kwargs: Any):
         """Close all extra resources."""
         return self.env.close_extras(**kwargs)
 
