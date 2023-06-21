@@ -810,7 +810,9 @@ def make(
                 "rendering API, which is not supported by the HumanRendering wrapper."
             ) from e
         else:
-            raise e
+            raise type(e)(
+                f"{e} was raised from the environment creator for {env_spec.id} with kwargs ({env_spec_kwargs})"
+            )
 
     # Set the minimal env spec for the environment.
     env.unwrapped.spec = EnvSpec(
