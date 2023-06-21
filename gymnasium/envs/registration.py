@@ -856,6 +856,9 @@ def make(
     if apply_api_compatibility is True or (
         apply_api_compatibility is None and env_spec.apply_api_compatibility is True
     ):
+        logger.warn(
+            "The `gym.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and removed in v1.0"
+        )
         env = EnvCompatibility(env, render_mode)
 
     # Run the environment checker as the lowest level wrapper
