@@ -185,6 +185,7 @@ class Env(Generic[ObsType, ActType]):
         """After the user has finished using the environment, close contains the code necessary to "clean up" the environment.
 
         This is critical for closing rendering windows, database or HTTP connections.
+        Calling ``close`` on an already closed environment has no effect and won't raise an error.
         """
         pass
 
