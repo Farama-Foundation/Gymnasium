@@ -321,3 +321,13 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
             logger.warn(
                 "Not able to test alternative render modes due to the environment not having a spec. Try instantialising the environment through gymnasium.make"
             )
+
+    if env.spec is not None:
+        new_env = env.spec.make()
+        new_env.close()
+        try:
+            new_env.close()
+        except Exception as e:
+            logger.warn(
+                f"Calling `env.close()` on the closed environment should be allowed, but it raised an exception: {e}"
+            )
