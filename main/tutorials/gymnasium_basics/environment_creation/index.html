@@ -691,12 +691,13 @@ and some auxiliary information. We can use the methods <code class="docutils lit
 <h3>Step<a class="headerlink" href="#step" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">step</span></code> method usually contains most of the logic of your
 environment. It accepts an <code class="docutils literal notranslate"><span class="pre">action</span></code>, computes the state of the
-environment after applying that action and returns the 4-tuple
-<code class="docutils literal notranslate"><span class="pre">(observation,</span> <span class="pre">reward,</span> <span class="pre">done,</span> <span class="pre">info)</span></code>. Once the new state of the
-environment has been computed, we can check whether it is a terminal
-state and we set <code class="docutils literal notranslate"><span class="pre">done</span></code> accordingly. Since we are using sparse binary
-rewards in <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>, computing <code class="docutils literal notranslate"><span class="pre">reward</span></code> is trivial once we
-know <code class="docutils literal notranslate"><span class="pre">done</span></code>. To gather <code class="docutils literal notranslate"><span class="pre">observation</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>, we can again make
+environment after applying that action and returns the 5-tuple
+<code class="docutils literal notranslate"><span class="pre">(observation,</span> <span class="pre">reward,</span> <span class="pre">terminated,</span> <span class="pre">truncated,</span> <span class="pre">info)</span></code>. See
+<a class="reference internal" href="../../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.Env.step()</span></code></a>. Once the new state of the environment has
+been computed, we can check whether it is a terminal state and we set
+<code class="docutils literal notranslate"><span class="pre">done</span></code> accordingly. Since we are using sparse binary rewards in
+<code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>, computing <code class="docutils literal notranslate"><span class="pre">reward</span></code> is trivial once we know
+<code class="docutils literal notranslate"><span class="pre">done</span></code>.To gather <code class="docutils literal notranslate"><span class="pre">observation</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>, we can again make
 use of <code class="docutils literal notranslate"><span class="pre">_get_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">_get_info</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
     <span class="c1"># Map the action (element of {0,1,2,3}) to the direction we walk in</span>
