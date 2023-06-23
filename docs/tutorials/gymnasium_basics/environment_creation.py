@@ -225,12 +225,13 @@ class GridWorldEnv(gym.Env):
 #
 # The ``step`` method usually contains most of the logic of your
 # environment. It accepts an ``action``, computes the state of the
-# environment after applying that action and returns the 4-tuple
-# ``(observation, reward, done, info)``. Once the new state of the
-# environment has been computed, we can check whether it is a terminal
-# state and we set ``done`` accordingly. Since we are using sparse binary
-# rewards in ``GridWorldEnv``, computing ``reward`` is trivial once we
-# know ``done``. To gather ``observation`` and ``info``, we can again make
+# environment after applying that action and returns the 5-tuple
+# ``(observation, reward, terminated, truncated, info)``. See
+# :meth:`gymnasium.Env.step`. Once the new state of the environment has
+# been computed, we can check whether it is a terminal state and we set
+# ``done`` accordingly. Since we are using sparse binary rewards in
+# ``GridWorldEnv``, computing ``reward`` is trivial once we know
+# ``done``.To gather ``observation`` and ``info``, we can again make
 # use of ``_get_obs`` and ``_get_info``:
 
     def step(self, action):
