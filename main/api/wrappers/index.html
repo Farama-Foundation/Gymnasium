@@ -504,7 +504,7 @@ with (possibly optional) parameters to the wrapper’s constructor.</p>
 <span class="go">Box(-1.0, 1.0, (3,), float32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RescaleAction</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">min_action</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_action</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span>
-<span class="go">Box(-1.0, 1.0, (3,), float32)</span>
+<span class="go">Box(0.0, 1.0, (3,), float32)</span>
 </pre></div>
 </div>
 <p>You can access the environment underneath the <strong>first</strong> wrapper by using the <a class="reference internal" href="#gymnasium.wrappers.gymnasium.Wrapper.env" title="gymnasium.wrappers.gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.env</span></code></a> attribute.
