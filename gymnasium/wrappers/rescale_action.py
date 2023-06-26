@@ -59,6 +59,13 @@ class RescaleAction(gym.ActionWrapper, gym.utils.RecordConstructorArgs):
             np.zeros(env.action_space.shape, dtype=env.action_space.dtype) + max_action
         )
 
+        self.action_space = Box(
+            low=min_action,
+            high=max_action,
+            shape=env.action_space.shape,
+            dtype=env.action_space.dtype,
+        )
+
     def action(self, action):
         """Rescales the action affinely from  [:attr:`min_action`, :attr:`max_action`] to the action space of the base environment, :attr:`env`.
 

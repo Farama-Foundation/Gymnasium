@@ -15,7 +15,7 @@ with (possibly optional) parameters to the wrapper's constructor.
     Box(-1.0, 1.0, (3,), float32)
     >>> wrapped_env = RescaleAction(base_env, min_action=0, max_action=1)
     >>> wrapped_env.action_space
-    Box(-1.0, 1.0, (3,), float32)
+    Box(0.0, 1.0, (3,), float32)
 
 You can access the environment underneath the **first** wrapper by using the :attr:`gymnasium.Wrapper.env` attribute.
 As the :class:`gymnasium.Wrapper` class inherits from :class:`gymnasium.Env` then :attr:`gymnasium.Wrapper.env` can be another wrapper.
