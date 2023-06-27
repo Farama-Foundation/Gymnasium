@@ -13,6 +13,9 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.experimental.wrappers.utils import RunningMeanStd
 
 
+__all__ = ["NormalizeRewardV1"]
+
+
 class NormalizeRewardV1(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):

@@ -5,6 +5,7 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 import gymnasium as gym
+from gymnasium import logger
 from gymnasium.core import ActType
 from gymnasium.utils.passive_env_checker import (
     check_action_space,
@@ -39,10 +40,11 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.checked_reset = False
         self.checked_step = False
         self.checked_render = False
+        self.close_called = False
 
     def step(self, action: ActType):
         """Steps through the environment that on the first call will run the `passive_env_step_check`."""
-        if self.checked_step is False:
+        if not self.checked_step:
             self.checked_step = True
             return env_step_passive_checker(self.env, action)
         else:
@@ -50,7 +52,7 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
     def reset(self, **kwargs):
         """Resets the environment that on the first call will run the `passive_env_reset_check`."""
-        if self.checked_reset is False:
+        if not self.checked_reset:
             self.checked_reset = True
             return env_reset_passive_checker(self.env, **kwargs)
         else:
@@ -58,7 +60,7 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
     def render(self, *args, **kwargs):
         """Renders the environment that on the first call will run the `passive_env_render_check`."""
-        if self.checked_render is False:
+        if not self.checked_render:
             self.checked_render = True
             return env_render_passive_checker(self.env, *args, **kwargs)
         else:
@@ -77,3 +79,17 @@ class PassiveEnvChecker(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
         self._cached_spec = env_spec
         return env_spec
+
+    def close(self):
+        """Warns if calling close on a closed environment fails."""
+        if not self.close_called:
+            self.close_called = True
+            return self.env.close()
+        else:
+            try:
+                return self.env.close()
+            except Exception as e:
+                logger.warn(
+                    "Calling `env.close()` on the closed environment should be allowed, but it raised the following exception."
+                )
+                raise e
