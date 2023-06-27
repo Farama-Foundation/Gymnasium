@@ -363,9 +363,9 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
         rewards = forward_reward + healthy_reward
 
-        costs = ctrl_cost = self.control_cost(action)
+        ctrl_cost = self.control_cost(action)
         contact_cost = self.contact_cost
-        costs += contact_cost
+        costs = ctrl_cost + contact_cost
 
         terminated = self.terminated
         observation = self._get_obs()
