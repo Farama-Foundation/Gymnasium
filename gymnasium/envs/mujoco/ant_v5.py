@@ -3,9 +3,11 @@ __credits__ = ["Kallinteris-Andreas"]
 from typing import Dict, Tuple, Union
 
 import numpy as np
+
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+
 
 DEFAULT_CAMERA_CONFIG = {
     "distance": 4.0,
@@ -191,7 +193,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     |`ctrl_cost_weight`                          | **float**  | `0.5`        | Weight for _ctrl_cost_ term (see section on reward) |
     |`contact_cost_weight`                       | **float**  | `5e-4`       | Weight for _contact_cost_ term (see section on reward) |
     |`healthy_reward`                            | **float**  | `1`          | Weight for _healthy_reward_ term (see section on reward) |
-    |`main_body`                                 |**str|int** | `1`("torso") | Name or ID of the body, whose diplacement is used to calculate the *dx*/_forward_reward_ (useful for custom MuJoCo models)|
+    |`main_body`                                 |**str|int** | `1`("torso") | Name or ID of the body, whose displacement is used to calculate the *dx*/_forward_reward_ (useful for custom MuJoCo models)|
     |`terminate_when_unhealthy`                  | **bool**   | `True`       | If true, issue a done signal if the z-coordinate of the torso is no longer in the `healthy_z_range` |
     |`healthy_z_range`                           | **tuple**  | `(0.2, 1)`   | The ant is considered healthy if the z-coordinate of the torso is in this range |
     |`contact_force_range`                       | **tuple**  | `(-1, 1)`    | Contact forces are clipped to this range in the computation of *contact_cost* |
@@ -232,7 +234,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         reset_noise_scale: float = 0.1,
         exclude_current_positions_from_observation: bool = True,
         include_cfrc_ext_in_observation: bool = True,
-        **kwargs
+        **kwargs,
     ):
         utils.EzPickle.__init__(
             self,
@@ -250,7 +252,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             reset_noise_scale,
             exclude_current_positions_from_observation,
             include_cfrc_ext_in_observation,
-            **kwargs
+            **kwargs,
         )
 
         self._forward_reward_weight = forward_reward_weight
@@ -278,7 +280,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             frame_skip,
             observation_space=None,  # needs to be defined after
             default_camera_config=default_camera_config,
-            **kwargs
+            **kwargs,
         )
 
         self.metadata = {
