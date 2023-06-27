@@ -58,7 +58,15 @@ def test_verify_info_x_position(env_id):
 # Note: "HumnanoidStandup-v4" does not have `info`
 # Note: "Humnanoid-v4/3" & "Ant-v4/3" fail this test
 @pytest.mark.parametrize(
-    "env_id", ["Ant-v5", "Humanoid-v5", "HumanoidStandup-v5", "Swimmer-v5"]
+    "env_id",
+    [
+        "Ant-v5",
+        "Humanoid-v5",
+        "HumanoidStandup-v5",
+        "Swimmer-v5",
+        "Swimmer-v4",
+        "Swimmer-v3",
+    ],
 )
 def test_verify_info_y_position(env_id):
     """Asserts that the environment has position[1] == info['y_position']"""
@@ -146,19 +154,20 @@ def test_verify_info_xy_velocity_com(env_id):
 # Note: Inverted(Double)Pendulum-v4/2 does not have `info['reward_survive']`, but it is still affected
 # Note: all `v4/v3/v2` environments with a heathly reward are fail this test
 @pytest.mark.parametrize(
-    "env_id",
+    "env",
     [
-        "Ant-v5",
-        "Hopper-v5",
-        "Humanoid-v5",
-        "InvertedDoublePendulum-v5",
-        "InvertedPendulum-v5",
-        "Walker2d-v5",
+        "Ant",
+        "Hopper",
+        "Humanoid",
+        "InvertedDoublePendulum",
+        "InvertedPendulum",
+        "Walker2d",
     ],
 )
-def test_verify_reward_survive(env_id):
+@pytest.mark.parametrize("version", ["v5"])
+def test_verify_reward_survive(env, version):
     """Assert that `reward_survive` is 0 on `terminal` states and not 0 on non-`terminal` states"""
-    env = gym.make(env_id, reset_noise_scale=0)
+    env = gym.make(f"{env}-{version}", reset_noise_scale=0)
     env.reset(seed=0)
     env.action_space.seed(0)
 
@@ -206,96 +215,75 @@ def test_frame_skip(env, version, frame_skip):
 # Dev Note: This can be version env parametrized because each env has it's own reward function
 @pytest.mark.parametrize("version", ["v5"])
 def test_reward_sum(version):
-    """Assert that the total reward equals the sum of the individual reward terms."""
+    """Assert that the total reward equals the sum of the individual reward terms, also asserts that the reward function has no fp ordering arithmetic errors."""
+    NUM_STEPS = 100
     env = gym.make(f"Ant-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert (
-        reward
-        - info["reward_forward"]
-        - info["reward_ctrl"]
-        - info["reward_contact"]
-        - info["reward_survive"]
-        < 1e-14
-    )
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == (info["reward_survive"] + info["reward_forward"]) - (
+            -info["reward_ctrl"] + -info["reward_contact"]
+        )
 
     env = gym.make(f"HalfCheetah-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert reward - info["reward_forward"] - info["reward_ctrl"] < 1e-14
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_forward"] + info["reward_ctrl"]
 
     env = gym.make(f"Hopper-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert (
-        reward - info["reward_forward"] - info["reward_ctrl"] - info["reward_survive"]
-        < 1e-14
-    )
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_forward"] + info["reward_survive"] + info["reward_ctrl"]
 
     env = gym.make(f"Humanoid-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert (
-        reward
-        - info["reward_forward"]
-        - info["reward_ctrl"]
-        - info["reward_contact"]
-        - info["reward_survive"]
-        < 1e-14
-    )
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == (info["reward_forward"] + info["reward_survive"]) + (info["reward_ctrl"] + info["reward_contact"])
 
     env = gym.make(f"HumanoidStandup-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert (
-        reward
-        - info["reward_linup"]
-        - info["reward_quadctrl"]
-        - info["reward_impact"]
-        - 1
-        < 1e-14
-    )
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_linup"] + info["reward_quadctrl"] + info["reward_impact"] + 1
 
     env = gym.make(f"InvertedDoublePendulum-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert (
-        reward
-        - info["reward_survive"]
-        - info["distance_penalty"]
-        - info["velocity_penalty"]
-        < 1e-14
-    )
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_survive"] + info["distance_penalty"] + info["velocity_penalty"]
 
     env = gym.make(f"InvertedPendulum-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert reward == info["reward_survive"]
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_survive"]
 
     env = gym.make(f"Pusher-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert (
-        reward - info["reward_dist"] - info["reward_ctrl"] - info["reward_near"] < 1e-14
-    )
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_dist"] + info["reward_ctrl"] + info["reward_near"]
 
     env = gym.make(f"Reacher-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert reward - info["reward_dist"] - info["reward_ctrl"] < 1e-14
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_dist"] + info["reward_ctrl"]
 
     env = gym.make(f"Swimmer-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert reward - info["reward_forward"] - info["reward_ctrl"] < 1e-14
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_forward"] + info["reward_ctrl"]
 
     env = gym.make(f"Walker2d-{version}")
     env.reset()
-    _, reward, _, _, info = env.step(env.action_space.sample())
-    assert (
-        reward - info["reward_forward"] - info["reward_ctrl"] - info["reward_survive"]
-        < 1e-14
-    )
+    for _ in range(NUM_STEPS):
+        _, reward, _, _, info = env.step(env.action_space.sample())
+        assert reward == info["reward_forward"] + info["reward_survive"] + info["reward_ctrl"]
 
 
 # Note: the environtments that are not present, is because they do not have identical behaviour
@@ -304,21 +292,23 @@ def test_reward_sum(version):
 )
 def test_identical_behaviour_v45(env):
     """Verify that v4 -> v5 transition. does not change the behaviour of the environments in way way"""
+    NUM_STEPS = 100
+
     env_v4 = gym.make(env + "-v4")
     env_v5 = gym.make(env + "-v5")
     env_v4.reset(seed=1234)
     env_v5.reset(seed=1234)
-    action = env_v4.action_space.sample()
-    obs_v4, rew_v4, terminal_v4, truncated_v4, info_v4 = env_v4.step(action)
-    obs_v5, rew_v5, terminal_v5, truncated_v5, info_v5 = env_v5.step(action)
-    assert obs_v4.shape[0] != 1
-    assert obs_v5.shape[0] != 1
-    assert (env_v4.unwrapped.data.qpos == env_v5.unwrapped.data.qpos).all()
-    assert (env_v4.unwrapped.data.qvel == env_v5.unwrapped.data.qvel).all()
-    if env not in ["HumanoidStandup", "Reacher"]:  # they have different obs
-        assert (obs_v4 == obs_v5).all()
-    assert rew_v4 == rew_v5
-    assert terminal_v4 == terminal_v5 and truncated_v4 == truncated_v5
+    for _ in range(NUM_STEPS):
+        action = env_v4.action_space.sample()
+        obs_v4, rew_v4, terminal_v4, truncated_v4, info_v4 = env_v4.step(action)
+        obs_v5, rew_v5, terminal_v5, truncated_v5, info_v5 = env_v5.step(action)
+        assert obs_v4.shape[0] != 1 and obs_v5.shape[0] != 1
+        assert (env_v4.unwrapped.data.qpos == env_v5.unwrapped.data.qpos).all()
+        assert (env_v4.unwrapped.data.qvel == env_v5.unwrapped.data.qvel).all()
+        if env not in ["HumanoidStandup", "Reacher"]:  # they have different obs
+            assert (obs_v4 == obs_v5).all()
+        assert rew_v4 == rew_v5
+        assert terminal_v4 == terminal_v5 and truncated_v4 == truncated_v5
 
 
 @pytest.mark.parametrize("version", ["v5", "v4"])
@@ -377,10 +367,11 @@ def test_distance_from_origin_info(env_id):
     )
 
 
-@pytest.mark.parametrize("env_id", ["Hopper-v5", "HumanoidStandup-v5", "Walker2d-v5"])
-def test_z_distance_from_origin_info(env_id):
+@pytest.mark.parametrize("env", ["Hopper", "HumanoidStandup", "Walker2d"])
+@pytest.mark.parametrize("version", ["v5"])
+def test_z_distance_from_origin_info(env, version):
     """Verify that `info"z_distance_from_origin"` is correct"""
-    env = gym.make(env_id)
+    env = gym.make(f"{env}-{version}")
     env.reset()
     _, _, _, _, info = env.step(env.action_space.sample())
     mujoco.mj_kinematics(env.unwrapped.model, env.unwrapped.data)
@@ -392,21 +383,22 @@ def test_z_distance_from_origin_info(env_id):
 
 
 @pytest.mark.parametrize(
-    "env_id",
+    "env",
     [
-        "Ant-v5",
-        "HalfCheetah-v5",
-        "Hopper-v5",
-        "Humanoid-v5",
-        "HumanoidStandup-v5",
-        "InvertedPendulum-v5",
-        "Swimmer-v5",
-        "Walker2d-v5",
+        "Ant",
+        "HalfCheetah",
+        "Hopper",
+        "Humanoid",
+        "HumanoidStandup",
+        "InvertedPendulum",
+        "Swimmer",
+        "Walker2d",
     ],
 )
-def test_observation_structure(env_id):
+@pytest.mark.parametrize("version", ["v5"])
+def test_observation_structure(env, version):
     """Verify that the `env.observation_structure` is properly defined."""
-    env = gym.make(env_id)
+    env = gym.make(f"{env}-{version}")
     if hasattr(env, "observation_structure"):
         return
 
@@ -416,37 +408,38 @@ def test_observation_structure(env_id):
         env.unwrapped.model.nq == obs_struct.get("skipped_qpos", 0) + obs_struct["qpos"]
     )
     assert env.unwrapped.model.nv == obs_struct["qvel"]
-    if obs_struct.get("cinert", 0):
+    if obs_struct.get("cinert", False):
         assert (env.unwrapped.model.nbody - 1) * 10 == obs_struct["cinert"]
-    if obs_struct.get("cvel", 0):
+    if obs_struct.get("cvel", False):
         assert (env.unwrapped.model.nbody - 1) * 6 == obs_struct["cvel"]
-    if obs_struct.get("qfrc_actuator", 0):
+    if obs_struct.get("qfrc_actuator", False):
         assert env.unwrapped.model.nv - 6 == obs_struct["qfrc_actuator"]
-    if obs_struct.get("cfrc_ext", 0):
+    if obs_struct.get("cfrc_ext", False):
         assert (env.unwrapped.model.nbody - 1) * 6 == obs_struct["cfrc_ext"]
-    if obs_struct.get("ten_lenght", 0):
+    if obs_struct.get("ten_lenght", False):
         assert env.unwrapped.model.ntendon == obs_struct["ten_lenght"]
-    if obs_struct.get("ten_velocity", 0):
+    if obs_struct.get("ten_velocity", False):
         assert env.unwrapped.model.ntendon == obs_struct["ten_velocity"]
 
 
 @pytest.mark.parametrize(
-    "env_id",
+    "env",
     [
-        "Ant-v5",
-        "HalfCheetah-v5",
-        "Hopper-v5",
-        "Humanoid-v5",
-        "HumanoidStandup-v5",
-        "Swimmer-v5",
-        "Walker2d-v5",
+        "Ant",
+        "HalfCheetah",
+        "Hopper",
+        "Humanoid",
+        "HumanoidStandup",
+        "Swimmer",
+        "Walker2d",
     ],
 )
-def test_reset_info(env_id):
+@pytest.mark.parametrize("version", ["v5"])
+def test_reset_info(env, version):
     """Verify that the environment returns info at `reset()`"""
-    env = gym.make(env_id)
+    env = gym.make(f"{env}-{version}")
     _, reset_info = env.reset()
-    assert reset_info.get("x_position")
+    assert "x_position" in reset_info
 
 
 """
