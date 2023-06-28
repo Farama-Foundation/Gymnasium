@@ -209,7 +209,7 @@ class MuJocoPyEnv(BaseMujocoEnv):
         logger.deprecation(
             "This version of the mujoco environments depends "
             "on the mujoco-py bindings, which are no longer maintained "
-            "and may stop working. Please upgrade to the v4 versions of "
+            "and may stop working. Please upgrade to the v5 or v4 versions of "
             "the environments (which depend on the mujoco python bindings instead), unless "
             "you are trying to precisely replicate previous works)."
         )
