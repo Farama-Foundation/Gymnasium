@@ -1,5 +1,8 @@
+"""A set of tests to help the desiner of gymansium environments verify that they work correctly."""
+
 import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
+
 
 def check_environments_match(
     env_a: gym.Env,
