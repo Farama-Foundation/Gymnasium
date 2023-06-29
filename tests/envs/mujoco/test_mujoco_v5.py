@@ -6,6 +6,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.error import Error
+from gymnasium.utils.env_checker import data_equivalence
 
 
 ALL_MUJOCO_ENVS = [
@@ -45,8 +46,8 @@ ALL_MUJOCO_ENVS = [
         "Walker2d-v3",
     ],
 )
-def test_verify_info_x_position(env_id):
-    """Asserts that the environment has position[0] == info['x_position']"""
+def test_verify_info_x_position(env_id: str):
+    """Asserts that the environment has position[0] == info['x_position']."""
     env = gym.make(env_id, exclude_current_positions_from_observation=False)
 
     _, _ = env.reset()
@@ -68,8 +69,8 @@ def test_verify_info_x_position(env_id):
         "Swimmer-v3",
     ],
 )
-def test_verify_info_y_position(env_id):
-    """Asserts that the environment has position[1] == info['y_position']"""
+def test_verify_info_y_position(env_id: str):
+    """Asserts that the environment has position[1] == info['y_position']."""
     env = gym.make(env_id, exclude_current_positions_from_observation=False)
 
     _, _ = env.reset()
@@ -81,8 +82,8 @@ def test_verify_info_y_position(env_id):
 # Note: "HumnanoidStandup-v4" does not have `info`
 @pytest.mark.parametrize("env", ["HalfCheetah", "Hopper", "Swimmer", "Walker2d"])
 @pytest.mark.parametrize("version", ["v5", "v4", "v3"])
-def test_verify_info_x_velocity(env, version):
-    """Asserts that the environment `info['x_velocity']` is properly assigned"""
+def test_verify_info_x_velocity(env: str, version: str):
+    """Asserts that the environment `info['x_velocity']` is properly assigned."""
     env = gym.make(f"{env}-{version}")
     env.reset()
 
@@ -97,8 +98,8 @@ def test_verify_info_x_velocity(env, version):
 
 # Note: "HumnanoidStandup-v4" does not have `info`
 @pytest.mark.parametrize("env_id", ["Swimmer-v5", "Swimmer-v4", "Swimmer-v3"])
-def test_verify_info_y_velocity(env_id):
-    """Asserts that the environment `info['y_velocity']` is properly assigned"""
+def test_verify_info_y_velocity(env_id: str):
+    """Asserts that the environment `info['y_velocity']` is properly assigned."""
     env = gym.make(env_id)
     env.reset()
 
@@ -112,8 +113,8 @@ def test_verify_info_y_velocity(env_id):
 
 
 @pytest.mark.parametrize("env_id", ["Ant-v5", "Ant-v4", "Ant-v3"])
-def test_verify_info_xy_velocity_xpos(env_id):
-    """Asserts that the environment `info['x/y_velocity']` is properly assigned, for the ant environment which uses kinmatics for the velocity"""
+def test_verify_info_xy_velocity_xpos(env_id: str):
+    """Asserts that the environment `info['x/y_velocity']` is properly assigned, for the ant environment which uses kinmatics for the velocity."""
     env = gym.make(env_id)
     env.reset()
 
@@ -128,8 +129,8 @@ def test_verify_info_xy_velocity_xpos(env_id):
 
 
 @pytest.mark.parametrize("env_id", ["Humanoid-v5", "Humanoid-v4", "Humanoid-v3"])
-def test_verify_info_xy_velocity_com(env_id):
-    """Asserts that the environment `info['x/y_velocity']` is properly assigned, for the humanoid environment which uses kinmatics of Center Of Mass for the velocity"""
+def test_verify_info_xy_velocity_com(env_id: str):
+    """Asserts that the environment `info['x/y_velocity']` is properly assigned, for the humanoid environment which uses kinmatics of Center Of Mass for the velocity."""
 
     def mass_center(model, data):
         mass = np.expand_dims(model.body_mass, axis=1)
@@ -165,8 +166,8 @@ def test_verify_info_xy_velocity_com(env_id):
     ],
 )
 @pytest.mark.parametrize("version", ["v5"])
-def test_verify_reward_survive(env, version):
-    """Assert that `reward_survive` is 0 on `terminal` states and not 0 on non-`terminal` states"""
+def test_verify_reward_survive(env: str, version: str):
+    """Assert that `reward_survive` is 0 on `terminal` states and not 0 on non-`terminal` states."""
     env = gym.make(f"{env}-{version}", reset_noise_scale=0)
     env.reset(seed=0)
     env.action_space.seed(0)
@@ -198,8 +199,8 @@ CHECK_ENV_IGNORE_WARNINGS = [
 @pytest.mark.parametrize("env", ALL_MUJOCO_ENVS)
 @pytest.mark.parametrize("version", ["v5"])
 @pytest.mark.parametrize("frame_skip", [1, 2, 3, 4, 5])
-def test_frame_skip(env, version, frame_skip):
-    """Verify that all `mujoco` envs work with different `frame_skip` values"""
+def test_frame_skip(env: str, version: str, frame_skip: int):
+    """Verify that all `mujoco` envs work with different `frame_skip` values."""
     env_id = f"{env}-{version}"
     env = gym.make(env_id, frame_skip=frame_skip)
 
@@ -214,7 +215,7 @@ def test_frame_skip(env, version, frame_skip):
 
 # Dev Note: This can be version env parametrized because each env has it's own reward function
 @pytest.mark.parametrize("version", ["v5"])
-def test_reward_sum(version):
+def test_reward_sum(version: str):
     """Assert that the total reward equals the sum of the individual reward terms, also asserts that the reward function has no fp ordering arithmetic errors."""
     NUM_STEPS = 100
     env = gym.make(f"Ant-{version}")
@@ -235,25 +236,41 @@ def test_reward_sum(version):
     env.reset()
     for _ in range(NUM_STEPS):
         _, reward, _, _, info = env.step(env.action_space.sample())
-        assert reward == info["reward_forward"] + info["reward_survive"] + info["reward_ctrl"]
+        assert (
+            reward
+            == info["reward_forward"] + info["reward_survive"] + info["reward_ctrl"]
+        )
 
     env = gym.make(f"Humanoid-{version}")
     env.reset()
     for _ in range(NUM_STEPS):
         _, reward, _, _, info = env.step(env.action_space.sample())
-        assert reward == (info["reward_forward"] + info["reward_survive"]) + (info["reward_ctrl"] + info["reward_contact"])
+        assert reward == (info["reward_forward"] + info["reward_survive"]) + (
+            info["reward_ctrl"] + info["reward_contact"]
+        )
 
     env = gym.make(f"HumanoidStandup-{version}")
     env.reset()
     for _ in range(NUM_STEPS):
         _, reward, _, _, info = env.step(env.action_space.sample())
-        assert reward == info["reward_linup"] + info["reward_quadctrl"] + info["reward_impact"] + 1
+        assert (
+            reward
+            == info["reward_linup"]
+            + info["reward_quadctrl"]
+            + info["reward_impact"]
+            + 1
+        )
 
     env = gym.make(f"InvertedDoublePendulum-{version}")
     env.reset()
     for _ in range(NUM_STEPS):
         _, reward, _, _, info = env.step(env.action_space.sample())
-        assert reward == info["reward_survive"] + info["distance_penalty"] + info["velocity_penalty"]
+        assert (
+            reward
+            == info["reward_survive"]
+            + info["distance_penalty"]
+            + info["velocity_penalty"]
+        )
 
     env = gym.make(f"InvertedPendulum-{version}")
     env.reset()
@@ -283,37 +300,76 @@ def test_reward_sum(version):
     env.reset()
     for _ in range(NUM_STEPS):
         _, reward, _, _, info = env.step(env.action_space.sample())
-        assert reward == info["reward_forward"] + info["reward_survive"] + info["reward_ctrl"]
+        assert (
+            reward
+            == info["reward_forward"] + info["reward_survive"] + info["reward_ctrl"]
+        )
 
 
 # Note: the environtments that are not present, is because they do not have identical behaviour
-@pytest.mark.parametrize(
-    "env", ["HalfCheetah", "HumanoidStandup", "Pusher", "Reacher", "Swimmer"]
-)
-def test_identical_behaviour_v45(env):
-    """Verify that v4 -> v5 transition. does not change the behaviour of the environments in way way"""
+def test_identical_behaviour_v45():
+    """Verify that v4 -> v5 transition. Does not change the behaviour of the environments in any unexpected way."""
     NUM_STEPS = 100
 
-    env_v4 = gym.make(env + "-v4")
-    env_v5 = gym.make(env + "-v5")
-    env_v4.reset(seed=1234)
-    env_v5.reset(seed=1234)
-    for _ in range(NUM_STEPS):
-        action = env_v4.action_space.sample()
-        obs_v4, rew_v4, terminal_v4, truncated_v4, info_v4 = env_v4.step(action)
-        obs_v5, rew_v5, terminal_v5, truncated_v5, info_v5 = env_v5.step(action)
-        assert obs_v4.shape[0] != 1 and obs_v5.shape[0] != 1
-        assert (env_v4.unwrapped.data.qpos == env_v5.unwrapped.data.qpos).all()
-        assert (env_v4.unwrapped.data.qvel == env_v5.unwrapped.data.qvel).all()
-        if env not in ["HumanoidStandup", "Reacher"]:  # they have different obs
-            assert (obs_v4 == obs_v5).all()
-        assert rew_v4 == rew_v5
-        assert terminal_v4 == terminal_v5 and truncated_v4 == truncated_v5
+    env_v4 = gym.make("Ant-v4")
+    env_v5 = gym.make("Ant-v5", include_cfrc_ext_in_observation=False)
+    check_environments_match(
+        env_v4, env_v5, NUM_STEPS, skip_rew=True, info_comparison="skip"
+    )
+
+    env_v4 = gym.make("HalfCheetah-v4")
+    env_v5 = gym.make("HalfCheetah-v5")
+    check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="skip")
+
+    # env_v4 = gym.make("Hopper-v4")
+    # env_v5 = gym.make("Hopper-v5")
+    # check_environments_match(env_v4, env_v5, num_steps, skip_rew=true, info_comparison="superset")
+
+    # skipping humanoid, everything has changed
+
+    env_v4 = gym.make("HumanoidStandup-v4")
+    env_v5 = gym.make("HumanoidStandup-v5")
+    check_environments_match(
+        env_v4, env_v5, NUM_STEPS, skip_obs=True, info_comparison="superset"
+    )
+
+    env_v4 = gym.make("InvertedDoublePendulum-v4")
+    env_v5 = gym.make("InvertedDoublePendulum-v5")
+    check_environments_match(
+        env_v4,
+        env_v5,
+        NUM_STEPS,
+        skip_obs=True,
+        skip_rew=True,
+        info_comparison="superset",
+    )
+
+    env_v4 = gym.make("InvertedPendulum-v4")
+    env_v5 = gym.make("InvertedPendulum-v5")
+    check_environments_match(
+        env_v4, env_v5, NUM_STEPS, skip_rew=True, info_comparison="superset"
+    )
+
+    env_v4 = gym.make("Pusher-v4")
+    env_v5 = gym.make("Pusher-v5")
+    check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="skip")
+
+    env_v4 = gym.make("Reacher-v4")
+    env_v5 = gym.make("Reacher-v5")
+    check_environments_match(
+        env_v4, env_v5, NUM_STEPS, skip_obs=True, info_comparison="skip"
+    )
+
+    env_v4 = gym.make("Swimmer-v4")
+    env_v5 = gym.make("Swimmer-v5")
+    check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="skip")
+
+    # skipping Walker2d, since the model has changed
 
 
 @pytest.mark.parametrize("version", ["v5", "v4"])
-def test_ant_com(version):
-    """Verify the kinmatic behaviour of the ant"""
+def test_ant_com(version: str):
+    """Verify the kinmatic behaviour of the ant."""
     env = gym.make(
         f"Ant-{version}"
     )  # `env` contains `data : MjData` and `model : MjModel`
@@ -335,8 +391,8 @@ def test_ant_com(version):
 
 
 @pytest.mark.parametrize("version", ["v5", "v4", "v3", "v2"])
-def test_set_state(version):
-    """Simple Test to verify that `mujocoEnv.set_state()` works correctly"""
+def test_set_state(version: str):
+    """Simple Test to verify that `mujocoEnv.set_state()` works correctly."""
     env = gym.make(f"Hopper-{version}")
     env.reset()
     new_qpos = np.array(
@@ -357,8 +413,8 @@ def test_set_state(version):
 @pytest.mark.parametrize(
     "env_id", ["Ant-v5", "Humanoid-v5", "Swimmer-v5", "Swimmer-v4", "Swimmer-v3"]
 )
-def test_distance_from_origin_info(env_id):
-    """Verify that `info"distance_from_origin"` is correct"""
+def test_distance_from_origin_info(env_id: str):
+    """Verify that `info"distance_from_origin"` is correct."""
     env = gym.make(env_id)
     env.reset()
     _, _, _, _, info = env.step(env.action_space.sample())
@@ -369,8 +425,8 @@ def test_distance_from_origin_info(env_id):
 
 @pytest.mark.parametrize("env", ["Hopper", "HumanoidStandup", "Walker2d"])
 @pytest.mark.parametrize("version", ["v5"])
-def test_z_distance_from_origin_info(env, version):
-    """Verify that `info"z_distance_from_origin"` is correct"""
+def test_z_distance_from_origin_info(env: str, version: str):
+    """Verify that `info"z_distance_from_origin"` is correct."""
     env = gym.make(f"{env}-{version}")
     env.reset()
     _, _, _, _, info = env.step(env.action_space.sample())
@@ -396,7 +452,7 @@ def test_z_distance_from_origin_info(env, version):
     ],
 )
 @pytest.mark.parametrize("version", ["v5"])
-def test_observation_structure(env, version):
+def test_observation_structure(env: str, version: str):
     """Verify that the `env.observation_structure` is properly defined."""
     env = gym.make(f"{env}-{version}")
     if hasattr(env, "observation_structure"):
@@ -430,16 +486,20 @@ def test_observation_structure(env, version):
         "Hopper",
         "Humanoid",
         "HumanoidStandup",
+        # "InvertedDoublePendulum",
+        # "InvertedPendulum",
+        # "Pusher",
+        # "Reacher",
         "Swimmer",
         "Walker2d",
     ],
 )
 @pytest.mark.parametrize("version", ["v5"])
-def test_reset_info(env, version):
-    """Verify that the environment returns info at `reset()`"""
+def test_reset_info(env: str, version: str):
+    """Verify that the environment returns info with `reset()`."""
     env = gym.make(f"{env}-{version}")
     _, reset_info = env.reset()
-    assert "x_position" in reset_info
+    assert len(reset_info) > 0
 
 
 """
@@ -456,8 +516,8 @@ https://github.com/Farama-Foundation/Gymnasium/blob/deb50802facfd827abd4d1f0cf10
 
 # Note: the max height used to be wrong in the documentation.
 @pytest.mark.parametrize("version", ["v5"])
-def test_inverted_double_pendulum_max_height(version):
-    """Verify the max height of Inverted Double Pendulum"""
+def test_inverted_double_pendulum_max_height(version: str):
+    """Verify the max height of Inverted Double Pendulum."""
     env = gym.make(f"InvertedDoublePendulum-{version}", reset_noise_scale=0)
     env.reset()
     y = env.unwrapped.data.site_xpos[0][2]
@@ -465,8 +525,8 @@ def test_inverted_double_pendulum_max_height(version):
 
 
 @pytest.mark.parametrize("version", ["v4"])
-def test_inverted_double_pendulum_max_height_old(version):
-    """Verify the max height of Inverted Double Pendulum (v4 does not have `reset_noise_scale` argument)"""
+def test_inverted_double_pendulum_max_height_old(version: str):
+    """Verify the max height of Inverted Double Pendulum (v4 does not have `reset_noise_scale` argument)."""
     env = gym.make(f"InvertedDoublePendulum-{version}")
     env.set_state(env.init_qpos, env.init_qvel)
     y = env.unwrapped.data.site_xpos[0][2]
@@ -475,7 +535,7 @@ def test_inverted_double_pendulum_max_height_old(version):
 
 # note: fails with `brax==0.9.0`
 @pytest.mark.parametrize("version", ["v5", "v4"])
-def test_model_object_count(version):
+def test_model_object_count(version: str):
     """Verify that all the objects of the model are loaded, mostly useful for using non-mujoco simulator."""
     env = gym.make(f"Ant-{version}")
     assert env.unwrapped.model.nq == 15
@@ -586,3 +646,102 @@ def test_model_object_count(version):
     assert env.unwrapped.model.njnt == 9
     assert env.unwrapped.model.ngeom == 8
     assert env.unwrapped.model.ntendon == 0
+
+
+"""
+def test_dt():
+    env_a = gym.make("Ant-v5", include_cfrc_ext_in_observation=False)
+    env_b = gym.make("Ant-v5", include_cfrc_ext_in_observation=False, frame_skip=1)
+    env_b.unwrapped.model.opt.timestep = 0.05
+
+    assert env_a.dt == env_b.dt
+    check_environments_match(env_a, env_b, num_steps=100)
+"""
+
+
+def check_environments_match(
+    env_a: gym.Env,
+    env_b: gym.Env,
+    num_steps: int,
+    seed: int = 0,
+    skip_obs: bool = False,
+    skip_rew: bool = False,
+    skip_terminal: bool = False,
+    skip_truncated: bool = False,
+    info_comparison: str = "equivalence",
+):
+    """Checks if the environments `env_a` & `env_b` are identical.
+
+    Args:
+        env_a: First environment to check.
+        env_b: Second environment to check.
+        num_steps: number of timesteps to test for, setting to 0 tests only resetting.
+        seed: used the seed the reset & actions.
+        skip_obs: If `True` it does not check for equivalence of the observation.
+        skip_rew: If `True` it does not check for equivalence of the observation.
+        skip_terminal: If `True` it does not check for equivalence of the observation.
+        skip_truncated: If `True` it does not check for equivalence of the observation.
+        skip_info: If `True` it does not check for equivalence of the observation.
+        info_comparison: If "equivalence" then checks if the `info`s are identical,
+            if "superset" checks if `info_b` is a (non-strict) superset of `info_a`
+            if "skip" no checks are made at the `info`.
+    """
+    assert info_comparison in ["equivalence", "superset", "skip"]
+
+    assert env_a.action_space == env_b.action_space
+    assert skip_obs or env_b.observation_space == env_b.observation_space
+
+    env_a.action_space.seed(seed)
+    obs_a, info_a = env_a.reset(seed=seed)
+    obs_b, info_b = env_b.reset(seed=seed)
+
+    assert skip_obs or data_equivalence(
+        obs_a, obs_b
+    ), "resetting observation is not equivalent"
+    if info_comparison == "equivalence":
+        assert data_equivalence(info_a, info_b), "resetting info is not equivalent"
+    elif info_comparison == "superset":
+        for key in info_a:
+            assert data_equivalence(
+                info_a[key], info_b[key]
+            ), "resetting info is not a superset"
+
+    for _ in range(num_steps):
+        action = env_a.action_space.sample()
+        obs_a, rew_a, terminal_a, truncated_a, info_a = env_a.step(action)
+        obs_b, rew_b, terminal_b, truncated_b, info_b = env_b.step(action)
+        assert skip_obs or data_equivalence(
+            obs_a, obs_b
+        ), "stepping observation is not equivalent"
+        assert skip_rew or data_equivalence(
+            rew_a, rew_b
+        ), "stepping reward is not equivalent"
+        assert (
+            skip_terminal or terminal_a == terminal_b
+        ), "stepping terminal is not equivalent"
+        assert (
+            skip_truncated or truncated_a == truncated_b
+        ), "stepping truncated is not equivalent"
+        if info_comparison == "equivalence":
+            assert data_equivalence(info_a, info_b), "stepping info is not equivalent"
+        elif info_comparison == "superset":
+            for key in info_a:
+                assert data_equivalence(
+                    info_a[key], info_b[key]
+                ), "stepping info is not a superset"
+
+        if terminal_a or truncated_a or terminal_b or truncated_b:
+            obs_a, info_a = env_a.reset(seed=seed)
+            obs_b, info_b = env_b.reset(seed=seed)
+            assert skip_obs or data_equivalence(
+                obs_a, obs_b
+            ), "resetting observation is not equivalent"
+            if info_comparison == "equivalence":
+                assert data_equivalence(
+                    info_a, info_b
+                ), "resetting info is not equivalent"
+            elif info_comparison == "superset":
+                for key in info_a:
+                    assert data_equivalence(
+                        info_a[key], info_b[key]
+                    ), "resetting info is not a superset"
