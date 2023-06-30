@@ -4,7 +4,7 @@ import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 
 
-def check_environments_match(
+def env_match(
     env_a: gym.Env,
     env_b: gym.Env,
     num_steps: int,
