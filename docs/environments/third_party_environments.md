@@ -17,6 +17,13 @@ many-agent RL ([MAgent2](https://magent2.farama.org/)),
 
 *If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/nHg2JRN489).*
 
+### [flappy-bird-env](https://github.com/robertoschiavone/flappy-bird-env)
+
+[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
+[![GitHub stars](https://img.shields.io/github/stars/robertoschiavone/flappy-bird-env)]()
+
+Flappy Bird as a Farama Gymnasium environment.
+
 ### [highway-env: Autonomous driving and tactical decision-making tasks](https://github.com/eleurent/highway-env)
 
 [![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
