@@ -17,103 +17,110 @@ many-agent RL ([MAgent2](https://magent2.farama.org/)),
 
 *If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/nHg2JRN489).*
 
-### [highway-env: Autonomous driving and tactical decision-making tasks](https://github.com/eleurent/highway-env)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/eleurent/highway-env)]()
-
-An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control.
-
-### [sumo-rl: Reinforcement Learning using SUMO traffic simulator](https://github.com/LucasAlegre/sumo-rl)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/LucasAlegre/sumo-rl)]()
-
-Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using [pettingzoo](https://pettingzoo.farama.org/)).
-
-### [panda-gym: Robotics environments using the PyBullet physics engine](https://github.com/qgallouedec/panda-gym/)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/qgallouedec/panda-gym)]()
-
-PyBullet based simulations of a robotic arm moving objects.
-
-### [tmrl: TrackMania 2020 through RL](https://github.com/trackmania-rl/tmrl/)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/trackmania-rl/tmrl)]()
-
-tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
-
-### [gym-jiminy: Training Robots in Jiminy](https://github.com/duburcqa/jiminy)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.0-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/duburcqa/jiminy)]()
-
-gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](https://github.com/duburcqa/jiminy), an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.
-
-### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium)]()
-
-Highly scalable and customizable Safe Reinforcement Learning library.
-
-### [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
-[![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)]()
-
-Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
-
-### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/Farama-Foundation/stable-retro)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/Farama-Foundation/stable-retro)]()
-
-Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
-
-### [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/stefanbschneider/mobile-env)]()
-
-An open, minimalist Gymnasium environment for autonomous coordination in wireless mobile networks.
-
-### [gym-cellular-automata: Cellular Automata environments](https://github.com/elbecerrasoto/gym-cellular-automata)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata)]()
-
-Environments where the agent interacts with _Cellular Automata_ by changing its cell states.
-
 ### [DACBench: a benchmark for Dynamic Algorithm Configuration](https://github.com/automl/DACBench)
 
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/automl/DACBench)]()
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
+![GitHub stars](https://img.shields.io/github/stars/automl/DACBench)
 
 A benchmark library for [Dynamic Algorithm Configuration](https://www.automl.org/dynamic-algorithm-configuration/). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
-### [gym-saturation: Environments used to prove theorems](https://github.com/inpefess/gym-saturation)
+### [flappy-bird-env](https://github.com/robertoschiavone/flappy-bird-env)
 
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/inpefess/gym-saturation)]()
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/robertoschiavone/flappy-bird-env)
 
-An environment for guiding automated theorem provers based on saturation algorithms (e.g. [Vampire](https://github.com/vprover/vampire)).
-
-### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
-
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.2-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/Paul-543NA/matrix-mdp-gym)]()
-
-An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (`P_0(s)`, `P(s'| s, a)` and `R(s', s, a)`) into a gym environment that represents the discrete MDP ruled by these dynamics.
+Flappy Bird as a Farama Gymnasium environment.
 
 ### [flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium](https://github.com/markub3327/flappy-bird-gymnasium)
 
-[![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)]()
-[![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)]()
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)
 
 A simple environment for single-agent reinforcement learning algorithms on a clone of [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.
+
+### [gym-cellular-automata: Cellular Automata environments](https://github.com/elbecerrasoto/gym-cellular-automata)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata)
+
+Environments where the agent interacts with _Cellular Automata_ by changing its cell states.
+
+### [gym-jiminy: Training Robots in Jiminy](https://github.com/duburcqa/jiminy)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.0-blue)
+![GitHub stars](https://img.shields.io/github/stars/duburcqa/jiminy)
+
+gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](https://github.com/duburcqa/jiminy), an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.
+
+### [gym-saturation: Environments used to prove theorems](https://github.com/inpefess/gym-saturation)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/inpefess/gym-saturation)
+
+An environment for guiding automated theorem provers based on saturation algorithms (e.g. [Vampire](https://github.com/vprover/vampire)).
+
+### [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
+
+Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
+
+### [highway-env: Autonomous driving and tactical decision-making tasks](https://github.com/eleurent/highway-env)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/eleurent/highway-env)
+
+An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control.
+
+### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.2-blue)
+![GitHub stars](https://img.shields.io/github/stars/Paul-543NA/matrix-mdp-gym)
+
+An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (`P_0(s)`, `P(s'| s, a)` and `R(s', s, a)`) into a gym environment that represents the discrete MDP ruled by these dynamics.
+
+### [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/stefanbschneider/mobile-env)
+
+An open, minimalist Gymnasium environment for autonomous coordination in wireless mobile networks.
+
+### [panda-gym: Robotics environments using the PyBullet physics engine](https://github.com/qgallouedec/panda-gym/)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
+![GitHub stars](https://img.shields.io/github/stars/qgallouedec/panda-gym)
+
+PyBullet based simulations of a robotic arm moving objects.
+
+### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium)
+
+Highly scalable and customizable Safe Reinforcement Learning library.
+
+### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/Farama-Foundation/stable-retro)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/Farama-Foundation/stable-retro)
+
+Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
+
+### [sumo-rl: Reinforcement Learning using SUMO traffic simulator](https://github.com/LucasAlegre/sumo-rl)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
+![GitHub stars](https://img.shields.io/github/stars/LucasAlegre/sumo-rl)
+
+Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using [pettingzoo](https://pettingzoo.farama.org/)).
+
+### [tmrl: TrackMania 2020 through RL](https://github.com/trackmania-rl/tmrl/)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/trackmania-rl/tmrl)
+
+tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
 ## Third-Party Environments using Gym
 
