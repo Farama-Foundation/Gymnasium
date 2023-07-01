@@ -202,7 +202,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     this reward would be positive if the Humanoid moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the center of mass ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions which is dependent on the `frame_skip` parameter (default is 5),
+    $dt$ is the time between actions, which is dependent on the `frame_skip` parameter (default is 5),
     and `frametime` which is 0.001 - making the default $dt = 5 \times 0.003 = 0.015$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1.25$).
     The calculation for the center of mass is defined in the `.py` file for the Humanoid.

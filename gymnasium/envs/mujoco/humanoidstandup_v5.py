@@ -199,7 +199,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     but it is an absolute reward which measures how much upward the Humanoid has moved overall.
     It is measured as $weight_{uph} \times (z_{after action} - 0)/dt$,
     where $z_{after action}$ is the z coordinate of the torso after taking an action,
-    and *dt* is the time between actions and is dependent on the `frame_skip` parameter
+    and *dt* is the time between actions, and is dependent on the `frame_skip` parameter
     (default is 5), where the frametime is 0.003 - making the default *dt = 5 * 0.003 = 0.015*.
     and $weight_{uph}$ is `uph_cost_weight`.
     - *quad_ctrl_cost*:

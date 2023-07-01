@@ -79,7 +79,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     this reward would be positive if the Swimmer moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions which is dependent on the `frame_skip` parameter (default is 4),
+    $dt$ is the time between actions, which is dependent on the `frame_skip` parameter (default is 4),
     and `frametime` which is 0.01 - making the default $dt = 4 \times 0.01 = 0.04$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
     - *ctrl_cost*:
