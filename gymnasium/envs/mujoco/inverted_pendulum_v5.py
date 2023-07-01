@@ -54,14 +54,14 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The goal is to make the inverted pendulum stand upright (within a certain angle limit)
-    as long as possible - as such a reward of +1 is awarded for each timestep that
+    The goal is to keep the inverted pendulum stand upright (within a certain angle limit)
+    for as long as possible - as such a reward of +1 is awarded for each timestep that
     the pole is upright.
 
     The pole is considered upright if:
-    $|angle| < 0.2$
+    $|angle| < 0.2$.
 
-    and `info` will also contain the reward.
+    and `info` also contains the reward.
 
 
     ## Starting State

@@ -205,12 +205,12 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is 5),
     and `frametime` which is 0.001 - so the default is $dt = 5 \times 0.003 = 0.015$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1.25$).
-    The calculation for the center of mass is defined in the `.py` file for the Humanoid.
+    The center of mass calculation is defined in the `.py` file for the Humanoid.
     - *ctrl_cost*:
     A negative reward to penalize the Humanoid for taking actions that are too large.
     $w_{control} \times \\|action\\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $0.1$).
-    If there are *nu* actuators/controls, then the control has shape  `nu x 1`.
+    If there are *nu* actuators/controls, then the control has shape `nu x 1`.
     - *contact_cost*:
     A negative reward to penalize the Humanoid if the external contact forces are too large.
     $w_{contact} \times clamp(contact\\_cost\\_range, \\|F_{contact}\\|_2^2)$, where

@@ -69,13 +69,13 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     The reward consists of two parts:
     - *reward_distance*:
     This reward is a measure of how far the *fingertip* of the reacher (the unattached end) is from the target,
-    with a more negative value assigned for when the reacher's *fingertip* is further away from the target.
+    with a more negative value assigned for if the reacher's *fingertip* is further away from the target.
     It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
-    where $w_{near}$ is `reward_near_weight`.
+    where $w_{near}$ is the `reward_near_weight`.
     - *reward_control*:
     A negative reward to penalize the walker for taking actions that are too large.
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
-    where $w_{control}$ is `reward_control_weight`.
+    where $w_{control}$ is the `reward_control_weight`.
 
     The total reward returned is ***reward*** *=* *reward_distance + reward_control*.
     `info` will also contain the individual reward terms.

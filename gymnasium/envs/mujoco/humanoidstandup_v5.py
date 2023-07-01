@@ -194,9 +194,9 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     ## Rewards
     The reward consists of three parts:
     - *uph_cost*:
-    A reward for moving upward (in an attempt to stand up).
-    This is not a relative reward which measures how much upward it has moved from the last timestep,
-    but it is an absolute reward which measures how much upward the Humanoid has moved overall.
+    A reward for moving up (trying to stand up).
+    This is not a relative reward, measuring how far up it has moved since the last timestep,
+    but it is an absolute reward that measures how much upward the Humanoid has moved up in total.
     It is measured as $weight_{uph} \times (z_{after action} - 0)/dt$,
     where $z_{after action}$ is the z coordinate of the torso after taking an action,
     and *dt* is the time between actions, and depends on the `frame_skip` parameter

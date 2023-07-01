@@ -74,15 +74,14 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     ## Rewards
     The reward consists of two parts:
     - *alive_bonus*:
-    The goal is to make the second inverted pendulum stand upright
-    (within a certain angle limit) as long as possible - as such a reward of `healthy_reward` is awarded
-     for each timestep that the second pole is upright.
+    The goal is to keep the second inverted pendulum upright (within a certain angle limit) as long as possible -
+    so for each timestep that the second pole is upright, a reward of `healthy_reward` is given.
     - *distance_penalty*:
     This reward is a measure of how far the *tip* of the second pendulum (the only free end) moves,
     and it is calculated as $0.01 x_{pole2-tip}^2 + (y_{pole2-tip}-2)^2$,
     where $x_{pole2-tip}, y_{pole2-tip}$ are the xy-coordinatesof the tip of the second pole.
     - *velocity_penalty*:
-    A negative reward for penalising the agent if it moves too fast.
+    A negative reward to penalize the agent for moving too fast.
     $10^{-3} \omega_1 + 5 10^{-3} \omega_2$,
     where $\omega_1, \omega_2$ are the angular velocities of the hinges.
 
