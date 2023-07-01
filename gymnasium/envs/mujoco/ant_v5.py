@@ -114,7 +114,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 13 |12      | ankle_4 (back right leg) |
 
     The (x,y,z) coordinates are translational DOFs while the orientations are rotational
-    DOFs expressed as quaternions. One can read more about free joints on the [Mujoco Documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
+    DOFs expressed as quaternions. One can read more about free joints in the [Mujoco Documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
 
 
     **Note:** Ant-v4+ environment no longer has the following contact forces issue.
@@ -125,35 +125,34 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The reward consists of three parts:
+    The reward consists of four parts:
     - *healthy_reward*:
-    Every timestep that the ant is healthy (see definition in section "Episode Termination"),
+    Every timestep that the Ant is healthy (see definition in section "Episode Termination"),
     it gets a reward of fixed value `healthy_reward`.
     - *forward_reward*:
-    A reward of moving forward,
+    A reward for moving forward,
     this reward would be positive if the Ant moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the `main_body` ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions which is dependent on the `frame_skip` parameter (default is 5),
-    and `frametime` which is 0.01 - making the default $dt = 5 \times 0.01 = 0.05$,
+    $dt$ is the time between actions, which is depends on the `frame_skip` parameter (default is 5),
+    and `frametime`, which is 0.01 - so the default is $dt = 5 \times 0.01 = 0.05$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
     - *ctrl_cost*:
-    A negative reward for penalizing the Ant if it takes actions that are too large.
+    A negative reward to penalize the Ant for taking actions that are too large.
     $w_{control} \times \\|action\\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $0.5$).
     - *contact_cost*:
-    A negative reward for penalizing the Ant if the external contact forces are too large.
+    A negative reward to penalize the Ant if the external contact forces are too large.
     $w_{contact} \times \\|F_{contact}\\|_2^2$, where
     $w_{contact}$ is `contact_cost_weight` (default is $5\times10^{-4}$),
     $F_{contact}$ are the external contact forces clipped by `contact_force_range` (see `cfrc_ext` section on observation).
 
 
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
+    and `info` will also contain the individual reward terms.
 
     But if `use_contact_forces=false` on `v4`
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*.
-
-    In either case `info` will also contain the individual reward terms.
 
 
     ## Starting State

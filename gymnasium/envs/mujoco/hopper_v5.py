@@ -76,7 +76,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     Every timestep that the Hopper is healthy (see definition in section "Episode Termination"),
     it gets a reward of fixed value `healthy_reward`.
     - *forward_reward*:
-    A reward of moving forward,
+    A reward for moving forward,
     this reward would be positive if the Hopper moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the "torso" ($x_{after-action} - x_{before-action}$),

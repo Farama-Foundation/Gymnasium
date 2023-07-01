@@ -198,7 +198,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     Every timestep that the Humanoid is alive (see section Episode Termination for definition),
     it gets a reward of fixed value `healthy_reward`.
     - *forward_reward*:
-    A reward of moving forward,
+    A reward for moving forward,
     this reward would be positive if the Humanoid moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the center of mass ($x_{after-action} - x_{before-action}$),

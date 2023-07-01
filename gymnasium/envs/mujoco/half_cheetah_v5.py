@@ -78,17 +78,17 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     ## Rewards
     The reward consists of two parts:
     - *forward_reward*:
-    A reward of moving forward,
+    A reward for moving forward,
     this reward would be positive if the Half Cheetah moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the "tip" ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions which is dependent on the `frame_skip` parameter (default is 5),
-    and `frametime` which is 0.01 - making the default $dt = 5 \times 0.01 = 0.05$,
+    $dt$ is the time between actions which is depends on the `frame_skip` parameter (default is 5),
+    and `frametime` which is 0.01 - so the default is $dt = 5 \times 0.01 = 0.05$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
     - *ctrl_cost*:
-    A negative reward for penalizing the Half Cheetah if it takes actions that are too large.
+    A negative reward to penalize the Half Cheetah for taking actions that are too large.
     $w_{control} \times \\|action\\|_2^2$,
-    where $w_{control}$ is `ctrl_cost_weight` (default is $0.1$).
+    where $w_{control}$ is the `ctrl_cost_weight` (default is $0.1$).
 
     The total reward returned is ***reward*** *=* *forward_reward - ctrl_cost*,
     and `info` will also contain the individual reward terms.

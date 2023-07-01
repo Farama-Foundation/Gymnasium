@@ -75,7 +75,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     ## Rewards
     The reward consists of two parts:
     - *forward_reward*:
-    A reward of moving forward,
+    A reward for moving forward,
     this reward would be positive if the Swimmer moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
