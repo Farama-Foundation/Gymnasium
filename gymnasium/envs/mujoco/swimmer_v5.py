@@ -80,7 +80,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
     $dt$ is the time between actions, which is dependent on the `frame_skip` parameter (default is 4),
-    and `frametime` which is 0.01 - making the default $dt = 4 \times 0.01 = 0.04$,
+    and `frametime` which is 0.01 - so the default is $dt = 4 \times 0.01 = 0.04$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
     - *ctrl_cost*:
     A negative reward for penalizing the Swimmer if it takes actions that are too large.

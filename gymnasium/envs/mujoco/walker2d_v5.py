@@ -87,7 +87,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
     $dt$ is the time between actions, which is dependent on the `frame_skip` parameter (default is 4),
-    and `frametime` which is 0.002 - making the default $dt = 4 \times 0.002 = 0.008$,
+    and `frametime` which is 0.002 - so the default is $dt = 4 \times 0.002 = 0.008$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
     - *ctrl_cost*:
     A negative reward for penalizing the Walker2d if it takes actions that are too large.

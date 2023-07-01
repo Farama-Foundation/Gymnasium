@@ -200,7 +200,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     It is measured as $weight_{uph} \times (z_{after action} - 0)/dt$,
     where $z_{after action}$ is the z coordinate of the torso after taking an action,
     and *dt* is the time between actions, and is dependent on the `frame_skip` parameter
-    (default is 5), where the frametime is 0.003 - making the default *dt = 5 * 0.003 = 0.015*.
+    (default is 5), where the frametime is 0.003 - so the default is *dt = 5 * 0.003 = 0.015*.
     and $weight_{uph}$ is `uph_cost_weight`.
     - *quad_ctrl_cost*:
     A negative reward for penalizing the Humanoid if it takes actions that are too large.
