@@ -88,7 +88,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     where $w_{control}$ is `ctrl_cost_weight` (default is $10^{-4}$).
 
     The total reward returned is ***reward*** *=* *forward_reward - ctrl_cost*,
-    and `info` will also contain the individual reward terms
+    and `info` will also contain the individual reward terms.
 
 
     ## Starting State

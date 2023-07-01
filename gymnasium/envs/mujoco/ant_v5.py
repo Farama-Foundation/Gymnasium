@@ -147,7 +147,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     $w_{contact}$ is `contact_cost_weight` (default is $5\times10^{-4}$),
     $F_{contact}$ are the external contact forces clipped by `contact_force_range` (see `cfrc_ext` section on observation).
 
-
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
     and `info` will also contain the individual reward terms.
 
