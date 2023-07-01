@@ -203,12 +203,12 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     (default is 5), where the frametime is 0.003 - so the default is *dt = 5 * 0.003 = 0.015*.
     and $weight_{uph}$ is `uph_cost_weight`.
     - *quad_ctrl_cost*:
-    A negative reward for penalizing the Humanoid if it takes actions that are too large.
+    A negative reward to penalize the Humanoid for taking actions that are too large.
     $w_{quad_control} \times \\|action\\|_2^2$,
     where $w_{quad_control}$ is `ctrl_cost_weight` (default is $0.1$).
     If there are *nu* actuators/controls, then the control has shape  `nu x 1`.
     - *impact_cost*:
-    A negative reward for penalizing the Humanoid if the external contact forces are too large.
+    A negative reward to penalize the Humanoid if the external contact forces are too large.
     $w_{impact} \times clamp(impact\\_cost\\_range, \\|F_{contact}\\|_2^2)$, where
     $w_{impact}$ is `impact_cost_weight` (default is $5\times10^{-7}$),
     $F_{contact}$ are the external contact forces (see `cfrc_ext` section on observation).

@@ -88,7 +88,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     It is $-w_{dist} \|(P_{object} - P_{target})\|_2$.
     where $w_{dist}$ is `reward_dist_weight`.
     - *reward_control*:
-    A negative reward for penalising the pusher if it takes actions that are too large.
+    A negative reward to penalize the pusher for taking actions that are too large.
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
     where $w_{control}$ is `reward_control_weight`.
 

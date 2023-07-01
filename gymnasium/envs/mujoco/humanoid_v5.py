@@ -207,12 +207,12 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     $w_{forward}$ is the `forward_reward_weight` (default is $1.25$).
     The calculation for the center of mass is defined in the `.py` file for the Humanoid.
     - *ctrl_cost*:
-    A negative reward for penalizing the Humanoid if it takes actions that are too large.
+    A negative reward to penalize the Humanoid for taking actions that are too large.
     $w_{control} \times \\|action\\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $0.1$).
     If there are *nu* actuators/controls, then the control has shape  `nu x 1`.
     - *contact_cost*:
-    A negative reward for penalizing the Humanoid if the external contact forces are too large.
+    A negative reward to penalize the Humanoid if the external contact forces are too large.
     $w_{contact} \times clamp(contact\\_cost\\_range, \\|F_{contact}\\|_2^2)$, where
     $w_{contact}$ is `contact_cost_weight` (default is $5\times10^{-7}$),
     $F_{contact}$ are the external contact forces (see `cfrc_ext` section on observation).

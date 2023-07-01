@@ -90,7 +90,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     and `frametime` which is 0.002 - so the default is $dt = 4 \times 0.002 = 0.008$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
     - *ctrl_cost*:
-    A negative reward for penalizing the Walker2d if it takes actions that are too large.
+    A negative reward to penalize the Walker2d for taking actions that are too large.
     $w_{control} \times \\|action\\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $10^{-3}$).
 

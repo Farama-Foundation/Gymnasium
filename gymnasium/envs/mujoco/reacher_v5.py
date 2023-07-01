@@ -73,7 +73,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
     where $w_{near}$ is `reward_near_weight`.
     - *reward_control*:
-    A negative reward for penalising the walker if it takes actions that are too large.
+    A negative reward to penalize the walker for taking actions that are too large.
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
     where $w_{control}$ is `reward_control_weight`.
 
