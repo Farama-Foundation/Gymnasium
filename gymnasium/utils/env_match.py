@@ -27,9 +27,11 @@ def check_environments_match(
         skip_terminal: If `True` it does not check for equivalence of the observation.
         skip_truncated: If `True` it does not check for equivalence of the observation.
         skip_info: If `True` it does not check for equivalence of the observation.
-        info_comparison: options:
+        info_comparison: The options are
             If "equivalence" then checks if the `info`s are identical,
             If "superset" checks if `info_b` is a (non-strict) superset of `info_a`
+            If "keys-equivalence" checks if the `info`s keys are identical (while ignoring the values).
+            If "keys-superset" checks if the `info_b`s keys are a superset of `info_a`'s keys.
             If "skip" no checks are made at the `info`.
     """
     assert info_comparison in [
