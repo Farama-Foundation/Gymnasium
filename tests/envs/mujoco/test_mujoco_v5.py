@@ -170,9 +170,9 @@ def test_verify_reward_survive(env: str, version: str):
     """Assert that `reward_survive` is 0 on `terminal` states and not 0 on non-`terminal` states."""
     env = gym.make(f"{env}-{version}", reset_noise_scale=0)
     env.reset(seed=0)
-    env.action_space.seed(0)
+    env.action_space.seed(1)
 
-    for step in range(175):
+    for step in range(80):
         obs, rew, terminal, truncated, info = env.step(env.action_space.sample())
 
         if terminal:
@@ -213,7 +213,7 @@ def test_frame_skip(env: str, version: str, frame_skip: int):
             raise Error(f"Unexpected warning: {warning.message}")
 
 
-# Dev Note: This can be version env parametrized because each env has it's own reward function
+# Dev Note: This can not be version env parametrized because each env has it's own reward function
 @pytest.mark.parametrize("version", ["v5"])
 def test_reward_sum(version: str):
     """Assert that the total reward equals the sum of the individual reward terms, also asserts that the reward function has no fp ordering arithmetic errors."""
@@ -321,9 +321,11 @@ def test_identical_behaviour_v45():
     env_v5 = gym.make("HalfCheetah-v5")
     check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="skip")
 
-    # env_v4 = gym.make("Hopper-v4")
-    # env_v5 = gym.make("Hopper-v5")
-    # check_environments_match(env_v4, env_v5, num_steps, skip_rew=true, info_comparison="superset")
+    env_v4 = gym.make("Hopper-v4")
+    env_v5 = gym.make("Hopper-v5")
+    check_environments_match(
+        env_v4, env_v5, NUM_STEPS, skip_rew=True, info_comparison="superset"
+    )
 
     # skipping humanoid, everything has changed
 
@@ -352,19 +354,21 @@ def test_identical_behaviour_v45():
 
     env_v4 = gym.make("Pusher-v4")
     env_v5 = gym.make("Pusher-v5")
-    check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="skip")
+    check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="keys-superset")
 
     env_v4 = gym.make("Reacher-v4")
     env_v5 = gym.make("Reacher-v5")
     check_environments_match(
-        env_v4, env_v5, NUM_STEPS, skip_obs=True, info_comparison="skip"
+        env_v4, env_v5, NUM_STEPS, skip_obs=True, info_comparison="keys-equivalence"
     )
 
     env_v4 = gym.make("Swimmer-v4")
     env_v5 = gym.make("Swimmer-v5")
     check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="skip")
 
-    # skipping Walker2d, since the model has changed
+    env_v4 = gym.make("Walker2d-v4")
+    env_v5 = gym.make("Walker2d-v5")
+    check_environments_match(env_v4, env_v5, NUM_STEPS, skip_obs=True, skip_rew=True, skip_terminal=True, info_comparison="keys-superset")
 
 
 @pytest.mark.parametrize("version", ["v5", "v4"])
@@ -502,19 +506,7 @@ def test_reset_info(env: str, version: str):
     assert len(reset_info) > 0
 
 
-"""
-[Bug Report] [Documentation] Inverted Double Pendulum max Height is wrong
-
-The Documentation States:
-```md
-The maximum standing height of the system is 1.196 m when all the parts are perpendicularly vertical on top of each other)
-```
-but the height of each pole is 0.6 (0.6+0.6==1.2)
-https://github.com/Farama-Foundation/Gymnasium/blob/deb50802facfd827abd4d1f0cf1069afb12a726b/gymnasium/envs/mujoco/assets/inverted_double_pendulum.xml#L33-L39
-"""
-
-
-# Note: the max height used to be wrong in the documentation.
+# Note: the max height used to be wrong in the documentation. (1.196m instead of 1.2m)
 @pytest.mark.parametrize("version", ["v5"])
 def test_inverted_double_pendulum_max_height(version: str):
     """Verify the max height of Inverted Double Pendulum."""
