@@ -1,7 +1,7 @@
 """Implementation of a space that represents the cartesian product of `Discrete` spaces."""
 from __future__ import annotations
 
-from typing import Any, Sequence, Iterable, Mapping
+from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
 from numpy.typing import NDArray
