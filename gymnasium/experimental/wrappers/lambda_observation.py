@@ -12,8 +12,7 @@
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Sequence
-from typing_extensions import Final
+from typing import Any, Callable, Final, Sequence
 
 import numpy as np
 

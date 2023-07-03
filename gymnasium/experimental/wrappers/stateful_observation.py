@@ -10,8 +10,7 @@ from __future__ import annotations
 
 from collections import deque
 from copy import deepcopy
-from typing import Any, SupportsFloat
-from typing_extensions import Final
+from typing import Any, Final, SupportsFloat
 
 import numpy as np
 
