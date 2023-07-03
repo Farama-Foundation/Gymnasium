@@ -4,6 +4,7 @@
 * ``TimeAwareObservationV0`` - A wrapper for adding time aware observations to environment observation
 * ``FrameStackObservationV0`` - Frame stack the observations
 * ``NormalizeObservationV0`` - Normalized the observations to a mean and
+* ``MaxAndSkipObservationV0`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
 """
 from __future__ import annotations
 
@@ -24,6 +25,14 @@ from gymnasium.experimental.vector.utils import (
 )
 from gymnasium.experimental.wrappers.utils import RunningMeanStd, create_zero_array
 from gymnasium.spaces import Box, Dict, Tuple
+
+
+__all__ = [
+    "DelayObservationV0",
+    "TimeAwareObservationV0",
+    "FrameStackObservationV0",
+    "NormalizeObservationV0",
+]
 
 
 class DelayObservationV0(
@@ -431,3 +440,68 @@ class NormalizeObservationV0(
         return (observation - self.obs_rms.mean) / np.sqrt(
             self.obs_rms.var + self.epsilon
         )
+
+
+class MaxAndSkipObservationV0(
+    gym.Wrapper[WrapperObsType, ActType, ObsType, ActType],
+    gym.utils.RecordConstructorArgs,
+):
+    """This wrapper will return only every ``skip``-th frame (frameskipping) and return the max between the two last observations.
+
+    Note: This wrapper is based on the wrapper from stable-baselines3: https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#MaxAndSkipEnv
+    """
+
+    def __init__(self, env: gym.Env[ObsType, ActType], skip: int = 4):
+        """This wrapper will return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
+
+        Args:
+            env (Env): The environment to apply the wrapper
+            skip: The number of frames to skip
+        """
+        gym.utils.RecordConstructorArgs.__init__(self, skip=skip)
+        gym.Wrapper.__init__(self, env)
+
+        if not np.issubdtype(type(skip), np.integer):
+            raise TypeError(
+                f"The skip is expected to be an integer, actual type: {type(skip)}"
+            )
+        if skip < 2:
+            raise ValueError(
+                f"The skip value needs to be equal or greater than two, actual value: {skip}"
+            )
+        if env.observation_space.shape is None:
+            raise ValueError("The observation space must have the shape attribute.")
+
+        self._skip = skip
+        self._obs_buffer = np.zeros(
+            (2, *env.observation_space.shape), dtype=env.observation_space.dtype
+        )
+
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        """Step the environment with the given action for ``skip`` steps.
+
+        Repeat action, sum reward, and max over last observations.
+
+        Args:
+            action: The action to step through the environment with
+        Returns:
+            Max of the last two observations, reward, terminated, truncated, and info from the environment
+        """
+        total_reward = 0.0
+        terminated = truncated = False
+        info = {}
+        for i in range(self._skip):
+            obs, reward, terminated, truncated, info = self.env.step(action)
+            done = terminated or truncated
+            if i == self._skip - 2:
+                self._obs_buffer[0] = obs
+            if i == self._skip - 1:
+                self._obs_buffer[1] = obs
+            total_reward += float(reward)
+            if done:
+                break
+        max_frame = self._obs_buffer.max(axis=0)
+
+        return max_frame, total_reward, terminated, truncated, info

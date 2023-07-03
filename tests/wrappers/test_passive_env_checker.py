@@ -35,7 +35,7 @@ def test_passive_checker_wrapper_warnings(env):
     [
         (
             GenericTestEnv(action_space=None),
-            "The environment must specify an action space. https://gymnasium.farama.org/content/environment_creation/",
+            "The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/",
         ),
         (
             GenericTestEnv(action_space="error"),
@@ -43,7 +43,7 @@ def test_passive_checker_wrapper_warnings(env):
         ),
         (
             GenericTestEnv(observation_space=None),
-            "The environment must specify an observation space. https://gymnasium.farama.org/content/environment_creation/",
+            "The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/",
         ),
         (
             GenericTestEnv(observation_space="error"),

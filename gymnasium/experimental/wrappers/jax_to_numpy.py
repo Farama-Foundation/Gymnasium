@@ -20,7 +20,7 @@ except ImportError:
         "Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install gymnasium[jax]`"
     )
 
-__all__ = ["jax_to_numpy", "numpy_to_jax", "JaxToNumpyV0"]
+__all__ = ["JaxToNumpyV0", "jax_to_numpy", "numpy_to_jax"]
 
 
 @functools.singledispatch
