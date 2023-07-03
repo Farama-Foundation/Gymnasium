@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 
 from gymnasium.spaces import Discrete
@@ -5,31 +7,23 @@ from gymnasium.spaces import Discrete
 
 def test_space_legacy_pickling():
     """Test the legacy pickle of Discrete that is missing the `start` parameter."""
-    legacy_state = {
-        "shape": (
-            1,
-            2,
-            3,
-        ),
-        "dtype": np.int64,
-        "np_random": np.random.default_rng(),
-        "n": 3,
-    }
-    space = Discrete(1)
-    space.__setstate__(legacy_state)
+    # Test that start is corrected passed
+    space = Discrete(1, start=2)
+    state = space.__dict__
 
-    assert space.shape == legacy_state["shape"]
-    assert space.np_random == legacy_state["np_random"]
-    assert space.n == 3
-    assert space.dtype == legacy_state["dtype"]
+    new_space = Discrete(1)
+    new_space.__setstate__(state)
+    assert new_space == space
+    assert new_space.start == 2
 
-    # Test that start is missing
-    assert "start" in space.__dict__
-    del space.__dict__["start"]  # legacy did not include start param
-    assert "start" not in space.__dict__
+    legacy_space = Discrete(1)
+    legacy_state = deepcopy(legacy_space.__dict__)
+    del legacy_state["start"]
 
-    space.__setstate__(legacy_state)
-    assert space.start == 0
+    new_legacy_space = Discrete(2)
+    new_legacy_space.__setstate__(legacy_state)
+    assert new_legacy_space == legacy_space
+    assert new_legacy_space.start == 0
 
 
 def test_sample_mask():

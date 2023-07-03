@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 import pytest
 
@@ -153,3 +155,24 @@ def test_multidiscrete_start_contains():
 
     assert [12, 23, 34] in space
     assert [13, 23, 34] not in space
+
+
+def test_space_legacy_pickling():
+    """Test the legacy pickle of Discrete that is missing the `start` parameter."""
+    # Test that start is corrected passed
+    space = MultiDiscrete([1, 2, 3], start=[4, 5, 6])
+    state = space.__dict__
+
+    new_space = MultiDiscrete([1, 2, 3])
+    new_space.__setstate__(state)
+    assert new_space == space
+    assert np.all(new_space.start == np.array([4, 5, 6]))
+
+    legacy_space = MultiDiscrete([1, 2, 3])
+    legacy_state = deepcopy(legacy_space.__dict__)
+    del legacy_state["start"]
+
+    new_legacy_space = MultiDiscrete([1, 2, 3])
+    new_legacy_space.__setstate__(legacy_state)
+    assert new_legacy_space == legacy_space
+    assert np.all(new_legacy_space.start == np.array([0, 0, 0]))
