@@ -1,12 +1,14 @@
 """A collection of perofmance bencharks, useful for debugging performance related issues."""
 
-import gymnasium
 import time
 from typing import Callable
 
+import gymnasium
+
 
 def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None):
-    """A benchmark to measure the runtime perfomance of step for an environment.
+    """A benchmark to measure the runtime performance of step for an environment.
+
     example usage:
         ```py
         env_old = ...
@@ -19,7 +21,7 @@ def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None):
     Args:
         env: the environment to benchmarked.
         target_duration: the duration of the benchmark in seconds (note: it will go slightly over it).
-        seed: seeds the environement and action sampled.
+        seed: seeds the environment and action sampled.
 
     Returns: the average steps per second.
     """
@@ -47,13 +49,15 @@ def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None):
     return steps_per_time
 
 
-def benchmark_init(env_lambda: Callable[[], gymnasium.Env], target_duration: int = 5, seed=None):
-    """A benchmark to measure the intialization time and first reset.
+def benchmark_init(
+    env_lambda: Callable[[], gymnasium.Env], target_duration: int = 5, seed=None
+):
+    """A benchmark to measure the initialization time and first reset.
 
     Args:
-        env_lambda: the function to initialize the environemnt.
+        env_lambda: the function to initialize the environment.
         target_duration: the duration of the benchmark in seconds (note: it will go slightly over it).
-        seed: seeds the first reset of the environement.
+        seed: seeds the first reset of the environment.
     """
     inits = 0
     end = 0
@@ -95,4 +99,3 @@ def benchmark_render(env: gymnasium.Env, target_duration: int = 5):
 
     renders_per_time = renders / length
     return renders_per_time
-
