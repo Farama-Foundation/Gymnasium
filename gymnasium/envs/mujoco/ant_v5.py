@@ -384,7 +384,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
         if self._include_cfrc_ext_in_observation:
             contact_force = self.contact_forces[1:].flat.copy()
-            assert len(contact_force) == 78
             return np.concatenate((position, velocity, contact_force))
         else:
             return np.concatenate((position, velocity))
