@@ -44,7 +44,7 @@ mujoco_py = ["mujoco-py >=2.1,<2.2"]       # kept for backward compatibility
 mujoco = ["mujoco <=2.3.3", "imageio >=2.14.1"]
 toy-text = ["pygame >=2.1.3"]
 toy_text = ["pygame >=2.1.3"]         # kept for backward compatibility
-jax = ["jax ==0.3.24", "jaxlib ==0.3.24"]
+jax = ["jax >=0.4.0", "jaxlib >=0.4.0"]
 other = [
     "lz4 >=3.1.0",
     "opencv-python >=3.0",
@@ -71,8 +71,8 @@ all = [
     # toy-text
     "pygame >=2.1.3",
     # jax
-    "jax ==0.3.24",
-    "jaxlib ==0.3.24",
+    "jax >=0.4.0",
+    "jaxlib >=0.4.0",
     # other
     "lz4 >=3.1.0",
     "opencv-python >=3.0",
