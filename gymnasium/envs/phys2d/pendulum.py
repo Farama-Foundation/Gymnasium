@@ -23,7 +23,7 @@ RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]] 
 
 
 class PendulumFunctional(
-    FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
+    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType]
 ):
     """Pendulum but in jax and functional structure."""
 
@@ -47,8 +47,8 @@ class PendulumFunctional(
         return jax.random.uniform(key=rng, minval=-high, maxval=high, shape=high.shape)
 
     def transition(
-        self, state: jnp.ndarray, action: int | jnp.ndarray, rng: None = None
-    ) -> jnp.ndarray:
+        self, state: jax.Array, action: int | jax.Array, rng: None = None
+    ) -> jax.Array:
         """Pendulum transition."""
         th, thdot = state  # th := theta
         u = action
@@ -67,7 +67,7 @@ class PendulumFunctional(
         new_state = jnp.array([newth, newthdot])
         return new_state
 
-    def observation(self, state: jnp.ndarray) -> jnp.ndarray:
+    def observation(self, state: jax.Array) -> jax.Array:
         """Generates an observation based on the state."""
         theta, thetadot = state
         return jnp.array([jnp.cos(theta), jnp.sin(theta), thetadot])
