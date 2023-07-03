@@ -1,48 +1,69 @@
 """Test suite for JaxToNumpyV0."""
 
-import jax
-import jax.numpy as jnp
 import numpy as np
 import pytest
 
-from gymnasium.experimental.wrappers.conversion.jax_to_numpy import (
+
+jax = pytest.importorskip("jax")
+jnp = pytest.importorskip("jax.numpy")
+
+from gymnasium.experimental.wrappers.jax_to_numpy import (  # noqa: E402
     JaxToNumpyV0,
     jax_to_numpy,
     numpy_to_jax,
 )
-from gymnasium.utils.env_checker import data_equivalence
-from tests.testing_env import GenericTestEnv
+from gymnasium.utils.env_checker import data_equivalence  # noqa: E402
+from tests.testing_env import GenericTestEnv  # noqa: E402
 
 
 @pytest.mark.parametrize(
     "value, expected_value",
     [
-        (1.0, np.array(1.0)),
-        (2, np.array(2)),
-        ((3.0, 4), (np.array(3.0), np.array(4))),
-        ([3.0, 4], [np.array(3.0), np.array(4)]),
+        (1.0, np.array(1.0, dtype=np.float32)),
+        (2, np.array(2, dtype=np.int32)),
+        ((3.0, 4), (np.array(3.0, dtype=np.float32), np.array(4, dtype=np.int32))),
+        ([3.0, 4], [np.array(3.0, dtype=np.float32), np.array(4, dtype=np.int32)]),
         (
             {
                 "a": 6.0,
                 "b": 7,
             },
-            {"a": np.array(6.0), "b": np.array(7)},
+            {"a": np.array(6.0, dtype=np.float32), "b": np.array(7, dtype=np.int32)},
         ),
-        (np.array(1.0), np.array(1.0)),
-        (np.array([1, 2]), np.array([1, 2])),
-        (np.array([[1.0], [2.0]]), np.array([[1.0], [2.0]])),
+        (np.array(1.0, dtype=np.float32), np.array(1.0, dtype=np.float32)),
+        (np.array(1.0, dtype=np.uint8), np.array(1.0, dtype=np.uint8)),
+        (np.array([1, 2], dtype=np.int32), np.array([1, 2], dtype=np.int32)),
         (
-            {"a": (1, np.array(2.0), np.array([3, 4])), "b": {"c": 5}},
+            np.array([[1.0], [2.0]], dtype=np.int32),
+            np.array([[1.0], [2.0]], dtype=np.int32),
+        ),
+        (
             {
-                "a": (np.array(1), np.array(2.0), np.array([3, 4])),
-                "b": {"c": np.array(5)},
+                "a": (
+                    1,
+                    np.array(2.0, dtype=np.float32),
+                    np.array([3, 4], dtype=np.int32),
+                ),
+                "b": {"c": 5},
+            },
+            {
+                "a": (
+                    np.array(1, dtype=np.int32),
+                    np.array(2.0, dtype=np.float32),
+                    np.array([3, 4], dtype=np.int32),
+                ),
+                "b": {"c": np.array(5, dtype=np.int32)},
             },
         ),
     ],
 )
 def test_roundtripping(value, expected_value):
-    """We test numpy -> jax -> numpy as this is direction in the NumpyToJax wrapper."""
-    assert data_equivalence(jax_to_numpy(numpy_to_jax(value)), expected_value)
+    """We test numpy -> jax -> numpy as this is direction in the NumpyToJax wrapper.
+
+    Warning: Jax doesn't support float64 out of the box, therefore, we only test float32 in this test.
+    """
+    roundtripped_value = jax_to_numpy(numpy_to_jax(value))
+    assert data_equivalence(roundtripped_value, expected_value)
 
 
 def jax_reset_func(self, seed=None, options=None):

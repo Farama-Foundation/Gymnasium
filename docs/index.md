@@ -4,15 +4,20 @@ firstpage:
 lastpage:
 ---
 
-# Gymnasium is a standard API for reinforcement learning, and a diverse collection of reference environments
+```{project-logo} _static/img/gymnasium-text.png
+:alt: Gymnasium Logo
+```
 
-```{figure} _static/videos/box2d/lunar_lander_continuous.gif
+```{project-heading}
+An API standard for reinforcement learning with a diverse collection of reference environments
+```
+
+```{figure} _static/videos/box2d/lunar_lander.gif
    :alt: Lunar Lander
    :width: 500
 ```
 
-**Gymnasium is a maintained fork of OpenAI’s Gym library. The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility
-) for old Gym environments:**
+**Gymnasium is a maintained fork of OpenAI’s Gym library.** The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility) for old Gym environments:
 
 ```{code-block} python
 
@@ -25,6 +30,7 @@ for _ in range(1000):
 
    if terminated or truncated:
       observation, info = env.reset()
+
 env.close()
 ```
 
@@ -76,6 +82,7 @@ Comet Tutorial <https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasi
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
-release_notes/index
+gymnasium_release_notes/index
+gym_release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```

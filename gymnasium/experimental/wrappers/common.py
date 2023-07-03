@@ -25,6 +25,14 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
+__all__ = [
+    "AutoresetV0",
+    "PassiveEnvCheckerV0",
+    "OrderEnforcingV0",
+    "RecordEpisodeStatisticsV0",
+]
+
+
 class AutoresetV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
@@ -83,11 +91,11 @@ class PassiveEnvCheckerV0(
 
         assert hasattr(
             env, "action_space"
-        ), "The environment must specify an action space. https://gymnasium.farama.org/content/environment_creation/"
+        ), "The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
         check_action_space(env.action_space)
         assert hasattr(
             env, "observation_space"
-        ), "The environment must specify an observation space. https://gymnasium.farama.org/content/environment_creation/"
+        ), "The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
         check_observation_space(env.observation_space)
 
         self._checked_reset: bool = False

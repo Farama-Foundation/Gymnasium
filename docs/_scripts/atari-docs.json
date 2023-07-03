@@ -1,0 +1,522 @@
+{
+    "adventure": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=1",
+        "env_description": "You must find the enchanted chalice and return it to the golden castle. You can pick up various objects (keys, a sword,a bridge, or a magnet) and have to fight or outmanoeuvre dragons.",
+        "reward_description": ""
+    },
+    "air_raid": {
+        "atariage_url": "",
+        "env_description": "You control a ship that can move sideways. You must protect two buildings (one on the right and one on the left side of the screen) from flying saucers that are trying to drop bombs on them.",
+        "reward_description": ""
+    },
+    "alien": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=815",
+        "env_description": "You are stuck in a maze-like space ship with three aliens. You goal is to destroy their eggs that are scattered all over the ship while simultaneously avoiding the aliens (they are trying to kill you). You have a flamethrower that can help you turn them away in tricky situations. Moreover, you can occasionally collect a power-up (pulsar) that gives you the temporary ability to kill aliens.",
+        "reward_description": "### Rewards\n\nYou score points by destroying eggs, killing aliens, using pulsars, and collecting special prizes. When you are caught\nby an alien, you will lose one of your lives. The number of lives you have depends on the game flavor. For a\ntable of scores corresponding to the different achievements, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=815).\n"
+    },
+    "amidar": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=817",
+        "env_description": "This game is similar to Pac-Man: You are trying to visit all places on a 2-dimensional grid while simultaneously avoiding your enemies. You can turn the tables at one point in the game: Your enemies turn into chickens and you can catch them.",
+        "reward_description": "### Rewards\n\nYou score points by traversing new parts of the grid. Coloring an entire box in the maze or catching chickens gives extra points.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=817).\n"
+    },
+    "assault": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=827",
+        "env_description": "You control a vehicle that can move sideways. A big mother ship circles overhead and continually deploys smaller drones.You must destroy these enemies and dodge their attacks.",
+        "reward_description": ""
+    },
+    "asterix": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=3325",
+        "env_description": "You are Asterix and can move horizontally (continuously) and vertically (discretely). Objects move horizontally across the screen: lyres and other (more useful) objects. Your goal is to guideAsterix in such a way as to avoid lyres and collect as many other objects as possible. You score points by collecting objects and lose a life whenever you collect a lyre. You have three lives available at the beginning. If you score sufficiently many points, you will be awarded additional points.",
+        "reward_description": "### Rewards\n\nA table of scores awarded for collecting the different objects is provided on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=3325).\n"
+    },
+    "asteroids": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=828",
+        "env_description": "This is a well-known arcade game: You control a spaceship in an asteroid field and must break up asteroids by shooting them. Once all asteroids are destroyed, you enter a new level and new asteroids will appear. You will occasionally be attacked by a flying saucer.",
+        "reward_description": "### Rewards\n\nYou score points for destroying asteroids, satellites and UFOs. The smaller the asteroid, the more points you score\nfor destroying it.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=828&itemTypeID=HTMLMANUAL).\n"
+    },
+    "atlantis": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=835",
+        "env_description": "Your job is to defend the submerged city of Atlantis. Your enemies slowly descend towards the city and you must destroy them before they reach striking distance. To this end, you control three defense posts.You lose if your enemies manage to destroy all seven of Atlantis' installations. You may rebuild installations after you have fought of a wave of enemies and scored a sufficient number of points.",
+        "reward_description": "### Rewards\n\nYou score points for destroying enemies, keeping installations protected during attack waves. You score more points\nif you manage to destroy your enemies with one of the outer defense posts.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=835).\n"
+    },
+    "atlantis2": {
+        "atariage_url": "",
+        "env_description": "Atlantis2 is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.",
+        "reward_description": ""
+    },
+    "backgammon": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=12",
+        "env_description": "Your goal is to move all your pieces off the board (called 'bearing off'). Players take turns rolling dice and moving their pieces.",
+        "reward_description": ""
+    },
+    "bank_heist": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=1008",
+        "env_description": "You are a bank robber and (naturally) want to rob as many banks as possible. You control your getaway car and must navigate maze-like cities. The police chases you and will appear whenever you rob a bank. You may destroy police cars by dropping sticks of dynamite. You can fill up your gas tank by entering a new city.At the beginning of the game you have four lives. Lives are lost if you run out of gas, are caught by the police,or run over the dynamite you have previously dropped.",
+        "reward_description": "### Rewards\n\nYou score points for robbing banks and destroying police cars. If you rob nine or more banks, and then leave the city,\nyou will score extra points.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=1008).\n"
+    },
+    "basic_math": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=14",
+        "env_description": "You must solve basic math problems using a joystick\nto scroll to the correct numeric answer.",
+        "reward_description": ""
+    },
+    "battle_zone": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=859",
+        "env_description": "You control a tank and must destroy enemy vehicles. This game is played in a first-person perspective and creates a 3D illusion. A radar screen shows enemies around you. You start with 5 lives and gain up to 2 extra lives if you reach a sufficient score.",
+        "reward_description": "### Rewards\n\nYou receive points for destroying enemies.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=859&itemTypeID=HTMLMANUAL).\n"
+    },
+    "beam_rider": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=860",
+        "env_description": "You control a space-ship that travels forward at a constant speed. You can only steer it sideways between discrete positions. Your goal is to destroy enemy ships, avoid their attacks and dodge space debris.",
+        "reward_description": "### Rewards\n\nYou score points for destroying enemies.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=860&itemTypeID=MANUAL).\n"
+    },
+    "berzerk": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=866",
+        "env_description": "You are stuck in a maze with evil robots. You must destroy them and avoid touching the walls of the maze, as this will kill you. You may be awarded extra lives after scoring a sufficient number of points, depending on the game mode.You may also be chased by an undefeatable enemy, Evil Otto, that you must avoid. Evil Otto does not appear in the default mode.",
+        "reward_description": "### Rewards\n\nYou score points for destroying robots.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=866&itemTypeID=HTMLMANUAL).\n"
+    },
+    "blackjack": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=34",
+        "env_description": "Compete against a dealer to draw cards and score as close to 21 as possible without going over ('bust').",
+        "reward_description": ""
+    },
+    "bowling": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=879",
+        "env_description": "Your goal is to score as many points as possible in the game of Bowling. A game consists of 10 frames and you have two tries per frame. Knocking down all pins on the first try is called a \"strike\". Knocking down all pins on the second roll is called a \"spar\". Otherwise, the frame is called \"open\".",
+        "reward_description": "### Rewards\n\nYou receive points for knocking down pins. The exact score depends on whether you manage a \"strike\", \"spare\" or \"open\"\nframe. Moreover, the points you score for one frame may depend on following frames.\nYou can score up to 300 points in one game (if you manage to do 12 strikes).\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=879).\n"
+    },
+    "boxing": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=882",
+        "env_description": "You fight an opponent in a boxing ring. You score points for hitting the opponent. If you score 100 points, your opponent is knocked out.",
+        "reward_description": "### Rewards\n\nYou score points by landing punches.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=882).\n"
+    },
+    "breakout": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=889",
+        "env_description": "Another famous Atari game. The dynamics are similar to pong: You move a paddle and hit the ball in a brick wall at the top of the screen. Your goal is to destroy the brick wall. You can try to break through the wall and let the ball wreak havoc on the other side, all on its own! You have five lives.",
+        "reward_description": "### Rewards\n\nYou score points by destroying bricks in the wall. The reward for destroying a brick depends on the color of the brick.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=889).\n"
+    },
+    "carnival": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=908",
+        "env_description": "This is a \"shoot 'em up\" game. Targets move horizontally across the screen and you must shoot them. You are in control of a gun that can be moved horizontally. The supply of ammunition is limited and chickens may steal some bullets from you if you don't hit them in time.",
+        "reward_description": "### Rewards\n\nYou score points by destroying targets. Points (or bullets) may be subtracted if you hit the target when it shows a minus sign.\nYou will score extra points if it shows a plus sign!\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=908).\n"
+    },
+    "casino": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=70",
+        "env_description": "This is actually several games packaged together. Games 1 and 2 are Blackjack, where the second allows card splitting (which is when a player splits their cards into two groups and plays two hands simultaneously). Game 3 is stud poker, which involves drawing cards, betting, and attempting to get the highest scoring poker hand. Game 4 is poker solitaire, which involves filling a 5 by 5 matrix with cards and scoring the poker hands formed by the rows.",
+        "reward_description": ""
+    },
+    "centipede": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=911",
+        "env_description": "You are an elf and must use your magic wands to fend off spiders, fleas and centipedes. Your goal is to protect mushrooms in an enchanted forest. If you are bitten by a spider, flea or centipede, you will be temporally paralyzed and you will lose a magic wand. The game ends once you have lost all wands. You may receive additional wands after scoring a sufficient number of points.",
+        "reward_description": "### Rewards\n\nYou score points by hitting centipedes, scorpions, fleas and spiders. Additional points are awarded after every round\n(i.e. after you have lost a wand) for mushrooms that were not destroyed.\nDetailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=911).\n"
+    },
+    "chopper_command": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=921",
+        "env_description": "You control a helicopter and must protect truck convoys. To that end, you need to shoot down enemy aircraft.A mini-map is displayed at the bottom of the screen.",
+        "reward_description": "### Rewards\n\nYou score points by destroying planes and other helicopters. You score extra points at the end of every wave, depending on the number\nof trucks that have survived.\nDetailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=921).\n"
+    },
+    "crazy_climber": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=113",
+        "env_description": "You are a climber trying to reach the top of four buildings, while avoiding obstacles like closing windows and falling objects. When you receive damage (windows closing or objects) you will fall and lose one life; you have a total of 5 lives before the end games. At the top of each building, there's a helicopter which you need to catch to get to the next building. The goal is to climb as fast as possible while receiving the least amount of damage.",
+        "reward_description": "### Rewards\n\nA table of scores awarded for completing each row of a building is provided on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=113).\n"
+    },
+    "crossbow": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=115",
+        "env_description": "You must retrieve stolen treasures from the Evil Master's castle. Along the way you face enemies who you can shoot at with a crossbow.",
+        "reward_description": ""
+    },
+    "darkchambers": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=122",
+        "env_description": "You must survive 26 levels of enemies and curses and collect as much treasure as you can along the way.",
+        "reward_description": ""
+    },
+    "defender": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=128",
+        "env_description": "Aliens attack the earth. You control a spaceship and must defend humanity by destroying alien ships and rescuing humanoids.You have three lives and three smart bombs. You lose a live when you are shot down by an alien spaceship.Points are scored by destroying enemies and retrieving humans that are being abducted. You have an unlimited number of laser missiles.",
+        "reward_description": "### Rewards\n\nYou receive points for destroying enemies, rescuing abducted humans and keeping humans alive.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=128).\n"
+    },
+    "demon_attack": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=135",
+        "env_description": "You are facing waves of demons in the ice planet of Krybor. Points are accumulated by destroying demons. You begin with 3 reserve bunkers, and can increase its number (up to 6) by avoiding enemy attacks. Each attack wave you survive without any hits, grants you a new bunker. Every time an enemy hits you, a bunker is destroyed. When the last bunker falls, the next enemy hit will destroy you and the game ends.",
+        "reward_description": "### Rewards\n\nEach enemy you slay gives you points. The amount of points depends on the type of demon and which\nwave you are in. A detailed table of scores is provided on [the AtariAge\npage](https://atariage.com/manual_html_page.php?SoftwareLabelID=135).\n"
+    },
+    "donkey_kong": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=149",
+        "env_description": "You play as Mario trying to save your girlfriend who has been kidnapped by Donkey Kong. Remove rivets and jump over fireballs, with a score that starts high and counts down throughout the game.",
+        "reward_description": ""
+    },
+    "double_dunk": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=153",
+        "env_description": "You are playing a 2v2 game of basketball. At the start of each possession, you select between a set of different plays and then execute them to either score or prevent your rivals from scoring.",
+        "reward_description": "### Rewards\n\nScores follow the rules of basketball. You can get either 3 points, 2 points foul line) depending\nfrom where you shoot. After a defensive foul, a successful shot from the foul line gives you 1\npoint.\n"
+    },
+    "earthworld": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=541",
+        "env_description": "A quest to find the sword of Ultimate Sorcery. You must navigate through 12 zodiac-themed rooms in order to solve a puzzle.",
+        "reward_description": ""
+    },
+    "elevator_action": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=1131",
+        "env_description": "You are a secret agent that must retrieve some secret documents and reach the ground level of a building by going down an elevator/stairs. Once you reach the ground level, you are picked up and taken to the next level. You are equipped with a gun to defend yourself against enemy agents waiting for you in each floor. You gather points by shooting down enemy agents and visiting apartments marked with a red door, which contain the secret documents.This is an unreleased prototype based on the arcade game.",
+        "reward_description": "### Rewards\n\nYou start with 4 lives and are awarded 100 points for each enemy shot, and 500 points for each\nsecret document collected (visiting a red door). Each time you get shot you lose one life and the\ngame ends when losing all lives.\n"
+    },
+    "enduro": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=163",
+        "env_description": "You are a racer in the National Enduro, a long-distance endurance race. You must overtake a certain amount of cars each day to stay on the race. The first day you need to pass 200 cars, and 300 foreach following day. The game ends if you do not meet your overtake quota for the day.",
+        "reward_description": "### Rewards\n\nYou get 1 point for each vehicle you overtake.\n"
+    },
+    "entombed": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=165",
+        "env_description": "You and your team of archeologists must navigate a maze filled with zombies.",
+        "reward_description": ""
+    },
+    "et": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=157",
+        "env_description": "Help E.T. (the extra-terrestrial) get home! He has to collect pieces of a telephone, call his ship, and get to the landing pad.",
+        "reward_description": ""
+    },
+    "fishing_derby": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=182",
+        "env_description": "Your objective is to catch more sunfish than your opponent.",
+        "reward_description": "### Rewards\n\nThe exact reward dynamics depend on the environment and are usually documented in the game's manual. You can\nfind these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=182).\n\nAtari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1)."
+    },
+    "flag_capture": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=183",
+        "env_description": "You are an explorer navigating from square to square, collecting clues, and looking for a flag.",
+        "reward_description": ""
+    },
+    "freeway": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=192",
+        "env_description": "Your objective is to guide your chicken across lane after lane of busy rush hour traffic. You receive a point for every chicken that makes it to the top of the screen after crossing all the lanes of traffic.",
+        "reward_description": "### Rewards\n\nThe exact reward dynamics depend on the environment and are usually documented in the game's manual. You can\nfind these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=192).\n\nAtari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1)."
+    },
+    "frogger": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=194",
+        "env_description": "You are a frog trying to make their way home. Cross a highway and a perilous river without being crushed or eaten.",
+        "reward_description": ""
+    },
+    "frostbite": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=199",
+        "env_description": "In Frostbite, the player controls \"Frostbite Bailey\" who hops back and forth across across an Arctic river, changing the color of the ice blocks from white to blue. Each time he does so, a block is added to his igloo.",
+        "reward_description": "### Rewards\n\nThe exact reward dynamics depend on the environment and are usually documented in the game's manual. You can\nfind these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=199).\n\nAtari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1)."
+    },
+    "galaxian": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=202",
+        "env_description": "Protect your laser base from a Galaxian invasion. Defeat each wave by firing lasers at the attackers.",
+        "reward_description": ""
+    },
+    "gopher": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=218",
+        "env_description": "The player controls a shovel-wielding farmer who protects a crop of three carrots from a gopher.",
+        "reward_description": "### Rewards\n\nThe exact reward dynamics depend on the environment and are usually documented in the game's manual. You can\nfind these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=218).\n\nAtari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1)."
+    },
+    "gravitar": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=223",
+        "env_description": "The player controls a small blue spacecraft. The game starts in a fictional solar system with several planets to explore. If the player moves his ship into a planet, he will be taken to a side-view landscape.",
+        "reward_description": "### Rewards\n\nThe exact reward dynamics depend on the environment and are usually documented in the game's manual. You can\nfind these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=223).\n\nAtari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1)."
+    },
+    "hangman": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=231",
+        "env_description": "Guess the hidden word one letter at a time, and don't make too many incorrect guesses or you will lose. Word difficulty increases as you traverse through the games.",
+        "reward_description": ""
+    },
+    "haunted_house": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=233",
+        "env_description": "Explore a mansion haunted by the ghost of mean, old Samuel Graves. Your goal is to find three pieces of a magic urn and leave the mansion before losing your 9 lives.",
+        "reward_description": ""
+    },
+    "hero": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=228",
+        "env_description": "You need to rescue miners that are stuck in a mine shaft. You have access to various tools: A propeller backpack that allows you to fly wherever you want, sticks of dynamite that can be used to blast through walls, a laser beam to kill vermin, and a raft to float across stretches of lava.You have a limited amount of power. Once you run out, you lose a live.",
+        "reward_description": "### Rewards\n\nYou score points for shooting critters, rescuing miners, and dynamiting walls.\nExtra points are rewarded for any power remaining after rescuing a miner.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=228).\n"
+    },
+    "human_cannonball": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=238",
+        "env_description": "Shoot a person out of a cannonball and try to get them into the water tower.",
+        "reward_description": ""
+    },
+    "ice_hockey": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=241",
+        "env_description": "Your goal is to score as many points as possible in a standard game of Ice Hockey over a 3-minute time period. The ball is usually called \"the puck\".There are 32 shot angles ranging from the extreme left to the extreme right. The angles can only aim towards the opponent's goal.Just as in real hockey, you can pass the puck by shooting it off the sides of the rink. This can be really key when you're in position to score a goal.",
+        "reward_description": "### Rewards\n\nYou score points by shooting the puck into your opponent's goal. Your opponent scores in the same manner.\nThere are no limits to how many points you can get per game, other than the time limit of 3-minute games.\nFor a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=241).\n"
+    },
+    "jamesbond": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=250",
+        "env_description": "Your mission is to control Mr. Bond's specially designed multipurpose craft to complete a variety of missions.The craft moves forward with a right motion and slightly back with a left motion.An up or down motion causes the craft to jump or dive.You can also fire by either lobbing a bomb to the bottom of the screen or firing a fixed angle shot to the top of the screen.",
+        "reward_description": "### Rewards\n\nThe game ends when you complete the last mission or when you lose the last craft. In either case, you'll receive your final score.\nThere will be a rating based on your score. The highest rating in NOVICE is 006. The highest rating in AGENT is 007.\nFor a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=250).\n"
+    },
+    "journey_escape": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=252",
+        "env_description": "You must lead all 5 members of JOURNEY through waves of pesky characters and backstage obstacles to the Scarab Escape Vehicle before time runs out.You must also protect $50,000 in concert cash from grasping groupies, photographers, and promoters.",
+        "reward_description": "### Rewards\n\nAt the start of the game, you will have $50,000 and 60 units of time.\nYour end game score with be dependent on how much time you have remaining and who you encounter along the way.\nFor a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252).\n"
+    },
+    "kaboom": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=257",
+        "env_description": "A mad bomber is dropping bombs! Try to catch each of them in a bucket of water before they hit the ground.",
+        "reward_description": ""
+    },
+    "kangaroo": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=923",
+        "env_description": "The object of the game is to score as many points as you can while controlling Mother Kangaroo to rescue her precious baby. You start the game with three lives.During this rescue mission, Mother Kangaroo encounters many obstacles. You need to help her climb ladders, pick bonus fruit, and throw punches at monkeys.",
+        "reward_description": "### Rewards\n\nYour score will be shown at the top right corner of the game.\nYour end game score with be dependent on how much time you have remaining and who you encounter along the way.\nFor a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=923).\n"
+    },
+    "keystone_kapers": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=261",
+        "env_description": "You are a police officer (or 'Kop') trying to catch a 'Krook' as quickly as you can.",
+        "reward_description": ""
+    },
+    "king_kong": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=265",
+        "env_description": "Climb the Empire State Building to save the person that King Kong kidnapped and placed there. Beware the bombs that King Kong throws at you as you climb!",
+        "reward_description": ""
+    },
+    "klax": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=1130",
+        "env_description": "Flip tumbling tiles into bins to create rows of three or more matching-colored tiles (such a row is called a Klax).",
+        "reward_description": ""
+    },
+    "koolaid": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=266",
+        "env_description": "You are the Kool-Aid Man and you are trying to stop Thirsties from drinking your pool water by running into them.",
+        "reward_description": ""
+    },
+    "krull": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=267",
+        "env_description": "Your mission is to find and enter the Beast's Black Fortress, rescue Princess Lyssa, and destroy the Beast.The task is not an easy one, for the location of the Black Fortress changes with each sunrise on Krull.",
+        "reward_description": "### Rewards\n\nYou will receive various scores for each monster you kill.\nYou can play the game until you have lost all your lives.\nFor a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=267).\n"
+    },
+    "kung_fu_master": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=268",
+        "env_description": "You are a Kung-Fu Master fighting your way through the Evil Wizard's temple. Your goal is to rescue Princess Victoria, defeating various enemies along the way.",
+        "reward_description": ""
+    },
+    "laser_gates": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=271",
+        "env_description": "The Cryptic Computer is malfunctioning! Use your Dante Dart to navigate through the computer and deestroy the four Failsafe Detonators.",
+        "reward_description": ""
+    },
+    "lost_luggage": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=276",
+        "env_description": "Catch falling luggage before it spills open on the ground.",
+        "reward_description": ""
+    },
+    "mario_bros": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=286",
+        "env_description": "Help Mario and Luigi knock pipe pests into a puddle of water.",
+        "reward_description": ""
+    },
+    "miniature_golf": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=305",
+        "env_description": "Hit a golf ball as few times as possible in order to get it into the hole, avoiding obstacles.",
+        "reward_description": ""
+    },
+    "montezuma_revenge": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=310",
+        "env_description": "Your goal is to acquire Montezuma's treasure by making your way through a maze of chambers within the emperor's fortress. You must avoid deadly creatures while collecting valuables and tools which can help you escape with the treasure.",
+        "reward_description": ""
+    },
+    "mr_do": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=318",
+        "env_description": "Help Mr. Do harvest apples before the bad guys get to him.",
+        "reward_description": ""
+    },
+    "ms_pacman": {
+        "atariage_url": "https://atariage.com/manual_page.php?SoftwareLabelID=924",
+        "env_description": "Your goal is to collect all of the pellets on the screen while avoiding the ghosts.",
+        "reward_description": ""
+    },
+    "name_this_game": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=323",
+        "env_description": "Your goal is to defend the treasure that you have discovered. You must fight off a shark and an octopus while keeping an eye on your oxygen supply.",
+        "reward_description": ""
+    },
+    "othello": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=335",
+        "env_description": "Take turns placing tiles of your color (white or black) on a grid. You can surround an opponents tiles to change their color to yours. The goals is to end the game with the most tiles of your color on the board.",
+        "reward_description": ""
+    },
+    "pacman": {
+        "atariage_url": "",
+        "env_description": "A classic arcade game. Move Pac Man around a maze collecting food and avoiding ghosts- unless you eat a Power Pellet, then you can eat the ghosts too!",
+        "reward_description": ""
+    },
+    "phoenix": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=355",
+        "env_description": "Your goal is to reach and shoot the alien pilot. On your way there, you must eliminate waves of war birds while avoiding their bombs.",
+        "reward_description": ""
+    },
+    "pitfall": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=360",
+        "env_description": "You control Pitfall Harry and are tasked with collecting all the treasures in a jungle within 20 minutes. You have three lives. The game is over if you collect all the treasures or if you die or if the time runs out.",
+        "reward_description": "### Rewards\n\nYou get score points for collecting treasure, you lose points through some misfortunes like falling down a hole.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=360).\n"
+    },
+    "pitfall2": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=359",
+        "env_description": "Navigate Peruvian caves searching for niece Rhonda and cat Quicklaw as well as the lost Raj diamond.",
+        "reward_description": ""
+    },
+    "pong": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=587",
+        "env_description": "You control the right paddle, you compete against the left paddle controlled by the computer. You each try to keep deflecting the ball away from your goal and into your opponent's goal.",
+        "reward_description": "### Rewards\n\nYou get score points for getting the ball to pass the opponent's paddle. You lose points if the ball passes your paddle.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=587).\n"
+    },
+    "pooyan": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=372",
+        "env_description": "You are a mother pig protecting her piglets (Pooyans) from wolves. In the first scene, you can move up and down a rope. Try to shoot the worker's balloons, while guarding yourself from attacks. If the wolves reach the ground safely they will get behind and try to eat you. In the second scene, the wolves try to float up. You have to try and stop them using arrows and bait. You die if a wolf eats you, or a stone or rock hits you.",
+        "reward_description": "### Rewards\n\nIf you hit a balloon, wolf or stone with an arrow you score points.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=372).\n"
+    },
+    "private_eye": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=376",
+        "env_description": "You control the French Private Eye Pierre Touche. Navigate the city streets, parks, secret passages, dead-ends and one-ways in search of the ringleader, Henri Le Fiend and his gang. You also need to find evidence and stolen goods that are scattered about. There are five cases, complete each case before its statute of limitations expires.",
+        "reward_description": "### Rewards\n\nYou score points for completing your tasks like gathering evidence, nabbing questionable characters or closing cases etc. You lose points if you get hit or if your auto is on a pothole.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=376).\n"
+    },
+    "qbert": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareID=1224",
+        "env_description": "You are Q*bert. Your goal is to change the color of all the cubes on the pyramid to the pyramid's 'destination' color. To do this, you must hop on each cube on the pyramid one at a time while avoiding nasty creatures that lurk there.",
+        "reward_description": "### Rewards\n\nYou score points for changing color of the cubes to their destination colors or by defeating enemies. You also gain points for completing a level.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=1224&itemTypeID=HTMLMANUAL).\n"
+    },
+    "riverraid": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=409",
+        "env_description": "You control a jet that flies over a river: you can move it sideways and fire missiles to destroy enemy objects. Each time an enemy object is destroyed you score points (i.e. rewards).You lose a jet when you run out of fuel: fly over a fuel depot when you begin to run low.You lose a jet even when it collides with the river bank or one of the enemy objects (except fuel depots).The game begins with a squadron of three jets in reserve and you're given an additional jet (up to 9) for each 10,000 points you score.",
+        "reward_description": "### Rewards\n\nScore points are your only reward. You get score points each time you destroy an enemy object:\n\n| Enemy Object | Score Points |\n|--------------|--------------|\n| Tanker       | 30           |\n| Helicopter   | 60           |\n| Fuel Depot   | 80           |\n| Jet          | 100          |\n| Bridge       | 500          |\n\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=409).\n"
+    },
+    "road_runner": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=412",
+        "env_description": "You control the Road Runner(TM) in a race; you can control the direction to run in and times to jumps.The goal is to outrun Wile E. Coyote(TM) while avoiding the hazards of the desert.The game begins with three lives.  You lose a life when the coyote catches you, picks you up in a rocket, or shoots you with a cannon.  You also lose a life when a truck hits you, you hit a land mine, you fall off a cliff,or you get hit by a falling rock.You score points (i.e. rewards) by eating seeds along the road, eating steel shot, and destroying the coyote.",
+        "reward_description": "### Rewards\n\nScore points are your only reward. You get score points each time you:\n\n| actions                                               | points |\n|-------------------------------------------------------|--------|\n| eat a pile of birdseed                                | 100    |\n| eat steel shot                                        | 100    |\n| get the coyote hit by a mine (cannonball, rock, etc.) | 200    |\n| get the coyote hit by a truck                         | 1000   |\n\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=412).\n"
+    },
+    "robotank": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=416",
+        "env_description": "You control your Robot Tanks to destroy enemies and avoid enemy fire.Game ends when all of your Robot Tanks are destroyed or all 12 enemy squadrons are destroyed.The game begins with one active Robot Tank and three reserves.Your Robot Tank may get lost when it is hit by enemy    rocket fire - your video scrambles with static interference when this    happens - or just become damaged - sensors report the damage by flashing on your control panel (look at V/C/R/T squares).You earn one bonus Robot Tank for every enemy squadron destroyed. The maximum number of bonus Robot Tanks allowed at any one time is 12.",
+        "reward_description": "### Rewards\n\nThe number of enemies destroyed is the only reward.\n\nA small tank appears at the top of your screen for each enemy\n   you destroy.  A square with the number 12 appears each time a squadron of twelve enemies are\n   destroyed.\n\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=416).\n"
+    },
+    "seaquest": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=424",
+        "env_description": "You control a sub able to move in all directions and fire torpedoes.The goal is to retrieve as many divers as you can, while dodging and blasting enemy subs and killer sharks; points will be awarded accordingly.The game begins with one sub and three waiting on the horizon. Each time you increase your score by 10,000 points, an extra sub will be delivered to yourbase.  You can only have six reserve subs on the screen at one time.Your sub will explode if it collides with anything except your own divers.The sub has a limited amount of oxygen that decreases at a constant rate during the game. When the oxygen tank is almost empty, you need to surface and if you don't do it in time, your sub will blow up and you'll lose one diver.  Each time you're forced to surface, with less than six divers, you lose one diver as well.",
+        "reward_description": "### Rewards\n\nScore points are your only reward.\n\nBlasting enemy sub and killer shark is worth\n20 points.  Every time you surface with six divers, the value of enemy subs\nand killer sharks increases by 10, up to a maximum of 90 points each.\n\nRescued divers start at 50 points each.  Then, their point value increases by 50, every\ntime you surface, up to a maximum of 1000 points each.\n\nYou'll be further rewarded with bonus points for all the oxygen you have remaining the\nmoment you surface.  The more oxygen you have left, the more bonus points\nyou're given.\n\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=424).\n"
+    },
+    "sir_lancelot": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=431",
+        "env_description": "You control Sir Lancelot, riding atop Pegasus, and your goal is to save a prisoner locked in a castle and protected by a fire-breathing dragon.",
+        "reward_description": ""
+    },
+    "skiing": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=434",
+        "env_description": "You control a skier who can move sideways.The goal is to run through all gates (between the poles) in the fastest time.You are penalized five seconds for each gate you miss.If you hit a gate or a tree, your skier will jump back up and keep going.",
+        "reward_description": "### Rewards\n\nSeconds are your only rewards - negative rewards and penalties (e.g. missing a gate) are assigned as additional seconds.\n\nFor a more detailed documentation, see [the AtariAge page [SLALOM RACING section]](https://atariage.com/manual_html_page.php?SoftwareLabelID=434).\n"
+    },
+    "solaris": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=450",
+        "env_description": "You control a spaceship. Blast enemies before they can blast you. You can warp to different sectors. You have to defend Federation planets, and destroy Zylon forces. Keep track of your fuel, if you run out you lose a life. Warp to a Federation planet to refuel. The game ends if all your ships are destroyed or if you reach the Solaris planet.",
+        "reward_description": "### Rewards\n\nYou gain points for destroying enemies, rescuing cadets, making it through a corridor, destroying enemy planets etc.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=450).\n"
+    },
+    "space_invaders": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=460",
+        "env_description": "Your objective is to destroy the space invaders by shooting your laser cannon at them before they reach the Earth. The game ends when all your lives are lost after taking enemy fire, or when they reach the earth.",
+        "reward_description": "### Rewards\n\nYou gain points for destroying space invaders. The invaders in the back rows are worth more points.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=460).\n"
+    },
+    "space_war": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=470",
+        "env_description": "Use your Star Ship to compete in a sequence of games where you try to shoot your opponent as many times as possible without being hit yourself.",
+        "reward_description": ""
+    },
+    "star_gunner": {
+        "atariage_url": "http://www.atarimania.com/game-atari-2600-vcs-stargunner_16921.html",
+        "env_description": "Stop the alien invasion by shooting down alien saucers and creatures while avoiding bombs.",
+        "reward_description": "### Rewards\n\nYou score points for destroying enemies. You get bonus points for clearing a wave and a level.\nFor a more detailed documentation, see [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-stargunner_16921.html).\n"
+    },
+    "superman": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=533",
+        "env_description": "Play as Superman trying to capture Lex Luther and avoid the kryptonite satellites along the way.",
+        "reward_description": ""
+    },
+    "surround": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=537",
+        "env_description": "Surround your opponent without running into anything yourself.",
+        "reward_description": ""
+    },
+    "tennis": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=555",
+        "env_description": "You control the orange player playing against a computer-controlled blue player. The game follows the rules of tennis.The first player to win at least 6 games with a margin of at least two games wins the match. If the score is tied at 6-6, the first player to go 2 games up wins the match.",
+        "reward_description": "### Rewards\n\nThe scoring is as per the sport of tennis, played till one set.\nFor a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=555).\n"
+    },
+    "tetris": {
+        "atariage_url": "",
+        "env_description": "Direct falling tile-based shapes to try and perfectly fill the board without leaving empty space.",
+        "reward_description": ""
+    },
+    "tic_tac_toe_3d": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=521",
+        "env_description": "Players take turns placing their mark (an X or an O) on a 3-dimensional, 4 x 4 x 4 grid in an attempt to get 4 in a row before their opponent does.",
+        "reward_description": ""
+    },
+    "time_pilot": {
+        "atariage_url": "http://www.atarimania.com/game-atari-2600-vcs-time-pilot_8038.html",
+        "env_description": "You control an aircraft. Use it to destroy your enemies. As you progress in the game, you encounter enemies with technology that is increasingly from the future.",
+        "reward_description": "### Rewards\n\nYou score points for destroying enemies, gaining more points for difficult enemies.\nFor a more detailed documentation, see [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-time-pilot_8038.html).\n"
+    },
+    "trondead": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=569",
+        "env_description": "Use your deadly saucer to knock out encroaching opponents before they get to you.",
+        "reward_description": ""
+    },
+    "turmoil": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=571",
+        "env_description": "Blast aliens while avoiding deadly collisions.",
+        "reward_description": ""
+    },
+    "tutankham": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=572",
+        "env_description": "Your goal is to rack up points by finding treasures in the mazes of the tomb while eliminating its guardians.",
+        "reward_description": ""
+    },
+    "up_n_down": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=574",
+        "env_description": "Your goal is to steer your baja bugger to collect prizes and eliminate opponents.",
+        "reward_description": ""
+    },
+    "venture": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=576",
+        "env_description": "Your goal is to capture the treasure in every chamber of the dungeon while eliminating the monsters.",
+        "reward_description": ""
+    },
+    "video_checkers": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=579",
+        "env_description": "Classic checkers: move your color pieces towards the opposite end of the board, jumping over opponents pieces to remove them from the board and gaining a king when you reach the other side.",
+        "reward_description": ""
+    },
+    "video_chess": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=581",
+        "env_description": "This is the usual game of chess: capture the opponents king.",
+        "reward_description": ""
+    },
+    "video_cube": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=974",
+        "env_description": "Solve a Rubik's cube in a nonstandard way: guide Hubie around the cube and swap tiles on the cubes face with one another until each face consists of only one color.",
+        "reward_description": ""
+    },
+    "video_pinball": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=588",
+        "env_description": "Your goal is to keep the ball in play as long as possible and to score as many points as possible.",
+        "reward_description": ""
+    },
+    "wizard_of_wor": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=598",
+        "env_description": "Your goal is to beat the Wizard using your laser and radar scanner.",
+        "reward_description": ""
+    },
+    "word_zapper": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=599",
+        "env_description": "Shoot letters under time pressure in the prescribed order as they scroll across the screen.",
+        "reward_description": ""
+    },
+    "yars_revenge": {
+        "atariage_url": "https://atariage.com/manual_page.php?SoftwareLabelID=603&currentPage=1&maxPages=12",
+        "env_description": "The objective is to break a path through the shield and destroy the Qotile with a blast from the Zorlon Cannon.",
+        "reward_description": ""
+    },
+    "zaxxon": {
+        "atariage_url": "https://atariage.com/manual_html_page.php?SoftwareLabelID=606",
+        "env_description": "Your goal is to stop the evil robot Zaxxon and its armies from enslaving the galaxy by piloting your fighter and shooting enemies.",
+        "reward_description": ""
+    }
+}

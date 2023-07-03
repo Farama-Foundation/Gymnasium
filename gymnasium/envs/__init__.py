@@ -62,7 +62,7 @@ register(
 # ----------------------------------------
 
 register(
-    id="CartPoleJax-v0",
+    id="phys2d/CartPole-v0",
     entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=200,
@@ -70,7 +70,7 @@ register(
 )
 
 register(
-    id="CartPoleJax-v1",
+    id="phys2d/CartPole-v1",
     entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=500,
@@ -78,7 +78,7 @@ register(
 )
 
 register(
-    id="PendulumJax-v0",
+    id="phys2d/Pendulum-v0",
     entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxVectorEnv",
     max_episode_steps=200,
@@ -166,9 +166,14 @@ register(
 # ----------------------------------------
 
 register(
-    id="Jax-Blackjack-v0",
+    id="tabular/Blackjack-v0",
     entry_point="gymnasium.envs.tabular.blackjack:BlackJackJaxEnv",
     kwargs={"sutton_and_barto": True, "natural": False},
+)
+
+register(
+    id="tabular/CliffWalking-v0",
+    entry_point="gymnasium.envs.tabular.cliffwalking:CliffWalkingJaxEnv",
 )
 
 
@@ -369,7 +374,7 @@ register(
 # --- For shimmy compatibility
 def _raise_shimmy_error(*args: Any, **kwargs: Any):
     raise ImportError(
-        "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+        "To use the gym compatibility environments, run `pip install shimmy[gym-v21]` or `pip install shimmy[gym-v26]`"
     )
 
 

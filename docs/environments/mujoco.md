@@ -11,13 +11,13 @@ lastpage:
 mujoco/ant
 mujoco/half_cheetah
 mujoco/hopper
-mujoco/humanoid_standup
 mujoco/humanoid
+mujoco/humanoid_standup
 mujoco/inverted_double_pendulum
 mujoco/inverted_pendulum
+mujoco/pusher
 mujoco/reacher
 mujoco/swimmer
-mujoco/pusher
 mujoco/walker2d
 ```
 
@@ -37,7 +37,7 @@ These environments also require that the MuJoCo engine be installed. As of Octob
 
 For MuJoCo V3 environments and older the `mujoco-py` framework is required (`pip install mujoco-py`) which can be found in the [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py)
 
-There are ten Mujoco environments: Ant, HalfCheetah, Hopper, Humanoid, HumanoidStandup, IvertedDoublePendulum, InvertedPendulum, Reacher, Swimmer, and Walker. All of these environments are stochastic in terms of their initial state, with a Gaussian noise added to a fixed initial state in order to add stochasticity. The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: a position of a body part ('*mujoco-py.mjsim.qpos*') or joint and its corresponding velocity ('*mujoco-py.mjsim.qvel*'). Often, some of the first positional elements are omitted from the state space since the reward is calculated based on their values, leaving it up to the algorithm to infer those hidden values indirectly.
+There are eleven Mujoco environments: Ant, HalfCheetah, Hopper, Humanoid, HumanoidStandup, InvertedDoublePendulum, InvertedPendulum, Pusher, Reacher, Swimmer, and Walker2d. All of these environments are stochastic in terms of their initial state, with a Gaussian noise added to a fixed initial state in order to add stochasticity. The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: a position of a body part ('*mujoco-py.mjsim.qpos*') or joint and its corresponding velocity ('*mujoco-py.mjsim.qvel*'). Often, some of the first positional elements are omitted from the state space since the reward is calculated based on their values, leaving it up to the algorithm to infer those hidden values indirectly.
 
 Among Gymnasium environments, this set of environments can be considered as more difficult ones to solve by a policy.
 

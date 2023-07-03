@@ -49,8 +49,7 @@ class Graph(Space[GraphInstance]):
                [7, 0],
                [3, 7],
                [8, 4],
-               [8, 8]]))
-
+               [8, 8]], dtype=int32))
     """
 
     def __init__(
@@ -69,7 +68,7 @@ class Graph(Space[GraphInstance]):
 
         Args:
             node_space (Union[Box, Discrete]): space of the node features.
-            edge_space (Union[None, Box, Discrete]): space of the node features.
+            edge_space (Union[None, Box, Discrete]): space of the edge features.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
         """
         assert isinstance(
@@ -178,7 +177,7 @@ class Graph(Space[GraphInstance]):
         sampled_edge_links = None
         if sampled_edges is not None and num_edges > 0:
             sampled_edge_links = self.np_random.integers(
-                low=0, high=num_nodes, size=(num_edges, 2)
+                low=0, high=num_nodes, size=(num_edges, 2), dtype=np.int32
             )
 
         return GraphInstance(sampled_nodes, sampled_edges, sampled_edge_links)
@@ -248,14 +247,15 @@ class Graph(Space[GraphInstance]):
         ret: list[GraphInstance] = []
         for sample in sample_n:
             if "edges" in sample:
+                assert self.edge_space is not None
                 ret_n = GraphInstance(
-                    np.asarray(sample["nodes"]),
-                    np.asarray(sample["edges"]),
-                    np.asarray(sample["edge_links"]),
+                    np.asarray(sample["nodes"], dtype=self.node_space.dtype),
+                    np.asarray(sample["edges"], dtype=self.edge_space.dtype),
+                    np.asarray(sample["edge_links"], dtype=np.int32),
                 )
             else:
                 ret_n = GraphInstance(
-                    np.asarray(sample["nodes"]),
+                    np.asarray(sample["nodes"], dtype=self.node_space.dtype),
                     None,
                     None,
                 )

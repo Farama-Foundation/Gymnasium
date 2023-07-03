@@ -15,7 +15,6 @@ from typing import Any, Iterable, Iterator
 import numpy as np
 
 from gymnasium.error import CustomSpaceError
-from gymnasium.logger import warn
 from gymnasium.spaces import (
     Box,
     Dict,
@@ -74,28 +73,21 @@ def _batch_space_box(space: Box, n: int = 1):
 
 @batch_space.register(Discrete)
 def _batch_space_discrete(space: Discrete, n: int = 1):
-    if space.start == 0:
-        return MultiDiscrete(
-            np.full((n,), space.n, dtype=space.dtype),
-            dtype=space.dtype,
-            seed=deepcopy(space.np_random),
-        )
-    else:
-        return Box(
-            low=space.start,
-            high=space.start + space.n - 1,
-            shape=(n,),
-            dtype=space.dtype,
-            seed=deepcopy(space.np_random),
-        )
+    return MultiDiscrete(
+        np.full((n,), space.n, dtype=space.dtype),
+        dtype=space.dtype,
+        seed=deepcopy(space.np_random),
+        start=np.full((n,), space.start, dtype=space.dtype),
+    )
 
 
 @batch_space.register(MultiDiscrete)
 def _batch_space_multidiscrete(space: MultiDiscrete, n: int = 1):
     repeats = tuple([n] + [1] * space.nvec.ndim)
-    high = np.tile(space.nvec, repeats) - 1
+    low = np.tile(space.start, repeats)
+    high = low + np.tile(space.nvec, repeats) - 1
     return Box(
-        low=np.zeros_like(high),
+        low=low,
         high=high,
         dtype=space.dtype,
         seed=deepcopy(space.np_random),
@@ -306,10 +298,6 @@ def _concatenate_dict(
 @concatenate.register(Sequence)
 @concatenate.register(Space)
 def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
-    if out is not None:
-        warn(
-            f"For `vector.utils.concatenate({type(space)}, ...)`, `out` is not None ({out}) however the value is ignored."
-        )
     return tuple(items)
 
 

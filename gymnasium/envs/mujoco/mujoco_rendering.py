@@ -327,8 +327,8 @@ class WindowViewer(BaseRender):
         if self.window:
             if glfw.get_current_context() == self.window:
                 glfw.make_context_current(None)
-        glfw.destroy_window(self.window)
-        self.window = None
+            glfw.destroy_window(self.window)
+            self.window = None
 
     def __del__(self):
         """Eliminate all of the OpenGL glfw contexts and windows"""
@@ -603,7 +603,7 @@ class MujocoRenderer:
 
     The class has two main public methods available:
     - :meth:`render` - Renders the environment in three possible modes: "human", "rgb_array", or "depth_array"
-    - :meth:`close` - Closes all contexts initialized with the rendere
+    - :meth:`close` - Closes all contexts initialized with the renderer
 
     """
 

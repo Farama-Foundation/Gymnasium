@@ -14,9 +14,7 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 |   |   |
 |---|---|
 | Action Space | Discrete(9) |
-| Observation Shape | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0  |
+| Observation Space | Box(0, 255, (210, 160, 3), uint8) |
 | Import | `gymnasium.make("ALE/MsPacman-v5")` |
 
 For more MsPacman variants with different observation and action spaces, see the variants section.
@@ -25,36 +23,30 @@ For more MsPacman variants with different observation and action spaces, see the
 
 Your goal is to collect all of the pellets on the screen while avoiding the ghosts.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_page.php?SoftwareLabelID=924)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_page.php?SoftwareLabelID=924)
 
 ## Actions
 
-MsPacman has the action space `Discrete(9)` with the table below lists the meaning of each action's meanings.
-As MsPacman uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+MsPacman has the action space of `Discrete(9)` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning     |
-|---------|-------------|
-| `0`     | `NOOP`      |
-| `1`     | `UP`        |
-| `2`     | `RIGHT`     |
-| `3`     | `LEFT`      |
-| `4`     | `DOWN`      |
-| `5`     | `UPRIGHT`   |
-| `6`     | `UPLEFT`    |
-| `7`     | `DOWNRIGHT` |
-| `8`     | `DOWNLEFT`  |
+| Value   | Meaning   | Value   | Meaning     | Value   | Meaning    |
+|---------|-----------|---------|-------------|---------|------------|
+| `0`     | `NOOP`    | `1`     | `UP`        | `2`     | `RIGHT`    |
+| `3`     | `LEFT`    | `4`     | `DOWN`      | `5`     | `UPRIGHT`  |
+| `6`     | `UPLEFT`  | `7`     | `DOWNRIGHT` | `8`     | `DOWNLEFT` |
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 
 ## Variants
 

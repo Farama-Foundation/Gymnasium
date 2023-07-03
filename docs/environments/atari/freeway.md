@@ -14,48 +14,43 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 |   |   |
 |---|---|
 | Action Space | Discrete(3) |
-| Observation Shape | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0  |
+| Observation Space | Box(0, 255, (210, 160, 3), uint8) |
 | Import | `gymnasium.make("ALE/Freeway-v5")` |
 
 For more Freeway variants with different observation and action spaces, see the variants section.
 
 ## Description
 
-your objective is to guide your chicken across lane after lane of busy rush hour traffic. You receive a point for every chicken that makes it to the top of the screen after crossing all the lanes of traffic.
+Your objective is to guide your chicken across lane after lane of busy rush hour traffic. You receive a point for every chicken that makes it to the top of the screen after crossing all the lanes of traffic.
 
-    For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_thumbs.php?SoftwareLabelID=192)
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=192)
 
 ## Actions
 
-Freeway has the action space `Discrete(3)` with the table below lists the meaning of each action's meanings.
-As Freeway uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+Freeway has the action space of `Discrete(3)` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning   |
-|---------|-----------|
-| `0`     | `NOOP`    |
-| `1`     | `UP`      |
-| `2`     | `DOWN`    |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning   |
+|---------|-----------|---------|-----------|---------|-----------|
+| `0`     | `NOOP`    | `1`     | `UP`      | `2`     | `DOWN`    |
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 ### Rewards
 
 The exact reward dynamics depend on the environment and are usually documented in the game's manual. You can
-find these manuals on [AtariAge](https://atariage.com/manual_thumbs.php?SoftwareLabelID=192).
+find these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=192).
 
 Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1).
-
 ## Variants
 
 Freeway has the following variants of the environment id which have the following differences in observation,

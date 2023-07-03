@@ -14,40 +14,38 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 |   |   |
 |---|---|
 | Action Space | Discrete(4) |
-| Observation Shape | (210, 160, 3) |
-| Observation High | 255 |
-| Observation Low | 0  |
+| Observation Space | Box(0, 255, (210, 160, 3), uint8) |
 | Import | `gymnasium.make("ALE/Casino-v5")` |
 
 For more Casino variants with different observation and action spaces, see the variants section.
 
 ## Description
 
-Casino is missing description documentation. If you are interested in writing up a description, please create an issue or PR with the information on the Gymnasium github.
+This is actually several games packaged together. Games 1 and 2 are Blackjack, where the second allows card splitting (which is when a player splits their cards into two groups and plays two hands simultaneously). Game 3 is stud poker, which involves drawing cards, betting, and attempting to get the highest scoring poker hand. Game 4 is poker solitaire, which involves filling a 5 by 5 matrix with cards and scoring the poker hands formed by the rows.
+
+For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=70)
 
 ## Actions
 
-Casino has the action space `Discrete(4)` with the table below lists the meaning of each action's meanings.
-As Casino uses a reduced set of actions for `v0`, `v4` and `v5` versions of the environment.
+Casino has the action space of `Discrete(4)` with the table below listing the meaning of each action's meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify `full_action_space=True` during
 initialization or by passing `full_action_space=True` to `gymnasium.make`.
 
-| Value   | Meaning   |
-|---------|-----------|
-| `0`     | `NOOP`    |
-| `1`     | `FIRE`    |
-| `2`     | `UP`      |
-| `3`     | `DOWN`    |
+| Value   | Meaning   | Value   | Meaning   | Value   | Meaning   |
+|---------|-----------|---------|-----------|---------|-----------|
+| `0`     | `NOOP`    | `1`     | `FIRE`    | `2`     | `UP`      |
+| `3`     | `DOWN`    |         |           |         |           |
 
 ## Observations
 
-Atari environment have two possible observation types, the observation space is listed below.
-See variants section for the type of observation used by each environment id.
+Atari environments have three possible observation types: `"rgb"`, `"grayscale"` and `"ram"`.
 
 - `obs_type="rgb" -> observation_space=Box(0, 255, (210, 160, 3), np.uint8)`
 - `obs_type="ram" -> observation_space=Box(0, 255, (128,), np.uint8)`
+- `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
-Additionally, `obs_type="grayscale"` cause the environment return a grayscale version of the rgb array for observations with the observation space being `Box(0, 255, (210, 160), np.uint8)`
+See variants section for the type of observation used by each environment id by default.
+
 
 ## Variants
 

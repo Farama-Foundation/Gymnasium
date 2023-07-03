@@ -45,6 +45,9 @@ class Env(Generic[ObsType, ActType]):
       ``super().reset(seed=seed)`` and when assessing ``self.np_random``.
 
     .. seealso:: For modifying or extending environments use the :py:class:`gymnasium.Wrapper` class
+
+    Note:
+        To get reproducible sampling of actions, a seed can be set with ``env.action_space.seed(123)``.
     """
 
     # Set this in SOME subclasses
@@ -182,6 +185,7 @@ class Env(Generic[ObsType, ActType]):
         """After the user has finished using the environment, close contains the code necessary to "clean up" the environment.
 
         This is critical for closing rendering windows, database or HTTP connections.
+        Calling ``close`` on an already closed environment has no effect and won't raise an error.
         """
         pass
 

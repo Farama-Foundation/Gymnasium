@@ -17,7 +17,10 @@ from gymnasium.envs.registration import (
     pprint_registry,
     make_vec,
 )
-from gymnasium import envs, spaces, utils, vector, wrappers, error, logger
+
+# necessary for `envs.__init__` which registers all gymnasium environments and loads plugins
+from gymnasium import envs
+from gymnasium import experimental, spaces, utils, vector, wrappers, error, logger
 
 
 __all__ = [
@@ -37,6 +40,7 @@ __all__ = [
     "pprint_registry",
     # module folders
     "envs",
+    "experimental",
     "spaces",
     "utils",
     "vector",
@@ -44,7 +48,8 @@ __all__ = [
     "error",
     "logger",
 ]
-__version__ = "0.28.0"
+__version__ = "0.28.1"
+
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
 # SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using

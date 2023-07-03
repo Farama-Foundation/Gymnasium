@@ -70,6 +70,13 @@ class RecordVideo(gym.Wrapper, gym.utils.RecordConstructorArgs):
         )
         gym.Wrapper.__init__(self, env)
 
+        if env.render_mode in {None, "human", "ansi", "ansi_list"}:
+            raise ValueError(
+                f"Render mode is {env.render_mode}, which is incompatible with"
+                f" RecordVideo. Initialize your environment with a render_mode"
+                f" that returns an image, such as rgb_array."
+            )
+
         if episode_trigger is None and step_trigger is None:
             episode_trigger = capped_cubic_video_schedule
 
@@ -108,7 +115,7 @@ class RecordVideo(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.truncated = False
         if self.recording:
             assert self.video_recorder is not None
-            self.video_recorder.frames = []
+            self.video_recorder.recorded_frames = []
             self.video_recorder.capture_frame()
             self.recorded_frames += 1
             if self.video_length > 0:

@@ -1,7 +1,7 @@
 """An async vector environment."""
 from __future__ import annotations
 
-import multiprocessing as mp
+import multiprocessing
 import sys
 import time
 from copy import deepcopy
@@ -84,7 +84,8 @@ class AsyncVectorEnv(VectorEnv):
             worker: If set, then use that worker in a subprocess instead of a default one.
                 Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.
 
-        Warnings: worker is an advanced mode option. It provides a high degree of flexibility and a high chance
+        Warnings:
+            worker is an advanced mode option. It provides a high degree of flexibility and a high chance
             to shoot yourself in the foot; thus, if you are writing your own worker, it is recommended to start
             from the code for ``_worker`` (or ``_worker_shared_memory``) method, and add changes.
 
@@ -96,7 +97,7 @@ class AsyncVectorEnv(VectorEnv):
         """
         super().__init__()
 
-        ctx = mp.get_context(context)
+        ctx = multiprocessing.get_context(context)
         self.env_fns = env_fns
         self.num_envs = len(env_fns)
         self.shared_memory = shared_memory
@@ -238,7 +239,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `reset_wait` has timed out after {timeout} second(s)."
             )
 
@@ -326,7 +327,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `step_wait` has timed out after {timeout} second(s)."
             )
 
@@ -421,7 +422,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `call_wait` has timed out after {timeout} second(s)."
             )
 
@@ -511,7 +512,7 @@ class AsyncVectorEnv(VectorEnv):
                 )
                 function = getattr(self, f"{self._state.value}_wait")
                 function(timeout)
-        except mp.TimeoutError:
+        except multiprocessing.TimeoutError:
             terminate = True
 
         if terminate:

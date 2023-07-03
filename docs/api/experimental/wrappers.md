@@ -1,3 +1,7 @@
+---
+title: Wrappers
+---
+
 # Wrappers
 
 ## Observation Wrappers
@@ -33,7 +37,7 @@
 ```{eval-rst}
 .. autoclass:: gymnasium.experimental.wrappers.LambdaRewardV0
 .. autoclass:: gymnasium.experimental.wrappers.ClipRewardV0
-.. autoclass:: gymnasium.experimental.wrappers.NormalizeRewardV0
+.. autoclass:: gymnasium.experimental.wrappers.NormalizeRewardV1
 ```
 
 ## Other Wrappers

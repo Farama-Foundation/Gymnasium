@@ -18,6 +18,9 @@ from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 
 
+__all__ = ["RenderCollectionV0", "RecordVideoV0", "HumanRenderingV0"]
+
+
 class RenderCollectionV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
@@ -100,8 +103,6 @@ class RecordVideoV0(
     then every 1000 episodes.
     By default, the recording will be stopped once reset is called. However, you can also create recordings of fixed
     length (possibly spanning several episodes) by passing a strictly positive value for ``video_length``.
-    This wrapper uses the value `fps` from metadata as the number of frames per second;
-    if `fps` is not defined in metadata, the default value 30 is used.
     """
 
     def __init__(
@@ -112,6 +113,7 @@ class RecordVideoV0(
         step_trigger: Callable[[int], bool] | None = None,
         video_length: int = 0,
         name_prefix: str = "rl-video",
+        fps: int | None = None,
         disable_logger: bool = False,
     ):
         """Wrapper records videos of rollouts.
@@ -124,6 +126,8 @@ class RecordVideoV0(
             video_length (int): The length of recorded episodes. If 0, entire episodes are recorded.
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
+            fps (int): The frame per second in the video. The default value is the one specified in the environment metadata.
+                If the environment metadata doesn't specify `render_fps`, the value 30 is used.
             disable_logger (bool): Whether to disable moviepy logger or not
         """
         gym.utils.RecordConstructorArgs.__init__(
@@ -136,13 +140,6 @@ class RecordVideoV0(
             disable_logger=disable_logger,
         )
         gym.Wrapper.__init__(self, env)
-
-        try:
-            import moviepy  # noqa: F401
-        except ImportError as e:
-            raise error.DependencyNotInstalled(
-                "MoviePy is not installed, run `pip install moviepy`"
-            ) from e
 
         if env.render_mode in {None, "human", "ansi"}:
             raise ValueError(
@@ -172,9 +169,11 @@ class RecordVideoV0(
             )
         os.makedirs(self.video_folder, exist_ok=True)
 
+        if fps is None:
+            fps = self.metadata.get("render_fps", 30)
+        self.frames_per_sec: int = fps
         self.name_prefix: str = name_prefix
         self._video_name: str | None = None
-        self.frames_per_sec: int = self.metadata.get("render_fps", 30)
         self.video_length: int = video_length if video_length != 0 else float("inf")
         self.recording: bool = False
         self.recorded_frames: list[RenderFrame] = []
@@ -182,6 +181,13 @@ class RecordVideoV0(
 
         self.step_id = -1
         self.episode_id = -1
+
+        try:
+            import moviepy  # noqa: F401
+        except ImportError as e:
+            raise error.DependencyNotInstalled(
+                "MoviePy is not installed, run `pip install moviepy`"
+            ) from e
 
     def _capture_frame(self):
         assert self.recording, "Cannot capture a frame, recording wasn't started."
@@ -317,7 +323,7 @@ class HumanRenderingV0(
         ``render_mode="human"`` to ``make``. The wrapper will only be applied if the environment does not
         implement human-rendering natively (i.e. ``render_mode`` does not contain ``"human"``).
 
-        >>> env = gym.make("CartPoleJax-v1", render_mode="human")      # CartPoleJax-v1 doesn't implement human-rendering natively
+        >>> env = gym.make("phys2d/CartPole-v1", render_mode="human")      # CartPoleJax-v1 doesn't implement human-rendering natively
         >>> obs, _ = env.reset()     # This will start rendering to the screen
 
         Warning: If the base environment uses ``render_mode="rgb_array_list"``, its (i.e. the *base environment's*) render method

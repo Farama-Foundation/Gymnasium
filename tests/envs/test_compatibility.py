@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 import pytest
+from packaging import version
 
 import gymnasium
 from gymnasium.error import DependencyNotInstalled
@@ -27,7 +28,7 @@ class LegacyEnvExplicit(LegacyEnv, gymnasium.Env):
 
     observation_space = Discrete(1)
     action_space = Discrete(1)
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 30}
 
     def __init__(self):
         pass
@@ -56,7 +57,7 @@ class LegacyEnvImplicit(gymnasium.Env):
 
     observation_space = Discrete(1)
     action_space = Discrete(1)
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 30}
 
     def __init__(self):
         pass
@@ -142,25 +143,41 @@ def test_make_compatibility_in_make():
     del gymnasium.envs.registration.registry["LegacyTestEnv-v0"]
 
 
-def test_shimmy_gym_compatibility():
-    assert gymnasium.spec("GymV21Environment-v0") is not None
-    assert gymnasium.spec("GymV26Environment-v0") is not None
+@pytest.mark.parametrize(
+    "env",
+    (
+        pytest.param(
+            "GymV21Environment-v0",
+            marks=pytest.mark.skipif(
+                gym is not None
+                and (
+                    version.parse(gym.version.VERSION) < version.parse("0.21.0")
+                    or version.parse(gym.version.VERSION) >= version.parse("0.26.0")
+                ),
+                reason="Cannot test GymV21Environment-v0 compatibility env with gym < 0.21.0 or gym >= 0.26.0",
+            ),
+        ),
+        pytest.param(
+            "GymV26Environment-v0",
+            marks=pytest.mark.skipif(
+                gym is not None
+                and version.parse(gym.version.VERSION) < version.parse("0.26.0"),
+                reason="Cannot test GymV26Environment-v0 compatibility env with gym < 0.26.0",
+            ),
+        ),
+    ),
+)
+def test_shimmy_gym_compatibility(env):
+    assert gymnasium.spec(env) is not None
 
     if shimmy is None:
         with pytest.raises(
             ImportError,
             match=re.escape(
-                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
+                "To use the gym compatibility environments, run `pip install shimmy[gym-v21]` or `pip install shimmy[gym-v26]`"
             ),
         ):
-            gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
-        with pytest.raises(
-            ImportError,
-            match=re.escape(
-                "To use the gym compatibility environments, run `pip install shimmy[gym]`"
-            ),
-        ):
-            gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
+            gymnasium.make(env)
     elif gym is None:
         with pytest.raises(
             DependencyNotInstalled,
@@ -168,14 +185,6 @@ def test_shimmy_gym_compatibility():
                 "No module named 'gym' (Hint: You need to install gym with `pip install gym` to use gym environments"
             ),
         ):
-            gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
-        with pytest.raises(
-            DependencyNotInstalled,
-            match=re.escape(
-                "No module named 'gym' (Hint: You need to install gym with `pip install gym` to use gym environments"
-            ),
-        ):
-            gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
+            gymnasium.make(env, env_id="CartPole-v1")
     else:
-        gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
-        gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
+        gymnasium.make(env, env_id="CartPole-v1")

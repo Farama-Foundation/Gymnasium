@@ -3,13 +3,14 @@
 * ``DelayObservationV0`` - A wrapper for delaying the returned observation
 * ``TimeAwareObservationV0`` - A wrapper for adding time aware observations to environment observation
 * ``FrameStackObservationV0`` - Frame stack the observations
+* ``NormalizeObservationV0`` - Normalized the observations to a mean and
+* ``MaxAndSkipObservationV0`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
 """
 from __future__ import annotations
 
 from collections import deque
 from copy import deepcopy
-from typing import Any, SupportsFloat
-from typing_extensions import Final
+from typing import Any, Final, SupportsFloat
 
 import numpy as np
 
@@ -21,8 +22,16 @@ from gymnasium.experimental.vector.utils import (
     concatenate,
     create_empty_array,
 )
-from gymnasium.experimental.wrappers.utils import create_zero_array
+from gymnasium.experimental.wrappers.utils import RunningMeanStd, create_zero_array
 from gymnasium.spaces import Box, Dict, Tuple
+
+
+__all__ = [
+    "DelayObservationV0",
+    "TimeAwareObservationV0",
+    "FrameStackObservationV0",
+    "NormalizeObservationV0",
+]
 
 
 class DelayObservationV0(
@@ -382,3 +391,116 @@ class FrameStackObservationV0(
             )
         )
         return updated_obs, info
+
+
+class NormalizeObservationV0(
+    gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
+    """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
+
+    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
+    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.observation()` is called.
+    If `False`, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+
+    Note:
+        The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
+        newly instantiated or the policy was changed recently.
+    """
+
+    def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
+        """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
+
+        Args:
+            env (Env): The environment to apply the wrapper
+            epsilon: A stability parameter that is used when scaling the observations.
+        """
+        gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
+        gym.ObservationWrapper.__init__(self, env)
+
+        self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
+        self.epsilon = epsilon
+        self._update_running_mean = True
+
+    @property
+    def update_running_mean(self) -> bool:
+        """Property to freeze/continue the running mean calculation of the observation statistics."""
+        return self._update_running_mean
+
+    @update_running_mean.setter
+    def update_running_mean(self, setting: bool):
+        """Sets the property to freeze/continue the running mean calculation of the observation statistics."""
+        self._update_running_mean = setting
+
+    def observation(self, observation: ObsType) -> WrapperObsType:
+        """Normalises the observation using the running mean and variance of the observations."""
+        if self._update_running_mean:
+            self.obs_rms.update(observation)
+        return (observation - self.obs_rms.mean) / np.sqrt(
+            self.obs_rms.var + self.epsilon
+        )
+
+
+class MaxAndSkipObservationV0(
+    gym.Wrapper[WrapperObsType, ActType, ObsType, ActType],
+    gym.utils.RecordConstructorArgs,
+):
+    """This wrapper will return only every ``skip``-th frame (frameskipping) and return the max between the two last observations.
+
+    Note: This wrapper is based on the wrapper from stable-baselines3: https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#MaxAndSkipEnv
+    """
+
+    def __init__(self, env: gym.Env[ObsType, ActType], skip: int = 4):
+        """This wrapper will return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
+
+        Args:
+            env (Env): The environment to apply the wrapper
+            skip: The number of frames to skip
+        """
+        gym.utils.RecordConstructorArgs.__init__(self, skip=skip)
+        gym.Wrapper.__init__(self, env)
+
+        if not np.issubdtype(type(skip), np.integer):
+            raise TypeError(
+                f"The skip is expected to be an integer, actual type: {type(skip)}"
+            )
+        if skip < 2:
+            raise ValueError(
+                f"The skip value needs to be equal or greater than two, actual value: {skip}"
+            )
+        if env.observation_space.shape is None:
+            raise ValueError("The observation space must have the shape attribute.")
+
+        self._skip = skip
+        self._obs_buffer = np.zeros(
+            (2, *env.observation_space.shape), dtype=env.observation_space.dtype
+        )
+
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        """Step the environment with the given action for ``skip`` steps.
+
+        Repeat action, sum reward, and max over last observations.
+
+        Args:
+            action: The action to step through the environment with
+        Returns:
+            Max of the last two observations, reward, terminated, truncated, and info from the environment
+        """
+        total_reward = 0.0
+        terminated = truncated = False
+        info = {}
+        for i in range(self._skip):
+            obs, reward, terminated, truncated, info = self.env.step(action)
+            done = terminated or truncated
+            if i == self._skip - 2:
+                self._obs_buffer[0] = obs
+            if i == self._skip - 1:
+                self._obs_buffer[1] = obs
+            total_reward += float(reward)
+            if done:
+                break
+        max_frame = self._obs_buffer.max(axis=0)
+
+        return max_frame, total_reward, terminated, truncated, info

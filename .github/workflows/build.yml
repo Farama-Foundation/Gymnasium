@@ -9,25 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v3
       - run: |
            docker build -f bin/all-py.Dockerfile \
              --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
              --tag gymnasium-all-docker .
-      - name: Run tests (python 3.8+)
+      - name: Run tests
         run: docker run gymnasium-all-docker pytest tests/*
-        if: ${{ matrix.python-version == '3.8' || matrix.python-version == '3.9' || matrix.python-version == '3.10' }}
-      - name: Run doctests (python 3.8+)
+      - name: Run doctests
         run: docker run gymnasium-all-docker pytest --doctest-modules gymnasium/
-        if: ${{ matrix.python-version == '3.8' || matrix.python-version == '3.9' || matrix.python-version == '3.10' }}
-      - name: Run tests (python 3.7)
-        run: docker run gymnasium-all-docker pytest tests/*  --ignore-glob="**/*jax*"
-        if: ${{ matrix.python-version == '3.7'}}
-      - name: Run doctests (python 3.7)
-        run: docker run gymnasium-all-docker pytest --doctest-modules --ignore-glob="gymnasium/envs/phys2d/*" --ignore-glob="gymnasium/envs/tabular/*" --ignore-glob="**/*rendering*" --ignore=gymnasium/experimental/functional_jax_env.py gymnasium/
-        if: ${{ matrix.python-version == '3.7'}}
 
   build-necessary:
     runs-on:

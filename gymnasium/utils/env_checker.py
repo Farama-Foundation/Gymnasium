@@ -50,9 +50,13 @@ def data_equivalence(data_1, data_2) -> bool:
                 data_equivalence(o_1, o_2) for o_1, o_2 in zip(data_1, data_2)
             )
         elif isinstance(data_1, np.ndarray):
-            return data_1.shape == data_2.shape and np.allclose(
-                data_1, data_2, atol=0.00001
-            )
+            if data_1.shape == data_2.shape and data_1.dtype == data_2.dtype:
+                if data_1.dtype == object:
+                    return all(data_equivalence(a, b) for a, b in zip(data_1, data_2))
+                else:
+                    return np.allclose(data_1, data_2, atol=0.00001)
+            else:
+                return False
         else:
             return data_1 == data_2
     else:
@@ -258,7 +262,7 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
     This is an invasive function that calls the environment's reset and step.
 
     This is particularly useful when using a custom environment.
-    Please take a look at https://gymnasium.farama.org/content/environment_creation/
+    Please take a look at https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/
     for more information about the API.
 
     Args:
@@ -271,7 +275,7 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
 
     assert isinstance(
         env, gym.Env
-    ), "The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/content/environment_creation/ for more info."
+    ), "The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info."
 
     if env.unwrapped is not env:
         logger.warn(
@@ -281,13 +285,13 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
     # ============= Check the spaces (observation and action) ================
     assert hasattr(
         env, "action_space"
-    ), "The environment must specify an action space. See https://gymnasium.farama.org/content/environment_creation/ for more info."
+    ), "The environment must specify an action space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info."
     check_action_space(env.action_space)
     check_space_limit(env.action_space, "action")
 
     assert hasattr(
         env, "observation_space"
-    ), "The environment must specify an observation space. See https://gymnasium.farama.org/content/environment_creation/ for more info."
+    ), "The environment must specify an observation space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info."
     check_observation_space(env.observation_space)
     check_space_limit(env.observation_space, "observation")
 
@@ -316,4 +320,14 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
         else:
             logger.warn(
                 "Not able to test alternative render modes due to the environment not having a spec. Try instantialising the environment through gymnasium.make"
+            )
+
+    if env.spec is not None:
+        new_env = env.spec.make()
+        new_env.close()
+        try:
+            new_env.close()
+        except Exception as e:
+            logger.warn(
+                f"Calling `env.close()` on the closed environment should be allowed, but it raised an exception: {e}"
             )

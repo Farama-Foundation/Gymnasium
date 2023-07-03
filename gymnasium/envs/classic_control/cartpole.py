@@ -58,7 +58,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     ## Rewards
 
     Since the goal is to keep the pole upright for as long as possible, a reward of `+1` for every step taken,
-    including the termination step, is allotted. The threshold for rewards is 475 for v1.
+    including the termination step, is allotted. The threshold for rewards is 500 for v1 and 200 for v0.
 
     ## Starting State
 
@@ -362,10 +362,10 @@ class CartPoleVectorEnv(VectorEnv):
         self.low = -0.05
         self.high = 0.05
 
-        self.action_space = batch_space(spaces.Discrete(2), num_envs)
-        self.observation_space = batch_space(
-            spaces.Box(-high, high, dtype=np.float32), num_envs
-        )
+        self.single_action_space = spaces.Discrete(2)
+        self.action_space = batch_space(self.single_action_space, num_envs)
+        self.single_observation_space = spaces.Box(-high, high, dtype=np.float32)
+        self.observation_space = batch_space(self.single_observation_space, num_envs)
 
         self.render_mode = render_mode
 

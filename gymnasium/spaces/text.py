@@ -21,13 +21,13 @@ class Text(Space[str]):
         >>> from gymnasium.spaces import Text
         >>> # {"", "B5", "hello", ...}
         >>> Text(5)
-        Text(1, 5, characters=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)
+        Text(1, 5, charset=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)
         >>> # {"0", "42", "0123456789", ...}
         >>> import string
         >>> Text(min_length = 1,
         ...      max_length = 10,
         ...      charset = string.digits)
-        Text(1, 10, characters=0123456789)
+        Text(1, 10, charset=0123456789)
     """
 
     def __init__(
@@ -155,9 +155,7 @@ class Text(Space[str]):
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
-        return (
-            f"Text({self.min_length}, {self.max_length}, characters={self.characters})"
-        )
+        return f"Text({self.min_length}, {self.max_length}, charset={self.characters})"
 
     def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""

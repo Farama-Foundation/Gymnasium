@@ -1,17 +1,19 @@
 """Test suite for TorchToJaxV0."""
 
-import jax
-import jax.numpy as jnp
 import numpy as np
 import pytest
-import torch
 
-from gymnasium.experimental.wrappers.conversion.jax_to_torch import (
+
+jax = pytest.importorskip("jax")
+jnp = pytest.importorskip("jax.numpy")
+torch = pytest.importorskip("torch")
+
+from gymnasium.experimental.wrappers.jax_to_torch import (  # noqa: E402
     JaxToTorchV0,
     jax_to_torch,
     torch_to_jax,
 )
-from tests.testing_env import GenericTestEnv
+from tests.testing_env import GenericTestEnv  # noqa: E402
 
 
 def torch_data_equivalence(data_1, data_2) -> bool:

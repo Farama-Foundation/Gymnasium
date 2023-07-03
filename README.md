@@ -24,7 +24,7 @@ To install the base Gymnasium library, use `pip install gymnasium`
 
 This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install "gymnasium[atari]"` or use `pip install "gymnasium[all]"` to install all dependencies.
 
-We support and test for Python 3.7, 3.8, 3.9, 3.10, 3.11 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
+We support and test for Python 3.8, 3.9, 3.10, 3.11 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
 
 ## API
 
@@ -51,7 +51,9 @@ Please note that this is an incomplete list, and just includes libraries that th
 * [CleanRL](https://github.com/vwxyzjn/cleanrl) is a learning library based on the Gymnasium API. It is designed to cater to newer people in the field and provides very good reference implementations.
 * [PettingZoo](https://github.com/Farama-Foundation/PettingZoo) is a multi-agent version of Gymnasium with a number of implemented environments, i.e. multi-agent Atari environments.
 * The Farama Foundation also has a collection of many other [environments](https://farama.org/projects) that are maintained by the same team as Gymnasium and use the Gymnasium API.
-* If you're looking to track your rewards, hyperparameters, random seeds and more you can use [Comet](https://www.comet.com/site/?utm_source=gymnasium&utm_medium=partner&utm_campaign=partner_gymnasium_2023&utm_content=github) which has a built-in integration for Gymnasium. [Here's tutorial on how to use them together](https://bit.ly/CometGymnasiumIntegration). Comet is a sponsor of the Farama Foundation.
+* [Comet](https://www.comet.com/site/?utm_source=gymnasium&utm_medium=partner&utm_campaign=partner_gymnasium_2023&utm_content=github) is a free ML-Ops tool that tracks rewards, metrics, hyperparameters, and code for ML training runs. Comet has an easy-to use integration with Gymnasium, here's a [tutorial](https://bit.ly/CometGymnasiumIntegration) on how to use them together! Comet is a sponsor of the Farama Foundation!
+
+
 
 ## Environment Versioning
 

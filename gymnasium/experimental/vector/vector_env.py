@@ -67,6 +67,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     observation_space: gym.Space
     action_space: gym.Space
+    single_observation_space: gym.Space
+    single_action_space: gym.Space
 
     num_envs: int
 
@@ -267,6 +269,11 @@ class VectorWrapper(VectorEnv):
         Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.
     """
 
+    _observation_space: gym.Space | None = None
+    _action_space: gym.Space | None = None
+    _single_observation_space: gym.Space | None = None
+    _single_action_space: gym.Space | None = None
+
     def __init__(self, env: VectorEnv):
         """Initialize the vectorized environment wrapper."""
         super().__init__()
@@ -277,24 +284,31 @@ class VectorWrapper(VectorEnv):
     # explicitly forward the methods defined in VectorEnv
     # to self.env (instead of the base class)
 
-    def reset(self, **kwargs):
-        """Reset all environments."""
-        return self.env.reset(**kwargs)
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Reset all environment using seed and options."""
+        return self.env.reset(seed=seed, options=options)
 
-    def step(self, actions):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Step all environments."""
         return self.env.step(actions)
 
-    def close(self, **kwargs):
+    def close(self, **kwargs: Any):
         """Close all environments."""
         return self.env.close(**kwargs)
 
-    def close_extras(self, **kwargs):
+    def close_extras(self, **kwargs: Any):
         """Close all extra resources."""
         return self.env.close_extras(**kwargs)
 
     # implicitly forward all other methods and attributes to self.env
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         """Forward all other attributes to the base environment."""
         if name.startswith("_"):
             raise AttributeError(f"attempted to get missing private attribute '{name}'")
@@ -313,21 +327,85 @@ class VectorWrapper(VectorEnv):
         """Close the vectorized environment."""
         self.env.__del__()
 
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Gets the specification of the wrapped environment."""
+        return self.env.spec
+
+    @property
+    def observation_space(self) -> gym.Space:
+        """Gets the observation space of the vector environment."""
+        if self._observation_space is None:
+            return self.env.observation_space
+        return self._observation_space
+
+    @observation_space.setter
+    def observation_space(self, space: gym.Space):
+        """Sets the observation space of the vector environment."""
+        self._observation_space = space
+
+    @property
+    def action_space(self) -> gym.Space:
+        """Gets the action space of the vector environment."""
+        if self._action_space is None:
+            return self.env.action_space
+        return self._action_space
+
+    @action_space.setter
+    def action_space(self, space: gym.Space):
+        """Sets the action space of the vector environment."""
+        self._action_space = space
+
+    @property
+    def single_observation_space(self) -> gym.Space:
+        """Gets the single observation space of the vector environment."""
+        if self._single_observation_space is None:
+            return self.env.single_observation_space
+        return self._single_observation_space
+
+    @single_observation_space.setter
+    def single_observation_space(self, space: gym.Space):
+        """Sets the single observation space of the vector environment."""
+        self._single_observation_space = space
+
+    @property
+    def single_action_space(self) -> gym.Space:
+        """Gets the single action space of the vector environment."""
+        if self._single_action_space is None:
+            return self.env.single_action_space
+        return self._single_action_space
+
+    @single_action_space.setter
+    def single_action_space(self, space):
+        """Sets the single action space of the vector environment."""
+        self._single_action_space = space
+
+    @property
+    def num_envs(self) -> int:
+        """Gets the wrapped vector environment's num of the sub-environments."""
+        return self.env.num_envs
+
 
 class VectorObservationWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the observation. Equivalent to :class:`gym.ObservationWrapper` for vectorized environments."""
 
-    def reset(self, **kwargs):
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
-        observation = self.env.reset(**kwargs)
-        return self.observation(observation)
+        obs, info = self.env.reset(seed=seed, options=options)
+        return self.observation(obs), info
 
-    def step(self, actions):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return (
             self.observation(observation),
-            observation,
             reward,
             termination,
             truncation,
@@ -349,9 +427,11 @@ class VectorObservationWrapper(VectorWrapper):
 class VectorActionWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the actions. Equivalent of :class:`~gym.ActionWrapper` for vectorized environments."""
 
-    def step(self, actions: ActType):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Steps through the environment using a modified action by :meth:`action`."""
-        return self.env.step(self.action(actions))
+        return self.env.step(self.actions(actions))
 
     def actions(self, actions: ActType) -> ActType:
         """Transform the actions before sending them to the environment.
@@ -368,7 +448,9 @@ class VectorActionWrapper(VectorWrapper):
 class VectorRewardWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the reward. Equivalent of :class:`~gym.RewardWrapper` for vectorized environments."""
 
-    def step(self, actions):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Steps through the environment returning a reward modified by :meth:`reward`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return observation, self.reward(reward), termination, truncation, info

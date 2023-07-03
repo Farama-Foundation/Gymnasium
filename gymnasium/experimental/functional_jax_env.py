@@ -11,7 +11,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
-from gymnasium.experimental.wrappers.conversion.jax_to_numpy import jax_to_numpy
+from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
 from gymnasium.utils import seeding
 from gymnasium.vector.utils import batch_space
 
@@ -135,9 +135,9 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
             metadata = {}
         self.func_env = func_env
         self.num_envs = num_envs
+
         self.single_observation_space = func_env.observation_space
         self.single_action_space = func_env.action_space
-
         self.observation_space = batch_space(
             self.single_observation_space, self.num_envs
         )
