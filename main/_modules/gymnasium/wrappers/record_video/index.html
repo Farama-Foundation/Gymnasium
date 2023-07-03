@@ -549,6 +549,13 @@
         <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;human&quot;</span><span class="p">,</span> <span class="s2">&quot;ansi&quot;</span><span class="p">,</span> <span class="s2">&quot;ansi_list&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Render mode is </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">, which is incompatible with&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; RecordVideo. Initialize your environment with a render_mode&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; that returns an image, such as rgb_array.&quot;</span>
+            <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">episode_trigger</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">step_trigger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">episode_trigger</span> <span class="o">=</span> <span class="n">capped_cubic_video_schedule</span>
 
