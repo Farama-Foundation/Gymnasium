@@ -14,6 +14,7 @@ from gymnasium.error import DependencyNotInstalled
 
 
 try:
+    import jax
     import jax.numpy as jnp
 except ImportError:
     raise DependencyNotInstalled(
@@ -25,7 +26,7 @@ __all__ = ["JaxToNumpyV0", "jax_to_numpy", "numpy_to_jax"]
 
 @functools.singledispatch
 def numpy_to_jax(value: Any) -> Any:
-    """Converts a value to a Jax DeviceArray."""
+    """Converts a value to a Jax Array."""
     raise Exception(
         f"No known conversion for Numpy type ({type(value)}) to Jax registered. Report as issue on github."
     )
@@ -34,30 +35,30 @@ def numpy_to_jax(value: Any) -> Any:
 @numpy_to_jax.register(numbers.Number)
 def _number_to_jax(
     value: numbers.Number,
-) -> jnp.DeviceArray:
-    """Converts a number (int, float, etc.) to a Jax DeviceArray."""
+) -> jax.Array:
+    """Converts a number (int, float, etc.) to a Jax Array."""
     assert jnp is not None
     return jnp.array(value)
 
 
 @numpy_to_jax.register(np.ndarray)
-def _numpy_array_to_jax(value: np.ndarray) -> jnp.DeviceArray:
-    """Converts a NumPy Array to a Jax DeviceArray with the same dtype (excluding float64 without being enabled)."""
+def _numpy_array_to_jax(value: np.ndarray) -> jax.Array:
+    """Converts a NumPy Array to a Jax Array with the same dtype (excluding float64 without being enabled)."""
     assert jnp is not None
     return jnp.array(value, dtype=value.dtype)
 
 
 @numpy_to_jax.register(abc.Mapping)
 def _mapping_numpy_to_jax(value: Mapping[str, Any]) -> Mapping[str, Any]:
-    """Converts a dictionary of numpy arrays to a mapping of Jax DeviceArrays."""
+    """Converts a dictionary of numpy arrays to a mapping of Jax Array."""
     return type(value)(**{k: numpy_to_jax(v) for k, v in value.items()})
 
 
 @numpy_to_jax.register(abc.Iterable)
 def _iterable_numpy_to_jax(
     value: Iterable[np.ndarray | Any],
-) -> Iterable[jnp.DeviceArray | Any]:
-    """Converts an Iterable from Numpy Arrays to an iterable of Jax DeviceArrays."""
+) -> Iterable[jax.Array | Any]:
+    """Converts an Iterable from Numpy Arrays to an iterable of Jax Array."""
     return type(value)(numpy_to_jax(v) for v in value)
 
 
@@ -69,25 +70,25 @@ def jax_to_numpy(value: Any) -> Any:
     )
 
 
-@jax_to_numpy.register(jnp.DeviceArray)
-def _devicearray_jax_to_numpy(value: jnp.DeviceArray) -> np.ndarray:
-    """Converts a Jax DeviceArray to a numpy array."""
+@jax_to_numpy.register(jax.Array)
+def _devicearray_jax_to_numpy(value: jax.Array) -> np.ndarray:
+    """Converts a Jax Array to a numpy array."""
     return np.array(value)
 
 
 @jax_to_numpy.register(abc.Mapping)
 def _mapping_jax_to_numpy(
-    value: Mapping[str, jnp.DeviceArray | Any]
+    value: Mapping[str, jax.Array | Any]
 ) -> Mapping[str, np.ndarray | Any]:
-    """Converts a dictionary of Jax DeviceArrays to a mapping of numpy arrays."""
+    """Converts a dictionary of Jax Array to a mapping of numpy arrays."""
     return type(value)(**{k: jax_to_numpy(v) for k, v in value.items()})
 
 
 @jax_to_numpy.register(abc.Iterable)
 def _iterable_jax_to_numpy(
     value: Iterable[np.ndarray | Any],
-) -> Iterable[jnp.DeviceArray | Any]:
-    """Converts an Iterable from Numpy arrays to an iterable of Jax DeviceArrays."""
+) -> Iterable[jax.Array | Any]:
+    """Converts an Iterable from Numpy arrays to an iterable of Jax Array."""
     return type(value)(jax_to_numpy(v) for v in value)
 
 

@@ -62,7 +62,7 @@ def fell_off(player_position):
 
 
 class CliffWalkingFunctional(
-    FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
+    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType]
 ):
     """Cliff walking involves crossing a gridworld from start to goal while avoiding falling off a cliff.
 
@@ -139,7 +139,7 @@ class CliffWalkingFunctional(
         "render_fps": 4,
     }
 
-    def transition(self, state: EnvState, action: int | jnp.ndarray, key: PRNGKey):
+    def transition(self, state: EnvState, action: int | jax.Array, key: PRNGKey):
         """The Cliffwalking environment's state transition function."""
         new_position = state.player_position
 
@@ -188,13 +188,13 @@ class CliffWalkingFunctional(
             state.player_position[0] * 12 + state.player_position[1]
         ).reshape((1,))
 
-    def terminal(self, state: EnvState) -> jnp.ndarray:
+    def terminal(self, state: EnvState) -> jax.Array:
         """Determines if a particular Cliffwalking observation is terminal."""
         return jnp.array_equal(state.player_position, jnp.array([3, 11]))
 
     def reward(
         self, state: EnvState, action: ActType, next_state: StateType
-    ) -> jnp.ndarray:
+    ) -> jax.Array:
         """Calculates reward from a state."""
         state = next_state
         reward = -1 + (-99 * state.fallen[0])

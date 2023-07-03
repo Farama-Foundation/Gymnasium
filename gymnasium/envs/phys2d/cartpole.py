@@ -22,7 +22,7 @@ RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  
 
 
 class CartPoleFunctional(
-    FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
+    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType]
 ):
     """Cartpole but in jax and functional.
 
@@ -95,7 +95,7 @@ class CartPoleFunctional(
         )
 
     def transition(
-        self, state: jnp.ndarray, action: int | jnp.ndarray, rng: None = None
+        self, state: jax.Array, action: int | jax.Array, rng: None = None
     ) -> StateType:
         """Cartpole transition."""
         x, x_dot, theta, theta_dot = state
@@ -122,11 +122,11 @@ class CartPoleFunctional(
 
         return state
 
-    def observation(self, state: jnp.ndarray) -> jnp.ndarray:
+    def observation(self, state: jax.Array) -> jax.Array:
         """Cartpole observation."""
         return state
 
-    def terminal(self, state: jnp.ndarray) -> jnp.ndarray:
+    def terminal(self, state: jax.Array) -> jax.Array:
         """Checks if the state is terminal."""
         x, _, theta, _ = state
 
@@ -141,7 +141,7 @@ class CartPoleFunctional(
 
     def reward(
         self, state: StateType, action: ActType, next_state: StateType
-    ) -> jnp.ndarray:
+    ) -> jax.Array:
         """Computes the reward for the state transition using the action."""
         x, _, theta, _ = state
 

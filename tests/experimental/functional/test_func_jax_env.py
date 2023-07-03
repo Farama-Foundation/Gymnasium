@@ -38,7 +38,7 @@ def test_without_transform(env_class):
             pytest.fail("Terminal is not castable to bool")
 
         assert next_state.dtype == jnp.float32
-        assert isinstance(obs, jnp.ndarray)
+        assert isinstance(obs, jax.Array)
         assert obs.dtype == jnp.float32
 
         state = next_state
@@ -72,7 +72,7 @@ def test_jit(env_class):
             pytest.fail("Terminal is not castable to bool")
 
         assert next_state.dtype == jnp.float32
-        assert isinstance(obs, jnp.ndarray)
+        assert isinstance(obs, jax.Array)
         assert obs.dtype == jnp.float32
 
         state = next_state
@@ -105,7 +105,7 @@ def test_vmap(env_class):
         assert reward.dtype == jnp.float32
         assert terminal.shape == (num_envs,)
         assert terminal.dtype == bool
-        assert isinstance(obs, jnp.ndarray)
+        assert isinstance(obs, jax.Array)
         assert obs.dtype == jnp.float32
 
         state = next_state
