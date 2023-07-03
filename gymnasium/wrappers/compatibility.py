@@ -1,5 +1,4 @@
 """A compatibility wrapper converting an old-style environment into a valid environment."""
-import sys
 from typing import Any, Dict, Optional, Protocol, Tuple, runtime_checkable
 
 import gymnasium as gym
