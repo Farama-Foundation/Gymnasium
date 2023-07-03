@@ -395,12 +395,6 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         else:
             external_contact_forces = np.array([])
 
-        # TODO remove after validation
-        assert (self.data.cinert[0].flat.copy() == 0).all()
-        assert (self.data.cvel[0].flat.copy() == 0).all()
-        assert (self.data.qfrc_actuator[:6].flat.copy() == 0).all()
-        assert (self.data.cfrc_ext[0].flat.copy() == 0).all()
-
         if self._exclude_current_positions_from_observation:
             position = position[2:]
 
@@ -430,7 +424,6 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         quad_impact_cost = np.clip(quad_impact_cost, min_impact_cost, max_impact_cost)
 
         reward = uph_cost - quad_ctrl_cost - quad_impact_cost + 1
-
         info = {
             "reward_linup": uph_cost,
             "reward_quadctrl": -quad_ctrl_cost,

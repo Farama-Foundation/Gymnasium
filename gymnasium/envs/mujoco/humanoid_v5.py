@@ -415,10 +415,6 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     @property
     def terminated(self):
         terminated = (not self.is_healthy) and self._terminate_when_unhealthy
-        # TODO remove after validation
-        assert terminated == (
-            not self.is_healthy if self._terminate_when_unhealthy else False
-        )
         return terminated
 
     def _get_obs(self):
@@ -442,12 +438,6 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
             external_contact_forces = self.data.cfrc_ext[1:].flat.copy()
         else:
             external_contact_forces = np.array([])
-
-        # TODO remove after validation
-        assert (self.data.cinert[0].flat.copy() == 0).all()
-        assert (self.data.cvel[0].flat.copy() == 0).all()
-        assert (self.data.qfrc_actuator[:6].flat.copy() == 0).all()
-        assert (self.data.cfrc_ext[0].flat.copy() == 0).all()
 
         if self._exclude_current_positions_from_observation:
             position = position[2:]

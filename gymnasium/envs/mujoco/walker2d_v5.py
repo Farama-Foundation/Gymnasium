@@ -105,7 +105,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### termination
+    #### Termination
     If `terminate_when_unhealthy is True` (which is the default), the environment terminates when the Walker2d is unhealthy.
     The Walker2d is unhealthy if any of the following happens:
 
@@ -113,7 +113,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     2. The height of the walker is ***not*** in the closed interval specified by `healthy_z_range`
     3. The absolute value of the angle (`observation[1]` if `exclude_current_positions_from_observation=False`, else `observation[2]`) is ***not*** in the closed interval specified by `healthy_angle_range`
 
-    #### truncation
+    #### Truncation
     the maximum duration of an episode is 1000 timesteps.
 
     If `terminate_when_unhealthy=False` is passed, the episode is ended only when 1000 timesteps are exceeded.
@@ -260,10 +260,6 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     @property
     def terminated(self):
         terminated = (not self.is_healthy) and self._terminate_when_unhealthy
-        # TODO remove after validation
-        assert terminated == (
-            not self.is_healthy if self._terminate_when_unhealthy else False
-        )
         return terminated
 
     def _get_obs(self):

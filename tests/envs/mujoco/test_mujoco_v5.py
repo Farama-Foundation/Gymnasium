@@ -306,7 +306,7 @@ def test_reward_sum(version: str):
         )
 
 
-# Note: the environtments that are not present, is because they do not have identical behaviour
+# Note: the environtments "HalfCheetah", "Pusher", "Swimmer"
 def test_identical_behaviour_v45():
     """Verify that v4 -> v5 transition. Does not change the behaviour of the environments in any unexpected way."""
     NUM_STEPS = 100

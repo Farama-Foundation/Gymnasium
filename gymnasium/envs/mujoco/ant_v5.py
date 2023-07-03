@@ -172,7 +172,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     1. Any of the state space values is no longer finite
     2. The z-coordinate of the torso is **not** in the closed interval given by `healthy_z_range` (defaults to [0.2, 1.0])
 
-    #### truncation
+    #### Truncation
     The maximum duration of an episode is 1000 timesteps.
 
 
@@ -338,35 +338,27 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     @property
     def terminated(self):
         terminated = (not self.is_healthy) and self._terminate_when_unhealthy
-        # TODO remove after validation
-        assert terminated == (
-            not self.is_healthy if self._terminate_when_unhealthy else False
-        )
         return terminated
 
     def step(self, action):
         xy_position_before = self.data.body(self._main_body).xpos[:2].copy()
-        # TODO remove after validation
-        # assert (xy_position_before == self.get_body_com("torso")[:2].copy()).all()
         self.do_simulation(action, self.frame_skip)
         xy_position_after = self.data.body(self._main_body).xpos[:2].copy()
-        # TODO remove after validation
-        # assert (xy_position_after == self.get_body_com("torso")[:2].copy()).all()
 
         xy_velocity = (xy_position_after - xy_position_before) / self.dt
         x_velocity, y_velocity = xy_velocity
 
         forward_reward = x_velocity * self._forward_reward_weight
         healthy_reward = self.healthy_reward
-
         rewards = forward_reward + healthy_reward
 
         ctrl_cost = self.control_cost(action)
         contact_cost = self.contact_cost
         costs = ctrl_cost + contact_cost
 
-        terminated = self.terminated
         observation = self._get_obs()
+        reward = rewards - costs
+        terminated = self.terminated
         info = {
             "reward_forward": forward_reward,
             "reward_ctrl": -ctrl_cost,
@@ -378,8 +370,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             "x_velocity": x_velocity,
             "y_velocity": y_velocity,
         }
-
-        reward = rewards - costs
 
         if self.render_mode == "human":
             self.render()
@@ -393,9 +383,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             position = position[2:]
 
         if self._include_cfrc_ext_in_observation:
-            assert (
-                self.contact_forces[0].flat.copy() == 0
-            ).all()  # TODO remove after validation
             contact_force = self.contact_forces[1:].flat.copy()
             assert len(contact_force) == 78
             return np.concatenate((position, velocity, contact_force))

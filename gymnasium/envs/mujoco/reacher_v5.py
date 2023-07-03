@@ -175,11 +175,11 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
         reward_dist = -np.linalg.norm(vec) * self._reward_dist_weight
         reward_ctrl = -np.square(action).sum() * self._reward_control_weight
-        reward = reward_dist + reward_ctrl
 
         self.do_simulation(action, self.frame_skip)
 
         observation = self._get_obs()
+        reward = reward_dist + reward_ctrl
         info = {
             "reward_dist": reward_dist,
             "reward_ctrl": reward_ctrl,
@@ -207,9 +207,6 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         theta = self.data.qpos.flat[:2]
-        assert (self.get_body_com("fingertip") - self.get_body_com("target"))[
-            2
-        ] == 0  # TODO remove after validation
         return np.concatenate(
             [
                 np.cos(theta),
