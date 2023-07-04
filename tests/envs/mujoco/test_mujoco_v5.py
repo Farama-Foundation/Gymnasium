@@ -368,7 +368,15 @@ def test_identical_behaviour_v45():
 
     env_v4 = gym.make("Walker2d-v4")
     env_v5 = gym.make("Walker2d-v5")
-    check_environments_match(env_v4, env_v5, NUM_STEPS, skip_obs=True, skip_rew=True, skip_terminal=True, info_comparison="keys-superset")
+    check_environments_match(
+        env_v4,
+        env_v5,
+        NUM_STEPS,
+        skip_obs=True,
+        skip_rew=True,
+        skip_terminal=True,
+        info_comparison="keys-superset",
+    )
 
 
 @pytest.mark.parametrize("version", ["v5", "v4"])
