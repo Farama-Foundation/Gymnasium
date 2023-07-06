@@ -6,7 +6,7 @@ from typing import Callable
 import gymnasium
 
 
-def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None):
+def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None) -> float:
     """A benchmark to measure the runtime performance of step for an environment.
 
     example usage:
@@ -26,7 +26,7 @@ def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None):
     Returns: the average steps per second.
     """
     steps = 0
-    end = 0
+    end = 0.0
     env.reset(seed=seed)
     env.action_space.sample()
     start = time.time()
@@ -51,7 +51,7 @@ def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None):
 
 def benchmark_init(
     env_lambda: Callable[[], gymnasium.Env], target_duration: int = 5, seed=None
-):
+) -> float:
     """A benchmark to measure the initialization time and first reset.
 
     Args:
@@ -60,7 +60,7 @@ def benchmark_init(
         seed: seeds the first reset of the environment.
     """
     inits = 0
-    end = 0
+    end = 0.0
     start = time.time()
     while True:
         inits += 1
@@ -76,7 +76,7 @@ def benchmark_init(
     return inits_per_time
 
 
-def benchmark_render(env: gymnasium.Env, target_duration: int = 5):
+def benchmark_render(env: gymnasium.Env, target_duration: int = 5) -> float:
     """A benchmark to measure the time of render().
 
     Note: does not work with `render_mode='human'`
@@ -86,7 +86,7 @@ def benchmark_render(env: gymnasium.Env, target_duration: int = 5):
 
     """
     renders = 0
-    end = 0
+    end = 0.0
     start = time.time()
     while True:
         renders += 1
