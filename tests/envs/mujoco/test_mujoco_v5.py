@@ -80,11 +80,11 @@ def test_verify_info_y_position(env_id: str):
 
 
 # Note: "HumnanoidStandup-v4" does not have `info`
-@pytest.mark.parametrize("env", ["HalfCheetah", "Hopper", "Swimmer", "Walker2d"])
+@pytest.mark.parametrize("env_name", ["HalfCheetah", "Hopper", "Swimmer", "Walker2d"])
 @pytest.mark.parametrize("version", ["v5", "v4", "v3"])
-def test_verify_info_x_velocity(env: str, version: str):
+def test_verify_info_x_velocity(env_name: str, version: str):
     """Asserts that the environment `info['x_velocity']` is properly assigned."""
-    env = gym.make(f"{env}-{version}")
+    env = gym.make(f"{env_name}-{version}")
     env.reset()
 
     old_x = env.unwrapped.data.qpos[0]
@@ -155,7 +155,7 @@ def test_verify_info_xy_velocity_com(env_id: str):
 # Note: Inverted(Double)Pendulum-v4/2 does not have `info['reward_survive']`, but it is still affected
 # Note: all `v4/v3/v2` environments with a heathly reward are fail this test
 @pytest.mark.parametrize(
-    "env",
+    "env_name",
     [
         "Ant",
         "Hopper",
@@ -166,9 +166,9 @@ def test_verify_info_xy_velocity_com(env_id: str):
     ],
 )
 @pytest.mark.parametrize("version", ["v5"])
-def test_verify_reward_survive(env: str, version: str):
+def test_verify_reward_survive(env_name: str, version: str):
     """Assert that `reward_survive` is 0 on `terminal` states and not 0 on non-`terminal` states."""
-    env = gym.make(f"{env}-{version}", reset_noise_scale=0)
+    env = gym.make(f"{env_name}-{version}", reset_noise_scale=0)
     env.reset(seed=0)
     env.action_space.seed(1)
 
@@ -196,12 +196,12 @@ CHECK_ENV_IGNORE_WARNINGS = [
 ]
 
 
-@pytest.mark.parametrize("env", ALL_MUJOCO_ENVS)
+@pytest.mark.parametrize("env_name", ALL_MUJOCO_ENVS)
 @pytest.mark.parametrize("version", ["v5"])
 @pytest.mark.parametrize("frame_skip", [1, 2, 3, 4, 5])
-def test_frame_skip(env: str, version: str, frame_skip: int):
+def test_frame_skip(env_name: str, version: str, frame_skip: int):
     """Verify that all `mujoco` envs work with different `frame_skip` values."""
-    env_id = f"{env}-{version}"
+    env_id = f"{env_name}-{version}"
     env = gym.make(env_id, frame_skip=frame_skip)
 
     # Test if env adheres to Gym API
@@ -306,7 +306,7 @@ def test_reward_sum(version: str):
         )
 
 
-# Note: the environtments "HalfCheetah", "Pusher", "Swimmer"
+# Note: the environtments "HalfCheetah", "Pusher", "Swimmer", are identical between `v4` & `v5` (excluding `info`)
 def test_identical_behaviour_v45():
     """Verify that v4 -> v5 transition. Does not change the behaviour of the environments in any unexpected way."""
     NUM_STEPS = 100
@@ -435,11 +435,11 @@ def test_distance_from_origin_info(env_id: str):
     )
 
 
-@pytest.mark.parametrize("env", ["Hopper", "HumanoidStandup", "Walker2d"])
+@pytest.mark.parametrize("env_name", ["Hopper", "HumanoidStandup", "Walker2d"])
 @pytest.mark.parametrize("version", ["v5"])
-def test_z_distance_from_origin_info(env: str, version: str):
+def test_z_distance_from_origin_info(env_name: str, version: str):
     """Verify that `info"z_distance_from_origin"` is correct."""
-    env = gym.make(f"{env}-{version}")
+    env = gym.make(f"{env_name}-{version}")
     env.reset()
     _, _, _, _, info = env.step(env.action_space.sample())
     mujoco.mj_kinematics(env.unwrapped.model, env.unwrapped.data)
@@ -451,7 +451,7 @@ def test_z_distance_from_origin_info(env: str, version: str):
 
 
 @pytest.mark.parametrize(
-    "env",
+    "env_name",
     [
         "Ant",
         "HalfCheetah",
@@ -464,9 +464,9 @@ def test_z_distance_from_origin_info(env: str, version: str):
     ],
 )
 @pytest.mark.parametrize("version", ["v5"])
-def test_observation_structure(env: str, version: str):
+def test_observation_structure(env_name: str, version: str):
     """Verify that the `env.observation_structure` is properly defined."""
-    env = gym.make(f"{env}-{version}")
+    env = gym.make(f"{env_name}-{version}")
     if hasattr(env, "observation_structure"):
         return
 
@@ -491,7 +491,7 @@ def test_observation_structure(env: str, version: str):
 
 
 @pytest.mark.parametrize(
-    "env",
+    "env_name",
     [
         "Ant",
         "HalfCheetah",
@@ -507,9 +507,9 @@ def test_observation_structure(env: str, version: str):
     ],
 )
 @pytest.mark.parametrize("version", ["v5"])
-def test_reset_info(env: str, version: str):
+def test_reset_info(env_name: str, version: str):
     """Verify that the environment returns info with `reset()`."""
-    env = gym.make(f"{env}-{version}")
+    env = gym.make(f"{env_name}-{version}")
     _, reset_info = env.reset()
     assert len(reset_info) > 0
 
