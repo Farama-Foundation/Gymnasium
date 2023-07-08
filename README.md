@@ -67,3 +67,21 @@ We have a roadmap for future development work for Gymnasium available here: http
 ## Support Gymnasium's Development
 
 If you are financially able to do so and would like to support the development of Gymnasium, please join others in the community in [donating to us](https://github.com/sponsors/Farama-Foundation).
+
+## Citation
+
+You can cite Gymnasium as:
+
+```
+@misc{towers_gymnasium_2023,
+        title = {Gymnasium},
+        url = {https://zenodo.org/record/8127025},
+        abstract = {An API standard for single-agent reinforcement learning environments, with popular reference environments and related utilities (formerly Gym)},
+        urldate = {2023-07-08},
+        publisher = {Zenodo},
+        author = {Towers, Mark and Terry, Jordan K. and Kwiatkowski, Ariel and Balis, John U. and Cola, Gianluca de and Deleu, Tristan and Goulão, Manuel and Kallinteris, Andreas and KG, Arjun and Krimmel, Markus and Perez-Vicente, Rodrigo and Pierré, Andrea and Schulhoff, Sander and Tai, Jun Jet and Shen, Andrew Tan Jin and Younis, Omar G.},
+        month = mar,
+        year = {2023},
+        doi = {10.5281/zenodo.8127026},
+}
+```
