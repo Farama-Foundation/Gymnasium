@@ -66,14 +66,14 @@ authors:
     email: sschulho@umd.edu
     affiliation: University of Maryland
     orcid: 'https://orcid.org/0009-0003-1904-0838'
-  - given-names: Andrew Jin Shen
-    family-names: Tan
-    email: andrew.jinshen@gmail.com
-    orcid: 'https://orcid.org/0009-0009-8772-5525'
   - given-names: Jun Jet
     family-names: Tai
     email: taijunjet@hotmail.com
     affiliation: Coventry University
+  - given-names: Andrew Jin Shen
+    family-names: Tan
+    email: andrew.jinshen@gmail.com
+    orcid: 'https://orcid.org/0009-0009-8772-5525'
   - given-names: Omar G.
     family-names: Younis
     email: omar.younis98@gmail.com
