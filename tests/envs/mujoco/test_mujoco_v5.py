@@ -7,8 +7,8 @@ import pytest
 import gymnasium as gym
 from gymnasium.envs.mujoco.mujoco_env import BaseMujocoEnv, MujocoEnv
 from gymnasium.error import Error
-from gymnasium.utils.env_match import check_environments_match
 from gymnasium.utils.env_checker import check_env
+from gymnasium.utils.env_match import check_environments_match
 
 
 ALL_MUJOCO_ENVS = [
@@ -461,10 +461,7 @@ def test_z_distance_from_origin_info(env_name: str, version: str):
     )
 
 
-@pytest.mark.parametrize(
-    "env_name",
-    ALL_MUJOCO_ENVS
-)
+@pytest.mark.parametrize("env_name", ALL_MUJOCO_ENVS)
 @pytest.mark.parametrize("version", ["v5"])
 def test_observation_structure(env_name: str, version: str):
     """Verify that the `env.observation_structure` is properly defined."""
