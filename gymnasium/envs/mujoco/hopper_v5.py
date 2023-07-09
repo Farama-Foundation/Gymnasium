@@ -120,7 +120,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
     | Parameter                                    | Type      | Default               | Description                                                                                                                                                                     |
     | -------------------------------------------- | --------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `xml_file`                                   | **str**   | `"hopper_v5.xml"`     | Path to a MuJoCo model                                                                                                                                                          |
+    | `xml_file`                                   | **str**   | `"hopper.xml"`        | Path to a MuJoCo model                                                                                                                                                          |
     | `forward_reward_weight`                      | **float** | `1`                   | Weight for _forward_reward_ term (see section on reward)                                                                                                                        |
     | `ctrl_cost_weight`                           | **float** | `1e-3`                | Weight for _ctrl_cost_ reward (see section on reward)                                                                                                                           |
     | `healthy_reward`                             | **float** | `1`                   | Weight for _healthy_reward_ reward (see section on reward)                                                                                                                      |
@@ -149,7 +149,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="hopper_v5.xml",
+        xml_file="hopper.xml",
         frame_skip=4,
         default_camera_config=DEFAULT_CAMERA_CONFIG,
         forward_reward_weight=1.0,
