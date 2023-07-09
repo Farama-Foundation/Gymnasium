@@ -79,6 +79,10 @@ authors:
     email: omar.younis98@gmail.com
     affiliation: University of Bologna
     orcid: 'https://orcid.org/0009-0004-2783-7932'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.8127025
+    description: Zenodo DOI
 repository-code: 'https://github.com/Farama-Foundation/Gymnasium'
 url: 'https://gymnasium.farama.org/'
 abstract: >-
