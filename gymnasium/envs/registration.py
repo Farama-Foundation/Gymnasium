@@ -593,8 +593,9 @@ def load_plugin_envs(entry_point: str = "gymnasium.envs"):
             fn = plugin.load()
             try:
                 fn()
+                plugin_module_name = plugin.value.split(".")[0]
                 logger.warn(
-                    f"The environment registration system on `import gymnasium` is deprecated and will be removed in v1.0 ({plugin.value}), please update code to `import {plugin.value}` separately or use to load the module `gym.make('{plugin.value}:env_name-v0')`"
+                    f"The environment entry-point registration system on `import gymnasium` is deprecated and will be removed in v1.0. To register environments from {plugin_module_name}, please `import {plugin_module_name}` separately or use `gym.make('{plugin_module_name}:env_name-v0')`."
                 )
             except Exception:
                 logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
