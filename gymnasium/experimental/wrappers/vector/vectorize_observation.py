@@ -8,7 +8,7 @@ import numpy as np
 
 from gymnasium import Space
 from gymnasium.core import Env, ObsType
-from gymnasium.experimental import VectorEnv
+from gymnasium.experimental.vector import VectorEnv
 from gymnasium.experimental.vector import VectorObservationWrapper
 from gymnasium.experimental.vector.utils import batch_space, concatenate, iterate
 from gymnasium.experimental.wrappers import lambda_observation

@@ -8,7 +8,7 @@ import numpy as np
 
 from gymnasium import Space
 from gymnasium.core import ActType, Env
-from gymnasium.experimental import VectorEnv
+from gymnasium.experimental.vector import VectorEnv
 from gymnasium.experimental.vector import VectorActionWrapper
 from gymnasium.experimental.wrappers import lambda_action
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
