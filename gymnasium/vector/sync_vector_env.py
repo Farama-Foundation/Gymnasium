@@ -31,6 +31,7 @@ class SyncVectorEnv(VectorEnv):
     def __init__(
         self,
         env_fns: Iterable[Callable[[], Env]],
+        tasks: List,
         observation_space: Space = None,
         action_space: Space = None,
         copy: bool = True,
@@ -50,7 +51,17 @@ class SyncVectorEnv(VectorEnv):
                 (or, by default, the observation space of the first sub-environment).
         """
         self.env_fns = env_fns
-        self.envs = [env_fn() for env_fn in env_fns]
+        self.envs = []
+        self.tasks = dict()
+        self.env_names = []
+        self.current_tasks = dict()
+        for env_name in env_fns:
+            env = env_fns[env_name]()
+            self.env_names.append(env_name)
+            self.tasks[env_name] = [task for task in tasks if task.env_name == env_name]
+            self.current_tasks[env_name] = 0
+            env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
+            self.envs.append(env)
         self.copy = copy
         self.metadata = self.envs[0].metadata
 
@@ -118,7 +129,11 @@ class SyncVectorEnv(VectorEnv):
                 kwargs["seed"] = single_seed
             if options is not None:
                 kwargs["options"] = options
-
+            # need to set task first
+            env_name = self.env_names[i]
+            _, _ = env.reset()
+            self.current_tasks[env_name] = (self.current_tasks[env_name] + 1) % len(self.tasks[env_name])
+            env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
             observation, info = env.reset(**kwargs)
             observations.append(observation)
             infos = self._add_info(infos, info, i)
@@ -150,6 +165,11 @@ class SyncVectorEnv(VectorEnv):
 
             if self._terminateds[i] or self._truncateds[i]:
                 old_observation, old_info = observation, info
+                # select new task
+                env_name = self.env_names[i]
+                _, _ = env.reset()
+                self.current_tasks[env_name] = (self.current_tasks[env_name] + 1) % len(self.tasks[env_name])
+                env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
                 observation, info = env.reset()
                 info["final_observation"] = old_observation
                 info["final_info"] = old_info
