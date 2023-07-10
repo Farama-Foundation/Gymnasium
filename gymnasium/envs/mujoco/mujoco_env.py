@@ -376,7 +376,7 @@ class MujocoEnv(BaseMujocoEnv):
 
     def _initialize_simulation(
         self,
-    ) -> Tuple[mujoco._structs.MjModel, mujoco._structs.MjData]:
+    ):
         model = mujoco.MjModel.from_xml_path(self.fullpath)
         # MjrContext will copy model.vis.global_.off* to con.off*
         model.vis.global_.offwidth = self.width
