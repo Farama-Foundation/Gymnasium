@@ -9,7 +9,7 @@ from gymnasium import Env
 from gymnasium.spaces import Space
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import VectorEnv
-
+from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 
 __all__ = ["SyncVectorEnv"]
 
@@ -61,7 +61,7 @@ class SyncVectorEnv(VectorEnv):
             self.tasks[env_name] = [task for task in tasks if task.env_name == env_name]
             self.current_tasks[env_name] = 0
             env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
-            self.envs.append(env)
+            self.envs.append(RecordEpisodeStatistics(env))
         self.copy = copy
         self.metadata = self.envs[0].metadata
 
