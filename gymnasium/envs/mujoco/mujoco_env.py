@@ -373,7 +373,7 @@ class MujocoEnv(BaseMujocoEnv):
         self.mujoco_renderer = MujocoRenderer(
             self.model, self.data, default_camera_config
         )
-        
+
     def _initialize_simulation(
         self,
     ) -> Tuple[mujoco._structs.MjModel, mujoco._structs.MjData]:
