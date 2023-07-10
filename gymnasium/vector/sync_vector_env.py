@@ -10,7 +10,7 @@ from gymnasium.spaces import Space
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import VectorEnv
 from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
-
+from gymnasium.wrappers.one_hot_wrapper import OneHotV0
 __all__ = ["SyncVectorEnv"]
 
 
@@ -32,6 +32,7 @@ class SyncVectorEnv(VectorEnv):
         self,
         env_fns: Iterable[Callable[[], Env]],
         tasks: List,
+        use_one_hot_wrapper: bool = False,
         observation_space: Space = None,
         action_space: Space = None,
         copy: bool = True,
@@ -61,7 +62,10 @@ class SyncVectorEnv(VectorEnv):
             self.tasks[env_name] = [task for task in tasks if task.env_name == env_name]
             self.current_tasks[env_name] = 0
             env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
-            self.envs.append(RecordEpisodeStatistics(env))
+            if use_one_hot_wrapper:
+                env = OneHotV0(env, self.env_names.index(env_name), len(self.env_fns.keys()))
+            env = RecordEpisodeStatistics(env)
+            self.envs.append(env)
         self.copy = copy
         self.metadata = self.envs[0].metadata
 
