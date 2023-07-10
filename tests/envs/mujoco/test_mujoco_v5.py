@@ -664,9 +664,13 @@ def test_model_object_count(version: str):
 
 def test_dt():
     """Assert that env.dt gets assigned correctly."""
-    env_a = gym.make("Ant-v5", include_cfrc_ext_in_observation=False)
-    env_b = gym.make("Ant-v5", include_cfrc_ext_in_observation=False, frame_skip=1)
-    env_b.unwrapped.model.opt.timestep = 0.05
+    env_a = gym.make("Ant-v5", include_cfrc_ext_in_observation=False).unwrapped
+    env_b = gym.make(
+        "Ant-v5", include_cfrc_ext_in_observation=False, frame_skip=1
+    ).unwrapped
+    assert isinstance(env_a, BaseMujocoEnv)
+    assert isinstance(env_b, BaseMujocoEnv)
+    env_b.model.opt.timestep = 0.05
 
     assert env_a.dt == env_b.dt
     # check_environments_match(env_a, env_b, num_steps=100)   # This Fails as expected
