@@ -8,6 +8,28 @@ from gymnasium.experimental.wrappers.vector.dict_info_to_list import DictInfoToL
 from gymnasium.experimental.wrappers.vector.record_episode_statistics import (
     RecordEpisodeStatisticsV0,
 )
+from gymnasium.experimental.wrappers.vector.vectorize_action import (
+    ClipActionV0,
+    LambdaActionV0,
+    RescaleActionV0,
+    VectorizeLambdaActionV0,
+)
+from gymnasium.experimental.wrappers.vector.vectorize_observation import (
+    DtypeObservationV0,
+    FilterObservationV0,
+    FlattenObservationV0,
+    GrayscaleObservationV0,
+    LambdaObservationV0,
+    RescaleObservationV0,
+    ReshapeObservationV0,
+    ResizeObservationV0,
+    VectorizeLambdaObservationV0,
+)
+from gymnasium.experimental.wrappers.vector.vectorize_reward import (
+    ClipRewardV0,
+    LambdaRewardV0,
+    VectorizeLambdaRewardV0,
+)
 
 
 __all__ = [
