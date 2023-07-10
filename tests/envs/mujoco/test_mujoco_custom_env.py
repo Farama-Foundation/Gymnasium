@@ -107,6 +107,7 @@ def test_frame_skip(frame_skip):
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
             raise Error(f"Unexpected warning: {warning.message}")
 
+
 def test_xml_file():
     """Verify that the loading of a custom XML file works"""
     relative_path = "./tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
