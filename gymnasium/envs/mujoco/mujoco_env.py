@@ -1,5 +1,5 @@
 from os import path
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Union
 
 import numpy as np
 
@@ -67,8 +67,7 @@ class BaseMujocoEnv(gym.Env):
 
         self.width = width
         self.height = height
-        # may use width and height
-        self.model, self.data = self._initialize_simulation()
+        self._initialize_simulation()  # may use width and height
 
         self.init_qpos = self.data.qpos.ravel().copy()
         self.init_qvel = self.data.qvel.ravel().copy()
@@ -210,7 +209,7 @@ class MuJocoPyEnv(BaseMujocoEnv):
         logger.deprecation(
             "This version of the mujoco environments depends "
             "on the mujoco-py bindings, which are no longer maintained "
-            "and may stop working. Please upgrade to the v5 or v4 versions of "
+            "and may stop working. Please upgrade to the v4 versions of "
             "the environments (which depend on the mujoco python bindings instead), unless "
             "you are trying to precisely replicate previous works)."
         )
@@ -230,10 +229,9 @@ class MuJocoPyEnv(BaseMujocoEnv):
         )
 
     def _initialize_simulation(self):
-        model = mujoco_py.load_model_from_path(self.fullpath)
-        self.sim = mujoco_py.MjSim(model)
-        data = self.sim.data
-        return model, data
+        self.model = mujoco_py.load_model_from_path(self.fullpath)
+        self.sim = mujoco_py.MjSim(self.model)
+        self.data = self.sim.data
 
     def _reset_simulation(self):
         self.sim.reset()
@@ -369,22 +367,16 @@ class MujocoEnv(BaseMujocoEnv):
 
         from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
 
-        # An Optional member indicating the composion of the observation space
-        self.observation_structure: Dict
-
         self.mujoco_renderer = MujocoRenderer(
             self.model, self.data, default_camera_config
         )
 
-    def _initialize_simulation(
-        self,
-    ) -> Tuple[mujoco._structs.MjModel, mujoco._structs.MjData]:
-        model = mujoco.MjModel.from_xml_path(self.fullpath)
+    def _initialize_simulation(self):
+        self.model = mujoco.MjModel.from_xml_path(self.fullpath)
         # MjrContext will copy model.vis.global_.off* to con.off*
-        model.vis.global_.offwidth = self.width
-        model.vis.global_.offheight = self.height
-        data = mujoco.MjData(model)
-        return model, data
+        self.model.vis.global_.offwidth = self.width
+        self.model.vis.global_.offheight = self.height
+        self.data = mujoco.MjData(self.model)
 
     def _reset_simulation(self):
         mujoco.mj_resetData(self.model, self.data)
