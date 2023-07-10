@@ -324,9 +324,9 @@ def test_make_kwargs(register_kwargs_env):
     }
 
     assert isinstance(env.unwrapped, ArgumentEnv)
-    assert env.arg1 == "arg1"
-    assert env.arg2 == "override_arg2"
-    assert env.arg3 == "override_arg3"
+    assert env.unwrapped.arg1 == "arg1"
+    assert env.unwrapped.arg2 == "override_arg2"
+    assert env.unwrapped.arg3 == "override_arg3"
     env.close()
 
 

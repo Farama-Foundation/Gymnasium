@@ -2,7 +2,6 @@
 from typing import Any
 
 from gymnasium.envs.registration import (
-    load_plugin_envs,
     make,
     pprint_registry,
     register,
@@ -381,7 +380,3 @@ def _raise_shimmy_error(*args: Any, **kwargs: Any):
 # When installed, shimmy will re-register these environments with the correct entry_point
 register(id="GymV21Environment-v0", entry_point=_raise_shimmy_error)
 register(id="GymV26Environment-v0", entry_point=_raise_shimmy_error)
-
-
-# Hook to load plugins from entry points
-load_plugin_envs()

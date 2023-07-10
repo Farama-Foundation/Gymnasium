@@ -25,35 +25,35 @@ def test_carracing_domain_randomize():
     """
     env = gym.make("CarRacing-v2", domain_randomize=True)
 
-    road_color = env.road_color
-    bg_color = env.bg_color
-    grass_color = env.grass_color
+    road_color = env.unwrapped.road_color
+    bg_color = env.unwrapped.bg_color
+    grass_color = env.unwrapped.grass_color
 
     env.reset(options={"randomize": False})
 
     assert (
-        road_color == env.road_color
+        road_color == env.unwrapped.road_color
     ).all(), f"Have different road color after reset with randomize turned off. Before: {road_color}, after: {env.road_color}."
     assert (
-        bg_color == env.bg_color
+        bg_color == env.unwrapped.bg_color
     ).all(), f"Have different bg color after reset with randomize turned off. Before: {bg_color}, after: {env.bg_color}."
     assert (
-        grass_color == env.grass_color
+        grass_color == env.unwrapped.grass_color
     ).all(), f"Have different grass color after reset with randomize turned off. Before: {grass_color}, after: {env.grass_color}."
 
     env.reset()
 
     assert (
-        road_color != env.road_color
-    ).all(), f"Have same road color after reset. Before: {road_color}, after: {env.road_color}."
+        road_color != env.unwrapped.road_color
+    ).all(), f"Have same road color after reset. Before: {road_color}, after: {env.unwrapped.road_color}."
     assert (
-        bg_color != env.bg_color
+        bg_color != env.unwrapped.bg_color
     ).all(), (
-        f"Have same bg color after reset. Before: {bg_color}, after: {env.bg_color}."
+        f"Have same bg color after reset. Before: {bg_color}, after: {env.unwrapped.bg_color}."
     )
     assert (
-        grass_color != env.grass_color
-    ).all(), f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
+        grass_color != env.unwrapped.grass_color
+    ).all(), f"Have same grass color after reset. Before: {grass_color}, after: {env.unwrapped.grass_color}."
 
 
 @pytest.mark.parametrize("seed", range(5))
@@ -173,7 +173,7 @@ def test_customizable_resets(env_name: str, low_high: Optional[list]):
     else:
         low, high = low_high
         env.reset(options={"low": low, "high": high})
-        assert np.all((env.state >= low) & (env.state <= high))
+        assert np.all((env.unwrapped.state >= low) & (env.unwrapped.state <= high))
     # Make sure we can take a step.
     env.step(env.action_space.sample())
 

@@ -54,7 +54,6 @@ class Env(Generic[ObsType, ActType]):
     metadata: dict[str, Any] = {"render_modes": []}
     # define render_mode if your environment supports rendering
     render_mode: str | None = None
-    reward_range = (-float("inf"), float("inf"))
     spec: EnvSpec | None = None
 
     # Set these in ALL subclasses
@@ -271,34 +270,9 @@ class Wrapper(
 
         self._action_space: spaces.Space[WrapperActType] | None = None
         self._observation_space: spaces.Space[WrapperObsType] | None = None
-        self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
         self._metadata: dict[str, Any] | None = None
 
         self._cached_spec: EnvSpec | None = None
-
-    def __getattr__(self, name: str) -> Any:
-        """Returns an attribute with ``name``, unless ``name`` starts with an underscore.
-
-        Args:
-            name: The variable name
-
-        Returns:
-            The value of the variable in the wrapper stack
-
-        Warnings:
-            This feature is deprecated and removed in v1.0 and replaced with `env.get_attr(name})`
-        """
-        if name == "_np_random":
-            raise AttributeError(
-                "Can't access `_np_random` of a wrapper, use `self.unwrapped._np_random` or `self.np_random`."
-            )
-        elif name.startswith("_"):
-            raise AttributeError(f"accessing private attribute '{name}' is prohibited")
-        logger.warn(
-            f"env.{name} to get variables from other wrappers is deprecated and will be removed in v1.0, "
-            f"to get this variable you can do `env.unwrapped.{name}` for environment variables or `env.get_attr('{name}')` that will search the reminding wrappers."
-        )
-        return getattr(self.env, name)
 
     def get_attr(self, name: str) -> Any:
         """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.
@@ -392,18 +366,6 @@ class Wrapper(
     @observation_space.setter
     def observation_space(self, space: spaces.Space[WrapperObsType]):
         self._observation_space = space
-
-    @property
-    def reward_range(self) -> tuple[SupportsFloat, SupportsFloat]:
-        """Return the :attr:`Env` :attr:`reward_range` unless overwritten then the wrapper :attr:`reward_range` is used."""
-        if self._reward_range is None:
-            return self.env.reward_range
-        logger.warn("The `reward_range` is deprecated and will be removed in v1.0")
-        return self._reward_range
-
-    @reward_range.setter
-    def reward_range(self, value: tuple[SupportsFloat, SupportsFloat]):
-        self._reward_range = value
 
     @property
     def metadata(self) -> dict[str, Any]:
