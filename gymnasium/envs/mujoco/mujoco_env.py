@@ -1,5 +1,5 @@
 from os import path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 
@@ -67,7 +67,8 @@ class BaseMujocoEnv(gym.Env):
 
         self.width = width
         self.height = height
-        self._initialize_simulation()  # may use width and height
+        # may use width and height
+        self.model, self.data = self._initialize_simulation()
 
         self.init_qpos = self.data.qpos.ravel().copy()
         self.init_qvel = self.data.qvel.ravel().copy()
@@ -229,9 +230,10 @@ class MuJocoPyEnv(BaseMujocoEnv):
         )
 
     def _initialize_simulation(self):
-        self.model = mujoco_py.load_model_from_path(self.fullpath)
-        self.sim = mujoco_py.MjSim(self.model)
-        self.data = self.sim.data
+        model = mujoco_py.load_model_from_path(self.fullpath)
+        self.sim = mujoco_py.MjSim(model)
+        data = self.sim.data
+        return model, data
 
     def _reset_simulation(self):
         self.sim.reset()
@@ -367,16 +369,22 @@ class MujocoEnv(BaseMujocoEnv):
 
         from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
 
+        # An Optional member indicating the composion of the observation space
+        self.observation_structure: Dict
+
         self.mujoco_renderer = MujocoRenderer(
             self.model, self.data, default_camera_config
         )
 
-    def _initialize_simulation(self):
-        self.model = mujoco.MjModel.from_xml_path(self.fullpath)
+    def _initialize_simulation(
+        self,
+    ) -> Tuple[mujoco._structs.MjModel, mujoco._structs.MjData]:
+        model = mujoco.MjModel.from_xml_path(self.fullpath)
         # MjrContext will copy model.vis.global_.off* to con.off*
-        self.model.vis.global_.offwidth = self.width
-        self.model.vis.global_.offheight = self.height
-        self.data = mujoco.MjData(self.model)
+        model.vis.global_.offwidth = self.width
+        model.vis.global_.offheight = self.height
+        data = mujoco.MjData(model)
+        return model, data
 
     def _reset_simulation(self):
         mujoco.mj_resetData(self.model, self.data)
