@@ -18,6 +18,9 @@ from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 
 
+__all__ = ["RenderCollectionV0", "RecordVideoV0", "HumanRenderingV0"]
+
+
 class RenderCollectionV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
@@ -138,13 +141,6 @@ class RecordVideoV0(
         )
         gym.Wrapper.__init__(self, env)
 
-        try:
-            import moviepy  # noqa: F401
-        except ImportError as e:
-            raise error.DependencyNotInstalled(
-                "MoviePy is not installed, run `pip install moviepy`"
-            ) from e
-
         if env.render_mode in {None, "human", "ansi"}:
             raise ValueError(
                 f"Render mode is {env.render_mode}, which is incompatible with RecordVideo.",
@@ -185,6 +181,13 @@ class RecordVideoV0(
 
         self.step_id = -1
         self.episode_id = -1
+
+        try:
+            import moviepy  # noqa: F401
+        except ImportError as e:
+            raise error.DependencyNotInstalled(
+                "MoviePy is not installed, run `pip install moviepy`"
+            ) from e
 
     def _capture_frame(self):
         assert self.recording, "Cannot capture a frame, recording wasn't started."

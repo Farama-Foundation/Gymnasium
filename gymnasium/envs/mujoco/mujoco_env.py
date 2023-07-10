@@ -1,5 +1,5 @@
 from os import path
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 import numpy as np
 
@@ -40,8 +40,26 @@ class BaseMujocoEnv(gym.Env):
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
     ):
-        if model_path.startswith("/"):
+        """Base abstract class for mujoco based environments.
+
+        Args:
+            model_path: Path to the MuJoCo Model.
+            frame_skip: Number of MuJoCo simulation steps per gym `step()`.
+            observation_space: The observation space of the environment.
+            render_mode: The `render_mode` used.
+            width: The width of the render window.
+            height: The height of the render window.
+            camera_id: The camera ID used.
+            camera_name: The name of the camera used (can not be used in conjunction with `camera_id`).
+
+        Raises:
+            OSError: when the `model_path` does not exist.
+            error.DependencyNotInstalled: When `mujoco` is not installed.
+        """
+        if model_path.startswith(".") or model_path.startswith("/"):
             self.fullpath = model_path
+        elif model_path.startswith("~"):
+            self.fullpath = path.expanduser(model_path)
         else:
             self.fullpath = path.join(path.dirname(__file__), "assets", model_path)
         if not path.exists(self.fullpath):
@@ -61,9 +79,10 @@ class BaseMujocoEnv(gym.Env):
             "rgb_array",
             "depth_array",
         ], self.metadata["render_modes"]
-        assert (
-            int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
-        ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
+        if "render_fps" in self.metadata:
+            assert (
+                int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
+            ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
 
         self.observation_space = observation_space
         self._set_action_space()
@@ -113,6 +132,9 @@ class BaseMujocoEnv(gym.Env):
         raise NotImplementedError
 
     # -----------------------------
+    def _get_reset_info(self) -> Dict:
+        """Function that generates the `info` that is returned during a `reset()`."""
+        return {}
 
     def reset(
         self,
@@ -125,9 +147,11 @@ class BaseMujocoEnv(gym.Env):
         self._reset_simulation()
 
         ob = self.reset_model()
+        info = self._get_reset_info()
+
         if self.render_mode == "human":
             self.render()
-        return ob, {}
+        return ob, info
 
     def set_state(self, qpos, qvel):
         """

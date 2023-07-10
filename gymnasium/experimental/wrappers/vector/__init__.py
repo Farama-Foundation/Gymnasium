@@ -1,6 +1,13 @@
 """Wrappers for vector environments."""
 # pyright: reportUnsupportedDunderAll=false
 import importlib
+import re
+
+from gymnasium.error import DeprecatedWrapper
+from gymnasium.experimental.wrappers.vector.dict_info_to_list import DictInfoToListV0
+from gymnasium.experimental.wrappers.vector.record_episode_statistics import (
+    RecordEpisodeStatisticsV0,
+)
 
 
 __all__ = [
@@ -18,8 +25,8 @@ __all__ = [
     "ReshapeObservationV0",
     "RescaleObservationV0",
     "DtypeObservationV0",
-    "PixelObservationV0",
-    "NormalizeObservationV0",
+    # "PixelObservationV0",
+    # "NormalizeObservationV0",
     # "TimeAwareObservationV0",
     # "FrameStackObservationV0",
     # "DelayObservationV0",
@@ -30,7 +37,7 @@ __all__ = [
     # --- Reward wrappers ---
     "LambdaRewardV0",
     "ClipRewardV0",
-    "NormalizeRewardV1",
+    # "NormalizeRewardV1",
     # --- Common ---
     "RecordEpisodeStatisticsV0",
     # --- Rendering ---
@@ -44,69 +51,74 @@ __all__ = [
 ]
 
 
+# As these wrappers requires `jax` or `torch`, they are loaded by runtime on users trying to access them
+#   to avoid `import jax` or `import torch` on `import gymnasium`.
 _wrapper_to_class = {
-    # --- dict_info_to_list
-    "DictInfoToListV0": "dict_info_to_list",
-    # --- vectorize_action.py
-    "VectorizeLambdaActionV0": "vectorize_action",
-    "LambdaActionV0": "vectorize_action",
-    "ClipActionV0": "vectorize_action",
-    "RescaleActionV0": "vectorize_action",
-    # --- vectorize_observation.py
-    "VectorizeLambdaObservationV0": "vectorize_observation",
-    "LambdaObservationV0": "vectorize_observation",
-    "FilterObservationV0": "vectorize_observation",
-    "FlattenObservationV0": "vectorize_observation",
-    "GrayscaleObservationV0": "vectorize_observation",
-    "ResizeObservationV0": "vectorize_observation",
-    "ReshapeObservationV0": "vectorize_observation",
-    "RescaleObservationV0": "vectorize_observation",
-    "DtypeObservationV0": "vectorize_observation",
-    # --- vectorize_reward.py
-    "VectorizeLambdaRewardV0": "vectorize_reward",
-    "ClipRewardV0": "vectorize_reward",
-    "LambdaRewardV0": "vectorize_reward",
-    # --- stateful_action
-    # --- stateful_observation
-    # "TimeAwareObservationV0": "stateful_observation",
-    # "DelayObservationV0": "stateful_observation",
-    # "FrameStackObservationV0": "stateful_observation",
-    # "NormalizeObservationV0": "stateful_observation",
-    # "PixelObservationV0": "stateful_observation",
-    # --- stateful_reward
-    # "NormalizeRewardV1": "stateful_reward",
-    # --- common
-    "RecordEpisodeStatisticsV0": "record_episode_statistics",
-    # --- rendering
-    # "RenderCollectionV0": "rendering",
-    # "RecordVideoV0": "rendering",
-    # "HumanRenderingV0": "rendering",
-    # --- jax_to_numpy
+    # data converters
     "JaxToNumpyV0": "jax_to_numpy",
-    # --- jax_to_torch
     "JaxToTorchV0": "jax_to_torch",
-    # --- numpy_to_torch
     "NumpyToTorchV0": "numpy_to_torch",
 }
 
 
-def __getattr__(name: str):
-    """To avoid having to load all vector wrappers on `import gymnasium` with all of their extra modules.
+def __getattr__(wrapper_name: str):
+    """Load a wrapper by name.
 
-    This optimises the loading of gymnasium.
+    This optimizes the loading of gymnasium wrappers by only loading the wrapper if it is used.
+    Errors will be raised if the wrapper does not exist or if the version is not the latest.
 
     Args:
-        name: The name of a wrapper to load
+        wrapper_name: The name of a wrapper to load.
 
     Returns:
-        Wrapper
+        The specified wrapper.
+
+    Raises:
+        AttributeError: If the wrapper does not exist.
+        DeprecatedWrapper: If the version is not the latest.
     """
-    if name in _wrapper_to_class:
+    # Check if the requested wrapper is in the _wrapper_to_class dictionary
+    if wrapper_name in _wrapper_to_class:
         import_stmt = (
-            f"gymnasium.experimental.wrappers.vector.{_wrapper_to_class[name]}"
+            f"gymnasium.experimental.wrappers.vector.{_wrapper_to_class[wrapper_name]}"
         )
         module = importlib.import_module(import_stmt)
-        return getattr(module, name)
-    # add helpful error message if version number has changed
+        return getattr(module, wrapper_name)
+
+    # Define a regex pattern to match the integer suffix (version number) of the wrapper
+    int_suffix_pattern = r"(\d+)$"
+    version_match = re.search(int_suffix_pattern, wrapper_name)
+
+    # If a version number is found, extract it and the base wrapper name
+    if version_match:
+        version = int(version_match.group())
+        base_name = wrapper_name[: -len(version_match.group())]
     else:
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+        version = float("inf")
+        base_name = wrapper_name[:-2]
+
+    # Filter the list of all wrappers to include only those with the same base name
+    matching_wrappers = [name for name in __all__ if name.startswith(base_name)]
+
+    # If no matching wrappers are found, raise an AttributeError
+    if not matching_wrappers:
+        raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")
+
+    # Find the latest version of the matching wrappers
+    latest_wrapper = max(
+        matching_wrappers, key=lambda s: int(re.findall(int_suffix_pattern, s)[0])
+    )
+    latest_version = int(re.findall(int_suffix_pattern, latest_wrapper)[0])
+
+    # If the requested wrapper is an older version, raise a DeprecatedWrapper exception
+    if version < latest_version:
+        raise DeprecatedWrapper(
+            f"{wrapper_name!r} is now deprecated, use {latest_wrapper!r} instead.\n"
+            f"To see the changes made, go to "
+            f"https://gymnasium.farama.org/api/experimental/vector-wrappers/#gymnasium.experimental.wrappers.vector.{latest_wrapper}"
+        )
+    # If the requested version is invalid, raise an AttributeError
+    else:
+        raise AttributeError(
+            f"module {__name__!r} has no attribute {wrapper_name!r}, did you mean {latest_wrapper!r}"
+        )
