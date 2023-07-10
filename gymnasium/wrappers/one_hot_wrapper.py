@@ -1,4 +1,5 @@
 import gymnasium as gym
+import numpy as np
 
 class OneHotV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     def __init__(self, env: gym.Env, task_idx: int, num_envs: int):
@@ -9,7 +10,7 @@ class OneHotV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.one_hot = np.zeros(num_envs)
         self.one_hot[task_idx] = 1
 
-    def step(self, action, task):
+    def step(self, action):
         next_state, reward, terminate, truncate, info = self.env.step(action)
         next_state = np.concatenate([next_state, self.one_hot])
         return next_state, reward, terminate, truncate, info

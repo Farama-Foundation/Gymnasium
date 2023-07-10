@@ -6,7 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from gymnasium import Env
-from gymnasium.spaces import Space
+from gymnasium.spaces import Space, Box
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import VectorEnv
 from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
@@ -30,7 +30,7 @@ class SyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Iterable[Callable[[], Env]],
+        env_fns,
         tasks: List,
         use_one_hot_wrapper: bool = False,
         observation_space: Space = None,
@@ -71,6 +71,14 @@ class SyncVectorEnv(VectorEnv):
 
         if (observation_space is None) or (action_space is None):
             observation_space = observation_space or self.envs[0].observation_space
+            print(observation_space)
+            if use_one_hot_wrapper:
+                low = np.zeros(10)
+                high = np.ones(10)
+                #print(np.hstack([observation_space.low, low]))
+                #print(np.hstack([observation_space.high, high]))
+                observation_space = Box(low=np.hstack([observation_space.low, low]), high=np.hstack([observation_space.high, high]), dtype=np.float64)
+                print(observation_space)
             action_space = action_space or self.envs[0].action_space
         super().__init__(
             num_envs=len(self.envs),
