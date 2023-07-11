@@ -60,7 +60,7 @@ class SyncVectorEnv(VectorEnv):
             env = env_fns[env_name]()
             self.env_names.append(env_name)
             self.tasks[env_name] = [task for task in tasks if task.env_name == env_name]
-            self.current_tasks[env_name] = 0
+            self.current_tasks[env_name] = np.random.choice(len(self.tasks[env_name]))
             env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
             if use_one_hot_wrapper:
                 env = OneHotV0(env, self.env_names.index(env_name), len(self.env_fns.keys()))
@@ -73,8 +73,8 @@ class SyncVectorEnv(VectorEnv):
             observation_space = observation_space or self.envs[0].observation_space
             print(observation_space)
             if use_one_hot_wrapper:
-                low = np.zeros(10)
-                high = np.ones(10)
+                low = np.zeros(len(self.envs))
+                high = np.ones(len(self.envs))
                 #print(np.hstack([observation_space.low, low]))
                 #print(np.hstack([observation_space.high, high]))
                 observation_space = Box(low=np.hstack([observation_space.low, low]), high=np.hstack([observation_space.high, high]), dtype=np.float64)
@@ -180,7 +180,7 @@ class SyncVectorEnv(VectorEnv):
                 # select new task
                 env_name = self.env_names[i]
                 _, _ = env.reset()
-                self.current_tasks[env_name] = (self.current_tasks[env_name] + 1) % len(self.tasks[env_name])
+                self.current_tasks[env_name] = np.random.choice(len(self.tasks[env_name]))
                 env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
                 observation, info = env.reset()
                 info["final_observation"] = old_observation
