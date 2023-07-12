@@ -10,6 +10,9 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.experimental.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 
 
+__all__ = ["RecordEpisodeStatisticsV0"]
+
+
 class RecordEpisodeStatisticsV0(VectorWrapper):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 

@@ -80,6 +80,9 @@ class PointEnv(MujocoEnv, utils.EzPickle):
 
         return observation
 
+    def _get_reset_info(self):
+        return {"works": True}
+
 
 CHECK_ENV_IGNORE_WARNINGS = [
     f"\x1b[33mWARN: {message}\x1b[0m"
@@ -108,11 +111,21 @@ def test_frame_skip(frame_skip):
 def test_xml_file():
     """Verify that the loading of a custom XML file works"""
     relative_path = "./tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
-    env = PointEnv(xml_file=relative_path)
-    assert env.unwrapped.data.qpos.size == 9
+    env = PointEnv(xml_file=relative_path).unwrapped
+    assert isinstance(env, MujocoEnv)
+    assert env.data.qpos.size == 9
 
     full_path = os.getcwd() + "/tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
-    env = PointEnv(xml_file=full_path)
-    assert env.unwrapped.data.qpos.size == 9
+    env = PointEnv(xml_file=full_path).unwrapped
+    assert isinstance(env, MujocoEnv)
+    assert env.data.qpos.size == 9
 
     # note can not test user home path (with '~') because github CI does not have a home folder
+
+
+def test_reset_info():
+    """Verify that the environment returns info at `reset()`"""
+    env = PointEnv()
+
+    _, info = env.reset()
+    assert info["works"] is True

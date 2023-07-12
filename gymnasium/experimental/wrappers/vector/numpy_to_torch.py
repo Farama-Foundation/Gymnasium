@@ -13,6 +13,9 @@ from gymnasium.experimental.wrappers.numpy_to_torch import (
 )
 
 
+__all__ = ["NumpyToTorchV0"]
+
+
 class NumpyToTorchV0(VectorWrapper):
     """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors."""
 

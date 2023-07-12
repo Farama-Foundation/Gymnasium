@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 
+jax = pytest.importorskip("jax")
 jnp = pytest.importorskip("jax.numpy")
 
 from gymnasium.experimental.wrappers.jax_to_numpy import (  # noqa: E402
@@ -72,7 +73,7 @@ def jax_reset_func(self, seed=None, options=None):
 
 def jax_step_func(self, action):
     """A jax-based step function."""
-    assert isinstance(action, jnp.DeviceArray), type(action)
+    assert isinstance(action, jax.Array), type(action)
     return (
         jnp.array([1, 2, 3]),
         jnp.array(5.0),
@@ -88,16 +89,14 @@ def test_jax_to_numpy_wrapper():
 
     # Check that the reset and step for jax environment are as expected
     obs, info = jax_env.reset()
-    assert isinstance(obs, jnp.DeviceArray)
-    assert isinstance(info, dict) and isinstance(info["data"], jnp.DeviceArray)
+    assert isinstance(obs, jax.Array)
+    assert isinstance(info, dict) and isinstance(info["data"], jax.Array)
 
     obs, reward, terminated, truncated, info = jax_env.step(jnp.array([1, 2]))
-    assert isinstance(obs, jnp.DeviceArray)
-    assert isinstance(reward, jnp.DeviceArray)
-    assert isinstance(terminated, jnp.DeviceArray) and isinstance(
-        truncated, jnp.DeviceArray
-    )
-    assert isinstance(info, dict) and isinstance(info["data"], jnp.DeviceArray)
+    assert isinstance(obs, jax.Array)
+    assert isinstance(reward, jax.Array)
+    assert isinstance(terminated, jax.Array) and isinstance(truncated, jax.Array)
+    assert isinstance(info, dict) and isinstance(info["data"], jax.Array)
 
     # Check that the wrapped version is correct.
     numpy_env = JaxToNumpyV0(jax_env)

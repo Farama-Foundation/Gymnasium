@@ -4,34 +4,77 @@ import importlib
 import re
 
 from gymnasium.error import DeprecatedWrapper
+from gymnasium.experimental.wrappers import vector
+from gymnasium.experimental.wrappers.atari_preprocessing import AtariPreprocessingV0
+from gymnasium.experimental.wrappers.common import (
+    AutoresetV0,
+    OrderEnforcingV0,
+    PassiveEnvCheckerV0,
+    RecordEpisodeStatisticsV0,
+)
+from gymnasium.experimental.wrappers.lambda_action import (
+    ClipActionV0,
+    LambdaActionV0,
+    RescaleActionV0,
+)
+from gymnasium.experimental.wrappers.lambda_observation import (
+    DtypeObservationV0,
+    FilterObservationV0,
+    FlattenObservationV0,
+    GrayscaleObservationV0,
+    LambdaObservationV0,
+    PixelObservationV0,
+    RescaleObservationV0,
+    ReshapeObservationV0,
+    ResizeObservationV0,
+)
+from gymnasium.experimental.wrappers.lambda_reward import ClipRewardV0, LambdaRewardV0
+from gymnasium.experimental.wrappers.rendering import (
+    HumanRenderingV0,
+    RecordVideoV0,
+    RenderCollectionV0,
+)
+from gymnasium.experimental.wrappers.stateful_action import StickyActionV0
+from gymnasium.experimental.wrappers.stateful_observation import (
+    DelayObservationV0,
+    FrameStackObservationV0,
+    MaxAndSkipObservationV0,
+    NormalizeObservationV0,
+    TimeAwareObservationV0,
+)
+from gymnasium.experimental.wrappers.stateful_reward import NormalizeRewardV1
+
+
+# Todo - Add legacy wrapper to new wrapper error for users when merged into gymnasium.wrappers
 
 
 __all__ = [
     "vector",
     # --- Observation wrappers ---
-    "LambdaObservationV0",
+    "AtariPreprocessingV0",
+    "DelayObservationV0",
+    "DtypeObservationV0",
     "FilterObservationV0",
     "FlattenObservationV0",
+    "FrameStackObservationV0",
     "GrayscaleObservationV0",
+    "LambdaObservationV0",
+    "MaxAndSkipObservationV0",
+    "NormalizeObservationV0",
+    "PixelObservationV0",
     "ResizeObservationV0",
     "ReshapeObservationV0",
     "RescaleObservationV0",
-    "DtypeObservationV0",
-    "PixelObservationV0",
-    "NormalizeObservationV0",
     "TimeAwareObservationV0",
-    "FrameStackObservationV0",
-    "DelayObservationV0",
-    "AtariPreprocessingV0",
     # --- Action Wrappers ---
-    "LambdaActionV0",
     "ClipActionV0",
+    "LambdaActionV0",
     "RescaleActionV0",
     # "NanAction",
     "StickyActionV0",
     # --- Reward wrappers ---
-    "LambdaRewardV0",
     "ClipRewardV0",
+    "LambdaRewardV0",
     "NormalizeRewardV1",
     # --- Common ---
     "AutoresetV0",
@@ -48,45 +91,9 @@ __all__ = [
     "NumpyToTorchV0",
 ]
 
-
+# As these wrappers requires `jax` or `torch`, they are loaded by runtime for users trying to access them
+#   to avoid `import jax` or `import torch` on `import gymnasium`.
 _wrapper_to_class = {
-    # lambda_action.py
-    "LambdaActionV0": "lambda_action",
-    "ClipActionV0": "lambda_action",
-    "RescaleActionV0": "lambda_action",
-    # lambda_observation.py
-    "LambdaObservationV0": "lambda_observation",
-    "FilterObservationV0": "lambda_observation",
-    "FlattenObservationV0": "lambda_observation",
-    "GrayscaleObservationV0": "lambda_observation",
-    "ResizeObservationV0": "lambda_observation",
-    "ReshapeObservationV0": "lambda_observation",
-    "RescaleObservationV0": "lambda_observation",
-    "DtypeObservationV0": "lambda_observation",
-    "PixelObservationV0": "lambda_observation",
-    # lambda_reward.py
-    "ClipRewardV0": "lambda_reward",
-    "LambdaRewardV0": "lambda_reward",
-    # stateful_action
-    "StickyActionV0": "stateful_action",
-    # stateful_observation
-    "TimeAwareObservationV0": "stateful_observation",
-    "DelayObservationV0": "stateful_observation",
-    "FrameStackObservationV0": "stateful_observation",
-    "NormalizeObservationV0": "stateful_observation",
-    # stateful_reward
-    "NormalizeRewardV1": "stateful_reward",
-    # atari_preprocessing
-    "AtariPreprocessingV0": "atari_preprocessing",
-    # common
-    "PassiveEnvCheckerV0": "common",
-    "OrderEnforcingV0": "common",
-    "AutoresetV0": "common",
-    "RecordEpisodeStatisticsV0": "common",
-    # rendering
-    "RenderCollectionV0": "rendering",
-    "RecordVideoV0": "rendering",
-    "HumanRenderingV0": "rendering",
     # data converters
     "JaxToNumpyV0": "jax_to_numpy",
     "JaxToTorchV0": "jax_to_torch",
@@ -110,10 +117,8 @@ def __getattr__(wrapper_name: str):
         AttributeError: If the wrapper does not exist.
         DeprecatedWrapper: If the version is not the latest.
     """
-    if wrapper_name == "vector":
-        return importlib.import_module("gymnasium.experimental.wrappers.vector")
     # Check if the requested wrapper is in the _wrapper_to_class dictionary
-    elif wrapper_name in _wrapper_to_class:
+    if wrapper_name in _wrapper_to_class:
         import_stmt = (
             f"gymnasium.experimental.wrappers.{_wrapper_to_class[wrapper_name]}"
         )
