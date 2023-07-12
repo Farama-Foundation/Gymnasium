@@ -593,10 +593,6 @@ def load_plugin_envs(entry_point: str = "gymnasium.envs"):
             fn = plugin.load()
             try:
                 fn()
-                plugin_module_name = plugin.value.split(".")[0]
-                logger.warn(
-                    f"The environment entry-point registration system on `import gymnasium` is deprecated and will be removed in v1.0. To register environments from {plugin_module_name}, please `import {plugin_module_name}` separately or use `gym.make('{plugin_module_name}:env_name-v0')`."
-                )
             except Exception:
                 logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
 
@@ -672,8 +668,12 @@ def register(
         ns_id = current_namespace
     else:
         ns_id = ns
-
     full_env_id = get_env_id(ns_id, name, version)
+
+    if order_enforce is True:
+        logger.warn(
+            "`gymnasium.register(..., order_enforcing=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument."
+        )
 
     new_spec = EnvSpec(
         id=full_env_id,
@@ -851,7 +851,7 @@ def make(
         apply_api_compatibility is None and env_spec.apply_api_compatibility is True
     ):
         logger.warn(
-            "The `gym.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and removed in v1.0"
+            "`gymnasium.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and will be removed in v1.0"
         )
         env = gym.wrappers.EnvCompatibility(env, render_mode)
 
@@ -864,6 +864,10 @@ def make(
     # Add the order enforcing wrapper
     if env_spec.order_enforce:
         env = gym.wrappers.OrderEnforcing(env)
+
+        logger.warn(
+            "`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0"
+        )
 
     # Add the time limit wrapper
     if max_episode_steps is not None:
