@@ -273,6 +273,9 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         reward = rewards - costs
         terminated = self.terminated
         info = {
+            "reward_forward": forward_reward,
+            "reward_ctrl": -ctrl_cost,
+            "reward_survive": healthy_reward,
             "x_position": x_position_after,
             "x_velocity": x_velocity,
         }
