@@ -6,11 +6,11 @@ import numpy as np
 from numpy.typing import NDArray
 
 from gymnasium import Env
-from gymnasium.spaces import Space, Box
+from gymnasium.spaces import Space
 from gymnasium.vector.utils import concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import VectorEnv
-from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
-from gymnasium.wrappers.one_hot_wrapper import OneHotV0
+
+
 __all__ = ["SyncVectorEnv"]
 
 
@@ -30,9 +30,7 @@ class SyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns,
-        tasks: List,
-        use_one_hot_wrapper: bool = False,
+        env_fns: Iterable[Callable[[], Env]],
         observation_space: Space = None,
         action_space: Space = None,
         copy: bool = True,
@@ -52,33 +50,12 @@ class SyncVectorEnv(VectorEnv):
                 (or, by default, the observation space of the first sub-environment).
         """
         self.env_fns = env_fns
-        self.envs = []
-        self.tasks = dict()
-        self.env_names = []
-        self.current_tasks = dict()
-        for env_name in env_fns:
-            env = env_fns[env_name]()
-            self.env_names.append(env_name)
-            self.tasks[env_name] = [task for task in tasks if task.env_name == env_name]
-            self.current_tasks[env_name] = np.random.choice(len(self.tasks[env_name]))
-            env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
-            if use_one_hot_wrapper:
-                env = OneHotV0(env, self.env_names.index(env_name), len(self.env_fns.keys()))
-            env = RecordEpisodeStatistics(env)
-            self.envs.append(env)
+        self.envs = [env_fn() for env_fn in env_fns]
         self.copy = copy
         self.metadata = self.envs[0].metadata
 
         if (observation_space is None) or (action_space is None):
             observation_space = observation_space or self.envs[0].observation_space
-            print(observation_space)
-            if use_one_hot_wrapper:
-                low = np.zeros(len(self.envs))
-                high = np.ones(len(self.envs))
-                #print(np.hstack([observation_space.low, low]))
-                #print(np.hstack([observation_space.high, high]))
-                observation_space = Box(low=np.hstack([observation_space.low, low]), high=np.hstack([observation_space.high, high]), dtype=np.float64)
-                print(observation_space)
             action_space = action_space or self.envs[0].action_space
         super().__init__(
             num_envs=len(self.envs),
@@ -141,11 +118,7 @@ class SyncVectorEnv(VectorEnv):
                 kwargs["seed"] = single_seed
             if options is not None:
                 kwargs["options"] = options
-            # need to set task first
-            env_name = self.env_names[i]
-            _, _ = env.reset()
-            self.current_tasks[env_name] = (self.current_tasks[env_name] + 1) % len(self.tasks[env_name])
-            env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
+
             observation, info = env.reset(**kwargs)
             observations.append(observation)
             infos = self._add_info(infos, info, i)
@@ -177,11 +150,6 @@ class SyncVectorEnv(VectorEnv):
 
             if self._terminateds[i] or self._truncateds[i]:
                 old_observation, old_info = observation, info
-                # select new task
-                env_name = self.env_names[i]
-                _, _ = env.reset()
-                self.current_tasks[env_name] = np.random.choice(len(self.tasks[env_name]))
-                env.set_task(self.tasks[env_name][self.current_tasks[env_name]])
                 observation, info = env.reset()
                 info["final_observation"] = old_observation
                 info["final_info"] = old_info
@@ -250,12 +218,12 @@ class SyncVectorEnv(VectorEnv):
 
     def _check_spaces(self) -> bool:
         for env in self.envs:
-            '''if not (env.observation_space == self.single_observation_space):
+            if not (env.observation_space == self.single_observation_space):
                 raise RuntimeError(
                     "Some environments have an observation space different from "
                     f"`{self.single_observation_space}`. In order to batch observations, "
                     "the observation spaces from all environments must be equal."
-                )'''
+                )
 
             if not (env.action_space == self.single_action_space):
                 raise RuntimeError(
