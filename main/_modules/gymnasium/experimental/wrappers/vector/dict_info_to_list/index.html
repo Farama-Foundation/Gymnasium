@@ -7,11 +7,11 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/vector/record_episode_statistics.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../../search/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/vector/record_episode_statistics.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/vector/dict_info_to_list.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../../search/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/vector/dict_info_to_list.html" />
 
     <link rel="shortcut icon" href="../../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
-        <title>gymnasium.experimental.wrappers.vector.record_episode_statistics - Gymnasium Documentation</title>
+        <title>gymnasium.experimental.wrappers.vector.dict_info_to_list - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css" />
@@ -476,151 +476,93 @@
           </div>
           <article role="main">
             
-            <h1>Source code for gymnasium.experimental.wrappers.vector.record_episode_statistics</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper that tracks the cumulative rewards and episode lengths.&quot;&quot;&quot;</span>
+            <h1>Source code for gymnasium.experimental.wrappers.vector.dict_info_to_list</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Wrapper that converts the info format for vec envs into the list format.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span> <span class="nn">gymnasium.experimental.vector.vector_env</span> <span class="kn">import</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorWrapper</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RecordEpisodeStatisticsV0&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DictInfoToListV0&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="RecordEpisodeStatisticsV0"><a class="viewcode-back" href="../../../../../../api/experimental/vector_wrappers/#gymnasium.experimental.wrappers.vector.RecordEpisodeStatisticsV0">[docs]</a><span class="k">class</span> <span class="nc">RecordEpisodeStatisticsV0</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This wrapper will keep track of cumulative rewards and episode lengths.</span>
+<div class="viewcode-block" id="DictInfoToListV0"><a class="viewcode-back" href="../../../../../../api/experimental/vector_wrappers/#gymnasium.experimental.wrappers.vector.DictInfoToListV0">[docs]</a><span class="k">class</span> <span class="nc">DictInfoToListV0</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts infos of vectorized environments from dict to List[dict].</span>
 
-<span class="sd">    At the end of an episode, the statistics of the episode will be added to ``info``</span>
-<span class="sd">    using the key ``episode``. If using a vectorized environment also the key</span>
-<span class="sd">    ``_episode`` is used which indicates whether the env at the respective index has</span>
-<span class="sd">    the episode statistics.</span>
+<span class="sd">    This wrapper converts the info format of a</span>
+<span class="sd">    vector environment from a dictionary to a list of dictionaries.</span>
+<span class="sd">    This wrapper is intended to be used around vectorized</span>
+<span class="sd">    environments. If using other wrappers that perform</span>
+<span class="sd">    operation on info like `RecordEpisodeStatistics` this</span>
+<span class="sd">    need to be the outermost wrapper.</span>
 
-<span class="sd">    After the completion of an episode, ``info`` will look like this::</span>
+<span class="sd">    i.e. ``DictInfoToListV0(RecordEpisodeStatisticsV0(vector_env))``</span>
 
-<span class="sd">        &gt;&gt;&gt; info = {  # doctest: +SKIP</span>
-<span class="sd">        ...     ...</span>
-<span class="sd">        ...     &quot;episode&quot;: {</span>
-<span class="sd">        ...         &quot;r&quot;: &quot;&lt;cumulative reward&gt;&quot;,</span>
-<span class="sd">        ...         &quot;l&quot;: &quot;&lt;episode length&gt;&quot;,</span>
-<span class="sd">        ...         &quot;t&quot;: &quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
-<span class="sd">        ...     },</span>
-<span class="sd">        ... }</span>
+<span class="sd">    Example::</span>
 
-<span class="sd">    For a vectorized environments the output will be in the form of::</span>
-
-<span class="sd">        &gt;&gt;&gt; infos = {  # doctest: +SKIP</span>
-<span class="sd">        ...     ...</span>
-<span class="sd">        ...     &quot;episode&quot;: {</span>
-<span class="sd">        ...         &quot;r&quot;: &quot;&lt;array of cumulative reward for each done sub-environment&gt;&quot;,</span>
-<span class="sd">        ...         &quot;l&quot;: &quot;&lt;array of episode length for each done sub-environment&gt;&quot;,</span>
-<span class="sd">        ...         &quot;t&quot;: &quot;&lt;array of elapsed time since beginning of episode for each done sub-environment&gt;&quot;</span>
-<span class="sd">        ...     },</span>
-<span class="sd">        ...     &quot;_episode&quot;: &quot;&lt;boolean array of length num-envs&gt;&quot;</span>
-<span class="sd">        ... }</span>
-
-<span class="sd">    Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via</span>
-<span class="sd">    :attr:`wrapped_env.return_queue` and :attr:`wrapped_env.length_queue` respectively.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        return_queue: The cumulative rewards of the last ``deque_size``-many episodes</span>
-<span class="sd">        length_queue: The lengths of the last ``deque_size``-many episodes</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; dict_info = {</span>
+<span class="sd">        ...      &quot;k&quot;: np.array([0., 0., 0.5, 0.3]),</span>
+<span class="sd">        ...      &quot;_k&quot;: np.array([False, False, True, True])</span>
+<span class="sd">        ...  }</span>
+<span class="sd">        &gt;&gt;&gt; list_info = [{}, {}, {&quot;k&quot;: 0.5}, {&quot;k&quot;: 0.3}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">deque_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will keep track of cumulative rewards and episode lengths.</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will convert the info into the list format.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to apply the wrapper</span>
-<span class="sd">            deque_size: The size of the buffers :attr:`return_queue` and :attr:`length_queue`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, convert dict info to list.&quot;&quot;&quot;</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="n">list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">return_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">deque_size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">length_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">deque_size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">list_info</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using kwargs and resets the episode returns and lengths.&quot;&quot;&quot;</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using kwargs.&quot;&quot;&quot;</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">list_info</span>
 
-        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
+    <span class="k">def</span> <span class="nf">_convert_info_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the dict info to list.</span>
 
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, recording the episode statistics.&quot;&quot;&quot;</span>
-        <span class="p">(</span>
-            <span class="n">observations</span><span class="p">,</span>
-            <span class="n">rewards</span><span class="p">,</span>
-            <span class="n">terminations</span><span class="p">,</span>
-            <span class="n">truncations</span><span class="p">,</span>
-            <span class="n">infos</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="sd">        Convert the dict info of the vectorized environment</span>
+<span class="sd">        into a list of dictionaries where the i-th dictionary</span>
+<span class="sd">        has the info of the i-th environment.</span>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`info` dtype is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span><span class="si">}</span><span class="s2"> while supported dtype is `dict`. This may be due to usage of other wrappers in the wrong order.&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            infos (dict): info dict coming from the env.</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">+=</span> <span class="n">rewards</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list_info (list): converted info.</span>
 
-        <span class="n">dones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">)</span>
-        <span class="n">num_dones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dones</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">num_dones</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;episode&quot;</span> <span class="ow">in</span> <span class="n">infos</span> <span class="ow">or</span> <span class="s2">&quot;_episode&quot;</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Attempted to add episode stats when they already exist&quot;</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">infos</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dones</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                    <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dones</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                    <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                        <span class="n">dones</span><span class="p">,</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
-                        <span class="mf">0.0</span><span class="p">,</span>
-                    <span class="p">),</span>
-                <span class="p">}</span>
-                <span class="n">infos</span><span class="p">[</span><span class="s2">&quot;_episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dones</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_count</span> <span class="o">+=</span> <span class="n">num_dones</span>
-
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dones</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">return_queue</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">length_queue</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">[</span><span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">[</span><span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span><span class="p">[</span><span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">observations</span><span class="p">,</span>
-            <span class="n">rewards</span><span class="p">,</span>
-            <span class="n">terminations</span><span class="p">,</span>
-            <span class="n">truncations</span><span class="p">,</span>
-            <span class="n">infos</span><span class="p">,</span>
-        <span class="p">)</span></div>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_info</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
+        <span class="n">list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_episode_statistics</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">list_info</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">has_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
+                    <span class="n">list_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">infos</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">list_info</span></div>
 </pre></div>
           </article>
         </div>
