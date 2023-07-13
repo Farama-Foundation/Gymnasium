@@ -525,7 +525,7 @@ def _find_spec(env_id: str) -> EnvSpec:
 
     if env_spec is None:
         _check_version_exists(ns, name, version)
-        raise error.Error(f"No registered env with id: {env_name}")
+        raise error.Error(f"No registered env with id: {env_name}. Did you register it, or import the package that registers it? Use `gymnasium.pprint_registry()` to see all of the registered environments.")
 
     return env_spec
 
@@ -667,9 +667,9 @@ def register(
         ns_id = ns
     full_env_id = get_env_id(ns_id, name, version)
 
-    if order_enforce is True:
+    if autoreset is True:
         logger.warn(
-            "`gymnasium.register(..., order_enforcing=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument."
+            "`gymnasium.register(..., autoreset=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument."
         )
 
     new_spec = EnvSpec(
@@ -862,10 +862,6 @@ def make(
     if env_spec.order_enforce:
         env = gym.wrappers.OrderEnforcing(env)
 
-        logger.warn(
-            "`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0"
-        )
-
     # Add the time limit wrapper
     if max_episode_steps is not None:
         env = gym.wrappers.TimeLimit(env, max_episode_steps)
@@ -875,6 +871,10 @@ def make(
     # Add the auto-reset wrapper
     if autoreset is True or (autoreset is None and env_spec.autoreset is True):
         env = gym.wrappers.AutoResetWrapper(env)
+
+        logger.warn(
+            "`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0"
+        )
 
     for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:

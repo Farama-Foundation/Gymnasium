@@ -48,9 +48,10 @@ class VectorListInfo(gym.Wrapper, gym.utils.RecordConstructorArgs):
         Args:
             env (Env): The environment to apply the wrapper
         """
-        assert getattr(
-            env, "is_vector_env", False
-        ), "This wrapper can only be used in vectorized environments."
+        try:
+            self.get_wrapper_attr("is_vector_env")
+        except AttributeError:
+            assert False, "This wrapper can only be used in vectorized environments."
 
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
