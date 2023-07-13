@@ -48,13 +48,12 @@ class VectorListInfo(gym.Wrapper, gym.utils.RecordConstructorArgs):
         Args:
             env (Env): The environment to apply the wrapper
         """
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.Wrapper.__init__(self, env)
         try:
             self.get_wrapper_attr("is_vector_env")
         except AttributeError:
             assert False, "This wrapper can only be used in vectorized environments."
-
-        gym.utils.RecordConstructorArgs.__init__(self)
-        gym.Wrapper.__init__(self, env)
 
     def step(self, action):
         """Steps through the environment, convert dict info to list."""
