@@ -7,11 +7,11 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/vector/record_episode_statistics.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../../search/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/vector/record_episode_statistics.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/vector/vectorize_reward.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../../search/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/experimental/wrappers/vector/vectorize_reward.html" />
 
     <link rel="shortcut icon" href="../../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
-        <title>gymnasium.experimental.wrappers.vector.record_episode_statistics - Gymnasium Documentation</title>
+        <title>gymnasium.experimental.wrappers.vector.vectorize_reward - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css" />
@@ -476,150 +476,84 @@
           </div>
           <article role="main">
             
-            <h1>Source code for gymnasium.experimental.wrappers.vector.record_episode_statistics</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper that tracks the cumulative rewards and episode lengths.&quot;&quot;&quot;</span>
+            <h1>Source code for gymnasium.experimental.wrappers.vector.vectorize_reward</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Vectorizes reward function to work with `VectorEnv`.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
-<span class="kn">from</span> <span class="nn">gymnasium.experimental.vector.vector_env</span> <span class="kn">import</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorWrapper</span>
+<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">gymnasium.experimental.vector</span> <span class="kn">import</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorRewardWrapper</span>
+<span class="kn">from</span> <span class="nn">gymnasium.experimental.vector.vector_env</span> <span class="kn">import</span> <span class="n">ArrayType</span>
+<span class="kn">from</span> <span class="nn">gymnasium.experimental.wrappers</span> <span class="kn">import</span> <span class="n">lambda_reward</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RecordEpisodeStatisticsV0&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="LambdaRewardV0"><a class="viewcode-back" href="../../../../../../api/experimental/vector_wrappers/#gymnasium.experimental.wrappers.vector.LambdaRewardV0">[docs]</a><span class="k">class</span> <span class="nc">LambdaRewardV0</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A reward wrapper that allows a custom function to modify the step reward.&quot;&quot;&quot;</span>
 
-
-<div class="viewcode-block" id="RecordEpisodeStatisticsV0"><a class="viewcode-back" href="../../../../../../api/experimental/vector_wrappers/#gymnasium.experimental.wrappers.vector.RecordEpisodeStatisticsV0">[docs]</a><span class="k">class</span> <span class="nc">RecordEpisodeStatisticsV0</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This wrapper will keep track of cumulative rewards and episode lengths.</span>
-
-<span class="sd">    At the end of an episode, the statistics of the episode will be added to ``info``</span>
-<span class="sd">    using the key ``episode``. If using a vectorized environment also the key</span>
-<span class="sd">    ``_episode`` is used which indicates whether the env at the respective index has</span>
-<span class="sd">    the episode statistics.</span>
-
-<span class="sd">    After the completion of an episode, ``info`` will look like this::</span>
-
-<span class="sd">        &gt;&gt;&gt; info = {  # doctest: +SKIP</span>
-<span class="sd">        ...     ...</span>
-<span class="sd">        ...     &quot;episode&quot;: {</span>
-<span class="sd">        ...         &quot;r&quot;: &quot;&lt;cumulative reward&gt;&quot;,</span>
-<span class="sd">        ...         &quot;l&quot;: &quot;&lt;episode length&gt;&quot;,</span>
-<span class="sd">        ...         &quot;t&quot;: &quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
-<span class="sd">        ...     },</span>
-<span class="sd">        ... }</span>
-
-<span class="sd">    For a vectorized environments the output will be in the form of::</span>
-
-<span class="sd">        &gt;&gt;&gt; infos = {  # doctest: +SKIP</span>
-<span class="sd">        ...     ...</span>
-<span class="sd">        ...     &quot;episode&quot;: {</span>
-<span class="sd">        ...         &quot;r&quot;: &quot;&lt;array of cumulative reward for each done sub-environment&gt;&quot;,</span>
-<span class="sd">        ...         &quot;l&quot;: &quot;&lt;array of episode length for each done sub-environment&gt;&quot;,</span>
-<span class="sd">        ...         &quot;t&quot;: &quot;&lt;array of elapsed time since beginning of episode for each done sub-environment&gt;&quot;</span>
-<span class="sd">        ...     },</span>
-<span class="sd">        ...     &quot;_episode&quot;: &quot;&lt;boolean array of length num-envs&gt;&quot;</span>
-<span class="sd">        ... }</span>
-
-<span class="sd">    Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via</span>
-<span class="sd">    :attr:`wrapped_env.return_queue` and :attr:`wrapped_env.length_queue` respectively.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        return_queue: The cumulative rewards of the last ``deque_size``-many episodes</span>
-<span class="sd">        length_queue: The lengths of the last ``deque_size``-many episodes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">deque_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will keep track of cumulative rewards and episode lengths.</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ArrayType</span><span class="p">],</span> <span class="n">ArrayType</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize LambdaRewardV0 wrapper.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            env (Env): The environment to apply the wrapper</span>
-<span class="sd">            deque_size: The size of the buffers :attr:`return_queue` and :attr:`length_queue`</span>
+<span class="sd">            env (Env): The vector environment to wrap</span>
+<span class="sd">            func: (Callable): The function to apply to reward</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>
+    <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to reward.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">return_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">deque_size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">length_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">deque_size</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="VectorizeLambdaRewardV0"><a class="viewcode-back" href="../../../../../../api/experimental/vector_wrappers/#gymnasium.experimental.wrappers.vector.VectorizeLambdaRewardV0">[docs]</a><span class="k">class</span> <span class="nc">VectorizeLambdaRewardV0</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorizes a single-agent lambda reward wrapper for vector environments.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">lambda_reward</span><span class="o">.</span><span class="n">LambdaRewardV0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using kwargs and resets the episode returns and lengths.&quot;&quot;&quot;</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the vectorized lambda reward wrapper.</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="sd">        Args:</span>
+<span class="sd">            env: The vector environment to wrap.</span>
+<span class="sd">            wrapper: The wrapper to vectorize</span>
+<span class="sd">            **kwargs: Keyword argument for the wrapper</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">Env</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, recording the episode statistics.&quot;&quot;&quot;</span>
-        <span class="p">(</span>
-            <span class="n">observations</span><span class="p">,</span>
-            <span class="n">rewards</span><span class="p">,</span>
-            <span class="n">terminations</span><span class="p">,</span>
-            <span class="n">truncations</span><span class="p">,</span>
-            <span class="n">infos</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates over the reward updating each with the wrapper func.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reward</span><span class="p">):</span>
+            <span class="n">reward</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reward</span></div>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`info` dtype is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span><span class="si">}</span><span class="s2"> while supported dtype is `dict`. This may be due to usage of other wrappers in the wrong order.&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">+=</span> <span class="n">rewards</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">+=</span> <span class="mi">1</span>
+<div class="viewcode-block" id="ClipRewardV0"><a class="viewcode-back" href="../../../../../../api/experimental/vector_wrappers/#gymnasium.experimental.wrappers.vector.ClipRewardV0">[docs]</a><span class="k">class</span> <span class="nc">ClipRewardV0</span><span class="p">(</span><span class="n">VectorizeLambdaRewardV0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper that clips the rewards for an environment between an upper and lower bound.&quot;&quot;&quot;</span>
 
-        <span class="n">dones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">)</span>
-        <span class="n">num_dones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dones</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
+        <span class="n">min_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for ClipReward wrapper.</span>
 
-        <span class="k">if</span> <span class="n">num_dones</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;episode&quot;</span> <span class="ow">in</span> <span class="n">infos</span> <span class="ow">or</span> <span class="s2">&quot;_episode&quot;</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Attempted to add episode stats when they already exist&quot;</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">infos</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dones</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                    <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dones</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                    <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                        <span class="n">dones</span><span class="p">,</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
-                        <span class="mf">0.0</span><span class="p">,</span>
-                    <span class="p">),</span>
-                <span class="p">}</span>
-                <span class="n">infos</span><span class="p">[</span><span class="s2">&quot;_episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dones</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_count</span> <span class="o">+=</span> <span class="n">num_dones</span>
-
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dones</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">return_queue</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">length_queue</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">[</span><span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">[</span><span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span><span class="p">[</span><span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">observations</span><span class="p">,</span>
-            <span class="n">rewards</span><span class="p">,</span>
-            <span class="n">terminations</span><span class="p">,</span>
-            <span class="n">truncations</span><span class="p">,</span>
-            <span class="n">infos</span><span class="p">,</span>
+<span class="sd">        Args:</span>
+<span class="sd">            env: The vector environment to wrap</span>
+<span class="sd">            min_reward: The min reward for each step</span>
+<span class="sd">            max_reward: the max reward for each step</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">env</span><span class="p">,</span>
+            <span class="n">lambda_reward</span><span class="o">.</span><span class="n">ClipRewardV0</span><span class="p">,</span>
+            <span class="n">min_reward</span><span class="o">=</span><span class="n">min_reward</span><span class="p">,</span>
+            <span class="n">max_reward</span><span class="o">=</span><span class="n">max_reward</span><span class="p">,</span>
         <span class="p">)</span></div>
 </pre></div>
           </article>

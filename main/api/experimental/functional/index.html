@@ -490,93 +490,6 @@
 <h1>Functional Environment<a class="headerlink" href="#functional-environment" title="Permalink to this heading">#</a></h1>
 <section id="gymnasium-experimental-funcenv">
 <h2>gymnasium.experimental.FuncEnv<a class="headerlink" href="#gymnasium-experimental-funcenv" title="Permalink to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.</span></span><span class="sig-name descname"><span class="pre">FuncEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/experimental/functional/#FuncEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.experimental.FuncEnv" title="Permalink to this definition">#</a></dt>
-<dd><p>Base class (template) for functional envs.</p>
-<p>This API is meant to be used in a stateless manner, with the environment state being passed around explicitly.
-That being said, nothing here prevents users from using the environment statefully, it’s just not recommended.
-A functional env consists of the following functions (in this case, instance methods):
-- initial: returns the initial state of the POMDP
-- observation: returns the observation in a given state
-- transition: returns the next state after taking an action in a given state
-- reward: returns the reward for a given (state, action, next_state) tuple
-- terminal: returns whether a given state is terminal
-- state_info: optional, returns a dict of info about a given state
-- step_info: optional, returns a dict of info about a given (state, action, next_state) tuple</p>
-<p>The class-based structure serves the purpose of allowing environment constants to be defined in the class,
-and then using them by name in the code itself.</p>
-<p>For the moment, this is predominantly for internal use. This API is likely to change, but in the future
-we intend to flesh it out and officially expose it to end users.</p>
-<p>Initialize the environment constants.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.initial">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">initial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StateType</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.initial" title="Permalink to this definition">#</a></dt>
-<dd><p>Initial state.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.transition">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StateType</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.transition" title="Permalink to this definition">#</a></dt>
-<dd><p>Transition.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.observation">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ObsType</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.observation" title="Permalink to this definition">#</a></dt>
-<dd><p>Observation.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.reward">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RewardType</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.reward" title="Permalink to this definition">#</a></dt>
-<dd><p>Reward.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.terminal">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">terminal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TerminalType</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.terminal" title="Permalink to this definition">#</a></dt>
-<dd><p>Terminal state.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.state_info">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">state_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.state_info" title="Permalink to this definition">#</a></dt>
-<dd><p>Info dict about a single state.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.step_info">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">step_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.step_info" title="Permalink to this definition">#</a></dt>
-<dd><p>Info dict about a full transition.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.transform">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.transform" title="Permalink to this definition">#</a></dt>
-<dd><p>Functional transformations.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.render_image">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">render_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RenderStateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">RenderStateType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.render_image" title="Permalink to this definition">#</a></dt>
-<dd><p>Show the state.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.render_init">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">render_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RenderStateType</span></span></span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.render_init" title="Permalink to this definition">#</a></dt>
-<dd><p>Initialize the render state.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.experimental.FuncEnv.render_close">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.experimental.FuncEnv.</span></span><span class="sig-name descname"><span class="pre">render_close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RenderStateType</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.experimental.FuncEnv.render_close" title="Permalink to this definition">#</a></dt>
-<dd><p>Close the render state.</p>
-</dd></dl>
-
 </section>
 <section id="gymnasium-experimental-func2env-functionaljaxcompatibilityenv">
 <h2>gymnasium.experimental.func2env.FunctionalJaxCompatibilityEnv<a class="headerlink" href="#gymnasium-experimental-func2env-functionaljaxcompatibilityenv" title="Permalink to this heading">#</a></h2>
@@ -653,21 +566,7 @@ we intend to flesh it out and officially expose it to end users.</p>
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Functional Environment</a><ul>
-<li><a class="reference internal" href="#gymnasium-experimental-funcenv">gymnasium.experimental.FuncEnv</a><ul>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv"><code class="docutils literal notranslate"><span class="pre">FuncEnv</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.initial"><code class="docutils literal notranslate"><span class="pre">initial()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.transition"><code class="docutils literal notranslate"><span class="pre">transition()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.observation"><code class="docutils literal notranslate"><span class="pre">observation()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.reward"><code class="docutils literal notranslate"><span class="pre">reward()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.terminal"><code class="docutils literal notranslate"><span class="pre">terminal()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.state_info"><code class="docutils literal notranslate"><span class="pre">state_info()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.step_info"><code class="docutils literal notranslate"><span class="pre">step_info()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.transform"><code class="docutils literal notranslate"><span class="pre">transform()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.render_image"><code class="docutils literal notranslate"><span class="pre">render_image()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.render_init"><code class="docutils literal notranslate"><span class="pre">render_init()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.experimental.FuncEnv.render_close"><code class="docutils literal notranslate"><span class="pre">render_close()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#gymnasium-experimental-funcenv">gymnasium.experimental.FuncEnv</a></li>
 <li><a class="reference internal" href="#gymnasium-experimental-func2env-functionaljaxcompatibilityenv">gymnasium.experimental.func2env.FunctionalJaxCompatibilityEnv</a></li>
 </ul>
 </li>
