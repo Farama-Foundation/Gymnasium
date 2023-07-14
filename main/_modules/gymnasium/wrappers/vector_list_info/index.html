@@ -527,12 +527,12 @@
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to apply the wrapper</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span>
-            <span class="n">env</span><span class="p">,</span> <span class="s2">&quot;is_vector_env&quot;</span><span class="p">,</span> <span class="kc">False</span>
-        <span class="p">),</span> <span class="s2">&quot;This wrapper can only be used in vectorized environments.&quot;</span>
-
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="s2">&quot;is_vector_env&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;This wrapper can only be used in vectorized environments.&quot;</span>
 
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, convert dict info to list.&quot;&quot;&quot;</span>
