@@ -170,6 +170,10 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
 
         return OrderedDict([(k, space.sample()) for k, space in self.spaces.items()])
 
+    def keys(self) -> List[str]:
+        """Return a list of keys in the dictionary."""
+        return list(self.spaces.keys())
+
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, dict) and x.keys() == self.spaces.keys():
