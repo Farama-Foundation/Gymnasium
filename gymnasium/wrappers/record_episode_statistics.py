@@ -59,14 +59,19 @@ class RecordEpisodeStatistics(gym.Wrapper, gym.utils.RecordConstructorArgs):
         gym.utils.RecordConstructorArgs.__init__(self, deque_size=deque_size)
         gym.Wrapper.__init__(self, env)
 
-        self.num_envs = getattr(env, "num_envs", 1)
+        try:
+            self.num_envs = self.get_wrapper_attr("num_envs")
+            self.is_vector_env = self.get_wrapper_attr("is_vector_env")
+        except AttributeError:
+            self.num_envs = 1
+            self.is_vector_env = False
+
         self.episode_count = 0
         self.episode_start_times: np.ndarray = None
         self.episode_returns: Optional[np.ndarray] = None
         self.episode_lengths: Optional[np.ndarray] = None
         self.return_queue = deque(maxlen=deque_size)
         self.length_queue = deque(maxlen=deque_size)
-        self.is_vector_env = getattr(env, "is_vector_env", False)
 
     def reset(self, **kwargs):
         """Resets the environment using kwargs and resets the episode returns and lengths."""

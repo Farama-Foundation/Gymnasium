@@ -50,6 +50,9 @@ def make(
                [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
               dtype=float32), {})
     """
+    gym.logger.warn(
+        "`gymnasium.vector.make(...)` is deprecated and will be replaced by `gymnasium.make_vec(...)` in v1.0"
+    )
 
     def create_env(env_num: int) -> Callable[[], Env]:
         """Creates an environment that can enable or disable the environment checker."""

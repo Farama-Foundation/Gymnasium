@@ -13,6 +13,7 @@ import sys
 import traceback
 from collections import defaultdict
 from dataclasses import dataclass, field
+from types import ModuleType
 from typing import Any, Callable, Iterable, Sequence
 
 import gymnasium as gym
@@ -43,6 +44,7 @@ __all__ = [
     "make_vec",
     "spec",
     "pprint_registry",
+    "register_envs",
 ]
 
 
@@ -523,7 +525,9 @@ def _find_spec(env_id: str) -> EnvSpec:
 
     if env_spec is None:
         _check_version_exists(ns, name, version)
-        raise error.Error(f"No registered env with id: {env_name}")
+        raise error.Error(
+            f"No registered env with id: {env_name}. Did you register it, or import the package that registers it? Use `gymnasium.pprint_registry()` to see all of the registered environments."
+        )
 
     return env_spec
 
@@ -592,6 +596,11 @@ def load_plugin_envs(entry_point: str = "gymnasium.envs"):
                 logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
 
 
+def register_envs(env_module: ModuleType):
+    """A No-op function such that it can appear to IDEs that a module is used."""
+    pass
+
+
 @contextlib.contextmanager
 def namespace(ns: str):
     """Context manager for modifying the current namespace."""
@@ -658,8 +667,12 @@ def register(
         ns_id = current_namespace
     else:
         ns_id = ns
-
     full_env_id = get_env_id(ns_id, name, version)
+
+    if autoreset is True:
+        logger.warn(
+            "`gymnasium.register(..., autoreset=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument."
+        )
 
     new_spec = EnvSpec(
         id=full_env_id,
@@ -836,6 +849,9 @@ def make(
     if apply_api_compatibility is True or (
         apply_api_compatibility is None and env_spec.apply_api_compatibility is True
     ):
+        logger.warn(
+            "`gymnasium.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and will be removed in v1.0"
+        )
         env = gym.wrappers.EnvCompatibility(env, render_mode)
 
     # Run the environment checker as the lowest level wrapper
@@ -857,6 +873,10 @@ def make(
     # Add the auto-reset wrapper
     if autoreset is True or (autoreset is None and env_spec.autoreset is True):
         env = gym.wrappers.AutoResetWrapper(env)
+
+        logger.warn(
+            "`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0"
+        )
 
     for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
