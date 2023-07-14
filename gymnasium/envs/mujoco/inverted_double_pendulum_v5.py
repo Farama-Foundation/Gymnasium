@@ -27,6 +27,15 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     and the goal is to balance the second pole on top of the first pole, which is in turn on top of the
     cart, by applying continuous forces on the cart.
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | InvertedDoublePendulum-v5 | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | InvertedDoublePendulum-v4 | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | InvertedDoublePendulum-v2 | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
 
     ## Action Space
     The agent take a 1-element vector for actions.
@@ -34,7 +43,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     numerical force applied to the cart (with magnitude representing the amount of force and
     sign representing the direction)
 
-    | Num | Action                    | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit      |
+    | Num | Action                    | Control Min | Control Max | Name (in corresponding XML file) | Joint |Type (Unit)|
     |-----|---------------------------|-------------|-------------|----------------------------------|-------|-----------|
     | 0   | Force applied on the cart | -1          | 1           | slider                           | slide | Force (N) |
 
@@ -46,7 +55,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
     The observation is a `ndarray` with shape `(9,)` where the elements correspond to the following:
 
-    | Num | Observation                                                       | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
+    | Num | Observation                                                       | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ----------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
     | 0   | position of the cart along the linear surface                     | -Inf | Inf | slider                           | slide | position (m)             |
     | 1   | sine of the angle between the cart and the first pole             | -Inf | Inf | sin(hinge)                       | hinge | unitless                 |
@@ -72,7 +81,8 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The reward consists of two parts:
+    The total reward is: ***reward*** *=* *alive_bonus - distance_penalty - velocity_penalty*.
+
     - *alive_bonus*:
     The goal is to keep the second inverted pendulum upright (within a certain angle limit) as long as possible -
     so for each timestep that the second pole is upright, a reward of `healthy_reward` is given.
@@ -85,15 +95,14 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     $10^{-3} \omega_1 + 5 10^{-3} \omega_2$,
     where $\omega_1, \omega_2$ are the angular velocities of the hinges.
 
-    The total reward returned is ***reward*** *=* *alive_bonus - distance_penalty - velocity_penalty*
-    and `info` will also contain the individual reward terms.
+    `info` contains the individual reward terms.
 
 
     ## Starting State
-    All observations start in state
-    (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) with a uniform noise in the range
-    of `[-reset_noise_scale, reset_noise_scale]` added to the positional values (cart position and pole angles) and standard
-    normal force with a standard deviation of `reset_noise_scale` added to the velocity values for stochasticity.
+    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{3}, reset\_noise\_scale \times 1_{3}]}$.
+    The initial velocity state is $\mathcal{N}(0_{3}, reset\_noise\_scale^2 \times I_{3})$.
+
+    where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
 
     ## Episode End
@@ -102,14 +111,16 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     The Inverted Double Pendulum is unhealthy if any of the following happens:
 
     1.Termination: The y_coordinate of the tip of the second pole $\leq 1$.
-    The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other).
+
+    Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.
 
     #### Truncation
     The maximum duration of an episode is 1000 timesteps.
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `xml_file`, `healthy_reward`, `reset_noise_scale`, etc.
+    InvertedDoublePendulum provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -140,10 +151,10 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="inverted_double_pendulum.xml",
-        frame_skip=5,
-        healthy_reward=10.0,
-        reset_noise_scale=0.1,
+        xml_file: str = "inverted_double_pendulum.xml",
+        frame_skip: int = 5,
+        healthy_reward: float = 10.0,
+        reset_noise_scale: float = 0.1,
         **kwargs,
     ):
         utils.EzPickle.__init__(self, xml_file, frame_skip, reset_noise_scale, **kwargs)

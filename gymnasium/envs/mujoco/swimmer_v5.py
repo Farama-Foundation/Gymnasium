@@ -34,11 +34,22 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     and *k* = 0.1. It is possible to pass a custom MuJoCo XML file during construction to increase the
     number of links, or to tweak any of the parameters.
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | Swimmer-v5                | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | Swimmer-v4                | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | Swimmer-v3                | `mujoco-py`     | Maintained for reproducibility              |
+    | Swimmer-v2                | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
+
 
     ## Action Space
     The action space is a `Box(-1, 1, (2,), float32)`. An action represents the torques applied between *links*
 
-    | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
+    | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     |-----|------------------------------------|-------------|-------------|----------------------------------|-------|--------------|
     | 0   | Torque applied on the first rotor  | -1          | 1           | motor1_rot                       | hinge | torque (N m) |
     | 1   | Torque applied on the second rotor | -1          | 1           | motor2_rot                       | hinge | torque (N m) |
@@ -49,16 +60,14 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     * θ<sub>i</sub>: angle of part *i* with respect to the *x* axis
     * θ<sub>i</sub>': its derivative with respect to time (angular velocity)
 
-    In the default case, observations do not include the x- and y-coordinates of the front tip. These may
-    be included by passing `exclude_current_positions_from_observation=False` during construction.
-    Then, the observation space will be `Box(-Inf, Inf, (10,), float64)` where the first two observations
-    represent the x- and y-coordinates of the front tip.
-    Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x- and y-coordinates
-    will be returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
+    By default, the observation does not include the x- and y-coordinates of the front tip.
+    These can be be included by passing `exclude_current_positions_from_observation=False` during construction.
+    In this case, the observation space will be a `Box(-Inf, Inf, (10,), float64)`, where the first two observations are the x- and y-coordinates of the front tip.
+    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
     By default, the observation is a `Box(-Inf, Inf, (8,), float64)` where the elements correspond to the following:
 
-    | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
+    | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
     | 0   | angle of the front tip               | -Inf | Inf | free_body_rot                    | hinge | angle (rad)              |
     | 1   | angle of the first rotor             | -Inf | Inf | motor1_rot                       | hinge | angle (rad)              |
@@ -73,7 +82,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The reward consists of two parts:
+    The total reward is: ***reward*** *=* *forward_reward - ctrl_cost*.
+
     - *forward_reward*:
     A reward for moving forward,
     this reward would be positive if the Swimmer moves forward (in the positive $x$ direction / in the right direction).
@@ -87,12 +97,14 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     $w_{control} \times \\|action\\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $10^{-4}$).
 
-    The total reward returned is ***reward*** *=* *forward_reward - ctrl_cost*,
-    and `info` will also contain the individual reward terms.
+    `info` contains the individual reward terms.
 
 
     ## Starting State
-    All observations start in state (0,0,0,0,0,0,0,0) with a Uniform noise in the range of [-`reset_noise_scale`, `reset_noise_scale`] is added to the initial state for stochasticity.
+    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{5}, reset\_noise\_scale \times 1_{5}]}$.
+    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{5}, reset\_noise\_scale \times 1_{5}]}$.
+
+    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
 
     ## Episode End
@@ -104,7 +116,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `xml_file`.
+    Swimmer provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -138,12 +151,12 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="swimmer.xml",
-        frame_skip=4,
-        forward_reward_weight=1.0,
-        ctrl_cost_weight=1e-4,
-        reset_noise_scale=0.1,
-        exclude_current_positions_from_observation=True,
+        xml_file: str = "swimmer.xml",
+        frame_skip: int = 4,
+        forward_reward_weight: float = 1.0,
+        ctrl_cost_weight: float = 1e-4,
+        reset_noise_scale: float = 0.1,
+        exclude_current_positions_from_observation: bool = True,
         **kwargs,
     ):
         utils.EzPickle.__init__(

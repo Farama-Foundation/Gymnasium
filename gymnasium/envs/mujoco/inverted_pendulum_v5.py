@@ -25,6 +25,16 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     at one end and having another end free. The cart can be pushed left or right, and the
     goal is to balance the pole on the top of the cart by applying forces on the cart.
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | InvertedPendulum-v5       | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | InvertedPendulum-v4       | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | InvertedPendulum-v2       | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
+
 
     ## Action Space
     The agent take a 1-element vector for actions.
@@ -33,7 +43,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     the numerical force applied to the cart (with magnitude representing the amount of
     force and sign representing the direction)
 
-    | Num | Action                    | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit      |
+    | Num | Action                    | Control Min | Control Max | Name (in corresponding XML file) | Joint |Type (Unit)|
     |-----|---------------------------|-------------|-------------|----------------------------------|-------|-----------|
     | 0   | Force applied on the cart | -3          | 3           | slider                           | slide | Force (N) |
 
@@ -45,12 +55,12 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
     The observation is a `ndarray` with shape `(4,)` where the elements correspond to the following:
 
-    | Num | Observation                                   | Min  | Max | Name (in corresponding XML file) | Joint | Unit                      |
+    | Num | Observation                                   | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | --------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------- |
     | 0   | position of the cart along the linear surface | -Inf | Inf | slider                           | slide | position (m)              |
     | 1   | vertical angle of the pole on the cart        | -Inf | Inf | hinge                            | hinge | angle (rad)               |
     | 2   | linear velocity of the cart                   | -Inf | Inf | slider                           | slide | velocity (m/s)            |
-    | 3   | angular velocity of the pole on the cart      | -Inf | Inf | hinge                            | hinge | anglular velocity (rad/s) |
+    | 3   | angular velocity of the pole on the cart      | -Inf | Inf | hinge                            | hinge | angular velocity (rad/s)  |
 
 
     ## Rewards
@@ -65,6 +75,11 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Starting State
+    The initial position state is $\\mathcal{U}_{[-reset\\_noise\\_scale \times 1_{2}, reset\\_noise\\_scale \times 1_{2}]}$.
+    The initial velocity state is $\\mathcal{U}_{[-reset\\_noise\\_scale \times 1_{2}, reset\\_noise\\_scale \times 1_{2}]}$.
+
+    where $\\mathcal{U}$ is the multivariate uniform continuous distribution.
+
     All observations start in state
     (0.0, 0.0, 0.0, 0.0) with a uniform noise in the range
     of `[-reset_noise_scale, reset_noise_scale]` added to the values for stochasticity.
@@ -83,7 +98,8 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `reset_noise_scale`.
+    InvertedPendulum provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -113,9 +129,9 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="inverted_pendulum.xml",
-        frame_skip=2,
-        reset_noise_scale=0.01,
+        xml_file: str = "inverted_pendulum.xml",
+        frame_skip: int = 2,
+        reset_noise_scale: float = 0.01,
         **kwargs,
     ):
         utils.EzPickle.__init__(self, xml_file, frame_skip, reset_noise_scale, **kwargs)

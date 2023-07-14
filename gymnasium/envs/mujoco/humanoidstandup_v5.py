@@ -1,5 +1,7 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+from typing import Dict, Tuple
+
 import numpy as np
 
 from gymnasium import utils
@@ -26,14 +28,21 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     and then the goal of the environment is to make the humanoid standup and then keep it standing
     by applying torques on the various hinges.
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | HumanoidStandup-v5        | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | HumanoidStandup-v4        | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | HumanoidStandup-v2        | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
+
 
     ## Action Space
-    The agent take a 17-element vector for actions.
+    The action space is a `Box(-1, 1, (17,), float32)`. An action represents the torques applied at the hinge joints.
 
-    The action space is a continuous `(action, ...)` all in `[-1, 1]`, where `action`
-    represents the numerical torques applied at the hinge joints.
-
-    | Num | Action                                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
+    | Num | Action                                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     | --- | ---------------------------------------------------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
     | 0   | Torque applied on the hinge in the y-coordinate of the abdomen                     | -0.4        | 0.4         | abdomen_y                        | hinge | torque (N m) |
     | 1   | Torque applied on the hinge in the z-coordinate of the abdomen                     | -0.4        | 0.4         | abdomen_z                        | hinge | torque (N m) |
@@ -68,7 +77,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
     However, by default, the observation is a `Box(-Inf, Inf, (348,), float64)`. The elements correspond to the following:
 
-    | Num | Observation                                                                                                     | Min  | Max | Name (in corresponding XML file) | Joint | Unit                       |
+    | Num | Observation                                                                                                     | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)                |
     | --- | --------------------------------------------------------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | -------------------------- |
     | 0   | z-coordinate of the torso (centre)                                                                              | -Inf | Inf | root                             | free  | position (m)               |
     | 1   | x-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
@@ -183,8 +192,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     DOFs expressed as quaternions. One can read more about free joints on the
     [Mujoco Documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
 
-    **Note:** Humanoid-v4 environment no longer has the following contact forces issue.
-    If using previous Humanoid versions from v4, there have been reported issues that using a Mujoco-Py version > 2.0
+    **Note:**
+    When using Humanoid-v3 or earlier versions, problems have been reported when using a Mujoco-Py version > 2.0.
     results in the contact forces always being 0. As such we recommend to use a Mujoco-Py
     version < 2.0 when using the Humanoid environment if you would like to report results
     with contact forces (if contact forces are not used in your experiments, you can use
@@ -192,7 +201,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The reward consists of three parts:
+    The total reward is: ***reward*** *=* *uph_cost + 1 - quad_ctrl_cost - quad_impact_cost*.
+
     - *uph_cost*:
     A reward for moving up (trying to stand up).
     This is not a relative reward, measuring how far up it has moved since the last timestep,
@@ -213,17 +223,16 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     $w_{impact}$ is `impact_cost_weight` (default is $5\times10^{-7}$),
     $F_{contact}$ are the external contact forces (see `cfrc_ext` section on observation).
 
-    The total reward returned is ***reward*** *=* *uph_cost + 1 - quad_ctrl_cost - quad_impact_cost*,
-    and `info` will also contain the individual reward terms.
+    `info` contains the individual reward terms.
 
 
     ## Starting State
-    All observations start in state
-    (0.0, 0.0,  0.105, 1.0, 0.0  ... 0.0) with a uniform noise in the range of
-    [-0.01, 0.01] added to the positional and velocity values (values in the table)
-    for stochasticity. Note that the initial z coordinate is intentionally selected
-    to be low, thereby indicating a laying down humanoid. The initial orientation is
-    designed to make it face forward as well.
+    The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}$.
+    The initial velocity state is $0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}$.
+
+    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
+
+    Note that the z- and x-coordinates are non-zero so that the humanoid immediately lies down and faces forward (x-axis).
 
 
     ## Episode End
@@ -235,7 +244,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc.
+    HumanoidStandup provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -274,19 +284,19 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="humanoidstandup.xml",
-        frame_skip=5,
-        default_camera_config=DEFAULT_CAMERA_CONFIG,
-        uph_cost_weight=1,
-        ctrl_cost_weight=0.1,
-        impact_cost_weight=0.5e-6,
-        impact_cost_range=(-np.inf, 10.0),
-        reset_noise_scale=1e-2,
-        exclude_current_positions_from_observation=True,
-        include_cinert_in_observation=True,
-        include_cvel_in_observation=True,
-        include_qfrc_actuator_in_observation=True,
-        include_cfrc_ext_in_observation=True,
+        xml_file: str = "humanoidstandup.xml",
+        frame_skip: int = 5,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        uph_cost_weight: float = 1,
+        ctrl_cost_weight: float = 0.1,
+        impact_cost_weight: float = 0.5e-6,
+        impact_cost_range: Tuple[float, float] = (-np.inf, 10.0),
+        reset_noise_scale: float = 1e-2,
+        exclude_current_positions_from_observation: bool = True,
+        include_cinert_in_observation: bool = True,
+        include_cvel_in_observation: bool = True,
+        include_qfrc_actuator_in_observation: bool = True,
+        include_cfrc_ext_in_observation: bool = True,
         **kwargs,
     ):
         utils.EzPickle.__init__(

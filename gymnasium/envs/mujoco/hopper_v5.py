@@ -1,5 +1,7 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+from typing import Dict, Tuple
+
 import numpy as np
 
 from gymnasium import utils
@@ -28,11 +30,21 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     forward (right) direction by applying torques on the three hinges
     connecting the four body parts.
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | Hopper-v5                 | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | Hopper-v4                 | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | Hopper-v3                 | `mujoco-py`     | Maintained for reproducibility              |
+    | Hopper-v2                 | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
 
     ## Action Space
     The action space is a `Box(-1, 1, (3,), float32)`. An action represents the torques applied at the hinge joints.
 
-    | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
+    | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     |-----|------------------------------------|-------------|-------------|----------------------------------|-------|--------------|
     | 0   | Torque applied on the thigh rotor  | -1          | 1           | thigh_joint                      | hinge | torque (N m) |
     | 1   | Torque applied on the leg rotor    | -1          | 1           | leg_joint                        | hinge | torque (N m) |
@@ -40,9 +52,11 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-    Observations consist of positional values of different body parts of the
-    hopper, followed by the velocities of those individual parts
-    (their derivatives) with all the positions ordered before all the velocities.
+    The observation Space consists of the following parts (in order):
+
+    - qpos:* Position values of the robots's body parts.
+    - qvel:* The velocities of these individual body parts,
+    (their derivatives).
 
     By default, observations do not include the x-coordinate of the hopper. It may
     be included by passing `exclude_current_positions_from_observation=False` during construction.
@@ -51,10 +65,15 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x-coordinate
     will be returned in `info` with key `"x_position"`.
 
+    By default, the observation does not include the robot's x-coordinate (`rootx`).
+    This can be be included by passing `exclude_current_positions_from_observation=False` during construction.
+    In this case, the observation space will be a `Box(-Inf, Inf, (12,), float64)`, where the first observation element is the x--coordinate of the robot.
+    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
+
     However, by default, the observation is a `Box(-Inf, Inf, (11,), float64)` where the elements
     correspond to the following:
 
-    | Num | Observation                                        | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
+    | Num | Observation                                        | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | -------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
     | 0   | z-coordinate of the torso (height of hopper)       | -Inf | Inf | rootz                            | slide | position (m)             |
     | 1   | angle of the torso                                 | -Inf | Inf | rooty                            | hinge | angle (rad)              |
@@ -71,7 +90,8 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The reward consists of three parts:
+    The total reward is: ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*.
+
     - *healthy_reward*:
     Every timestep that the Hopper is healthy (see definition in section "Episode Termination"),
     it gets a reward of fixed value `healthy_reward`.
@@ -88,18 +108,21 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     $w_{control} \times \\|action\\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $10^{-3}$).
 
-    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*,
-    and `info` will also contain the individual reward terms.
+    `info` contains the individual reward terms.
+
 
     ## Starting State
-    All observations start in state
-    (0.0, 1.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) with a uniform noise
-     in the range of [-`reset_noise_scale`, `reset_noise_scale`] added to the values for stochasticity.
+    The initial position state is $[0, 1.25, 0, 0, 0, 0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{6}, reset\_noise\_scale \times 1_{6}]}$.
+    The initial velocity state is $0_6 + \mathcal{U}_{[-reset\_noise\_scale \times 1_{6}, reset\_noise\_scale \times 1_{6}]}$.
+
+    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
+
+    Note that the z-coordinate is non-zero so that the hopper can stand up immediately.
 
 
     ## Episode End
     #### Termination
-    If `terminate_when_unhealthy is True` (which is the default), the environment terminates when the Hopper is unhealthy.
+    If `terminate_when_unhealthy is True` (the default), the environment terminates when the Hopper is unhealthy.
     The Hopper is unhealthy if any of the following happens:
 
     1. An element of `observation[1:]` (if  `exclude_current_positions_from_observation=True`, else `observation[2:]`) is no longer contained in the closed interval specified by the argument `healthy_state_range`
@@ -111,7 +134,8 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc.
+    Hopper provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -149,18 +173,18 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="hopper.xml",
-        frame_skip=4,
-        default_camera_config=DEFAULT_CAMERA_CONFIG,
-        forward_reward_weight=1.0,
-        ctrl_cost_weight=1e-3,
-        healthy_reward=1.0,
-        terminate_when_unhealthy=True,
-        healthy_state_range=(-100.0, 100.0),
-        healthy_z_range=(0.7, float("inf")),
-        healthy_angle_range=(-0.2, 0.2),
-        reset_noise_scale=5e-3,
-        exclude_current_positions_from_observation=True,
+        xml_file: str = "hopper.xml",
+        frame_skip: int = 4,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        forward_reward_weight: float = 1.0,
+        ctrl_cost_weight: float = 1e-3,
+        healthy_reward: float = 1.0,
+        terminate_when_unhealthy: bool = True,
+        healthy_state_range: Tuple[float, float] = (-100.0, 100.0),
+        healthy_z_range: Tuple[float, float] = (0.7, float("inf")),
+        healthy_angle_range: Tuple[float, float] = (-0.2, 0.2),
+        reset_noise_scale: float = 5e-3,
+        exclude_current_positions_from_observation: bool = True,
         **kwargs,
     ):
         utils.EzPickle.__init__(

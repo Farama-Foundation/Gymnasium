@@ -26,11 +26,21 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     torques on the eight hinges connecting the two body parts of each leg and the torso
     (nine body parts and eight hinges).
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | Ant-v5                    | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | Ant-v4                    | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | Ant-v3                    | `mujoco-py`     | Maintained for reproducibility              |
+    | Ant-v2                    | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
 
     ## Action Space
     The action space is a `Box(-1, 1, (8,), float32)`. An action represents the torques applied at the hinge joints.
 
-    | Num | Action                                                            | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
+    | Num | Action                                                            | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     | --- | ----------------------------------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
     | 0   | Torque applied on the rotor between the torso and back right hip  | -1          | 1           | hip_4 (right_back_leg)           | hinge | torque (N m) |
     | 1   | Torque applied on the rotor between the back right two links      | -1          | 1           | angle_4 (right_back_leg)         | hinge | torque (N m) |
@@ -43,20 +53,23 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-    Observations consist of positional values of different body parts of the ant,
-    followed by the velocities of those individual parts (their derivatives) with all
-    the positions ordered before all the velocities.
+    The observation Space consists of the following parts (in order):
 
-    By default, observations do not include the x- and y-coordinates of the ant's torso. These may
-    be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will be a `Box(-Inf, Inf, (107,), float64)` where the first two observations
-    represent the x- and y- coordinates of the ant's torso.
-    Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x- and y-coordinates
-    of the torso will be returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
+    - qpos:* Position values of the robots's body parts.
+    - qvel:* The velocities of these individual body parts,
+    (their derivatives).
+    - *cfrc_ext:* This is the center of mass based external forces on the body parts.
+    It has shape 13 * 6 (*nbody * 6*) and hence adds to another 78 elements in the state space.
+    (external forces - force x, y, z and torque x, y, z)
 
-    However, by default, observation Space is a `Box(-Inf, Inf, (105,), float64)` where the elements correspond to the following:
+    By default, the observation does not include the x- and y-coordinates of the torso.
+    These can be be included by passing `exclude_current_positions_from_observation=False` during construction.
+    In this case, the observation space will be a `Box(-Inf, Inf, (107,), float64)`, where the first two observations are the x- and y-coordinates of the torso.
+    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
-    | Num | Observation                                                  | Min    | Max    | Name (in corresponding XML file)       | Joint | Unit                     |
+    By default, however, the observation space is a `Box(-Inf, Inf, (105,), float64)`, where the position and velocity elements are as follows:
+
+    | Num | Observation                                                  | Min    | Max    | Name (in corresponding XML file)       | Joint | Type (Unit)              |
     |-----|--------------------------------------------------------------|--------|--------|----------------------------------------|-------|--------------------------|
     | 0   | z-coordinate of the torso (centre)                           | -Inf   | Inf    | torso                                  | free  | position (m)             |
     | 1   | x-orientation of the torso (centre)                          | -Inf   | Inf    | torso                                  | free  | angle (rad)              |
@@ -88,44 +101,39 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | excluded | x-coordinate of the torso (centre)                      | -Inf   | Inf    | torso                                  | free  | position (m)             |
     | excluded | y-coordinate of the torso (centre)                      | -Inf   | Inf    | torso                                  | free  | position (m)             |
 
-
-    Additionally, after all the positional and velocity based values in the table, the observation contains:
-    - *cfrc_ext:* 13*6 = 78 elements, which are contact forces
-    (external forces - force x, y, z and torque x, y, z) applied to the
-    center of mass of each of the body parts.
-
     The body parts are:
 
-    | id (for `v2`, `v3`, `v4)` | id (for `v5`) | body part |
-    | ---|  ---   |  ------------  |
-    | 0  |excluded| worldbody (note: all values are constant 0) |
-    | 1  |0       | torso |
-    | 2  |1       | front_left_leg |
-    | 3  |2       | aux_1 (front left leg) |
-    | 4  |3       | ankle_1 (front left leg) |
-    | 5  |4       | front_right_leg |
-    | 6  |5       | aux_2 (front right leg) |
-    | 7  |6       | ankle_2 (front right leg) |
-    | 8  |7       | back_leg (back left leg) |
-    | 9  |8       | aux_3 (back left leg) |
-    | 10 |9       | ankle_3 (back left leg) |
-    | 11 |10      | right_back_leg |
-    | 12 |11      | aux_4 (back right leg) |
-    | 13 |12      | ankle_4 (back right leg) |
+    | body part                 | id (for `v2`, `v3`, `v4)` | id (for `v5`) |
+    |  -----------------------  |  ---   |  ---  |
+    | worldbody (note: all values are constant 0) | 0  |excluded|
+    | torso                     | 1  |0       |
+    | front_left_leg            | 2  |1       |
+    | aux_1 (front left leg)    | 3  |2       |
+    | ankle_1 (front left leg)  | 4  |3       |
+    | front_right_leg           | 5  |4       |
+    | aux_2 (front right leg)   | 6  |5       |
+    | ankle_2 (front right leg) | 7  |6       |
+    | back_leg (back left leg)  | 8  |7       |
+    | aux_3 (back left leg)     | 9  |8       |
+    | ankle_3 (back left leg)   | 10 |9       |
+    | right_back_leg            | 11 |10      |
+    | aux_4 (back right leg)    | 12 |11      |
+    | ankle_4 (back right leg)  | 13 |12      |
 
     The (x,y,z) coordinates are translational DOFs while the orientations are rotational
     DOFs expressed as quaternions. One can read more about free joints in the [Mujoco Documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
 
 
-    **Note:** Ant-v4+ environment no longer has the following contact forces issue.
-    If using previous Humanoid versions from v4, there have been reported issues that using a Mujoco-Py version > 2.0 results
+    **Note:**
+    When using Ant-v3 or earlier versions, problems have been reported when using a Mujoco-Py version > 2.0 results
     in the contact forces always being 0. As such we recommend to use a Mujoco-Py version < 2.0
     when using the Ant environment if you would like to report results with contact forces (if
     contact forces are not used in your experiments, you can use version > 2.0).
 
 
     ## Rewards
-    The reward consists of four parts:
+    The total reward is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
+
     - *healthy_reward*:
     Every timestep that the Ant is healthy (see definition in section "Episode Termination"),
     it gets a reward of fixed value `healthy_reward`.
@@ -147,26 +155,24 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     $w_{contact}$ is `contact_cost_weight` (default is $5\times10^{-4}$),
     $F_{contact}$ are the external contact forces clipped by `contact_force_range` (see `cfrc_ext` section on observation).
 
-    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
-    and `info` will also contain the individual reward terms.
+    `info` contains the individual reward terms.
 
     But if `use_contact_forces=false` on `v4`
     The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*.
 
 
     ## Starting State
-    All observations start in state
-    (0.0, 0.0,  0.75, 1.0, 0.0  ... 0.0) with a uniform noise in the range
-    of [-`reset_noise_scale`, `reset_noise_scale`] added to the positional values and standard normal noise
-    with mean 0 and standard deviation `reset_noise_scale` added to the velocity values for
-    stochasticity. Note that the initial z coordinate is intentionally selected
-    to be slightly high, thereby indicating a standing up ant. The initial orientation
-    is designed to make it face forward as well.
+    The initial position state is $[0.0, 0.0, 0.75, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{15}, reset\_noise\_scale \times 1_{15}]}$.
+    The initial velocity state is $\mathcal{N}(0_{14}, reset\_noise\_scale^2 \times I_{14})$.
+
+    where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
+
+    Note that the z- and x-coordinates are non-zero so that the ant can immediately stand up and face forward (x-axis).
 
 
     ## Episode End
     #### Termination
-    If `terminate_when_unhealthy is True` (which is the default), the environment terminates when the Ant is unhealthy.
+    If `terminate_when_unhealthy is True` (the default), the environment terminates when the Ant is unhealthy.
     the Ant is unhealthy if any of the following happens:
 
     1. Any of the state space values is no longer finite
@@ -177,7 +183,8 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc.
+    Ant provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -220,7 +227,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "ant.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1,
         ctrl_cost_weight: float = 0.5,
         contact_cost_weight: float = 5e-4,

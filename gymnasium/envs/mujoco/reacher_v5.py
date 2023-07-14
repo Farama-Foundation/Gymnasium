@@ -1,5 +1,7 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+from typing import Dict
+
 import numpy as np
 
 from gymnasium import utils
@@ -7,7 +9,7 @@ from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
 
-DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
+DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0.0}
 
 
 class ReacherEnv(MujocoEnv, utils.EzPickle):
@@ -16,14 +18,24 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     "Reacher" is a two-jointed robot arm. The goal is to move the robot's end effector (called *fingertip*) close to a
     target that is spawned at a random position.
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | Reacher-v5                | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | Reacher-v4                | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | Reacher-v2                | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
+
 
     ## Action Space
     The action space is a `Box(-1, 1, (2,), float32)`. An action `(a, b)` represents the torques applied at the hinge joints.
 
-    | Num | Action                                                                          | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit |
-    |-----|---------------------------------------------------------------------------------|-------------|-------------|--------------------------|-------|------|
-    | 0   | Torque applied at the first hinge (connecting the link to the point of fixture) | -1 | 1 | joint0  | hinge | torque (N m) |
-    | 1   |  Torque applied at the second hinge (connecting the two links)                  | -1 | 1 | joint1  | hinge | torque (N m) |
+    | Num | Action                                                                          | Control Min | Control Max |Name (in corresponding XML file)| Joint | Type (Unit)  |
+    |-----|---------------------------------------------------------------------------------|-------------|-------------|--------------------------------|-------|--------------|
+    | 0   | Torque applied at the first hinge (connecting the link to the point of fixture) | -1          | 1           | joint0                         | hinge | torque (N m) |
+    | 1   | Torque applied at the second hinge (connecting the two links)                   | -1          | 1           | joint1                         | hinge | torque (N m) |
 
 
     ## Observation Space
@@ -37,7 +49,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     The observation is a `Box(-Inf, Inf, (10,), float64)` where the elements correspond to the following:
 
-    | Num | Observation                                                                                    | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
+    | Num | Observation                                                                                    | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ---------------------------------------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
     | 0   | cosine of the angle of the first arm                                                           | -Inf | Inf | cos(joint0)                      | hinge | unitless                 |
     | 1   | cosine of the angle of the second arm                                                          | -Inf | Inf | cos(joint1)                      | hinge | unitless                 |
@@ -66,7 +78,8 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The reward consists of two parts:
+    The total reward is: ***reward*** *=* *reward_distance + reward_control*.
+
     - *reward_distance*:
     This reward is a measure of how far the *fingertip* of the reacher (the unattached end) is from the target,
     with a more negative value assigned for if the reacher's *fingertip* is further away from the target.
@@ -77,19 +90,18 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
     where $w_{control}$ is the `reward_control_weight`.
 
-    The total reward returned is ***reward*** *=* *reward_distance + reward_control*.
-    `info` will also contain the individual reward terms.
+    `info` contains the individual reward terms.
 
     ## Starting State
-    All observations start in state
-    (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    with a noise added for stochasticity. A uniform noise in the range
-    [-0.1, 0.1] is added to the positional attributes, while the target position
-    is selected uniformly at random in a disk of radius 0.2 around the origin.
-    Independent, uniform noise in the
-    range of [-0.005, 0.005] is added to the velocities, and the last
-    element ("fingertip" - "target") is calculated at the end once everything
-    is set. The default setting has a framerate of 2 and a *dt = 2 * 0.01 = 0.02*
+    The initial position state of the reacher arm is $\mathcal{U}_{[-0.1 \times 1_{2}, 0.1 \times 1_{2}]}$.
+    The position state of the goal is (permanently) $\mathcal{S}(0.2)$.
+    The initial velocity state of the Reacher arm is $\mathcal{U}_{[-0.005 \times 1_{2}, 0.005 \times 1_{2}]}$.
+    The velocity state of the object is (permanently) $0_2$.
+
+    where $\mathcal{U}$ is the multivariate uniform continuous distribution and $\mathcal{S} is the uniform continuous spherical distribution.
+
+    The default frame rate is 2, with each frame lasting for 0.01, so *dt = 2 * 0.01 = 0.02*.
+
 
     ## Episode End
     #### Termination
@@ -100,7 +112,8 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `xml_file`.
+    Reacher provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -131,11 +144,11 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="reacher.xml",
-        frame_skip=2,
-        default_camera_config=DEFAULT_CAMERA_CONFIG,
-        reward_dist_weight=1,
-        reward_control_weight=1,
+        xml_file: str = "reacher.xml",
+        frame_skip: int = 2,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        reward_dist_weight: float = 1,
+        reward_control_weight: float = 1,
         **kwargs,
     ):
         utils.EzPickle.__init__(

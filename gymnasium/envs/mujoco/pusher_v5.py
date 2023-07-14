@@ -1,5 +1,7 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+from typing import Dict
+
 import numpy as np
 
 from gymnasium import utils
@@ -20,19 +22,29 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     The goal is to move a target cylinder (called *object*) to a goal position using the robot's end effector (called *fingertip*).
     The robot consists of shoulder, elbow, forearm, and wrist joints.
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | Pusher-v5                 | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | Pusher-v4                 | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | Pusher-v2                 | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
+
 
     ## Action Space
     The action space is a `Box(-2, 2, (7,), float32)`. An action `(a, b)` represents the torques applied at the hinge joints.
 
-    | Num | Action                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
+    | Num | Action                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     |-----|--------------------------------------------------------------------|-------------|-------------|----------------------------------|-------|--------------|
-    | 0    | Rotation of the panning the shoulder                              | -2          | 2           | r_shoulder_pan_joint             | hinge | torque (N m) |
-    | 1    | Rotation of the shoulder lifting joint                            | -2          | 2           | r_shoulder_lift_joint            | hinge | torque (N m) |
-    | 2    | Rotation of the shoulder rolling joint                            | -2          | 2           | r_upper_arm_roll_joint           | hinge | torque (N m) |
-    | 3    | Rotation of hinge joint that flexed the elbow                     | -2          | 2           | r_elbow_flex_joint               | hinge | torque (N m) |
-    | 4    | Rotation of hinge that rolls the forearm                          | -2          | 2           | r_forearm_roll_joint             | hinge | torque (N m) |
-    | 5    | Rotation of flexing the wrist                                     | -2          | 2           | r_wrist_flex_joint               | hinge | torque (N m) |
-    | 6    | Rotation of rolling the wrist                                     | -2          | 2           | r_wrist_roll_joint               | hinge | torque (N m) |
+    | 0   | Rotation of the panning the shoulder                               | -2          | 2           | r_shoulder_pan_joint             | hinge | torque (N m) |
+    | 1   | Rotation of the shoulder lifting joint                             | -2          | 2           | r_shoulder_lift_joint            | hinge | torque (N m) |
+    | 2   | Rotation of the shoulder rolling joint                             | -2          | 2           | r_upper_arm_roll_joint           | hinge | torque (N m) |
+    | 3   | Rotation of hinge joint that flexed the elbow                      | -2          | 2           | r_elbow_flex_joint               | hinge | torque (N m) |
+    | 4   | Rotation of hinge that rolls the forearm                           | -2          | 2           | r_forearm_roll_joint             | hinge | torque (N m) |
+    | 5   | Rotation of flexing the wrist                                      | -2          | 2           | r_wrist_flex_joint               | hinge | torque (N m) |
+    | 6   | Rotation of rolling the wrist                                      | -2          | 2           | r_wrist_roll_joint               | hinge | torque (N m) |
 
 
     ## Observation Space
@@ -48,7 +60,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     An analogy can be drawn to a human arm in order to help understand the state space, with the words flex and roll meaning the
     same as human joints.
 
-    | Num | Observation                                              | Min  | Max | Name (in corresponding XML file) | Joint    | Unit                     |
+    | Num | Observation                                              | Min  | Max | Name (in corresponding XML file) | Joint    | Type (Unit)              |
     | --- | -------------------------------------------------------- | ---- | --- | -------------------------------- | -------- | ------------------------ |
     | 0   | Rotation of the panning the shoulder                     | -Inf | Inf | r_shoulder_pan_joint             | hinge    | angle (rad)              |
     | 1   | Rotation of the shoulder lifting joint                   | -Inf | Inf | r_shoulder_lift_joint            | hinge    | angle (rad)              |
@@ -76,7 +88,8 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The reward consists of two parts:
+    The total reward is: ***reward*** *=* *reward_dist + reward_ctrl + reward_near*.
+
     - *reward_near*:
     This reward is a measure of how far the *fingertip* of the pusher (the unattached end) is from the object,
     with a more negative value assigned for when the pusher's *fingertip* is further away from the target.
@@ -92,20 +105,22 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
     where $w_{control}$ is the `reward_control_weight`.
 
-    The total reward returned is ***reward*** *=* *reward_dist + reward_ctrl + reward_near*,
-    `info` will also contain the individual reward terms.
+    `info` contains the individual reward terms.
 
 
     ## Starting State
-    All pusher (not including object and goal) states start in
-    (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0). A uniform noise in the range
-    [-0.005, 0.005] is added to the velocity attributes only. The velocities of
-    the object and goal are permanently set to 0. The object's x-position is selected uniformly
-    between [-0.3, 0] while the y-position is selected uniformly between [-0.2, 0.2], and this
-    process is repeated until the vector norm between the object's (x,y) position and origin is not greater
-    than 0.17. The goal always have the same position of (0.45, -0.05, -0.323).
+    The initial position state of the Pusher arm is $0_{6}$.
+    The initial position state of the object is $\mathcal{U}_{[[-0.3, -0.2], [0, 0.2]]}$.
+    The position state of the goal is (permanently) $[0.45, -0.05, -0.323]$.
+    The initial velocity state of the Pusher arm is $\mathcal{U}_{[-0.005 \times 1_{6}, 0.005 \times 1_{6}]}$.
+    The initial velocity state of the object is $0_2$.
+    The velocity state of the goal is (permanently) $0_3$.
 
-    The default framerate is 5 with each frame lasting for 0.01, giving rise to a *dt = 5 * 0.01 = 0.05*
+    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
+
+    Note that the initial position state of the object is sampled until it's distance to the goal is $ > 0.17 m$.
+
+    The default frame rate is 5, with each frame lasting for 0.01, so *dt = 5 * 0.01 = 0.05*.
 
 
     ## Episode End
@@ -117,7 +132,8 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `xml_file`.
+    Pusher provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -149,12 +165,12 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="pusher.xml",
-        frame_skip=5,
-        default_camera_config=DEFAULT_CAMERA_CONFIG,
-        reward_near_weight=0.5,
-        reward_dist_weight=1,
-        reward_control_weight=0.1,
+        xml_file: str = "pusher.xml",
+        frame_skip: int = 5,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        reward_near_weight: float = 0.5,
+        reward_dist_weight: float = 1,
+        reward_control_weight: float = 0.1,
         **kwargs,
     ):
         utils.EzPickle.__init__(

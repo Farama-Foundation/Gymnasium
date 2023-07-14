@@ -1,5 +1,7 @@
 __credits__ = ["Kallinteris-Andreas", "Rushiv Arora"]
 
+from typing import Dict
+
 import numpy as np
 
 from gymnasium import utils
@@ -26,11 +28,22 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     over the front and back thighs (connecting to the torso), shins
     (connecting to the thighs) and feet (connecting to the shins).
 
+    Gymnasium includes the following versions of the environment:
+
+    | Environment               | Binding         | Notes                                       |
+    | ------------------------- | --------------- | ------------------------------------------- |
+    | HalfCheetah-v5            | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | HalfCheetah-v4            | `mujoco=>2.1.3` | Maintained for reproducibility              |
+    | HalfCheetah-v3            | `mujoco-py`     | Maintained for reproducibility              |
+    | HalfCheetah-v2            | `mujoco-py`     | Maintained for reproducibility              |
+
+    For more information see section "Version History".
+
 
     ## Action Space
     The action space is a `Box(-1, 1, (6,), float32)`. An action represents the torques applied at the hinge joints.
 
-    | Num | Action                                  | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit         |
+    | Num | Action                                  | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     | --- | --------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
     | 0   | Torque applied on the back thigh rotor  | -1          | 1           | bthigh                           | hinge | torque (N m) |
     | 1   | Torque applied on the back shin rotor   | -1          | 1           | bshin                            | hinge | torque (N m) |
@@ -41,19 +54,20 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-    Observations consist of positional values of different body parts of the
-    cheetah, followed by the velocities of those individual parts (their derivatives) with all the positions ordered before all the velocities.
+    The observation Space consists of the following parts (in order):
 
-    By default, observations do not include the cheetah's `rootx`. It may
-    be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In that case, the observation space will be a `Box(-Inf, Inf, (18,), float64)` where the first element
-    represents the `rootx`.
-    Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the
-    will be returned in `info` with key `"x_position"`.
+    - qpos:* Position values of the robots's body parts.
+    - qvel:* The velocities of these individual body parts,
+    (their derivatives).
+
+    By default, the observation does not include the robot's x-coordinate (`rootx`).
+    This can be be included by passing `exclude_current_positions_from_observation=False` during construction.
+    In this case, the observation space will be a `Box(-Inf, Inf, (18,), float64)`, where the first observation element is the x--coordinate of the robot.
+    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
     However, by default, the observation is a `Box(-Inf, Inf, (17,), float64)` where the elements correspond to the following:
 
-    | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Unit                     |
+    | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
     | 0   | z-coordinate of the front tip        | -Inf | Inf | rootz                            | slide | position (m)             |
     | 1   | angle of the front tip               | -Inf | Inf | rooty                            | hinge | angle (rad)              |
@@ -76,7 +90,8 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The reward consists of two parts:
+    The total reward is: ***reward*** *=* *forward_reward - ctrl_cost*.
+
     - *forward_reward*:
     A reward for moving forward,
     this reward would be positive if the Half Cheetah moves forward (in the positive $x$ direction / in the right direction).
@@ -90,18 +105,14 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     $w_{control} \times \\|action\\|_2^2$,
     where $w_{control}$ is the `ctrl_cost_weight` (default is $0.1$).
 
-    The total reward returned is ***reward*** *=* *forward_reward - ctrl_cost*,
-    and `info` will also contain the individual reward terms.
+    `info` contains the individual reward terms.
 
 
     ## Starting State
-    All observations start in state (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,) with a noise added to the
-    initial state for stochasticity. As seen before, the first 8 values in the
-    state are positional and the last 9 values are velocity. A uniform noise in
-    the range of [-`reset_noise_scale`, `reset_noise_scale`] is added to the positional values while a standard
-    normal noise with a mean of 0 and standard deviation of `reset_noise_scale` is added to the
-    initial velocity values of all zeros.
+    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{9}, reset\_noise\_scale \times 1_{9}]}$.
+    The initial velocity state is $\mathcal{N}(0_{9}, reset\_noise\_scale^2 \times I_{9})$.
+
+    where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
 
     ## Episode End
@@ -113,7 +124,8 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Arguments
-    `gymnasium.make` takes additional arguments such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc.
+    HalfCheetah provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+    These parameters can be applied during `gymnasium.make` in the following way:
 
     ```python
     import gymnasium as gym
@@ -146,13 +158,13 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file="half_cheetah.xml",
-        frame_skip=5,
-        default_camera_config=DEFAULT_CAMERA_CONFIG,
-        forward_reward_weight=1.0,
-        ctrl_cost_weight=0.1,
-        reset_noise_scale=0.1,
-        exclude_current_positions_from_observation=True,
+        xml_file: str = "half_cheetah.xml",
+        frame_skip: int = 5,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        forward_reward_weight: float = 1.0,
+        ctrl_cost_weight: float = 0.1,
+        reset_noise_scale: float = 0.1,
+        exclude_current_positions_from_observation: bool = True,
         **kwargs,
     ):
         utils.EzPickle.__init__(
