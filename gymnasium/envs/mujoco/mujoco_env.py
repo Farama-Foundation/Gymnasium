@@ -170,9 +170,9 @@ class BaseMujocoEnv(gym.Env[np.float64, np.float32]):
         Step the simulation n number of frames and applying a control action.
         """
         # Check control input is contained in the action space
-        if np.array(ctrl).shape != self.action_space.shape:
+        if np.array(ctrl).shape != (self.model.nu,):
             raise ValueError(
-                f"Action dimension mismatch. Expected {self.action_space.shape}, found {np.array(ctrl).shape}"
+                f"Action dimension mismatch. Expected {(self.model.nu,)}, found {np.array(ctrl).shape}"
             )
         self._step_mujoco_simulation(ctrl, n_frames)
 
