@@ -509,7 +509,7 @@ Additionally, we have optimized module loading so that PyTorch or Jax are only l
 <h3>Reproducibility details</h3>
 <p>In previous versions, Gymnasium supported <code>gym.make(spec)</code> where the <code>spec</code> is an <code>EnvSpec</code> from <code>gym.spec(str)</code> or <code>env.spec</code> and worked identically to the string based <code>gym.make(“”)</code>. In both cases, there was no way to specify additional wrappers that should be applied to an environment. With this release, we added <code>additional_wrappers</code> to <code>EnvSpec</code> for specifying wrappers applied to the base environment (<code>TimeLimit</code>, <code>PassiveEnvChecker</code>, <code>Autoreset</code> and <code>ApiCompatibility</code> are not included as they are specify in other fields).<br>
 This additional field will allow users to accurately save or reproduce an environment used in training for a policy or to generate an offline RL dataset. We provide a json converter function (<code>EnvSpec.to_json</code>) for saving the <code>EnvSpec</code> to a “safe” file type however there are several cases (NumPy data, functions) which cannot be saved to json. In these cases, we recommend pickle but be warned that this can allow remote users to include malicious data in the spec.</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import gymnasium as gym
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import gymnasium as gym
 
 env = gym.make(&quot;CartPole-v0&quot;)
 env = gym.wrappers.TimeAwareObservation(env)
@@ -532,30 +532,31 @@ pickled_env_spec = pickle.loads(pickle.dumps(env_spec))
 recreated_env = gym.make(json_env_spec)
 print(recreated_env)  
 # &lt;TimeAwareObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v0&gt;&gt;&gt;&gt;&gt;&gt;
-# Be aware that the `TimeAwareObservation` was included by `make`"><pre><span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
+# Be aware that the `TimeAwareObservation` was included by `make`"><pre lang="python" class="notranslate"><code>import gymnasium as gym
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"CartPole-v0"</span>)
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-s1">wrappers</span>.<span class="pl-v">TimeAwareObservation</span>(<span class="pl-s1">env</span>)
-<span class="pl-en">print</span>(<span class="pl-s1">env</span>)  
-<span class="pl-c"># &lt;TimeAwareObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v0&gt;&gt;&gt;&gt;&gt;&gt;</span>
-<span class="pl-s1">env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">env</span>.<span class="pl-s1">spec</span>
-<span class="pl-s1">env_spec</span>.<span class="pl-en">pprint</span>()
-<span class="pl-c"># id=CartPole-v0</span>
-<span class="pl-c"># reward_threshold=195.0</span>
-<span class="pl-c"># max_episode_steps=200</span>
-<span class="pl-c"># additional_wrappers=[</span>
-<span class="pl-c"># 	name=TimeAwareObservation, kwargs={}</span>
-<span class="pl-c"># ]</span>
+env = gym.make("CartPole-v0")
+env = gym.wrappers.TimeAwareObservation(env)
+print(env)  
+# &lt;TimeAwareObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v0&gt;&gt;&gt;&gt;&gt;&gt;
+env_spec = env.spec
+env_spec.pprint()
+# id=CartPole-v0
+# reward_threshold=195.0
+# max_episode_steps=200
+# additional_wrappers=[
+# 	name=TimeAwareObservation, kwargs={}
+# ]
 
-<span class="pl-k">import</span> <span class="pl-s1">json</span>
-<span class="pl-k">import</span> <span class="pl-s1">pickle</span>
+import json
+import pickle
 
-<span class="pl-s1">json_env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">json</span>.<span class="pl-en">loads</span>(<span class="pl-s1">env_spec</span>.<span class="pl-en">to_json</span>())
-<span class="pl-s1">pickled_env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">pickle</span>.<span class="pl-en">loads</span>(<span class="pl-s1">pickle</span>.<span class="pl-en">dumps</span>(<span class="pl-s1">env_spec</span>))
-<span class="pl-s1">recreated_env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s1">json_env_spec</span>)
-<span class="pl-en">print</span>(<span class="pl-s1">recreated_env</span>)  
-<span class="pl-c"># &lt;TimeAwareObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v0&gt;&gt;&gt;&gt;&gt;&gt;</span>
-<span class="pl-c"># Be aware that the `TimeAwareObservation` was included by `make`</span></pre></div>
+json_env_spec = json.loads(env_spec.to_json())
+pickled_env_spec = pickle.loads(pickle.dumps(env_spec))
+recreated_env = gym.make(json_env_spec)
+print(recreated_env)  
+# &lt;TimeAwareObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v0&gt;&gt;&gt;&gt;&gt;&gt;
+# Be aware that the `TimeAwareObservation` was included by `make`
+</code></pre></div>
 <p>To support this type of recreation, wrappers must inherit from <code>gym.utils.RecordConstructorUtils</code> to allow <code>gym.make</code> to know what arguments to create the wrapper with. Gymnasium has implemented this for all built-in wrappers but for external projects, should be added to each wrapper. To do this, call <code>gym.utils.RecordConstructorUtils.__init__(self, …)</code> in the first line of the wrapper’s constructor with identical l keyword arguments as passed to the wrapper’s constructor, except for <code>env</code>. As an example see the <a href="https://github.com/Farama-Foundation/Gymnasium/blob/8c167b868dd386ac1eb4bbe2fb25da3da174c75d/gymnasium/experimental/wrappers/atari_preprocessing.py#L65">Atari Preprocessing wrapper</a><br>
 For a more detailed discussion, see the original PRs - <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1556900765" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/292" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/292/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/292">#292</a> and <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1607664235" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/355" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/355/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/355">#355</a></p>
 <h2>Other Major Changes</h2>
