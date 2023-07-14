@@ -164,8 +164,11 @@ class MountainCarEnv(gym.Env):
             self.render()
         return np.array(self.state, dtype=np.float32), {}
 
+
     def _height(self, xs):
-        return np.sin(3 * xs) * 0.45 + 0.55
+        height = np.sin(3 * xs) * 0.45 + 0.55
+        height = np.clip(np.sin(3 * xs) * 0.45 + 0.55, 0, 1)
+        return height
 
     def render(self):
         if self.render_mode is None:
