@@ -1,3 +1,4 @@
+import collections
 import warnings
 
 import mujoco
@@ -314,76 +315,40 @@ def test_reward_sum(version: str):
         )
 
 
+env_conf = collections.namedtuple("env_conf", "env_name, obs, rew, term, info")
+
+
 # Note: the environtments "HalfCheetah", "Pusher", "Swimmer", are identical between `v4` & `v5` (excluding `info`)
-def test_identical_behaviour_v45():
+@pytest.mark.parametrize(
+    "env_conf",
+    [
+        env_conf("Ant", True, True, False, "skip"),
+        env_conf("HalfCheetah", False, False, False, "skip"),
+        env_conf("Hopper", False, True, False, "superset"),
+        # skipping humanoid, everything has changed
+        env_conf("HumanoidStandup", True, False, False, "superset"),
+        env_conf("InvertedDoublePendulum", True, True, False, "superset"),
+        env_conf("InvertedPendulum", False, True, False, "superset"),
+        env_conf("Pusher", False, False, False, "keys-superset"),
+        env_conf("Reacher", True, False, False, "keys-equivalence"),
+        env_conf("Swimmer", False, False, False, "skip"),
+        env_conf("Walker2d", True, True, True, "keys-superset"),
+    ],
+)
+def test_identical_behaviour_v45(env_conf):
     """Verify that v4 -> v5 transition. Does not change the behaviour of the environments in any unexpected way."""
     NUM_STEPS = 100
+    env_v4 = gym.make(f"{env_conf.env_name}-v4")
+    env_v5 = gym.make(f"{env_conf.env_name}-v5")
 
-    env_v4 = gym.make("Ant-v4")
-    env_v5 = gym.make("Ant-v5", include_cfrc_ext_in_observation=False)
-    check_environments_match(
-        env_v4, env_v5, NUM_STEPS, skip_rew=True, info_comparison="skip"
-    )
-
-    env_v4 = gym.make("HalfCheetah-v4")
-    env_v5 = gym.make("HalfCheetah-v5")
-    check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="skip")
-
-    env_v4 = gym.make("Hopper-v4")
-    env_v5 = gym.make("Hopper-v5")
-    check_environments_match(
-        env_v4, env_v5, NUM_STEPS, skip_rew=True, info_comparison="superset"
-    )
-
-    # skipping humanoid, everything has changed
-
-    env_v4 = gym.make("HumanoidStandup-v4")
-    env_v5 = gym.make("HumanoidStandup-v5")
-    check_environments_match(
-        env_v4, env_v5, NUM_STEPS, skip_obs=True, info_comparison="superset"
-    )
-
-    env_v4 = gym.make("InvertedDoublePendulum-v4")
-    env_v5 = gym.make("InvertedDoublePendulum-v5")
     check_environments_match(
         env_v4,
         env_v5,
         NUM_STEPS,
-        skip_obs=True,
-        skip_rew=True,
-        info_comparison="superset",
-    )
-
-    env_v4 = gym.make("InvertedPendulum-v4")
-    env_v5 = gym.make("InvertedPendulum-v5")
-    check_environments_match(
-        env_v4, env_v5, NUM_STEPS, skip_rew=True, info_comparison="superset"
-    )
-
-    env_v4 = gym.make("Pusher-v4")
-    env_v5 = gym.make("Pusher-v5")
-    check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="keys-superset")
-
-    env_v4 = gym.make("Reacher-v4")
-    env_v5 = gym.make("Reacher-v5")
-    check_environments_match(
-        env_v4, env_v5, NUM_STEPS, skip_obs=True, info_comparison="keys-equivalence"
-    )
-
-    env_v4 = gym.make("Swimmer-v4")
-    env_v5 = gym.make("Swimmer-v5")
-    check_environments_match(env_v4, env_v5, NUM_STEPS, info_comparison="skip")
-
-    env_v4 = gym.make("Walker2d-v4")
-    env_v5 = gym.make("Walker2d-v5")
-    check_environments_match(
-        env_v4,
-        env_v5,
-        NUM_STEPS,
-        skip_obs=True,
-        skip_rew=True,
-        skip_terminal=True,
-        info_comparison="keys-superset",
+        skip_obs=env_conf.obs,
+        skip_rew=env_conf.rew,
+        skip_terminal=env_conf.term,
+        info_comparison=env_conf.info,
     )
 
 
@@ -674,3 +639,38 @@ def test_dt():
 
     assert env_a.dt == env_b.dt
     # check_environments_match(env_a, env_b, num_steps=100)   # This Fails as expected
+
+
+@pytest.mark.parametrize(
+    "env_id",
+    [
+        "Ant-v5",
+        "Ant-v4",
+        "Ant-v3",
+        "HalfCheetah-v5",
+        "HalfCheetah-v4",
+        "HalfCheetah-v3",
+        "Hopper-v5",
+        "Hopper-v4",
+        "Hopper-v3",
+        "Humanoid-v5",
+        "Humanoid-v4",
+        "Humanoid-v3",
+        "HumanoidStandup-v5",
+        "InvertedDoublePendulum-v5",
+        "InvertedPendulum-v5",
+        "Swimmer-v5",
+        "Swimmer-v4",
+        "Swimmer-v3",
+        "Walker2d-v5",
+        "Walker2d-v4",
+        "Walker2d-v3",
+    ],
+)
+def test_reset_noise_scale(env_id):
+    """Checks that when `reset_noise_scale=0` we have deterministic initialization."""
+    env: BaseMujocoEnv = gym.make(env_id, reset_noise_scale=0).unwrapped
+    env.reset()
+
+    assert np.all(env.data.qpos == env.init_qpos)
+    assert np.all(env.data.qvel == env.init_qvel)
