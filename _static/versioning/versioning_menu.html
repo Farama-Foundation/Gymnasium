@@ -122,7 +122,7 @@
                 return 0
         }
 
-        if (githubUser !== null || repo !== null) {
+        if ((githubUser !== null && githubUser !== "") || (repo !== null && repo !== "")) {
             const basePath = "";
             const mainBranchName = "main"
             const apiUrl = `https://api.github.com/repos/${githubUser}/${repo}/git/trees/gh-pages`;
