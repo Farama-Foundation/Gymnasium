@@ -529,6 +529,9 @@
 <span class="sd">               [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],</span>
 <span class="sd">              dtype=float32), {})</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;`gymnasium.vector.make(...)` is deprecated and will be replaced by `gymnasium.make_vec(...)` in v1.0&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_env</span><span class="p">(</span><span class="n">env_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates an environment that can enable or disable the environment checker.&quot;&quot;&quot;</span>

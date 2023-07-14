@@ -492,6 +492,7 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">ModuleType</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -522,6 +523,7 @@
     <span class="s2">&quot;make_vec&quot;</span><span class="p">,</span>
     <span class="s2">&quot;spec&quot;</span><span class="p">,</span>
     <span class="s2">&quot;pprint_registry&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;register_envs&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -1002,7 +1004,9 @@
 
     <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_check_version_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No registered env with id: </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No registered env with id: </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">. Did you register it, or import the package that registers it? Use `gymnasium.pprint_registry()` to see all of the registered environments.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">env_spec</span>
 
@@ -1071,6 +1075,11 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;plugin: </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> raised </span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
+<span class="k">def</span> <span class="nf">register_envs</span><span class="p">(</span><span class="n">env_module</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A No-op function such that it can appear to IDEs that a module is used.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
 <div class="viewcode-block" id="namespace"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.namespace">[docs]</a><span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <span class="k">def</span> <span class="nf">namespace</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for modifying the current namespace.&quot;&quot;&quot;</span>
@@ -1137,8 +1146,12 @@
         <span class="n">ns_id</span> <span class="o">=</span> <span class="n">current_namespace</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ns_id</span> <span class="o">=</span> <span class="n">ns</span>
-
     <span class="n">full_env_id</span> <span class="o">=</span> <span class="n">get_env_id</span><span class="p">(</span><span class="n">ns_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`gymnasium.register(..., autoreset=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument.&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">new_spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
         <span class="nb">id</span><span class="o">=</span><span class="n">full_env_id</span><span class="p">,</span>
@@ -1315,6 +1328,9 @@
     <span class="k">if</span> <span class="n">apply_api_compatibility</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span>
         <span class="n">apply_api_compatibility</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">apply_api_compatibility</span> <span class="ow">is</span> <span class="kc">True</span>
     <span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`gymnasium.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and will be removed in v1.0&quot;</span>
+        <span class="p">)</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">EnvCompatibility</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">render_mode</span><span class="p">)</span>
 
     <span class="c1"># Run the environment checker as the lowest level wrapper</span>
@@ -1336,6 +1352,10 @@
     <span class="c1"># Add the auto-reset wrapper</span>
     <span class="k">if</span> <span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span><span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">AutoResetWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">wrapper_spec</span> <span class="ow">in</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">[</span><span class="n">num_prior_wrappers</span><span class="p">:]:</span>
         <span class="k">if</span> <span class="n">wrapper_spec</span><span class="o">.</span><span class="n">kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
