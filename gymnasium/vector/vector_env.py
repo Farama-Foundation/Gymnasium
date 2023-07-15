@@ -128,7 +128,7 @@ class VectorEnv(gym.Env):
 
         Example:
             >>> import gymnasium as gym
-            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
+            >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
             >>> envs.reset(seed=42)
             (array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
                    [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
@@ -181,7 +181,7 @@ class VectorEnv(gym.Env):
         Example:
             >>> import gymnasium as gym
             >>> import numpy as np
-            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
+            >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
             >>> _ = envs.reset(seed=42)
             >>> actions = np.array([1, 0, 1])
             >>> observations, rewards, termination, truncation, infos = envs.step(actions)
