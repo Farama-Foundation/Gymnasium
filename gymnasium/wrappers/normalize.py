@@ -71,7 +71,9 @@ class NormalizeObservation(gym.Wrapper, gym.utils.RecordConstructorArgs):
             self.is_vector_env = False
 
         if self.is_vector_env:
-            self.obs_rms = RunningMeanStd(shape=self.single_observation_space.shape)
+            self.obs_rms = RunningMeanStd(
+                shape=self.get_wrapper_attr("single_observation_space").shape
+            )
         else:
             self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
         self.epsilon = epsilon

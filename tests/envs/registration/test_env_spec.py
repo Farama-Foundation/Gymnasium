@@ -161,9 +161,7 @@ reward_threshold=475.0
 nondeterministic=False
 max_episode_steps=500
 order_enforce=True
-autoreset=False
 disable_env_checker=False
-applied_api_compatibility=False
 additional_wrappers=[
 	name=TimeAwareObservation, kwargs={}
 ]"""
@@ -187,8 +185,6 @@ reward_threshold=475.0
 nondeterministic=False
 max_episode_steps=500
 order_enforce=True
-autoreset=False
 disable_env_checker=False
-applied_api_compatibility=False
 additional_wrappers=[]"""
     )

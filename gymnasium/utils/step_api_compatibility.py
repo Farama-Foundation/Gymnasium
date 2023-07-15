@@ -158,7 +158,7 @@ def step_api_compatibility(
         >>> obs, rewards, done, info = step_api_compatibility(env.step(0), output_truncation_bool=False)
         >>> obs, rewards, terminated, truncated, info = step_api_compatibility(env.step(0), output_truncation_bool=True)
 
-        >>> vec_env = gym.vector.make("CartPole-v0")
+        >>> vec_env = gym.make_vec("CartPole-v0")
         >>> _ = vec_env.reset()
         >>> obs, rewards, dones, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=False)
         >>> obs, rewards, terminated, truncated, info = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)

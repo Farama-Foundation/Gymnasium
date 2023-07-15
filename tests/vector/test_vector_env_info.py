@@ -12,10 +12,12 @@ ENV_STEPS = 50
 SEED = 42
 
 
-@pytest.mark.parametrize("asynchronous", [True, False])
-def test_vector_env_info(asynchronous):
-    env = gym.vector.make(
-        ENV_ID, num_envs=NUM_ENVS, asynchronous=asynchronous, disable_env_checker=True
+@pytest.mark.parametrize("vectorization_mode", ["sync", "async"])
+def test_vector_env_info(vectorization_mode):
+    env = gym.make_vec(
+        ENV_ID,
+        num_envs=NUM_ENVS,
+        vectorization_mode=vectorization_mode,
     )
     env.reset(seed=SEED)
     for _ in range(ENV_STEPS):

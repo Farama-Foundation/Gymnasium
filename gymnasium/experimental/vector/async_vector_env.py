@@ -656,7 +656,7 @@ def _worker(
                         f"Trying to call function `{name}` with "
                         f"`_call`. Use `{name}` directly instead."
                     )
-                function = getattr(env, name)
+                function = env.get_wrapper_attr(name)
                 if callable(function):
                     pipe.send((function(*args, **kwargs), True))
                 else:

@@ -180,7 +180,7 @@ class SyncVectorEnv(VectorEnv):
         """
         results = []
         for env in self.envs:
-            function = getattr(env, name)
+            function = env.get_wrapper_attr(name)
             if callable(function):
                 results.append(function(*args, **kwargs))
             else:

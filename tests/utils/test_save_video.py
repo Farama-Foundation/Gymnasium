@@ -81,8 +81,11 @@ def test_record_video_within_vector():
     n_steps = 199
     expected_video = 2
 
-    envs = gym.vector.make(
-        "CartPole-v1", num_envs=2, asynchronous=True, render_mode="rgb_array_list"
+    envs = gym.make_vec(
+        "CartPole-v1",
+        num_envs=2,
+        vectorization_mode="async",
+        render_mode="rgb_array_list",
     )
     envs.reset()
     episode_frames = []

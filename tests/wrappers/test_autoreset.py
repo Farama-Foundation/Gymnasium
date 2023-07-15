@@ -1,13 +1,10 @@
 """Tests the gymnasium.wrapper.AutoResetWrapper operates as expected."""
 from typing import Generator, Optional
-from unittest.mock import MagicMock
 
 import numpy as np
-import pytest
 
 import gymnasium as gym
 from gymnasium.wrappers import AutoResetWrapper
-from tests.envs.utils import all_testing_env_specs
 
 
 class DummyResetEnv(gym.Env):
@@ -50,49 +47,6 @@ def unwrap_env(env) -> Generator[gym.Wrapper, None, None]:
     while isinstance(env, gym.Wrapper):
         yield type(env)
         env = env.env
-
-
-@pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
-)
-def test_make_autoreset_true(spec):
-    """Tests gym.make with `autoreset=True`, and check that the reset actually happens.
-
-    Note: This test assumes that the outermost wrapper is AutoResetWrapper so if that
-     is being changed in the future, this test will break and need to be updated.
-    Note: This test assumes that all first-party environments will terminate in a finite
-     amount of time with random actions, which is true as of the time of adding this test.
-    """
-    env = gym.make(spec.id, autoreset=True, disable_env_checker=True)
-    assert AutoResetWrapper in unwrap_env(env)
-
-    env.reset(seed=0)
-    env.unwrapped.reset = MagicMock(side_effect=env.unwrapped.reset)
-
-    terminated, truncated = False, False
-    while not (terminated or truncated):
-        obs, reward, terminated, truncated, info = env.step(env.action_space.sample())
-
-    assert env.unwrapped.reset.called
-    env.close()
-
-
-@pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
-)
-def test_gym_make_autoreset(spec):
-    """Tests that `gym.make` autoreset wrapper is applied only when `gym.make(..., autoreset=True)`."""
-    env = gym.make(spec.id, disable_env_checker=True)
-    assert AutoResetWrapper not in unwrap_env(env)
-    env.close()
-
-    env = gym.make(spec.id, autoreset=False, disable_env_checker=True)
-    assert AutoResetWrapper not in unwrap_env(env)
-    env.close()
-
-    env = gym.make(spec.id, autoreset=True, disable_env_checker=True)
-    assert AutoResetWrapper in unwrap_env(env)
-    env.close()
 
 
 def test_autoreset_wrapper_autoreset():
