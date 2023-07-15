@@ -112,6 +112,15 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     | `reset_noise_scale`     | **float**  | `0.01`        | Scale of random perturbations of initial position and velocity (see section on Starting State) |
 
     ## Version History
+    * v5:
+        - Minimum `mujoco` version is now 2.3.3.
+        - Added support for fully custom/third party `mujoco` models using the `xml_file` argument (previously only a few changes could be made to the existing models).
+        - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
+        - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
+        - Fixed bug: `healthy_reward` was given on every step (even if the Pendulum is unhealthy), now it is only given if the Pendulum is healthy (not terminated) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/500)).
+        - Added `xml_file` argument.
+        - Added `reset_noise_scale` argument to set the range of initial states.
+        - Added `info["reward_survive"]` which contains the reward.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1..
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.5.

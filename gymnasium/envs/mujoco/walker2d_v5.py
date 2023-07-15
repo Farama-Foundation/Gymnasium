@@ -159,6 +159,18 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Version History
+    * v5:
+        - Minimum `mujoco` version is now 2.3.3.
+        - Added support for fully custom/third party `mujoco` models using the `xml_file` argument (previously only a few changes could be made to the existing models).
+        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
+        - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
+        - Return a non-empty `info` with `reset()`, previously an empty dictionary was returned, the new keys are the same state information as `step()`.
+        - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
+        - In v2, v3 and v4 the models have different friction values for the two feet (left foot friction == 1.9 and right foot friction == 0.9). The `Walker-v5` model is updated to have the same friction for both feet (set to 1.9). This causes the Walker2d's the right foot to slide less on the surface and therefore require more force to move (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
+        - Fixed bug: `healthy_reward` was given on every step (even if the Walker2D is unhealthy), now it is only given if the Walker2d is healthy. The `info` "reward_survive" is updated with this change (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
+        - Restored the `xml_file` argument (was removed in `v4`).
+        - Added individual reward terms in `info` (`info["reward_forward"]`, info`["reward_ctrl"]`, `info["reward_survive"]`).
+        - Added `info["z_distance_from_origin"]` which is equal to the vertical distance of the "torso" body from its initial position.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco-py >= 1.50

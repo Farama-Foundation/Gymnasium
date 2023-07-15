@@ -268,6 +268,22 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     | `include_cfrc_ext_in_observation`            | **bool**  | `True`           | Whether to include *cfrc_ext* elements in the observations.                                                                                                               |
 
     ## Version History
+    * v5:
+        - Minimum `mujoco` version is now 2.3.3.
+        - Added support for fully custom/third party `mujoco` models using the `xml_file` argument (previously only a few changes could be made to the existing models).
+        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
+        - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
+        - Return a non-empty `info` with `reset()`, previously an empty dictionary was returned, the new keys are the same state information as `step()`.
+        - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
+        - Excluded the `cinert` & `cvel` & `cfrc_ext` of `worldbody` and `root`/`freejoint` `qfrc_actuator` from the observation space, as it was always 0, and thus provided no useful information to the agent, resulting in slightly faster training) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
+        - Restored the `xml_file` argument (was removed in `v4`).
+        - Added `xml_file` argument.
+        - Added `uph_cost_weight`, `ctrl_cost_weight`, `impact_cost_weight`, `impact_cost_range` arguments, to configure the reward function (defaults are effectively the same as in `v4`).
+        - Added `reset_noise_scale` argument, to set the range of initial states.
+        - Added `include_cinert_in_observation`, `include_cvel_in_observation`, `include_qfrc_actuator_in_observation`, `include_cfrc_ext_in_observation` arguments to allow for the exclusion of observation elements from the observation space.
+        - Added `info["tendon_length"]` and `info["tendon_velocity"]` containing observations of the Humanoid's 2 tendons connecting the hips to the knees.
+        - Added `info["x_position"]` & `info["y_position"]` , which contain the observations excluded when `exclude_current_positions_from_observation == True`.
+        - Added `info["z_distance_from_origin"]` which is equal to the vertical distance of the "torso" body from its initial position.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50.

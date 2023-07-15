@@ -208,6 +208,23 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     |`use_contact_forces` (`v4` only)            | **bool**   | `False`      | If true, it extends the observation space by adding contact forces (see `Observation Space` section) and includes contact_cost to the reward function (see `Rewards` section) |
 
     ## Version History
+    * v5:
+        - Minimum `mujoco` version is now 2.3.3.
+        - Added support for fully custom/third party `mujoco` models using the `xml_file` argument (previously only a few changes could be made to the existing models).
+        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
+        - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
+        - Return a non-empty `info` with `reset()`, previously an empty dictionary was returned, the new keys are the same state information as `step()`.
+        - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
+        - Fixed bug: `healthy_reward` was given on every step (even if the Ant is unhealthy), now it is only given when the Ant is healthy. The `info["reward_survive"]` is updated with this change (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
+        - The reward function now always includes `contact_cost`, before it was only included if `use_contact_forces=True` (can be set to `0` with `contact_cost_weight=0`).
+        - Excluded the `cfrc_ext` of `worldbody` from the observation space as it was always 0, and thus provided no useful information to the agent, resulting is slightly faster training (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
+        - Added the `main_body` argument, which specifies the body used to compute the forward reward (mainly useful for custom MuJoCo models).
+        - Added the `forward_reward_weight` argument, which defaults to `1` (effectively the same behavior as in `v4`).
+        - Added the `include_cfrc_ext_in_observation` argument, previously in `v4` the inclusion of `cfrc_ext` observations was controlled by `use_contact_forces` which defaulted to `False`, while `include_cfrc_ext_in_observation` defaults to `True`.
+        - Removed the `use_contact_forces` argument (note: its functionality has been replaced by `include_cfrc_ext_in_observation` and `contact_cost_weight`) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/214)).
+        - Fixed `info["reward_ctrl"]` sometimes containing `contact_cost` instead of `ctrl_cost`.
+        - Fixed `info["x_position"]` & `info["y_position"]` & `info["distance_from_origin"]` giving `xpos` instead of `qpos` observations (`xpos` observations are behind 1 `mj_step()` more [here](https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388)) (related [Github issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/521) & [Github issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/539)).
+        - Removed `info["forward_reward"]` as it is equivalent to `info["reward_forward"]`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3, also removed contact forces from the default observation space (new variable `use_contact_forces=True` can restore them)
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco-py >= 1.50

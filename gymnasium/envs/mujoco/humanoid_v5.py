@@ -283,6 +283,24 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | `include_cfrc_ext_in_observation`            | **bool**  | `True`           | Whether to include *cfrc_ext* elements in the observations.                                                                                                               |
 
     ## Version History
+    * v5:
+        - Minimum `mujoco` version is now 2.3.3.
+        - Added support for fully custom/third party `mujoco` models using the `xml_file` argument (previously only a few changes could be made to the existing models).
+        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
+        - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
+        - Return a non-empty `info` with `reset()`, previously an empty dictionary was returned, the new keys are the same state information as `step()`.
+        - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
+        - Fixed bug: `healthy_reward` was given on every step (even if the Humanoid was unhealthy), now it is only given when the Humanoid is healthy. The `info["reward_survive"]` is updated with this change (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
+        - Restored `contact_cost` and the corresponding `contact_cost_weight` and `contact_cost_range` arguments, with the same defaults as in `Humanoid-v3` (was removed in `v4`) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/504)).
+        - Excluded the `cinert` & `cvel` & `cfrc_ext` of `worldbody` and `root`/`freejoint` `qfrc_actuator` from the observation space, as it was always 0, and thus provided no useful information to the agent, resulting in slightly faster training) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
+        - Restored the `xml_file` argument (was removed in `v4`).
+        - Added `include_cinert_in_observation`, `include_cvel_in_observation`, `include_qfrc_actuator_in_observation`, `include_cfrc_ext_in_observation` arguments to allow for the exclusion of observation elements from the observation space.
+        - Fixed `info["x_position"]` & `info["y_position"]` & `info["distance_from_origin"]` returning `xpos` instead of `qpos` based observations (`xpos` observations are behind 1 `mj_step()` more [here](https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388)) (related [Github issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/521) & [Github issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/539)).
+        - Added `info["tendon_length"]` and `info["tendon_velocity"]` containing observations of the Humanoid's 2 tendons connecting the hips to the knees.
+        - Renamed `info["reward_alive"]` to `info["reward_survive"]` to be consistent with the other environments.
+        - Renamed `info["reward_linvel"]` to `info["reward_forward"]` to be consistent with the other environments.
+        - Renamed `info["reward_quadctrl"]` to `info["reward_ctrl"]` to be consistent with the other environments.
+        - Removed `info["forward_reward"]` as it is equivalent to `info["reward_forward"]`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco-py >= 1.50

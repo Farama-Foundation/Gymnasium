@@ -134,6 +134,15 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     | `reset_noise_scale`     | **float**  | `0.1`                          | Scale of random perturbations of initial position and velocity (see section on Starting State) |
 
     ## Version History
+    * v5:
+        - Minimum `mujoco` version is now 2.3.3.
+        - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
+        - Fixed bug: `healthy_reward` was given on every step (even if the Pendulum is unhealthy), now it is only given if the DoublePendulum is healthy (not terminated)(related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/500)).
+        - Excluded the `qfrc_constraint` ("constraint force") of the hinges from the observation space (as it was always 0, thus providing no useful information to the agent, resulting is slightly faster training) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/228)).
+        - Added `xml_file` argument.
+        - Added `reset_noise_scale` argument, to set the range of initial states.
+        - Added `healthy_reward` argument to configure the reward function (defaults are effectively the same as in `v4`).
+        - Added individual reward terms in `info` ( `info["reward_survive"]`, `info["distance_penalty"]`, `info["velocity_penalty"]`).
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50

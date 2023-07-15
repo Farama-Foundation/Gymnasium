@@ -148,6 +148,14 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     | `reward_control_weight` | **float**  | `0.1`        | Weight for *reward_control* term (see section on reward) |
 
     ## Version History
+    * v5:
+        - Minimum `mujoco` version is now 2.3.3.
+        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
+        - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
+        - Added `xml_file` argument.
+        - Added `reward_near_weight`, `reward_dist_weight`, `reward_control_weight` arguments, to configure the reward function (defaults are effectively the same as in `v4`).
+        - Fixed `info["reward_ctrl"]` being not being multiplied by the reward weight.
+        - Added `info["reward_near"]` which is equal to the reward term `reward_near`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50.
