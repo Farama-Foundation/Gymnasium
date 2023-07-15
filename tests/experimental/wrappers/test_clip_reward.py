@@ -41,7 +41,7 @@ def test_clip_reward_within_vector(lower_bound, upper_bound, expected_reward):
     """
     actions = [DISCRETE_ACTION for _ in range(NUM_ENVS)]
 
-    env = gym.vector.make(ENV_ID, num_envs=NUM_ENVS)
+    env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
     env = ClipRewardV0(env, lower_bound, upper_bound)
     env.reset(seed=SEED)
 

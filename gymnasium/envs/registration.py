@@ -10,7 +10,6 @@ import importlib.util
 import json
 import re
 import sys
-import traceback
 from collections import defaultdict
 from dataclasses import dataclass, field
 from types import ModuleType
@@ -86,11 +85,13 @@ class EnvSpec:
     * **nondeterministic**: If the observation of an environment cannot be repeated with the same initial state, random number generator state and actions.
     * **max_episode_steps**: The max number of steps that the environment can take before truncation
     * **order_enforce**: If to enforce the order of :meth:`gymnasium.Env.reset` before :meth:`gymnasium.Env.step` and :meth:`gymnasium.Env.render` functions
-    * **autoreset**: If to automatically reset the environment on episode end
     * **disable_env_checker**: If to disable the environment checker wrapper in :meth:`gymnasium.make`, by default False (runs the environment checker)
     * **kwargs**: Additional keyword arguments passed to the environment during initialisation
     * **additional_wrappers**: A tuple of additional wrappers applied to the environment (WrapperSpec)
     * **vector_entry_point**: The location of the vectorized environment to create from
+
+    Deprecated:
+        v1.0.0 - Autoreset attribute removed
     """
 
     id: str
@@ -103,9 +104,7 @@ class EnvSpec:
     # Wrappers
     max_episode_steps: int | None = field(default=None)
     order_enforce: bool = field(default=True)
-    autoreset: bool = field(default=False)
     disable_env_checker: bool = field(default=False)
-    apply_api_compatibility: bool = field(default=False)
 
     # Environment arguments
     kwargs: dict = field(default_factory=dict)
@@ -224,12 +223,8 @@ class EnvSpec:
             output += f"\nmax_episode_steps={self.max_episode_steps}"
         if print_all or self.order_enforce is not True:
             output += f"\norder_enforce={self.order_enforce}"
-        if print_all or self.autoreset is not False:
-            output += f"\nautoreset={self.autoreset}"
         if print_all or self.disable_env_checker is not False:
             output += f"\ndisable_env_checker={self.disable_env_checker}"
-        if print_all or self.apply_api_compatibility is not False:
-            output += f"\napplied_api_compatibility={self.apply_api_compatibility}"
 
         if print_all or self.additional_wrappers:
             wrapper_output: list[str] = []
@@ -569,9 +564,7 @@ def register(
     nondeterministic: bool = False,
     max_episode_steps: int | None = None,
     order_enforce: bool = True,
-    autoreset: bool = False,
     disable_env_checker: bool = False,
-    apply_api_compatibility: bool = False,
     additional_wrappers: tuple[WrapperSpec, ...] = (),
     vector_entry_point: VectorEnvCreator | str | None = None,
     **kwargs: Any,
@@ -591,13 +584,15 @@ def register(
         max_episode_steps: The maximum number of episodes steps before truncation. Used by the :class:`gymnasium.wrappers.TimeLimit` wrapper if not ``None``.
         order_enforce: If to enable the order enforcer wrapper to ensure users run functions in the correct order.
             If ``True``, then the :class:`gymnasium.wrappers.OrderEnforcing` is applied to the environment.
-        autoreset: If to add the :class:`gymnasium.wrappers.AutoResetWrapper` such that on ``(terminated or truncated) is True``, :meth:`gymnasium.Env.reset` is called.
         disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.
         apply_api_compatibility: If to apply the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper to the environment.
             Use if the environment is implemented in the gym v0.21 environment API.
         additional_wrappers: Additional wrappers to apply the environment.
         vector_entry_point: The entry point for creating the vector environment
         **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.
+
+    Deprecated:
+        v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed
     """
     assert (
         entry_point is not None or vector_entry_point is not None
@@ -620,11 +615,6 @@ def register(
         ns_id = ns
     full_env_id = get_env_id(ns_id, name, version)
 
-    if autoreset is True:
-        logger.warn(
-            "`gymnasium.register(..., autoreset=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument."
-        )
-
     new_spec = EnvSpec(
         id=full_env_id,
         entry_point=entry_point,
@@ -632,9 +622,7 @@ def register(
         nondeterministic=nondeterministic,
         max_episode_steps=max_episode_steps,
         order_enforce=order_enforce,
-        autoreset=autoreset,
         disable_env_checker=disable_env_checker,
-        apply_api_compatibility=apply_api_compatibility,
         **kwargs,
         additional_wrappers=additional_wrappers,
         vector_entry_point=vector_entry_point,
@@ -649,8 +637,6 @@ def register(
 def make(
     id: str | EnvSpec,
     max_episode_steps: int | None = None,
-    autoreset: bool | None = None,
-    apply_api_compatibility: bool | None = None,
     disable_env_checker: bool | None = None,
     **kwargs: Any,
 ) -> Env:
@@ -663,10 +649,6 @@ def make(
             This is equivalent to importing the module first to register the environment followed by making the environment.
         max_episode_steps: Maximum length of an episode, can override the registered :class:`EnvSpec` ``max_episode_steps``.
             The value is used by :class:`gymnasium.wrappers.TimeLimit`.
-        autoreset: Whether to automatically reset the environment after each episode (:class:`gymnasium.wrappers.AutoResetWrapper`).
-        apply_api_compatibility: Whether to wrap the environment with the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper that
-            converts the environment step from a done bool to return termination and truncation bools.
-            By default, the argument is None in which the :class:`EnvSpec` ``apply_api_compatibility`` is used, otherwise this variable is used in favor.
         disable_env_checker: If to add :class:`gymnasium.wrappers.PassiveEnvChecker`, ``None`` will default to the
             :class:`EnvSpec` ``disable_env_checker`` value otherwise use this value will be used.
         kwargs: Additional arguments to pass to the environment constructor.
@@ -676,6 +658,9 @@ def make(
 
     Raises:
         Error: If the ``id`` doesn't exist in the :attr:`registry`
+
+    Deprecated:
+        v1.0.0 - `autoreset` and `apply_api_compatibility` was removed
     """
     if isinstance(id, EnvSpec):
         env_spec = id
@@ -741,14 +726,6 @@ def make(
                 f"that is not in the possible render_modes ({render_modes})."
             )
 
-    if apply_api_compatibility or (
-        apply_api_compatibility is None and env_spec.apply_api_compatibility
-    ):
-        # If we use the compatibility layer, we treat the render mode explicitly and don't pass it to the env creator
-        render_mode = env_spec_kwargs.pop("render_mode", None)
-    else:
-        render_mode = None
-
     try:
         env = env_creator(**env_spec_kwargs)
     except TypeError as e:
@@ -774,9 +751,7 @@ def make(
         nondeterministic=env_spec.nondeterministic,
         max_episode_steps=None,
         order_enforce=False,
-        autoreset=False,
         disable_env_checker=True,
-        apply_api_compatibility=False,
         kwargs=env_spec_kwargs,
         additional_wrappers=(),
         vector_entry_point=env_spec.vector_entry_point,
@@ -796,15 +771,6 @@ def make(
                 f"The environment's wrapper spec {recreated_wrapper_spec} is different from the saved `EnvSpec` additional wrapper {env_spec_wrapper_spec}"
             )
 
-    # Add step API wrapper
-    if apply_api_compatibility is True or (
-        apply_api_compatibility is None and env_spec.apply_api_compatibility is True
-    ):
-        logger.warn(
-            "`gymnasium.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and will be removed in v1.0"
-        )
-        env = gym.wrappers.EnvCompatibility(env, render_mode)
-
     # Run the environment checker as the lowest level wrapper
     if disable_env_checker is False or (
         disable_env_checker is None and env_spec.disable_env_checker is False
@@ -820,14 +786,6 @@ def make(
         env = gym.wrappers.TimeLimit(env, max_episode_steps)
     elif env_spec.max_episode_steps is not None:
         env = gym.wrappers.TimeLimit(env, env_spec.max_episode_steps)
-
-    # Add the auto-reset wrapper
-    if autoreset is True or (autoreset is None and env_spec.autoreset is True):
-        env = gym.wrappers.AutoResetWrapper(env)
-
-        logger.warn(
-            "`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0"
-        )
 
     for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
@@ -911,7 +869,7 @@ def make_vec(
         # Assume it's a string
         env_creator = load_env_creator(entry_point)
 
-    def _create_env():
+    def _create_env() -> Env:
         # Env creator for use with sync and async modes
         _kwargs_copy = _kwargs.copy()
 
@@ -938,7 +896,7 @@ def make_vec(
 
     if vectorization_mode == "sync":
         env = gym.experimental.vector.SyncVectorEnv(
-            env_fns=[_create_env for _ in range(num_envs)],
+            env_fns=(_create_env for _ in range(num_envs)),
             **vector_kwargs,
         )
     elif vectorization_mode == "async":

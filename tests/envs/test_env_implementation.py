@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.box2d import BipedalWalker
+from gymnasium.envs.box2d import BipedalWalker, CarRacing
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
 from gymnasium.envs.toy_text import TaxiEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
@@ -23,37 +23,37 @@ def test_carracing_domain_randomize():
     CarRacing DomainRandomize should have different colours at every reset.
     However, it should have same colours when `options={"randomize": False}` is given to reset.
     """
-    env = gym.make("CarRacing-v2", domain_randomize=True)
+    env: CarRacing = gym.make("CarRacing-v2", domain_randomize=True).unwrapped
 
-    road_color = env.unwrapped.road_color
-    bg_color = env.unwrapped.bg_color
-    grass_color = env.unwrapped.grass_color
+    road_color = env.road_color
+    bg_color = env.bg_color
+    grass_color = env.grass_color
 
     env.reset(options={"randomize": False})
 
     assert (
-        road_color == env.unwrapped.road_color
+        road_color == env.road_color
     ).all(), f"Have different road color after reset with randomize turned off. Before: {road_color}, after: {env.road_color}."
     assert (
-        bg_color == env.unwrapped.bg_color
+        bg_color == env.bg_color
     ).all(), f"Have different bg color after reset with randomize turned off. Before: {bg_color}, after: {env.bg_color}."
     assert (
-        grass_color == env.unwrapped.grass_color
+        grass_color == env.grass_color
     ).all(), f"Have different grass color after reset with randomize turned off. Before: {grass_color}, after: {env.grass_color}."
 
     env.reset()
 
     assert (
-        road_color != env.unwrapped.road_color
-    ).all(), f"Have same road color after reset. Before: {road_color}, after: {env.unwrapped.road_color}."
+        road_color != env.road_color
+    ).all(), f"Have same road color after reset. Before: {road_color}, after: {env.road_color}."
     assert (
-        bg_color != env.unwrapped.bg_color
+        bg_color != env.bg_color
     ).all(), (
-        f"Have same bg color after reset. Before: {bg_color}, after: {env.unwrapped.bg_color}."
+        f"Have same bg color after reset. Before: {bg_color}, after: {env.bg_color}."
     )
     assert (
-        grass_color != env.unwrapped.grass_color
-    ).all(), f"Have same grass color after reset. Before: {grass_color}, after: {env.unwrapped.grass_color}."
+        grass_color != env.grass_color
+    ).all(), f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
 
 
 @pytest.mark.parametrize("seed", range(5))

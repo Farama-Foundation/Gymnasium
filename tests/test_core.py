@@ -162,7 +162,7 @@ def test_wrapper_property_forwarding(class_, props):
         assert getattr(env, key) == value
 
     # Otherwise, test if the properties are forwarded
-    all_properties = {"observation_space", "action_space", "reward_range", "metadata"}
+    all_properties = {"observation_space", "action_space", "metadata"}
     for key in all_properties - props.keys():
         assert getattr(env, key) == getattr(env.unwrapped, key)
 
@@ -209,7 +209,6 @@ def test_gymnasium_env():
 
     assert env.metadata == {"render_modes": []}
     assert env.render_mode is None
-    assert env.reward_range == (-float("inf"), float("inf"))
     assert env.spec is None
     assert env._np_random is None  # pyright: ignore [reportPrivateUsage]
 
@@ -252,10 +251,6 @@ def test_gymnasium_wrapper():
 
     assert env.render_mode == wrapper_env.render_mode
 
-    assert env.reward_range == wrapper_env.reward_range
-    wrapper_env.reward_range = (-1.0, 1.0)
-    assert env.reward_range != wrapper_env.reward_range
-
     assert env.spec == wrapper_env.spec
 
     env.observation_space = Box(0, 1)
@@ -277,7 +272,7 @@ def test_gymnasium_wrapper():
     with pytest.raises(
         AttributeError,
         match=re.escape(
-            "Can't access `_np_random` of a wrapper, use `self.unwrapped._np_random` or `self.np_random`."
+            "Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."
         ),
     ):
         print(wrapper_env.access_hidden_np_random())

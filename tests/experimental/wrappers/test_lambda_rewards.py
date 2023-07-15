@@ -41,7 +41,7 @@ def test_lambda_reward_within_vector(reward_fn, expected_reward):
     to reward in a vectorized environment.
     """
     actions = [DISCRETE_ACTION for _ in range(NUM_ENVS)]
-    env = gym.vector.make(ENV_ID, num_envs=NUM_ENVS)
+    env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
     env = LambdaRewardV0(env, reward_fn)
     env.reset(seed=SEED)
 

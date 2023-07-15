@@ -49,7 +49,6 @@ If you'd like to implement your own custom wrapper, check out `the corresponding
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.autoreset import AutoResetWrapper
 from gymnasium.wrappers.clip_action import ClipAction
-from gymnasium.wrappers.compatibility import EnvCompatibility
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from gymnasium.wrappers.filter_observation import FilterObservation
 from gymnasium.wrappers.flatten_observation import FlattenObservation
@@ -64,7 +63,6 @@ from gymnasium.wrappers.record_video import RecordVideo, capped_cubic_video_sche
 from gymnasium.wrappers.render_collection import RenderCollection
 from gymnasium.wrappers.rescale_action import RescaleAction
 from gymnasium.wrappers.resize_observation import ResizeObservation
-from gymnasium.wrappers.step_api_compatibility import StepAPICompatibility
 from gymnasium.wrappers.time_aware_observation import TimeAwareObservation
 from gymnasium.wrappers.time_limit import TimeLimit
 from gymnasium.wrappers.transform_observation import TransformObservation

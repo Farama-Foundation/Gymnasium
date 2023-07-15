@@ -13,16 +13,11 @@ from gymnasium.core import ActType, ObsType, WrapperObsType
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.error import NameNotFound
 from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.wrappers import (
-    AutoResetWrapper,
-    HumanRendering,
-    OrderEnforcing,
-    TimeLimit,
-)
+from gymnasium.wrappers import HumanRendering, OrderEnforcing, TimeLimit
 from gymnasium.wrappers.env_checker import PassiveEnvChecker
 from tests.envs.registration.utils_envs import ArgumentEnv
 from tests.envs.utils import all_testing_env_specs
-from tests.testing_env import GenericTestEnv, old_reset_func, old_step_func
+from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import has_wrapper
 
 
@@ -94,35 +89,6 @@ def test_max_episode_steps(register_parameter_envs):
         assert has_wrapper(env, TimeLimit)
 
 
-def test_autorest(register_parameter_envs):
-    """Test the `autoreset` parameter in `gym.make`."""
-    for make_id in [
-        "CartPole-v1",
-        gym.spec("CartPole-v1"),
-        "AutoresetEnv-v0",
-        gym.spec("AutoresetEnv-v0"),
-    ]:
-        env_spec = gym.spec(make_id) if isinstance(make_id, str) else make_id
-
-        # Use the spec's value
-        env = gym.make(make_id)
-        assert env.spec is not None
-        assert env.spec.autoreset == env_spec.autoreset
-        assert has_wrapper(env, AutoResetWrapper) is env_spec.autoreset
-
-        # Set autoreset is True
-        env = gym.make(make_id, autoreset=True)
-        assert has_wrapper(env, AutoResetWrapper)
-        assert env.spec is not None
-        assert env.spec.autoreset is True
-
-        # Set autoreset is False
-        env = gym.make(make_id, autoreset=False)
-        assert has_wrapper(env, AutoResetWrapper) is False
-        assert env.spec is not None
-        assert env.spec.autoreset is False
-
-
 @pytest.mark.parametrize(
     "registration_disabled, make_disabled, if_disabled",
     [
@@ -156,44 +122,6 @@ def test_disable_env_checker(
     assert has_wrapper(env, PassiveEnvChecker) is not if_disabled
 
     del gym.registry["DisableEnvCheckerEnv-v0"]
-
-
-def test_apply_api_compatibility(register_parameter_envs):
-    """Test the `apply_api_compatibility` parameter for `gym.make`."""
-    # Apply the environment compatibility and check it works as intended
-    for make_id in ["EnabledApplyApiComp-v0", gym.spec("EnabledApplyApiComp-v0")]:
-        env = gym.make(make_id)
-        assert isinstance(env.unwrapped, gym.wrappers.EnvCompatibility)
-
-        # env has time limit of 3 enabling this test
-        env.reset()
-        assert len(env.step(env.action_space.sample())) == 5
-        env.step(env.action_space.sample())
-        _, _, termination, truncation, _ = env.step(env.action_space.sample())
-        assert termination is False and truncation is True
-
-    for make_id in ["DisabledApplyApiComp-v0", gym.spec("DisabledApplyApiComp-v0")]:
-        # Turn off the spec api compatibility
-        env = gym.make(make_id)
-        assert isinstance(env.unwrapped, gym.wrappers.EnvCompatibility) is False
-        env.reset()
-        with pytest.raises(
-            ValueError,
-            match=re.escape("not enough values to unpack (expected 5, got 4)"),
-        ):
-            env.step(env.action_space.sample())
-
-        # Apply the environment compatibility and check it works as intended
-        assert env.spec is not None
-        assert env.spec.apply_api_compatibility is False
-        env = gym.make(make_id, apply_api_compatibility=True)
-        assert isinstance(env.unwrapped, gym.wrappers.EnvCompatibility)
-
-        env.reset()
-        assert len(env.step(env.action_space.sample())) == 5
-        env.step(env.action_space.sample())
-        _, _, termination, truncation, _ = env.step(env.action_space.sample())
-        assert termination is False and truncation is True
 
 
 def test_order_enforcing(register_parameter_envs):
@@ -516,28 +444,12 @@ def register_parameter_envs():
     gym.register(
         "NoMaxEpisodeStepsEnv-v0", lambda: GenericTestEnv(), max_episode_steps=None
     )
-    gym.register("AutoresetEnv-v0", lambda: GenericTestEnv(), autoreset=True)
 
-    gym.register(
-        "EnabledApplyApiComp-v0",
-        lambda: GenericTestEnv(step_func=old_step_func, reset_func=old_reset_func),
-        apply_api_compatibility=True,
-        max_episode_steps=3,
-    )
-    gym.register(
-        "DisabledApplyApiComp-v0",
-        lambda: GenericTestEnv(step_func=old_step_func, reset_func=old_reset_func),
-        apply_api_compatibility=False,
-        max_episode_steps=3,
-    )
     gym.register("OrderlessEnv-v0", lambda: GenericTestEnv(), order_enforce=False)
 
     yield
 
     del gym.registry["NoMaxEpisodeStepsEnv-v0"]
-    del gym.registry["AutoresetEnv-v0"]
-    del gym.registry["EnabledApplyApiComp-v0"]
-    del gym.registry["DisabledApplyApiComp-v0"]
     del gym.registry["OrderlessEnv-v0"]
 
 

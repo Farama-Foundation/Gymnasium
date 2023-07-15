@@ -82,7 +82,7 @@ class VectorListInfo(gym.Wrapper, gym.utils.RecordConstructorArgs):
             list_info (list): converted info.
 
         """
-        list_info = [{} for _ in range(self.num_envs)]
+        list_info = [{} for _ in range(self.get_wrapper_attr("num_envs"))]
         list_info = self._process_episode_statistics(infos, list_info)
         for k in infos:
             if k.startswith("_"):

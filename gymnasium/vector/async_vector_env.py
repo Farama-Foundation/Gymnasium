@@ -587,7 +587,7 @@ def _worker(index, env_fn, pipe, parent_pipe, shared_memory, error_queue):
                         f"Trying to call function `{name}` with "
                         f"`_call`. Use `{name}` directly instead."
                     )
-                function = getattr(env, name)
+                function = env.get_wrapper_attr(name)
                 if callable(function):
                     pipe.send((function(*args, **kwargs), True))
                 else:
@@ -661,7 +661,7 @@ def _worker_shared_memory(index, env_fn, pipe, parent_pipe, shared_memory, error
                         f"Trying to call function `{name}` with "
                         f"`_call`. Use `{name}` directly instead."
                     )
-                function = getattr(env, name)
+                function = env.get_wrapper_attr(name)
                 if callable(function):
                     pipe.send((function(*args, **kwargs), True))
                 else:
