@@ -10,8 +10,8 @@ from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
-from gymnasium.experimental.functional_jax_env import (
+from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.utils.functional_jax_env import (
     FunctionalJaxEnv,
     FunctionalJaxVectorEnv,
 )
