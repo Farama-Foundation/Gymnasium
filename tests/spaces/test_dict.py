@@ -145,3 +145,14 @@ def test_iterator():
         assert key in DICT_SPACE.spaces
 
     assert {key for key in DICT_SPACE} == DICT_SPACE.spaces.keys()
+
+
+def test_keys_contains():
+    """Test that `Dict.keys()` will correctly assess if the key is in the space."""
+    space = Dict(a=Box(0, 1), b=Box(1, 2))
+
+    for key in space.keys():
+        assert key in space.keys()
+    assert "a" in space.keys()
+
+    assert "c" not in space.keys()

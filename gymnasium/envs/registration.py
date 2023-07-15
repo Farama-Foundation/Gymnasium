@@ -25,10 +25,7 @@ if sys.version_info < (3, 10):
 else:
     import importlib.metadata as metadata
 
-if sys.version_info < (3, 8):
-    from typing_extensions import Protocol
-else:
-    from typing import Protocol
+from typing import Protocol
 
 
 ENV_ID_RE = re.compile(
@@ -528,7 +525,9 @@ def _find_spec(env_id: str) -> EnvSpec:
 
     if env_spec is None:
         _check_version_exists(ns, name, version)
-        raise error.Error(f"No registered env with id: {env_name}")
+        raise error.Error(
+            f"No registered env with id: {env_name}. Did you register it, or import the package that registers it? Use `gymnasium.pprint_registry()` to see all of the registered environments."
+        )
 
     return env_spec
 
@@ -619,8 +618,12 @@ def register(
         ns_id = current_namespace
     else:
         ns_id = ns
-
     full_env_id = get_env_id(ns_id, name, version)
+
+    if autoreset is True:
+        logger.warn(
+            "`gymnasium.register(..., autoreset=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument."
+        )
 
     new_spec = EnvSpec(
         id=full_env_id,
@@ -798,7 +801,7 @@ def make(
         apply_api_compatibility is None and env_spec.apply_api_compatibility is True
     ):
         logger.warn(
-            "The `gym.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and removed in v1.0"
+            "`gymnasium.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and will be removed in v1.0"
         )
         env = gym.wrappers.EnvCompatibility(env, render_mode)
 
@@ -821,6 +824,10 @@ def make(
     # Add the auto-reset wrapper
     if autoreset is True or (autoreset is None and env_spec.autoreset is True):
         env = gym.wrappers.AutoResetWrapper(env)
+
+        logger.warn(
+            "`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0"
+        )
 
     for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
-from gymnasium import logger, spaces
+from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 
@@ -233,7 +233,7 @@ class Env(Generic[ObsType, ActType]):
         # propagate exception
         return False
 
-    def get_attr(self, name: str) -> Any:
+    def get_wrapper_attr(self, name: str) -> Any:
         """Gets the attribute `name` from the environment."""
         return getattr(self, name)
 
@@ -274,7 +274,7 @@ class Wrapper(
 
         self._cached_spec: EnvSpec | None = None
 
-    def get_attr(self, name: str) -> Any:
+    def get_wrapper_attr(self, name: str) -> Any:
         """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.
 
         Args:
@@ -287,7 +287,7 @@ class Wrapper(
             return getattr(self, name)
         else:
             try:
-                return self.env.get_attr(name)
+                return self.env.get_wrapper_attr(name)
             except AttributeError as e:
                 raise AttributeError(
                     f"wrapper {self.class_name()} has no attribute {name!r}"
