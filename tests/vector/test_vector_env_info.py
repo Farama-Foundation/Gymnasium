@@ -18,7 +18,6 @@ def test_vector_env_info(vectorization_mode):
         ENV_ID,
         num_envs=NUM_ENVS,
         vectorization_mode=vectorization_mode,
-        disable_env_checker=True,
     )
     env.reset(seed=SEED)
     for _ in range(ENV_STEPS):
