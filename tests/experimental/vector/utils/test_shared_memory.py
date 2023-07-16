@@ -1,4 +1,4 @@
-"""Tests `gymnasium.experimental.vector.utils.shared_memory functions."""
+"""Tests `gymnasium.vector.utils.shared_memory functions."""
 
 import multiprocessing as mp
 import re
@@ -7,7 +7,7 @@ import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
-from gymnasium.experimental.vector.utils import (
+from gymnasium.vector.utils import (
     create_shared_memory,
     read_from_shared_memory,
     write_to_shared_memory,

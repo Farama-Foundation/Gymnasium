@@ -895,12 +895,12 @@ def make_vec(
         return _env
 
     if vectorization_mode == "sync":
-        env = gym.experimental.vector.SyncVectorEnv(
+        env = gym.vector.SyncVectorEnv(
             env_fns=(_create_env for _ in range(num_envs)),
             **vector_kwargs,
         )
     elif vectorization_mode == "async":
-        env = gym.experimental.vector.AsyncVectorEnv(
+        env = gym.vector.AsyncVectorEnv(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )

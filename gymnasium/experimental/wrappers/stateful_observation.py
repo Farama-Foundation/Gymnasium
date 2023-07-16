@@ -17,7 +17,7 @@ import numpy as np
 import gymnasium as gym
 import gymnasium.spaces as spaces
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
-from gymnasium.experimental.vector.utils import (
+from gymnasium.vector.utils import (
     batch_space,
     concatenate,
     create_empty_array,

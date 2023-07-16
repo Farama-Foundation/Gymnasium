@@ -5,7 +5,7 @@ import pytest
 from numpy.testing import assert_array_equal
 
 from gymnasium.spaces import Box, Dict, MultiDiscrete, Space, Tuple
-from gymnasium.vector.utils.spaces import batch_space, iterate
+from gymnasium.vector.utils import batch_space, iterate
 from tests.vector.utils import CustomSpace, assert_rng_equal, custom_spaces, spaces
 
 

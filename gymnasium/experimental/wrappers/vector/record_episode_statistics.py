@@ -7,7 +7,7 @@ from collections import deque
 import numpy as np
 
 from gymnasium.core import ActType, ObsType
-from gymnasium.experimental.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 
 
 __all__ = ["RecordEpisodeStatisticsV0"]

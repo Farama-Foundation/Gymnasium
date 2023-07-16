@@ -11,7 +11,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.experimental import wrappers
-from gymnasium.experimental.vector import VectorEnv
+from gymnasium.vector import VectorEnv
 from gymnasium.spaces import Box, Dict, Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from tests.testing_env import GenericTestEnv

@@ -1,21 +1,9 @@
 """Root __init__ of the gym experimental wrappers."""
 
 
-from gymnasium.experimental import vector, wrappers
-
-
-# from gymnasium.experimental.vector.async_vector_env import AsyncVectorEnv
-# from gymnasium.experimental.vector.sync_vector_env import SyncVectorEnv
-# from gymnasium.experimental.vector.vector_env import VectorEnv, VectorWrapper
+from gymnasium.experimental import wrappers
 
 
 __all__ = [
-    # Vector
-    # "VectorEnv",
-    # "VectorWrapper",
-    # "SyncVectorEnv",
-    # "AsyncVectorEnv",
-    # wrappers
     "wrappers",
-    "vector",
 ]

@@ -11,7 +11,7 @@ from gymnasium.error import (
     ClosedEnvironmentError,
     NoAsyncCallError,
 )
-from gymnasium.experimental.vector import AsyncVectorEnv
+from gymnasium.vector import AsyncVectorEnv
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from tests.experimental.vector.testing_utils import (
     CustomSpace,

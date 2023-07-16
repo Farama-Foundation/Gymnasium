@@ -6,8 +6,8 @@ from typing import Any, Callable
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.experimental.vector import VectorEnv, VectorRewardWrapper
-from gymnasium.experimental.vector.vector_env import ArrayType
+from gymnasium.vector import VectorEnv, VectorRewardWrapper
+from gymnasium.vector.vector_env import ArrayType
 from gymnasium.experimental.wrappers import lambda_reward
 
 

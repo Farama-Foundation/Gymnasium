@@ -6,7 +6,7 @@ import numpy as np
 
 from gymnasium import make_vec
 from gymnasium.core import ObsType
-from gymnasium.experimental.vector import VectorWrapper
+from gymnasium.vector import VectorWrapper
 
 
 class DummyWrapper(VectorWrapper):

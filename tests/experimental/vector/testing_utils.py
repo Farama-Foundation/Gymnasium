@@ -1,4 +1,4 @@
-"""Testing utilitys for `gymnasium.experimental.vector`."""
+"""Testing utilitys for `gymnasium.vector`."""
 import time
 from typing import Optional
 

@@ -4,8 +4,8 @@ from __future__ import annotations
 from typing import Any
 
 from gymnasium.core import ActType, ObsType
-from gymnasium.experimental.vector import VectorEnv, VectorWrapper
-from gymnasium.experimental.vector.vector_env import ArrayType
+from gymnasium.vector import VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import ArrayType
 from gymnasium.experimental.wrappers.jax_to_torch import (
     Device,
     jax_to_torch,

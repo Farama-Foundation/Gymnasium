@@ -2,7 +2,7 @@
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.experimental.vector import VectorWrapper
+from gymnasium.vector import VectorWrapper
 
 
 class DummyVectorWrapper(VectorWrapper):

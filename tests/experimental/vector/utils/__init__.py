@@ -1,1 +1,1 @@
-"""Module for testing `gymnasium.experimental.vector.utils` functions."""
+"""Module for testing `gymnasium.vector.utils` functions."""

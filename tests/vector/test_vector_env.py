@@ -53,6 +53,7 @@ def test_vector_env_equal(shared_memory):
     sync_env.close()
 
 
+@pytest.mark.skip(reason="VectorEnv no longer has a constructor")
 def test_custom_space_vector_env():
     env = VectorEnv(4, CustomSpace(), CustomSpace())
 

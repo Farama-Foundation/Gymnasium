@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.experimental.vector import SyncVectorEnv
+from gymnasium.vector import SyncVectorEnv
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from tests.envs.utils import all_testing_env_specs
 from tests.vector.utils import (
