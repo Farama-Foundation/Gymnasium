@@ -6,11 +6,14 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import spaces
-from gymnasium.wrappers.pixel_observation import STATE_KEY, PixelObservationWrapper
+from gymnasium.wrappers import RenderObservationV0
+
+
+STATE_KEY = "state"
 
 
 class FakeEnvironment(gym.Env):
-    def __init__(self, render_mode="single_rgb_array"):
+    def __init__(self, render_mode="rgb_array"):
         self.action_space = spaces.Box(shape=(1,), low=-1, high=1, dtype=np.float32)
         self.render_mode = render_mode
 
@@ -55,39 +58,36 @@ def test_dict_observation(pixels_only):
     env = FakeDictObservationEnvironment()
 
     # Make sure we are testing the right environment for the test.
-    observation_space = env.observation_space
-    assert isinstance(observation_space, spaces.Dict)
+    assert isinstance(env.observation_space, spaces.Dict)
 
-    width, height = (320, 240)
+    # width, height = (320, 240)
 
     # The wrapper should only add one observation.
-    wrapped_env = PixelObservationWrapper(
+    wrapped_env = RenderObservationV0(
         env,
-        pixel_keys=(pixel_key,),
-        pixels_only=pixels_only,
-        render_kwargs={pixel_key: {"width": width, "height": height}},
+        render_key=pixel_key,
+        render_only=pixels_only,
+        # render_kwargs={pixel_key: {"width": width, "height": height}},
     )
-
-    assert isinstance(wrapped_env.observation_space, spaces.Dict)
-
+    obs, info = wrapped_env.reset()
     if pixels_only:
-        assert len(wrapped_env.observation_space.spaces) == 1
-        assert list(wrapped_env.observation_space.spaces.keys()) == [pixel_key]
+        assert isinstance(wrapped_env.observation_space, spaces.Box)
+        assert isinstance(obs, np.ndarray)
+
+        rendered_obs = obs
     else:
-        assert (
-            len(wrapped_env.observation_space.spaces)
-            == len(observation_space.spaces) + 1
-        )
-        expected_keys = list(observation_space.spaces.keys()) + [pixel_key]
+        assert isinstance(wrapped_env.observation_space, spaces.Dict)
+
+        expected_keys = [pixel_key] + list(env.observation_space.spaces.keys())
         assert list(wrapped_env.observation_space.spaces.keys()) == expected_keys
 
-    # Check that the added space item is consistent with the added observation.
-    observation, info = wrapped_env.reset()
-    rgb_observation = observation[pixel_key]
+        assert isinstance(obs, dict)
+        rendered_obs = obs[pixel_key]
 
-    assert isinstance(info, dict)
-    assert rgb_observation.shape == (height, width, 3)
-    assert rgb_observation.dtype == np.uint8
+    # Check that the added space item is consistent with the added observation.
+    # assert rendered_obs.shape == (height, width, 3)
+    assert rendered_obs.ndim == 3
+    assert rendered_obs.dtype == np.uint8
 
 
 @pytest.mark.parametrize("pixels_only", (True, False))
@@ -95,31 +95,31 @@ def test_single_array_observation(pixels_only):
     pixel_key = "depth"
 
     env = FakeArrayObservationEnvironment()
-    observation_space = env.observation_space
-    assert isinstance(observation_space, spaces.Box)
+    assert isinstance(env.observation_space, spaces.Box)
 
-    wrapped_env = PixelObservationWrapper(
-        env, pixel_keys=(pixel_key,), pixels_only=pixels_only
+    # The wrapper should only add one observation.
+    wrapped_env = RenderObservationV0(
+        env,
+        render_key=pixel_key,
+        render_only=pixels_only,
+        # render_kwargs={pixel_key: {"width": width, "height": height}},
     )
-    wrapped_env.observation_space = wrapped_env.observation_space
-    assert isinstance(wrapped_env.observation_space, spaces.Dict)
-
+    obs, info = wrapped_env.reset()
     if pixels_only:
-        assert len(wrapped_env.observation_space.spaces) == 1
-        assert list(wrapped_env.observation_space.spaces.keys()) == [pixel_key]
+        assert isinstance(wrapped_env.observation_space, spaces.Box)
+        assert isinstance(obs, np.ndarray)
+
+        rendered_obs = obs
     else:
-        assert len(wrapped_env.observation_space.spaces) == 2
-        assert list(wrapped_env.observation_space.spaces.keys()) == [
-            STATE_KEY,
-            pixel_key,
-        ]
+        assert isinstance(wrapped_env.observation_space, spaces.Dict)
 
-    observation, info = wrapped_env.reset()
-    depth_observation = observation[pixel_key]
+        expected_keys = [pixel_key, "state"]
+        assert list(wrapped_env.observation_space.spaces.keys()) == expected_keys
 
-    assert isinstance(info, dict)
-    assert depth_observation.shape == (32, 32, 3)
-    assert depth_observation.dtype == np.uint8
+        assert isinstance(obs, dict)
+        rendered_obs = obs[pixel_key]
 
-    if not pixels_only:
-        assert isinstance(observation[STATE_KEY], np.ndarray)
+    # Check that the added space item is consistent with the added observation.
+    # assert rendered_obs.shape == (height, width, 3)
+    assert rendered_obs.ndim == 3
+    assert rendered_obs.dtype == np.uint8

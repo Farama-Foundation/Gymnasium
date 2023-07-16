@@ -13,8 +13,12 @@ from gymnasium.core import ActType, ObsType, WrapperObsType
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.error import NameNotFound
 from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.wrappers import HumanRendering, OrderEnforcing, TimeLimit
-from gymnasium.wrappers.env_checker import PassiveEnvChecker
+from gymnasium.wrappers import (
+    HumanRenderingV0,
+    OrderEnforcingV0,
+    PassiveEnvCheckerV0,
+    TimeLimitV0,
+)
 from tests.envs.registration.utils_envs import ArgumentEnv
 from tests.envs.utils import all_testing_env_specs
 from tests.testing_env import GenericTestEnv
@@ -61,14 +65,14 @@ def test_max_episode_steps(register_parameter_envs):
 
         # Use the spec's value
         env = gym.make(make_id)
-        assert has_wrapper(env, TimeLimit)
+        assert has_wrapper(env, TimeLimitV0)
         assert env.spec is not None
         assert env.spec.max_episode_steps == env_spec.max_episode_steps
 
         # Set a custom max episode steps value
         assert env_spec.max_episode_steps != 100
         env = gym.make(make_id, max_episode_steps=100)
-        assert has_wrapper(env, TimeLimit)
+        assert has_wrapper(env, TimeLimitV0)
         assert env.spec is not None
         assert env.spec.max_episode_steps == 100, make_id
 
@@ -80,13 +84,13 @@ def test_max_episode_steps(register_parameter_envs):
         env = gym.make(make_id)
         assert env.spec is not None
         assert env.spec.max_episode_steps is None
-        assert has_wrapper(env, TimeLimit) is False
+        assert has_wrapper(env, TimeLimitV0) is False
 
         # set a custom max episode steps values
         env = gym.make(make_id, max_episode_steps=100)
         assert env.spec is not None
         assert env.spec.max_episode_steps == 100
-        assert has_wrapper(env, TimeLimit)
+        assert has_wrapper(env, TimeLimitV0)
 
 
 @pytest.mark.parametrize(
@@ -115,11 +119,11 @@ def test_disable_env_checker(
 
     # Test when the registered EnvSpec.disable_env_checker = False
     env = gym.make("DisableEnvCheckerEnv-v0", disable_env_checker=make_disabled)
-    assert has_wrapper(env, PassiveEnvChecker) is not if_disabled
+    assert has_wrapper(env, PassiveEnvCheckerV0) is not if_disabled
 
     env_spec = gym.spec("DisableEnvCheckerEnv-v0")
     env = gym.make(env_spec, disable_env_checker=make_disabled)
-    assert has_wrapper(env, PassiveEnvChecker) is not if_disabled
+    assert has_wrapper(env, PassiveEnvCheckerV0) is not if_disabled
 
     del gym.registry["DisableEnvCheckerEnv-v0"]
 
@@ -130,11 +134,11 @@ def test_order_enforcing(register_parameter_envs):
 
     for make_id in ["CartPole-v1", gym.spec("CartPole-v1")]:
         env = gym.make(make_id)
-        assert has_wrapper(env, OrderEnforcing)
+        assert has_wrapper(env, OrderEnforcingV0)
 
     for make_id in ["OrderlessEnv-v0", gym.spec("OrderlessEnv-v0")]:
         env = gym.make(make_id)
-        assert has_wrapper(env, OrderEnforcing) is False
+        assert has_wrapper(env, OrderEnforcingV0) is False
 
     # There is no `make(..., order_enforcing=...)` so we don't test that
 
@@ -166,7 +170,7 @@ def test_make_with_render_mode():
 def test_make_render_collection():
     # Make sure that render_mode is applied correctly
     env = gym.make("CartPole-v1", render_mode="rgb_array_list")
-    assert has_wrapper(env, gym.wrappers.RenderCollection)
+    assert has_wrapper(env, gym.wrappers.RenderCollectionV0)
     assert env.render_mode == "rgb_array_list"
     assert env.unwrapped.render_mode == "rgb_array"
 
@@ -183,7 +187,7 @@ def test_make_human_rendering(register_rendering_testing_envs):
     # Make sure that native rendering is used when possible
     env = gym.make("CartPole-v1", render_mode="human")
     assert (
-        has_wrapper(env, HumanRendering) is False
+        has_wrapper(env, HumanRenderingV0) is False
     )  # Should use native human-rendering
     assert env.render_mode == "human"
     env.close()
@@ -196,7 +200,7 @@ def test_make_human_rendering(register_rendering_testing_envs):
     ):
         # Make sure that `HumanRendering` is applied here as the environment doesn't use native rendering
         env = gym.make("NoHumanRendering-v0", render_mode="human")
-        assert has_wrapper(env, HumanRendering)
+        assert has_wrapper(env, HumanRenderingV0)
         assert env.render_mode == "human"
         env.close()
 
@@ -288,9 +292,9 @@ def test_make_with_env_spec():
     assert id_env.spec == spec_env.spec
 
     # make with applied wrappers
-    env_2 = gym.wrappers.NormalizeReward(
-        gym.wrappers.TimeAwareObservation(
-            gym.wrappers.FlattenObservation(
+    env_2 = gym.wrappers.NormalizeRewardV1(
+        gym.wrappers.TimeAwareObservationV0(
+            gym.wrappers.FlattenObservationV0(
                 gym.make("CartPole-v1", render_mode="rgb_array")
             )
         ),
@@ -310,12 +314,12 @@ def test_make_with_env_spec():
     # make with wrapper in env-creator
     gym.register(
         "CartPole-v3",
-        lambda: gym.wrappers.TimeAwareObservation(CartPoleEnv()),
+        lambda: gym.wrappers.NormalizeRewardV1(CartPoleEnv()),
         disable_env_checker=True,
         order_enforce=False,
     )
     env_4 = gym.make(gym.spec("CartPole-v3"))
-    assert isinstance(env_4, gym.wrappers.TimeAwareObservation)
+    assert isinstance(env_4, gym.wrappers.NormalizeRewardV1)
     assert isinstance(env_4.env, CartPoleEnv)
     env_4.close()
 
@@ -324,10 +328,10 @@ def test_make_with_env_spec():
         lambda: CartPoleEnv(),
         disable_env_checker=True,
         order_enforce=False,
-        additional_wrappers=(gym.wrappers.TimeAwareObservation.wrapper_spec(),),
+        additional_wrappers=(gym.wrappers.NormalizeRewardV1.wrapper_spec(),),
     )
     env_5 = gym.make(gym.spec("CartPole-v4"))
-    assert isinstance(env_5, gym.wrappers.TimeAwareObservation)
+    assert isinstance(env_5, gym.wrappers.NormalizeRewardV1)
     assert isinstance(env_5.env, CartPoleEnv)
     env_5.close()
 
@@ -369,9 +373,9 @@ def test_make_with_env_spec():
 
 def test_make_with_env_spec_levels():
     """Test that we can recreate the environment at each 'level'."""
-    env = gym.wrappers.NormalizeReward(
-        gym.wrappers.TimeAwareObservation(
-            gym.wrappers.FlattenObservation(
+    env = gym.wrappers.NormalizeRewardV1(
+        gym.wrappers.TimeAwareObservationV0(
+            gym.wrappers.FlattenObservationV0(
                 gym.make("CartPole-v1", render_mode="rgb_array")
             )
         ),
@@ -388,14 +392,14 @@ def test_make_with_env_spec_levels():
 def test_wrapped_env_entry_point():
     def _create_env():
         _env = gym.make("CartPole-v1", render_mode="rgb_array")
-        _env = gym.wrappers.FlattenObservation(_env)
+        _env = gym.wrappers.FlattenObservationV0(_env)
         return _env
 
     gym.register("TestingEnv-v0", entry_point=_create_env)
 
     env = gym.make("TestingEnv-v0")
-    env = gym.wrappers.TimeAwareObservation(env)
-    env = gym.wrappers.NormalizeReward(env, gamma=0.8)
+    env = gym.wrappers.TimeAwareObservationV0(env)
+    env = gym.wrappers.NormalizeRewardV1(env, gamma=0.8)
 
     recreated_env = gym.make(env.spec)
 

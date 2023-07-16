@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import TransformObservation
+from gymnasium.wrappers import LambdaObservationV0
 
 
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1"])
@@ -11,9 +11,10 @@ def test_transform_observation(env_id):
         return 3 * x + 2
 
     env = gym.make(env_id, disable_env_checker=True)
-    wrapped_env = TransformObservation(
+    wrapped_env = LambdaObservationV0(
         gym.make(env_id, disable_env_checker=True),
         lambda obs: affine_transform(obs),
+        env.observation_space,
     )
 
     obs, info = env.reset(seed=0)

@@ -13,8 +13,8 @@ def test_full_integration():
     # Create an environment to test with
     env = gym.make("CartPole-v1", render_mode="rgb_array")
 
-    env = gym.wrappers.TimeAwareObservation(env)
-    env = gym.wrappers.NormalizeReward(env, gamma=0.8)
+    env = gym.wrappers.TimeAwareObservationV0(env)
+    env = gym.wrappers.NormalizeRewardV1(env, gamma=0.8)
 
     # Generate the spec_stack
     env_spec = env.spec
@@ -37,9 +37,9 @@ def test_full_integration():
     # Recreate the environment using the spec_stack
     recreated_env = gym.make(recreate_env_spec)
     assert recreated_env.render_mode == "rgb_array"
-    assert isinstance(recreated_env, gym.wrappers.NormalizeReward)
+    assert isinstance(recreated_env, gym.wrappers.NormalizeRewardV1)
     assert recreated_env.gamma == 0.8
-    assert isinstance(recreated_env.env, gym.wrappers.TimeAwareObservation)
+    assert isinstance(recreated_env.env, gym.wrappers.TimeAwareObservationV0)
     assert isinstance(recreated_env.unwrapped, CartPoleEnv)
 
     obs, info = env.reset(seed=42)
@@ -74,7 +74,7 @@ def test_full_integration():
         gym.spec("CartPole-v1"),
         gym.make("CartPole-v1").unwrapped.spec,
         gym.make("CartPole-v1").spec,
-        gym.wrappers.NormalizeReward(gym.make("CartPole-v1")).spec,
+        gym.wrappers.NormalizeRewardV1(gym.make("CartPole-v1")).spec,
     ],
 )
 def test_env_spec_to_from_json(env_spec: EnvSpec):
@@ -87,9 +87,9 @@ def test_env_spec_to_from_json(env_spec: EnvSpec):
 def test_pickling_env_stack():
     env = gym.make("CartPole-v1", render_mode="rgb_array")
 
-    env = gym.wrappers.FlattenObservation(env)
-    env = gym.wrappers.TimeAwareObservation(env)
-    env = gym.wrappers.NormalizeReward(env, gamma=0.8)
+    env = gym.wrappers.FlattenObservationV0(env)
+    env = gym.wrappers.TimeAwareObservationV0(env)
+    env = gym.wrappers.NormalizeRewardV1(env, gamma=0.8)
 
     pickled_env = pickle.loads(pickle.dumps(env))
 
@@ -124,7 +124,7 @@ def test_pickling_env_stack():
 
 def test_env_spec_pprint():
     env = gym.make("CartPole-v1")
-    env = gym.wrappers.TimeAwareObservation(env)
+    env = gym.wrappers.TimeAwareObservationV0(env)
 
     env_spec = env.spec
     assert env_spec is not None
@@ -136,7 +136,7 @@ def test_env_spec_pprint():
 reward_threshold=475.0
 max_episode_steps=500
 additional_wrappers=[
-	name=TimeAwareObservation, kwargs={}
+	name=TimeAwareObservationV0, kwargs={'flatten': False, 'normalize_time': True, 'dict_time_key': 'time'}
 ]"""
     )
 
@@ -148,7 +148,7 @@ entry_point=gymnasium.envs.classic_control.cartpole:CartPoleEnv
 reward_threshold=475.0
 max_episode_steps=500
 additional_wrappers=[
-	name=TimeAwareObservation, entry_point=gymnasium.wrappers.time_aware_observation:TimeAwareObservation, kwargs={}
+	name=TimeAwareObservationV0, entry_point=gymnasium.wrappers.stateful_observation:TimeAwareObservationV0, kwargs={'flatten': False, 'normalize_time': True, 'dict_time_key': 'time'}
 ]"""
     )
 
@@ -163,7 +163,7 @@ max_episode_steps=500
 order_enforce=True
 disable_env_checker=False
 additional_wrappers=[
-	name=TimeAwareObservation, kwargs={}
+	name=TimeAwareObservationV0, kwargs={'flatten': False, 'normalize_time': True, 'dict_time_key': 'time'}
 ]"""
     )
 

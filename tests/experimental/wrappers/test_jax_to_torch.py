@@ -8,7 +8,7 @@ jax = pytest.importorskip("jax")
 jnp = pytest.importorskip("jax.numpy")
 torch = pytest.importorskip("torch")
 
-from gymnasium.experimental.wrappers.jax_to_torch import (  # noqa: E402
+from gymnasium.wrappers.jax_to_torch import (  # noqa: E402
     JaxToTorchV0,
     jax_to_torch,
     torch_to_jax,

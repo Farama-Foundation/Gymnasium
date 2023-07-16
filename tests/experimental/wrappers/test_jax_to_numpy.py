@@ -7,12 +7,12 @@ import pytest
 jax = pytest.importorskip("jax")
 jnp = pytest.importorskip("jax.numpy")
 
-from gymnasium.experimental.wrappers.jax_to_numpy import (  # noqa: E402
+from gymnasium.utils.env_checker import data_equivalence  # noqa: E402
+from gymnasium.wrappers.jax_to_numpy import (  # noqa: E402
     JaxToNumpyV0,
     jax_to_numpy,
     numpy_to_jax,
 )
-from gymnasium.utils.env_checker import data_equivalence  # noqa: E402
 from tests.testing_env import GenericTestEnv  # noqa: E402
 
 

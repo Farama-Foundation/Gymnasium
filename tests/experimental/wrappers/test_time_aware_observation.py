@@ -1,7 +1,7 @@
 """Test suite for TimeAwareObservationV0."""
 
-from gymnasium.experimental.wrappers import TimeAwareObservationV0
 from gymnasium.spaces import Box, Dict, Tuple
+from gymnasium.wrappers import TimeAwareObservationV0
 from tests.testing_env import GenericTestEnv
 
 

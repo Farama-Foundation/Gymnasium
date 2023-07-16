@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import RecordEpisodeStatistics, VectorListInfo
+from gymnasium.wrappers.vector import DictInfoToListV0, RecordEpisodeStatisticsV0
 
 
 ENV_ID = "CartPole-v1"
@@ -11,21 +11,19 @@ ENV_STEPS = 50
 SEED = 42
 
 
-@pytest.mark.skip(reason="Wait for experimental vector list info to be added")
 def test_usage_in_vector_env():
     env = gym.make(ENV_ID, disable_env_checker=True)
     vector_env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
 
-    VectorListInfo(vector_env)
+    DictInfoToListV0(vector_env)
 
     with pytest.raises(AssertionError):
-        VectorListInfo(env)
+        DictInfoToListV0(env)
 
 
-@pytest.mark.skip(reason="Wait for experimental vector list info to be added")
 def test_info_to_list():
     env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
-    wrapped_env = VectorListInfo(env_to_wrap)
+    wrapped_env = DictInfoToListV0(env_to_wrap)
     wrapped_env.action_space.seed(SEED)
     _, info = wrapped_env.reset(seed=SEED)
     assert isinstance(info, list)
@@ -41,10 +39,9 @@ def test_info_to_list():
                 assert "final_observation" not in list_info[i]
 
 
-@pytest.mark.skip(reason="Wait for experimental vector list info to be added")
 def test_info_to_list_statistics():
     env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
-    wrapped_env = VectorListInfo(RecordEpisodeStatistics(env_to_wrap))
+    wrapped_env = DictInfoToListV0(RecordEpisodeStatisticsV0(env_to_wrap))
     _, info = wrapped_env.reset(seed=SEED)
     wrapped_env.action_space.seed(SEED)
     assert isinstance(info, list)

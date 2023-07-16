@@ -5,8 +5,8 @@ import re
 import pytest
 
 import gymnasium
-import gymnasium.experimental.wrappers as wrappers
-from gymnasium.experimental.wrappers import __all__
+import gymnasium.wrappers as wrappers
+from gymnasium.wrappers import __all__
 
 
 def test_import_wrappers():
@@ -22,7 +22,7 @@ def test_import_wrappers():
     with pytest.raises(
         AttributeError,
         match=re.escape(
-            "module 'gymnasium.experimental.wrappers' has no attribute 'ClipRewardVT', did you mean"
+            "module 'gymnasium.wrappers' has no attribute 'ClipRewardVT', did you mean"
         ),
     ):
         getattr(wrappers, "ClipRewardVT")
@@ -30,7 +30,7 @@ def test_import_wrappers():
     with pytest.raises(
         AttributeError,
         match=re.escape(
-            "module 'gymnasium.experimental.wrappers' has no attribute 'ClipRewardV99', did you mean"
+            "module 'gymnasium.wrappers' has no attribute 'ClipRewardV99', did you mean"
         ),
     ):
         getattr(wrappers, "ClipRewardV99")
@@ -39,7 +39,7 @@ def test_import_wrappers():
     with pytest.raises(
         AttributeError,
         match=re.escape(
-            "module 'gymnasium.experimental.wrappers' has no attribute 'NonexistentWrapper'"
+            "module 'gymnasium.wrappers' has no attribute 'NonexistentWrapper'"
         ),
     ):
         getattr(wrappers, "NonexistentWrapper")
@@ -49,10 +49,10 @@ def test_import_wrappers():
 def test_all_wrappers_shortened(wrapper_name):
     """Check that each element of the `__all__` wrappers can be loaded, provided dependencies are installed."""
     try:
-        assert getattr(gymnasium.experimental.wrappers, wrapper_name) is not None
+        assert getattr(gymnasium.wrappers, wrapper_name) is not None
     except gymnasium.error.DependencyNotInstalled as e:
         pytest.skip(str(e))
 
 
 def test_wrapper_vector():
-    assert gymnasium.experimental.wrappers.vector is not None
+    assert gymnasium.wrappers.vector is not None

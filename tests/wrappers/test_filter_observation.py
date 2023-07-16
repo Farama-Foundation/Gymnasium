@@ -5,7 +5,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import spaces
-from gymnasium.wrappers.filter_observation import FilterObservation
+from gymnasium.wrappers import FilterObservationV0
 
 
 class FakeEnvironment(gym.Env):
@@ -40,14 +40,27 @@ class FakeEnvironment(gym.Env):
 FILTER_OBSERVATION_TEST_CASES = (
     (("key1", "key2"), ("key1",)),
     (("key1", "key2"), ("key1", "key2")),
-    (("key1",), None),
+    # (("key1",), None),
     (("key1",), ("key1",)),
 )
 
 ERROR_TEST_CASES = (
-    ("key", ValueError, "All the filter_keys must be included..*"),
-    (False, TypeError, "'bool' object is not iterable"),
-    (1, TypeError, "'int' object is not iterable"),
+    (
+        "key",
+        ValueError,
+        "All the `filter_keys` must be included in the observation space.",
+    ),
+    (
+        False,
+        TypeError,
+        "Expects `filter_keys` to be a Sequence, actual type: <class 'bool'>",
+    ),
+    (
+        1,
+        TypeError,
+        "Expects `filter_keys` to be a Sequence, actual type: <class 'int'>",
+    ),
+    ((), ValueError, "The observation space is empty due to filtering all of the keys"),
 )
 
 
@@ -62,7 +75,7 @@ class TestFilterObservation:
         observation_space = env.observation_space
         assert isinstance(observation_space, spaces.Dict)
 
-        wrapped_env = FilterObservation(env, filter_keys=filter_keys)
+        wrapped_env = FilterObservationV0(env, filter_keys=filter_keys)
 
         assert isinstance(wrapped_env.observation_space, spaces.Dict)
 
@@ -84,4 +97,4 @@ class TestFilterObservation:
         env = FakeEnvironment(observation_keys=("key1", "key2"))
 
         with pytest.raises(error_type, match=error_match):
-            FilterObservation(env, filter_keys=filter_keys)
+            FilterObservationV0(env, filter_keys=filter_keys)

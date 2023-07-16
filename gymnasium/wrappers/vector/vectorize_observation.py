@@ -8,9 +8,9 @@ import numpy as np
 
 from gymnasium import Space
 from gymnasium.core import Env, ObsType
-from gymnasium.experimental.wrappers import lambda_observation
 from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.wrappers import lambda_observation
 
 
 class LambdaObservationV0(VectorObservationWrapper):

@@ -2,12 +2,12 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.envs.classic_control.pendulum import PendulumEnv
-from gymnasium.wrappers import TimeLimit
+from gymnasium.wrappers import TimeLimitV0
 
 
 def test_time_limit_reset_info():
     env = gym.make("CartPole-v1", disable_env_checker=True)
-    env = TimeLimit(env, 100)
+    env = TimeLimitV0(env, 100)
     ob_space = env.observation_space
     obs, info = env.reset()
     assert ob_space.contains(obs)
@@ -20,9 +20,9 @@ def test_time_limit_wrapper(double_wrap):
     # so we are sure termination is only due to timeout
     env = PendulumEnv()
     max_episode_length = 20
-    env = TimeLimit(env, max_episode_length)
+    env = TimeLimitV0(env, max_episode_length)
     if double_wrap:
-        env = TimeLimit(env, max_episode_length)
+        env = TimeLimitV0(env, max_episode_length)
     env.reset()
     terminated, truncated = False, False
     n_steps = 0
@@ -48,9 +48,9 @@ def test_termination_on_last_step(double_wrap):
     env.step = patched_step
 
     max_episode_length = 1
-    env = TimeLimit(env, max_episode_length)
+    env = TimeLimitV0(env, max_episode_length)
     if double_wrap:
-        env = TimeLimit(env, max_episode_length)
+        env = TimeLimitV0(env, max_episode_length)
     env.reset()
     _, _, terminated, truncated, _ = env.step(env.action_space.sample())
     assert terminated is True

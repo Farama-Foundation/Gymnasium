@@ -21,8 +21,7 @@ from gymnasium.envs.registration import (
 
 # necessary for `envs.__init__` which registers all gymnasium environments and loads plugins
 from gymnasium import envs
-from gymnasium import spaces, utils, vector, wrappers, error, logger
-from gymnasium import experimental, functional
+from gymnasium import spaces, utils, vector, wrappers, error, logger, functional
 
 
 __all__ = [
@@ -43,7 +42,6 @@ __all__ = [
     "register_envs",
     # module folders
     "envs",
-    "experimental",
     "spaces",
     "utils",
     "vector",

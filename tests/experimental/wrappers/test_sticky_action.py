@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from gymnasium.error import InvalidProbability
-from gymnasium.experimental.wrappers import StickyActionV0
+from gymnasium.wrappers import StickyActionV0
 from tests.experimental.wrappers.utils import NUM_STEPS, record_action_as_obs_step
 from tests.testing_env import GenericTestEnv
 

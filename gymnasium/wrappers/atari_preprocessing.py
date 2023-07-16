@@ -5,13 +5,10 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-try:
-    import cv2
-except ImportError:
-    cv2 = None
+__all__ = ["AtariPreprocessingV0"]
 
 
-class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
+class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Atari 2600 preprocessing wrapper.
 
     This class follows the guidelines in Machado et al. (2018),
@@ -72,10 +69,13 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         )
         gym.Wrapper.__init__(self, env)
 
-        if cv2 is None:
+        try:
+            import cv2  # noqa: F401
+        except ImportError:
             raise gym.error.DependencyNotInstalled(
                 "opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari"
             )
+
         assert frame_skip > 0
         assert screen_size > 0
         assert noop_max >= 0
@@ -187,7 +187,9 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     def _get_obs(self):
         if self.frame_skip > 1:  # more efficient in-place pooling
             np.maximum(self.obs_buffer[0], self.obs_buffer[1], out=self.obs_buffer[0])
-        assert cv2 is not None
+
+        import cv2
+
         obs = cv2.resize(
             self.obs_buffer[0],
             (self.screen_size, self.screen_size),

@@ -1,13 +1,13 @@
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.wrappers import ClipAction
+from gymnasium.wrappers import ClipActionV0
 
 
 def test_clip_action():
     # mountaincar: action-based rewards
     env = gym.make("MountainCarContinuous-v0", disable_env_checker=True)
-    wrapped_env = ClipAction(
+    wrapped_env = ClipActionV0(
         gym.make("MountainCarContinuous-v0", disable_env_checker=True)
     )
 

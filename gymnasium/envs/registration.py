@@ -775,17 +775,17 @@ def make(
     if disable_env_checker is False or (
         disable_env_checker is None and env_spec.disable_env_checker is False
     ):
-        env = gym.wrappers.PassiveEnvChecker(env)
+        env = gym.wrappers.PassiveEnvCheckerV0(env)
 
     # Add the order enforcing wrapper
     if env_spec.order_enforce:
-        env = gym.wrappers.OrderEnforcing(env)
+        env = gym.wrappers.OrderEnforcingV0(env)
 
     # Add the time limit wrapper
     if max_episode_steps is not None:
-        env = gym.wrappers.TimeLimit(env, max_episode_steps)
+        env = gym.wrappers.TimeLimitV0(env, max_episode_steps)
     elif env_spec.max_episode_steps is not None:
-        env = gym.wrappers.TimeLimit(env, env_spec.max_episode_steps)
+        env = gym.wrappers.TimeLimitV0(env, env_spec.max_episode_steps)
 
     for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
@@ -797,9 +797,9 @@ def make(
 
     # Add human rendering wrapper
     if apply_human_rendering:
-        env = gym.wrappers.HumanRendering(env)
+        env = gym.wrappers.HumanRenderingV0(env)
     elif apply_render_collection:
-        env = gym.wrappers.RenderCollection(env)
+        env = gym.wrappers.RenderCollectionV0(env)
 
     return env
 
@@ -811,7 +811,7 @@ def make_vec(
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
-) -> gym.experimental.vector.VectorEnv:
+) -> gym.vector.VectorEnv:
     """Create a vector environment according to the given ID.
 
     Note:
@@ -885,10 +885,10 @@ def make_vec(
         _env = env_creator(**_kwargs_copy)
         _env.spec = spec_
         if spec_.max_episode_steps is not None:
-            _env = gym.wrappers.TimeLimit(_env, spec_.max_episode_steps)
+            _env = gym.wrappers.TimeLimitV0(_env, spec_.max_episode_steps)
 
         if render_mode is not None and render_mode.endswith("_list"):
-            _env = gym.wrappers.RenderCollection(_env)
+            _env = gym.wrappers.RenderCollectionV0(_env)
 
         for wrapper in wrappers:
             _env = wrapper(_env)

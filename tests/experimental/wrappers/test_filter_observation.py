@@ -1,6 +1,6 @@
 """Test suite for FilterObservationV0."""
-from gymnasium.experimental.wrappers import FilterObservationV0
 from gymnasium.spaces import Box, Dict, Tuple
+from gymnasium.wrappers import FilterObservationV0
 from tests.experimental.wrappers.utils import (
     check_obs,
     record_random_obs_reset,

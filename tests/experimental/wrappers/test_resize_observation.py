@@ -5,8 +5,8 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental.wrappers import ResizeObservationV0
 from gymnasium.spaces import Box
+from gymnasium.wrappers import ResizeObservationV0
 from tests.experimental.wrappers.utils import (
     check_obs,
     record_random_obs_reset,

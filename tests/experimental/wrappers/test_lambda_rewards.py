@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental.wrappers import LambdaRewardV0
+from gymnasium.wrappers import LambdaRewardV0
 from tests.experimental.wrappers.utils import DISCRETE_ACTION, ENV_ID, NUM_ENVS, SEED
 
 

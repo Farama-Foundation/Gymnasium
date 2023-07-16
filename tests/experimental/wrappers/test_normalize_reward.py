@@ -2,7 +2,7 @@
 import numpy as np
 
 from gymnasium.core import ActType
-from gymnasium.experimental.wrappers import NormalizeRewardV1
+from gymnasium.wrappers import NormalizeRewardV1
 from tests.testing_env import GenericTestEnv
 
 
@@ -24,13 +24,13 @@ def test_running_mean_normalize_reward_wrapper():
     assert wrapped_env.update_running_mean
 
     wrapped_env.reset()
-    rms_var_init = wrapped_env.rewards_running_means.var
-    rms_mean_init = wrapped_env.rewards_running_means.mean
+    rms_var_init = wrapped_env.return_rms.var
+    rms_mean_init = wrapped_env.return_rms.mean
 
     # Statistics are updated when env.step()
     wrapped_env.step(None)
-    rms_var_updated = wrapped_env.rewards_running_means.var
-    rms_mean_updated = wrapped_env.rewards_running_means.mean
+    rms_var_updated = wrapped_env.return_rms.var
+    rms_mean_updated = wrapped_env.return_rms.mean
     assert rms_var_init != rms_var_updated
     assert rms_mean_init != rms_mean_updated
 
@@ -40,8 +40,8 @@ def test_running_mean_normalize_reward_wrapper():
 
     # Statistics are frozen
     wrapped_env.step(None)
-    assert rms_var_updated == wrapped_env.rewards_running_means.var
-    assert rms_mean_updated == wrapped_env.rewards_running_means.mean
+    assert rms_var_updated == wrapped_env.return_rms.var
+    assert rms_mean_updated == wrapped_env.return_rms.mean
 
 
 def test_normalize_reward_wrapper():

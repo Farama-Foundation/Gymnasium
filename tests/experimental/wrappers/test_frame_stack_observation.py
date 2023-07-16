@@ -4,10 +4,10 @@ import re
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental.wrappers import FrameStackObservationV0
-from gymnasium.experimental.wrappers.utils import create_zero_array
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import iterate
+from gymnasium.wrappers import FrameStackObservationV0
+from gymnasium.wrappers.utils import create_zero_array
 from tests.experimental.wrappers.utils import (
     SEED,
     TESTING_OBS_ENVS,

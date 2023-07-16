@@ -17,9 +17,9 @@ import numpy as np
 import gymnasium as gym
 import gymnasium.spaces as spaces
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
-from gymnasium.experimental.wrappers.utils import RunningMeanStd, create_zero_array
 from gymnasium.spaces import Box, Dict, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array
+from gymnasium.wrappers.utils import RunningMeanStd, create_zero_array
 
 
 __all__ = [
@@ -156,8 +156,8 @@ class TimeAwareObservationV0(
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
-        flatten: bool = False,
-        normalize_time: bool = True,
+        flatten: bool = True,
+        normalize_time: bool = False,
         *,
         dict_time_key: str = "time",
     ):
@@ -189,7 +189,7 @@ class TimeAwareObservationV0(
                 "The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`."
             )
 
-        self._timesteps: int = 0
+        self.timesteps: int = 0
 
         # Find the normalized time space
         if self.normalize_time:
@@ -198,9 +198,7 @@ class TimeAwareObservationV0(
             )
             time_space = Box(0.0, 1.0)
         else:
-            self._time_preprocess_func = lambda time: np.array(
-                [self.max_timesteps - time], dtype=np.int32
-            )
+            self._time_preprocess_func = lambda time: np.array([time], dtype=np.int32)
             time_space = Box(0, self.max_timesteps, dtype=np.int32)
 
         # Find the observation space
@@ -240,7 +238,7 @@ class TimeAwareObservationV0(
         """
         return self._obs_postprocess_func(
             self._append_data_func(
-                observation, self._time_preprocess_func(self._timesteps)
+                observation, self._time_preprocess_func(self.timesteps)
             )
         )
 
@@ -255,7 +253,7 @@ class TimeAwareObservationV0(
         Returns:
             The environment's step using the action with the next observation containing the timestep info
         """
-        self._timesteps += 1
+        self.timesteps += 1
 
         return super().step(action)
 
@@ -271,7 +269,7 @@ class TimeAwareObservationV0(
         Returns:
             Resets the environment with the initial timestep info added the observation
         """
-        self._timesteps = 0
+        self.timesteps = 0
 
         return super().reset(seed=seed, options=options)
 

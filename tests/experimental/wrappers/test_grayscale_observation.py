@@ -1,8 +1,8 @@
 """Test suite for GrayscaleObservationV0."""
 import numpy as np
 
-from gymnasium.experimental.wrappers import GrayscaleObservationV0
 from gymnasium.spaces import Box
+from gymnasium.wrappers import GrayscaleObservationV0
 from tests.experimental.wrappers.utils import (
     check_obs,
     record_random_obs_reset,

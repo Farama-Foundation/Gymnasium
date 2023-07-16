@@ -2,33 +2,15 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import FrameStack
-
-
-try:
-    import lz4
-except ImportError:
-    lz4 = None
+from gymnasium.wrappers import FrameStackObservationV0
 
 
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1", "CarRacing-v2"])
 @pytest.mark.parametrize("num_stack", [2, 3, 4])
-@pytest.mark.parametrize(
-    "lz4_compress",
-    [
-        pytest.param(
-            True,
-            marks=pytest.mark.skipif(
-                lz4 is None, reason="Need lz4 to run tests with compression"
-            ),
-        ),
-        False,
-    ],
-)
-def test_frame_stack(env_id, num_stack, lz4_compress):
+def test_frame_stack(env_id, num_stack):
     env = gym.make(env_id, disable_env_checker=True)
     shape = env.observation_space.shape
-    env = FrameStack(env, num_stack, lz4_compress)
+    env = FrameStackObservationV0(env, num_stack)
     assert env.observation_space.shape == (num_stack,) + shape
     assert env.observation_space.dtype == env.env.observation_space.dtype
 
