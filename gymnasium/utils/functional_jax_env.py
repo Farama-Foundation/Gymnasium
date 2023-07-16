@@ -10,8 +10,8 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
+from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
 from gymnasium.vector.utils import batch_space
 

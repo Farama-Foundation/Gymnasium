@@ -11,12 +11,9 @@ from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
-from gymnasium.experimental.functional_jax_env import (
-    FunctionalJaxEnv,
-    FunctionalJaxVectorEnv,
-)
+from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
+from gymnasium.utils.functional_jax_env import FunctionalJaxEnv, FunctionalJaxVectorEnv
 
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821

@@ -5,7 +5,7 @@ from typing import Any
 
 import numpy as np
 
-from gymnasium.experimental.functional import FuncEnv
+from gymnasium.functional import FuncEnv
 
 
 class GenericTestFuncEnv(FuncEnv):
