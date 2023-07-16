@@ -3,9 +3,10 @@ from collections import OrderedDict
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Dict, Tuple, Box, Discrete, MultiDiscrete, MultiBinary
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.vector.utils import concatenate, create_empty_array
 from tests.vector.utils import spaces
+
 
 BaseGymSpaces = (Box, Discrete, MultiDiscrete, MultiBinary)
 

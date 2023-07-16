@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from gymnasium.error import CustomSpaceError
-from gymnasium.spaces import Dict, Tuple, Box, Discrete, MultiBinary, MultiDiscrete
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.vector.utils.shared_memory import (
     create_shared_memory,
     read_from_shared_memory,
@@ -16,9 +16,7 @@ from gymnasium.vector.utils.shared_memory import (
 from tests.vector.utils import custom_spaces, spaces
 
 
-BaseGymSpaces = (
-    Box, Discrete, MultiDiscrete, MultiBinary
-)
+BaseGymSpaces = (Box, Discrete, MultiDiscrete, MultiBinary)
 
 
 expected_types = [

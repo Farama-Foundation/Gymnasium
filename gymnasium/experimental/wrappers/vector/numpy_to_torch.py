@@ -4,13 +4,13 @@ from __future__ import annotations
 from typing import Any
 
 from gymnasium.core import ActType, ObsType
-from gymnasium.vector import VectorEnv, VectorWrapper
-from gymnasium.vector.vector_env import ArrayType
 from gymnasium.experimental.wrappers.jax_to_torch import Device
 from gymnasium.experimental.wrappers.numpy_to_torch import (
     numpy_to_torch,
     torch_to_numpy,
 )
+from gymnasium.vector import VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import ArrayType
 
 
 __all__ = ["NumpyToTorchV0"]

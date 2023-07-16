@@ -7,12 +7,7 @@ from typing import Any, Callable, Iterator
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.vector.utils import (
-    batch_space,
-    concatenate,
-    create_empty_array,
-    iterate,
-)
+from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import VectorEnv
 
 

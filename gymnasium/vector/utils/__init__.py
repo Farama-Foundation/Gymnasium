@@ -1,9 +1,6 @@
 """Module for gymnasium experimental vector utility functions."""
 
-from gymnasium.vector.utils.misc import (
-    CloudpickleWrapper,
-    clear_mpi_env_vars,
-)
+from gymnasium.vector.utils.misc import CloudpickleWrapper, clear_mpi_env_vars
 from gymnasium.vector.utils.shared_memory import (
     create_shared_memory,
     read_from_shared_memory,
