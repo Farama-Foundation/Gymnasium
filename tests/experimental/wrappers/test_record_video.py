@@ -157,7 +157,7 @@ def test_record_video_within_vector():
     envs = gym.vector.SyncVectorEnv(
         [make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(2)]
     )
-    envs = gym.wrappers.RecordEpisodeStatistics(envs)
+    envs = gym.experimental.wrappers.vector.RecordEpisodeStatisticsV0(envs)
     envs.reset()
     for i in range(199):
         _, _, _, _, infos = envs.step(envs.action_space.sample())
