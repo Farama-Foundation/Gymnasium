@@ -192,7 +192,7 @@ class OffScreenViewer(BaseRender):
 
     def render(
         self,
-        render_mode: str,
+        render_mode: Optional[str],
         camera_id: Optional[int] = None,
         segmentation: bool = False,
     ):
@@ -628,7 +628,7 @@ class MujocoRenderer:
 
     def render(
         self,
-        render_mode: str,
+        render_mode: Optional[str],
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
     ):
