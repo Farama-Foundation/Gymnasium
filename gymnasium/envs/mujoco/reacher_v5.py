@@ -9,7 +9,7 @@ from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
 
-DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0.0}
+DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
 
 
 class ReacherEnv(MujocoEnv, utils.EzPickle):
