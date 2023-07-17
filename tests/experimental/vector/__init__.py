@@ -1,1 +1,1 @@
-"""Testing for `gymnasium.experimental.vector`."""
+"""Testing for `gymnasium.vector`."""

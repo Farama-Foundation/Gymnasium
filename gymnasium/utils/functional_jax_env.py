@@ -113,7 +113,7 @@ class FunctionalJaxEnv(gym.Env):
             self.render_state = None
 
 
-class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
+class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
     """A vector env implementation for functional Jax envs."""
 
     state: StateType

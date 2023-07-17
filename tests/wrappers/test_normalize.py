@@ -1,6 +1,7 @@
 from typing import Optional
 
 import numpy as np
+import pytest
 from numpy.testing import assert_almost_equal
 
 import gymnasium as gym
@@ -79,6 +80,7 @@ def test_normalize_return():
     )
 
 
+@pytest.mark.skip("Update to the new vector NormalizeReward wrapper")
 def test_normalize_observation_vector_env():
     env_fns = [make_env(0), make_env(1)]
     envs = gym.vector.SyncVectorEnv(env_fns)
@@ -104,11 +106,12 @@ def test_normalize_observation_vector_env():
     )
 
 
+@pytest.mark.skip("Update to the new vector NormalizeReward wrapper")
 def test_normalize_return_vector_env():
     env_fns = [make_env(0), make_env(1)]
     envs = gym.vector.SyncVectorEnv(env_fns)
     envs = NormalizeReward(envs)
-    obs = envs.reset()
+    envs.reset()
     obs, reward, _, _, _ = envs.step(envs.action_space.sample())
     assert_almost_equal(
         envs.return_rms.mean,

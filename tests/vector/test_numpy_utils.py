@@ -3,10 +3,12 @@ from collections import OrderedDict
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Dict, Tuple
-from gymnasium.vector.utils.numpy_utils import concatenate, create_empty_array
-from gymnasium.vector.utils.spaces import BaseGymSpaces
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
+from gymnasium.vector.utils import concatenate, create_empty_array
 from tests.vector.utils import spaces
+
+
+BaseGymSpaces = (Box, Discrete, MultiDiscrete, MultiBinary)
 
 
 @pytest.mark.parametrize(
@@ -112,6 +114,7 @@ def test_create_empty_array_zeros(space, n):
     assert_nested_type(array, space, n=n)
 
 
+@pytest.mark.skip(reason="This feature has not been kept")
 @pytest.mark.parametrize(
     "space", spaces, ids=[space.__class__.__name__ for space in spaces]
 )

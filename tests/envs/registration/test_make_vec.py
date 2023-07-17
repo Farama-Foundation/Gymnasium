@@ -3,7 +3,7 @@
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
 

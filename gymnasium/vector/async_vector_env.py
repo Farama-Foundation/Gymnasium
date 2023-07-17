@@ -1,15 +1,17 @@
 """An async vector environment."""
-import multiprocessing as mp
+from __future__ import annotations
+
+import multiprocessing
 import sys
 import time
 from copy import deepcopy
 from enum import Enum
-from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
+from multiprocessing import Queue
+from multiprocessing.connection import Connection
+from typing import Any, Callable, Sequence
 
 import numpy as np
-from numpy.typing import NDArray
 
-import gymnasium as gym
 from gymnasium import logger
 from gymnasium.core import Env, ObsType
 from gymnasium.error import (
@@ -20,6 +22,7 @@ from gymnasium.error import (
 )
 from gymnasium.vector.utils import (
     CloudpickleWrapper,
+    batch_space,
     clear_mpi_env_vars,
     concatenate,
     create_empty_array,
@@ -60,22 +63,16 @@ class AsyncVectorEnv(VectorEnv):
     def __init__(
         self,
         env_fns: Sequence[Callable[[], Env]],
-        observation_space: Optional[gym.Space] = None,
-        action_space: Optional[gym.Space] = None,
         shared_memory: bool = True,
         copy: bool = True,
-        context: Optional[str] = None,
+        context: str | None = None,
         daemon: bool = True,
-        worker: Optional[Callable] = None,
+        worker: callable | None = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
         Args:
             env_fns: Functions that create the environments.
-            observation_space: Observation space of a single environment. If ``None``,
-                then the observation space of the first environment is taken.
-            action_space: Action space of a single environment. If ``None``,
-                then the action space of the first environment is taken.
             shared_memory: If ``True``, then the observations from the worker processes are communicated back through
                 shared variables. This can improve the efficiency if the observations are large (e.g. images).
             copy: If ``True``, then the :meth:`~AsyncVectorEnv.reset` and :meth:`~AsyncVectorEnv.step` methods
@@ -98,23 +95,28 @@ class AsyncVectorEnv(VectorEnv):
             ValueError: If observation_space is a custom space (i.e. not a default space in Gym,
                 such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.
         """
-        ctx = mp.get_context(context)
+        super().__init__()
+
+        ctx = multiprocessing.get_context(context)
         self.env_fns = env_fns
+        self.num_envs = len(env_fns)
         self.shared_memory = shared_memory
         self.copy = copy
+
+        # This would be nice to get rid of, but without it there's a deadlock between shared memory and pipes
         dummy_env = env_fns[0]()
         self.metadata = dummy_env.metadata
 
-        if (observation_space is None) or (action_space is None):
-            observation_space = observation_space or dummy_env.observation_space
-            action_space = action_space or dummy_env.action_space
+        self.single_observation_space = dummy_env.observation_space
+        self.single_action_space = dummy_env.action_space
+
+        self.observation_space = batch_space(
+            self.single_observation_space, self.num_envs
+        )
+        self.action_space = batch_space(self.single_action_space, self.num_envs)
+
         dummy_env.close()
         del dummy_env
-        super().__init__(
-            num_envs=len(env_fns),
-            observation_space=observation_space,
-            action_space=action_space,
-        )
 
         if self.shared_memory:
             try:
@@ -141,8 +143,7 @@ class AsyncVectorEnv(VectorEnv):
 
         self.parent_pipes, self.processes = [], []
         self.error_queue = ctx.Queue()
-        target = _worker_shared_memory if self.shared_memory else _worker
-        target = worker or target
+        target = worker or _worker
         with clear_mpi_env_vars():
             for idx, env_fn in enumerate(self.env_fns):
                 parent_pipe, child_pipe = ctx.Pipe()
@@ -171,8 +172,8 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_async(
         self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
     ):
         """Send calls to the :obj:`reset` methods of the sub-environments.
 
@@ -199,7 +200,7 @@ class AsyncVectorEnv(VectorEnv):
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
                 f"Calling `reset_async` while waiting for a pending call to `{self._state.value}` to complete",
-                self._state.value,
+                str(self._state.value),
             )
 
         for pipe, single_seed in zip(self.parent_pipes, seed):
@@ -214,16 +215,12 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_wait(
         self,
-        timeout: Optional[Union[int, float]] = None,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ) -> Union[ObsType, Tuple[ObsType, dict]]:
+        timeout: int | float | None = None,
+    ) -> tuple[ObsType, list[dict]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
             timeout: Number of seconds before the call to `reset_wait` times out. If `None`, the call to `reset_wait` never times out.
-            seed: ignored
-            options: ignored
 
         Returns:
             A tuple of batched observations and list of dictionaries
@@ -242,7 +239,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `reset_wait` has timed out after {timeout} second(s)."
             )
 
@@ -262,6 +259,24 @@ class AsyncVectorEnv(VectorEnv):
 
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
+    ):
+        """Reset all parallel environments and return a batch of initial observations and info.
+
+        Args:
+            seed: The environment reset seeds
+            options: If to return the options
+
+        Returns:
+            A batch of observations and info from the vectorized environment.
+        """
+        self.reset_async(seed=seed, options=options)
+        return self.reset_wait()
+
     def step_async(self, actions: np.ndarray):
         """Send the calls to :obj:`step` to each sub-environment.
 
@@ -279,7 +294,7 @@ class AsyncVectorEnv(VectorEnv):
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
                 f"Calling `step_async` while waiting for a pending call to `{self._state.value}` to complete.",
-                self._state.value,
+                str(self._state.value),
             )
 
         actions = iterate(self.action_space, actions)
@@ -288,8 +303,8 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.WAITING_STEP
 
     def step_wait(
-        self, timeout: Optional[Union[int, float]] = None
-    ) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
+        self, timeout: int | float | None = None
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
         """Wait for the calls to :obj:`step` in each sub-environment to finish.
 
         Args:
@@ -312,7 +327,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `step_wait` has timed out after {timeout} second(s)."
             )
 
@@ -320,10 +335,10 @@ class AsyncVectorEnv(VectorEnv):
         successes = []
         for i, pipe in enumerate(self.parent_pipes):
             result, success = pipe.recv()
+            obs, rew, terminated, truncated, info = result
+
             successes.append(success)
             if success:
-                obs, rew, terminated, truncated, info = result
-
                 observations_list.append(obs)
                 rewards.append(rew)
                 terminateds.append(terminated)
@@ -348,6 +363,18 @@ class AsyncVectorEnv(VectorEnv):
             infos,
         )
 
+    def step(self, actions):
+        """Take an action for each parallel environment.
+
+        Args:
+            actions: element of :attr:`action_space` Batch of actions.
+
+        Returns:
+            Batch of (observations, rewards, terminations, truncations, infos)
+        """
+        self.step_async(actions)
+        return self.step_wait()
+
     def call_async(self, name: str, *args, **kwargs):
         """Calls the method with name asynchronously and apply args and kwargs to the method.
 
@@ -365,14 +392,14 @@ class AsyncVectorEnv(VectorEnv):
             raise AlreadyPendingCallError(
                 "Calling `call_async` while waiting "
                 f"for a pending call to `{self._state.value}` to complete.",
-                self._state.value,
+                str(self._state.value),
             )
 
         for pipe in self.parent_pipes:
             pipe.send(("_call", (name, args, kwargs)))
         self._state = AsyncState.WAITING_CALL
 
-    def call_wait(self, timeout: Optional[Union[int, float]] = None) -> list:
+    def call_wait(self, timeout: int | float | None = None) -> list:
         """Calls all parent pipes and waits for the results.
 
         Args:
@@ -395,7 +422,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if not self._poll(timeout):
             self._state = AsyncState.DEFAULT
-            raise mp.TimeoutError(
+            raise multiprocessing.TimeoutError(
                 f"The call to `call_wait` has timed out after {timeout} second(s)."
             )
 
@@ -405,7 +432,32 @@ class AsyncVectorEnv(VectorEnv):
 
         return results
 
-    def set_attr(self, name: str, values: Union[list, tuple, object]):
+    def call(self, name: str, *args, **kwargs) -> list[Any]:
+        """Call a method, or get a property, from each parallel environment.
+
+        Args:
+            name (str): Name of the method or property to call.
+            *args: Arguments to apply to the method call.
+            **kwargs: Keyword arguments to apply to the method call.
+
+        Returns:
+            List of the results of the individual calls to the method or property for each environment.
+        """
+        self.call_async(name, *args, **kwargs)
+        return self.call_wait()
+
+    def get_attr(self, name: str):
+        """Get a property from each parallel environment.
+
+        Args:
+            name (str): Name of the property to be get from each individual environment.
+
+        Returns:
+            The property with name
+        """
+        return self.call(name)
+
+    def set_attr(self, name: str, values: list[Any] | tuple[Any] | object):
         """Sets an attribute of the sub-environments.
 
         Args:
@@ -432,7 +484,7 @@ class AsyncVectorEnv(VectorEnv):
             raise AlreadyPendingCallError(
                 "Calling `set_attr` while waiting "
                 f"for a pending call to `{self._state.value}` to complete.",
-                self._state.value,
+                str(self._state.value),
             )
 
         for pipe, value in zip(self.parent_pipes, values):
@@ -440,9 +492,7 @@ class AsyncVectorEnv(VectorEnv):
         _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
         self._raise_if_errors(successes)
 
-    def close_extras(
-        self, timeout: Optional[Union[int, float]] = None, terminate: bool = False
-    ):
+    def close_extras(self, timeout: int | float | None = None, terminate: bool = False):
         """Close the environments & clean up the extra resources (processes and pipes).
 
         Args:
@@ -462,7 +512,7 @@ class AsyncVectorEnv(VectorEnv):
                 )
                 function = getattr(self, f"{self._state.value}_wait")
                 function(timeout)
-        except mp.TimeoutError:
+        except multiprocessing.TimeoutError:
             terminate = True
 
         if terminate:
@@ -507,15 +557,13 @@ class AsyncVectorEnv(VectorEnv):
         same_observation_spaces, same_action_spaces = zip(*results)
         if not all(same_observation_spaces):
             raise RuntimeError(
-                "Some environments have an observation space different from "
-                f"`{self.single_observation_space}`. In order to batch observations, "
-                "the observation spaces from all environments must be equal."
+                f"Some environments have an observation space different from `{self.single_observation_space}`. "
+                "In order to batch observations, the observation spaces from all environments must be equal."
             )
         if not all(same_action_spaces):
             raise RuntimeError(
-                "Some environments have an action space different from "
-                f"`{self.single_action_space}`. In order to batch actions, the "
-                "action spaces from all environments must be equal."
+                f"Some environments have an action space different from `{self.single_action_space}`. "
+                "In order to batch actions, the action spaces from all environments must be equal."
             )
 
     def _assert_is_running(self):
@@ -524,7 +572,7 @@ class AsyncVectorEnv(VectorEnv):
                 f"Trying to operate on `{type(self).__name__}`, after a call to `close()`."
             )
 
-    def _raise_if_errors(self, successes):
+    def _raise_if_errors(self, successes: list[bool]):
         if all(successes):
             return
 
@@ -549,15 +597,29 @@ class AsyncVectorEnv(VectorEnv):
             self.close(terminate=True)
 
 
-def _worker(index, env_fn, pipe, parent_pipe, shared_memory, error_queue):
-    assert shared_memory is None
+def _worker(
+    index: int,
+    env_fn: callable,
+    pipe: Connection,
+    parent_pipe: Connection,
+    shared_memory: bool,
+    error_queue: Queue,
+):
     env = env_fn()
+    observation_space = env.observation_space
+    action_space = env.action_space
     parent_pipe.close()
     try:
         while True:
             command, data = pipe.recv()
+
             if command == "reset":
                 observation, info = env.reset(**data)
+                if shared_memory:
+                    write_to_shared_memory(
+                        observation_space, index, observation, shared_memory
+                    )
+                    observation = None
                 pipe.send(((observation, info), True))
 
             elif command == "step":
@@ -573,6 +635,13 @@ def _worker(index, env_fn, pipe, parent_pipe, shared_memory, error_queue):
                     observation, info = env.reset()
                     info["final_observation"] = old_observation
                     info["final_info"] = old_info
+
+                if shared_memory:
+                    write_to_shared_memory(
+                        observation_space, index, observation, shared_memory
+                    )
+                    observation = None
+
                 pipe.send(((observation, reward, terminated, truncated, info), True))
             elif command == "seed":
                 env.seed(data)
@@ -599,80 +668,9 @@ def _worker(index, env_fn, pipe, parent_pipe, shared_memory, error_queue):
             elif command == "_check_spaces":
                 pipe.send(
                     (
-                        (data[0] == env.observation_space, data[1] == env.action_space),
+                        (data[0] == observation_space, data[1] == action_space),
                         True,
                     )
-                )
-            else:
-                raise RuntimeError(
-                    f"Received unknown command `{command}`. Must "
-                    "be one of {`reset`, `step`, `seed`, `close`, `_call`, "
-                    "`_setattr`, `_check_spaces`}."
-                )
-    except (KeyboardInterrupt, Exception):
-        error_queue.put((index,) + sys.exc_info()[:2])
-        pipe.send((None, False))
-    finally:
-        env.close()
-
-
-def _worker_shared_memory(index, env_fn, pipe, parent_pipe, shared_memory, error_queue):
-    assert shared_memory is not None
-    env = env_fn()
-    observation_space = env.observation_space
-    parent_pipe.close()
-    try:
-        while True:
-            command, data = pipe.recv()
-            if command == "reset":
-                observation, info = env.reset(**data)
-                write_to_shared_memory(
-                    observation_space, index, observation, shared_memory
-                )
-                pipe.send(((None, info), True))
-
-            elif command == "step":
-                (
-                    observation,
-                    reward,
-                    terminated,
-                    truncated,
-                    info,
-                ) = env.step(data)
-                if terminated or truncated:
-                    old_observation, old_info = observation, info
-                    observation, info = env.reset()
-                    info["final_observation"] = old_observation
-                    info["final_info"] = old_info
-                write_to_shared_memory(
-                    observation_space, index, observation, shared_memory
-                )
-                pipe.send(((None, reward, terminated, truncated, info), True))
-            elif command == "seed":
-                env.seed(data)
-                pipe.send((None, True))
-            elif command == "close":
-                pipe.send((None, True))
-                break
-            elif command == "_call":
-                name, args, kwargs = data
-                if name in ["reset", "step", "seed", "close"]:
-                    raise ValueError(
-                        f"Trying to call function `{name}` with "
-                        f"`_call`. Use `{name}` directly instead."
-                    )
-                function = env.get_wrapper_attr(name)
-                if callable(function):
-                    pipe.send((function(*args, **kwargs), True))
-                else:
-                    pipe.send((function, True))
-            elif command == "_setattr":
-                name, value = data
-                setattr(env, name, value)
-                pipe.send((None, True))
-            elif command == "_check_spaces":
-                pipe.send(
-                    ((data[0] == observation_space, data[1] == env.action_space), True)
                 )
             else:
                 raise RuntimeError(

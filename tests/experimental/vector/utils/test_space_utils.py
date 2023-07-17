@@ -1,4 +1,4 @@
-"""Testing `gymnasium.experimental.vector.utils.space_utils` functions."""
+"""Testing `gymnasium.vector.utils.space_utils` functions."""
 
 import copy
 import re
@@ -8,14 +8,9 @@ import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
-from gymnasium.experimental.vector.utils import (
-    batch_space,
-    concatenate,
-    create_empty_array,
-    iterate,
-)
 from gymnasium.spaces import Tuple
 from gymnasium.utils.env_checker import data_equivalence
+from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from tests.experimental.vector.utils.utils import is_rng_equal
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS, CustomSpace
 

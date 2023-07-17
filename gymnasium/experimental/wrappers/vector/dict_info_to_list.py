@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from gymnasium.core import ActType, ObsType
-from gymnasium.experimental.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 
 
 __all__ = ["DictInfoToListV0"]
