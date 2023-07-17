@@ -10,7 +10,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy
+from gymnasium.wrappers.jax_to_numpy import jax_to_numpy
 from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
 from gymnasium.vector.utils import batch_space
@@ -113,7 +113,7 @@ class FunctionalJaxEnv(gym.Env):
             self.render_state = None
 
 
-class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
+class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
     """A vector env implementation for functional Jax envs."""
 
     state: StateType

@@ -16,7 +16,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
 from gymnasium.utils.functional_jax_env import FunctionalJaxEnv
-from gymnasium.wrappers import HumanRendering
+from gymnasium.wrappers import HumanRenderingV0
 
 
 if TYPE_CHECKING:
@@ -370,7 +370,7 @@ if __name__ == "__main__":
     Temporary environment tester function.
     """
 
-    env = HumanRendering(CliffWalkingJaxEnv(render_mode="rgb_array"))
+    env = HumanRenderingV0(CliffWalkingJaxEnv(render_mode="rgb_array"))
 
     obs, info = env.reset()
     print(obs, info)

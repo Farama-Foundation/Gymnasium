@@ -93,15 +93,16 @@ class FilterObservationV0(
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FilterObservationV0
         >>> env = gym.make("CartPole-v1")
-        >>> env = gym.wrappers.TimeAwareObservationV0(env)
-        >>> env.observation_space = gym.spaces.Dict(obs=env.observation_space, time=gym.spaces.Discrete(1))
+        >>> env = gym.wrappers.TimeAwareObservationV0(env, flatten=False)
+        >>> env.observation_space
+        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
         >>> env.reset(seed=42)
-        ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': 0}, {})
+        ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}, {})
         >>> env = FilterObservationV0(env, filter_keys=['time'])
         >>> env.reset(seed=42)
-        ({'time': 0}, {})
+        ({'time': array([0], dtype=int32)}, {})
         >>> env.step(0)
-        ({'time': 0}, 1.0, False, False, {})
+        ({'time': array([1], dtype=int32)}, 1.0, False, False, {})
     """
 
     def __init__(

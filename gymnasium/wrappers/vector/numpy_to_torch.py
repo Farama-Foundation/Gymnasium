@@ -4,8 +4,8 @@ from __future__ import annotations
 from typing import Any
 
 from gymnasium.core import ActType, ObsType
-from gymnasium.experimental.wrappers.jax_to_torch import Device
-from gymnasium.experimental.wrappers.numpy_to_torch import (
+from gymnasium.wrappers.jax_to_torch import Device
+from gymnasium.wrappers.numpy_to_torch import (
     numpy_to_torch,
     torch_to_numpy,
 )

@@ -24,7 +24,7 @@ class LambdaRewardV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import LambdaRewardV0
+        >>> from gymnasium.wrappers import LambdaRewardV0
         >>> env = gym.make("CartPole-v1")
         >>> env = LambdaRewardV0(env, lambda r: 2 * r + 1)
         >>> _ = env.reset()
@@ -63,7 +63,7 @@ class ClipRewardV0(LambdaRewardV0[ObsType, ActType], gym.utils.RecordConstructor
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import ClipRewardV0
+        >>> from gymnasium.wrappers import ClipRewardV0
         >>> env = gym.make("CartPole-v1")
         >>> env = ClipRewardV0(env, 0, 0.5)
         >>> _ = env.reset()
