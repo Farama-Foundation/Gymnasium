@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
-from gymnasium import spaces
+from gymnasium import logger, spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 
@@ -234,6 +234,10 @@ class Env(Generic[ObsType, ActType]):
         # propagate exception
         return False
 
+    def get_wrapper_attr(self, name: str) -> Any:
+        """Gets the attribute `name` from the environment."""
+        return getattr(self, name)
+
 
 WrapperObsType = TypeVar("WrapperObsType")
 WrapperActType = TypeVar("WrapperActType")
@@ -273,14 +277,47 @@ class Wrapper(
         self._cached_spec: EnvSpec | None = None
 
     def __getattr__(self, name: str) -> Any:
-        """Returns an attribute with ``name``, unless ``name`` starts with an underscore."""
+        """Returns an attribute with ``name``, unless ``name`` starts with an underscore.
+
+        Args:
+            name: The variable name
+
+        Returns:
+            The value of the variable in the wrapper stack
+
+        Warnings:
+            This feature is deprecated and removed in v1.0 and replaced with `env.get_attr(name})`
+        """
         if name == "_np_random":
             raise AttributeError(
                 "Can't access `_np_random` of a wrapper, use `self.unwrapped._np_random` or `self.np_random`."
             )
         elif name.startswith("_"):
             raise AttributeError(f"accessing private attribute '{name}' is prohibited")
+        logger.warn(
+            f"env.{name} to get variables from other wrappers is deprecated and will be removed in v1.0, "
+            f"to get this variable you can do `env.unwrapped.{name}` for environment variables or `env.get_attr('{name}')` that will search the reminding wrappers."
+        )
         return getattr(self.env, name)
+
+    def get_wrapper_attr(self, name: str) -> Any:
+        """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.
+
+        Args:
+            name: The variable name to get
+
+        Returns:
+            The variable with name in wrapper or lower environments
+        """
+        if hasattr(self, name):
+            return getattr(self, name)
+        else:
+            try:
+                return self.env.get_wrapper_attr(name)
+            except AttributeError as e:
+                raise AttributeError(
+                    f"wrapper {self.class_name()} has no attribute {name!r}"
+                ) from e
 
     @property
     def spec(self) -> EnvSpec | None:
@@ -361,6 +398,7 @@ class Wrapper(
         """Return the :attr:`Env` :attr:`reward_range` unless overwritten then the wrapper :attr:`reward_range` is used."""
         if self._reward_range is None:
             return self.env.reward_range
+        logger.warn("The `reward_range` is deprecated and will be removed in v1.0")
         return self._reward_range
 
     @reward_range.setter
