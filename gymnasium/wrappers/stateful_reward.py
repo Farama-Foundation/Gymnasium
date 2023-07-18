@@ -10,7 +10,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType
-from gymnasium.experimental.wrappers.utils import RunningMeanStd
+from gymnasium.wrappers.utils import RunningMeanStd
 
 
 __all__ = ["NormalizeRewardV1"]
@@ -52,7 +52,7 @@ class NormalizeRewardV1(
         gym.utils.RecordConstructorArgs.__init__(self, gamma=gamma, epsilon=epsilon)
         gym.Wrapper.__init__(self, env)
 
-        self.rewards_running_means = RunningMeanStd(shape=())
+        self.return_rms = RunningMeanStd(shape=())
         self.discounted_reward: np.array = np.array([0.0])
         self.gamma = gamma
         self.epsilon = epsilon
@@ -81,5 +81,5 @@ class NormalizeRewardV1(
     def normalize(self, reward: SupportsFloat):
         """Normalizes the rewards with the running mean rewards and their variance."""
         if self._update_running_mean:
-            self.rewards_running_means.update(self.discounted_reward)
-        return reward / np.sqrt(self.rewards_running_means.var + self.epsilon)
+            self.return_rms.update(self.discounted_reward)
+        return reward / np.sqrt(self.return_rms.var + self.epsilon)

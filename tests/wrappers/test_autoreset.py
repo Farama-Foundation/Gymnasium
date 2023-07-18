@@ -4,7 +4,7 @@ from typing import Generator, Optional
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.wrappers import AutoResetWrapper
+from gymnasium.wrappers import AutoresetV0
 
 
 class DummyResetEnv(gym.Env):
@@ -52,7 +52,7 @@ def unwrap_env(env) -> Generator[gym.Wrapper, None, None]:
 def test_autoreset_wrapper_autoreset():
     """Tests the autoreset wrapper actually automatically resets correctly."""
     env = DummyResetEnv()
-    env = AutoResetWrapper(env)
+    env = AutoresetV0(env)
 
     obs, info = env.reset()
     assert obs == np.array([0])

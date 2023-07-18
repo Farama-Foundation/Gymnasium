@@ -18,7 +18,12 @@ from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 
 
-__all__ = ["RenderCollectionV0", "RecordVideoV0", "HumanRenderingV0"]
+__all__ = [
+    "RenderCollectionV0",
+    "RecordVideoV0",
+    "HumanRenderingV0",
+    "capped_cubic_video_schedule",
+]
 
 
 class RenderCollectionV0(
@@ -89,6 +94,14 @@ class RenderCollectionV0(
         return frames
 
 
+def capped_cubic_video_schedule(episode_id: int) -> bool:
+    """A scheduling function for the RecordVideo wrapper where videos are taken on capped (1000) cubic schedule."""
+    if episode_id < 1000:
+        return int(round(episode_id ** (1.0 / 3))) ** 3 == episode_id
+    else:
+        return episode_id % 1000 == 0
+
+
 class RecordVideoV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
@@ -148,13 +161,6 @@ class RecordVideoV0(
             )
 
         if episode_trigger is None and step_trigger is None:
-
-            def capped_cubic_video_schedule(episode_id: int) -> bool:
-                if episode_id < 1000:
-                    return int(round(episode_id ** (1.0 / 3))) ** 3 == episode_id
-                else:
-                    return episode_id % 1000 == 0
-
             episode_trigger = capped_cubic_video_schedule
 
         self.episode_trigger = episode_trigger
@@ -314,7 +320,7 @@ class HumanRenderingV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import HumanRenderingV0
+        >>> from gymnasium.wrappers import HumanRenderingV0
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> wrapped = HumanRenderingV0(env)
         >>> obs, _ = wrapped.reset()     # This will start rendering to the screen

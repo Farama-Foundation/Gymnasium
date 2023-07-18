@@ -58,7 +58,7 @@ class ClipActionV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import ClipActionV0
+        >>> from gymnasium.wrappers import ClipActionV0
         >>> import numpy as np
         >>> env = gym.make("Hopper-v4", disable_env_checker=True)
         >>> env = ClipActionV0(env)
@@ -103,7 +103,7 @@ class RescaleActionV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import RescaleActionV0
+        >>> from gymnasium.wrappers import RescaleActionV0
         >>> import numpy as np
         >>> env = gym.make("Hopper-v4", disable_env_checker=True)
         >>> _ = env.reset(seed=42)

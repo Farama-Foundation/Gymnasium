@@ -1,8 +1,8 @@
 """Test suite for RescaleActionV0."""
 import numpy as np
 
-from gymnasium.experimental.wrappers import RescaleActionV0
 from gymnasium.spaces import Box
+from gymnasium.wrappers import RescaleActionV0
 from tests.experimental.wrappers.utils import record_action_step
 from tests.testing_env import GenericTestEnv
 

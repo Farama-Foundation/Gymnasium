@@ -4,17 +4,17 @@ import importlib
 import re
 
 from gymnasium.error import DeprecatedWrapper
-from gymnasium.experimental.wrappers.vector.dict_info_to_list import DictInfoToListV0
-from gymnasium.experimental.wrappers.vector.record_episode_statistics import (
+from gymnasium.wrappers.vector.dict_info_to_list import DictInfoToListV0
+from gymnasium.wrappers.vector.record_episode_statistics import (
     RecordEpisodeStatisticsV0,
 )
-from gymnasium.experimental.wrappers.vector.vectorize_action import (
+from gymnasium.wrappers.vector.vectorize_action import (
     ClipActionV0,
     LambdaActionV0,
     RescaleActionV0,
     VectorizeLambdaActionV0,
 )
-from gymnasium.experimental.wrappers.vector.vectorize_observation import (
+from gymnasium.wrappers.vector.vectorize_observation import (
     DtypeObservationV0,
     FilterObservationV0,
     FlattenObservationV0,
@@ -25,7 +25,7 @@ from gymnasium.experimental.wrappers.vector.vectorize_observation import (
     ResizeObservationV0,
     VectorizeLambdaObservationV0,
 )
-from gymnasium.experimental.wrappers.vector.vectorize_reward import (
+from gymnasium.wrappers.vector.vectorize_reward import (
     ClipRewardV0,
     LambdaRewardV0,
     VectorizeLambdaRewardV0,
@@ -101,9 +101,7 @@ def __getattr__(wrapper_name: str):
     """
     # Check if the requested wrapper is in the _wrapper_to_class dictionary
     if wrapper_name in _wrapper_to_class:
-        import_stmt = (
-            f"gymnasium.experimental.wrappers.vector.{_wrapper_to_class[wrapper_name]}"
-        )
+        import_stmt = f"gymnasium.wrappers.vector.{_wrapper_to_class[wrapper_name]}"
         module = importlib.import_module(import_stmt)
         return getattr(module, wrapper_name)
 
@@ -137,7 +135,7 @@ def __getattr__(wrapper_name: str):
         raise DeprecatedWrapper(
             f"{wrapper_name!r} is now deprecated, use {latest_wrapper!r} instead.\n"
             f"To see the changes made, go to "
-            f"https://gymnasium.farama.org/api/experimental/vector-wrappers/#gymnasium.experimental.wrappers.vector.{latest_wrapper}"
+            f"https://gymnasium.farama.org/api/vector-wrappers/#gymnasium.wrappers.vector.{latest_wrapper}"
         )
     # If the requested version is invalid, raise an AttributeError
     else:

@@ -1,6 +1,6 @@
 """Test suite for FlattenObservationV0."""
-from gymnasium.experimental.wrappers import FlattenObservationV0
 from gymnasium.spaces import Box, Dict
+from gymnasium.wrappers import FlattenObservationV0
 from tests.experimental.wrappers.utils import (
     check_obs,
     record_random_obs_reset,

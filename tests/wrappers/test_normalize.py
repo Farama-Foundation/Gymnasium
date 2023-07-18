@@ -5,7 +5,7 @@ import pytest
 from numpy.testing import assert_almost_equal
 
 import gymnasium as gym
-from gymnasium.wrappers.normalize import NormalizeObservation, NormalizeReward
+from gymnasium.wrappers import NormalizeObservationV0, NormalizeRewardV1
 
 
 class DummyRewardEnv(gym.Env):
@@ -46,7 +46,7 @@ def make_env(return_reward_idx):
 
 def test_normalize_observation():
     env = DummyRewardEnv(return_reward_idx=0)
-    env = NormalizeObservation(env)
+    env = NormalizeObservationV0(env)
     env.reset()
     env.step(env.action_space.sample())
     assert_almost_equal(env.obs_rms.mean, 0.5, decimal=4)
@@ -56,7 +56,7 @@ def test_normalize_observation():
 
 def test_normalize_reset_info():
     env = DummyRewardEnv(return_reward_idx=0)
-    env = NormalizeObservation(env)
+    env = NormalizeObservationV0(env)
     obs, info = env.reset()
     assert isinstance(obs, np.ndarray)
     assert isinstance(info, dict)
@@ -64,7 +64,7 @@ def test_normalize_reset_info():
 
 def test_normalize_return():
     env = DummyRewardEnv(return_reward_idx=0)
-    env = NormalizeReward(env)
+    env = NormalizeRewardV1(env)
     env.reset()
     env.step(env.action_space.sample())
     assert_almost_equal(
@@ -80,7 +80,6 @@ def test_normalize_return():
     )
 
 
-@pytest.mark.skip("Update to the new vector NormalizeReward wrapper")
 def test_normalize_observation_vector_env():
     env_fns = [make_env(0), make_env(1)]
     envs = gym.vector.SyncVectorEnv(env_fns)
@@ -91,7 +90,7 @@ def test_normalize_observation_vector_env():
 
     env_fns = [make_env(0), make_env(1)]
     envs = gym.vector.SyncVectorEnv(env_fns)
-    envs = NormalizeObservation(envs)
+    envs = NormalizeObservationV0(envs)
     envs.reset()
     assert_almost_equal(
         envs.obs_rms.mean,
@@ -106,11 +105,11 @@ def test_normalize_observation_vector_env():
     )
 
 
-@pytest.mark.skip("Update to the new vector NormalizeReward wrapper")
+@pytest.mark.skip(reason="wrappers.vector.NormalizeReward is not yet implemented")
 def test_normalize_return_vector_env():
     env_fns = [make_env(0), make_env(1)]
     envs = gym.vector.SyncVectorEnv(env_fns)
-    envs = NormalizeReward(envs)
+    envs = NormalizeRewardV1(envs)
     envs.reset()
     obs, reward, _, _, _ = envs.step(envs.action_space.sample())
     assert_almost_equal(

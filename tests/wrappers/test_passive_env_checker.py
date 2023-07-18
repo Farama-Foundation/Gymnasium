@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers.env_checker import PassiveEnvChecker
+from gymnasium.wrappers import PassiveEnvCheckerV0
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_initialised_envs
 from tests.testing_env import GenericTestEnv
@@ -18,7 +18,7 @@ from tests.testing_env import GenericTestEnv
 )
 def test_passive_checker_wrapper_warnings(env):
     with warnings.catch_warnings(record=True) as caught_warnings:
-        checker_env = PassiveEnvChecker(env)
+        checker_env = PassiveEnvCheckerV0(env)
         checker_env.reset()
         checker_env.step(checker_env.action_space.sample())
         # todo, add check for render, bugged due to mujoco v2/3 and v4 envs
@@ -53,7 +53,7 @@ def test_passive_checker_wrapper_warnings(env):
 )
 def test_initialise_failures(env, message):
     with pytest.raises(AssertionError, match=f"^{re.escape(message)}$"):
-        PassiveEnvChecker(env)
+        PassiveEnvCheckerV0(env)
 
     env.close()
 
@@ -72,7 +72,7 @@ def test_api_failures():
         step_func=_step_failure,
         metadata={"render_modes": "error"},
     )
-    env = PassiveEnvChecker(env)
+    env = PassiveEnvCheckerV0(env)
     assert env.checked_reset is False
     assert env.checked_step is False
     assert env.checked_render is False

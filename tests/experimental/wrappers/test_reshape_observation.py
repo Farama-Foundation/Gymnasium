@@ -1,6 +1,6 @@
-"""Test suite for ReshapeObservationv0."""
-from gymnasium.experimental.wrappers import ReshapeObservationV0
+"""Test suite for ReshapeObservationV0."""
 from gymnasium.spaces import Box
+from gymnasium.wrappers import ReshapeObservationV0
 from tests.experimental.wrappers.utils import (
     check_obs,
     record_random_obs_reset,

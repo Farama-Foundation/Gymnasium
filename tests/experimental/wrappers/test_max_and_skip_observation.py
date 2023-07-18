@@ -4,7 +4,7 @@ import re
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental.wrappers import MaxAndSkipObservationV0
+from gymnasium.wrappers import MaxAndSkipObservationV0
 
 
 def test_max_and_skip_obs(skip: int = 4):

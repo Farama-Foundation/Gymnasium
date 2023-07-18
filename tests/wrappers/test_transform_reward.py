@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import TransformReward
+from gymnasium.wrappers import LambdaRewardV0
 
 
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1"])
@@ -11,7 +11,7 @@ def test_transform_reward(env_id):
     scales = [0.1, 200]
     for scale in scales:
         env = gym.make(env_id, disable_env_checker=True)
-        wrapped_env = TransformReward(
+        wrapped_env = LambdaRewardV0(
             gym.make(env_id, disable_env_checker=True), lambda r: scale * r
         )
         action = env.action_space.sample()
@@ -29,7 +29,7 @@ def test_transform_reward(env_id):
     min_r = -0.0005
     max_r = 0.0002
     env = gym.make(env_id, disable_env_checker=True)
-    wrapped_env = TransformReward(
+    wrapped_env = LambdaRewardV0(
         gym.make(env_id, disable_env_checker=True),
         lambda r: np.clip(r, min_r, max_r),
     )
@@ -47,7 +47,7 @@ def test_transform_reward(env_id):
 
     # use case #3: sign
     env = gym.make(env_id, disable_env_checker=True)
-    wrapped_env = TransformReward(
+    wrapped_env = LambdaRewardV0(
         gym.make(env_id, disable_env_checker=True), lambda r: np.sign(r)
     )
 

@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from gymnasium.experimental.wrappers import ClipActionV0
 from gymnasium.spaces import Box
+from gymnasium.wrappers import ClipActionV0
 from tests.experimental.wrappers.utils import record_action_step
 from tests.testing_env import GenericTestEnv
 

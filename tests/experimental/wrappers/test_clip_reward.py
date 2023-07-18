@@ -4,7 +4,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.error import InvalidBound
-from gymnasium.experimental.wrappers import ClipRewardV0
+from gymnasium.wrappers import ClipRewardV0
 from tests.envs.test_envs import SEED
 from tests.experimental.wrappers.test_lambda_rewards import (
     DISCRETE_ACTION,

@@ -3,12 +3,12 @@ import re
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import HumanRendering
+from gymnasium.wrappers import HumanRenderingV0
 
 
 def test_human_rendering():
     for mode in ["rgb_array", "rgb_array_list"]:
-        env = HumanRendering(
+        env = HumanRenderingV0(
             gym.make("CartPole-v1", render_mode=mode, disable_env_checker=True)
         )
         assert env.render_mode == "human"
@@ -28,5 +28,5 @@ def test_human_rendering():
             "Expected env.render_mode to be one of 'rgb_array' or 'rgb_array_list' but got 'human'"
         ),
     ):
-        HumanRendering(env)
+        HumanRenderingV0(env)
     env.close()

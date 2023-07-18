@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from gymnasium.spaces import Box, Discrete
-from gymnasium.wrappers import AtariPreprocessing
+from gymnasium.wrappers import AtariPreprocessingV0
 from tests.testing_env import GenericTestEnv
 
 
@@ -47,7 +47,7 @@ class AtariTestingEnv(GenericTestEnv):
     [
         (AtariTestingEnv(), (210, 160, 3)),
         (
-            AtariPreprocessing(
+            AtariPreprocessingV0(
                 AtariTestingEnv(),
                 screen_size=84,
                 grayscale_obs=True,
@@ -57,7 +57,7 @@ class AtariTestingEnv(GenericTestEnv):
             (84, 84),
         ),
         (
-            AtariPreprocessing(
+            AtariPreprocessingV0(
                 AtariTestingEnv(),
                 screen_size=84,
                 grayscale_obs=False,
@@ -67,7 +67,7 @@ class AtariTestingEnv(GenericTestEnv):
             (84, 84, 3),
         ),
         (
-            AtariPreprocessing(
+            AtariPreprocessingV0(
                 AtariTestingEnv(),
                 screen_size=84,
                 grayscale_obs=True,
@@ -95,7 +95,7 @@ def test_atari_preprocessing_grayscale(env, obs_shape):
 @pytest.mark.parametrize("scaled", [True, False])
 def test_atari_preprocessing_scale(grayscale, scaled, max_test_steps=10):
     # arbitrarily chosen number for stepping into env. and ensuring all observations are in the required range
-    env = AtariPreprocessing(
+    env = AtariPreprocessingV0(
         AtariTestingEnv(),
         screen_size=84,
         grayscale_obs=grayscale,

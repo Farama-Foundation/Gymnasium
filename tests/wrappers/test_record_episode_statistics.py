@@ -2,20 +2,23 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import RecordEpisodeStatistics, VectorListInfo
+from gymnasium.wrappers import RecordEpisodeStatisticsV0
+from gymnasium.wrappers.vector import (
+    RecordEpisodeStatisticsV0 as VectorRecordEpisodeStatisticsV0,
+)
 
 
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1"])
 @pytest.mark.parametrize("deque_size", [2, 5])
 def test_record_episode_statistics(env_id, deque_size):
     env = gym.make(env_id, disable_env_checker=True)
-    env = RecordEpisodeStatistics(env, deque_size)
+    env = RecordEpisodeStatisticsV0(env, deque_size)
 
     for n in range(5):
         env.reset()
         assert env.episode_returns is not None and env.episode_lengths is not None
-        assert env.episode_returns[0] == 0.0
-        assert env.episode_lengths[0] == 0
+        assert env.episode_returns == 0.0
+        assert env.episode_lengths == 0
         assert env.spec is not None
         for t in range(env.spec.max_episode_steps):
             _, _, terminated, truncated, info = env.step(env.action_space.sample())
@@ -29,14 +32,13 @@ def test_record_episode_statistics(env_id, deque_size):
 
 def test_record_episode_statistics_reset_info():
     env = gym.make("CartPole-v1", disable_env_checker=True)
-    env = RecordEpisodeStatistics(env)
+    env = RecordEpisodeStatisticsV0(env)
     ob_space = env.observation_space
     obs, info = env.reset()
     assert ob_space.contains(obs)
     assert isinstance(info, dict)
 
 
-@pytest.mark.skip(reason="Update with new vector wrapper")
 @pytest.mark.parametrize(
     ("num_envs", "vectorization_mode"),
     [(1, "sync"), (1, "async"), (4, "sync"), (4, "async")],
@@ -48,7 +50,7 @@ def test_record_episode_statistics_with_vectorenv(num_envs, vectorization_mode):
         num_envs=num_envs,
         vectorization_mode=vectorization_mode,
     )
-    envs = RecordEpisodeStatistics(envs)
+    envs = VectorRecordEpisodeStatisticsV0(envs)
     if vectorization_mode == "async":
         max_episode_step = envs.unwrapped.env_fns[0]().spec.max_episode_steps
     else:
@@ -66,13 +68,3 @@ def test_record_episode_statistics_with_vectorenv(num_envs, vectorization_mode):
         else:
             assert "episode" not in infos
             assert "_episode" not in infos
-
-
-@pytest.mark.skip(reason="With new vector environment, not possible to incorrectly do")
-def test_wrong_wrapping_order():
-    envs = gym.make_vec("CartPole-v1", num_envs=3)
-    wrapped_env = RecordEpisodeStatistics(VectorListInfo(envs))
-    wrapped_env.reset()
-
-    with pytest.raises(AssertionError):
-        wrapped_env.step(wrapped_env.action_space.sample())

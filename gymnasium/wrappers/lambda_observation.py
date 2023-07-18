@@ -31,7 +31,7 @@ __all__ = [
     "ReshapeObservationV0",
     "RescaleObservationV0",
     "DtypeObservationV0",
-    "PixelObservationV0",
+    "RenderObservationV0",
 ]
 
 
@@ -46,7 +46,7 @@ class LambdaObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import LambdaObservationV0
+        >>> from gymnasium.wrappers import LambdaObservationV0
         >>> import numpy as np
         >>> np.random.seed(0)
         >>> env = gym.make("CartPole-v1")
@@ -91,18 +91,18 @@ class FilterObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import TransformObservation
-        >>> from gymnasium.experimental.wrappers import FilterObservationV0
+        >>> from gymnasium.wrappers import FilterObservationV0
         >>> env = gym.make("CartPole-v1")
-        >>> env = gym.wrappers.TransformObservation(env, lambda obs: {'obs': obs, 'time': 0})
-        >>> env.observation_space = gym.spaces.Dict(obs=env.observation_space, time=gym.spaces.Discrete(1))
+        >>> env = gym.wrappers.TimeAwareObservationV0(env, flatten=False)
+        >>> env.observation_space
+        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
         >>> env.reset(seed=42)
-        ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': 0}, {})
+        ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}, {})
         >>> env = FilterObservationV0(env, filter_keys=['time'])
         >>> env.reset(seed=42)
-        ({'time': 0}, {})
+        ({'time': array([0], dtype=int32)}, {})
         >>> env.step(0)
-        ({'time': 0}, 1.0, False, False, {})
+        ({'time': array([1], dtype=int32)}, 1.0, False, False, {})
     """
 
     def __init__(
@@ -112,9 +112,12 @@ class FilterObservationV0(
 
         Args:
             env: The environment to wrap
-            filter_keys: The subspaces to be included, use a list of strings or integers for ``Dict`` and ``Tuple`` spaces respectivesly
+            filter_keys: The set of subspaces to be *included*, use a list of strings for ``Dict`` and integers for ``Tuple`` spaces
         """
-        assert isinstance(filter_keys, Sequence)
+        if not isinstance(filter_keys, Sequence):
+            raise TypeError(
+                f"Expects `filter_keys` to be a Sequence, actual type: {type(filter_keys)}"
+            )
         gym.utils.RecordConstructorArgs.__init__(self, filter_keys=filter_keys)
 
         # Filters for dictionary space
@@ -141,7 +144,7 @@ class FilterObservationV0(
             )
             if len(new_observation_space) == 0:
                 raise ValueError(
-                    "The observation space is empty due to filtering all keys."
+                    "The observation space is empty due to filtering all of the keys."
                 )
 
             LambdaObservationV0.__init__(
@@ -201,7 +204,7 @@ class FlattenObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import FlattenObservationV0
+        >>> from gymnasium.wrappers import FlattenObservationV0
         >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
@@ -238,7 +241,7 @@ class GrayscaleObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import GrayscaleObservationV0
+        >>> from gymnasium.wrappers import GrayscaleObservationV0
         >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
@@ -310,7 +313,7 @@ class ResizeObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import ResizeObservationV0
+        >>> from gymnasium.wrappers import ResizeObservationV0
         >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
@@ -319,7 +322,7 @@ class ResizeObservationV0(
         (32, 32, 3)
     """
 
-    def __init__(self, env: gym.Env[ObsType, ActType], shape: tuple[int, ...]):
+    def __init__(self, env: gym.Env[ObsType, ActType], shape: tuple[int, int]):
         """Constructor that requires an image environment observation space with a shape.
 
         Args:
@@ -327,13 +330,14 @@ class ResizeObservationV0(
             shape: The resized observation shape
         """
         assert isinstance(env.observation_space, spaces.Box)
-        assert len(env.observation_space.shape) in [2, 3]
+        assert len(env.observation_space.shape) in {2, 3}
         assert np.all(env.observation_space.low == 0) and np.all(
             env.observation_space.high == 255
         )
         assert env.observation_space.dtype == np.uint8
 
         assert isinstance(shape, tuple)
+        assert len(shape) == 2
         assert all(np.issubdtype(type(elem), np.integer) for elem in shape)
         assert all(x > 0 for x in shape)
 
@@ -344,7 +348,9 @@ class ResizeObservationV0(
                 "opencv (cv2) is not installed, run `pip install gymnasium[other]`"
             ) from e
 
-        self.shape: Final[tuple[int, ...]] = tuple(shape)
+        self.shape: Final[tuple[int, int]] = tuple(shape)
+        # for some reason, cv2.resize will return the shape in reverse, todo confirm implementation
+        self.cv2_shape: Final[tuple[int, int]] = (shape[1], shape[0])
 
         new_observation_space = spaces.Box(
             low=0,
@@ -357,7 +363,9 @@ class ResizeObservationV0(
         LambdaObservationV0.__init__(
             self,
             env=env,
-            func=lambda obs: cv2.resize(obs, self.shape, interpolation=cv2.INTER_AREA),
+            func=lambda obs: cv2.resize(
+                obs, self.cv2_shape, interpolation=cv2.INTER_AREA
+            ),
             observation_space=new_observation_space,
         )
 
@@ -370,7 +378,7 @@ class ReshapeObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import ReshapeObservationV0
+        >>> from gymnasium.wrappers import ReshapeObservationV0
         >>> env = gym.make("CarRacing-v2")
         >>> env.observation_space.shape
         (96, 96, 3)
@@ -418,7 +426,7 @@ class RescaleObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import RescaleObservationV0
+        >>> from gymnasium.wrappers import RescaleObservationV0
         >>> env = gym.make("Pendulum-v1")
         >>> env.observation_space
         Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)
@@ -548,7 +556,7 @@ class DtypeObservationV0(
         )
 
 
-class PixelObservationV0(
+class RenderObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
@@ -565,24 +573,27 @@ class PixelObservationV0(
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
-        pixels_only: bool = True,
-        pixels_key: str = "pixels",
+        render_only: bool = True,
+        render_key: str = "pixels",
         obs_key: str = "state",
     ):
         """Constructor of the pixel observation wrapper.
 
         Args:
             env: The environment to wrap.
-            pixels_only (bool): If ``True`` (default), the original observation returned
+            render_only (bool): If ``True`` (default), the original observation returned
                 by the wrapped environment will be discarded, and a dictionary
                 observation will only include pixels. If ``False``, the
                 observation dictionary will contain both the original
                 observations and the pixel observations.
-            pixels_key: Optional custom string specifying the pixel key. Defaults to "pixels"
+            render_key: Optional custom string specifying the pixel key. Defaults to "pixels"
             obs_key: Optional custom string specifying the obs key. Defaults to "state"
         """
         gym.utils.RecordConstructorArgs.__init__(
-            self, pixels_only=pixels_only, pixels_key=pixels_key, obs_key=obs_key
+            self,
+            pixels_only=render_only,
+            pixels_key=render_key,
+            obs_key=obs_key,
         )
 
         assert env.render_mode is not None and env.render_mode != "human"
@@ -591,30 +602,30 @@ class PixelObservationV0(
         assert pixels is not None and isinstance(pixels, np.ndarray)
         pixel_space = spaces.Box(low=0, high=255, shape=pixels.shape, dtype=np.uint8)
 
-        if pixels_only:
+        if render_only:
             obs_space = pixel_space
             LambdaObservationV0.__init__(
                 self, env=env, func=lambda _: self.render(), observation_space=obs_space
             )
         elif isinstance(env.observation_space, spaces.Dict):
-            assert pixels_key not in env.observation_space.spaces.keys()
+            assert render_key not in env.observation_space.spaces.keys()
 
             obs_space = spaces.Dict(
-                {pixels_key: pixel_space, **env.observation_space.spaces}
+                {render_key: pixel_space, **env.observation_space.spaces}
             )
             LambdaObservationV0.__init__(
                 self,
                 env=env,
-                func=lambda obs: {pixels_key: self.render(), **obs_space},
+                func=lambda obs: {render_key: self.render(), **obs},
                 observation_space=obs_space,
             )
         else:
             obs_space = spaces.Dict(
-                {obs_key: env.observation_space, pixels_key: pixel_space}
+                {obs_key: env.observation_space, render_key: pixel_space}
             )
             LambdaObservationV0.__init__(
                 self,
                 env=env,
-                func=lambda obs: {obs_key: obs, pixels_key: self.render()},
+                func=lambda obs: {obs_key: obs, render_key: self.render()},
                 observation_space=obs_space,
             )

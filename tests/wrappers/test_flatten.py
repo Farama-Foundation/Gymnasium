@@ -8,7 +8,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.spaces import Box, Dict, flatten, unflatten
-from gymnasium.wrappers import FlattenObservation
+from gymnasium.wrappers import FlattenObservationV0
 
 
 class FakeEnvironment(gym.Env):
@@ -66,7 +66,7 @@ class TestFlattenEnvironment:
         make sure that flattened observations occur in the order expected
         """
         env = FakeEnvironment(observation_space=observation_space)
-        wrapped_env = FlattenObservation(env)
+        wrapped_env = FlattenObservationV0(env)
         flattened, info = wrapped_env.reset()
 
         unflattened = unflatten(env.observation_space, flattened)

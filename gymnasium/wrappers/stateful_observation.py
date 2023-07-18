@@ -17,9 +17,9 @@ import numpy as np
 import gymnasium as gym
 import gymnasium.spaces as spaces
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
-from gymnasium.experimental.wrappers.utils import RunningMeanStd, create_zero_array
 from gymnasium.spaces import Box, Dict, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array
+from gymnasium.wrappers.utils import RunningMeanStd, create_zero_array
 
 
 __all__ = [
@@ -116,31 +116,22 @@ class TimeAwareObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import TimeAwareObservationV0
+        >>> from gymnasium.wrappers import TimeAwareObservationV0
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservationV0(env)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0.0, 1.0, (1,), float32))
+        Box([-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
+          0.00000000e+00], [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+         5.00000000e+02], (5,), float64)
         >>> env.reset(seed=42)[0]
-        {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0.], dtype=float32)}
+        array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ])
         >>> _ = env.action_space.seed(42)
         >>> env.step(env.action_space.sample())[0]
-        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': array([0.002], dtype=float32)}
+        array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  1.        ])
 
-    Unnormalize time observation space example:
+    Normalize time observation space example:
         >>> env = gym.make('CartPole-v1')
-        >>> env = TimeAwareObservationV0(env, normalize_time=False)
-        >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
-        >>> env.reset(seed=42)[0]
-        {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([500], dtype=int32)}
-        >>> _ = env.action_space.seed(42)[0]
-        >>> env.step(env.action_space.sample())[0]
-        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': array([499], dtype=int32)}
-
-    Flatten observation space example:
-        >>> env = gym.make("CartPole-v1")
-        >>> env = TimeAwareObservationV0(env, flatten=True)
+        >>> env = TimeAwareObservationV0(env, normalize_time=True)
         >>> env.observation_space
         Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38
           0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 1.0000000e+00], (5,), float32)
@@ -151,13 +142,25 @@ class TimeAwareObservationV0(
         >>> env.step(env.action_space.sample())[0]
         array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  0.002     ],
               dtype=float32)
+
+    Flatten observation space example:
+        >>> env = gym.make("CartPole-v1")
+        >>> env = TimeAwareObservationV0(env, flatten=False)
+        >>> env.observation_space
+        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        >>> env.reset(seed=42)[0]
+        {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}
+        >>> _ = env.action_space.seed(42)
+        >>> env.step(env.action_space.sample())[0]
+        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': array([1], dtype=int32)}
+
     """
 
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
-        flatten: bool = False,
-        normalize_time: bool = True,
+        flatten: bool = True,
+        normalize_time: bool = False,
         *,
         dict_time_key: str = "time",
     ):
@@ -189,7 +192,7 @@ class TimeAwareObservationV0(
                 "The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`."
             )
 
-        self._timesteps: int = 0
+        self.timesteps: int = 0
 
         # Find the normalized time space
         if self.normalize_time:
@@ -198,9 +201,7 @@ class TimeAwareObservationV0(
             )
             time_space = Box(0.0, 1.0)
         else:
-            self._time_preprocess_func = lambda time: np.array(
-                [self.max_timesteps - time], dtype=np.int32
-            )
+            self._time_preprocess_func = lambda time: np.array([time], dtype=np.int32)
             time_space = Box(0, self.max_timesteps, dtype=np.int32)
 
         # Find the observation space
@@ -240,7 +241,7 @@ class TimeAwareObservationV0(
         """
         return self._obs_postprocess_func(
             self._append_data_func(
-                observation, self._time_preprocess_func(self._timesteps)
+                observation, self._time_preprocess_func(self.timesteps)
             )
         )
 
@@ -255,7 +256,7 @@ class TimeAwareObservationV0(
         Returns:
             The environment's step using the action with the next observation containing the timestep info
         """
-        self._timesteps += 1
+        self.timesteps += 1
 
         return super().step(action)
 
@@ -271,7 +272,7 @@ class TimeAwareObservationV0(
         Returns:
             Resets the environment with the initial timestep info added the observation
         """
-        self._timesteps = 0
+        self.timesteps = 0
 
         return super().reset(seed=seed, options=options)
 
@@ -293,7 +294,7 @@ class FrameStackObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.experimental.wrappers import FrameStackObservationV0
+        >>> from gymnasium.wrappers import FrameStackObservationV0
         >>> env = gym.make("CarRacing-v2")
         >>> env = FrameStackObservationV0(env, 4)
         >>> env.observation_space

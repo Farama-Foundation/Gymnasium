@@ -10,7 +10,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.experimental import wrappers
+from gymnasium import wrappers
 from gymnasium.spaces import Box, Dict, Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import VectorEnv

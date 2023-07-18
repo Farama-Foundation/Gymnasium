@@ -6,9 +6,9 @@ from typing import Any, Callable
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.experimental.wrappers import lambda_reward
 from gymnasium.vector import VectorEnv, VectorRewardWrapper
 from gymnasium.vector.vector_env import ArrayType
+from gymnasium.wrappers import lambda_reward
 
 
 class LambdaRewardV0(VectorRewardWrapper):

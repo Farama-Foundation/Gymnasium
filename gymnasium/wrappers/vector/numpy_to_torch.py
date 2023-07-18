@@ -1,29 +1,23 @@
-"""Vector wrapper class for converting between PyTorch and Jax."""
+"""Wrapper for converting NumPy environments to PyTorch."""
 from __future__ import annotations
 
 from typing import Any
 
 from gymnasium.core import ActType, ObsType
-from gymnasium.experimental.wrappers.jax_to_torch import (
-    Device,
-    jax_to_torch,
-    torch_to_jax,
-)
 from gymnasium.vector import VectorEnv, VectorWrapper
 from gymnasium.vector.vector_env import ArrayType
+from gymnasium.wrappers.jax_to_torch import Device
+from gymnasium.wrappers.numpy_to_torch import numpy_to_torch, torch_to_numpy
 
 
-__all__ = ["JaxToTorchV0"]
+__all__ = ["NumpyToTorchV0"]
 
 
-class JaxToTorchV0(VectorWrapper):
-    """Wraps a Jax-based vector environment so that it can be interacted with through PyTorch Tensors.
-
-    Actions must be provided as PyTorch Tensors and observations, rewards, terminations and truncations will be returned as PyTorch Tensors.
-    """
+class NumpyToTorchV0(VectorWrapper):
+    """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors."""
 
     def __init__(self, env: VectorEnv, device: Device | None = None):
-        """Vector wrapper to change inputs and outputs to PyTorch tensors.
+        """Wrapper class to change inputs and outputs of environment to PyTorch tensors.
 
         Args:
             env: The Jax-based vector environment to wrap
@@ -36,23 +30,23 @@ class JaxToTorchV0(VectorWrapper):
     def step(
         self, actions: ActType
     ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
-        """Performs the given action within the environment.
+        """Using a PyTorch based action that is converted to NumPy to be used by the environment.
 
         Args:
-            actions: The action to perform as a PyTorch Tensor
+            action: A PyTorch-based action
 
         Returns:
-            Torch-based Tensors of the next observation, reward, termination, truncation, and extra info
+            The PyTorch-based Tensor next observation, reward, termination, truncation, and extra info
         """
-        jax_action = torch_to_jax(actions)
+        jax_action = torch_to_numpy(actions)
         obs, reward, terminated, truncated, info = self.env.step(jax_action)
 
         return (
-            jax_to_torch(obs, self.device),
-            jax_to_torch(reward, self.device),
-            jax_to_torch(terminated, self.device),
-            jax_to_torch(truncated, self.device),
-            jax_to_torch(info, self.device),
+            numpy_to_torch(obs, self.device),
+            numpy_to_torch(reward, self.device),
+            numpy_to_torch(terminated, self.device),
+            numpy_to_torch(truncated, self.device),
+            numpy_to_torch(info, self.device),
         )
 
     def reset(
@@ -71,6 +65,6 @@ class JaxToTorchV0(VectorWrapper):
             PyTorch-based observations and info
         """
         if options:
-            options = torch_to_jax(options)
+            options = torch_to_numpy(options)
 
-        return jax_to_torch(self.env.reset(seed=seed, options=options), self.device)
+        return numpy_to_torch(self.env.reset(seed=seed, options=options), self.device)

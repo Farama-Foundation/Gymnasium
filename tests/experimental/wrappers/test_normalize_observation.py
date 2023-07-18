@@ -1,5 +1,5 @@
 """Test suite for NormalizeObservationV0."""
-from gymnasium.experimental.wrappers import NormalizeObservationV0
+from gymnasium.wrappers import NormalizeObservationV0
 from tests.testing_env import GenericTestEnv
 
 

@@ -1,8 +1,8 @@
 """Test suite for RescaleObservationV0."""
 import numpy as np
 
-from gymnasium.experimental.wrappers import RescaleObservationV0
 from gymnasium.spaces import Box
+from gymnasium.wrappers import RescaleObservationV0
 from tests.experimental.wrappers.utils import (
     check_obs,
     record_action_as_obs_step,
