@@ -726,6 +726,15 @@ def make(
     Raises:
         Error: If the ``id`` doesn't exist in the :attr:`registry`
     """
+    make_kwargs = dict(
+        id=id,
+        max_episode_steps=max_episode_steps,
+        autoreset=autoreset,
+        apply_api_compatibility=apply_api_compatibility,
+        disable_env_checker=disable_env_checker,
+        **kwargs,
+    )
+
     if isinstance(id, EnvSpec):
         env_spec = id
         if not hasattr(env_spec, "additional_wrappers"):
@@ -830,6 +839,9 @@ def make(
         additional_wrappers=(),
         vector_entry_point=env_spec.vector_entry_point,
     )
+
+    # Store make kwargs on the environment
+    env.unwrapped._saved_make_kwargs = make_kwargs
 
     # Check if pre-wrapped wrappers
     assert env.spec is not None
