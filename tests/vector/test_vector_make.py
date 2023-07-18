@@ -3,7 +3,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.spaces import Box
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
-from gymnasium.wrappers import PassiveEnvCheckerV0, TimeLimitV0, LambdaObservationV0
+from gymnasium.wrappers import LambdaObservationV0, PassiveEnvCheckerV0, TimeLimitV0
 from tests.wrappers.utils import has_wrapper
 
 
@@ -51,7 +51,9 @@ def test_vector_make_wrappers():
         "CartPole-v1",
         num_envs=2,
         vectorization_mode="sync",
-        wrappers=(lambda _env: LambdaObservationV0(_env, lambda obs: obs * 2, Box(0, 2)),),
+        wrappers=(
+            lambda _env: LambdaObservationV0(_env, lambda obs: obs * 2, Box(0, 2)),
+        ),
     )
     # As asynchronous environment are inaccessible, synchronous vector must be used
     assert isinstance(env, SyncVectorEnv)

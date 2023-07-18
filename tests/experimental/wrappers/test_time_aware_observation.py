@@ -61,7 +61,9 @@ def test_normalize_time_parameter():
     wrapped_env = TimeAwareObservationV0(env, flatten=False, normalize_time=False)
     reset_obs, _ = wrapped_env.reset()
     step_obs, _, _, _, _ = wrapped_env.step(None)
-    assert reset_obs["time"] == np.array([0], dtype=np.int32) and step_obs["time"] == np.array([1], dtype=np.int32)
+    assert reset_obs["time"] == np.array([0], dtype=np.int32) and step_obs[
+        "time"
+    ] == np.array([1], dtype=np.int32)
 
     assert reset_obs in wrapped_env.observation_space
     assert step_obs in wrapped_env.observation_space

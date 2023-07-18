@@ -1,7 +1,7 @@
 """Wrapper that converts the info format for vec envs into the list format."""
 from __future__ import annotations
 
-from typing import Any, List
+from typing import Any
 
 from gymnasium.core import ActType, ObsType
 from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
@@ -86,7 +86,7 @@ class DictInfoToListV0(VectorWrapper):
         return list_info
 
     # todo - I think this function should be more general for any information
-    def _process_episode_statistics(self, infos: dict, list_info: list) -> List[dict]:
+    def _process_episode_statistics(self, infos: dict, list_info: list) -> list[dict]:
         """Process episode statistics.
 
         `RecordEpisodeStatistics` wrapper add extra

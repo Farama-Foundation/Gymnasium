@@ -1,6 +1,5 @@
 """Test for the `EnvSpec`, in particular, a full integration with `EnvSpec`."""
 import dill as pickle
-
 import pytest
 
 import gymnasium as gym
