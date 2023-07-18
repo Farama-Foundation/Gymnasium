@@ -417,7 +417,9 @@ class NormalizeObservationV0(
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         gym.ObservationWrapper.__init__(self, env)
 
-        self.obs_rms = RunningMeanStd(shape=self.observation_space.shape)
+        self.obs_rms = RunningMeanStd(
+            shape=self.observation_space.shape, dtype=self.observation_space.dtype
+        )
         self.epsilon = epsilon
         self._update_running_mean = True
 

@@ -11,7 +11,8 @@ def test_running_mean_normalize_observation_wrapper():
     # Default value is True
     assert wrapped_env.update_running_mean
 
-    wrapped_env.reset()
+    obs, _ = wrapped_env.reset()
+    assert obs in env.observation_space
     rms_var_init = wrapped_env.obs_rms.var
     rms_mean_init = wrapped_env.obs_rms.mean
 
