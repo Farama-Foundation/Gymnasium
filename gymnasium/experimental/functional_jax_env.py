@@ -135,7 +135,6 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
             metadata = {}
         self.func_env = func_env
         self.num_envs = num_envs
-
         self.single_observation_space = func_env.observation_space
         self.single_action_space = func_env.action_space
         self.observation_space = batch_space(
@@ -164,6 +163,7 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         self.rng = jrng.PRNGKey(seed)
 
         self.func_env.transform(jax.vmap)
+        self.func_env.transform(jax.jit)
 
     def reset(self, *, seed: int | None = None, options: dict | None = None):
         """Resets the environment."""
@@ -212,46 +212,30 @@ class FunctionalJaxVectorEnv(gym.experimental.vector.VectorEnv):
         )
 
         info = self.func_env.step_info(self.state, action, next_state)
-
         done = jnp.logical_or(terminated, truncated)
         if jnp.any(done):
             final_obs = self.func_env.observation(next_state)
 
-            to_reset = jnp.where(done)[0]
-            reset_count = to_reset.shape[0]
-
             rng, self.rng = jrng.split(self.rng)
-            rng = jrng.split(rng, reset_count)
+            rng = jrng.split(rng, self.num_envs)
 
             new_initials = self.func_env.initial(rng)
 
-            next_state = self.state.at[to_reset].set(new_initials)
-            self.steps = self.steps.at[to_reset].set(0)
+            next_state = jnp.where(done[:, None], new_initials, next_state)
+            self.steps = jnp.where(done, jnp.zeros_like(self.steps), self.steps)
 
             # Get the final observations and infos
-            info["final_observation"] = np.array([None for _ in range(self.num_envs)])
-            info["final_info"] = np.array([None for _ in range(self.num_envs)])
+            # info["final_observation"] = np.array([None for _ in range(self.num_envs)])
 
-            info["_final_observation"] = np.array([False for _ in range(self.num_envs)])
-            info["_final_info"] = np.array([False for _ in range(self.num_envs)])
+            info["final_observation"] = final_obs
+            info["final_info"] = info
 
-            # TODO: this can maybe be optimized, but right now I don't know how
-            for i in to_reset:
-                info["final_observation"][i] = final_obs[i]
-                info["final_info"][i] = {
-                    k: v[i]
-                    for k, v in info.items()
-                    if k
-                    not in {
-                        "final_observation",
-                        "final_info",
-                        "_final_observation",
-                        "_final_info",
-                    }
-                }
+            info["_final_observation"] = done
+            info["_final_info"] = done
 
-                info["_final_observation"][i] = True
-                info["_final_info"][i] = True
+            start_info = self.func_env.state_info(next_state)
+
+            info = jax.tree_map(lambda a, b: jnp.where(done, b, a), info, start_info)
 
         observation = self.func_env.observation(next_state)
         observation = jax_to_numpy(observation)
