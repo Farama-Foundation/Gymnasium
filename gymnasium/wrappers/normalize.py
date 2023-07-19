@@ -63,8 +63,13 @@ class NormalizeObservation(gym.Wrapper, gym.utils.RecordConstructorArgs):
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         gym.Wrapper.__init__(self, env)
 
-        self.num_envs = getattr(env, "num_envs", 1)
-        self.is_vector_env = getattr(env, "is_vector_env", False)
+        try:
+            self.num_envs = self.get_wrapper_attr("num_envs")
+            self.is_vector_env = self.get_wrapper_attr("is_vector_env")
+        except AttributeError:
+            self.num_envs = 1
+            self.is_vector_env = False
+
         if self.is_vector_env:
             self.obs_rms = RunningMeanStd(shape=self.single_observation_space.shape)
         else:
@@ -121,8 +126,13 @@ class NormalizeReward(gym.core.Wrapper, gym.utils.RecordConstructorArgs):
         gym.utils.RecordConstructorArgs.__init__(self, gamma=gamma, epsilon=epsilon)
         gym.Wrapper.__init__(self, env)
 
-        self.num_envs = getattr(env, "num_envs", 1)
-        self.is_vector_env = getattr(env, "is_vector_env", False)
+        try:
+            self.num_envs = self.get_wrapper_attr("num_envs")
+            self.is_vector_env = self.get_wrapper_attr("is_vector_env")
+        except AttributeError:
+            self.num_envs = 1
+            self.is_vector_env = False
+
         self.return_rms = RunningMeanStd(shape=())
         self.returns = np.zeros(self.num_envs)
         self.gamma = gamma

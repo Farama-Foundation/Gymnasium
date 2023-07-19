@@ -192,7 +192,7 @@ class OffScreenViewer(BaseRender):
 
     def render(
         self,
-        render_mode: str,
+        render_mode: Optional[str],
         camera_id: Optional[int] = None,
         segmentation: bool = False,
     ):
@@ -603,7 +603,7 @@ class MujocoRenderer:
 
     The class has two main public methods available:
     - :meth:`render` - Renders the environment in three possible modes: "human", "rgb_array", or "depth_array"
-    - :meth:`close` - Closes all contexts initialized with the rendere
+    - :meth:`close` - Closes all contexts initialized with the renderer
 
     """
 
@@ -628,7 +628,7 @@ class MujocoRenderer:
 
     def render(
         self,
-        render_mode: str,
+        render_mode: Optional[str],
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
     ):

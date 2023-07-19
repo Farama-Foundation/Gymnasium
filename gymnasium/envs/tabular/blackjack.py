@@ -28,8 +28,8 @@ deck = jnp.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10])
 class EnvState(NamedTuple):
     """A named tuple which contains the full state of the blackjack game."""
 
-    dealer_hand: jnp.ndarray
-    player_hand: jnp.ndarray
+    dealer_hand: jax.Array
+    player_hand: jax.Array
     dealer_cards: int
     player_cards: int
     done: int
@@ -159,7 +159,7 @@ def is_natural(hand):
 
 
 class BlackjackFunctional(
-    FuncEnv[jnp.ndarray, jnp.ndarray, int, float, bool, RenderStateType]
+    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType]
 ):
     """Blackjack is a card game where the goal is to beat the dealer by obtaining cards that sum to closer to 21 (without going over 21) than the dealers cards.
 
@@ -241,9 +241,7 @@ class BlackjackFunctional(
         # Flag for full agreement with the (Sutton and Barto, 2018) definition. Overrides self.natural
         self.sutton_and_barto = sutton_and_barto
 
-    def transition(
-        self, state: EnvState, action: Union[int, jnp.ndarray], key: PRNGKey
-    ):
+    def transition(self, state: EnvState, action: Union[int, jax.Array], key: PRNGKey):
         """The blackjack environment's state transition function."""
         env_state = jax.lax.cond(action, take, notake, (state, key))
 
@@ -286,7 +284,7 @@ class BlackjackFunctional(
 
         return state
 
-    def observation(self, state: EnvState) -> jnp.ndarray:
+    def observation(self, state: EnvState) -> jax.Array:
         """Blackjack observation."""
         return jnp.array(
             [
@@ -297,13 +295,13 @@ class BlackjackFunctional(
             dtype=np.int32,
         )
 
-    def terminal(self, state: EnvState) -> jnp.ndarray:
+    def terminal(self, state: EnvState) -> jax.Array:
         """Determines if a particular Blackjack observation is terminal."""
         return (state.done) > 0
 
     def reward(
         self, state: EnvState, action: ActType, next_state: StateType
-    ) -> jnp.ndarray:
+    ) -> jax.Array:
         """Calculates reward from a state."""
         state = next_state
 

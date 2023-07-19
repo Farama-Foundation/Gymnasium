@@ -13,19 +13,11 @@ import sys
 import traceback
 from collections import defaultdict
 from dataclasses import dataclass, field
+from types import ModuleType
 from typing import Any, Callable, Iterable, Sequence
 
+import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
-from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv, VectorEnv
-from gymnasium.wrappers import (
-    AutoResetWrapper,
-    EnvCompatibility,
-    HumanRendering,
-    OrderEnforcing,
-    PassiveEnvChecker,
-    RenderCollection,
-    TimeLimit,
-)
 
 
 if sys.version_info < (3, 10):
@@ -33,10 +25,7 @@ if sys.version_info < (3, 10):
 else:
     import importlib.metadata as metadata
 
-if sys.version_info < (3, 8):
-    from typing_extensions import Protocol
-else:
-    from typing import Protocol
+from typing import Protocol
 
 
 ENV_ID_RE = re.compile(
@@ -55,6 +44,7 @@ __all__ = [
     "make_vec",
     "spec",
     "pprint_registry",
+    "register_envs",
 ]
 
 
@@ -68,7 +58,7 @@ class EnvCreator(Protocol):
 class VectorEnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> VectorEnv:
+    def __call__(self, **kwargs: Any) -> gym.experimental.vector.VectorEnv:
         ...
 
 
@@ -535,7 +525,9 @@ def _find_spec(env_id: str) -> EnvSpec:
 
     if env_spec is None:
         _check_version_exists(ns, name, version)
-        raise error.Error(f"No registered env with id: {env_name}")
+        raise error.Error(
+            f"No registered env with id: {env_name}. Did you register it, or import the package that registers it? Use `gymnasium.pprint_registry()` to see all of the registered environments."
+        )
 
     return env_spec
 
@@ -604,6 +596,11 @@ def load_plugin_envs(entry_point: str = "gymnasium.envs"):
                 logger.warn(f"plugin: {plugin.value} raised {traceback.format_exc()}")
 
 
+def register_envs(env_module: ModuleType):
+    """A No-op function such that it can appear to IDEs that a module is used."""
+    pass
+
+
 @contextlib.contextmanager
 def namespace(ns: str):
     """Context manager for modifying the current namespace."""
@@ -670,8 +667,12 @@ def register(
         ns_id = current_namespace
     else:
         ns_id = ns
-
     full_env_id = get_env_id(ns_id, name, version)
+
+    if autoreset is True:
+        logger.warn(
+            "`gymnasium.register(..., autoreset=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument."
+        )
 
     new_spec = EnvSpec(
         id=full_env_id,
@@ -810,7 +811,9 @@ def make(
                 "rendering API, which is not supported by the HumanRendering wrapper."
             ) from e
         else:
-            raise e
+            raise type(e)(
+                f"{e} was raised from the environment creator for {env_spec.id} with kwargs ({env_spec_kwargs})"
+            )
 
     # Set the minimal env spec for the environment.
     env.unwrapped.spec = EnvSpec(
@@ -846,27 +849,34 @@ def make(
     if apply_api_compatibility is True or (
         apply_api_compatibility is None and env_spec.apply_api_compatibility is True
     ):
-        env = EnvCompatibility(env, render_mode)
+        logger.warn(
+            "`gymnasium.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and will be removed in v1.0"
+        )
+        env = gym.wrappers.EnvCompatibility(env, render_mode)
 
     # Run the environment checker as the lowest level wrapper
     if disable_env_checker is False or (
         disable_env_checker is None and env_spec.disable_env_checker is False
     ):
-        env = PassiveEnvChecker(env)
+        env = gym.wrappers.PassiveEnvChecker(env)
 
     # Add the order enforcing wrapper
     if env_spec.order_enforce:
-        env = OrderEnforcing(env)
+        env = gym.wrappers.OrderEnforcing(env)
 
     # Add the time limit wrapper
     if max_episode_steps is not None:
-        env = TimeLimit(env, max_episode_steps)
+        env = gym.wrappers.TimeLimit(env, max_episode_steps)
     elif env_spec.max_episode_steps is not None:
-        env = TimeLimit(env, env_spec.max_episode_steps)
+        env = gym.wrappers.TimeLimit(env, env_spec.max_episode_steps)
 
     # Add the auto-reset wrapper
     if autoreset is True or (autoreset is None and env_spec.autoreset is True):
-        env = AutoResetWrapper(env)
+        env = gym.wrappers.AutoResetWrapper(env)
+
+        logger.warn(
+            "`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0"
+        )
 
     for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
@@ -878,9 +888,9 @@ def make(
 
     # Add human rendering wrapper
     if apply_human_rendering:
-        env = HumanRendering(env)
+        env = gym.wrappers.HumanRendering(env)
     elif apply_render_collection:
-        env = RenderCollection(env)
+        env = gym.wrappers.RenderCollection(env)
 
     return env
 
@@ -892,7 +902,7 @@ def make_vec(
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
-) -> VectorEnv:
+) -> gym.experimental.vector.VectorEnv:
     """Create a vector environment according to the given ID.
 
     Note:
@@ -966,22 +976,22 @@ def make_vec(
         _env = env_creator(**_kwargs_copy)
         _env.spec = spec_
         if spec_.max_episode_steps is not None:
-            _env = TimeLimit(_env, spec_.max_episode_steps)
+            _env = gym.wrappers.TimeLimit(_env, spec_.max_episode_steps)
 
         if render_mode is not None and render_mode.endswith("_list"):
-            _env = RenderCollection(_env)
+            _env = gym.wrappers.RenderCollection(_env)
 
         for wrapper in wrappers:
             _env = wrapper(_env)
         return _env
 
     if vectorization_mode == "sync":
-        env = SyncVectorEnv(
+        env = gym.experimental.vector.SyncVectorEnv(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )
     elif vectorization_mode == "async":
-        env = AsyncVectorEnv(
+        env = gym.experimental.vector.AsyncVectorEnv(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )

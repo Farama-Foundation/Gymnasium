@@ -4,7 +4,7 @@ from __future__ import annotations
 import collections.abc
 import typing
 from collections import OrderedDict
-from typing import Any, Sequence
+from typing import Any, KeysView, Sequence
 
 import numpy as np
 
@@ -179,6 +179,10 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
     def __getitem__(self, key: str) -> Space[Any]:
         """Get the space that is associated to `key`."""
         return self.spaces[key]
+
+    def keys(self) -> KeysView:
+        """Returns the keys of the Dict."""
+        return KeysView(self.spaces)
 
     def __setitem__(self, key: str, value: Space[Any]):
         """Set the space that is associated to `key`."""
