@@ -14,6 +14,9 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidBound
 
 
+__all__ = ["LambdaRewardV0", "ClipRewardV0"]
+
+
 class LambdaRewardV0(
     gym.RewardWrapper[ObsType, ActType], gym.utils.RecordConstructorArgs
 ):

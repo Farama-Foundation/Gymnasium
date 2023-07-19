@@ -40,14 +40,6 @@ class VideoRecorder:
             Error: You can pass at most one of `path` or `base_path`
             Error: Invalid path given that must have a particular file extension
         """
-        try:
-            # check that moviepy is now installed
-            import moviepy  # noqa: F401
-        except ImportError as e:
-            raise error.DependencyNotInstalled(
-                "moviepy is not installed, run `pip install moviepy`"
-            ) from e
-
         self._async = env.metadata.get("semantics.async")
         self.enabled = enabled
         self.disable_logger = disable_logger
@@ -58,13 +50,20 @@ class VideoRecorder:
 
         self.render_mode = env.render_mode
 
-        if "rgb_array_list" != self.render_mode and "rgb_array" != self.render_mode:
-            logger.warn(
-                f"Disabling video recorder because environment {env} was not initialized with any compatible video "
-                "mode between `rgb_array` and `rgb_array_list`"
+        try:
+            # check that moviepy is now installed
+            import moviepy  # noqa: F401
+        except ImportError as e:
+            raise error.DependencyNotInstalled(
+                "moviepy is not installed, run `pip install moviepy`"
+            ) from e
+
+        if self.render_mode in {None, "human", "ansi", "ansi_list"}:
+            raise ValueError(
+                f"Render mode is {self.render_mode}, which is incompatible with"
+                f" RecordVideo. Initialize your environment with a render_mode"
+                f" that returns an image, such as rgb_array."
             )
-            # Disable since the environment has not been initialized with a compatible `render_mode`
-            self.enabled = False
 
         # Don't bother setting anything else if not enabled
         if not self.enabled:
@@ -143,9 +142,6 @@ class VideoRecorder:
         """Flush all data to disk and close any open frame encoders."""
         if not self.enabled or self._closed:
             return
-
-        # First close the environment
-        self.env.close()
 
         # Close the encoder
         if len(self.recorded_frames) > 0:

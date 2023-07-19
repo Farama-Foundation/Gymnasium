@@ -7,16 +7,19 @@ import jax.numpy as jnp
 
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental import VectorEnv, VectorWrapper
+from gymnasium.experimental.vector import VectorEnv, VectorWrapper
 from gymnasium.experimental.vector.vector_env import ArrayType
 from gymnasium.experimental.wrappers.jax_to_numpy import jax_to_numpy, numpy_to_jax
+
+
+__all__ = ["JaxToNumpyV0"]
 
 
 class JaxToNumpyV0(VectorWrapper):
     """Wraps a jax vector environment so that it can be interacted with through numpy arrays.
 
     Notes:
-        A vectorised version of ``gymnasium.experimental.wrappers.JaxToNumpyV0``
+        A vectorized version of ``gymnasium.experimental.wrappers.JaxToNumpyV0``
 
     Actions must be provided as numpy arrays and observations, rewards, terminations and truncations will be returned as numpy arrays.
     """

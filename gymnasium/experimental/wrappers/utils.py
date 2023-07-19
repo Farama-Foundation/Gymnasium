@@ -21,6 +21,9 @@ from gymnasium.spaces import (
 from gymnasium.spaces.space import T_cov
 
 
+__all__ = ["RunningMeanStd", "update_mean_var_count_from_moments", "create_zero_array"]
+
+
 class RunningMeanStd:
     """Tracks the mean, variance and count of values."""
 
@@ -99,8 +102,12 @@ def _create_discrete_zero_array(space: Discrete):
 
 
 @create_zero_array.register(MultiDiscrete)
+def _create_multidiscrete_zero_array(space: MultiDiscrete):
+    return np.array(space.start, copy=True, dtype=space.dtype)
+
+
 @create_zero_array.register(MultiBinary)
-def _create_array_zero_array(space: Discrete):
+def _create_array_zero_array(space: MultiBinary):
     return np.zeros(space.shape, dtype=space.dtype)
 
 

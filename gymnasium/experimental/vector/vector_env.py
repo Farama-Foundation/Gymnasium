@@ -299,11 +299,11 @@ class VectorWrapper(VectorEnv):
         """Step all environments."""
         return self.env.step(actions)
 
-    def close(self, **kwargs):
+    def close(self, **kwargs: Any):
         """Close all environments."""
         return self.env.close(**kwargs)
 
-    def close_extras(self, **kwargs):
+    def close_extras(self, **kwargs: Any):
         """Close all extra resources."""
         return self.env.close_extras(**kwargs)
 
@@ -397,7 +397,7 @@ class VectorObservationWrapper(VectorWrapper):
     ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
         obs, info = self.env.reset(seed=seed, options=options)
-        return self.observation(obs), info
+        return self.vector_observation(obs), info
 
     def step(
         self, actions: ActType
@@ -405,23 +405,42 @@ class VectorObservationWrapper(VectorWrapper):
         """Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return (
-            self.observation(observation),
+            self.vector_observation(observation),
             reward,
             termination,
             truncation,
-            info,
+            self.update_final_obs(info),
         )
 
-    def observation(self, observation: ObsType) -> ObsType:
-        """Defines the observation transformation.
+    def vector_observation(self, observation: ObsType) -> ObsType:
+        """Defines the vector observation transformation.
 
         Args:
-            observation (object): the observation from the environment
+            observation: A vector observation from the environment
 
         Returns:
-            observation (object): the transformed observation
+            the transformed observation
         """
         raise NotImplementedError
+
+    def single_observation(self, observation: ObsType) -> ObsType:
+        """Defines the single observation transformation.
+
+        Args:
+            observation: A single observation from the environment
+
+        Returns:
+            The transformed observation
+        """
+        raise NotImplementedError
+
+    def update_final_obs(self, info: dict[str, Any]) -> dict[str, Any]:
+        """Updates the `final_obs` in the info using `single_observation`."""
+        if "final_observation" in info:
+            for i, obs in enumerate(info["final_observation"]):
+                if obs is not None:
+                    info["final_observation"][i] = self.single_observation(obs)
+        return info
 
 
 class VectorActionWrapper(VectorWrapper):

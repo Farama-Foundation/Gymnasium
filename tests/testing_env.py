@@ -58,7 +58,7 @@ class GenericTestEnv(gym.Env):
         metadata: dict[str, Any] = {"render_modes": []},
         render_mode: str | None = None,
         spec: EnvSpec = EnvSpec(
-            "TestingEnv-v0", "testing-env-no-entry-point", max_episode_steps=100
+            "TestingEnv-v0", "tests.testing_env:GenericTestEnv", max_episode_steps=100
         ),
     ):
         """Generic testing environment constructor.

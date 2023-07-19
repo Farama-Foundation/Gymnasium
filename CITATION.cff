@@ -1,0 +1,97 @@
+cff-version: 1.2.0
+title: Gymnasium
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Mark
+    family-names: Towers
+    email: mt5g17@soton.ac.uk
+    affiliation: University of Southampton
+    orcid: 'https://orcid.org/0000-0002-2609-2041'
+  - given-names: Jordan K
+    family-names: Terry
+    email: jkterry@farama.org
+    affiliation: Farama Foundation
+    orcid: 'https://orcid.org/0009-0006-4511-3756'
+  - given-names: Ariel
+    family-names: Kwiatkowski
+    email: akwiatkowski@farama.org
+    affiliation: Farama Foundation
+    orcid: 'https://orcid.org/0000-0002-9391-9993'
+  - given-names: John U.
+    family-names: Balis
+    email: balis@wisc.edu
+    affiliation: University of Wisconsin - Madison
+  - given-names: Gianluca
+    name-particle: de
+    family-names: Cola
+    email: gianluca.deco@gmail.com
+    affiliation: Farama Foundation
+  - given-names: Tristan
+    family-names: Deleu
+    email: deleutri@mila.quebec
+    affiliation: 'Mila, Université de Montréal'
+  - given-names: Manuel
+    family-names: Goulão
+    email: manuel.silva.goulao@tecnico.ulisboa.pt
+    affiliation: Instituto Superior Tecnico
+    orcid: 'https://orcid.org/0000-0001-6478-2038'
+  - given-names: Andreas
+    family-names: Kallinteris
+    email: akallinteris@tuc.gr
+    affiliation: Technical University of Crete (TUC)
+    orcid: 'https://orcid.org/0000-0002-6223-2670'
+  - given-names: Arjun
+    email: kg.arjun@gmail.com
+    family-names: KG
+    affiliation: connectome.design
+  - given-names: Markus
+    family-names: Krimmel
+    email: markus.krimmel@student.uni-tuebingen.de
+    affiliation: ETH
+    orcid: 'https://orcid.org/0009-0005-0159-1214'
+  - given-names: Rodrigo
+    family-names: Perez-Vicente
+    email: rperezvicente@farama.org
+    affiliation: Farama Foundation
+  - given-names: Andrea
+    family-names: Pierré
+    email: andrea_pierre@brown.edu
+    affiliation: Brown University
+    orcid: 'https://orcid.org/0000-0003-4501-5428'
+  - given-names: Sander
+    family-names: Schulhoff
+    email: sschulho@umd.edu
+    affiliation: University of Maryland
+    orcid: 'https://orcid.org/0009-0003-1904-0838'
+  - given-names: Jun Jet
+    family-names: Tai
+    email: taijunjet@hotmail.com
+    affiliation: Coventry University
+  - given-names: Andrew Jin Shen
+    family-names: Tan
+    email: andrew.jinshen@gmail.com
+    orcid: 'https://orcid.org/0009-0009-8772-5525'
+  - given-names: Omar G.
+    family-names: Younis
+    email: omar.younis98@gmail.com
+    affiliation: University of Bologna
+    orcid: 'https://orcid.org/0009-0004-2783-7932'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.8127025
+    description: Zenodo DOI
+repository-code: 'https://github.com/Farama-Foundation/Gymnasium'
+url: 'https://gymnasium.farama.org/'
+abstract: >-
+  An API standard for single-agent reinforcement learning
+  environments, with popular reference environments and
+  related utilities (formerly Gym)
+keywords:
+  - reinforcement learning
+  - machine learning
+  - artificial intelligence
+  - simulation
+license: MIT

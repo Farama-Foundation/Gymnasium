@@ -1,7 +1,8 @@
 from os import path
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium import error, logger, spaces
@@ -26,7 +27,7 @@ else:
 DEFAULT_SIZE = 480
 
 
-class BaseMujocoEnv(gym.Env):
+class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
     """Superclass for all MuJoCo environments."""
 
     def __init__(
@@ -56,8 +57,10 @@ class BaseMujocoEnv(gym.Env):
             OSError: when the `model_path` does not exist.
             error.DependencyNotInstalled: When `mujoco` is not installed.
         """
-        if model_path.startswith("/"):
+        if model_path.startswith(".") or model_path.startswith("/"):
             self.fullpath = model_path
+        elif model_path.startswith("~"):
+            self.fullpath = path.expanduser(model_path)
         else:
             self.fullpath = path.join(path.dirname(__file__), "assets", model_path)
         if not path.exists(self.fullpath):
@@ -65,7 +68,8 @@ class BaseMujocoEnv(gym.Env):
 
         self.width = width
         self.height = height
-        self._initialize_simulation()  # may use width and height
+        # may use width and height
+        self.model, self.data = self._initialize_simulation()
 
         self.init_qpos = self.data.qpos.ravel().copy()
         self.init_qvel = self.data.qvel.ravel().copy()
@@ -77,9 +81,10 @@ class BaseMujocoEnv(gym.Env):
             "rgb_array",
             "depth_array",
         ], self.metadata["render_modes"]
-        assert (
-            int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
-        ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
+        if "render_fps" in self.metadata:
+            assert (
+                int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
+            ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
 
         self.observation_space = observation_space
         self._set_action_space()
@@ -96,39 +101,46 @@ class BaseMujocoEnv(gym.Env):
 
     # methods to override:
     # ----------------------------
+    def step(
+        self, action: NDArray[np.float32]
+    ) -> Tuple[NDArray[np.float64], np.float64, bool, bool, Dict[str, np.float64]]:
+        raise NotImplementedError
 
-    def reset_model(self):
+    def reset_model(self) -> NDArray[np.float64]:
         """
         Reset the robot degrees of freedom (qpos and qvel).
         Implement this in each subclass.
         """
         raise NotImplementedError
 
-    def _initialize_simulation(self):
+    def _initialize_simulation(self) -> Tuple[Any, Any]:
         """
         Initialize MuJoCo simulation data structures mjModel and mjData.
         """
         raise NotImplementedError
 
-    def _reset_simulation(self):
+    def _reset_simulation(self) -> None:
         """
         Reset MuJoCo simulation data structures, mjModel and mjData.
         """
         raise NotImplementedError
 
-    def _step_mujoco_simulation(self, ctrl, n_frames):
+    def _step_mujoco_simulation(self, ctrl, n_frames) -> None:
         """
         Step over the MuJoCo simulation.
         """
         raise NotImplementedError
 
-    def render(self):
+    def render(self) -> Union[NDArray[np.float64], None]:
         """
         Render a frame from the MuJoCo simulation as specified by the render_mode.
         """
         raise NotImplementedError
 
     # -----------------------------
+    def _get_reset_info(self) -> Dict[str, float]:
+        """Function that generates the `info` that is returned during a `reset()`."""
+        return {}
 
     def reset(
         self,
@@ -141,28 +153,30 @@ class BaseMujocoEnv(gym.Env):
         self._reset_simulation()
 
         ob = self.reset_model()
+        info = self._get_reset_info()
+
         if self.render_mode == "human":
             self.render()
-        return ob, {}
+        return ob, info
 
-    def set_state(self, qpos, qvel):
+    def set_state(self, qpos, qvel) -> None:
         """
         Set the joints position qpos and velocity qvel of the model. Override this method depending on the MuJoCo bindings used.
         """
         assert qpos.shape == (self.model.nq,) and qvel.shape == (self.model.nv,)
 
     @property
-    def dt(self):
+    def dt(self) -> float:
         return self.model.opt.timestep * self.frame_skip
 
-    def do_simulation(self, ctrl, n_frames):
+    def do_simulation(self, ctrl, n_frames) -> None:
         """
         Step the simulation n number of frames and applying a control action.
         """
         # Check control input is contained in the action space
-        if np.array(ctrl).shape != self.action_space.shape:
+        if np.array(ctrl).shape != (self.model.nu,):
             raise ValueError(
-                f"Action dimension mismatch. Expected {self.action_space.shape}, found {np.array(ctrl).shape}"
+                f"Action dimension mismatch. Expected {(self.model.nu,)}, found {np.array(ctrl).shape}"
             )
         self._step_mujoco_simulation(ctrl, n_frames)
 
@@ -170,11 +184,11 @@ class BaseMujocoEnv(gym.Env):
         """Close all processes like rendering contexts"""
         raise NotImplementedError
 
-    def get_body_com(self, body_name):
+    def get_body_com(self, body_name) -> NDArray[np.float64]:
         """Return the cartesian position of a body frame"""
         raise NotImplementedError
 
-    def state_vector(self):
+    def state_vector(self) -> NDArray[np.float64]:
         """Return the position and velocity joint states of the model"""
         return np.concatenate([self.data.qpos.flat, self.data.qvel.flat])
 
@@ -221,9 +235,10 @@ class MuJocoPyEnv(BaseMujocoEnv):
         )
 
     def _initialize_simulation(self):
-        self.model = mujoco_py.load_model_from_path(self.fullpath)
-        self.sim = mujoco_py.MjSim(self.model)
-        self.data = self.sim.data
+        model = mujoco_py.load_model_from_path(self.fullpath)
+        self.sim = mujoco_py.MjSim(model)
+        data = self.sim.data
+        return model, data
 
     def _reset_simulation(self):
         self.sim.reset()
@@ -338,7 +353,7 @@ class MujocoEnv(BaseMujocoEnv):
         height: int = DEFAULT_SIZE,
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
-        default_camera_config: Optional[dict] = None,
+        default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
     ):
         if MUJOCO_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
@@ -363,12 +378,15 @@ class MujocoEnv(BaseMujocoEnv):
             self.model, self.data, default_camera_config
         )
 
-    def _initialize_simulation(self):
-        self.model = mujoco.MjModel.from_xml_path(self.fullpath)
+    def _initialize_simulation(
+        self,
+    ) -> Tuple["mujoco._structs.MjModel", "mujoco._structs.MjData"]:
+        model = mujoco.MjModel.from_xml_path(self.fullpath)
         # MjrContext will copy model.vis.global_.off* to con.off*
-        self.model.vis.global_.offwidth = self.width
-        self.model.vis.global_.offheight = self.height
-        self.data = mujoco.MjData(self.model)
+        model.vis.global_.offwidth = self.width
+        model.vis.global_.offheight = self.height
+        data = mujoco.MjData(model)
+        return model, data
 
     def _reset_simulation(self):
         mujoco.mj_resetData(self.model, self.data)
