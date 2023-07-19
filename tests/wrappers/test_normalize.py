@@ -6,6 +6,7 @@ from numpy.testing import assert_almost_equal
 
 import gymnasium as gym
 from gymnasium.wrappers import NormalizeObservationV0, NormalizeRewardV1
+from tests.testing_env import GenericTestEnv
 
 
 class DummyRewardEnv(gym.Env):
@@ -45,13 +46,32 @@ def make_env(return_reward_idx):
 
 
 def test_normalize_observation():
-    env = DummyRewardEnv(return_reward_idx=0)
-    env = NormalizeObservationV0(env)
-    env.reset()
-    env.step(env.action_space.sample())
-    assert_almost_equal(env.obs_rms.mean, 0.5, decimal=4)
-    env.step(env.action_space.sample())
-    assert_almost_equal(env.obs_rms.mean, 1.0, decimal=4)
+    """Tests that the property `_update_running_mean` freezes/continues the running statistics updating."""
+    env = GenericTestEnv()
+    wrapped_env = NormalizeObservationV0(env)
+
+    # Default value is True
+    assert wrapped_env.update_running_mean
+
+    wrapped_env.reset()
+    rms_var_init = wrapped_env.obs_rms.var
+    rms_mean_init = wrapped_env.obs_rms.mean
+
+    # Statistics are updated when env.step()
+    wrapped_env.step(None)
+    rms_var_updated = wrapped_env.obs_rms.var
+    rms_mean_updated = wrapped_env.obs_rms.mean
+    assert rms_var_init != rms_var_updated
+    assert rms_mean_init != rms_mean_updated
+
+    # Assure property is set
+    wrapped_env.update_running_mean = False
+    assert not wrapped_env.update_running_mean
+
+    # Statistics are frozen
+    wrapped_env.step(None)
+    assert rms_var_updated == wrapped_env.obs_rms.var
+    assert rms_mean_updated == wrapped_env.obs_rms.mean
 
 
 def test_normalize_reset_info():
