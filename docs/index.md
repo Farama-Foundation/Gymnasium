@@ -53,7 +53,7 @@ api/spaces
 api/wrappers
 api/vector
 api/utils
-api/experimental
+api/functional
 ```
 
 ```{toctree}

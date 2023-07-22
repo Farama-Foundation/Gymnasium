@@ -2,13 +2,14 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Iterator, Sequence
 
 import numpy as np
 
 from gymnasium import Env
+from gymnasium.core import ActType, ObsType
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
-from gymnasium.vector.vector_env import VectorEnv
+from gymnasium.vector.vector_env import ArrayType, VectorEnv
 
 
 __all__ = ["SyncVectorEnv"]
@@ -26,11 +27,16 @@ class SyncVectorEnv(VectorEnv):
         >>> env.reset(seed=42)
         (array([[-0.14995256,  0.9886932 , -0.12224312],
                [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
+        >>> _ = env.action_space.seed(42)
+        >>> actions = env.action_space.sample()
+
+        >>> env.step(actions)
+
     """
 
     def __init__(
         self,
-        env_fns: Iterator[Callable[[], Env]],
+        env_fns: Iterator[Callable[[], Env]] | Sequence[Callable[[], Env]],
         copy: bool = True,
     ):
         """Vectorized environment that serially runs multiple environments.
@@ -108,7 +114,9 @@ class SyncVectorEnv(VectorEnv):
         )
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
-    def step(self, actions):
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
@@ -145,7 +153,7 @@ class SyncVectorEnv(VectorEnv):
             infos,
         )
 
-    def call(self, name, *args, **kwargs) -> tuple:
+    def call(self, name: str, *args: Any, **kwargs: Any) -> tuple[Any, ...]:
         """Calls the method with name and applies args and kwargs.
 
         Args:
@@ -166,7 +174,7 @@ class SyncVectorEnv(VectorEnv):
 
         return tuple(results)
 
-    def get_attr(self, name: str):
+    def get_attr(self, name: str) -> Any:
         """Get a property from each parallel environment.
 
         Args:
@@ -177,7 +185,7 @@ class SyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: list | tuple | Any):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any):
         """Sets an attribute of the sub-environments.
 
         Args:
@@ -201,7 +209,7 @@ class SyncVectorEnv(VectorEnv):
         for env, value in zip(self.envs, values):
             setattr(env, name, value)
 
-    def close_extras(self, **kwargs):
+    def close_extras(self, **kwargs: Any):
         """Close the environments."""
         [env.close() for env in self.envs]
 
