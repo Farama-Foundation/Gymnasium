@@ -54,8 +54,8 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation Space consists of the following parts (in order):
 
-    - qpos:* Position values of the robots's body parts.
-    - qvel:* The velocities of these individual body parts,
+    - qpos (5 elements by default):* Position values of the robots's body parts.
+    - qvel (6 elements):* The velocities of these individual body parts,
     (their derivatives).
 
     By default, observations do not include the x-coordinate of the hopper. It may
@@ -130,7 +130,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     3. The angle of the torso (`observation[1]` if  `exclude_current_positions_from_observation=True`, else `observation[2]`) is no longer contained in the closed interval specified by the argument `healthy_angle_range`
 
     #### Truncation
-    The maximum duration of an episode is 1000 timesteps.
+    The default duration of an episode is 1000 timesteps
 
 
     ## Arguments

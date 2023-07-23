@@ -112,7 +112,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     The Swimmer never terminates.
 
     #### Truncation
-    The maximum duration of an episode is 1000 timesteps.
+    The default duration of an episode is 1000 timesteps
 
 
     ## Arguments

@@ -128,7 +128,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     The Pusher never terminates.
 
     #### Truncation
-    The maximum duration of an episode is 100 timesteps.
+    The default duration of an episode is 100 timesteps
 
 
     ## Arguments

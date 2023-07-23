@@ -58,8 +58,8 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation Space consists of the following parts (in order):
 
-    - qpos:* Position values of the robots's body parts.
-    - qvel:* The velocities of these individual body parts,
+    - qpos (8 elements by default):* Position values of the robots's body parts.
+    - qvel (9 elements):* The velocities of these individual body parts,
     (their derivatives).
 
     By default, the observation does not include the robot's x-coordinate (`rootx`).
@@ -131,9 +131,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     3. The absolute value of the angle (`observation[1]` if `exclude_current_positions_from_observation=False`, else `observation[2]`) is ***not*** in the closed interval specified by `healthy_angle_range`
 
     #### Truncation
-    the maximum duration of an episode is 1000 timesteps.
-
-    If `terminate_when_unhealthy=False` is passed, the episode is ended only when 1000 timesteps are exceeded.
+    The default duration of an episode is 1000 timesteps
 
 
     ## Arguments

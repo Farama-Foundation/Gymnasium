@@ -108,7 +108,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     The Reacher never terminates.
 
     #### Truncation
-    The maximum duration of an episode is 50 timesteps.
+    The default duration of an episode is 50 timesteps
 
 
     ## Arguments

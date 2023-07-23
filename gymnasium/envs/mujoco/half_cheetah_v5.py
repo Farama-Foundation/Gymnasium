@@ -56,8 +56,8 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation Space consists of the following parts (in order):
 
-    - qpos:* Position values of the robots's body parts.
-    - qvel:* The velocities of these individual body parts,
+    - qpos (8 elements by default):* Position values of the robots's body parts.
+    - qvel (9 elements):* The velocities of these individual body parts,
     (their derivatives).
 
     By default, the observation does not include the robot's x-coordinate (`rootx`).
@@ -120,7 +120,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     The Half Cheetah never terminates.
 
     #### Truncation
-    The maximum duration of an episode is 1000 timesteps.
+    The default duration of an episode is 1000 timesteps
 
 
     ## Arguments

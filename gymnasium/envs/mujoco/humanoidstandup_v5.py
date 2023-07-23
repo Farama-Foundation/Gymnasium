@@ -66,19 +66,19 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation space consists of the following parts (in order)
 
-    - qpos:* The position values of the robot's body parts.
-    - qvel:* The velocities of these individual body parts,
+    - qpos (22 elements by default):* The position values of the robot's body parts.
+    - qvel (23 elements):* The velocities of these individual body parts,
     (their derivatives).
-    - *cinert:* Mass and inertia of the rigid body parts relative to the center of mass,
+    - *cinert (130 elements):* Mass and inertia of the rigid body parts relative to the center of mass,
     (this is an intermediate result of the transition).
-    It has shape 13*10 (*nbody * 10*) and thus adds another 130 elements to the observation space.
+    It has shape 13*10 (*nbody * 10*).
     (cinert - inertia matrix and body mass offset and body mass)
-    - *cvel:* Center of mass based velocity.
-    It has shape 13 * 6 (*nbody * 6*) and thus adds another 78 elements to the observation space.
+    - *cvel (78 elements):* Center of mass based velocity.
+    It has shape 13 * 6 (*nbody * 6*).
     (com velocity - velocity x, y, z and angular velocity x, y, z)
-    - *qfrc_actuator:* Constraint force generated as the actuator force at each joint.
-    This has shape `(17,)`  *(nv * 1)* and thus adds another 17 elements to the observation space.
-    - *cfrc_ext:* This is the center of mass based external force on the body parts.
+    - *qfrc_actuator (17 elements):* Constraint force generated as the actuator force at each joint.
+    This has shape `(17,)`  *(nv * 1)*.
+    - *cfrc_ext (78 elements):* This is the center of mass based external force on the body parts.
     It has shape 13 * 6 (*nbody * 6*) and thus adds to another 78 elements in the observation space.
     (external forces - force x, y, z and torque x, y, z)
 
@@ -241,7 +241,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     The Humanoid never terminates.
 
     #### Truncation
-    The maximum duration of an episode is 1000 timesteps.
+    The default duration of an episode is 1000 timesteps
 
 
     ## Arguments

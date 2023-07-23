@@ -115,7 +115,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.
 
     #### Truncation
-    The maximum duration of an episode is 1000 timesteps.
+    The default duration of an episode is 1000 timesteps
 
 
     ## Arguments

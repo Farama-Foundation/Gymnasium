@@ -55,10 +55,10 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation Space consists of the following parts (in order):
 
-    - qpos:* Position values of the robots's body parts.
-    - qvel:* The velocities of these individual body parts,
+    - qpos (13 elements by default):* Position values of the robots's body parts.
+    - qvel (14 elements):* The velocities of these individual body parts,
     (their derivatives).
-    - *cfrc_ext:* This is the center of mass based external forces on the body parts.
+    - *cfrc_ext (78 elements):* This is the center of mass based external forces on the body parts.
     It has shape 13 * 6 (*nbody * 6*) and hence adds to another 78 elements in the state space.
     (external forces - force x, y, z and torque x, y, z)
 
@@ -179,7 +179,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     2. The z-coordinate of the torso is **not** in the closed interval given by `healthy_z_range` (defaults to [0.2, 1.0])
 
     #### Truncation
-    The maximum duration of an episode is 1000 timesteps.
+    The default duration of an episode is 1000 timesteps
 
 
     ## Arguments

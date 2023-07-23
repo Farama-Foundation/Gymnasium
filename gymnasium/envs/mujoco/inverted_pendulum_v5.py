@@ -94,7 +94,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     2. The absolute value of the vertical angle between the pole and the cart is greater than 0.2 radian.
 
     #### Truncation
-    The maximum duration of an episode is 1000 timesteps.
+    The default duration of an episode is 1000 timesteps
 
 
     ## Arguments
