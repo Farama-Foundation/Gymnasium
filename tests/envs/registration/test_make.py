@@ -500,7 +500,7 @@ def test_make_errors():
         with pytest.raises(
             gym.error.Error,
             match=re.escape(
-                "Environment version v0 for `Humanoid` is deprecated. Please use `Humanoid-v4` instead."
+                "Environment version v0 for `Humanoid` is deprecated. Please use `Humanoid-v5` instead."
             ),
         ):
             gym.make("Humanoid-v0")
