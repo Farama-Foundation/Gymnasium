@@ -81,3 +81,29 @@ def test_vector_make_disable_env_checker():
     assert isinstance(env, SyncVectorEnv)
     assert all(has_wrapper(sub_env, PassiveEnvChecker) is False for sub_env in env.envs)
     env.close()
+
+
+def test_vector_make_custom_vec_env_old():
+    gym.register(
+        "CustomVectorizationExample-v0",
+        vector_entry_point="tests.envs.registration.utils_envs:CustomVecEnv",
+    )
+
+    env = gym.vector.make("CustomVectorizationExample-v0", num_envs=16)
+    assert env.__class__.__name__ == "CustomVecEnv"
+    assert env.num_envs == 16
+    assert env.observation_space.shape == (16, 3)
+    assert env.action_space.shape == (16, 3)
+
+
+def test_vector_make_custom_vec_env_new():
+    gym.register(
+        "CustomVectorizationExample-v0",
+        vector_entry_point="tests.envs.registration.utils_envs:CustomVecEnv",
+    )
+
+    env = gym.make_vec("CustomVectorizationExample-v0", num_envs=16)
+    assert env.__class__.__name__ == "CustomVecEnv"
+    assert env.num_envs == 16
+    assert env.observation_space.shape == (16, 3)
+    assert env.action_space.shape == (16, 3)

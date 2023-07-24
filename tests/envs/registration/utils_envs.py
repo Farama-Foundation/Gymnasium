@@ -65,3 +65,15 @@ class NoRenderModesMetadata(gym.Env):
 
         self.observation_space = gym.spaces.Box(low=0, high=1)
         self.action_space = gym.spaces.Box(low=0, high=1)
+
+
+
+class CustomVecEnv(gym.vector.VectorEnv):
+    def __init__(
+        self,
+        num_envs: int,
+        **kwargs,
+    ):
+        obs_space = gym.spaces.Box(low=0, high=1, shape=(3,))
+        act_space = gym.spaces.Box(low=0, high=1, shape=(3,))
+        super().__init__(num_envs, obs_space, act_space)

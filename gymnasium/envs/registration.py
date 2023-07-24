@@ -487,7 +487,7 @@ def _check_metadata(testing_metadata: dict[str, Any]):
         )
 
 
-def _find_spec(env_id: str) -> EnvSpec:
+def find_env_spec(env_id: str) -> EnvSpec:
     # For string id's, load the environment spec from the registry then make the environment spec
     assert isinstance(env_id, str)
 
@@ -738,7 +738,7 @@ def make(
         assert isinstance(id, str)
 
         # The environment name can include an unloaded module in "module:env_name" style
-        env_spec = _find_spec(id)
+        env_spec = find_env_spec(id)
 
     assert isinstance(env_spec, EnvSpec)
 
@@ -898,7 +898,7 @@ def make(
 def make_vec(
     id: str | EnvSpec,
     num_envs: int = 1,
-    vectorization_mode: str = "async",
+    vectorization_mode: str = None,
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
@@ -913,7 +913,9 @@ def make_vec(
     Args:
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
-        vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom"
+        vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom". It will default to
+            None which will evaluate to "async" unless the environment has custom vectorization. In which case, the environment
+            will be vectorized according to the environment's ``vector_entry_point``.
         vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
         wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
         **kwargs: Additional arguments to pass to the environment constructor.
@@ -933,7 +935,10 @@ def make_vec(
     if isinstance(id, EnvSpec):
         spec_ = id
     else:
-        spec_ = _find_spec(id)
+        spec_ = find_env_spec(id)
+
+    if vectorization_mode is None:
+        vectorization_mode = "async" if spec_.vector_entry_point is None else "custom"
 
     _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)

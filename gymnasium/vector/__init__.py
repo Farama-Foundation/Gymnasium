@@ -3,6 +3,7 @@ from typing import Callable, Iterable, List, Optional, Union
 
 import gymnasium as gym
 from gymnasium.core import Env
+from gymnasium.envs.registration import find_env_spec, load_env_creator
 from gymnasium.vector import utils
 from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
@@ -54,32 +55,50 @@ def make(
         "`gymnasium.vector.make(...)` is deprecated and will be replaced by `gymnasium.make_vec(...)` in v1.0"
     )
 
-    def create_env(env_num: int) -> Callable[[], Env]:
-        """Creates an environment that can enable or disable the environment checker."""
-        # If the env_num > 0 then disable the environment checker otherwise use the parameter
-        _disable_env_checker = True if env_num > 0 else disable_env_checker
+    env_spec = find_env_spec(id)
+    vec_entry = env_spec.vector_entry_point
 
-        def _make_env() -> Env:
-            env = gym.envs.registration.make(
-                id,
-                disable_env_checker=_disable_env_checker,
-                **kwargs,
-            )
-            if wrappers is not None:
-                if callable(wrappers):
-                    env = wrappers(env)
-                elif isinstance(wrappers, Iterable) and all(
-                    [callable(w) for w in wrappers]
-                ):
-                    for wrapper in wrappers:
-                        env = wrapper(env)
-                else:
-                    raise NotImplementedError
-            return env
+    # when a user hasn't defined a vector_entry_point, use async or sync
+    if vec_entry is None:
+        def create_env(env_num: int) -> Callable[[], Env]:
+            """Creates an environment that can enable or disable the environment checker."""
+            # If the env_num > 0 then disable the environment checker otherwise use the parameter
+            _disable_env_checker = True if env_num > 0 else disable_env_checker
 
-        return _make_env
+            def _make_env() -> Env:
+                env = gym.envs.registration.make(
+                    id,
+                    disable_env_checker=_disable_env_checker,
+                    **kwargs,
+                )
+                if wrappers is not None:
+                    if callable(wrappers):
+                        env = wrappers(env)
+                    elif isinstance(wrappers, Iterable) and all(
+                        [callable(w) for w in wrappers]
+                    ):
+                        for wrapper in wrappers:
+                            env = wrapper(env)
+                    else:
+                        raise NotImplementedError
+                return env
 
-    env_fns = [
-        create_env(disable_env_checker or env_num > 0) for env_num in range(num_envs)
-    ]
-    return AsyncVectorEnv(env_fns) if asynchronous else SyncVectorEnv(env_fns)
+            return _make_env
+
+        env_fns = [
+            create_env(disable_env_checker or env_num > 0) for env_num in range(num_envs)
+        ]
+        return AsyncVectorEnv(env_fns) if asynchronous else SyncVectorEnv(env_fns)
+    
+    if isinstance(vec_entry, str):
+        vec_entry = load_env_creator(vec_entry)
+    
+    return vec_entry(
+        num_envs=num_envs,
+        **kwargs, 
+        extra_kwargs={
+            "disable_env_checker": disable_env_checker,
+            "wrappers": wrappers,
+            "asynchronous": asynchronous,
+        },
+    )
