@@ -67,7 +67,6 @@ class NoRenderModesMetadata(gym.Env):
         self.action_space = gym.spaces.Box(low=0, high=1)
 
 
-
 class CustomVecEnv(gym.vector.VectorEnv):
     def __init__(
         self,
