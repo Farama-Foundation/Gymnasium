@@ -20,18 +20,33 @@ class SyncVectorEnv(VectorEnv):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.vector.SyncVectorEnv([
+        >>> envs = gym.vector.SyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset(seed=42)
-        (array([[-0.14995256,  0.9886932 , -0.12224312],
-               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
-        >>> _ = env.action_space.seed(42)
-        >>> actions = env.action_space.sample()
-
-        >>> env.step(actions)
-
+        >>> envs
+        SyncVectorEnv(Pendulum-v1, num_envs=2)
+        >>> obs, infos = envs.reset(seed=42)
+        >>> obs
+        array([[-0.14995256,  0.9886932 , -0.12224312],
+               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32)
+        >>> infos
+        {}
+        >>> _ = envs.action_space.seed(42)
+        >>> actions = envs.action_space.sample()
+        >>> obs, rewards, terminates, truncates, infos = envs.step(actions)
+        >>> obs
+        array([[-0.1878752 ,  0.98219293,  0.7695615 ],
+               [ 0.6102389 ,  0.79221743, -0.8498053 ]], dtype=float32)
+        >>> rewards
+        array([-2.96562607, -0.99902063])
+        >>> terminates
+        array([False, False])
+        >>> truncates
+        array([False, False])
+        >>> infos
+        {}
+        >>> envs.close()
     """
 
     def __init__(

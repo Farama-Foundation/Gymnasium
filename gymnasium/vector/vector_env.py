@@ -53,11 +53,29 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     Examples:
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync", wrappers=(gym.wrappers.TimeAwareObservationV0,))
-        >>> envs = gym.wrappers.vector.ClipActionV0(envs)
-        >>> envs.reset(seed=123)
+        >>> envs = gym.wrappers.vector.ClipRewardV0(envs, min_reward=0.2, max_reward=0.8)
+        >>> envs
+        <ClipRewardV0, SyncVectorEnv(CartPole-v1, num_envs=3)>
+        >>> observations, infos = envs.reset(seed=123)
+        >>> observations
+        array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282,  0.        ],
+               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598,  0.        ],
+               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924,  0.        ]])
+        >>> infos
         {}
         >>> _ = envs.action_space.seed(123)
-        >>> envs.step(envs.action_space.sample())
+        >>> observations, rewards, terminations, truncations, infos = envs.step(envs.action_space.sample())
+        >>> observations
+        array([[ 0.01734283,  0.15089367, -0.02859527, -0.33293587,  1.        ],
+               [ 0.02909703, -0.16717631,  0.04740972,  0.3319138 ,  1.        ],
+               [ 0.03516225, -0.19559774, -0.01162461,  0.25715804,  1.        ]])
+        >>> rewards
+        array([0.8, 0.8, 0.8])
+        >>> terminations
+        array([False, False, False])
+        >>> truncations
+        array([False, False, False])
+        >>> infos
         {}
         >>> envs.close()
 
@@ -104,12 +122,15 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
         Example:
             >>> import gymnasium as gym
-            >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-            >>> envs.reset(seed=42)
-            (array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
+            >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+            >>> observations, infos = envs.reset(seed=42)
+            >>> observations
+            array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
                    [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
                    [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
-                  dtype=float32), {})
+                  dtype=float32)
+            >>> infos
+            {}
         """
         if seed is not None:
             self._np_random, seed = seeding.np_random(seed)
@@ -133,10 +154,10 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         Example:
             >>> import gymnasium as gym
             >>> import numpy as np
-            >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+            >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
             >>> _ = envs.reset(seed=42)
-            >>> actions = np.array([1, 0, 1], dtype=np.float32)
-            >>> observations, rewards, termination, truncation, infos = envs.step(actions)
+            >>> actions = np.array([1, 0, 1], dtype=np.int32)
+            >>> observations, rewards, terminations, truncations, infos = envs.step(actions)
             >>> observations
             array([[ 0.02727336,  0.18847767,  0.03625453, -0.26141977],
                    [ 0.01431748, -0.24002443, -0.04731862,  0.3110827 ],
@@ -144,9 +165,9 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
                   dtype=float32)
             >>> rewards
             array([1., 1., 1.])
-            >>> termination
+            >>> terminations
             array([False, False, False])
-            >>> termination
+            >>> terminations
             array([False, False, False])
             >>> infos
             {}
@@ -265,9 +286,11 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             A string containing the class name, number of environments and environment spec id
         """
         if self.spec is None:
-            return f"{self.__class__.__name__}({self.num_envs})"
+            return f"{self.__class__.__name__}(num_envs={self.num_envs})"
         else:
-            return f"{self.__class__.__name__}({self.spec.id}, {self.num_envs})"
+            return (
+                f"{self.__class__.__name__}({self.spec.id}, num_envs={self.num_envs})"
+            )
 
 
 class VectorWrapper(VectorEnv):

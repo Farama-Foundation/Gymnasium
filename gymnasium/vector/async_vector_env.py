@@ -51,13 +51,29 @@ class AsyncVectorEnv(VectorEnv):
 
     Example:
         >>> import gymnasium as gym
-        >>> env = gym.vector.AsyncVectorEnv([
+        >>> envs = gym.vector.AsyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
-        >>> env.reset(seed=42)
-        (array([[-0.14995256,  0.9886932 , -0.12224312],
-               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})
+        >>> observations, infos = envs.reset(seed=42)
+        >>> observations
+        array([[-0.14995256,  0.9886932 , -0.12224312],
+               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32)
+        >>> infos
+        {}
+        >>> _ = envs.action_space.seed(123)
+        >>> observations, rewards, terminations, truncations, infos = envs.step(envs.action_space.sample())
+        >>> observations
+        array([[-0.1851753 ,  0.98270553,  0.714599  ],
+               [ 0.6193494 ,  0.7851154 , -1.0808398 ]], dtype=float32)
+        >>> rewards
+        array([-2.96495728, -1.00214607])
+        >>> terminations
+        array([False, False])
+        >>> truncations
+        array([False, False])
+        >>> infos
+        {}
     """
 
     def __init__(
@@ -216,7 +232,7 @@ class AsyncVectorEnv(VectorEnv):
     def reset_wait(
         self,
         timeout: int | float | None = None,
-    ) -> tuple[ObsType, list[dict]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
