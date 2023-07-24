@@ -14,12 +14,12 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
         <title>Inverted Pendulum - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=093e2efd5a2c7b46ab7c7157e45f5f05a1e0a463" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=d98e5db1aa483f10fd0a50bf79700ebb0c5bab79" />
     
     
 
@@ -57,18 +57,6 @@
               <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
               <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
             </svg>
-            <!-- <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <line x1="0.5" y1="4.5" x2="23.5" y2="4.5" style="fill: none; "></line>
-              <line x1="0.5" y1="12" x2="14" y2="12" ></line>
-              <line x1="0.5" y1="19.5" x2="23.5" y2="19.5"></line>
-              <polyline style="stroke-width: 0px;" points="17 7 22 12 17 17"></polyline>
-            </svg> -->
-            <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px">
-              <defs></defs>
-              <rect y="1" width="22" height="22" rx="2" ry="2" style="fill: none;" x="1"></rect>
-              <line x1="8" y1="1" x2="8" y2="23"></line>
-              <polyline style="stroke-linecap: round; fill: none; stroke-linejoin: round;" points="13 7 17 12 13 17"></polyline>
-            </svg> -->
           </label>
         </div>
         <div class="farama-header__left farama-header__center--mobile">
@@ -498,7 +486,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(4,),</span> <span class="pre">float64)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;InvertedPendulum-v4&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;InvertedPendulum-v5&quot;)</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -513,6 +501,32 @@ allowing for more complex experiments (such as varying the effects of gravity).
 This environment involves a cart that can moved linearly, with a pole fixed on it
 at one end and having another end free. The cart can be pushed left or right, and the
 goal is to balance the pole on the top of the cart by applying forces on the cart.</p>
+<p>Gymnasium includes the following versions of the environment:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Environment</p></th>
+<th class="head"><p>Binding</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>InvertedPendulum-v5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.3.3</span></code></p></td>
+<td><p>Recommended (most features, the least bugs)</p></td>
+</tr>
+<tr class="row-odd"><td><p>InvertedPendulum-v4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.1.3</span></code></p></td>
+<td><p>Maintained for reproducibility</p></td>
+</tr>
+<tr class="row-even"><td><p>InvertedPendulum-v2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
+<td><p>Maintained for reproducibility</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For more information see section “Version History”.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
@@ -529,7 +543,7 @@ force and sign representing the direction)</p>
 <th class="head"><p>Control Max</p></th>
 <th class="head"><p>Name (in corresponding XML file)</p></th>
 <th class="head"><p>Joint</p></th>
-<th class="head"><p>Unit</p></th>
+<th class="head"><p>Type (Unit)</p></th>
 </tr>
 </thead>
 <tbody>
@@ -560,7 +574,7 @@ with all the positions ordered before all the velocities.</p>
 <th class="head"><p>Max</p></th>
 <th class="head"><p>Name (in corresponding XML file)</p></th>
 <th class="head"><p>Joint</p></th>
-<th class="head"><p>Unit</p></th>
+<th class="head"><p>Type (Unit)</p></th>
 </tr>
 </thead>
 <tbody>
@@ -594,7 +608,7 @@ with all the positions ordered before all the velocities.</p>
 <td><p>Inf</p></td>
 <td><p>hinge</p></td>
 <td><p>hinge</p></td>
-<td><p>anglular velocity (rad/s)</p></td>
+<td><p>angular velocity (rad/s)</p></td>
 </tr>
 </tbody>
 </table>
@@ -602,46 +616,89 @@ with all the positions ordered before all the velocities.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
-<p>The goal is to make the inverted pendulum stand upright (within a certain angle limit)
-as long as possible - as such a reward of +1 is awarded for each timestep that
+<p>The goal is to keep the inverted pendulum stand upright (within a certain angle limit)
+for as long as possible - as such a reward of +1 is awarded for each timestep that
 the pole is upright.</p>
+<p>The pole is considered upright if:
+$|angle| &lt; 0.2$.</p>
+<p>and <code class="docutils literal notranslate"><span class="pre">info</span></code> also contains the reward.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<p>The initial position state is $\mathcal{U}<em>{[-reset_noise_scale   imes 1</em>{2}, reset_noise_scale         imes 1_{2}]}$.
+The initial velocity state is $\mathcal{U}<em>{[-reset_noise_scale   imes 1</em>{2}, reset_noise_scale         imes 1_{2}]}$.</p>
+<p>where $\mathcal{U}$ is the multivariate uniform continuous distribution.</p>
 <p>All observations start in state
 (0.0, 0.0, 0.0, 0.0) with a uniform noise in the range
-of [-0.01, 0.01] added to the values for stochasticity.</p>
+of <code class="docutils literal notranslate"><span class="pre">[-reset_noise_scale,</span> <span class="pre">reset_noise_scale]</span></code> added to the values for stochasticity.</p>
 </section>
 <section id="episode-end">
 <h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
-<p>The episode ends when any of the following happens:</p>
+<section id="termination">
+<h3>Termination<a class="headerlink" href="#termination" title="Permalink to this heading">#</a></h3>
+<p>The environment terminates when the Inverted Pendulum is unhealthy.
+The Inverted Pendulum is unhealthy if any of the following happens:</p>
 <ol class="arabic simple">
-<li><p>Truncation: The episode duration reaches 1000 timesteps.</p></li>
-<li><p>Termination: Any of the state space values is no longer finite.</p></li>
-<li><p>Termination: The absolute value of the vertical angle between the pole and the cart is greater than 0.2 radian.</p></li>
+<li><p>Any of the state space values is no longer finite.</p></li>
+<li><p>The absolute value of the vertical angle between the pole and the cart is greater than 0.2 radian.</p></li>
 </ol>
+</section>
+<section id="truncation">
+<h3>Truncation<a class="headerlink" href="#truncation" title="Permalink to this heading">#</a></h3>
+<p>The default duration of an episode is 1000 timesteps</p>
+</section>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
-<p>No additional arguments are currently supported.</p>
+<p>InvertedPendulum provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
+These parameters can be applied during <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> in the following way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;InvertedPendulum-v4&#39;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;InvertedPendulum-v5&#39;</span><span class="p">,</span> <span class="n">reset_noise_scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>There is no v3 for InvertedPendulum, unlike the robot environments where a
-v3 and beyond take <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> kwargs such as <code class="docutils literal notranslate"><span class="pre">xml_file</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code>, etc.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;InvertedPendulum-v2&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">xml_file</span></code></p></td>
+<td><p><strong>str</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;inverted_double_pendulum.xml&quot;</span></code></p></td>
+<td><p>Path to a MuJoCo model</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code></p></td>
+<td><p><strong>float</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.01</span></code></p></td>
+<td><p>Scale of random perturbations of initial position and velocity (see section on Starting State)</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1.3</p></li>
-<li><p>v3: Support for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> kwargs such as <code class="docutils literal notranslate"><span class="pre">xml_file</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code>, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)</p></li>
-<li><p>v2: All continuous control environments now use mujoco-py &gt;= 1.50</p></li>
-<li><p>v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum)</p></li>
+<li><p>v5:</p>
+<ul>
+<li><p>Minimum <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> version is now 2.3.3.</p></li>
+<li><p>Added support for fully custom/third party <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> models using the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument (previously only a few changes could be made to the existing models).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">env.observation_structure</span></code>, a dictionary for specifying the observation space compose (e.g. <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>), useful for building tooling and wrappers for the MuJoCo environments.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> argument, used to configure the <code class="docutils literal notranslate"><span class="pre">dt</span></code> (duration of <code class="docutils literal notranslate"><span class="pre">step()</span></code>), default varies by environment check environment documentation pages.</p></li>
+<li><p>Fixed bug: <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> was given on every step (even if the Pendulum is unhealthy), now it is only given if the Pendulum is healthy (not terminated) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/500">Github issue</a>).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code> argument to set the range of initial states.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_survive&quot;]</span></code> which contains the reward.</p></li>
+</ul>
+</li>
+<li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1..</p></li>
+<li><p>v3: This environment does not have a v3 release.</p></li>
+<li><p>v2: All continuous control environments now use mujoco-py &gt;= 1.5.</p></li>
+<li><p>v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum).</p></li>
 <li><p>v0: Initial versions release (1.0.0)</p></li>
 </ul>
 </section>
@@ -722,7 +779,11 @@ v3 and beyond take <code class="docutils literal notranslate"><span class="pre">
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
 <li><a class="reference internal" href="#starting-state">Starting State</a></li>
-<li><a class="reference internal" href="#episode-end">Episode End</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a><ul>
+<li><a class="reference internal" href="#termination">Termination</a></li>
+<li><a class="reference internal" href="#truncation">Truncation</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>
 </ul>
@@ -757,38 +818,58 @@ v3 and beyond take <code class="docutils literal notranslate"><span class="pre">
     </script>
 
     
-    <script>
-          (() => {
-              if (!localStorage.getItem("shownCookieAlert")) {
-                  const boxElem = document.createElement("div");
-                  boxElem.classList.add("cookie-alert");
-                  const containerElem = document.createElement("div");
-                  containerElem.classList.add("cookie-alert__container");
-                  const textElem = document.createElement("p");
-                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
-                                      Google Analytics</a> to collect statistics. You can disable it by blocking
-                                      the JavaScript coming from www.google-analytics.com.`;
-                                      containerElem.appendChild(textElem);
-                  const closeBtn = document.createElement("button");
-                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
-                  closeBtn.onclick = () => {
-                      localStorage.setItem("shownCookieAlert", "true");
-                      boxElem.style.display = "none";
-                  }
-                  containerElem.appendChild(closeBtn);
-                  boxElem.appendChild(containerElem);
-                  document.body.appendChild(boxElem);
-              }
-          })()
-      </script>
-
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
       <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6H9C8TWXZ8');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
 
-        gtag('config', 'G-6H9C8TWXZ8');
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
       </script>
 
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
@@ -797,6 +878,37 @@ v3 and beyond take <code class="docutils literal notranslate"><span class="pre">
     <script src="../../../_static/scripts/furo.js"></script>
     
     <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
       // Create menu with Farama projects by using the API at farama.org/api/projects.json
       const createCORSRequest = (method, url) => {
         let xhr = new XMLHttpRequest();
@@ -823,9 +935,15 @@ v3 and beyond take <code class="docutils literal notranslate"><span class="pre">
       xhr.onload = () => {
         const jsonResponse = xhr.response;
         const sections = {
-          "Documentation": [],
-          "Mature Projects": [],
-          "Incubating Projects": [],
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
           "Foundation": [
             {
               name: "About",
@@ -841,28 +959,38 @@ v3 and beyond take <code class="docutils literal notranslate"><span class="pre">
             }
           ]
         }
+
+        // Categorize projects
         Object.keys(jsonResponse).forEach(key => {
           projectJson = jsonResponse[key];
           if (projectJson.website !== null) {
             projectJson.link = projectJson.website;
-            sections["Documentation"].push(projectJson)
-          } else if (projectJson.type == "mature") {
-            projectJson.link = projectJson.github;
-            sections["Mature Projects"].push(projectJson)
           } else {
             projectJson.link = projectJson.github;
-            sections["Incubating Projects"].push(projectJson)
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
           }
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
 
         Object.keys(sections).forEach((key, i) => {
-          projects = sections[key];
           const sectionElem = Object.assign(
             document.createElement('div'), {
               className:'farama-header-menu__section',
-              style: "padding-left: 24px"
             }
           )
           sectionElem.appendChild(Object.assign(document.createElement('span'),
@@ -871,33 +999,37 @@ v3 and beyond take <code class="docutils literal notranslate"><span class="pre">
               innerText: key
             }
           ))
-          const ulElem = Object.assign(document.createElement('ul'),
-            {
-              className:'farama-header-menu-list',
-            }
-          )
-          for (let project of projects) {
-            const liElem = document.createElement("li");
-            const aElem = Object.assign(document.createElement("a"),
-              {
-                href: project.link
-              }
-            );
-            liElem.appendChild(aElem);
-            if (key !== "Foundation") {
-              const imgElem = Object.assign(document.createElement("img"),
-                {
-                  src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
-                  alt: `${project.name} logo`,
-                  className: "farama-black-logo-invert"
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: key == "Mature Projects" ? "display: flex" : ""
                 }
-              );
-              aElem.appendChild(imgElem);
-            }
-            aElem.appendChild(document.createTextNode(project.name));
-            ulElem.appendChild(liElem);
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== "Foundation");
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
           }
-          sectionElem.appendChild(ulElem);
           menuContainer.appendChild(sectionElem)
         });
       }
