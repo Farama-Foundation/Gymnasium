@@ -68,7 +68,7 @@ title: Utils
 .. autoproperty:: gymnasium.Env.np_random
 ```
 
-### Implementing environments
+## Implementing environments
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
@@ -77,3 +77,5 @@ When implementing an environment, the :meth:`Env.reset` and :meth:`Env.step` fun
 dynamics of the environment.
 For more information see the environment creation tutorial.
 ```
+
+## Creating environments
