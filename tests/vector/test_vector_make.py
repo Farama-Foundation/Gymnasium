@@ -83,20 +83,7 @@ def test_vector_make_disable_env_checker():
     env.close()
 
 
-def test_vector_make_custom_vec_env_old():
-    gym.register(
-        "CustomVectorizationExample-v0",
-        vector_entry_point="tests.envs.registration.utils_envs:CustomVecEnv",
-    )
-
-    env = gym.vector.make("CustomVectorizationExample-v0", num_envs=16)
-    assert env.__class__.__name__ == "CustomVecEnv"
-    assert env.num_envs == 16
-    assert env.observation_space.shape == (16, 3)
-    assert env.action_space.shape == (16, 3)
-
-
-def test_vector_make_custom_vec_env_new():
+def test_vector_make_custom_vec_env():
     gym.register(
         "CustomVectorizationExample-v0",
         vector_entry_point="tests.envs.registration.utils_envs:CustomVecEnv",
@@ -107,3 +94,4 @@ def test_vector_make_custom_vec_env_new():
     assert env.num_envs == 16
     assert env.observation_space.shape == (16, 3)
     assert env.action_space.shape == (16, 3)
+    env.close()
