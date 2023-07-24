@@ -7,7 +7,12 @@ from gymnasium.envs.registration import EnvSpec
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from gymnasium.vector import SyncVectorEnv
 from tests.envs.utils import all_testing_env_specs
-from tests.vector.testing_utils import CustomSpace, make_env
+from tests.vector.testing_utils import (
+    CustomSpace,
+    assert_rng_equal,
+    make_custom_space_env,
+    make_env,
+)
 
 
 def test_create_sync_vector_env():
