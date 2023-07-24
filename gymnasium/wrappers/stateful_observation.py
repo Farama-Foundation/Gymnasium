@@ -3,7 +3,7 @@
 * ``DelayObservationV0`` - A wrapper for delaying the returned observation
 * ``TimeAwareObservationV0`` - A wrapper for adding time aware observations to environment observation
 * ``FrameStackObservationV0`` - Frame stack the observations
-* ``NormalizeObservationV0`` - Normalized the observations to a mean and
+* ``NormalizeObservationV0`` - Normalized the observations to have unit variance with a moving mean
 * ``MaxAndSkipObservationV0`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
 """
 from __future__ import annotations
@@ -103,7 +103,7 @@ class TimeAwareObservationV0(
     """Augment the observation with time information of the episode.
 
     The :attr:`normalize_time` if ``True`` represents time as a normalized value between [0,1]
-    otherwise if ``False``, the number of timesteps remaining before truncation occurs is an integer.
+    otherwise if ``False``, the current timestep is an integer.
 
     For environments with ``Dict`` observation spaces, the time information is automatically
     added in the key `"time"` (can be changed through :attr:`dict_time_key`) and for environments with ``Tuple``
@@ -393,7 +393,7 @@ class NormalizeObservationV0(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
+    """This wrapper will normalize observations such that each observation is centered with unit variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
     statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.observation()` is called.
@@ -405,7 +405,7 @@ class NormalizeObservationV0(
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
-        """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
+        """This wrapper will normalize observations such that each observation is centered with unit variance.
 
         Args:
             env (Env): The environment to apply the wrapper
@@ -489,13 +489,12 @@ class MaxAndSkipObservationV0(
         info = {}
         for i in range(self._skip):
             obs, reward, terminated, truncated, info = self.env.step(action)
-            done = terminated or truncated
             if i == self._skip - 2:
                 self._obs_buffer[0] = obs
             if i == self._skip - 1:
                 self._obs_buffer[1] = obs
             total_reward += float(reward)
-            if done:
+            if terminated or truncated:
                 break
         max_frame = self._obs_buffer.max(axis=0)
 
