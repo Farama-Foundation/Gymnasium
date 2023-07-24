@@ -8,7 +8,7 @@ import pytest
 from gymnasium.spaces import Discrete
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
-from tests.vector.utils import make_env
+from tests.vector.testing_utils import make_env
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])

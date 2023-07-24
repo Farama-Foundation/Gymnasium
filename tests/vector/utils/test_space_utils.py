@@ -11,7 +11,7 @@ from gymnasium.error import CustomSpaceError
 from gymnasium.spaces import Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
-from tests.experimental.vector.utils.utils import is_rng_equal
+from tests.vector.utils.utils import is_rng_equal
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS, CustomSpace
 
 

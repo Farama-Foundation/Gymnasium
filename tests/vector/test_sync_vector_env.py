@@ -7,12 +7,7 @@ from gymnasium.envs.registration import EnvSpec
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from gymnasium.vector import SyncVectorEnv
 from tests.envs.utils import all_testing_env_specs
-from tests.vector.utils import (
-    CustomSpace,
-    assert_rng_equal,
-    make_custom_space_env,
-    make_env,
-)
+from tests.vector.testing_utils import CustomSpace, make_env
 
 
 def test_create_sync_vector_env():
@@ -46,7 +41,7 @@ def test_step_sync_vector_env(use_single_action_space):
     env_fns = [make_env("FrozenLake-v1", i) for i in range(8)]
 
     env = SyncVectorEnv(env_fns)
-    observations = env.reset()
+    env.reset()
 
     assert isinstance(env.single_action_space, Discrete)
     assert isinstance(env.action_space, MultiDiscrete)

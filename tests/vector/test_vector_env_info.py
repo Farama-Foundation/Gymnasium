@@ -4,7 +4,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
-from tests.vector.utils import make_env
+from tests.vector.testing_utils import make_env
 
 
 ENV_ID = "CartPole-v1"

@@ -13,7 +13,7 @@ from gymnasium.error import (
 )
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from gymnasium.vector import AsyncVectorEnv
-from tests.experimental.vector.testing_utils import (
+from tests.vector.testing_utils import (
     CustomSpace,
     make_custom_space_env,
     make_env,
