@@ -216,6 +216,10 @@ A gym environment for a miniature racecar using the [PyBullet](https://github.co
 
 ## Other environments
 
+### [Connect-4-gym : An environment for practicing self playing](https://github.com/lucasBertola/Connect-4-Gym-env-Reinforcement-learning)
+
+Connect-4-Gym is an environment designed for creating AIs that learn by playing against themselves and assigning them an Elo rating. This environment can be used to train and evaluate reinforcement learning agents on the classic board game Connect Four.
+
 ### [CompilerGym: Optimise compiler tasks](https://github.com/facebookresearch/CompilerGym)
 
 Reinforcement learning environments for compiler optimization tasks, such as LLVM phase ordering, GCC flag tuning, and CUDA loop nest code generation.
@@ -259,7 +263,3 @@ The OpenModelica Microgrid Gym (OMG) package is a software toolbox for the simul
 ### [GymFC: A flight control tuning and training framework](https://github.com/wil3/gymfc/)
 
 GymFC is a modular framework for synthesizing neuro-flight controllers. Has been used to generate policies for the world's first open-source neural network flight control firmware [Neuroflight](https://github.com/wil3/neuroflight).
-
-### [Connect-4-gym : An environment for practicing self playing](https://github.com/lucasBertola/Connect-4-Gym-env-Reinforcement-learning)
-
-Connect-4-Gym is an environment designed for creating AIs that learn by playing against themselves and assigning them an Elo rating. This environment can be used to train and evaluate reinforcement learning agents on the classic board game Connect Four.
