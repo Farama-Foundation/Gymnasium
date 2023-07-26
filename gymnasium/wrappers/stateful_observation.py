@@ -499,3 +499,11 @@ class MaxAndSkipObservationV0(
         max_frame = self._obs_buffer.max(axis=0)
 
         return max_frame, total_reward, terminated, truncated, info
+
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[ObsType, dict[str, Any]]:
+        self._obs_buffer = np.zeros(
+            (2, *self.env.observation_space.shape), dtype=self.env.observation_space.dtype
+        )
+        return super().reset(seed=seed, options=options)
