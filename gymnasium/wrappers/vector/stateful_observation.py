@@ -8,8 +8,8 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType
-from gymnasium.experimental.vector.vector_env import VectorObservationWrapper
-from gymnasium.experimental.wrappers.utils import RunningMeanStd
+from gymnasium.vector.vector_env import VectorObservationWrapper
+from gymnasium.wrappers.utils import RunningMeanStd
 
 
 __all__ = ["NormalizeObservationV0"]

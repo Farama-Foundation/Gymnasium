@@ -3,8 +3,8 @@ import numpy as np
 import pytest
 
 from gymnasium import spaces
-from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv
-from gymnasium.experimental.wrappers.vector import NormalizeObservationV0
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.wrappers.vector import NormalizeObservationV0
 from tests.testing_env import GenericTestEnv
 
 

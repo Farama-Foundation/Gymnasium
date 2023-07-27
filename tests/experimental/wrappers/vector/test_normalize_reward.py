@@ -5,8 +5,8 @@ import numpy as np
 import pytest
 
 from gymnasium.core import ActType
-from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv
-from gymnasium.experimental.wrappers.vector import NormalizeRewardV1
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.wrappers.vector import NormalizeRewardV1
 from tests.testing_env import GenericTestEnv
 
 
