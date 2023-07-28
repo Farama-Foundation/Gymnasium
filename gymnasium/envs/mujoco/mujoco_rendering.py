@@ -281,8 +281,13 @@ class OffScreenViewer(BaseRender):
 class WindowViewer(BaseRender):
     """Class for window rendering in all MuJoCo environments."""
 
-    def __init__(self, model: "mujoco.MjModel", data: "mujoco.MjData",
-                 width: Optional[int] = None, height: Optional[int] = None):
+    def __init__(
+        self,
+        model: "mujoco.MjModel",
+        data: "mujoco.MjData",
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+    ):
         glfw.init()
 
         self._button_left_pressed = False
@@ -301,7 +306,9 @@ class WindowViewer(BaseRender):
         self._advance_by_one_step = False
         self._hide_menu = False
 
-        monitor_width, monitor_height = glfw.get_video_mode(glfw.get_primary_monitor()).size
+        monitor_width, monitor_height = glfw.get_video_mode(
+            glfw.get_primary_monitor()
+        ).size
         width = monitor_width // 2 if width is None else width
         height = monitor_height // 2 if height is None else height
 
@@ -688,7 +695,9 @@ class MujocoRenderer:
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
             if render_mode == "human":
-                self.viewer = WindowViewer(self.model, self.data, self.width, self.height)
+                self.viewer = WindowViewer(
+                    self.model, self.data, self.width, self.height
+                )
 
             elif render_mode in {"rgb_array", "depth_array"}:
                 self.viewer = OffScreenViewer(self.model, self.data)
