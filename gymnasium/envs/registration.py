@@ -938,7 +938,7 @@ def make_vec(
         spec_ = find_env_spec(id)
 
     if vectorization_mode is None:
-        vectorization_mode = "async" if spec_.vector_entry_point is None else "custom"
+        vectorization_mode = "sync" if spec_.vector_entry_point is None else "custom"
 
     _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
