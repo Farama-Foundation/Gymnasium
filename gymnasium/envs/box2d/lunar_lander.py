@@ -63,11 +63,6 @@ class ContactDetector(contactListener):
         self.env = env
 
     def BeginContact(self, contact):
-        if (
-            self.env.lander == contact.fixtureA.body
-            or self.env.lander == contact.fixtureB.body
-        ):
-            self.env.game_over = True
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
                 self.env.legs[i].ground_contact = True
@@ -286,10 +281,8 @@ class LunarLander(gym.Env, EzPickle):
         low = np.array(
             [
                 # these are bounds for position
-                # realistically the environment should have ended
-                # long before we reach more than 50% outside
                 -1.5,
-                -1.5,
+                -1.0,
                 # velocity bounds is 5x rated speed
                 -5.0,
                 -5.0,
@@ -302,10 +295,8 @@ class LunarLander(gym.Env, EzPickle):
         high = np.array(
             [
                 # these are bounds for position
-                # realistically the environment should have ended
-                # long before we reach more than 50% outside
                 1.5,
-                1.5,
+                1.0,
                 # velocity bounds is 5x rated speed
                 5.0,
                 5.0,
@@ -352,7 +343,6 @@ class LunarLander(gym.Env, EzPickle):
         self._destroy()
         self.world.contactListener_keepref = ContactDetector(self)
         self.world.contactListener = self.world.contactListener_keepref
-        self.game_over = False
         self.prev_shaping = None
 
         W = VIEWPORT_W / SCALE
@@ -644,6 +634,7 @@ class LunarLander(gym.Env, EzPickle):
             1.0 if self.legs[1].ground_contact else 0.0,
         ]
         assert len(state) == 8
+        state = np.array(state, dtype=np.float32)
 
         reward = 0
         shaping = (
@@ -664,7 +655,9 @@ class LunarLander(gym.Env, EzPickle):
         reward -= s_power * 0.03
 
         terminated = False
-        if self.game_over or abs(state[0]) >= 1.0:
+        if any(self.observation_space.low[:2] < state[:2]) or any(
+            state[:2] > self.observation_space.high[:2]
+        ):
             terminated = True
             reward = -100
         if not self.lander.awake:
@@ -673,7 +666,7 @@ class LunarLander(gym.Env, EzPickle):
 
         if self.render_mode == "human":
             self.render()
-        return np.array(state, dtype=np.float32), reward, terminated, False, {}
+        return state, reward, terminated, False, {}
 
     def render(self):
         if self.render_mode is None:
