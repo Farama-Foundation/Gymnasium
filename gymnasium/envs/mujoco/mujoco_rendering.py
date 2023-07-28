@@ -519,7 +519,7 @@ class WindowViewer(BaseRender):
         width, height = glfw.get_framebuffer_size(window)
 
         mujoco.mjv_moveCamera(
-            self.model, action, dx / height, dy / height, self.scn, self.cam
+            self.model, action, dx / width, dy / height, self.scn, self.cam
         )
 
         self._last_mouse_x = int(self._scale * xpos)
