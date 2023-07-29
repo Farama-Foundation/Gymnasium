@@ -375,7 +375,7 @@ class MujocoEnv(BaseMujocoEnv):
         from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
 
         self.mujoco_renderer = MujocoRenderer(
-            self.model, self.data, default_camera_config
+            self.model, self.data, default_camera_config, self.width, self.height
         )
 
     def _initialize_simulation(
