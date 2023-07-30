@@ -296,7 +296,7 @@ class Wrapper(
             raise AttributeError(f"accessing private attribute '{name}' is prohibited")
         logger.warn(
             f"env.{name} to get variables from other wrappers is deprecated and will be removed in v1.0, "
-            f"to get this variable you can do `env.unwrapped.{name}` for environment variables or `env.get_attr('{name}')` that will search the reminding wrappers."
+            f"to get this variable you can do `env.unwrapped.{name}` for environment variables or `env.get_attr('{name}')` that will search the remaining wrappers."
         )
         return getattr(self.env, name)
 
