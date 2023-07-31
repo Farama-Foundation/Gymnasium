@@ -4,8 +4,6 @@ title: Functional
 
 # Functional Env
 
-## Functional API
-
 ```{eval-rst}
 .. autoclass:: gymnasium.functional.FuncEnv
 
