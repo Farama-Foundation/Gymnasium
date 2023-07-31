@@ -17,19 +17,27 @@ An API standard for reinforcement learning with a diverse collection of referenc
    :width: 500
 ```
 
-**Gymnasium is a maintained fork of OpenAI’s Gym library.** The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](content/gym_compatibility) for old Gym environments:
+**Gymnasium is a maintained fork of OpenAI’s Gym library.** The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](introduction/gym_compatibility) for old Gym environments:
 
 ```{code-block} python
-
 import gymnasium as gym
+
+# Initialise the environment
 env = gym.make("LunarLander-v2", render_mode="human")
+
+# Reset the environment to generate the first observation
 observation, info = env.reset(seed=42)
 for _ in range(1000):
-   action = env.action_space.sample()  # this is where you would insert your policy
-   observation, reward, terminated, truncated, info = env.step(action)
+    # this is where you would insert your policy
+    action = env.action_space.sample()
 
-   if terminated or truncated:
-      observation, info = env.reset()
+    # step (transition) through the environment with the action
+    # receiving the next observation, reward and if the episode has terminated or truncated
+    observation, reward, terminated, truncated, info = env.step(action)
+
+    # If the episode has ended then we can reset to start a new episode
+    if terminated or truncated:
+        observation, info = env.reset()
 
 env.close()
 ```
@@ -38,9 +46,9 @@ env.close()
 :hidden:
 :caption: Introduction
 
-content/basic_usage
-content/gym_compatibility
-content/migration-guide
+introduction/basic_usage
+introduction/gym_compatibility
+introduction/migration-guide
 ```
 
 ```{toctree}

@@ -160,7 +160,7 @@ class PendulumFunctional(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
         )
 
-    def render_init(
+    def render_initialise(
         self, screen_width: int = 600, screen_height: int = 400
     ) -> RenderStateType:
         """Initialises the render state."""

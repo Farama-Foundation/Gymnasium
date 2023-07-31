@@ -19,7 +19,7 @@ class JaxToNumpyV0(VectorWrapper):
     """Wraps a jax vector environment so that it can be interacted with through numpy arrays.
 
     Notes:
-        A vectorized version of ``gymnasium.experimental.wrappers.JaxToNumpyV0``
+        A vectorized version of ``gymnasium.wrappers.JaxToNumpyV0``
 
     Actions must be provided as numpy arrays and observations, rewards, terminations and truncations will be returned as numpy arrays.
     """

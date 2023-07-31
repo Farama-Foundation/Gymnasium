@@ -2,36 +2,35 @@
 title: Functional
 ---
 
-# Functional Environment
+# Functional Env
 
-## gymnasium.experimental.FuncEnv
+## Functional API
 
 ```{eval-rst}
-.. autoclass:: gymnasium.experimental.FuncEnv
+.. autoclass:: gymnasium.functional.FuncEnv
 
-.. autofunction:: gymnasium.experimental.FuncEnv.initial
-.. autofunction:: gymnasium.experimental.FuncEnv.transition
+    .. automethod:: gymnasium.functional.FuncEnv.transform
 
-.. autofunction:: gymnasium.experimental.FuncEnv.observation
-.. autofunction:: gymnasium.experimental.FuncEnv.reward
-.. autofunction:: gymnasium.experimental.FuncEnv.terminal
+    .. automethod:: gymnasium.functional.FuncEnv.initial
+    .. automethod:: gymnasium.functional.FuncEnv.initial_info
 
-.. autofunction:: gymnasium.experimental.FuncEnv.state_info
-.. autofunction:: gymnasium.experimental.FuncEnv.step_info
+    .. automethod:: gymnasium.functional.FuncEnv.transition
+    .. automethod:: gymnasium.functional.FuncEnv.observation
+    .. automethod:: gymnasium.functional.FuncEnv.reward
+    .. automethod:: gymnasium.functional.FuncEnv.terminal
+    .. automethod:: gymnasium.functional.FuncEnv.transition_info
 
-.. autofunction:: gymnasium.experimental.FuncEnv.transform
-
-.. autofunction:: gymnasium.experimental.FuncEnv.render_image
-.. autofunction:: gymnasium.experimental.FuncEnv.render_init
-.. autofunction:: gymnasium.experimental.FuncEnv.render_close
+    .. automethod:: gymnasium.functional.FuncEnv.render_image
+    .. automethod:: gymnasium.functional.FuncEnv.render_initialise
+    .. automethod:: gymnasium.functional.FuncEnv.render_close
 ```
 
-## gymnasium.experimental.func2env.FunctionalJaxCompatibilityEnv
+## Converting Jax-based Functional environments to standard Env
 
 ```{eval-rst}
-.. autoclass:: gymnasium.experimental.functional_jax_env.FunctionalJaxEnv
+.. autoclass:: gymnasium.utils.functional_jax_env.FunctionalJaxEnv
 
-.. autofunction:: gymnasium.experimental.functional_jax_env.FunctionalJaxEnv.reset
-.. autofunction:: gymnasium.experimental.functional_jax_env.FunctionalJaxEnv.step
-.. autofunction:: gymnasium.experimental.functional_jax_env.FunctionalJaxEnv.render
+    .. automethod:: gymnasium.utils.functional_jax_env.FunctionalJaxEnv.reset
+    .. automethod:: gymnasium.utils.functional_jax_env.FunctionalJaxEnv.step
+    .. automethod:: gymnasium.utils.functional_jax_env.FunctionalJaxEnv.render
 ```

@@ -21,9 +21,9 @@ vector/wrappers
 ### Methods
 
 ```{eval-rst}
-.. autofunction:: gymnasium.vector.VectorEnv.reset
-.. autofunction:: gymnasium.vector.VectorEnv.step
-.. autofunction:: gymnasium.vector.VectorEnv.render
+.. automethod:: gymnasium.vector.VectorEnv.reset
+.. automethod:: gymnasium.vector.VectorEnv.step
+.. automethod:: gymnasium.vector.VectorEnv.close
 ```
 
 ### Attributes
@@ -57,9 +57,8 @@ vector/wrappers
 ### Additional Methods
 
 ```{eval-rst}
-.. automethod:: gymnasium.vector.VectorEnv.close
-.. automethod:: gymnasium.vector.VectorEnv.unwrapped
-.. automethod:: gymnasium.vector.VectorEnv.np_random
+.. autoproperty:: gymnasium.vector.VectorEnv.unwrapped
+.. autoproperty:: gymnasium.vector.VectorEnv.np_random
 ```
 
 ## Making Vector Environments

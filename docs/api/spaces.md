@@ -9,39 +9,36 @@ title: Spaces
 spaces/fundamental
 spaces/composite
 spaces/utils
-spaces/vector_utils
+vector/utils
 ```
 
 ```{eval-rst}
 .. automodule:: gymnasium.spaces
-```
 
-## The Base Class
-
-```{eval-rst}
 .. autoclass:: gymnasium.spaces.Space
 ```
 
-### Attributes
-
+## Attributes
 ```{eval-rst}
-.. autoproperty:: gymnasium.spaces.space.Space.shape
+.. currentmodule:: gymnasium.spaces
+
+.. autoproperty:: Space.shape
 .. property:: Space.dtype
 
     Return the data type of this space.
-.. autoproperty:: gymnasium.spaces.space.Space.is_np_flattenable
+.. autoproperty:: Space.is_np_flattenable
+.. autoproperty:: Space.np_random
 ```
 
-### Methods
-
+## Methods
 Each space implements the following functions:
 
 ```{eval-rst}
-.. autofunction:: gymnasium.spaces.space.Space.sample
-.. autofunction:: gymnasium.spaces.space.Space.contains
-.. autofunction:: gymnasium.spaces.space.Space.seed
-.. autofunction:: gymnasium.spaces.space.Space.to_jsonable
-.. autofunction:: gymnasium.spaces.space.Space.from_jsonable
+.. automethod:: gymnasium.spaces.space.Space.sample
+.. automethod:: gymnasium.spaces.space.Space.contains
+.. automethod:: gymnasium.spaces.space.Space.seed
+.. automethod:: gymnasium.spaces.space.Space.to_jsonable
+.. automethod:: gymnasium.spaces.space.Space.from_jsonable
 ```
 
 ## Fundamental Spaces
@@ -69,7 +66,7 @@ Often environment spaces require joining fundamental spaces together for vectori
 * :py:class:`Graph` - Supports graph based actions or observations with discrete or continuous nodes and edge values.
 ```
 
-## Utils
+## Utility functions
 
 Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces.
 This can be important for passing information to neural networks.
@@ -81,7 +78,7 @@ This can be important for passing information to neural networks.
 * :py:class:`utils.unflatten` - The reverse of the `flatten_space` function
 ```
 
-## Vector Utils
+## Vector Utility functions
 
 When vectorizing environments, it is necessary to modify the observation and action spaces for new batched spaces sizes.
 Therefore, Gymnasium provides a number of additional functions used when using a space with a Vector environment.
