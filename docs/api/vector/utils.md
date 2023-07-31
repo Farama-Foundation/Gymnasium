@@ -1,6 +1,6 @@
 # Utility functions
 
-## Spaces utility functions
+## Vectorizing Spaces
 
 ```{eval-rst}
 .. autofunction:: gymnasium.vector.utils.batch_space
@@ -9,7 +9,7 @@
 .. autofunction:: gymnasium.vector.utils.create_empty_array
 ```
 
-## Shared memory functions
+## Shared Memory for a Space
 
 ```{eval-rst}
 .. autofunction:: gymnasium.vector.utils.create_shared_memory

@@ -585,8 +585,6 @@ def register(
         order_enforce: If to enable the order enforcer wrapper to ensure users run functions in the correct order.
             If ``True``, then the :class:`gymnasium.wrappers.OrderEnforcing` is applied to the environment.
         disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.
-        apply_api_compatibility: If to apply the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper to the environment.
-            Use if the environment is implemented in the gym v0.21 environment API.
         additional_wrappers: Additional wrappers to apply the environment.
         vector_entry_point: The entry point for creating the vector environment
         **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.

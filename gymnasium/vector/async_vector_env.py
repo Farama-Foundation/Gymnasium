@@ -93,7 +93,7 @@ class AsyncVectorEnv(VectorEnv):
                 shared variables. This can improve the efficiency if the observations are large (e.g. images).
             copy: If ``True``, then the :meth:`~AsyncVectorEnv.reset` and :meth:`~AsyncVectorEnv.step` methods
                 return a copy of the observations.
-            context: Context for `multiprocessing`_. If ``None``, then the default context is used.
+            context: Context for `multiprocessing`. If ``None``, then the default context is used.
             daemon: If ``True``, then subprocesses have ``daemon`` flag turned on; that is, they will quit if
                 the head process quits. However, ``daemon=True`` prevents subprocesses to spawn children,
                 so for some environments you may want to have it set to ``False``.

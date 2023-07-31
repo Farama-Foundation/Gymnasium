@@ -28,8 +28,8 @@ def convert_to_terminated_truncated_step_api(
     """Function to transform step returns to new step API irrespective of input API.
 
     Args:
-        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)
-        is_vector_env (bool): Whether the step_returns are from a vector environment
+        step_returns (tuple): Items returned by :func:`Env.step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``
+        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment
     """
     if len(step_returns) == 5:
         return step_returns
@@ -81,8 +81,8 @@ def convert_to_done_step_api(
     """Function to transform step returns to old step API irrespective of input API.
 
     Args:
-        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)
-        is_vector_env (bool): Whether the step_returns are from a vector environment
+        step_returns (tuple): Items returned by :func:`Env.step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``
+        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment
     """
     if len(step_returns) == 4:
         return step_returns
@@ -134,32 +134,32 @@ def step_api_compatibility(
     output_truncation_bool: bool = True,
     is_vector_env: bool = False,
 ) -> Union[TerminatedTruncatedStepType, DoneStepType]:
-    """Function to transform step returns to the API specified by `output_truncation_bool` bool.
+    """Function to transform step returns to the API specified by ``output_truncation_bool``.
 
-    Done (old) step API refers to step() method returning (observation, reward, done, info)
-    Terminated Truncated (new) step API refers to step() method returning (observation, reward, terminated, truncated, info)
+    Done (old) step API refers to :meth:`Env.step` method returning ``(observation, reward, done, info)``
+    Terminated Truncated (new) step API refers to :meth:`Env.step` method returning ``(observation, reward, terminated, truncated, info)``
     (Refer to docs for details on the API change)
 
     Args:
-        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)
+        step_returns (tuple): Items returned by :meth:`Env.step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``
         output_truncation_bool (bool): Whether the output should return two booleans (new API) or one (old) (True by default)
         is_vector_env (bool): Whether the step_returns are from a vector environment
 
     Returns:
-        step_returns (tuple): Depending on `output_truncation_bool` bool, it can return `(obs, rew, done, info)` or `(obs, rew, terminated, truncated, info)`
+        step_returns (tuple): Depending on ``output_truncation_bool``, it can return ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``
 
     Example:
-        This function can be used to ensure compatibility in step interfaces with conflicting API. Eg. if env is written in old API,
+        This function can be used to ensure compatibility in step interfaces with conflicting API. E.g. if env is written in old API,
          wrapper is written in new API, and the final step output is desired to be in old API.
 
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v0")
-        >>> _ = env.reset()
+        >>> _, _ = env.reset()
         >>> obs, rewards, done, info = step_api_compatibility(env.step(0), output_truncation_bool=False)
         >>> obs, rewards, terminated, truncated, info = step_api_compatibility(env.step(0), output_truncation_bool=True)
 
         >>> vec_env = gym.make_vec("CartPole-v0")
-        >>> _ = vec_env.reset()
+        >>> _, _ = vec_env.reset()
         >>> obs, rewards, dones, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=False)
         >>> obs, rewards, terminated, truncated, info = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)
     """

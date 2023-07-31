@@ -37,12 +37,10 @@ class Env(Generic[ObsType, ActType]):
 
     - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.
     - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.
-    - :attr:`reward_range` - A tuple corresponding to the minimum and maximum possible rewards for an agent over an episode.
-      The default reward range is set to :math:`(-\infty,+\infty)`.
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
     - :attr:`metadata` - The metadata of the environment, i.e. render modes, render fps
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
-      ``super().reset(seed=seed)`` and when assessing ``self.np_random``.
+      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
 
     .. seealso:: For modifying or extending environments use the :py:class:`gymnasium.Wrapper` class
 

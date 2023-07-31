@@ -517,9 +517,9 @@ class VectorRewardWrapper(VectorWrapper):
     ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Steps through the environment returning a reward modified by :meth:`reward`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
-        return observation, self.reward(reward), termination, truncation, info
+        return observation, self.rewards(reward), termination, truncation, info
 
-    def reward(self, reward: ArrayType) -> ArrayType:
+    def rewards(self, reward: ArrayType) -> ArrayType:
         """Transform the reward before returning it.
 
         Args:

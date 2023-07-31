@@ -25,7 +25,7 @@ class LambdaRewardV0(VectorRewardWrapper):
 
         self.func = func
 
-    def reward(self, reward: ArrayType) -> ArrayType:
+    def rewards(self, reward: ArrayType) -> ArrayType:
         """Apply function to reward."""
         return self.func(reward)
 
@@ -47,7 +47,7 @@ class VectorizeLambdaRewardV0(VectorRewardWrapper):
 
         self.wrapper = wrapper(Env(), **kwargs)
 
-    def reward(self, reward: ArrayType) -> ArrayType:
+    def rewards(self, reward: ArrayType) -> ArrayType:
         """Iterates over the reward updating each with the wrapper func."""
         for i, r in enumerate(reward):
             reward[i] = self.wrapper.func(r)
