@@ -207,6 +207,10 @@ class REINFORCE:
         log_prob_mean = log_probs.mean()
     
         # Update the loss with the mean log probability and deltas
+        # Note: The multiplication here is not a standard element-wise multiplication.
+        # It is a scalar multiplication, where deltas.mean() calculates the mean of all
+        # the elements in the tensor deltas, and the scalar result is then multiplied
+        # element-wise with the tensor log_prob_mean.
         loss = -log_prob_mean * deltas.mean()
     
         # Update the policy network
