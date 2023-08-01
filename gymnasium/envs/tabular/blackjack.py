@@ -15,7 +15,7 @@ from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
-from gymnasium.utils import EzPickle, seeding
+from gymnasium.utils import ezpickle, seeding
 from gymnasium.wrappers import HumanRendering
 
 
@@ -473,14 +473,14 @@ class BlackjackFunctional(
         pygame.quit()
 
 
-class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
+class BlackJackJaxEnv(FunctionalJaxEnv):
     """A Gymnasium Env wrapper for the functional blackjack env."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
+    @ezpickle
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         """Initializes Gym wrapper for blackjack functional env."""
-        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         env = BlackjackFunctional(**kwargs)
         env.transform(jax.jit)
 

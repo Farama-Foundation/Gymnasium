@@ -12,7 +12,7 @@ import gymnasium as gym
 from gymnasium import error, spaces
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.utils import EzPickle
+from gymnasium.utils import ezpickle
 
 
 try:
@@ -105,7 +105,7 @@ class ContactDetector(contactListener):
                 leg.ground_contact = False
 
 
-class BipedalWalker(gym.Env, EzPickle):
+class BipedalWalker(gym.Env):
     """
     ## Description
     This is a simple 4-joint walker robot environment.
@@ -174,8 +174,8 @@ class BipedalWalker(gym.Env, EzPickle):
         "render_fps": FPS,
     }
 
+    @ezpickle
     def __init__(self, render_mode: str | None = None, hardcore: bool = False):
-        EzPickle.__init__(self, render_mode, hardcore)
         self.isopen = True
 
         self.world = Box2D.b2World()

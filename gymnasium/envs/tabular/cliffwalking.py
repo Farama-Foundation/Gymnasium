@@ -15,7 +15,7 @@ from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
-from gymnasium.utils import EzPickle
+from gymnasium.utils import ezpickle
 from gymnasium.wrappers import HumanRendering
 
 
@@ -347,14 +347,14 @@ class CliffWalkingFunctional(
         pygame.quit()
 
 
-class CliffWalkingJaxEnv(FunctionalJaxEnv, EzPickle):
+class CliffWalkingJaxEnv(FunctionalJaxEnv):
     """A Gymnasium Env wrapper for the functional cliffwalking env."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
+    @ezpickle
     def __init__(self, render_mode: str | None = None, **kwargs):
         """Initializes Gym wrapper for cliffwalking functional env."""
-        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         env = CliffWalkingFunctional(**kwargs)
         env.transform(jax.jit)
 

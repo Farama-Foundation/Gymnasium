@@ -321,7 +321,7 @@ class Wrapper(
 
     @property
     def spec(self) -> EnvSpec | None:
-        """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""
+        """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper is decorated with `@ezpickle`."""
         if self._cached_spec is not None:
             return self._cached_spec
 

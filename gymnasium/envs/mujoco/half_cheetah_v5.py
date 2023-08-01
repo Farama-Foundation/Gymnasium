@@ -7,10 +7,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -18,7 +18,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
+class HalfCheetahEnv(MujocoEnv):
     r"""
     ## Description
     This environment is based on the work by P. Wawrzyński in
@@ -169,6 +169,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         ],
     }
 
+    @ezpickle
     def __init__(
         self,
         xml_file: str = "half_cheetah.xml",
@@ -180,18 +181,6 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         exclude_current_positions_from_observation: bool = True,
         **kwargs,
     ):
-        utils.EzPickle.__init__(
-            self,
-            xml_file,
-            frame_skip,
-            default_camera_config,
-            forward_reward_weight,
-            ctrl_cost_weight,
-            reset_noise_scale,
-            exclude_current_positions_from_observation,
-            **kwargs,
-        )
-
         self._forward_reward_weight = forward_reward_weight
         self._ctrl_cost_weight = ctrl_cost_weight
 

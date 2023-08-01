@@ -4,13 +4,13 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
-class HalfCheetahEnv(MuJocoPyEnv, utils.EzPickle):
+class HalfCheetahEnv(MuJocoPyEnv):
     metadata = {
         "render_modes": [
             "human",
@@ -20,12 +20,12 @@ class HalfCheetahEnv(MuJocoPyEnv, utils.EzPickle):
         "render_fps": 20,
     }
 
+    @ezpickle
     def __init__(self, **kwargs):
         observation_space = Box(low=-np.inf, high=np.inf, shape=(17,), dtype=np.float64)
         MuJocoPyEnv.__init__(
             self, "half_cheetah.xml", 5, observation_space=observation_space, **kwargs
         )
-        utils.EzPickle.__init__(self, **kwargs)
 
     def step(
         self, action: ActType

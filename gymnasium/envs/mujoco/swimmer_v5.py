@@ -7,13 +7,13 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
-class SwimmerEnv(MujocoEnv, utils.EzPickle):
+class SwimmerEnv(MujocoEnv):
     r"""
     ## Description
     This environment corresponds to the Swimmer environment described in Rémi Coulom's PhD thesis
@@ -167,6 +167,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         ],
     }
 
+    @ezpickle
     def __init__(
         self,
         xml_file: str = "swimmer.xml",
@@ -177,17 +178,6 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         exclude_current_positions_from_observation: bool = True,
         **kwargs,
     ):
-        utils.EzPickle.__init__(
-            self,
-            xml_file,
-            frame_skip,
-            forward_reward_weight,
-            ctrl_cost_weight,
-            reset_noise_scale,
-            exclude_current_positions_from_observation,
-            **kwargs,
-        )
-
         self._forward_reward_weight = forward_reward_weight
         self._ctrl_cost_weight = ctrl_cost_weight
 

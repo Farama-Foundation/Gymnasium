@@ -6,14 +6,14 @@ import warnings
 import numpy as np
 import pytest
 
-from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.error import Error
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 from gymnasium.utils.env_checker import check_env
 
 
-class PointEnv(MujocoEnv, utils.EzPickle):
+class PointEnv(MujocoEnv):
     """
     A simple mujuco env to test third party mujoco env, using the `Gymansium.MujocoEnv` environment API.
     """
@@ -26,9 +26,8 @@ class PointEnv(MujocoEnv, utils.EzPickle):
         ],
     }
 
+    @ezpickle
     def __init__(self, xml_file="point.xml", frame_skip=1, **kwargs):
-        utils.EzPickle.__init__(self, xml_file, frame_skip, **kwargs)
-
         MujocoEnv.__init__(
             self,
             xml_file,

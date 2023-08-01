@@ -4,10 +4,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 def mass_center(model, sim):
@@ -16,7 +16,7 @@ def mass_center(model, sim):
     return (np.sum(mass * xpos, 0) / np.sum(mass))[0]
 
 
-class HumanoidEnv(MuJocoPyEnv, utils.EzPickle):
+class HumanoidEnv(MuJocoPyEnv):
     metadata = {
         "render_modes": [
             "human",
@@ -26,6 +26,7 @@ class HumanoidEnv(MuJocoPyEnv, utils.EzPickle):
         "render_fps": 67,
     }
 
+    @ezpickle
     def __init__(self, **kwargs):
         observation_space = Box(
             low=-np.inf, high=np.inf, shape=(376,), dtype=np.float64
@@ -33,7 +34,6 @@ class HumanoidEnv(MuJocoPyEnv, utils.EzPickle):
         MuJocoPyEnv.__init__(
             self, "humanoid.xml", 5, observation_space=observation_space, **kwargs
         )
-        utils.EzPickle.__init__(self, **kwargs)
 
     def _get_obs(self):
         data = self.sim.data

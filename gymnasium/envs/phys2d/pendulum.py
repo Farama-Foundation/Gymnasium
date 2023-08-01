@@ -16,7 +16,7 @@ from gymnasium.experimental.functional_jax_env import (
     FunctionalJaxEnv,
     FunctionalJaxVectorEnv,
 )
-from gymnasium.utils import EzPickle
+from gymnasium.utils import ezpickle
 
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
@@ -192,15 +192,14 @@ class PendulumFunctional(
         pygame.quit()
 
 
-class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
+class PendulumJaxEnv(FunctionalJaxEnv):
     """Jax-based pendulum environment using the functional version as base."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
 
+    @ezpickle
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor where the kwargs are passed to the base environment to modify the parameters."""
-        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-
         env = PendulumFunctional(**kwargs)
         env.transform(jax.jit)
 
@@ -211,11 +210,12 @@ class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
         )
 
 
-class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
+class PendulumJaxVectorEnv(FunctionalJaxVectorEnv):
     """Jax-based implementation of the vectorized CartPole environment."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
+    @ezpickle
     def __init__(
         self,
         num_envs: int,
@@ -224,14 +224,6 @@ class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
         **kwargs: Any,
     ):
         """Constructor for the vectorized CartPole where the kwargs are applied to the functional environment."""
-        EzPickle.__init__(
-            self,
-            num_envs=num_envs,
-            render_mode=render_mode,
-            max_episode_steps=max_episode_steps,
-            **kwargs,
-        )
-
         env = PendulumFunctional(**kwargs)
         env.transform(jax.jit)
 

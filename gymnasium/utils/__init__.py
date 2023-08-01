@@ -7,8 +7,8 @@ These are not intended as API functions, and will not remain stable over time.
 # We want this since we use `utils` during our import-time sanity checks
 # that verify that our dependencies are actually present.
 from gymnasium.utils.colorize import colorize
-from gymnasium.utils.ezpickle import EzPickle
+from gymnasium.utils.ezpickle import ezpickle
 from gymnasium.utils.record_constructor import RecordConstructorArgs
 
 
-__all__ = ["colorize", "EzPickle", "RecordConstructorArgs"]
+__all__ = ["colorize", "ezpickle", "RecordConstructorArgs"]

@@ -4,10 +4,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -24,7 +24,7 @@ def mass_center(model, sim):
     return (np.sum(mass * xpos, axis=0) / np.sum(mass))[0:2].copy()
 
 
-class HumanoidEnv(MuJocoPyEnv, utils.EzPickle):
+class HumanoidEnv(MuJocoPyEnv):
     metadata = {
         "render_modes": [
             "human",
@@ -34,6 +34,7 @@ class HumanoidEnv(MuJocoPyEnv, utils.EzPickle):
         "render_fps": 67,
     }
 
+    @ezpickle
     def __init__(
         self,
         xml_file="humanoid.xml",
@@ -48,21 +49,6 @@ class HumanoidEnv(MuJocoPyEnv, utils.EzPickle):
         exclude_current_positions_from_observation=True,
         **kwargs,
     ):
-        utils.EzPickle.__init__(
-            self,
-            xml_file,
-            forward_reward_weight,
-            ctrl_cost_weight,
-            contact_cost_weight,
-            contact_cost_range,
-            healthy_reward,
-            terminate_when_unhealthy,
-            healthy_z_range,
-            reset_noise_scale,
-            exclude_current_positions_from_observation,
-            **kwargs,
-        )
-
         self._forward_reward_weight = forward_reward_weight
         self._ctrl_cost_weight = ctrl_cost_weight
         self._contact_cost_weight = contact_cost_weight

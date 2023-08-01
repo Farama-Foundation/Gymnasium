@@ -4,13 +4,13 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
-class ReacherEnv(MuJocoPyEnv, utils.EzPickle):
+class ReacherEnv(MuJocoPyEnv):
     metadata = {
         "render_modes": [
             "human",
@@ -20,8 +20,8 @@ class ReacherEnv(MuJocoPyEnv, utils.EzPickle):
         "render_fps": 50,
     }
 
+    @ezpickle
     def __init__(self, **kwargs):
-        utils.EzPickle.__init__(self, **kwargs)
         observation_space = Box(low=-np.inf, high=np.inf, shape=(11,), dtype=np.float64)
         MuJocoPyEnv.__init__(
             self, "reacher.xml", 2, observation_space=observation_space, **kwargs

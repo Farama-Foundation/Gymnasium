@@ -13,7 +13,7 @@ from gymnasium import spaces
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.box2d.car_dynamics import Car
 from gymnasium.error import DependencyNotInstalled, InvalidAction
-from gymnasium.utils import EzPickle
+from gymnasium.utils import ezpickle
 
 
 try:
@@ -109,7 +109,7 @@ class FrictionDetector(contactListener):
             obj.tiles.remove(tile)
 
 
-class CarRacing(gym.Env, EzPickle):
+class CarRacing(gym.Env):
     """
     ## Description
     The easiest control task to learn from pixels - a top-down
@@ -205,6 +205,7 @@ class CarRacing(gym.Env, EzPickle):
         "render_fps": FPS,
     }
 
+    @ezpickle
     def __init__(
         self,
         render_mode: str | None = None,
@@ -213,14 +214,6 @@ class CarRacing(gym.Env, EzPickle):
         domain_randomize: bool = False,
         continuous: bool = True,
     ):
-        EzPickle.__init__(
-            self,
-            render_mode,
-            verbose,
-            lap_complete_percent,
-            domain_randomize,
-            continuous,
-        )
         self.continuous = continuous
         self.domain_randomize = domain_randomize
         self.lap_complete_percent = lap_complete_percent

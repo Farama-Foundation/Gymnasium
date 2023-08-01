@@ -7,10 +7,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -20,7 +20,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
+class InvertedDoublePendulumEnv(MujocoEnv):
     r"""
     ## Description
     This environment originates from control theory and builds on the cartpole
@@ -164,6 +164,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         ],
     }
 
+    @ezpickle
     def __init__(
         self,
         xml_file: str = "inverted_double_pendulum.xml",
@@ -172,8 +173,6 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         reset_noise_scale: float = 0.1,
         **kwargs,
     ):
-        utils.EzPickle.__init__(self, xml_file, frame_skip, reset_noise_scale, **kwargs)
-
         self._healthy_reward = healthy_reward
         self._reset_noise_scale = reset_noise_scale
 

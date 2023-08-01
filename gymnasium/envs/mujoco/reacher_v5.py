@@ -8,16 +8,16 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
 
 
-class ReacherEnv(MujocoEnv, utils.EzPickle):
+class ReacherEnv(MujocoEnv):
     r"""
     ## Description
     "Reacher" is a two-jointed robot arm. The goal is to move the robot's end effector (called *fingertip*) close to a
@@ -155,6 +155,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         ],
     }
 
+    @ezpickle
     def __init__(
         self,
         xml_file: str = "reacher.xml",
@@ -164,16 +165,6 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         reward_control_weight: float = 1,
         **kwargs,
     ):
-        utils.EzPickle.__init__(
-            self,
-            xml_file,
-            frame_skip,
-            default_camera_config,
-            reward_dist_weight,
-            reward_control_weight,
-            **kwargs,
-        )
-
         self._reward_dist_weight = reward_dist_weight
         self._reward_control_weight = reward_control_weight
 

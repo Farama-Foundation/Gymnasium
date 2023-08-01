@@ -13,7 +13,7 @@ import gymnasium as gym
 from gymnasium import error, spaces
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.utils import EzPickle, colorize
+from gymnasium.utils import colorize, ezpickle
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
 
@@ -82,7 +82,7 @@ class ContactDetector(contactListener):
                 self.env.legs[i].ground_contact = False
 
 
-class LunarLander(gym.Env, EzPickle):
+class LunarLander(gym.Env):
     """
     ## Description
     This environment is a classic rocket trajectory optimization problem.
@@ -229,6 +229,7 @@ class LunarLander(gym.Env, EzPickle):
         "render_fps": FPS,
     }
 
+    @ezpickle
     def __init__(
         self,
         render_mode: str | None = None,
@@ -238,16 +239,6 @@ class LunarLander(gym.Env, EzPickle):
         wind_power: float = 15.0,
         turbulence_power: float = 1.5,
     ):
-        EzPickle.__init__(
-            self,
-            render_mode,
-            continuous,
-            gravity,
-            enable_wind,
-            wind_power,
-            turbulence_power,
-        )
-
         assert (
             -12.0 < gravity and gravity < 0.0
         ), f"gravity (current value: {gravity}) must be between -12 and 0"

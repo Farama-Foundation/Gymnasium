@@ -4,10 +4,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -16,7 +16,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
+class InvertedPendulumEnv(MujocoEnv):
     metadata = {
         "render_modes": [
             "human",
@@ -26,8 +26,8 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
         "render_fps": 25,
     }
 
+    @ezpickle
     def __init__(self, **kwargs):
-        utils.EzPickle.__init__(self, **kwargs)
         observation_space = Box(low=-np.inf, high=np.inf, shape=(4,), dtype=np.float64)
         MujocoEnv.__init__(
             self,

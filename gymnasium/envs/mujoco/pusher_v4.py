@@ -4,10 +4,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -16,7 +16,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-class PusherEnv(MujocoEnv, utils.EzPickle):
+class PusherEnv(MujocoEnv):
     metadata = {
         "render_modes": [
             "human",
@@ -26,8 +26,8 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         "render_fps": 20,
     }
 
+    @ezpickle
     def __init__(self, **kwargs):
-        utils.EzPickle.__init__(self, **kwargs)
         observation_space = Box(low=-np.inf, high=np.inf, shape=(23,), dtype=np.float64)
         MujocoEnv.__init__(
             self,

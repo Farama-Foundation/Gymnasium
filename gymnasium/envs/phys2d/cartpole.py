@@ -15,7 +15,7 @@ from gymnasium.experimental.functional_jax_env import (
     FunctionalJaxEnv,
     FunctionalJaxVectorEnv,
 )
-from gymnasium.utils import EzPickle
+from gymnasium.utils import ezpickle
 
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
@@ -259,15 +259,14 @@ class CartPoleFunctional(
         pygame.quit()
 
 
-class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
+class CartPoleJaxEnv(FunctionalJaxEnv):
     """Jax-based implementation of the CartPole environment."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
+    @ezpickle
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor for the CartPole where the kwargs are applied to the functional environment."""
-        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-
         env = CartPoleFunctional(**kwargs)
         env.transform(jax.jit)
 
@@ -279,11 +278,12 @@ class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
         )
 
 
-class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
+class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv):
     """Jax-based implementation of the vectorized CartPole environment."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
 
+    @ezpickle
     def __init__(
         self,
         num_envs: int,
@@ -292,14 +292,6 @@ class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
         **kwargs: Any,
     ):
         """Constructor for the vectorized CartPole where the kwargs are applied to the functional environment."""
-        EzPickle.__init__(
-            self,
-            num_envs=num_envs,
-            render_mode=render_mode,
-            max_episode_steps=max_episode_steps,
-            **kwargs,
-        )
-
         env = CartPoleFunctional(**kwargs)
         env.transform(jax.jit)
 

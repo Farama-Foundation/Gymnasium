@@ -68,7 +68,8 @@ class WrapperSpec:
 
     * name: The name of the wrapper.
     * entry_point: The location of the wrapper to create from.
-    * kwargs: Additional keyword arguments passed to the wrapper. If the wrapper doesn't inherit from EzPickle then this is ``None``
+    * kwargs: Additional keyword arguments passed to the wrapper. If the wrapper
+    isn't decorated with `@ezpickle` then this is ``None``
     """
 
     name: str

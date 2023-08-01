@@ -4,10 +4,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -18,7 +18,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-class Walker2dEnv(MuJocoPyEnv, utils.EzPickle):
+class Walker2dEnv(MuJocoPyEnv):
     metadata = {
         "render_modes": [
             "human",
@@ -28,6 +28,7 @@ class Walker2dEnv(MuJocoPyEnv, utils.EzPickle):
         "render_fps": 125,
     }
 
+    @ezpickle
     def __init__(
         self,
         xml_file="walker2d.xml",
@@ -41,20 +42,6 @@ class Walker2dEnv(MuJocoPyEnv, utils.EzPickle):
         exclude_current_positions_from_observation=True,
         **kwargs,
     ):
-        utils.EzPickle.__init__(
-            self,
-            xml_file,
-            forward_reward_weight,
-            ctrl_cost_weight,
-            healthy_reward,
-            terminate_when_unhealthy,
-            healthy_z_range,
-            healthy_angle_range,
-            reset_noise_scale,
-            exclude_current_positions_from_observation,
-            **kwargs,
-        )
-
         self._forward_reward_weight = forward_reward_weight
         self._ctrl_cost_weight = ctrl_cost_weight
 

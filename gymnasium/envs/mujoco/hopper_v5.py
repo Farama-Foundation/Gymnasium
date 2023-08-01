@@ -8,10 +8,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -22,7 +22,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-class HopperEnv(MujocoEnv, utils.EzPickle):
+class HopperEnv(MujocoEnv):
     r"""
     ## Description
     This environment is based on the work done by Erez, Tassa, and Todorov in
@@ -187,6 +187,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         ],
     }
 
+    @ezpickle
     def __init__(
         self,
         xml_file: str = "hopper.xml",
@@ -203,23 +204,6 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         exclude_current_positions_from_observation: bool = True,
         **kwargs,
     ):
-        utils.EzPickle.__init__(
-            self,
-            xml_file,
-            frame_skip,
-            default_camera_config,
-            forward_reward_weight,
-            ctrl_cost_weight,
-            healthy_reward,
-            terminate_when_unhealthy,
-            healthy_state_range,
-            healthy_z_range,
-            healthy_angle_range,
-            reset_noise_scale,
-            exclude_current_positions_from_observation,
-            **kwargs,
-        )
-
         self._forward_reward_weight = forward_reward_weight
 
         self._ctrl_cost_weight = ctrl_cost_weight

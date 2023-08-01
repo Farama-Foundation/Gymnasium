@@ -8,10 +8,10 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
 DEFAULT_CAMERA_CONFIG = {
@@ -20,7 +20,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-class PusherEnv(MujocoEnv, utils.EzPickle):
+class PusherEnv(MujocoEnv):
     r"""
     ## Description
     "Pusher" is a multi-jointed robot arm which is very similar to that of a human.
@@ -176,6 +176,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         ],
     }
 
+    @ezpickle
     def __init__(
         self,
         xml_file: str = "pusher.xml",
@@ -186,16 +187,6 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         reward_control_weight: float = 0.1,
         **kwargs,
     ):
-        utils.EzPickle.__init__(
-            self,
-            xml_file,
-            frame_skip,
-            default_camera_config,
-            reward_near_weight,
-            reward_dist_weight,
-            reward_control_weight,
-            **kwargs,
-        )
         self._reward_near_weight = reward_near_weight
         self._reward_dist_weight = reward_dist_weight
         self._reward_control_weight = reward_control_weight

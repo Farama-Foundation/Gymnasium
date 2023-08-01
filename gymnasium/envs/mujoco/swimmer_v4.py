@@ -7,13 +7,13 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 
-from gymnasium import utils
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
+from gymnasium.utils import ezpickle
 
 
-class SwimmerEnv(MujocoEnv, utils.EzPickle):
+class SwimmerEnv(MujocoEnv):
     metadata = {
         "render_modes": [
             "human",
@@ -23,6 +23,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         "render_fps": 25,
     }
 
+    @ezpickle
     def __init__(
         self,
         forward_reward_weight=1.0,
@@ -31,15 +32,6 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         exclude_current_positions_from_observation=True,
         **kwargs,
     ):
-        utils.EzPickle.__init__(
-            self,
-            forward_reward_weight,
-            ctrl_cost_weight,
-            reset_noise_scale,
-            exclude_current_positions_from_observation,
-            **kwargs,
-        )
-
         self._forward_reward_weight = forward_reward_weight
         self._ctrl_cost_weight = ctrl_cost_weight
 
