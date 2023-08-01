@@ -206,7 +206,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
             xml_file,
             frame_skip,
             observation_space=None,
-            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            default_camera_config=default_camera_config,
             **kwargs,
         )
 
