@@ -657,10 +657,14 @@ tuning was done.</p>
 
         <span class="n">deltas</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">gs</span><span class="p">)</span>
 
-        <span class="n">loss</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># minimize -1 * prob * reward obtained</span>
-        <span class="k">for</span> <span class="n">log_prob</span><span class="p">,</span> <span class="n">delta</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">,</span> <span class="n">deltas</span><span class="p">):</span>
-            <span class="n">loss</span> <span class="o">+=</span> <span class="n">log_prob</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">log_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the mean of log probabilities for all actions in the episode</span>
+        <span class="n">log_prob_mean</span> <span class="o">=</span> <span class="n">log_probs</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+        <span class="c1"># Update the loss with the mean log probability and deltas</span>
+        <span class="c1"># Now, we compute the correct total loss by taking the sum of the element-wise products.</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">log_prob_mean</span> <span class="o">*</span> <span class="n">deltas</span><span class="p">)</span>
 
         <span class="c1"># Update the policy network</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
