@@ -207,11 +207,8 @@ class REINFORCE:
         log_prob_mean = log_probs.mean()
     
         # Update the loss with the mean log probability and deltas
-        # Note: The multiplication here is not a standard element-wise multiplication.
-        # It is a scalar multiplication, where deltas.mean() calculates the mean of all
-        # the elements in the tensor deltas, and the scalar result is then multiplied
-        # element-wise with the tensor log_prob_mean.
-        loss = -log_prob_mean * deltas.mean()
+        # Now, we compute the correct total loss by taking the sum of the element-wise products.
+        loss = -torch.sum(log_prob_mean * deltas)
     
         # Update the policy network
         self.optimizer.zero_grad()
@@ -221,6 +218,7 @@ class REINFORCE:
         # Empty / zero out all episode-centric/related variables
         self.probs = []
         self.rewards = []
+
 
 
 # %%
