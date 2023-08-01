@@ -1,14 +1,18 @@
+from __future__ import annotations
+
+
 """
 http://incompleteideas.net/MountainCar/MountainCar1.cp
 permalink: https://perma.cc/6Z2N-PFWC
 """
 import math
-from typing import Optional
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import spaces
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
@@ -101,7 +105,7 @@ class MountainCarEnv(gym.Env):
         "render_fps": 30,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, goal_velocity=0):
+    def __init__(self, render_mode: str | None = None, goal_velocity=0):
         self.min_position = -1.2
         self.max_position = 0.6
         self.max_speed = 0.07
@@ -125,7 +129,9 @@ class MountainCarEnv(gym.Env):
         self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Box(self.low, self.high, dtype=np.float32)
 
-    def step(self, action: int):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         assert self.action_space.contains(
             action
         ), f"{action!r} ({type(action)}) invalid"
@@ -151,9 +157,9 @@ class MountainCarEnv(gym.Env):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
@@ -167,7 +173,7 @@ class MountainCarEnv(gym.Env):
     def _height(self, xs):
         return np.sin(3 * xs) * 0.45 + 0.55
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -275,7 +281,7 @@ class MountainCarEnv(gym.Env):
         # Control with left and right arrow keys.
         return {(): 1, (276,): 0, (275,): 2, (275, 276): 1}
 
-    def close(self):
+    def close(self) -> None:
         if self.screen is not None:
             import pygame
 

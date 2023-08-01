@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import List, Optional
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import Env, spaces, utils
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import seeding
@@ -33,7 +36,7 @@ MAPS = {
 
 
 # DFS to check that it's a valid path.
-def is_valid(board: List[List[str]], max_size: int) -> bool:
+def is_valid(board: list[list[str]], max_size: int) -> bool:
     frontier, discovered = [], set()
     frontier.append((0, 0))
     while frontier:
@@ -54,8 +57,8 @@ def is_valid(board: List[List[str]], max_size: int) -> bool:
 
 
 def generate_random_map(
-    size: int = 8, p: float = 0.8, seed: Optional[int] = None
-) -> List[str]:
+    size: int = 8, p: float = 0.8, seed: int | None = None
+) -> list[str]:
     """Generates a random valid map (one that has a path from start to goal)
 
     Args:
@@ -217,7 +220,7 @@ class FrozenLakeEnv(Env):
 
     def __init__(
         self,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         desc=None,
         map_name="4x4",
         is_slippery=True,
@@ -297,12 +300,14 @@ class FrozenLakeEnv(Env):
         self.goal_img = None
         self.start_img = None
 
-    def step(self, a):
-        transitions = self.P[self.s][a]
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        transitions = self.P[self.s][action]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, t = transitions[i]
         self.s = s
-        self.lastaction = a
+        self.lastaction = action
 
         if self.render_mode == "human":
             self.render()
@@ -311,9 +316,9 @@ class FrozenLakeEnv(Env):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)
         self.lastaction = None
@@ -322,7 +327,7 @@ class FrozenLakeEnv(Env):
             self.render()
         return int(self.s), {"prob": 1}
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -460,7 +465,7 @@ class FrozenLakeEnv(Env):
         with closing(outfile):
             return outfile.getvalue()
 
-    def close(self):
+    def close(self) -> None:
         if self.window_surface is not None:
             import pygame
 

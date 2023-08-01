@@ -1,12 +1,16 @@
+from __future__ import annotations
+
+
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Any, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import error, spaces
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle
 
@@ -170,13 +174,13 @@ class BipedalWalker(gym.Env, EzPickle):
         "render_fps": FPS,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, hardcore: bool = False):
+    def __init__(self, render_mode: str | None = None, hardcore: bool = False):
         EzPickle.__init__(self, render_mode, hardcore)
         self.isopen = True
 
         self.world = Box2D.b2World()
-        self.terrain: List[Box2D.b2Body] = []
-        self.hull: Optional[Box2D.b2Body] = None
+        self.terrain: list[Box2D.b2Body] = []
+        self.hull: Box2D.b2Body | None = None
 
         self.prev_shaping = None
 
@@ -260,7 +264,7 @@ class BipedalWalker(gym.Env, EzPickle):
         # state += [l.fraction for l in self.lidar]
 
         self.render_mode = render_mode
-        self.screen: Optional[pygame.Surface] = None
+        self.screen: pygame.Surface | None = None
         self.clock = None
 
     def _destroy(self):
@@ -428,9 +432,9 @@ class BipedalWalker(gym.Env, EzPickle):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         super().reset(seed=seed)
         self._destroy()
         self.world.contactListener_bug_workaround = ContactDetector(self)
@@ -454,8 +458,8 @@ class BipedalWalker(gym.Env, EzPickle):
             (self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM), 0), True
         )
 
-        self.legs: List[Box2D.b2Body] = []
-        self.joints: List[Box2D.b2RevoluteJoint] = []
+        self.legs: list[Box2D.b2Body] = []
+        self.joints: list[Box2D.b2RevoluteJoint] = []
         for i in [-1, +1]:
             leg = self.world.CreateDynamicBody(
                 position=(init_x, init_y - LEG_H / 2 - LEG_DOWN),
@@ -517,7 +521,9 @@ class BipedalWalker(gym.Env, EzPickle):
             self.render()
         return self.step(np.array([0, 0, 0, 0]))[0], {}
 
-    def step(self, action: np.ndarray):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         assert self.hull is not None
 
         # self.hull.ApplyForceToCenter((0, 20), True) -- Uncomment this to receive a bit of stability help
@@ -608,7 +614,7 @@ class BipedalWalker(gym.Env, EzPickle):
             self.render()
         return np.array(state, dtype=np.float32), reward, terminated, False, {}
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -758,7 +764,7 @@ class BipedalWalker(gym.Env, EzPickle):
                 np.array(pygame.surfarray.pixels3d(self.surf)), axes=(1, 0, 2)
             )[:, -VIEWPORT_W:]
 
-    def close(self):
+    def close(self) -> None:
         if self.screen is not None:
             import pygame
 

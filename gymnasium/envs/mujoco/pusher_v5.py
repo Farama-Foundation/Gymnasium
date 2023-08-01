@@ -1,10 +1,15 @@
+from __future__ import annotations
+
+
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict
+
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 from gymnasium import utils
+from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -175,7 +180,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "pusher.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float] = DEFAULT_CAMERA_CONFIG,
         reward_near_weight: float = 0.5,
         reward_dist_weight: float = 1,
         reward_control_weight: float = 0.1,
@@ -215,7 +220,9 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
             "render_fps": int(np.round(1.0 / self.dt)),
         }
 
-    def step(self, action):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         vec_1 = self.get_body_com("object") - self.get_body_com("tips_arm")
         vec_2 = self.get_body_com("object") - self.get_body_com("goal")
 
