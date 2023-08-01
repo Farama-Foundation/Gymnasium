@@ -17,6 +17,7 @@ def make_env():
     def step_func(self, action: ActType):
         self.step_id += 1
         done = self.step_id == 10
+        print(self.step_id)
         return self.observation_space.sample(), float(done), done, False, {}
 
     def thunk():
@@ -52,24 +53,23 @@ def test_normalize_rew():
 
 
 def test_against_wrapper():
-    n_envs, n_steps = 8, 1000
-    env_fns = [make_env() for _ in range(n_envs)]
+    env_fns = [make_env() for _ in range(8)]
     vec_env = SyncVectorEnv(env_fns)
     vec_env = wrappers.vector.NormalizeRewardV1(vec_env)
     vec_env.reset()
-    for _ in range(n_steps):
+    for _ in range(100):
         action = vec_env.action_space.sample()
         vec_env.step(action)
 
     env = make_env()()
     env = wrappers.NormalizeRewardV1(env)
     env.reset()
-    for _ in range(n_envs * n_steps):
+    for _ in range(100):
         action = env.action_space.sample()
         _, _, ter, tru, _ = env.step(action)
         if ter or tru:
             env.reset()
 
-    rtol = 0.07
+    rtol = 0.01
     atol = 0
     assert np.allclose(env.return_rms.var, vec_env.return_rms.var, rtol=rtol, atol=atol)
