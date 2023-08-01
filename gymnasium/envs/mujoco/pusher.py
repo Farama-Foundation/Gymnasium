@@ -1,6 +1,11 @@
+from __future__ import annotations
+
+from typing import Any, SupportsFloat
+
 import numpy as np
 
 from gymnasium import utils
+from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
 
@@ -22,16 +27,18 @@ class PusherEnv(MuJocoPyEnv, utils.EzPickle):
             self, "pusher.xml", 5, observation_space=observation_space, **kwargs
         )
 
-    def step(self, a):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         vec_1 = self.get_body_com("object") - self.get_body_com("tips_arm")
         vec_2 = self.get_body_com("object") - self.get_body_com("goal")
 
         reward_near = -np.linalg.norm(vec_1)
         reward_dist = -np.linalg.norm(vec_2)
-        reward_ctrl = -np.square(a).sum()
+        reward_ctrl = -np.square(action).sum()
         reward = reward_dist + 0.1 * reward_ctrl + 0.5 * reward_near
 
-        self.do_simulation(a, self.frame_skip)
+        self.do_simulation(action, self.frame_skip)
         if self.render_mode == "human":
             self.render()
 

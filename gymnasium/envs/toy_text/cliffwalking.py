@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import Optional
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import Env, spaces
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 
@@ -95,7 +98,7 @@ class CliffWalkingEnv(Env):
         "render_fps": 4,
     }
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(self, render_mode: str | None = None):
         self.shape = (4, 12)
         self.start_state_index = np.ravel_multi_index((3, 0), self.shape)
 
@@ -170,18 +173,25 @@ class CliffWalkingEnv(Env):
         is_terminated = tuple(new_position) == terminal_state
         return [(1.0, new_state, -1, is_terminated)]
 
-    def step(self, a):
-        transitions = self.P[self.s][a]
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        transitions = self.P[self.s][action]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, t = transitions[i]
         self.s = s
-        self.lastaction = a
+        self.lastaction = action
 
         if self.render_mode == "human":
             self.render()
         return (int(s), r, t, False, {"prob": p})
 
-    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    def reset(
+        self,
+        *,
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)
         self.lastaction = None
@@ -190,7 +200,7 @@ class CliffWalkingEnv(Env):
             self.render()
         return int(self.s), {"prob": 1}
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(

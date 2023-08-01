@@ -1,6 +1,11 @@
+from __future__ import annotations
+
+from typing import Any, SupportsFloat
+
 import numpy as np
 
 from gymnasium import utils
+from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -34,7 +39,9 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         )
         utils.EzPickle.__init__(self, **kwargs)
 
-    def step(self, action):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         self.do_simulation(action, self.frame_skip)
         ob = self._get_obs()
         x, _, y = self.data.site_xpos[0]

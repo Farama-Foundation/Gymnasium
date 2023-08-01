@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 from os import path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, SupportsFloat
 
 import numpy as np
 from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium import error, logger, spaces
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.spaces import Space
 
 
@@ -35,11 +38,11 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         model_path,
         frame_skip,
         observation_space: Space,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
+        camera_id: int | None = None,
+        camera_name: str | None = None,
     ):
         """Base abstract class for mujoco based environments.
 
@@ -102,8 +105,8 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
     # methods to override:
     # ----------------------------
     def step(
-        self, action: NDArray[np.float32]
-    ) -> Tuple[NDArray[np.float64], np.float64, bool, bool, Dict[str, np.float64]]:
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         raise NotImplementedError
 
     def reset_model(self) -> NDArray[np.float64]:
@@ -113,7 +116,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         """
         raise NotImplementedError
 
-    def _initialize_simulation(self) -> Tuple[Any, Any]:
+    def _initialize_simulation(self) -> tuple[Any, Any]:
         """
         Initialize MuJoCo simulation data structures mjModel and mjData.
         """
@@ -131,23 +134,23 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         """
         raise NotImplementedError
 
-    def render(self) -> Union[NDArray[np.float64], None]:
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         """
         Render a frame from the MuJoCo simulation as specified by the render_mode.
         """
         raise NotImplementedError
 
     # -----------------------------
-    def _get_reset_info(self) -> Dict[str, float]:
+    def _get_reset_info(self) -> dict[str, float]:
         """Function that generates the `info` that is returned during a `reset()`."""
         return {}
 
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         super().reset(seed=seed)
 
         self._reset_simulation()
@@ -199,11 +202,11 @@ class MuJocoPyEnv(BaseMujocoEnv):
         model_path: str,
         frame_skip: int,
         observation_space: Space,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
+        camera_id: int | None = None,
+        camera_name: str | None = None,
     ):
         if MUJOCO_PY_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
@@ -259,7 +262,7 @@ class MuJocoPyEnv(BaseMujocoEnv):
         for _ in range(n_frames):
             self.sim.step()
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -309,7 +312,7 @@ class MuJocoPyEnv(BaseMujocoEnv):
 
     def _get_viewer(
         self, mode
-    ) -> Union["mujoco_py.MjViewer", "mujoco_py.MjRenderContextOffscreen"]:
+    ) -> mujoco_py.MjViewer | mujoco_py.MjRenderContextOffscreen:
         self.viewer = self._viewers.get(mode)
         if self.viewer is None:
             if mode == "human":
@@ -327,7 +330,7 @@ class MuJocoPyEnv(BaseMujocoEnv):
 
         return self.viewer
 
-    def close(self):
+    def close(self) -> None:
         if self.viewer is not None:
             self.viewer = None
             self._viewers = {}
@@ -348,12 +351,12 @@ class MujocoEnv(BaseMujocoEnv):
         model_path,
         frame_skip,
         observation_space: Space,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
-        default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
+        camera_id: int | None = None,
+        camera_name: str | None = None,
+        default_camera_config: dict[str, float | int] | None = None,
     ):
         if MUJOCO_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
@@ -380,7 +383,7 @@ class MujocoEnv(BaseMujocoEnv):
 
     def _initialize_simulation(
         self,
-    ) -> Tuple["mujoco._structs.MjModel", "mujoco._structs.MjData"]:
+    ) -> tuple[mujoco._structs.MjModel, mujoco._structs.MjData]:
         model = mujoco.MjModel.from_xml_path(self.fullpath)
         # MjrContext will copy model.vis.global_.off* to con.off*
         model.vis.global_.offwidth = self.width
@@ -409,12 +412,12 @@ class MujocoEnv(BaseMujocoEnv):
         # See https://github.com/openai/gym/issues/1541
         mujoco.mj_rnePostConstraint(self.model, self.data)
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         return self.mujoco_renderer.render(
             self.render_mode, self.camera_id, self.camera_name
         )
 
-    def close(self):
+    def close(self) -> None:
         if self.mujoco_renderer is not None:
             self.mujoco_renderer.close()
 

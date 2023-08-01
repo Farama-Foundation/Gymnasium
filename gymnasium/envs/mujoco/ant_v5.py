@@ -1,10 +1,14 @@
+from __future__ import annotations
+
+
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple, Union
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 from gymnasium import utils
+from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -244,15 +248,15 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "ant.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1,
         ctrl_cost_weight: float = 0.5,
         contact_cost_weight: float = 5e-4,
         healthy_reward: float = 1.0,
-        main_body: Union[int, str] = 1,
+        main_body: int | str = 1,
         terminate_when_unhealthy: bool = True,
-        healthy_z_range: Tuple[float, float] = (0.2, 1.0),
-        contact_force_range: Tuple[float, float] = (-1.0, 1.0),
+        healthy_z_range: tuple[float, float] = (0.2, 1.0),
+        contact_force_range: tuple[float, float] = (-1.0, 1.0),
         reset_noise_scale: float = 0.1,
         exclude_current_positions_from_observation: bool = True,
         include_cfrc_ext_in_observation: bool = True,
@@ -364,7 +368,9 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         terminated = (not self.is_healthy) and self._terminate_when_unhealthy
         return terminated
 
-    def step(self, action):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         xy_position_before = self.data.body(self._main_body).xpos[:2].copy()
         self.do_simulation(action, self.frame_skip)
         xy_position_after = self.data.body(self._main_body).xpos[:2].copy()

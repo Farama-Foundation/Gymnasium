@@ -1,12 +1,16 @@
+from __future__ import annotations
+
+
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-from typing import Optional, Union
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import spaces
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.box2d.car_dynamics import Car
 from gymnasium.error import DependencyNotInstalled, InvalidAction
 from gymnasium.utils import EzPickle
@@ -203,7 +207,7 @@ class CarRacing(gym.Env, EzPickle):
 
     def __init__(
         self,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         verbose: bool = False,
         lap_complete_percent: float = 0.95,
         domain_randomize: bool = False,
@@ -224,14 +228,14 @@ class CarRacing(gym.Env, EzPickle):
 
         self.contactListener_keepref = FrictionDetector(self, self.lap_complete_percent)
         self.world = Box2D.b2World((0, 0), contactListener=self.contactListener_keepref)
-        self.screen: Optional[pygame.Surface] = None
+        self.screen: pygame.Surface | None = None
         self.surf = None
         self.clock = None
         self.isopen = True
         self.invisible_state_window = None
         self.invisible_video_window = None
         self.road = None
-        self.car: Optional[Car] = None
+        self.car: Car | None = None
         self.reward = 0.0
         self.prev_reward = 0.0
         self.verbose = verbose
@@ -490,9 +494,9 @@ class CarRacing(gym.Env, EzPickle):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         super().reset(seed=seed)
         self._destroy()
         self.world.contactListener_bug_workaround = FrictionDetector(
@@ -529,7 +533,9 @@ class CarRacing(gym.Env, EzPickle):
             self.render()
         return self.step(None)[0], {}
 
-    def step(self, action: Union[np.ndarray, int]):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         assert self.car is not None
         if action is not None:
             if self.continuous:
@@ -576,7 +582,7 @@ class CarRacing(gym.Env, EzPickle):
             self.render()
         return self.state, step_reward, terminated, truncated, {}
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -780,7 +786,7 @@ class CarRacing(gym.Env, EzPickle):
             np.array(pygame.surfarray.pixels3d(scaled_screen)), axes=(1, 0, 2)
         )
 
-    def close(self):
+    def close(self) -> None:
         if self.screen is not None:
             pygame.display.quit()
             self.isopen = False
