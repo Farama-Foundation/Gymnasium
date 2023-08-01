@@ -1,15 +1,19 @@
+from __future__ import annotations
+
+
 """
 Classic cart-pole system implemented by Rich Sutton et al.
 Copied from http://incompleteideas.net/sutton/book/code/pole.c
 permalink: https://perma.cc/C9ZM-652R
 """
 import math
-from typing import Optional, Tuple, Union
+from typing import Any, SupportsFloat, Union
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import logger, spaces
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.vector import VectorEnv
@@ -88,7 +92,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         "render_fps": 50,
     }
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(self, render_mode: str | None = None):
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
@@ -129,7 +133,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         self.steps_beyond_terminated = None
 
-    def step(self, action):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         assert self.action_space.contains(
             action
         ), f"{action!r} ({type(action)}) invalid"
@@ -193,9 +199,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
@@ -209,7 +215,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.render()
         return np.array(self.state, dtype=np.float32), {}
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -307,7 +313,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
                 np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
             )
 
-    def close(self):
+    def close(self) -> None:
         if self.screen is not None:
             import pygame
 
@@ -326,7 +332,7 @@ class CartPoleVectorEnv(VectorEnv):
         self,
         num_envs: int = 2,
         max_episode_steps: int = 500,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
     ):
         super().__init__()
         self.num_envs = num_envs
@@ -380,7 +386,7 @@ class CartPoleVectorEnv(VectorEnv):
 
     def step(
         self, action: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
         assert self.action_space.contains(
             action
         ), f"{action!r} ({type(action)}) invalid"
@@ -444,8 +450,8 @@ class CartPoleVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound

@@ -1,10 +1,15 @@
+from __future__ import annotations
+
+
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple
+
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 from gymnasium import utils
+from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -320,14 +325,14 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "humanoid.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.25,
         ctrl_cost_weight: float = 0.1,
         contact_cost_weight: float = 5e-7,
-        contact_cost_range: Tuple[float, float] = (-np.inf, 10.0),
+        contact_cost_range: tuple[float, float] = (-np.inf, 10.0),
         healthy_reward: float = 5.0,
         terminate_when_unhealthy: bool = True,
-        healthy_z_range: Tuple[float, float] = (1.0, 2.0),
+        healthy_z_range: tuple[float, float] = (1.0, 2.0),
         reset_noise_scale: float = 1e-2,
         exclude_current_positions_from_observation: bool = True,
         include_cinert_in_observation: bool = True,
@@ -485,7 +490,9 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
             )
         )
 
-    def step(self, action):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         xy_position_before = mass_center(self.model, self.data)
         self.do_simulation(action, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)

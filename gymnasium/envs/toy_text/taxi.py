@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import Optional
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import Env, spaces, utils
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 
@@ -156,7 +159,7 @@ class TaxiEnv(Env):
         "render_fps": 4,
     }
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(self, render_mode: str | None = None):
         self.desc = np.asarray(MAP, dtype="c")
 
         self.locs = locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
@@ -282,12 +285,14 @@ class TaxiEnv(Env):
             mask[5] = 1
         return mask
 
-    def step(self, a):
-        transitions = self.P[self.s][a]
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        transitions = self.P[self.s][action]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, t = transitions[i]
         self.s = s
-        self.lastaction = a
+        self.lastaction = action
 
         if self.render_mode == "human":
             self.render()
@@ -296,9 +301,9 @@ class TaxiEnv(Env):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)
         self.lastaction = None
@@ -308,7 +313,7 @@ class TaxiEnv(Env):
             self.render()
         return int(self.s), {"prob": 1.0, "action_mask": self.action_mask(self.s)}
 
-    def render(self):
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -493,7 +498,7 @@ class TaxiEnv(Env):
         with closing(outfile):
             return outfile.getvalue()
 
-    def close(self):
+    def close(self) -> None:
         if self.window is not None:
             import pygame
 

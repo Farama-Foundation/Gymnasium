@@ -1,10 +1,15 @@
+from __future__ import annotations
+
+
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple
+
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 from gymnasium import utils
+from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -186,14 +191,14 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "hopper.xml",
         frame_skip: int = 4,
-        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-3,
         healthy_reward: float = 1.0,
         terminate_when_unhealthy: bool = True,
-        healthy_state_range: Tuple[float, float] = (-100.0, 100.0),
-        healthy_z_range: Tuple[float, float] = (0.7, float("inf")),
-        healthy_angle_range: Tuple[float, float] = (-0.2, 0.2),
+        healthy_state_range: tuple[float, float] = (-100.0, 100.0),
+        healthy_z_range: tuple[float, float] = (0.7, float("inf")),
+        healthy_angle_range: tuple[float, float] = (-0.2, 0.2),
         reset_noise_scale: float = 5e-3,
         exclude_current_positions_from_observation: bool = True,
         **kwargs,
@@ -306,7 +311,9 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         observation = np.concatenate((position, velocity)).ravel()
         return observation
 
-    def step(self, action):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         x_position_before = self.data.qpos[0]
         self.do_simulation(action, self.frame_skip)
         x_position_after = self.data.qpos[0]
