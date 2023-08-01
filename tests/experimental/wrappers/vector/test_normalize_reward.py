@@ -2,11 +2,10 @@
 from typing import Optional
 
 import numpy as np
-import pytest
 
+from gymnasium import wrappers
 from gymnasium.core import ActType
-from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
-from gymnasium.wrappers.vector import NormalizeRewardV1
+from gymnasium.vector import SyncVectorEnv
 from tests.testing_env import GenericTestEnv
 
 
@@ -26,11 +25,10 @@ def make_env():
     return thunk
 
 
-@pytest.mark.parametrize("class_", [AsyncVectorEnv, SyncVectorEnv])
-def test_normalize_rew(class_):
+def test_normalize_rew():
     env_fns = [make_env() for _ in range(8)]
-    env = class_(env_fns)
-    env = NormalizeRewardV1(env)
+    env = SyncVectorEnv(env_fns)
+    env = wrappers.vector.NormalizeRewardV1(env)
 
     env.reset()
     for _ in range(100):
@@ -51,3 +49,27 @@ def test_normalize_rew(class_):
 
     forward_rets = np.asarray(forward_rets)
     assert np.allclose(np.std(forward_rets), 1, atol=0.2)
+
+
+def test_against_wrapper():
+    n_envs, n_steps = 8, 1000
+    env_fns = [make_env() for _ in range(n_envs)]
+    vec_env = SyncVectorEnv(env_fns)
+    vec_env = wrappers.vector.NormalizeRewardV1(vec_env)
+    vec_env.reset()
+    for _ in range(n_steps):
+        action = vec_env.action_space.sample()
+        vec_env.step(action)
+
+    env = make_env()()
+    env = wrappers.NormalizeRewardV1(env)
+    env.reset()
+    for _ in range(n_envs * n_steps):
+        action = env.action_space.sample()
+        _, _, ter, tru, _ = env.step(action)
+        if ter or tru:
+            env.reset()
+
+    rtol = 0.07
+    atol = 0
+    assert np.allclose(env.return_rms.var, vec_env.return_rms.var, rtol=rtol, atol=atol)

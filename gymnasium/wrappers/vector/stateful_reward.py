@@ -47,8 +47,8 @@ class NormalizeRewardV1(VectorWrapper, gym.utils.RecordConstructorArgs):
         gym.utils.RecordConstructorArgs.__init__(self, gamma=gamma, epsilon=epsilon)
         gym.Wrapper.__init__(self, env)
 
-        self.rewards_running_means = RunningMeanStd(shape=())
-        self.discounted_reward: np.array = np.zeros((self.num_envs,), dtype=np.float32)
+        self.return_rms = RunningMeanStd(shape=())
+        self.accumulated_reward: np.array = np.zeros((self.num_envs,), dtype=np.float32)
         self.gamma = gamma
         self.epsilon = epsilon
         self._update_running_mean = True
@@ -68,13 +68,13 @@ class NormalizeRewardV1(VectorWrapper, gym.utils.RecordConstructorArgs):
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment, normalizing the reward returned."""
         obs, reward, terminated, truncated, info = super().step(action)
-        self.discounted_reward = (
-            self.discounted_reward * self.gamma * (1 - terminated) + reward
+        self.accumulated_reward = (
+            self.accumulated_reward * self.gamma * (1 - terminated) + reward
         )
         return obs, self.normalize(reward), terminated, truncated, info
 
     def normalize(self, reward: SupportsFloat):
         """Normalizes the rewards with the running mean rewards and their variance."""
         if self._update_running_mean:
-            self.rewards_running_means.update(self.discounted_reward)
-        return reward / np.sqrt(self.rewards_running_means.var + self.epsilon)
+            self.return_rms.update(self.accumulated_reward)
+        return reward / np.sqrt(self.return_rms.var + self.epsilon)
