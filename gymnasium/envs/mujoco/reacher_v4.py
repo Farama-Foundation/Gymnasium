@@ -1,11 +1,6 @@
-from __future__ import annotations
-
-from typing import Any, SupportsFloat
-
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -35,15 +30,13 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
             **kwargs,
         )
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, a):
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
         reward_dist = -np.linalg.norm(vec)
-        reward_ctrl = -np.square(action).sum()
+        reward_ctrl = -np.square(a).sum()
         reward = reward_dist + reward_ctrl
 
-        self.do_simulation(action, self.frame_skip)
+        self.do_simulation(a, self.frame_skip)
         if self.render_mode == "human":
             self.render()
 

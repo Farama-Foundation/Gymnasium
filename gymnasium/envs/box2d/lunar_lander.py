@@ -1,17 +1,13 @@
-from __future__ import annotations
-
-
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
 import warnings
-from typing import TYPE_CHECKING, Any, SupportsFloat
+from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import error, spaces
-from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle, colorize
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
@@ -231,7 +227,7 @@ class LunarLander(gym.Env, EzPickle):
 
     def __init__(
         self,
-        render_mode: str | None = None,
+        render_mode: Optional[str] = None,
         continuous: bool = False,
         gravity: float = -10.0,
         enable_wind: bool = False,
@@ -280,7 +276,7 @@ class LunarLander(gym.Env, EzPickle):
         self.isopen = True
         self.world = Box2D.b2World(gravity=(0, gravity))
         self.moon = None
-        self.lander: Box2D.b2Body | None = None
+        self.lander: Optional[Box2D.b2Body] = None
         self.particles = []
 
         self.prev_reward = None
@@ -349,9 +345,9 @@ class LunarLander(gym.Env, EzPickle):
     def reset(
         self,
         *,
-        seed: int | None = None,
-        options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+        seed: Optional[int] = None,
+        options: Optional[dict] = None,
+    ):
         super().reset(seed=seed)
         self._destroy()
         self.world.contactListener_keepref = ContactDetector(self)
@@ -487,9 +483,7 @@ class LunarLander(gym.Env, EzPickle):
         while self.particles and (all or self.particles[0].ttl < 0):
             self.world.DestroyBody(self.particles.pop(0))
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action):
         assert self.lander is not None
 
         # Update wind and apply to the lander
@@ -681,7 +675,7 @@ class LunarLander(gym.Env, EzPickle):
             self.render()
         return np.array(state, dtype=np.float32), reward, terminated, False, {}
 
-    def render(self) -> RenderFrame | list[RenderFrame] | None:
+    def render(self):
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -797,7 +791,7 @@ class LunarLander(gym.Env, EzPickle):
                 np.array(pygame.surfarray.pixels3d(self.surf)), axes=(1, 0, 2)
             )
 
-    def close(self) -> None:
+    def close(self):
         if self.screen is not None:
             import pygame
 

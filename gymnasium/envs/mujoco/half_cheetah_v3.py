@@ -1,14 +1,8 @@
-from __future__ import annotations
-
-
 __credits__ = ["Rushiv Arora"]
-
-from typing import Any, SupportsFloat
 
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
 
@@ -74,9 +68,7 @@ class HalfCheetahEnv(MuJocoPyEnv, utils.EzPickle):
         control_cost = self._ctrl_cost_weight * np.sum(np.square(action))
         return control_cost
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action):
         x_position_before = self.sim.data.qpos[0]
         self.do_simulation(action, self.frame_skip)
         x_position_after = self.sim.data.qpos[0]
