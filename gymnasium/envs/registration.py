@@ -914,7 +914,7 @@ def make_vec(
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
         vectorization_mode: How the environment will be vectorized. Can be "custom", "async" or "sync". It will default to
-            "async" UNLESS the environment was registered with a custom `vector_entry_point`, in which case, the `vectorization_mode`
+            "sync" UNLESS the environment was registered with a custom `vector_entry_point`, in which case, the `vectorization_mode`
             will default to "custom" as it will almost always be faster that way.
         vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
         wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
@@ -938,7 +938,7 @@ def make_vec(
         spec_ = _find_spec(id)
 
     if vectorization_mode is None:
-        vectorization_mode = "async" if spec_.vector_entry_point is None else "custom"
+        vectorization_mode = "sync" if spec_.vector_entry_point is None else "custom"
 
     _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
