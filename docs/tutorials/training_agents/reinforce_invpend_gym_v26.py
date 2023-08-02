@@ -220,7 +220,6 @@ class REINFORCE:
         self.rewards = []
 
 
-
 # %%
 # Now lets train the policy using REINFORCE to master the task of Inverted Pendulum.
 #
