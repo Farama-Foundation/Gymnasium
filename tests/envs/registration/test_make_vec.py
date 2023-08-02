@@ -3,6 +3,7 @@
 import pytest
 
 import gymnasium as gym
+from gymnasium.envs.classic_control.cartpole import CartPoleVectorEnv
 from gymnasium.experimental.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
@@ -11,7 +12,9 @@ from tests.wrappers.utils import has_wrapper
 def test_make_vec_env_id():
     """Ensure that the `gym.make_vec` creates the right environment."""
     env = gym.make_vec("CartPole-v1")
-    assert isinstance(env, AsyncVectorEnv)
+    assert isinstance(
+        env, CartPoleVectorEnv
+    ), "If a vectorized entrypoint is available, it should be used by default."
     assert env.num_envs == 1
     env.close()
 

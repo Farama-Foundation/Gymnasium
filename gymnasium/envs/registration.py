@@ -487,7 +487,7 @@ def _check_metadata(testing_metadata: dict[str, Any]):
         )
 
 
-def find_env_spec(env_id: str) -> EnvSpec:
+def _find_spec(env_id: str) -> EnvSpec:
     # For string id's, load the environment spec from the registry then make the environment spec
     assert isinstance(env_id, str)
 
@@ -738,7 +738,7 @@ def make(
         assert isinstance(id, str)
 
         # The environment name can include an unloaded module in "module:env_name" style
-        env_spec = find_env_spec(id)
+        env_spec = _find_spec(id)
 
     assert isinstance(env_spec, EnvSpec)
 
@@ -935,10 +935,10 @@ def make_vec(
     if isinstance(id, EnvSpec):
         spec_ = id
     else:
-        spec_ = find_env_spec(id)
+        spec_ = _find_spec(id)
 
     if vectorization_mode is None:
-        vectorization_mode = "sync" if spec_.vector_entry_point is None else "custom"
+        vectorization_mode = "async" if spec_.vector_entry_point is None else "custom"
 
     _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
