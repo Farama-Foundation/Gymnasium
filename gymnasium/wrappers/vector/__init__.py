@@ -8,6 +8,8 @@ from gymnasium.wrappers.vector.dict_info_to_list import DictInfoToListV0
 from gymnasium.wrappers.vector.record_episode_statistics import (
     RecordEpisodeStatisticsV0,
 )
+from gymnasium.wrappers.vector.stateful_observation import NormalizeObservationV0
+from gymnasium.wrappers.vector.stateful_reward import NormalizeRewardV1
 from gymnasium.wrappers.vector.vectorize_action import (
     ClipActionV0,
     LambdaActionV0,
@@ -47,8 +49,8 @@ __all__ = [
     "ReshapeObservationV0",
     "RescaleObservationV0",
     "DtypeObservationV0",
+    "NormalizeObservationV0",
     # "PixelObservationV0",
-    # "NormalizeObservationV0",
     # "TimeAwareObservationV0",
     # "FrameStackObservationV0",
     # "DelayObservationV0",
@@ -59,7 +61,7 @@ __all__ = [
     # --- Reward wrappers ---
     "LambdaRewardV0",
     "ClipRewardV0",
-    # "NormalizeRewardV1",
+    "NormalizeRewardV1",
     # --- Common ---
     "RecordEpisodeStatisticsV0",
     # --- Rendering ---
