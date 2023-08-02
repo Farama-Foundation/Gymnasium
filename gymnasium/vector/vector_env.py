@@ -343,13 +343,6 @@ class VectorWrapper(VectorEnv):
         """Close all extra resources."""
         return self.env.close_extras(**kwargs)
 
-    # implicitly forward all other methods and attributes to self.env
-    def __getattr__(self, name: str) -> Any:
-        """Forward all other attributes to the base environment."""
-        if name.startswith("_"):
-            raise AttributeError(f"attempted to get missing private attribute '{name}'")
-        return getattr(self.env, name)
-
     @property
     def unwrapped(self):
         """Return the base non-wrapped environment."""
