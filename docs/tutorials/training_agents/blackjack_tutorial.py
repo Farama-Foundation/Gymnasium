@@ -242,8 +242,10 @@ class BlackjackAgent:
 # %%
 # To train the agent, we will let the agent play one episode (one complete
 # game is called an episode) at a time and then update it’s Q-values after
-# each episode. The agent will have to experience a lot of episodes to
-# explore the environment sufficiently.
+# each step (one single action in a game is called a step).
+# 
+# The agent will have to experience a lot of episodes to explore the 
+# environment sufficiently.
 #
 # Now we should be ready to build the training loop.
 #
