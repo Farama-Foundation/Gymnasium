@@ -33,7 +33,7 @@ def test_vector_env_wrapper_attributes():
     env = gym.make_vec("CartPole-v1", num_envs=3)
     wrapped = DummyVectorWrapper(gym.make_vec("CartPole-v1", num_envs=3))
 
-    assert np.allclose(wrapped.call("gravity"), env.call("gravity"))
+    assert np.allclose(wrapped.env.call("gravity"), env.call("gravity"))
     env.set_attr("gravity", [20.0, 20.0, 20.0])
-    wrapped.set_attr("gravity", [20.0, 20.0, 20.0])
-    assert np.allclose(wrapped.get_attr("gravity"), env.get_attr("gravity"))
+    wrapped.env.set_attr("gravity", [20.0, 20.0, 20.0])
+    assert np.allclose(wrapped.env.get_attr("gravity"), env.get_attr("gravity"))
