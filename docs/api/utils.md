@@ -4,6 +4,18 @@ title: Utils
 
 # Utils
 
+## Seeding
+
+```{eval-rst}
+.. autofunction:: gymnasium.utils.seeding.np_random
+```
+
+## Environment Checking
+
+```{eval-rst}
+.. autofunction:: gymnasium.utils.env_checker.check_env
+```
+
 ## Visualization
 
 ```{eval-rst}
@@ -30,16 +42,4 @@ title: Utils
 .. autofunction:: gymnasium.utils.step_api_compatibility.step_api_compatibility
 .. autofunction:: gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api
 .. autofunction:: gymnasium.utils.step_api_compatibility.convert_to_done_step_api
-```
-
-## Seeding
-
-```{eval-rst}
-.. autofunction:: gymnasium.utils.seeding.np_random
-```
-
-## Environment Checking
-
-```{eval-rst}
-.. autofunction:: gymnasium.utils.env_checker.check_env
 ```

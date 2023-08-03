@@ -40,8 +40,7 @@ wrappers/vector_wrappers
 
     The environment (one level underneath) this wrapper.
 
-    This may itself be a wrapped environment.
-    To obtain the environment underneath all layers of wrappers, use :attr:`gymnasium.Wrapper.unwrapped`.
+    This may itself be a wrapped environment. To obtain the environment underneath all layers of wrappers, use :attr:`gymnasium.Wrapper.unwrapped`.
 
 .. autoproperty:: gymnasium.Wrapper.action_space
 .. autoproperty:: gymnasium.Wrapper.observation_space
