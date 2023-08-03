@@ -30,8 +30,12 @@ def test_vector_env_wrapper_inheritance():
 
 def test_vector_env_wrapper_attributes():
     """Test if `set_attr`, `call` methods for VecEnvWrapper get correctly forwarded to the vector env it is wrapping."""
-    env = gym.make_vec("CartPole-v1", num_envs=3)
-    wrapped = DummyVectorWrapper(gym.make_vec("CartPole-v1", num_envs=3))
+
+    # NOTE: using sync mode because `call` and `set_attr` are not implemented for the custom vectorization (because it doesn't make sense to do so)
+    env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+    wrapped = DummyVectorWrapper(
+        gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+    )
 
     assert np.allclose(wrapped.call("gravity"), env.call("gravity"))
     env.set_attr("gravity", [20.0, 20.0, 20.0])
