@@ -2,7 +2,7 @@
 title: Vector
 ---
 
-# Vector
+# Vector environments
 
 ```{toctree}
 :hidden:

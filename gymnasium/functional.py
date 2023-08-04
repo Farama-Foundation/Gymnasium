@@ -48,25 +48,25 @@ class FuncEnv(
         self.__dict__.update(options or {})
 
     def initial(self, rng: Any) -> StateType:
-        """Initial state."""
+        """Generates the initial state of the environment with a random number generator."""
         raise NotImplementedError
 
     def transition(self, state: StateType, action: ActType, rng: Any) -> StateType:
-        """Transition."""
+        """Updates (transitions) the state with an action and random number generator."""
         raise NotImplementedError
 
     def observation(self, state: StateType) -> ObsType:
-        """Observation."""
+        """Generates an observation for a given state of an environment."""
         raise NotImplementedError
 
     def reward(
         self, state: StateType, action: ActType, next_state: StateType
     ) -> RewardType:
-        """Reward."""
+        """Computes the reward for a given transition between `state`, `action` to `next_state`."""
         raise NotImplementedError
 
     def terminal(self, state: StateType) -> TerminalType:
-        """Terminal state."""
+        """Returns if the state is a final terminal state."""
         raise NotImplementedError
 
     def initial_info(self, state: StateType) -> dict:

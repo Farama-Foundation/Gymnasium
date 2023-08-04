@@ -2,7 +2,7 @@ import os
 import shutil
 
 import gymnasium as gym
-from gymnasium.wrappers.rendering import capped_cubic_video_schedule
+from gymnasium.utils.save_video import capped_cubic_video_schedule
 
 
 def test_record_video_using_default_trigger():

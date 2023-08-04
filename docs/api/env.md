@@ -20,8 +20,7 @@ title: Env
 ```{eval-rst}
 .. autoattribute:: gymnasium.Env.action_space
 
-    The Space object corresponding to valid actions, all valid actions should be contained with the space.
-    For example, if the action space is of type `Discrete` and gives the value `Discrete(2)`, this means there are two valid discrete actions: `0` & `1`.
+    The Space object corresponding to valid actions, all valid actions should be contained with the space. For example, if the action space is of type `Discrete` and gives the value `Discrete(2)`, this means there are two valid discrete actions: `0` & `1`.
 
     .. code::
 
@@ -32,9 +31,7 @@ title: Env
 
 .. autoattribute:: gymnasium.Env.observation_space
 
-    The Space object corresponding to valid observations, all valid observations should be contained with the space.
-    For example, if the observation space is of type :class:`Box` and the shape of the object is ``(4,)``, this denotes a valid observation will be an array of 4 numbers.
-    We can check the box bounds as well with attributes.
+    The Space object corresponding to valid observations, all valid observations should be contained with the space. For example, if the observation space is of type :class:`Box` and the shape of the object is ``(4,)``, this denotes a valid observation will be an array of 4 numbers. We can check the box bounds as well with attributes.
 
     .. code::
 
@@ -54,11 +51,7 @@ title: Env
 .. autoattribute:: gymnasium.Env.spec
 
     The :class:`EnvSpec` of the environment normally set during :py:meth:`gymnasium.make`
-```
 
-## Additional Methods
-
-```{eval-rst}
 .. autoproperty:: gymnasium.Env.unwrapped
 .. autoproperty:: gymnasium.Env.np_random
 ```
@@ -68,11 +61,13 @@ title: Env
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-When implementing an environment, the :meth:`Env.reset` and :meth:`Env.step` functions much be created describing the
-dynamics of the environment.
-For more information see the environment creation tutorial.
+When implementing an environment, the :meth:`Env.reset` and :meth:`Env.step` functions much be created describing the dynamics of the environment. For more information see the environment creation tutorial.
 ```
 
 ## Creating environments
 
-TODO
+```{eval-rst}
+.. py:currentmodule:: gymnasium
+
+To create an environment, gymnasium provides :meth:`make` to initialise the environment along with several important wrappers. Furthermore, gymnasium provides :meth:`make_vec` for creating vector environments and to view all the environment that can be created use :meth:`pprint_registry`.
+```

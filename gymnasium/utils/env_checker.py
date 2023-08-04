@@ -1,4 +1,4 @@
-"""A set of functions for checking an environment details.
+"""A set of functions for checking an environment implementation.
 
 This file is originally from the Stable Baselines3 repository hosted on GitHub
 (https://github.com/DLR-RM/stable-baselines3/)
@@ -257,17 +257,18 @@ def check_space_limit(space, space_type: str):
 
 
 def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
-    """Check that an environment follows Gym API.
+    """Check that an environment follows Gymnasium's API.
 
-    This is an invasive function that calls the environment's reset and step.
+    .. py:currentmodule:: gymnasium.Env
 
-    This is particularly useful when using a custom environment.
-    Please take a look at https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/
-    for more information about the API.
+    To ensure that an environment is implemented "correctly", ``check_env`` checks that the :attr:`observation_space` and :attr:`action_space` are correct.
+    Furthermore, the function will call the :meth:`reset`, :meth:`step` and :meth:`render` functions with a variety of values.
+
+    We highly recommend users calling this function after an environment is constructed and within a projects continuous integration to keep an environment update with Gymnasium's API.
 
     Args:
         env: The Gym environment that will be checked
-        warn: Ignored
+        warn: Ignored, previously silenced particular warnings
         skip_render_check: Whether to skip the checks for the render method. True by default (useful for the CI)
     """
     if warn is not None:
