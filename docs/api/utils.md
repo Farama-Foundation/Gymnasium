@@ -1,8 +1,8 @@
 ---
-title: Utils
+title: Utility functions
 ---
 
-# Utils
+# Utility functions
 
 ## Seeding
 
@@ -27,6 +27,12 @@ title: Utils
 .. autoclass:: gymnasium.utils.play.PlayableGame
 
     .. automethod:: process_event
+```
+
+## Environment pickling
+
+```{eval-rst}
+.. autoclass:: gymnasium.utils.ezpickle.EzPickle
 ```
 
 ## Save Rendering Videos

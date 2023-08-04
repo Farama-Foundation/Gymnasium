@@ -22,7 +22,6 @@ __all__ = [
     "RenderCollectionV0",
     "RecordVideoV0",
     "HumanRenderingV0",
-    "capped_cubic_video_schedule",
 ]
 
 
@@ -94,25 +93,19 @@ class RenderCollectionV0(
         return frames
 
 
-def capped_cubic_video_schedule(episode_id: int) -> bool:
-    """A scheduling function for the RecordVideo wrapper where videos are taken on capped (1000) cubic schedule."""
-    if episode_id < 1000:
-        return int(round(episode_id ** (1.0 / 3))) ** 3 == episode_id
-    else:
-        return episode_id % 1000 == 0
-
-
 class RecordVideoV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """This wrapper records videos of rollouts.
+
+    .. py:currentmodule:: gymnasium.utils.save_video
 
     Usually, you only want to record episodes intermittently, say every hundredth episode.
     To do this, you can specify ``episode_trigger`` or ``step_trigger``.
     They should be functions returning a boolean that indicates whether a recording should be started at the
     current episode or step, respectively.
     If neither :attr:`episode_trigger` nor ``step_trigger`` is passed, a default ``episode_trigger`` will be employed,
-    i.e. capped_cubic_video_schedule. This function starts a video at every episode that is a power of 3 until 1000 and
+    i.e. :func:`capped_cubic_video_schedule`. This function starts a video at every episode that is a power of 3 until 1000 and
     then every 1000 episodes.
     By default, the recording will be stopped once reset is called. However, you can also create recordings of fixed
     length (possibly spanning several episodes) by passing a strictly positive value for ``video_length``.
@@ -140,7 +133,7 @@ class RecordVideoV0(
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
             fps (int): The frame per second in the video. The default value is the one specified in the environment metadata.
-                If the environment metadata doesn't specify `render_fps`, the value 30 is used.
+                If the environment metadata doesn't specify ``render_fps``, the value 30 is used.
             disable_logger (bool): Whether to disable moviepy logger or not
         """
         gym.utils.RecordConstructorArgs.__init__(
@@ -161,6 +154,8 @@ class RecordVideoV0(
             )
 
         if episode_trigger is None and step_trigger is None:
+            from gymnasium.utils.save_video import capped_cubic_video_schedule
+
             episode_trigger = capped_cubic_video_schedule
 
         self.episode_trigger = episode_trigger
