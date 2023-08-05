@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=d98e5db1aa483f10fd0a50bf79700ebb0c5bab79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
     
     
 
@@ -679,8 +679,9 @@ valued as the best) <code class="docutils literal notranslate"><span class="pre"
 </div>
 <p>To train the agent, we will let the agent play one episode (one complete
 game is called an episode) at a time and then update it’s Q-values after
-each episode. The agent will have to experience a lot of episodes to
-explore the environment sufficiently.</p>
+each step (one single action in a game is called a step).</p>
+<p>The agent will have to experience a lot of episodes to explore the
+environment sufficiently.</p>
 <p>Now we should be ready to build the training loop.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># hyperparameters</span>
 <span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
@@ -1174,7 +1175,7 @@ Barto</a>, section
             const subSectionContainerElem = Object.assign(
                 document.createElement('div'), {
                   className:'farama-header-menu__subsections-container',
-                  style: key == "Mature Projects" ? "display: flex" : ""
+                  style: 'display: flex'
                 }
             )
             Object.keys(subSections).forEach((subKey, i) => {
@@ -1189,7 +1190,7 @@ Barto</a>, section
                   innerText: subKey
                 }
               ))
-              const ulElem = createProjectsList(subSections[subKey], key !== "Foundation");
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
               subSectionElem.appendChild(ulElem);
               subSectionContainerElem.appendChild(subSectionElem);
             })
