@@ -42,13 +42,12 @@ __all__ = [
 
 
 class TimeLimitV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """This wrapper will issue a `truncated` signal if a maximum number of timesteps is exceeded.
+    """Limits the number of steps for an environment through truncating the environment if a maximum number of timesteps is exceeded.
 
     If a truncation is not defined inside the environment itself, this is the only place that the truncation signal is issued.
     Critically, this is different from the `terminated` signal that originates from the underlying environment as part of the MDP.
 
     Example:
-       >>> import gymnasium as gym
        >>> from gymnasium.wrappers import TimeLimitV0
        >>> env = gym.make("CartPole-v1")
        >>> env = TimeLimitV0(env, max_episode_steps=1000)
@@ -98,7 +97,8 @@ class TimeLimitV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
         """Resets the environment with :param:`**kwargs` and sets the number of steps elapsed to zero.
 
         Args:
-            **kwargs: The kwargs to reset the environment with
+            seed: Seed for the environment
+            options: Options for the environment
 
         Returns:
             The reset environment
@@ -124,7 +124,7 @@ class TimeLimitV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
 class AutoresetV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.
+    """The wrapped environment is automatically reset when an terminated or truncated state is reached.
 
     When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,
     and the return format of :meth:`self.step` is as follows: ``(new_obs, final_reward, final_terminated, final_truncated, info)``
@@ -205,7 +205,7 @@ class AutoresetV0(
 class PassiveEnvCheckerV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """A passive environment checker wrapper that surrounds the step, reset and render functions to check they follow the gymnasium API."""
+    """A passive environment checker wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follows gymnasium's API."""
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
         """Initialises the wrapper with the environments, run the observation and action space tests."""
@@ -286,7 +286,7 @@ class PassiveEnvCheckerV0(
 class OrderEnforcingV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.
+    """Will produce an error if ``step`` or ``render`` is called before ``render``.
 
     Example:
         >>> import gymnasium as gym

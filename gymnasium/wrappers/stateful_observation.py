@@ -33,7 +33,7 @@ __all__ = [
 class DelayObservationV0(
     gym.ObservationWrapper[ObsType, ActType, ObsType], gym.utils.RecordConstructorArgs
 ):
-    """Wrapper which adds a delay to the returned observation.
+    """Adds a delay to the returned observation from the environment.
 
     Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
     the same shape as the observation space.
@@ -100,7 +100,7 @@ class TimeAwareObservationV0(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Augment the observation with time information of the episode.
+    """Augment the observation with the number of time steps taken within an episode.
 
     The :attr:`normalize_time` if ``True`` represents time as a normalized value between [0,1]
     otherwise if ``False``, the current timestep is an integer.
@@ -281,7 +281,7 @@ class FrameStackObservationV0(
     gym.Wrapper[WrapperObsType, ActType, ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Observation wrapper that stacks the observations in a rolling manner.
+    """Stacks the observations from the last ``N`` time steps in a rolling manner.
 
     For example, if the number of stacks is 4, then the returned observation contains
     the most recent 4 observations. For environment 'Pendulum-v1', the original observation
@@ -393,7 +393,7 @@ class NormalizeObservationV0(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """This wrapper will normalize observations such that each observation is centered with unit variance.
+    """Normalizes observations to be centered at the mean with unit variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
     statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.observation()` is called.
@@ -443,9 +443,10 @@ class MaxAndSkipObservationV0(
     gym.Wrapper[WrapperObsType, ActType, ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
-    """This wrapper will return only every ``skip``-th frame (frameskipping) and return the max between the two last observations.
+    """Skips the N-th frame (observation) and return the max values between the two last observations.
 
-    Note: This wrapper is based on the wrapper from stable-baselines3: https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#MaxAndSkipEnv
+    Note:
+        This wrapper is based on the wrapper from [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#MaxAndSkipEnv)
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], skip: int = 4):

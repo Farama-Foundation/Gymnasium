@@ -96,7 +96,7 @@ class JaxToNumpyV0(
     gym.Wrapper[WrapperObsType, WrapperActType, ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Wraps a jax environment so that it can be interacted with through numpy arrays.
+    """Wraps a Jax-based environment such that it can be interacted with NumPy arrays.
 
     Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
 

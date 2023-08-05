@@ -7,7 +7,7 @@ title: Wrapper
 ```{toctree}
 :hidden:
 
-wrappers/wrapper_table
+wrappers/table
 wrappers/misc_wrappers
 wrappers/action_wrappers
 wrappers/observation_wrappers
