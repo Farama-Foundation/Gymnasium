@@ -9,7 +9,9 @@ __all__ = ["AtariPreprocessingV0"]
 
 
 class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """Atari 2600 preprocessing wrapper.
+    """Implements the common preprocessing techniques for Atari environments (excluding frame stacking).
+
+    For frame stacking use :class:`gymnasium.wrappers.FrameStackObservation`.
 
     This class follows the guidelines in Machado et al. (2018),
     "Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents".

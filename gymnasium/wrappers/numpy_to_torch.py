@@ -88,7 +88,7 @@ def _numpy_iterable_to_torch(
 
 
 class NumpyToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors.
+    """Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
 

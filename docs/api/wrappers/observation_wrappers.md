@@ -11,6 +11,7 @@
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.LambdaObservationV0
 .. autoclass:: gymnasium.wrappers.DelayObservationV0
+.. autoclass:: gymnasium.wrappers.DTypeObervationV0
 .. autoclass:: gymnasium.wrappers.FilterObservationV0
 .. autoclass:: gymnasium.wrappers.FlattenObservationV0
 .. autoclass:: gymnasium.wrappers.FrameStackObservationV0

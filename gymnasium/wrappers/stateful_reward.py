@@ -19,7 +19,7 @@ __all__ = ["NormalizeRewardV1"]
 class NormalizeRewardV1(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
+    r"""Normalizes immediate rewards such that their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
 

@@ -14,7 +14,7 @@ __all__ = ["StickyActionV0"]
 class StickyActionV0(
     gym.ActionWrapper[ObsType, ActType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """Wrapper which adds a probability of repeating the previous action.
+    """Adds a probability that the action is repeated for the same ``step`` function.
 
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_
     in Section 5.2 on page 12.

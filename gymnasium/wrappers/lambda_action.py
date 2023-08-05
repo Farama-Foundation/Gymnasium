@@ -21,7 +21,7 @@ __all__ = ["LambdaActionV0", "ClipActionV0", "RescaleActionV0"]
 class LambdaActionV0(
     gym.ActionWrapper[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """A wrapper that provides a function to modify the action passed to :meth:`step`."""
+    """Applies a function to the ``action`` before passing the modified value to the environment ``step`` function."""
 
     def __init__(
         self,
@@ -54,7 +54,7 @@ class LambdaActionV0(
 class ClipActionV0(
     LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """Clip the continuous action within the valid :class:`Box` observation space bound.
+    """Clips the ``action`` pass to ``step`` to be within the environment's `action_space`.
 
     Example:
         >>> import gymnasium as gym
@@ -96,7 +96,7 @@ class ClipActionV0(
 class RescaleActionV0(
     LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
+    """Affinely (linearly) rescales a ``Box`` action space of the environment to within the range of ``[min_action, max_action]``.
 
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
     or :attr:`max_action` are numpy arrays, the shape must match the shape of the environment's action space.

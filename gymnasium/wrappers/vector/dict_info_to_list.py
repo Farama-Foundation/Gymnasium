@@ -11,7 +11,7 @@ __all__ = ["DictInfoToListV0"]
 
 
 class DictInfoToListV0(VectorWrapper):
-    """Converts infos of vectorized environments from dict to List[dict].
+    """Converts infos of vectorized environments from ``dict`` to ``List[dict]``.
 
     This wrapper converts the info format of a
     vector environment from a dictionary to a list of dictionaries.

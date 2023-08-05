@@ -39,7 +39,7 @@ class LambdaObservationV0(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Transforms an observation via a function provided to the wrapper.
+    """Applies a function to the ``observation`` received from the environment's ``reset`` and ``step`` that is passed back to the user.
 
     The function :attr:`func` will be applied to all observations.
     If the observations from :attr:`func` are outside the bounds of the ``env``'s observation space, provide an :attr:`observation_space`.
@@ -87,7 +87,7 @@ class FilterObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Filters Dict or Tuple observation space by the keys or indexes.
+    """Filters a Dict or Tuple observation spaces by a set of keys or indexes.
 
     Example:
         >>> import gymnasium as gym
@@ -200,7 +200,7 @@ class FlattenObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Observation wrapper that flattens the observation.
+    """Flattens the environment's observation space and each observation from ``reset`` and ``step`` functions.
 
     Example:
         >>> import gymnasium as gym
@@ -235,9 +235,9 @@ class GrayscaleObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Observation wrapper that converts an RGB image to grayscale.
+    """Converts an image observation computed by ``reset`` and ``step`` from RGB to Grayscale.
 
-    The :attr:`keep_dim` will keep the channel dimension
+    The :attr:`keep_dim` will keep the channel dimension.
 
     Example:
         >>> import gymnasium as gym
@@ -309,7 +309,7 @@ class ResizeObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Resizes image observations using OpenCV to shape.
+    """Resizes image observations using OpenCV to a specified shape.
 
     Example:
         >>> import gymnasium as gym
@@ -374,7 +374,7 @@ class ReshapeObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Reshapes array based observations to shapes.
+    """Reshapes Array based observations to a specified shape.
 
     Example:
         >>> import gymnasium as gym
@@ -422,7 +422,7 @@ class RescaleObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Linearly rescales observation to between a minimum and maximum value.
+    """Affinely (linearly) rescales a ``Box`` observation space of the environment to within the range of ``[min_obs, max_obs]``.
 
     Example:
         >>> import gymnasium as gym
@@ -498,7 +498,7 @@ class DtypeObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Observation wrapper for transforming the dtype of an observation.
+    """Modifies the dtype of an observation array to a specified dtype.
 
     Note:
         This is only compatible with :class:`Box`, :class:`Discrete`, :class:`MultiDiscrete` and :class:`MultiBinary` observation spaces
@@ -560,14 +560,10 @@ class RenderObservationV0(
     LambdaObservationV0[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Includes the rendered observations to the environment's observations.
+    """Includes the rendered observations in the environment's observations.
 
-    Observations of this wrapper will be dictionaries of images.
-    You can also choose to add the observation of the base environment to this dictionary.
-    In that case, if the base environment has an observation space of type :class:`Dict`, the dictionary
-    of rendered images will be updated with the base environment's observation. If, however, the observation
-    space is of type :class:`Box`, the base environment's observation (which will be an element of the :class:`Box`
-    space) will be added to the dictionary under the key "state".
+    Notes:
+       This was previously called ``PixelObservationWrapper``.
     """
 
     def __init__(

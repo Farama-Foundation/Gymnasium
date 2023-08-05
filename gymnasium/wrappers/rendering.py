@@ -96,7 +96,7 @@ class RenderCollectionV0(
 class RecordVideoV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """This wrapper records videos of rollouts.
+    """Records videos of environment episodes using the environment's render function.
 
     .. py:currentmodule:: gymnasium.utils.save_video
 
@@ -304,7 +304,7 @@ class RecordVideoV0(
 class HumanRenderingV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """Performs human rendering for an environment that only supports "rgb_array"rendering.
+    """Allows human like rendering for environments that support "rgb_array" rendering.
 
     This wrapper is particularly useful when you have implemented an environment that can produce
     RGB images but haven't implemented any code to render the images to the screen.

@@ -20,7 +20,7 @@ __all__ = ["LambdaRewardV0", "ClipRewardV0"]
 class LambdaRewardV0(
     gym.RewardWrapper[ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """A reward wrapper that allows a custom function to modify the step reward.
+    """Applies a function to the ``reward`` received from the environment's ``step``.
 
     Example:
         >>> import gymnasium as gym
@@ -59,7 +59,7 @@ class LambdaRewardV0(
 
 
 class ClipRewardV0(LambdaRewardV0[ObsType, ActType], gym.utils.RecordConstructorArgs):
-    """A wrapper that clips the rewards for an environment between an upper and lower bound.
+    """Clips the rewards for an environment between an upper and lower bound.
 
     Example:
         >>> import gymnasium as gym

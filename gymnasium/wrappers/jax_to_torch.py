@@ -115,7 +115,7 @@ def _jax_iterable_to_torch(
 
 
 class JaxToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """Wraps a Jax-based environment so that it can be interacted with through PyTorch Tensors.
+    """Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
 
