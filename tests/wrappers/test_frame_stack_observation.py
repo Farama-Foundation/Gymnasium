@@ -1,4 +1,4 @@
-"""Test suite for FrameStackObservationV0."""
+"""Test suite for FrameStackObservation wrapper."""
 import re
 
 import pytest
@@ -8,11 +8,7 @@ from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import iterate
 from gymnasium.wrappers import FrameStackObservationV0
 from gymnasium.wrappers.utils import create_zero_array
-from tests.experimental.wrappers.utils import (
-    SEED,
-    TESTING_OBS_ENVS,
-    TESTING_OBS_ENVS_IDS,
-)
+from tests.wrappers.utils import SEED, TESTING_OBS_ENVS, TESTING_OBS_ENVS_IDS
 
 
 @pytest.mark.parametrize("env", TESTING_OBS_ENVS, ids=TESTING_OBS_ENVS_IDS)

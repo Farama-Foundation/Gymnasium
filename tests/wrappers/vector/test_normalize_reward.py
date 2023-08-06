@@ -1,4 +1,4 @@
-"""Test suite for NormalizeRewardV1."""
+"""Test suite for vector NormalizeReward wrapper."""
 from typing import Optional
 
 import numpy as np

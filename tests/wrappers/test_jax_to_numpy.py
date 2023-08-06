@@ -1,4 +1,4 @@
-"""Test suite for JaxToNumpyV0."""
+"""Test suite for JaxToNumpy wrapper."""
 
 import numpy as np
 import pytest

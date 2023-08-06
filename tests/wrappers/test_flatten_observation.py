@@ -1,23 +1,29 @@
-import numpy as np
-import pytest
+"""Test suite for FlattenObservation wrapper."""
 
-import gymnasium as gym
-from gymnasium import spaces
+from gymnasium.spaces import Box, Dict, flatten_space
 from gymnasium.wrappers import FlattenObservationV0
+from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import (
+    check_obs,
+    record_random_obs_reset,
+    record_random_obs_step,
+)
 
 
-@pytest.mark.parametrize("env_id", ["Blackjack-v1"])
-def test_flatten_observation(env_id):
-    env = gym.make(env_id, disable_env_checker=True)
+def test_flatten_observation_wrapper():
+    """Tests the ``FlattenObservation`` wrapper that the observation are flattened correctly."""
+    env = GenericTestEnv(
+        observation_space=Dict(arm=Box(0, 1), head=Box(2, 3)),
+        reset_func=record_random_obs_reset,
+        step_func=record_random_obs_step,
+    )
     wrapped_env = FlattenObservationV0(env)
 
-    obs, info = env.reset()
-    wrapped_obs, wrapped_obs_info = wrapped_env.reset()
+    assert wrapped_env.observation_space == flatten_space(env.observation_space)
+    assert wrapped_env.action_space == env.action_space
 
-    space = spaces.Tuple((spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2)))
-    wrapped_space = spaces.Box(0, 1, [32 + 11 + 2], dtype=np.int64)
+    obs, info = wrapped_env.reset()
+    check_obs(env, wrapped_env, obs, info["obs"])
 
-    assert space.contains(obs)
-    assert wrapped_space.contains(wrapped_obs)
-    assert isinstance(info, dict)
-    assert isinstance(wrapped_obs_info, dict)
+    obs, _, _, _, info = wrapped_env.step(None)
+    check_obs(env, wrapped_env, obs, info["obs"])

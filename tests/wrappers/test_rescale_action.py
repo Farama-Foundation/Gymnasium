@@ -1,33 +1,38 @@
+"""Test suite for RescaleAction wrapper."""
 import numpy as np
-import pytest
 
-import gymnasium as gym
+from gymnasium.spaces import Box
 from gymnasium.wrappers import RescaleActionV0
+from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import record_action_step
 
 
-def test_rescale_action():
-    env = gym.make("CartPole-v1", disable_env_checker=True)
-    with pytest.raises(AssertionError):
-        RescaleActionV0(env, -1, 1)
-    del env
-
-    env = gym.make("Pendulum-v1", disable_env_checker=True)
+def test_rescale_action_wrapper():
+    """Test that the action is rescale within a min / max bound."""
+    env = GenericTestEnv(
+        step_func=record_action_step,
+        action_space=Box(np.array([0, 1]), np.array([1, 3])),
+    )
     wrapped_env = RescaleActionV0(
-        gym.make("Pendulum-v1", disable_env_checker=True), -1, 1
+        env, min_action=np.array([-5, 0]), max_action=np.array([5, 1])
     )
+    assert wrapped_env.action_space == Box(np.array([-5, 0]), np.array([5, 1]))
 
-    seed = 0
+    for sample_action, expected_action in (
+        (
+            np.array([0.0, 0.5], dtype=np.float32),
+            np.array([0.5, 2.0], dtype=np.float32),
+        ),
+        (
+            np.array([-5.0, 0.0], dtype=np.float32),
+            np.array([0.0, 1.0], dtype=np.float32),
+        ),
+        (
+            np.array([5.0, 1.0], dtype=np.float32),
+            np.array([1.0, 3.0], dtype=np.float32),
+        ),
+    ):
+        assert sample_action in wrapped_env.action_space
 
-    obs, info = env.reset(seed=seed)
-    wrapped_obs, wrapped_obs_info = wrapped_env.reset(seed=seed)
-    assert np.allclose(obs, wrapped_obs)
-
-    obs, reward, _, _, _ = env.step(np.array([1.5], dtype=np.float32))
-    # with pytest.raises(AssertionError):
-    #     wrapped_env.step([1.5])
-    wrapped_obs, wrapped_reward, _, _, _ = wrapped_env.step(
-        np.array([0.75], dtype=np.float32)
-    )
-
-    assert np.allclose(obs, wrapped_obs)
-    assert np.allclose(reward, wrapped_reward)
+        _, _, _, _, info = wrapped_env.step(sample_action)
+        assert np.all(info["action"] == expected_action)

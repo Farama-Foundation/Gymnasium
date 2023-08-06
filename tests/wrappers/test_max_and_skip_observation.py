@@ -1,4 +1,4 @@
-"""Test suite for MaxAndSkipObservationV0."""
+"""Test suite for MaxAndSkipObservation wrapper."""
 import re
 
 import pytest

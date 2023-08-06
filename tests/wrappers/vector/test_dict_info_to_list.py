@@ -1,3 +1,5 @@
+"""Test suite for DictInfoTolist wrapper."""
+
 import numpy as np
 import pytest
 

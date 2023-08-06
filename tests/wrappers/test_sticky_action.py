@@ -1,11 +1,11 @@
-"""Test suite for StickyActionV0."""
+"""Test suite for StickyAction wrapper."""
 import numpy as np
 import pytest
 
 from gymnasium.error import InvalidProbability
 from gymnasium.wrappers import StickyActionV0
-from tests.experimental.wrappers.utils import NUM_STEPS, record_action_as_obs_step
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import NUM_STEPS, record_action_as_obs_step
 
 
 def test_sticky_action():

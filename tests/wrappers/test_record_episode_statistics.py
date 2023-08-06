@@ -1,11 +1,9 @@
-import numpy as np
+"""Test suite for RecordEpisodeStatistics wrapper."""
+
 import pytest
 
 import gymnasium as gym
 from gymnasium.wrappers import RecordEpisodeStatisticsV0
-from gymnasium.wrappers.vector import (
-    RecordEpisodeStatisticsV0 as VectorRecordEpisodeStatisticsV0,
-)
 
 
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1"])
@@ -28,43 +26,3 @@ def test_record_episode_statistics(env_id, deque_size):
                 break
     assert len(env.return_queue) == deque_size
     assert len(env.length_queue) == deque_size
-
-
-def test_record_episode_statistics_reset_info():
-    env = gym.make("CartPole-v1", disable_env_checker=True)
-    env = RecordEpisodeStatisticsV0(env)
-    ob_space = env.observation_space
-    obs, info = env.reset()
-    assert ob_space.contains(obs)
-    assert isinstance(info, dict)
-
-
-@pytest.mark.parametrize(
-    ("num_envs", "vectorization_mode"),
-    [(1, "sync"), (1, "async"), (4, "sync"), (4, "async")],
-)
-def test_record_episode_statistics_with_vectorenv(num_envs, vectorization_mode):
-    envs = gym.make_vec(
-        "CartPole-v1",
-        render_mode=None,
-        num_envs=num_envs,
-        vectorization_mode=vectorization_mode,
-    )
-    envs = VectorRecordEpisodeStatisticsV0(envs)
-    if vectorization_mode == "async":
-        max_episode_step = envs.unwrapped.env_fns[0]().spec.max_episode_steps
-    else:
-        max_episode_step = envs.unwrapped.envs[0].spec.max_episode_steps
-
-    envs.reset()
-    for _ in range(max_episode_step + 1):
-        _, _, terminateds, truncateds, infos = envs.step(envs.action_space.sample())
-        if any(terminateds) or any(truncateds):
-            assert "episode" in infos
-            assert "_episode" in infos
-            assert all(infos["_episode"] == np.bitwise_or(terminateds, truncateds))
-            assert all([item in infos["episode"] for item in ["r", "l", "t"]])
-            break
-        else:
-            assert "episode" not in infos
-            assert "_episode" not in infos

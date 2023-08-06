@@ -1,14 +1,10 @@
-"""Test suite for RescaleObservationV0."""
+"""Test suite for RescaleObservation wrapper."""
 import numpy as np
 
 from gymnasium.spaces import Box
 from gymnasium.wrappers import RescaleObservationV0
-from tests.experimental.wrappers.utils import (
-    check_obs,
-    record_action_as_obs_step,
-    record_obs_reset,
-)
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import check_obs, record_action_as_obs_step, record_obs_reset
 
 
 def test_rescale_observation():
