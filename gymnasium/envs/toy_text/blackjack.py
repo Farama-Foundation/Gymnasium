@@ -1,13 +1,10 @@
-from __future__ import annotations
-
 import os
-from typing import Any, SupportsFloat
+from typing import Optional
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import spaces
-from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
 
 
@@ -152,7 +149,7 @@ class BlackjackEnv(gym.Env):
         "render_fps": 4,
     }
 
-    def __init__(self, render_mode: str | None = None, natural=False, sab=False):
+    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False):
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Tuple(
             (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
@@ -167,9 +164,7 @@ class BlackjackEnv(gym.Env):
 
         self.render_mode = render_mode
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action):
         assert self.action_space.contains(action)
         if action:  # hit: add a card to players hand and return
             self.player.append(draw_card(self.np_random))
@@ -205,10 +200,9 @@ class BlackjackEnv(gym.Env):
 
     def reset(
         self,
-        *,
-        seed: int | None = None,
-        options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+        seed: Optional[int] = None,
+        options: Optional[dict] = None,
+    ):
         super().reset(seed=seed)
         self.dealer = draw_hand(self.np_random)
         self.player = draw_hand(self.np_random)
@@ -229,7 +223,7 @@ class BlackjackEnv(gym.Env):
             self.render()
         return self._get_obs(), {}
 
-    def render(self) -> RenderFrame | list[RenderFrame] | None:
+    def render(self):
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -348,7 +342,7 @@ class BlackjackEnv(gym.Env):
                 np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
             )
 
-    def close(self) -> None:
+    def close(self):
         if hasattr(self, "screen"):
             import pygame
 

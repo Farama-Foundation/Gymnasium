@@ -1,11 +1,6 @@
-from __future__ import annotations
-
-from typing import Any, SupportsFloat
-
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
 
@@ -27,16 +22,14 @@ class SwimmerEnv(MuJocoPyEnv, utils.EzPickle):
         )
         utils.EzPickle.__init__(self, **kwargs)
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, a):
         ctrl_cost_coeff = 0.0001
         xposbefore = self.sim.data.qpos[0]
-        self.do_simulation(action, self.frame_skip)
+        self.do_simulation(a, self.frame_skip)
         xposafter = self.sim.data.qpos[0]
 
         reward_fwd = (xposafter - xposbefore) / self.dt
-        reward_ctrl = -ctrl_cost_coeff * np.square(action).sum()
+        reward_ctrl = -ctrl_cost_coeff * np.square(a).sum()
         reward = reward_fwd + reward_ctrl
         ob = self._get_obs()
 

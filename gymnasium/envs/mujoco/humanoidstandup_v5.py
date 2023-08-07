@@ -1,15 +1,10 @@
-from __future__ import annotations
-
-
 __credits__ = ["Kallinteris-Andreas"]
 
-
-from typing import Any, SupportsFloat
+from typing import Dict, Tuple
 
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -308,11 +303,11 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "humanoidstandup.xml",
         frame_skip: int = 5,
-        default_camera_config: dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
         uph_cost_weight: float = 1,
         ctrl_cost_weight: float = 0.1,
         impact_cost_weight: float = 0.5e-6,
-        impact_cost_range: tuple[float, float] = (-np.inf, 10.0),
+        impact_cost_range: Tuple[float, float] = (-np.inf, 10.0),
         reset_noise_scale: float = 1e-2,
         exclude_current_positions_from_observation: bool = True,
         include_cinert_in_observation: bool = True,
@@ -441,9 +436,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             )
         )
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action):
         self.do_simulation(action, self.frame_skip)
         pos_after = self.data.qpos[2]
 

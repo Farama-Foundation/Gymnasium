@@ -1,15 +1,10 @@
-from __future__ import annotations
-
-
 __credits__ = ["Kallinteris-Andreas"]
 
-
-from typing import Any, SupportsFloat
+from typing import Dict
 
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -159,7 +154,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "reacher.xml",
         frame_skip: int = 2,
-        default_camera_config: dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
         reward_dist_weight: float = 1,
         reward_control_weight: float = 1,
         **kwargs,
@@ -197,9 +192,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
             "render_fps": int(np.round(1.0 / self.dt)),
         }
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action):
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
         reward_dist = -np.linalg.norm(vec) * self._reward_dist_weight
         reward_ctrl = -np.square(action).sum() * self._reward_control_weight

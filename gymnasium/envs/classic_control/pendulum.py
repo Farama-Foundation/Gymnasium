@@ -1,16 +1,12 @@
-from __future__ import annotations
-
-
 __credits__ = ["Carlos Luis"]
 
 from os import path
-from typing import Any, SupportsFloat
+from typing import Optional
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import spaces
-from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
@@ -101,7 +97,7 @@ class PendulumEnv(gym.Env):
         "render_fps": 30,
     }
 
-    def __init__(self, render_mode: str | None = None, g=10.0):
+    def __init__(self, render_mode: Optional[str] = None, g=10.0):
         self.max_speed = 8
         self.max_torque = 2.0
         self.dt = 0.05
@@ -125,9 +121,7 @@ class PendulumEnv(gym.Env):
         )
         self.observation_space = spaces.Box(low=-high, high=high, dtype=np.float32)
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, u):
         th, thdot = self.state  # th := theta
 
         g = self.g
@@ -135,7 +129,7 @@ class PendulumEnv(gym.Env):
         l = self.l
         dt = self.dt
 
-        u = np.clip(action, -self.max_torque, self.max_torque)[0]
+        u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u  # for rendering
         costs = angle_normalize(th) ** 2 + 0.1 * thdot**2 + 0.001 * (u**2)
 
@@ -149,12 +143,7 @@ class PendulumEnv(gym.Env):
             self.render()
         return self._get_obs(), -costs, False, False, {}
 
-    def reset(
-        self,
-        *,
-        seed: int | None = None,
-        options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
         if options is None:
             high = np.array([DEFAULT_X, DEFAULT_Y])
@@ -178,7 +167,7 @@ class PendulumEnv(gym.Env):
         theta, thetadot = self.state
         return np.array([np.cos(theta), np.sin(theta), thetadot], dtype=np.float32)
 
-    def render(self) -> RenderFrame | list[RenderFrame] | None:
+    def render(self):
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -275,7 +264,7 @@ class PendulumEnv(gym.Env):
                 np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
             )
 
-    def close(self) -> None:
+    def close(self):
         if self.screen is not None:
             import pygame
 

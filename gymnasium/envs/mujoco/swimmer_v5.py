@@ -1,14 +1,8 @@
-from __future__ import annotations
-
-
 __credits__ = ["Kallinteris-Andreas", "Rushiv Arora"]
-
-from typing import Any, SupportsFloat
 
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -228,9 +222,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         control_cost = self._ctrl_cost_weight * np.sum(np.square(action))
         return control_cost
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action):
         xy_position_before = self.data.qpos[0:2].copy()
         self.do_simulation(action, self.frame_skip)
         xy_position_after = self.data.qpos[0:2].copy()

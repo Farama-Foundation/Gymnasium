@@ -1,11 +1,6 @@
-from __future__ import annotations
-
-from typing import Any, SupportsFloat
-
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -134,9 +129,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
             )
         )
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action):
         xy_position_before = mass_center(self.model, self.data)
         self.do_simulation(action, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)

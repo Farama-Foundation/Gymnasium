@@ -1,15 +1,10 @@
-from __future__ import annotations
-
-
 __credits__ = ["Kallinteris-Andreas"]
 
-
-from typing import Any, SupportsFloat
+from typing import Dict, Tuple
 
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -193,13 +188,13 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "walker2d_v5.xml",
         frame_skip: int = 4,
-        default_camera_config: dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-3,
         healthy_reward: float = 1.0,
         terminate_when_unhealthy: bool = True,
-        healthy_z_range: tuple[float, float] = (0.8, 2.0),
-        healthy_angle_range: tuple[float, float] = (-1.0, 1.0),
+        healthy_z_range: Tuple[float, float] = (0.8, 2.0),
+        healthy_angle_range: Tuple[float, float] = (-1.0, 1.0),
         reset_noise_scale: float = 5e-3,
         exclude_current_positions_from_observation: bool = True,
         **kwargs,
@@ -305,9 +300,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
         observation = np.concatenate((position, velocity)).ravel()
         return observation
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action):
         x_position_before = self.data.qpos[0]
         self.do_simulation(action, self.frame_skip)
         x_position_after = self.data.qpos[0]
