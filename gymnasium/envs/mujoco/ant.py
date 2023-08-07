@@ -1,11 +1,6 @@
-from __future__ import annotations
-
-from typing import Any, SupportsFloat
-
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MuJocoPyEnv
 from gymnasium.spaces import Box
 
@@ -29,15 +24,13 @@ class AntEnv(MuJocoPyEnv, utils.EzPickle):
         )
         utils.EzPickle.__init__(self, **kwargs)
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, a):
         xposbefore = self.get_body_com("torso")[0]
-        self.do_simulation(action, self.frame_skip)
+        self.do_simulation(a, self.frame_skip)
         xposafter = self.get_body_com("torso")[0]
 
         forward_reward = (xposafter - xposbefore) / self.dt
-        ctrl_cost = 0.5 * np.square(action).sum()
+        ctrl_cost = 0.5 * np.square(a).sum()
         contact_cost = (
             0.5 * 1e-3 * np.sum(np.square(np.clip(self.sim.data.cfrc_ext, -1, 1)))
         )

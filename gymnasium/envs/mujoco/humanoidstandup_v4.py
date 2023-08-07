@@ -1,11 +1,6 @@
-from __future__ import annotations
-
-from typing import Any, SupportsFloat
-
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.core import ActType, ObsType
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
@@ -55,10 +50,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             ]
         )
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
-        self.do_simulation(action, self.frame_skip)
+    def step(self, a):
+        self.do_simulation(a, self.frame_skip)
         pos_after = self.data.qpos[2]
         data = self.data
         uph_cost = (pos_after - 0) / self.model.opt.timestep

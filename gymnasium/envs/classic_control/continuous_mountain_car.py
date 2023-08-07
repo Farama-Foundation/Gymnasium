@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 """
 @author: Olivier Sigaud
 
@@ -17,13 +14,12 @@ permalink: https://perma.cc/6Z2N-PFWC
 """
 
 import math
-from typing import Any, SupportsFloat
+from typing import Optional
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import spaces
-from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
@@ -113,7 +109,7 @@ class Continuous_MountainCarEnv(gym.Env):
         "render_fps": 30,
     }
 
-    def __init__(self, render_mode: str | None = None, goal_velocity=0):
+    def __init__(self, render_mode: Optional[str] = None, goal_velocity=0):
         self.min_action = -1.0
         self.max_action = 1.0
         self.min_position = -1.2
@@ -147,9 +143,7 @@ class Continuous_MountainCarEnv(gym.Env):
             low=self.low_state, high=self.high_state, dtype=np.float32
         )
 
-    def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    def step(self, action: np.ndarray):
         position = self.state[0]
         velocity = self.state[1]
         force = min(max(action[0], self.min_action), self.max_action)
@@ -183,12 +177,7 @@ class Continuous_MountainCarEnv(gym.Env):
             self.render()
         return self.state, reward, terminated, False, {}
 
-    def reset(
-        self,
-        *,
-        seed: int | None = None,
-        options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
@@ -202,7 +191,7 @@ class Continuous_MountainCarEnv(gym.Env):
     def _height(self, xs):
         return np.sin(3 * xs) * 0.45 + 0.55
 
-    def render(self) -> RenderFrame | list[RenderFrame] | None:
+    def render(self):
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -306,7 +295,7 @@ class Continuous_MountainCarEnv(gym.Env):
                 np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
             )
 
-    def close(self) -> None:
+    def close(self):
         if self.screen is not None:
             import pygame
 
