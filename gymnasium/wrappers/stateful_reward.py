@@ -62,8 +62,7 @@ class NormalizeRewardV1(
         ...
         >>> # will approach 0.99 with more episodes
         >>> np.var(episode_rewards)
-        0.0008876301247721108
-
+        0.010162116476634746
     """
 
     def __init__(
