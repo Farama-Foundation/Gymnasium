@@ -1,12 +1,9 @@
-"""Test suite for DtypeObservationV0."""
+"""Test suite for DtypeObservation wrapper."""
 import numpy as np
 
 from gymnasium.wrappers import DtypeObservationV0
-from tests.experimental.wrappers.utils import (
-    record_random_obs_reset,
-    record_random_obs_step,
-)
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import record_random_obs_reset, record_random_obs_step
 
 
 def test_dtype_observation():

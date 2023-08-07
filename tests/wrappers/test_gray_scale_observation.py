@@ -1,26 +1,38 @@
-import pytest
+"""Test suite for GrayscaleObservation wrapper."""
+import numpy as np
 
-import gymnasium as gym
-from gymnasium import spaces
+from gymnasium.spaces import Box
 from gymnasium.wrappers import GrayscaleObservationV0
+from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import (
+    check_obs,
+    record_random_obs_reset,
+    record_random_obs_step,
+)
 
 
-@pytest.mark.parametrize("env_id", ["CarRacing-v2"])
-@pytest.mark.parametrize("keep_dim", [True, False])
-def test_gray_scale_observation(env_id, keep_dim):
-    rgb_env = gym.make(env_id, disable_env_checker=True)
+def test_grayscale_observation_wrapper():
+    """Tests the ``GrayscaleObservation`` that the observation is grayscale."""
+    env = GenericTestEnv(
+        observation_space=Box(0, 255, shape=(25, 25, 3), dtype=np.uint8),
+        reset_func=record_random_obs_reset,
+        step_func=record_random_obs_step,
+    )
+    wrapped_env = GrayscaleObservationV0(env)
 
-    assert isinstance(rgb_env.observation_space, spaces.Box)
-    assert len(rgb_env.observation_space.shape) == 3
-    assert rgb_env.observation_space.shape[-1] == 3
+    obs, info = wrapped_env.reset()
+    check_obs(env, wrapped_env, obs, info["obs"])
+    assert obs.shape == (25, 25)
 
-    wrapped_env = GrayscaleObservationV0(rgb_env, keep_dim=keep_dim)
-    assert isinstance(wrapped_env.observation_space, spaces.Box)
-    if keep_dim:
-        assert len(wrapped_env.observation_space.shape) == 3
-        assert wrapped_env.observation_space.shape[-1] == 1
-    else:
-        assert len(wrapped_env.observation_space.shape) == 2
+    obs, _, _, _, info = wrapped_env.step(None)
+    check_obs(env, wrapped_env, obs, info["obs"])
 
-    wrapped_obs, info = wrapped_env.reset()
-    assert wrapped_obs in wrapped_env.observation_space
+    # Keep_dim
+    wrapped_env = GrayscaleObservationV0(env, keep_dim=True)
+
+    obs, info = wrapped_env.reset()
+    check_obs(env, wrapped_env, obs, info["obs"])
+    assert obs.shape == (25, 25, 1)
+
+    obs, _, _, _, info = wrapped_env.step(None)
+    check_obs(env, wrapped_env, obs, info["obs"])

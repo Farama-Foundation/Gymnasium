@@ -1,3 +1,5 @@
+"""Test suite for AtariProcessing wrapper."""
+
 import numpy as np
 import pytest
 
@@ -43,7 +45,7 @@ class AtariTestingEnv(GenericTestEnv):
 
 
 @pytest.mark.parametrize(
-    "env, obs_shape",
+    "env, expected_obs_shape",
     [
         (AtariTestingEnv(), (210, 160, 3)),
         (
@@ -79,8 +81,8 @@ class AtariTestingEnv(GenericTestEnv):
         ),
     ],
 )
-def test_atari_preprocessing_grayscale(env, obs_shape):
-    assert env.observation_space.shape == obs_shape
+def test_atari_preprocessing_grayscale(env, expected_obs_shape):
+    assert env.observation_space.shape == expected_obs_shape
 
     obs, _ = env.reset(seed=0)
     assert obs in env.observation_space

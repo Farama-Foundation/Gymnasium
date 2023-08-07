@@ -1,23 +1,18 @@
-"""Test suite for ClipRewardV0."""
+"""Test suite for ClipReward wrapper."""
 import numpy as np
 import pytest
 
 import gymnasium as gym
 from gymnasium.error import InvalidBound
 from gymnasium.wrappers import ClipRewardV0
-from tests.envs.test_envs import SEED
-from tests.experimental.wrappers.test_lambda_rewards import (
-    DISCRETE_ACTION,
-    ENV_ID,
-    NUM_ENVS,
-)
+from tests.wrappers.utils import DISCRETE_ACTION, ENV_ID, SEED
 
 
 @pytest.mark.parametrize(
     ("lower_bound", "upper_bound", "expected_reward"),
     [(None, 0.5, 0.5), (0, None, 1), (0, 0.5, 0.5)],
 )
-def test_clip_reward(lower_bound, upper_bound, expected_reward):
+def test_clip_reward_wrapper(lower_bound, upper_bound, expected_reward):
     """Test reward clipping.
 
     Test if reward is correctly clipped accordingly to the input args.
@@ -28,26 +23,6 @@ def test_clip_reward(lower_bound, upper_bound, expected_reward):
     _, rew, _, _, _ = env.step(DISCRETE_ACTION)
 
     assert rew == expected_reward
-
-
-@pytest.mark.parametrize(
-    ("lower_bound", "upper_bound", "expected_reward"),
-    [(None, 0.5, 0.5), (0, None, 1), (0, 0.5, 0.5)],
-)
-def test_clip_reward_within_vector(lower_bound, upper_bound, expected_reward):
-    """Test reward clipping in vectorized environment.
-
-    Test if reward is correctly clipped accordingly to the input args in a vectorized environment.
-    """
-    actions = [DISCRETE_ACTION for _ in range(NUM_ENVS)]
-
-    env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
-    env = ClipRewardV0(env, lower_bound, upper_bound)
-    env.reset(seed=SEED)
-
-    _, rew, _, _, _ = env.step(actions)
-
-    assert np.alltrue(rew == expected_reward)
 
 
 @pytest.mark.parametrize(

@@ -1,9 +1,9 @@
-"""Test suite for LambdaActionV0."""
+"""Test suite for LambdaAction wrapper."""
 
 from gymnasium.spaces import Box
 from gymnasium.wrappers import LambdaActionV0
-from tests.experimental.wrappers.utils import record_action_step
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import record_action_step
 
 
 def test_lambda_action_wrapper():

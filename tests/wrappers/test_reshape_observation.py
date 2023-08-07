@@ -1,12 +1,12 @@
-"""Test suite for ReshapeObservationV0."""
+"""Test suite for ReshapeObservation wrapper."""
 from gymnasium.spaces import Box
 from gymnasium.wrappers import ReshapeObservationV0
-from tests.experimental.wrappers.utils import (
+from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import (
     check_obs,
     record_random_obs_reset,
     record_random_obs_step,
 )
-from tests.testing_env import GenericTestEnv
 
 
 def test_reshape_observation_wrapper():

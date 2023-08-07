@@ -1,6 +1,10 @@
 """Tests that the vectorised wrappers operate identically in `VectorEnv(Wrapper)` and `VectorWrapper(VectorEnv)`.
 
-The exception is the data converter wrappers (`JaxToTorch`, `JaxToNumpy` and `NumpyToJax`)
+The exception is the data converter wrappers
+ * Data conversion wrappers - `JaxToTorch`, `JaxToNumpy` and `NumpyToJax`
+ * Normalizing wrappers - `NormalizeObservation` and `NormalizeReward`
+ * Different implementations - `LambdaObservation`, `LambdaReward` and `LambdaAction`
+ * Different random sources - `StickyAction`
 """
 from __future__ import annotations
 
@@ -42,8 +46,7 @@ def custom_environments():
         ("CarRacing-v2", "ReshapeObservationV0", {"shape": (96, 48, 6)}),
         ("CartPole-v1", "RescaleObservationV0", {"min_obs": 0, "max_obs": 1}),
         ("CartPole-v1", "DtypeObservationV0", {"dtype": np.int32}),
-        # ("CartPole-v1", "PixelObservationV0", {}),
-        # ("CartPole-v1", "NormalizeObservationV0", {}),
+        # ("CartPole-v1", "RenderObservationV0", {}),
         # ("CartPole-v1", "TimeAwareObservationV0", {}),
         # ("CartPole-v1", "FrameStackObservationV0", {}),
         # ("CartPole-v1", "DelayObservationV0", {}),
@@ -53,9 +56,7 @@ def custom_environments():
             "RescaleActionV0",
             {"min_action": 1, "max_action": 2},
         ),
-        # ("CartPole-v1", "StickyActionV0", {}),
         ("CartPole-v1", "ClipRewardV0", {"min_reward": 0.25, "max_reward": 0.75}),
-        # ("CartPole-v1", "NormalizeRewardV1", {}),
     ),
 )
 def test_vector_wrapper_equivalence(
@@ -112,12 +113,3 @@ def test_vector_wrapper_equivalence(
 
     wrapper_vector_env.close()
     vector_wrapper_env.close()
-
-
-# ("CartPole-v1", "LambdaObservationV0", {"func": lambda obs: obs + 1}),
-# ("CartPole-v1", "LambdaActionV0", {"func": lambda action: action + 1}),
-# ("CartPole-v1", "LambdaRewardV0", {"func": lambda reward: reward + 1}),
-# (vector.JaxToNumpyV0, {}, {}),
-# (vector.JaxToTorchV0, {}, {}),
-# (vector.NumpyToTorchV0, {}, {}),
-# ("CartPole-v1", "RecordEpisodeStatisticsV0", {}),  # for the time taken in info, this is not equivalent for two instances

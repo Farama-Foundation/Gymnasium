@@ -1,4 +1,4 @@
-"""Test suite for TorchToJaxV0."""
+"""Test suite for TorchToJax wrapper."""
 
 import numpy as np
 import pytest

@@ -1,3 +1,4 @@
+"""Test suite for TimeAwareObservation wrapper."""
 import numpy as np
 import pytest
 

@@ -61,6 +61,7 @@ def numpy_to_torch(value: Any, device: Device | None = None) -> Any:
     )
 
 
+@numpy_to_torch.register(numbers.Number)
 @numpy_to_torch.register(np.ndarray)
 def _numpy_to_torch(value: np.ndarray, device: Device | None = None) -> torch.Tensor:
     """Converts a Jax Array into a PyTorch Tensor."""
@@ -84,7 +85,7 @@ def _numpy_iterable_to_torch(
     value: Iterable[Any], device: Device | None = None
 ) -> Iterable[Any]:
     """Converts an Iterable from Jax Array to an iterable of PyTorch Tensors."""
-    return type(value)(numpy_to_torch(v, device) for v in value)
+    return type(value)(tuple(numpy_to_torch(v, device) for v in value))
 
 
 class NumpyToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):

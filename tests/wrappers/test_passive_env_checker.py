@@ -1,3 +1,5 @@
+"""Test suite for PassiveEnvChecker wrapper."""
+
 import re
 import warnings
 

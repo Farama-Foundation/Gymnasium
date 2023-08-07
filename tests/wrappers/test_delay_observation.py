@@ -1,4 +1,4 @@
-"""Test suite for DelayObservationV0."""
+"""Test suite for DelayObservation wrapper."""
 import re
 
 import pytest
@@ -7,11 +7,7 @@ import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.wrappers import DelayObservationV0
 from gymnasium.wrappers.utils import create_zero_array
-from tests.experimental.wrappers.utils import (
-    SEED,
-    TESTING_OBS_ENVS,
-    TESTING_OBS_ENVS_IDS,
-)
+from tests.wrappers.utils import SEED, TESTING_OBS_ENVS, TESTING_OBS_ENVS_IDS
 
 
 @pytest.mark.parametrize("env", TESTING_OBS_ENVS, ids=TESTING_OBS_ENVS_IDS)
