@@ -470,7 +470,6 @@ class MaxAndSkipObservationV0(
     Example:
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
-        >>> action_space = env.action_space
         >>> obs0, *_ = env.reset(seed=123)
         >>> obs1, *_ = env.step(1)
         >>> obs2, *_ = env.step(1)
