@@ -18,6 +18,42 @@ class StickyActionV0(
 
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_
     in Section 5.2 on page 12.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1")
+        >>> env.reset(seed=123)
+        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
+
+        >>> env.step(1)
+        (array([ 0.01734283,  0.15089367, -0.02859527, -0.33293587], dtype=float32), 1.0, False, False, {})
+
+        >>> env.step(0)
+        (array([ 0.0203607 , -0.04380985, -0.03525399, -0.04940585], dtype=float32), 1.0, False, False, {})
+
+        >>> env.step(1)
+        (array([ 0.01948451,  0.15179941, -0.03624211, -0.35299996], dtype=float32), 1.0, False, False, {})
+
+        >>> env.step(0)
+        (array([ 0.02252049, -0.04278894, -0.0433021 , -0.07196194], dtype=float32), 1.0, False, False, {})
+
+        >>> env = gym.make("CartPole-v1")
+        >>> env = StickyActionV0(env, repeat_action_probability=0.9)
+        >>> env.reset(seed=123)
+        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
+
+        >>> env.step(1)
+        (array([ 0.01734283,  0.15089367, -0.02859527, -0.33293587], dtype=float32), 1.0, False, False, {})
+
+        >>> env.step(0)
+        (array([ 0.0203607 ,  0.34641072, -0.03525399, -0.6344974 ], dtype=float32), 1.0, False, False, {})
+
+        >>> env.step(1)
+        (array([ 0.02728892,  0.5420062 , -0.04794393, -0.9380709 ], dtype=float32), 1.0, False, False, {})
+
+        >>> env.step(0)
+        (array([ 0.03812904,  0.73774064, -0.06670535, -1.2454252 ], dtype=float32), 1.0, False, False, {})
+
     """
 
     def __init__(
