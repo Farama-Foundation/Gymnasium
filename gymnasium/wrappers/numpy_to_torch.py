@@ -95,6 +95,30 @@ class NumpyToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
     Note:
         For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
+
+    Example:
+        >>> import torch
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1")
+        >>> env = NumpyToTorchV0(env)
+        >>> obs, _ = env.reset(seed=123)
+        >>> type(obs)
+        <class 'torch.Tensor'>
+
+        >>> action = torch.tensor(env.action_space.sample())
+        >>> obs, reward, terminated, truncated, info = env.step(action)
+        >>> type(obs)
+        <class 'torch.Tensor'>
+
+        >>> type(reward)
+        <class 'float'>
+
+        >>> type(terminated)
+        <class 'bool'>
+
+        >>> type(truncated)
+        <class 'bool'>
+
     """
 
     def __init__(self, env: gym.Env, device: Device | None = None):
