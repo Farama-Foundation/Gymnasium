@@ -19,13 +19,19 @@ class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     Specifically, the following preprocess stages applies to the atari environment:
 
     - Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.
-    - Frame skipping: The number of frames skipped between steps, 4 by default
-    - Max-pooling: Pools over the most recent two observations from the frame skips
+    - Frame skipping: The number of frames skipped between steps, 4 by default.
+    - Max-pooling: Pools over the most recent two observations from the frame skips.
     - Termination signal when a life is lost: When the agent losses a life during the environment, then the environment is terminated.
         Turned off by default. Not recommended by Machado et al. (2018).
-    - Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default
-    - Grayscale observation: If the observation is colour or greyscale, by default, greyscale.
-    - Scale observation: If to scale the observation between [0, 1) or [0, 255), by default, not scaled.
+    - Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default.
+    - Grayscale observation: Makes the observation greyscale, enabled by default.
+    - Grayscale new axis: Extends the last channel of the observation such that the image is 3-dimensional, not enabled by default.
+    - Scale observation: Whether to scale the observation between [0, 1) or [0, 255), not scaled by default.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("ALE/Adventure-v5")
+        >>> env = AtariPreprocessingV0(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False)
     """
 
     def __init__(
@@ -45,7 +51,7 @@ class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
             env (Env): The environment to apply the preprocessing
             noop_max (int): For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.
             frame_skip (int): The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.
-            screen_size (int): resize Atari frame
+            screen_size (int): resize Atari frame.
             terminal_on_life_loss (bool): `if True`, then :meth:`step()` returns `terminated=True` whenever a
                 life is lost.
             grayscale_obs (bool): if True, then gray scale observation is returned, otherwise, RGB observation
