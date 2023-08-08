@@ -156,7 +156,7 @@ class TaxiEnv(Env):
         "render_fps": 4,
     }
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(self, render_mode: Optional[str] = None, is_rainy=False):
         self.desc = np.asarray(MAP, dtype="c")
 
         self.locs = locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
@@ -173,6 +173,20 @@ class TaxiEnv(Env):
             state: {action: [] for action in range(num_actions)}
             for state in range(num_states)
         }
+
+        def move_transition(row, col, action):
+            new_row = row
+            new_col = col
+            if action == 0:
+                new_row = min(row + 1, max_row)
+            elif action == 1:
+                new_row = max(row - 1, 0)
+            if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
+                new_col = min(col + 1, max_col)
+            elif action == 3 and self.desc[1 + row, 2 * col] == b":":
+                new_col = max(col - 1, 0)
+            return new_row, new_col
+
         for row in range(num_rows):
             for col in range(num_columns):
                 for pass_idx in range(len(locs) + 1):  # +1 for being inside taxi
@@ -188,15 +202,8 @@ class TaxiEnv(Env):
                             )  # default reward when there is no pickup/dropoff
                             terminated = False
                             taxi_loc = (row, col)
-
-                            if action == 0:
-                                new_row = min(row + 1, max_row)
-                            elif action == 1:
-                                new_row = max(row - 1, 0)
-                            if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
-                                new_col = min(col + 1, max_col)
-                            elif action == 3 and self.desc[1 + row, 2 * col] == b":":
-                                new_col = max(col - 1, 0)
+                            if action < 4:
+                                new_row, new_col = move_transition(row, col, action)
                             elif action == 4:  # pickup
                                 if pass_idx < 4 and taxi_loc == locs[pass_idx]:
                                     new_pass_idx = 4
@@ -214,9 +221,24 @@ class TaxiEnv(Env):
                             new_state = self.encode(
                                 new_row, new_col, new_pass_idx, dest_idx
                             )
-                            self.P[state][action].append(
-                                (1.0, new_state, reward, terminated)
-                            )
+                            if action < 4 and is_rainy:
+                                self.P[state][action].append(
+                                    (0.8, new_state, reward, terminated)
+                                )
+                                unintended_actions = (2, 3) if action < 2 else (0, 1)
+                                for unintended_action in unintended_actions:
+                                    new_row, new_col = move_transition(row, col, unintended_action)
+                                    new_state = self.encode(
+                                        new_row, new_col, new_pass_idx, dest_idx
+                                    )
+                                    self.P[state][action].append(
+                                        (0.1, new_state, reward, terminated)
+                                    )
+                            else:
+                                self.P[state][action].append(
+                                    (1.0, new_state, reward, terminated)
+                                )
+
         self.initial_state_distrib /= self.initial_state_distrib.sum()
         self.action_space = spaces.Discrete(num_actions)
         self.observation_space = spaces.Discrete(num_states)
