@@ -567,28 +567,28 @@ class RenderObservationV0(
        This was previously called ``PixelObservationWrapper``.
 
     Example:
-    Replace the observation with the rendered image:
-    >>> import gymnasium as gym
-    >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
-    >>> env = RenderObservationV0(env, render_only=True)
-    >>> obs, _ = env.reset(seed=123)
-    >>> image = env.render()
-    >>> (obs == image).all()
-    True
+        Replace the observation with the rendered image:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
+        >>> env = RenderObservationV0(env, render_only=True)
+        >>> obs, _ = env.reset(seed=123)
+        >>> image = env.render()
+        >>> (obs == image).all()
+        True
 
-    Add the rendered image to the original observation as a dictionary item:
-    >>> import gymnasium as gym
-    >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
-    >>> env = RenderObservationV0(env, render_only=False)
-    >>> obs, _ = env.reset(seed=123)
-    >>> obs.keys()
-    dict_keys(['state', 'pixels'])
+        Add the rendered image to the original observation as a dictionary item:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
+        >>> env = RenderObservationV0(env, render_only=False)
+        >>> obs, _ = env.reset(seed=123)
+        >>> obs.keys()
+        dict_keys(['state', 'pixels'])
 
-    >>> obs["state"]
-    array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
+        >>> obs["state"]
+        array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
 
-    >>> (obs["pixels"] == env.render()).all()
-    True
+        >>> (obs["pixels"] == env.render()).all()
+        True
 
     """
 

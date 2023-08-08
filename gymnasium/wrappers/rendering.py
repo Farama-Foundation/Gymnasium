@@ -28,7 +28,61 @@ __all__ = [
 class RenderCollectionV0(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``."""
+    """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
+
+    Example:
+        Return the list of frames for the number of steps ``render`` wasn't called.
+        >>> import gymnasium as gym
+        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = RenderCollectionV0(env)
+        >>> _ = env.reset(seed=123)
+        >>> for _ in range(5):
+        ...     _ = env.step(env.action_space.sample())
+        ...
+        >>> frames = env.render()
+        >>> len(frames)
+        6
+
+        >>> frames = env.render()
+        >>> len(frames)
+        0
+
+        Return the list of frames for the number of steps the episode was running.
+        >>> import gymnasium as gym
+        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = RenderCollectionV0(env, pop_frames=False)
+        >>> _ = env.reset(seed=123)
+        >>> for _ in range(5):
+        ...     _ = env.step(env.action_space.sample())
+        ...
+        >>> frames = env.render()
+        >>> len(frames)
+        6
+
+        >>> frames = env.render()
+        >>> len(frames)
+        6
+
+        Collect all frames for all episodes, without clearing them when render is called
+        >>> import gymnasium as gym
+        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = RenderCollectionV0(env, pop_frames=False, reset_clean=False)
+        >>> _ = env.reset(seed=123)
+        >>> for _ in range(5):
+        ...     _ = env.step(env.action_space.sample())
+        ...
+        >>> _ = env.reset(seed=123)
+        >>> for _ in range(5):
+        ...     _ = env.step(env.action_space.sample())
+        ...
+        >>> frames = env.render()
+        >>> len(frames)
+        12
+
+        >>> frames = env.render()
+        >>> len(frames)
+        12
+    """
 
     def __init__(
         self,
@@ -109,6 +163,55 @@ class RecordVideoV0(
     then every 1000 episodes.
     By default, the recording will be stopped once reset is called. However, you can also create recordings of fixed
     length (possibly spanning several episodes) by passing a strictly positive value for ``video_length``.
+
+    Example:
+        Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:
+        >>> import os
+        >>> import gymnasium as gym
+        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> trigger = lambda t: t % 10 == 0
+        >>> env = RecordVideoV0(env, video_folder="./save_videos", episode_trigger=trigger)
+        >>> for i in range(50):
+        ...     termination, truncation = False, False
+        ...     _ = env.reset(seed=123)
+        ...     while not (termination or truncation):
+        ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
+        ...
+        >>> env.close()
+        >>> len(os.listdir("./save_videos"))
+        5
+
+        Run the environment for 3 episodes, save each episode starting from step 10:
+        >>> import os
+        >>> import gymnasium as gym
+        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> trigger = lambda t: t == 10
+        >>> env = RecordVideoV0(env, video_folder="./save_videos", step_trigger=trigger)
+        >>> for i in range(3):
+        ...     termination, truncation = False, False
+        ...     _ = env.reset(seed=123)
+        ...     while not (termination or truncation):
+        ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
+        ...
+        >>> env.close()
+        >>> len(os.listdir("./save_videos"))
+        3
+
+        Run 3 episodes, record everything, but in chunks of 1000 frames:
+        >>> import os
+        >>> import gymnasium as gym
+        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = RecordVideoV0(env, video_folder="./save_videos", video_length=1000)
+        >>> for i in range(3):
+        ...     termination, truncation = False, False
+        ...     _ = env.reset(seed=123)
+        ...     while not (termination or truncation):
+        ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
+        ...
+        >>> env.close()
+        >>> len(os.listdir("./save_videos"))
+        2
+
     """
 
     def __init__(
@@ -335,6 +438,7 @@ class HumanRenderingV0(
         >>> obs, _ = wrapped.reset()
         >>> env.render() # env.render() will always return an empty list!
         []
+
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):

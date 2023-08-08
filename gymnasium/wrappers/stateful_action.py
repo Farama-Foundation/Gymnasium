@@ -22,22 +22,6 @@ class StickyActionV0(
     Example:
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
-        >>> env.reset(seed=123)
-        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
-
-        >>> env.step(1)
-        (array([ 0.01734283,  0.15089367, -0.02859527, -0.33293587], dtype=float32), 1.0, False, False, {})
-
-        >>> env.step(0)
-        (array([ 0.0203607 , -0.04380985, -0.03525399, -0.04940585], dtype=float32), 1.0, False, False, {})
-
-        >>> env.step(1)
-        (array([ 0.01948451,  0.15179941, -0.03624211, -0.35299996], dtype=float32), 1.0, False, False, {})
-
-        >>> env.step(0)
-        (array([ 0.02252049, -0.04278894, -0.0433021 , -0.07196194], dtype=float32), 1.0, False, False, {})
-
-        >>> env = gym.make("CartPole-v1")
         >>> env = StickyActionV0(env, repeat_action_probability=0.9)
         >>> env.reset(seed=123)
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
