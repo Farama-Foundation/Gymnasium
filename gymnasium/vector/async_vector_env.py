@@ -8,7 +8,7 @@ from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from numpy.typing import NDArray
-
+from enum import Enum
 import gymnasium as gym
 from gymnasium import logger
 from gymnasium.core import Env, ObsType
@@ -616,72 +616,74 @@ def _worker(index, env_fn, pipe, parent_pipe, shared_memory, error_queue):
         env.close()
 
 
+
+
+class Command(Enum):
+    RESET = "reset"
+    STEP = "step"
+    SEED = "seed"
+    CLOSE = "close"
+    CALL = "_call"
+    SETATTR = "_setattr"
+    CHECK_SPACES = "_check_spaces"
+
 def _worker_shared_memory(index, env_fn, pipe, parent_pipe, shared_memory, error_queue):
     assert shared_memory is not None
     env = env_fn()
     observation_space = env.observation_space
     parent_pipe.close()
+    
+    def send_response(result, success=True):
+        pipe.send((result, success))
+
     try:
         while True:
             command, data = pipe.recv()
-            if command == "reset":
+            if command == Command.RESET.value:
                 observation, info = env.reset(**data)
-                write_to_shared_memory(
-                    observation_space, index, observation, shared_memory
-                )
-                pipe.send(((None, info), True))
+                write_to_shared_memory(observation_space, index, observation, shared_memory)
+                send_response(((None, info)))
 
-            elif command == "step":
-                (
-                    observation,
-                    reward,
-                    terminated,
-                    truncated,
-                    info,
-                ) = env.step(data)
+            elif command == Command.STEP.value:
+                observation, reward, terminated, truncated, info = env.step(data)
                 if terminated or truncated:
                     old_observation, old_info = observation, info
                     observation, info = env.reset()
                     info["final_observation"] = old_observation
                     info["final_info"] = old_info
-                write_to_shared_memory(
-                    observation_space, index, observation, shared_memory
-                )
-                pipe.send(((None, reward, terminated, truncated, info), True))
-            elif command == "seed":
+                write_to_shared_memory(observation_space, index, observation, shared_memory)
+                send_response(((None, reward, terminated, truncated, info)))
+
+            elif command == Command.SEED.value:
                 env.seed(data)
-                pipe.send((None, True))
-            elif command == "close":
-                pipe.send((None, True))
+                send_response(None)
+
+            elif command == Command.CLOSE.value:
+                send_response(None)
                 break
-            elif command == "_call":
+
+            elif command == Command.CALL.value:
                 name, args, kwargs = data
-                if name in ["reset", "step", "seed", "close"]:
-                    raise ValueError(
-                        f"Trying to call function `{name}` with "
-                        f"`_call`. Use `{name}` directly instead."
-                    )
+                if name in [Command.RESET.value, Command.STEP.value, Command.SEED.value, Command.CLOSE.value]:
+                    raise ValueError(f"Trying to call function `{name}` with `_call`. Use `{name}` directly instead.")
                 function = getattr(env, name)
                 if callable(function):
-                    pipe.send((function(*args, **kwargs), True))
+                    send_response((function(*args, **kwargs)))
                 else:
-                    pipe.send((function, True))
-            elif command == "_setattr":
+                    send_response((function))
+
+            elif command == Command.SETATTR.value:
                 name, value = data
                 setattr(env, name, value)
-                pipe.send((None, True))
-            elif command == "_check_spaces":
-                pipe.send(
-                    ((data[0] == observation_space, data[1] == env.action_space), True)
-                )
+                send_response(None)
+
+            elif command == Command.CHECK_SPACES.value:
+                send_response(((data[0] == observation_space, data[1] == env.action_space)))
+
             else:
-                raise RuntimeError(
-                    f"Received unknown command `{command}`. Must "
-                    "be one of {`reset`, `step`, `seed`, `close`, `_call`, "
-                    "`_setattr`, `_check_spaces`}."
-                )
+                raise RuntimeError(f"Received unknown command `{command}`. Must be one of {', '.join(Command.__members__.keys())}.")
     except (KeyboardInterrupt, Exception):
         error_queue.put((index,) + sys.exc_info()[:2])
-        pipe.send((None, False))
+        send_response(None, False)
     finally:
         env.close()
