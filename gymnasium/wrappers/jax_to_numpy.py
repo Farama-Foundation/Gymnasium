@@ -103,6 +103,29 @@ class JaxToNumpyV0(
     Notes:
         The Jax To Numpy and Numpy to Jax conversion does not guarantee a roundtrip (jax -> numpy -> jax) and vice versa.
         The reason for this is jax does not support non-array values, therefore numpy ``int_32(5) -> DeviceArray([5], dtype=jnp.int23)``
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("JaxEnv-vx")
+        >>> env = JaxToNumpyV0(env)
+        >>> obs, _ = env.reset(seed=123)
+        >>> type(obs)
+        <class 'numpy.ndarray'>
+
+        >>> action = env.action_space.sample()
+        >>> obs, reward, terminated, truncated, info = env.step(action)
+        >>> type(obs)
+        <class 'numpy.ndarray'>
+
+        >>> type(reward)
+        <class 'float'>
+
+        >>> type(terminated)
+        <class 'bool'>
+
+        >>> type(truncated)
+        <class 'bool'>
+
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
