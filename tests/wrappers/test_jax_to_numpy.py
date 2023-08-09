@@ -104,7 +104,9 @@ def test_jax_to_numpy_wrapper():
     assert isinstance(obs, np.ndarray)
     assert isinstance(info, dict) and isinstance(info["data"], np.ndarray)
 
-    obs, reward, terminated, truncated, info = numpy_env.step(np.array([1, 2]))
+    obs, reward, terminated, truncated, info = numpy_env.step(
+        np.array([1, 2], dtype=np.int32)
+    )
     assert isinstance(obs, np.ndarray)
     assert isinstance(reward, float)
     assert isinstance(terminated, bool) and isinstance(truncated, bool)

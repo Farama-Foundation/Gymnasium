@@ -395,7 +395,7 @@ class ReshapeObservationV0(
             shape: The reshaped observation space
         """
         assert isinstance(env.observation_space, spaces.Box)
-        assert np.product(shape) == np.product(env.observation_space.shape)
+        assert np.prod(shape) == np.prod(env.observation_space.shape)
 
         assert isinstance(shape, tuple)
         assert all(np.issubdtype(type(elem), np.integer) for elem in shape)
