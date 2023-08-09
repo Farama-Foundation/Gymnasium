@@ -313,10 +313,10 @@ class VectorWrapper(VectorEnv):
         self.env = env
         assert isinstance(env, VectorEnv)
 
-        _observation_space: gym.Space | None = None
-        _action_space: gym.Space | None = None
-        _single_observation_space: gym.Space | None = None
-        _single_action_space: gym.Space | None = None
+        self._observation_space: gym.Space | None = None
+        self._action_space: gym.Space | None = None
+        self._single_observation_space: gym.Space | None = None
+        self._single_action_space: gym.Space | None = None
 
     def reset(
         self,
