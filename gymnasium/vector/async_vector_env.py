@@ -13,7 +13,7 @@ from typing import Any, Callable, Sequence
 import numpy as np
 
 from gymnasium import logger
-from gymnasium.core import Env, ObsType
+from gymnasium.core import Env, ObsType, RenderFrame
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
@@ -111,17 +111,18 @@ class AsyncVectorEnv(VectorEnv):
             ValueError: If observation_space is a custom space (i.e. not a default space in Gym,
                 such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.
         """
-        super().__init__()
-
-        ctx = multiprocessing.get_context(context)
         self.env_fns = env_fns
         self.num_envs = len(env_fns)
+
         self.shared_memory = shared_memory
         self.copy = copy
 
         # This would be nice to get rid of, but without it there's a deadlock between shared memory and pipes
         dummy_env = env_fns[0]()
+
         self.metadata = dummy_env.metadata
+        self.spec = dummy_env.spec
+        self.render_mode = dummy_env.render_mode
 
         self.single_observation_space = dummy_env.observation_space
         self.single_action_space = dummy_env.action_space
@@ -134,6 +135,7 @@ class AsyncVectorEnv(VectorEnv):
         dummy_env.close()
         del dummy_env
 
+        ctx = multiprocessing.get_context(context)
         if self.shared_memory:
             try:
                 _obs_buffer = create_shared_memory(
@@ -144,12 +146,9 @@ class AsyncVectorEnv(VectorEnv):
                 )
             except CustomSpaceError as e:
                 raise ValueError(
-                    "Using `shared_memory=True` in `AsyncVectorEnv` "
-                    "is incompatible with non-standard Gymnasium observation spaces "
-                    "(i.e. custom spaces inheriting from `gymnasium.Space`), and is "
-                    "only compatible with default Gymnasium spaces (e.g. `Box`, "
-                    "`Tuple`, `Dict`) for batching. Set `shared_memory=False` "
-                    "if you use custom observation spaces."
+                    "Using `shared_memory=True` in `AsyncVectorEnv` is incompatible with non-standard Gymnasium observation spaces "
+                    "(i.e. custom spaces inheriting from `gymnasium.Space`), and is only compatible with default Gymnasium spaces "
+                    "(e.g. `Box`, `Tuple`, `Dict`) for batching. Set `shared_memory=False` if you use custom observation spaces."
                 ) from e
         else:
             _obs_buffer = None
@@ -347,7 +346,13 @@ class AsyncVectorEnv(VectorEnv):
                 f"The call to `step_wait` has timed out after {timeout} second(s)."
             )
 
-        observations_list, rewards, terminateds, truncateds, infos = [], [], [], [], {}
+        observations_list, rewards, terminations, truncations, infos = (
+            [],
+            [],
+            [],
+            [],
+            {},
+        )
         successes = []
         for i, pipe in enumerate(self.parent_pipes):
             result, success = pipe.recv()
@@ -357,8 +362,8 @@ class AsyncVectorEnv(VectorEnv):
             if success:
                 observations_list.append(obs)
                 rewards.append(rew)
-                terminateds.append(terminated)
-                truncateds.append(truncated)
+                terminations.append(terminated)
+                truncations.append(truncated)
                 infos = self._add_info(infos, info, i)
 
         self._raise_if_errors(successes)
@@ -374,8 +379,8 @@ class AsyncVectorEnv(VectorEnv):
         return (
             deepcopy(self.observations) if self.copy else self.observations,
             np.array(rewards),
-            np.array(terminateds, dtype=np.bool_),
-            np.array(truncateds, dtype=np.bool_),
+            np.array(terminations, dtype=np.bool_),
+            np.array(truncations, dtype=np.bool_),
             infos,
         )
 
@@ -390,6 +395,10 @@ class AsyncVectorEnv(VectorEnv):
         """
         self.step_async(actions)
         return self.step_wait()
+
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns a list of rendered frames from the environments."""
+        return tuple(self.call("render"))
 
     def call_async(self, name: str, *args, **kwargs):
         """Calls the method with name asynchronously and apply args and kwargs to the method.
@@ -669,8 +678,7 @@ def _worker(
                 name, args, kwargs = data
                 if name in ["reset", "step", "seed", "close"]:
                     raise ValueError(
-                        f"Trying to call function `{name}` with "
-                        f"`_call`. Use `{name}` directly instead."
+                        f"Trying to call function `{name}` with `_call`. Use `{name}` directly instead."
                     )
                 function = env.get_wrapper_attr(name)
                 if callable(function):
@@ -690,9 +698,8 @@ def _worker(
                 )
             else:
                 raise RuntimeError(
-                    f"Received unknown command `{command}`. Must "
-                    "be one of {`reset`, `step`, `seed`, `close`, `_call`, "
-                    "`_setattr`, `_check_spaces`}."
+                    f"Received unknown command `{command}`. Must be one of "
+                    "{`reset`, `step`, `seed`, `close`, `_call`, `_setattr`, `_check_spaces`}."
                 )
     except (KeyboardInterrupt, Exception):
         error_queue.put((index,) + sys.exc_info()[:2])

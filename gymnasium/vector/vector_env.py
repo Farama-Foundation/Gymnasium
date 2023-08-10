@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, TypeVar
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.utils import seeding
 
 
@@ -93,6 +93,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     """
 
     spec: EnvSpec | None = None
+    render_mode: str | None = None
+    closed: bool = False
 
     observation_space: gym.Space
     action_space: gym.Space
@@ -100,8 +102,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     single_action_space: gym.Space
 
     num_envs: int
-
-    closed: bool = False
 
     _np_random: np.random.Generator | None = None
 
@@ -172,6 +172,16 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             >>> infos
             {}
         """
+
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the rendered frames from the parallel environments.
+
+        Returns:
+            A tuple of rendered frames from the parallel environments
+        """
+        raise NotImplementedError(
+            f"{self.__str__()} render function is not implemented."
+        )
 
     def close(self, **kwargs: Any):
         """Close all parallel environments and release resources.
@@ -333,6 +343,10 @@ class VectorWrapper(VectorEnv):
         """Step through all environments using the actions returning the batched data."""
         return self.env.step(actions)
 
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the render mode from the base vector environment."""
+        return self.env.render()
+
     def close(self, **kwargs: Any):
         """Close all environments."""
         return self.env.close(**kwargs)
@@ -407,6 +421,11 @@ class VectorWrapper(VectorEnv):
     def num_envs(self) -> int:
         """Gets the wrapped vector environment's num of the sub-environments."""
         return self.env.num_envs
+
+    @property
+    def render_mode(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the `render_mode` from the base environment."""
+        return self.env.render_mode
 
 
 class VectorObservationWrapper(VectorWrapper):

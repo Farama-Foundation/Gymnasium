@@ -62,6 +62,20 @@ def test_reset_async_vector_env(shared_memory):
     assert all([isinstance(info, dict) for info in infos])
 
 
+def test_render_sync_vector():
+    envs = AsyncVectorEnv([make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)])
+    assert envs.render_mode == "rgb_array"
+
+    envs.reset()
+    rendered_frames = envs.render()
+    assert isinstance(rendered_frames, tuple)
+    assert len(rendered_frames) == envs.num_envs
+    assert all(isinstance(frame, np.ndarray) for frame in rendered_frames)
+
+    envs = AsyncVectorEnv([make_env("CartPole-v1", i) for i in range(3)])
+    assert envs.render_mode is None
+
+
 @pytest.mark.parametrize("shared_memory", [True, False])
 @pytest.mark.parametrize("use_single_action_space", [True, False])
 def test_step_async_vector_env(shared_memory, use_single_action_space):

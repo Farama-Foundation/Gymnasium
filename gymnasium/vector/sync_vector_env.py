@@ -7,7 +7,7 @@ from typing import Any, Callable, Iterator, Sequence
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.core import ActType, ObsType
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import ArrayType, VectorEnv
 
@@ -64,14 +64,16 @@ class SyncVectorEnv(VectorEnv):
             RuntimeError: If the observation space of some sub-environment does not match observation_space
                 (or, by default, the observation space of the first sub-environment).
         """
-        super().__init__()
+        self.copy = copy
+
         self.env_fns = env_fns
         self.envs = [env_fn() for env_fn in env_fns]
-        self.num_envs = len(self.envs)
-        self.copy = copy
-        self.metadata = self.envs[0].metadata
 
+        self.metadata = self.envs[0].metadata
         self.spec = self.envs[0].spec
+        self.render_mode = self.envs[0].render_mode
+
+        self.num_envs = len(self.envs)
 
         self.single_observation_space = self.envs[0].observation_space
         self.single_action_space = self.envs[0].action_space
@@ -80,14 +82,14 @@ class SyncVectorEnv(VectorEnv):
             self.single_observation_space, self.num_envs
         )
         self.action_space = batch_space(self.single_action_space, self.num_envs)
-
         self._check_spaces()
-        self.observations = create_empty_array(
+
+        self._observations = create_empty_array(
             self.single_observation_space, n=self.num_envs, fn=np.zeros
         )
         self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
-        self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
-        self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
 
     def reset(
         self,
@@ -109,8 +111,8 @@ class SyncVectorEnv(VectorEnv):
             seed = [seed + i for i in range(self.num_envs)]
         assert len(seed) == self.num_envs
 
-        self._terminateds[:] = False
-        self._truncateds[:] = False
+        self._terminations[:] = False
+        self._truncations[:] = False
         observations = []
         infos = {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
@@ -124,10 +126,12 @@ class SyncVectorEnv(VectorEnv):
             observations.append(observation)
             infos = self._add_info(infos, info, i)
 
-        self.observations = concatenate(
-            self.single_observation_space, observations, self.observations
+        self._observations = concatenate(
+            self.single_observation_space, observations, self._observations
         )
-        return (deepcopy(self.observations) if self.copy else self.observations), infos
+        return (
+            deepcopy(self._observations) if self.copy else self._observations
+        ), infos
 
     def step(
         self, actions: ActType
@@ -144,29 +148,33 @@ class SyncVectorEnv(VectorEnv):
             (
                 observation,
                 self._rewards[i],
-                self._terminateds[i],
-                self._truncateds[i],
+                self._terminations[i],
+                self._truncations[i],
                 info,
             ) = env.step(action)
 
-            if self._terminateds[i] or self._truncateds[i]:
+            if self._terminations[i] or self._truncations[i]:
                 old_observation, old_info = observation, info
                 observation, info = env.reset()
                 info["final_observation"] = old_observation
                 info["final_info"] = old_info
             observations.append(observation)
             infos = self._add_info(infos, info, i)
-        self.observations = concatenate(
-            self.single_observation_space, observations, self.observations
+        self._observations = concatenate(
+            self.single_observation_space, observations, self._observations
         )
 
         return (
-            deepcopy(self.observations) if self.copy else self.observations,
+            deepcopy(self._observations) if self.copy else self._observations,
             np.copy(self._rewards),
-            np.copy(self._terminateds),
-            np.copy(self._truncateds),
+            np.copy(self._terminations),
+            np.copy(self._truncations),
             infos,
         )
+
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the rendered frames from the environments."""
+        return tuple(env.render() for env in self.envs)
 
     def call(self, name: str, *args: Any, **kwargs: Any) -> tuple[Any, ...]:
         """Calls the method with name and applies args and kwargs.
