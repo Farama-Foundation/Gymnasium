@@ -135,7 +135,7 @@ def test_env_spec_pprint():
 reward_threshold=475.0
 max_episode_steps=500
 additional_wrappers=[
-	name=TimeAwareObservationV0, kwargs={'flatten': True, 'normalize_time': False, 'dict_time_key': 'time'}
+	name=TimeAwareObservation, kwargs={'flatten': True, 'normalize_time': False, 'dict_time_key': 'time'}
 ]"""
     )
 
@@ -147,7 +147,7 @@ entry_point=gymnasium.envs.classic_control.cartpole:CartPoleEnv
 reward_threshold=475.0
 max_episode_steps=500
 additional_wrappers=[
-	name=TimeAwareObservationV0, entry_point=gymnasium.wrappers.stateful_observation:TimeAwareObservationV0, kwargs={'flatten': True, 'normalize_time': False, 'dict_time_key': 'time'}
+	name=TimeAwareObservation, entry_point=gymnasium.wrappers.stateful_observation:TimeAwareObservation, kwargs={'flatten': True, 'normalize_time': False, 'dict_time_key': 'time'}
 ]"""
     )
 
@@ -162,7 +162,7 @@ max_episode_steps=500
 order_enforce=True
 disable_env_checker=False
 additional_wrappers=[
-	name=TimeAwareObservationV0, kwargs={'flatten': True, 'normalize_time': False, 'dict_time_key': 'time'}
+	name=TimeAwareObservation, kwargs={'flatten': True, 'normalize_time': False, 'dict_time_key': 'time'}
 ]"""
     )
 
