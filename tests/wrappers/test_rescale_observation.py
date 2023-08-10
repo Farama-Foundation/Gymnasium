@@ -2,7 +2,7 @@
 import numpy as np
 
 from gymnasium.spaces import Box
-from gymnasium.wrappers import RescaleObservationV0
+from gymnasium.wrappers import RescaleObservation
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import check_obs, record_action_as_obs_step, record_obs_reset
 
@@ -16,7 +16,7 @@ def test_rescale_observation():
         reset_func=record_obs_reset,
         step_func=record_action_as_obs_step,
     )
-    wrapped_env = RescaleObservationV0(
+    wrapped_env = RescaleObservation(
         env,
         min_obs=np.array([-5, 0], dtype=np.float32),
         max_obs=np.array([5, 1], dtype=np.float32),

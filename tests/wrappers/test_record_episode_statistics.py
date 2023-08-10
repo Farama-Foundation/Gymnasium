@@ -3,14 +3,14 @@
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import RecordEpisodeStatisticsV0
+from gymnasium.wrappers import RecordEpisodeStatistics
 
 
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1"])
 @pytest.mark.parametrize("deque_size", [2, 5])
 def test_record_episode_statistics(env_id, deque_size):
     env = gym.make(env_id, disable_env_checker=True)
-    env = RecordEpisodeStatisticsV0(env, deque_size)
+    env = RecordEpisodeStatistics(env, deque_size)
 
     for n in range(5):
         env.reset()

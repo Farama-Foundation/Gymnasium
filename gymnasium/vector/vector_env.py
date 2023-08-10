@@ -52,8 +52,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     Examples:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync", wrappers=(gym.wrappers.TimeAwareObservationV0,))
-        >>> envs = gym.wrappers.vector.ClipRewardV0(envs, min_reward=0.2, max_reward=0.8)
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync", wrappers=(gym.wrappers.TimeAwareObservation,))
+        >>> envs = gym.wrappers.vector.ClipReward(envs, min_reward=0.2, max_reward=0.8)
         >>> envs
         <ClipRewardV0, SyncVectorEnv(CartPole-v1, num_envs=3)>
         >>> observations, infos = envs.reset(seed=123)

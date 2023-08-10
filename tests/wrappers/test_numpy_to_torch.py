@@ -9,7 +9,7 @@ torch = pytest.importorskip("torch")
 
 from gymnasium.utils.env_checker import data_equivalence  # noqa: E402
 from gymnasium.wrappers.numpy_to_torch import (  # noqa: E402
-    NumpyToTorchV0,
+    NumpyToTorch,
     numpy_to_torch,
     torch_to_numpy,
 )
@@ -96,7 +96,7 @@ def test_numpy_to_torch():
     assert isinstance(info, dict) and isinstance(info["data"], np.ndarray)
 
     # Check that the wrapped version is correct.
-    torch_env = NumpyToTorchV0(numpy_env)
+    torch_env = NumpyToTorch(numpy_env)
 
     # Check that the reset and step for torch environment are as expected
     obs, info = torch_env.reset()

@@ -4,7 +4,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
-from gymnasium.wrappers import LambdaObservationV0, TimeLimitV0
+from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
 
 
@@ -45,10 +45,10 @@ def test_make_vec_wrappers():
     assert isinstance(sub_env, gym.Env)
     assert sub_env.spec is not None
     if sub_env.spec.max_episode_steps is not None:
-        assert has_wrapper(sub_env, TimeLimitV0)
+        assert has_wrapper(sub_env, TimeLimit)
 
     assert all(
-        has_wrapper(sub_env, LambdaObservationV0) is False for sub_env in env.envs
+        has_wrapper(sub_env, TransformObservation) is False for sub_env in env.envs
     )
     env.close()
 
@@ -57,13 +57,13 @@ def test_make_vec_wrappers():
         num_envs=2,
         vectorization_mode="sync",
         wrappers=[
-            lambda _env: LambdaObservationV0(
+            lambda _env: TransformObservation(
                 _env, lambda obs: obs * 2, sub_env.observation_space
             )
         ],
     )
     # As asynchronous environment are inaccessible, synchronous vector must be used
     assert isinstance(env, SyncVectorEnv)
-    assert all(has_wrapper(sub_env, LambdaObservationV0) for sub_env in env.envs)
+    assert all(has_wrapper(sub_env, TransformObservation) for sub_env in env.envs)
 
     env.close()

@@ -1,6 +1,6 @@
 """A collection of wrappers for modifying the reward with an internal state.
 
-* ``NormalizeRewardV1`` - Normalizes the rewards to a mean and standard deviation
+* ``NormalizeReward`` - Normalizes the rewards to a mean and standard deviation
 """
 from __future__ import annotations
 
@@ -13,10 +13,10 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.wrappers.utils import RunningMeanStd
 
 
-__all__ = ["NormalizeRewardV1"]
+__all__ = ["NormalizeReward"]
 
 
-class NormalizeRewardV1(
+class NormalizeReward(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     r"""Normalizes immediate rewards such that their exponential moving average has a fixed variance.

@@ -8,10 +8,10 @@ import numpy as np
 from gymnasium import Env
 from gymnasium.vector import VectorEnv, VectorRewardWrapper
 from gymnasium.vector.vector_env import ArrayType
-from gymnasium.wrappers import lambda_reward
+from gymnasium.wrappers import transform_reward
 
 
-class LambdaRewardV0(VectorRewardWrapper):
+class TransformReward(VectorRewardWrapper):
     """A reward wrapper that allows a custom function to modify the step reward."""
 
     def __init__(self, env: VectorEnv, func: Callable[[ArrayType], ArrayType]):
@@ -30,11 +30,14 @@ class LambdaRewardV0(VectorRewardWrapper):
         return self.func(reward)
 
 
-class VectorizeLambdaRewardV0(VectorRewardWrapper):
-    """Vectorizes a single-agent lambda reward wrapper for vector environments."""
+class VectorizeTransformReward(VectorRewardWrapper):
+    """Vectorizes a single-agent transform reward wrapper for vector environments."""
 
     def __init__(
-        self, env: VectorEnv, wrapper: type[lambda_reward.LambdaRewardV0], **kwargs: Any
+        self,
+        env: VectorEnv,
+        wrapper: type[transform_reward.TransformReward],
+        **kwargs: Any,
     ):
         """Constructor for the vectorized lambda reward wrapper.
 
@@ -54,7 +57,7 @@ class VectorizeLambdaRewardV0(VectorRewardWrapper):
         return reward
 
 
-class ClipRewardV0(VectorizeLambdaRewardV0):
+class ClipReward(VectorizeTransformReward):
     """A wrapper that clips the rewards for an environment between an upper and lower bound."""
 
     def __init__(
@@ -72,7 +75,7 @@ class ClipRewardV0(VectorizeLambdaRewardV0):
         """
         super().__init__(
             env,
-            lambda_reward.ClipRewardV0,
+            transform_reward.ClipReward,
             min_reward=min_reward,
             max_reward=max_reward,
         )

@@ -8,10 +8,10 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidProbability
 
 
-__all__ = ["StickyActionV0"]
+__all__ = ["StickyAction"]
 
 
-class StickyActionV0(
+class StickyAction(
     gym.ActionWrapper[ObsType, ActType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Adds a probability that the action is repeated for the same ``step`` function.

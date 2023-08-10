@@ -23,7 +23,7 @@ except ImportError:
     )
 
 
-__all__ = ["NumpyToTorchV0", "torch_to_numpy", "numpy_to_torch"]
+__all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch"]
 
 
 @functools.singledispatch
@@ -88,7 +88,7 @@ def _numpy_iterable_to_torch(
     return type(value)(tuple(numpy_to_torch(v, device) for v in value))
 
 
-class NumpyToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
+class NumpyToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.

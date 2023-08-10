@@ -10,10 +10,10 @@ from gymnasium import Space
 from gymnasium.core import Env, ObsType
 from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
-from gymnasium.wrappers import lambda_observation
+from gymnasium.wrappers import transform_observation
 
 
-class LambdaObservationV0(VectorObservationWrapper):
+class TransformObservation(VectorObservationWrapper):
     """Transforms an observation via a function provided to the wrapper.
 
     The function :attr:`func` will be applied to all vector observations.
@@ -27,7 +27,7 @@ class LambdaObservationV0(VectorObservationWrapper):
         single_func: Callable[[ObsType], Any],
         observation_space: Space | None = None,
     ):
-        """Constructor for the lambda observation wrapper.
+        """Constructor for the transform observation wrapper.
 
         Args:
             env: The vector environment to wrap
@@ -52,8 +52,8 @@ class LambdaObservationV0(VectorObservationWrapper):
         return self.single_func(observation)
 
 
-class VectorizeLambdaObservationV0(VectorObservationWrapper):
-    """Vectori`es a single-agent lambda observation wrapper for vector environments."""
+class VectorizeTransformObservation(VectorObservationWrapper):
+    """Vectorizes a single-agent transform observation wrapper for vector environments."""
 
     class VectorizedEnv(Env):
         """Fake single-agent environment uses for the single-agent wrapper."""
@@ -65,10 +65,10 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
     def __init__(
         self,
         env: VectorEnv,
-        wrapper: type[lambda_observation.LambdaObservationV0],
+        wrapper: type[transform_observation.TransformObservation],
         **kwargs: Any,
     ):
-        """Constructor for the vectorized lambda observation wrapper.
+        """Constructor for the vectorized transform observation wrapper.
 
         Args:
             env: The vector environment to wrap.
@@ -116,7 +116,7 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
         return self.wrapper.func(observation)
 
 
-class FilterObservationV0(VectorizeLambdaObservationV0):
+class FilterObservation(VectorizeTransformObservation):
     """Vector wrapper for filtering dict or tuple observation spaces."""
 
     def __init__(self, env: VectorEnv, filter_keys: Sequence[str | int]):
@@ -127,11 +127,11 @@ class FilterObservationV0(VectorizeLambdaObservationV0):
             filter_keys: The subspaces to be included, use a list of strings or integers for ``Dict`` and ``Tuple`` spaces respectivesly
         """
         super().__init__(
-            env, lambda_observation.FilterObservationV0, filter_keys=filter_keys
+            env, transform_observation.FilterObservation, filter_keys=filter_keys
         )
 
 
-class FlattenObservationV0(VectorizeLambdaObservationV0):
+class FlattenObservation(VectorizeTransformObservation):
     """Observation wrapper that flattens the observation."""
 
     def __init__(self, env: VectorEnv):
@@ -140,10 +140,10 @@ class FlattenObservationV0(VectorizeLambdaObservationV0):
         Args:
             env:  The vector environment to wrap
         """
-        super().__init__(env, lambda_observation.FlattenObservationV0)
+        super().__init__(env, transform_observation.FlattenObservation)
 
 
-class GrayscaleObservationV0(VectorizeLambdaObservationV0):
+class GrayscaleObservation(VectorizeTransformObservation):
     """Observation wrapper that converts an RGB image to grayscale."""
 
     def __init__(self, env: VectorEnv, keep_dim: bool = False):
@@ -154,11 +154,11 @@ class GrayscaleObservationV0(VectorizeLambdaObservationV0):
             keep_dim: If to keep the channel in the observation, if ``True``, ``obs.shape == 3`` else ``obs.shape == 2``
         """
         super().__init__(
-            env, lambda_observation.GrayscaleObservationV0, keep_dim=keep_dim
+            env, transform_observation.GrayscaleObservation, keep_dim=keep_dim
         )
 
 
-class ResizeObservationV0(VectorizeLambdaObservationV0):
+class ResizeObservation(VectorizeTransformObservation):
     """Resizes image observations using OpenCV to shape."""
 
     def __init__(self, env: VectorEnv, shape: tuple[int, ...]):
@@ -168,10 +168,10 @@ class ResizeObservationV0(VectorizeLambdaObservationV0):
             env: The vector environment to wrap
             shape: The resized observation shape
         """
-        super().__init__(env, lambda_observation.ResizeObservationV0, shape=shape)
+        super().__init__(env, transform_observation.ResizeObservation, shape=shape)
 
 
-class ReshapeObservationV0(VectorizeLambdaObservationV0):
+class ReshapeObservation(VectorizeTransformObservation):
     """Reshapes array based observations to shapes."""
 
     def __init__(self, env: VectorEnv, shape: int | tuple[int, ...]):
@@ -181,10 +181,10 @@ class ReshapeObservationV0(VectorizeLambdaObservationV0):
             env: The vector environment to wrap
             shape: The reshaped observation space
         """
-        super().__init__(env, lambda_observation.ReshapeObservationV0, shape=shape)
+        super().__init__(env, transform_observation.ReshapeObservation, shape=shape)
 
 
-class RescaleObservationV0(VectorizeLambdaObservationV0):
+class RescaleObservation(VectorizeTransformObservation):
     """Linearly rescales observation to between a minimum and maximum value."""
 
     def __init__(
@@ -202,13 +202,13 @@ class RescaleObservationV0(VectorizeLambdaObservationV0):
         """
         super().__init__(
             env,
-            lambda_observation.RescaleObservationV0,
+            transform_observation.RescaleObservation,
             min_obs=min_obs,
             max_obs=max_obs,
         )
 
 
-class DtypeObservationV0(VectorizeLambdaObservationV0):
+class DtypeObservation(VectorizeTransformObservation):
     """Observation wrapper for transforming the dtype of an observation."""
 
     def __init__(self, env: VectorEnv, dtype: Any):
@@ -218,4 +218,4 @@ class DtypeObservationV0(VectorizeLambdaObservationV0):
             env: The vector environment to wrap
             dtype: The new dtype of the observation
         """
-        super().__init__(env, lambda_observation.DtypeObservationV0, dtype=dtype)
+        super().__init__(env, transform_observation.DtypeObservation, dtype=dtype)

@@ -4,13 +4,13 @@ import shutil
 from typing import List
 
 import gymnasium as gym
-from gymnasium.wrappers import RecordVideoV0
+from gymnasium.wrappers import RecordVideo
 
 
 def test_record_video_using_default_trigger():
     """Test RecordVideo using the default episode trigger."""
     env = gym.make("CartPole-v1", render_mode="rgb_array_list")
-    env = RecordVideoV0(env, "videos")
+    env = RecordVideo(env, "videos")
     env.reset()
     episode_count = 0
     for _ in range(199):
@@ -33,7 +33,7 @@ def test_record_video_using_default_trigger():
 def test_record_video_while_rendering():
     """Test RecordVideo while calling render and using a _list render mode."""
     env = gym.make("FrozenLake-v1", render_mode="rgb_array_list")
-    env = RecordVideoV0(env, "videos")
+    env = RecordVideo(env, "videos")
     env.reset()
     episode_count = 0
     for _ in range(199):
@@ -58,7 +58,7 @@ def test_record_video_step_trigger():
     """Test RecordVideo defining step trigger function."""
     env = gym.make("CartPole-v1", render_mode="rgb_array", disable_env_checker=True)
     env._max_episode_steps = 20
-    env = RecordVideoV0(env, "videos", step_trigger=lambda x: x % 100 == 0)
+    env = RecordVideo(env, "videos", step_trigger=lambda x: x % 100 == 0)
     env.reset()
     for _ in range(199):
         action = env.action_space.sample()
@@ -78,7 +78,7 @@ def test_record_video_both_trigger():
         "CartPole-v1", render_mode="rgb_array_list", disable_env_checker=True
     )
     env._max_episode_steps = 20
-    env = RecordVideoV0(
+    env = RecordVideo(
         env,
         "videos",
         step_trigger=lambda x: x == 100,
@@ -101,7 +101,7 @@ def test_record_video_length():
     """Test if argument video_length of RecordVideo works properly."""
     env = gym.make("CartPole-v1", render_mode="rgb_array_list")
     env._max_episode_steps = 20
-    env = RecordVideoV0(env, "videos", step_trigger=lambda x: x == 0, video_length=10)
+    env = RecordVideo(env, "videos", step_trigger=lambda x: x == 0, video_length=10)
     env.reset()
     for _ in range(10):
         action = env.action_space.sample()
@@ -122,7 +122,7 @@ def test_rendering_works():
     """Test if render output is as expected when the env is wrapped with RecordVideo."""
     env = gym.make("CartPole-v1", render_mode="rgb_array_list")
     env._max_episode_steps = 20
-    env = RecordVideoV0(env, "videos")
+    env = RecordVideo(env, "videos")
     env.reset()
     n_steps = 10
     for _ in range(n_steps):

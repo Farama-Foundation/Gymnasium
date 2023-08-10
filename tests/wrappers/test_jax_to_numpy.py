@@ -9,7 +9,7 @@ jnp = pytest.importorskip("jax.numpy")
 
 from gymnasium.utils.env_checker import data_equivalence  # noqa: E402
 from gymnasium.wrappers.jax_to_numpy import (  # noqa: E402
-    JaxToNumpyV0,
+    JaxToNumpy,
     jax_to_numpy,
     numpy_to_jax,
 )
@@ -99,7 +99,7 @@ def test_jax_to_numpy_wrapper():
     assert isinstance(info, dict) and isinstance(info["data"], jax.Array)
 
     # Check that the wrapped version is correct.
-    numpy_env = JaxToNumpyV0(jax_env)
+    numpy_env = JaxToNumpy(jax_env)
     obs, info = numpy_env.reset()
     assert isinstance(obs, np.ndarray)
     assert isinstance(info, dict) and isinstance(info["data"], np.ndarray)

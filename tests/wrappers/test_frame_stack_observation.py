@@ -6,7 +6,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import iterate
-from gymnasium.wrappers import FrameStackObservationV0
+from gymnasium.wrappers import FrameStackObservation
 from gymnasium.wrappers.utils import create_zero_array
 from tests.wrappers.utils import SEED, TESTING_OBS_ENVS, TESTING_OBS_ENVS_IDS
 
@@ -25,7 +25,7 @@ def test_env_obs(env, stack_size: int = 3):
         obs, _, _, _, _ = env.step(env.action_space.sample())
         unstacked_obs.append(obs)
 
-    env = FrameStackObservationV0(env, stack_size=stack_size)
+    env = FrameStackObservation(env, stack_size=stack_size)
     env.action_space.seed(SEED)
 
     obs, _ = env.reset(seed=SEED)
@@ -55,7 +55,7 @@ def test_stack_size(stack_size: int):
 
     zero_obs = create_zero_array(env.observation_space)
 
-    env = FrameStackObservationV0(env, stack_size=stack_size)
+    env = FrameStackObservation(env, stack_size=stack_size)
 
     env.action_space.seed(seed=SEED)
     obs, _ = env.reset(seed=SEED)
@@ -81,10 +81,10 @@ def test_stack_size_failures():
             "The stack_size is expected to be an integer, actual type: <class 'float'>"
         ),
     ):
-        FrameStackObservationV0(env, stack_size=1.0)
+        FrameStackObservation(env, stack_size=1.0)
 
     with pytest.raises(
         ValueError,
         match=re.escape("The stack_size needs to be greater than one, actual value: 0"),
     ):
-        FrameStackObservationV0(env, stack_size=0)
+        FrameStackObservation(env, stack_size=0)

@@ -1,8 +1,8 @@
 """A collections of rendering-based wrappers.
 
-* ``RenderCollectionV0`` - Collects rendered frames into a list
-* ``RecordVideoV0`` - Records a video of the environments
-* ``HumanRenderingV0`` - Provides human rendering of environments with ``"rgb_array"``
+* ``RenderCollection`` - Collects rendered frames into a list
+* ``RecordVideo`` - Records a video of the environments
+* ``HumanRendering`` - Provides human rendering of environments with ``"rgb_array"``
 """
 from __future__ import annotations
 
@@ -19,13 +19,13 @@ from gymnasium.error import DependencyNotInstalled
 
 
 __all__ = [
-    "RenderCollectionV0",
-    "RecordVideoV0",
-    "HumanRenderingV0",
+    "RenderCollection",
+    "RecordVideo",
+    "HumanRendering",
 ]
 
 
-class RenderCollectionV0(
+class RenderCollection(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``."""
@@ -93,7 +93,7 @@ class RenderCollectionV0(
         return frames
 
 
-class RecordVideoV0(
+class RecordVideo(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Records videos of environment episodes using the environment's render function.
@@ -301,7 +301,7 @@ class RecordVideoV0(
             logger.warn("Unable to save last video! Did you call close()?")
 
 
-class HumanRenderingV0(
+class HumanRendering(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Allows human like rendering for environments that support "rgb_array" rendering.
@@ -315,9 +315,9 @@ class HumanRenderingV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import HumanRenderingV0
+        >>> from gymnasium.wrappers import HumanRendering
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> wrapped = HumanRenderingV0(env)
+        >>> wrapped = HumanRendering(env)
         >>> obs, _ = wrapped.reset()     # This will start rendering to the screen
 
         The wrapper can also be applied directly when the environment is instantiated, simply by passing
@@ -331,7 +331,7 @@ class HumanRenderingV0(
         will always return an empty list:
 
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array_list")
-        >>> wrapped = HumanRenderingV0(env)
+        >>> wrapped = HumanRendering(env)
         >>> obs, _ = wrapped.reset()
         >>> env.render() # env.render() will always return an empty list!
         []

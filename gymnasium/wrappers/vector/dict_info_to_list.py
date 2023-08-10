@@ -7,10 +7,10 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 
 
-__all__ = ["DictInfoToListV0"]
+__all__ = ["DictInfoToList"]
 
 
-class DictInfoToListV0(VectorWrapper):
+class DictInfoToList(VectorWrapper):
     """Converts infos of vectorized environments from ``dict`` to ``List[dict]``.
 
     This wrapper converts the info format of a
