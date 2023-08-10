@@ -572,21 +572,33 @@ class RenderObservationV0(
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = RenderObservationV0(env, render_only=True)
+        >>> env.observation_space
+        Box(0, 255, (400, 600, 3), uint8)
         >>> obs, _ = env.reset(seed=123)
         >>> image = env.render()
-        >>> (obs == image).all()
+        >>> np.all(obs == image)
+        True
+        >>> obs, *_ = env.step(env.action_space.sample())
+        >>> image = env.render()
+        >>> np.all(obs == image)
         True
 
         Add the rendered image to the original observation as a dictionary item:
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = RenderObservationV0(env, render_only=False)
+        >>> env.observation_space
+        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
         >>> obs, _ = env.reset(seed=123)
         >>> obs.keys()
         dict_keys(['state', 'pixels'])
         >>> obs["state"]
         array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
-        >>> (obs["pixels"] == env.render()).all()
+        >>> np.all(obs["pixels"] == env.render())
+        True
+        >>> obs, *_ = env.step(env.action_space.sample())
+        >>> image = env.render()
+        >>> np.all(obs["pixels"] == image)
         True
     """
 
