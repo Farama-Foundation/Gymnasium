@@ -10,7 +10,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType
-from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 
@@ -45,7 +45,7 @@ class NormalizeRewardV1(VectorWrapper, gym.utils.RecordConstructorArgs):
             gamma (float): The discount factor that is used in the exponential moving average.
         """
         gym.utils.RecordConstructorArgs.__init__(self, gamma=gamma, epsilon=epsilon)
-        gym.Wrapper.__init__(self, env)
+        VectorWrapper.__init__(self, env)
 
         self.return_rms = RunningMeanStd(shape=())
         self.accumulated_reward: np.array = np.zeros((self.num_envs,), dtype=np.float32)
@@ -64,10 +64,10 @@ class NormalizeRewardV1(VectorWrapper, gym.utils.RecordConstructorArgs):
         self._update_running_mean = setting
 
     def step(
-        self, action: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Steps through the environment, normalizing the reward returned."""
-        obs, reward, terminated, truncated, info = super().step(action)
+        obs, reward, terminated, truncated, info = super().step(actions)
         self.accumulated_reward = (
             self.accumulated_reward * self.gamma * (1 - terminated) + reward
         )

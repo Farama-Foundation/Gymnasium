@@ -265,6 +265,7 @@ class Wrapper(
             env: The environment to wrap
         """
         self.env = env
+        assert isinstance(env, Env)
 
         self._action_space: spaces.Space[WrapperActType] | None = None
         self._observation_space: spaces.Space[WrapperObsType] | None = None
