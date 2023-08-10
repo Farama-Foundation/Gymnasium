@@ -45,10 +45,12 @@ class LambdaObservationV0(
     If the observations from :attr:`func` are outside the bounds of the ``env``'s observation space, provide an :attr:`observation_space`.
 
     Example:
-        >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import LambdaObservationV0
         >>> import numpy as np
+        >>> import gymnasium as gym
         >>> np.random.seed(0)
+        >>> env = gym.make("CartPole-v1")
+        >>> env.reset(seed=42)
+        (array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), {})
         >>> env = gym.make("CartPole-v1")
         >>> env = LambdaObservationV0(env, lambda obs: obs + 0.1 * np.random.random(obs.shape), env.observation_space)
         >>> env.reset(seed=42)
