@@ -412,7 +412,7 @@ class NormalizeObservationV0(
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
         >>> np.var(obs)
         0.00056409097
-        >>> env = NormalizeObservationV0(env, delay=2)
+        >>> env = NormalizeObservationV0(env)
         >>> obs, info = env.reset(seed=123)
         >>> obs, info
         (array([ 1.6538188 , -0.9636979 , -0.27014682, -0.42001915], dtype=float32), {})
