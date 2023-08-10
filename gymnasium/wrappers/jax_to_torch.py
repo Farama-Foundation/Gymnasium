@@ -123,22 +123,22 @@ class JaxToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
         For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
 
     Example:
-        >>> import torch
-        >>> import gymnasium as gym
-        >>> env = gym.make("JaxEnv-vx")
-        >>> env = JaxtoTorchV0(env)
-        >>> obs, _ = env.reset(seed=123)
-        >>> type(obs)
+        >>> import torch                                                # doctest: SKIP
+        >>> import gymnasium as gym                                     # doctest: SKIP
+        >>> env = gym.make("JaxEnv-vx")                                 # doctest: SKIP
+        >>> env = JaxtoTorchV0(env)                                     # doctest: SKIP
+        >>> obs, _ = env.reset(seed=123)                                # doctest: SKIP
+        >>> type(obs)                                                   # doctest: SKIP
         <class 'torch.Tensor'>
-        >>> action = torch.tensor(env.action_space.sample())
-        >>> obs, reward, terminated, truncated, info = env.step(action)
-        >>> type(obs)
+        >>> action = torch.tensor(env.action_space.sample())            # doctest: SKIP
+        >>> obs, reward, terminated, truncated, info = env.step(action) # doctest: SKIP
+        >>> type(obs)                                                   # doctest: SKIP
         <class 'torch.Tensor'>
-        >>> type(reward)
+        >>> type(reward)                                                # doctest: SKIP
         <class 'float'>
-        >>> type(terminated)
+        >>> type(terminated)                                            # doctest: SKIP
         <class 'bool'>
-        >>> type(truncated)
+        >>> type(truncated)                                             # doctest: SKIP
         <class 'bool'>
     """
 

@@ -154,4 +154,3 @@ reportUnboundVariable = "warning"
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning:gymnasium.*:"]
-addopts = "--ignore=gymnasium/wrappers/jax_to_numpy.py --ignore=gymnasium/wrappers/jax_to_torch.py"

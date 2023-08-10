@@ -38,6 +38,9 @@ class DelayObservationV0(
     Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
     the same shape as the observation space.
 
+    Note:
+        This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.
+
     Example:
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
@@ -51,9 +54,6 @@ class DelayObservationV0(
         (array([0., 0., 0., 0.], dtype=float32), 1.0, False, False, {})
         >>> env.step(env.action_space.sample())
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 1.0, False, False, {})
-
-    Note:
-        This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], delay: int):
@@ -410,17 +410,14 @@ class NormalizeObservationV0(
         >>> obs, info = env.reset(seed=123)
         >>> obs, info
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
-
         >>> np.var(obs)
-        >>> 0.0008606825
-
+        0.0008606825
         >>> env = NormalizeObservationV0(env, delay=2)
         >>> obs, info = env.reset(seed=123)
         >>> obs, info
         (array([ 1.6538188 , -0.9636979 , -0.27014682, -0.42001915], dtype=float32), {})
-
         >>> np.var(obs)
-        >>> 0.9783064
+        0.9783064
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
@@ -475,17 +472,15 @@ class MaxAndSkipObservationV0(
         >>> obs2, *_ = env.step(1)
         >>> obs3, *_ = env.step(1)
         >>> obs4, *_ = env.step(1)
-
+        >>> skip_and_max_obs = np.max(np.stack([obs3, obs4], axis=0), axis=0)
         >>> env = gym.make("CartPole-v1")
         >>> wrapped_env = MaxAndSkipObservationV0(env)
         >>> wrapped_obs0, *_ = wrapped_env.reset(seed=123)
         >>> wrapped_obs1, *_ = wrapped_env.step(1)
-        >>> (wrapped_obs0 == obs0).all()
+        >>> np.all(obs0 == wrapped_obs0)
         True
-
-        >>> (wrapped_obs0 == obs4).all()
+        >>> np.all(wrapped_obs1 == skip_and_max_obs)
         True
-
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], skip: int = 4):

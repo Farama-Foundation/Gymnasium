@@ -105,21 +105,21 @@ class JaxToNumpyV0(
         The reason for this is jax does not support non-array values, therefore numpy ``int_32(5) -> DeviceArray([5], dtype=jnp.int23)``
 
     Example:
-        >>> import gymnasium as gym
-        >>> env = gym.make("JaxEnv-vx")
-        >>> env = JaxToNumpyV0(env)
-        >>> obs, _ = env.reset(seed=123)
-        >>> type(obs)
+        >>> import gymnasium as gym                                     # doctest: SKIP
+        >>> env = gym.make("JaxEnv-vx")                                 # doctest: SKIP
+        >>> env = JaxToNumpyV0(env)                                     # doctest: SKIP
+        >>> obs, _ = env.reset(seed=123)                                # doctest: SKIP
+        >>> type(obs)                                                   # doctest: SKIP
         <class 'numpy.ndarray'>
-        >>> action = env.action_space.sample()
-        >>> obs, reward, terminated, truncated, info = env.step(action)
-        >>> type(obs)
+        >>> action = env.action_space.sample()                          # doctest: SKIP
+        >>> obs, reward, terminated, truncated, info = env.step(action) # doctest: SKIP
+        >>> type(obs)                                                   # doctest: SKIP
         <class 'numpy.ndarray'>
-        >>> type(reward)
+        >>> type(reward)                                                # doctest: SKIP
         <class 'float'>
-        >>> type(terminated)
+        >>> type(terminated)                                            # doctest: SKIP
         <class 'bool'>
-        >>> type(truncated)
+        >>> type(truncated)                                             # doctest: SKIP
         <class 'bool'>
     """
 

@@ -171,7 +171,7 @@ class RecordVideoV0(
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> trigger = lambda t: t % 10 == 0
         >>> env = RecordVideoV0(env, video_folder="./save_videos", episode_trigger=trigger)
-        >>> for i in range(50):
+        >>> for i in range(50): # doctest: +ELLIPSIS
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
         ...     while not (termination or truncation):
@@ -187,7 +187,7 @@ class RecordVideoV0(
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> trigger = lambda t: t == 10
         >>> env = RecordVideoV0(env, video_folder="./save_videos", step_trigger=trigger)
-        >>> for i in range(3):
+        >>> for i in range(3): # doctest: +ELLIPSIS
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
         ...     while not (termination or truncation):
@@ -202,7 +202,7 @@ class RecordVideoV0(
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> env = RecordVideoV0(env, video_folder="./save_videos", video_length=1000)
-        >>> for i in range(3):
+        >>> for i in range(3): # doctest: +ELLIPSIS
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
         ...     while not (termination or truncation):

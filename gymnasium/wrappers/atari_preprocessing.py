@@ -29,9 +29,9 @@ class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
     - Scale observation: Whether to scale the observation between [0, 1) or [0, 255), not scaled by default.
 
     Example:
-        >>> import gymnasium as gym
-        >>> env = gym.make("ALE/Adventure-v5")
-        >>> env = AtariPreprocessingV0(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False)
+        >>> import gymnasium as gym # doctest: +SKIP
+        >>> env = gym.make("ALE/Adventure-v5") # doctest: +SKIP
+        >>> env = AtariPreprocessingV0(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False) # doctest: +SKIP
     """
 
     def __init__(

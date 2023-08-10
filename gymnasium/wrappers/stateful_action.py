@@ -37,7 +37,6 @@ class StickyActionV0(
 
         >>> env.step(0)
         (array([ 0.03812904,  0.73774064, -0.06670535, -1.2454252 ], dtype=float32), 1.0, False, False, {})
-
     """
 
     def __init__(
