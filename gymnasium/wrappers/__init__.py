@@ -168,6 +168,4 @@ def __getattr__(wrapper_name: str):
         module = importlib.import_module(import_stmt)
         return getattr(module, wrapper_name)
 
-    raise AttributeError(
-        f"module {__name__!r} has no attribute {wrapper_name!r}"
-    )
+    raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")

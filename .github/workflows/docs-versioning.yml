@@ -29,10 +29,10 @@ jobs:
         run: pip install -r docs/requirements.txt
 
       - name: Install Gymnasium
-        run: pip install .[box2d,mujoco,jax,other]
+        run: pip install .[box2d,mujoco]
 
       - name: Build Envs Docs
-        run: python docs/_scripts/gen_mds.py && python docs/_scripts/gen_envs_display.py && python docs/_scripts/gen_wrapper_table.py
+        run: python docs/_scripts/gen_mds.py && python docs/_scripts/gen_envs_display.py
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build

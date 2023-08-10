@@ -7,13 +7,13 @@ title: Vector Wrappers
 ## Vector only wrappers
 
 ```{eval-rst}
-.. autoclass:: gymnasium.wrappers.vector.DictInfoToListV0
+.. autoclass:: gymnasium.wrappers.vector.DictInfoToList
 ```
 
-## Vectorize Lambda Wrappers to Vector Wrappers
+## Vectorize Transform Wrappers to Vector Wrappers
 
 ```{eval-rst}
-.. autoclass:: gymnasium.wrappers.vector.VectorizeLambdaObservationV0
-.. autoclass:: gymnasium.wrappers.vector.VectorizeLambdaActionV0
-.. autoclass:: gymnasium.wrappers.vector.VectorizeLambdaRewardV0
+.. autoclass:: gymnasium.wrappers.vector.VectorizeTransformObservation
+.. autoclass:: gymnasium.wrappers.vector.VectorizeTransformAction
+.. autoclass:: gymnasium.wrappers.vector.VectorizeTransformReward
 ```
