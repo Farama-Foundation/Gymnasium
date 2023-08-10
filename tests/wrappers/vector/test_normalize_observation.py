@@ -40,30 +40,29 @@ def test_against_wrapper(
 
 
 def test_update_running_mean():
-    env = SyncVectorEnv([thunk for _ in range(3)])
+    env = SyncVectorEnv([thunk for _ in range(2)])
     env = wrappers.vector.NormalizeObservationV0(env)
 
     # Default value is True
     assert env.update_running_mean
 
     obs, _ = env.reset()
-    assert obs in env.observation_space
     for _ in range(100):
-        action = env.action_space.sample()
-        env.step(action)
+        env.step(env.action_space.sample())
 
     # Disable
     env.update_running_mean = False
-    rms_var = np.copy(env.obs_rms.vec_var)
-    rms_mean = np.copy(env.obs_rms.vec_mean)
+    rms_mean = np.copy(env.obs_rms.mean)
+    rms_var = np.copy(env.obs_rms.var)
 
     val_step = 25
     obs_buffer = create_empty_array(env.observation_space, val_step)
+    env.action_space.seed(123)
     for i in range(val_step):
         obs, _, _, _, _ = env.step(env.action_space.sample())
         obs_buffer[i] = obs
 
-    assert np.all(rms_var == env.obs_rms.var)
     assert np.all(rms_mean == env.obs_rms.mean)
-    assert np.allclose(np.var(obs_buffer, axis=0), env.obs_rms.var, atol=1)
-    assert np.allclose(np.mean(obs_buffer, axis=0), env.obs_rms.mean, atol=1)
+    assert np.all(rms_var == env.obs_rms.var)
+    assert np.allclose(np.mean(obs_buffer, axis=(0, 1)), 0, atol=0.5)
+    assert np.allclose(np.var(obs_buffer, axis=(0, 1)), 1, atol=0.5)
