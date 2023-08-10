@@ -7,8 +7,8 @@ from __future__ import annotations
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
-from gymnasium.vector.vector_env import VectorObservationWrapper
+from gymnasium.core import ObsType
+from gymnasium.vector.vector_env import VectorEnv, VectorObservationWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 
@@ -27,7 +27,7 @@ class NormalizeObservationV0(VectorObservationWrapper, gym.utils.RecordConstruct
         newly instantiated or the policy was changed recently.
     """
 
-    def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
+    def __init__(self, env: VectorEnv, epsilon: float = 1e-8):
         """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
         Args:
@@ -35,7 +35,7 @@ class NormalizeObservationV0(VectorObservationWrapper, gym.utils.RecordConstruct
             epsilon: A stability parameter that is used when scaling the observations.
         """
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
-        gym.ObservationWrapper.__init__(self, env)
+        VectorObservationWrapper.__init__(self, env)
 
         self.obs_rms = RunningMeanStd(
             shape=self.single_observation_space.shape,

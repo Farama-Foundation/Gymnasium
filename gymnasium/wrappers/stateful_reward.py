@@ -102,13 +102,14 @@ class NormalizeRewardV1(
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment, normalizing the reward returned."""
         obs, reward, terminated, truncated, info = super().step(action)
+
+        # Using the `discounted_reward` rather than `reward` makes no sense but for backward compatibility, it is being kept
         self.discounted_reward = self.discounted_reward * self.gamma * (
             1 - terminated
         ) + float(reward)
-        return obs, self.normalize(float(reward)), terminated, truncated, info
-
-    def normalize(self, reward: SupportsFloat):
-        """Normalizes the rewards with the running mean rewards and their variance."""
         if self._update_running_mean:
             self.return_rms.update(self.discounted_reward)
-        return reward / np.sqrt(self.return_rms.var + self.epsilon)
+
+        # We don't (reward - self.return_rms.mean) see https://github.com/openai/baselines/issues/538
+        normalized_reward = reward / np.sqrt(self.return_rms.var + self.epsilon)
+        return obs, normalized_reward, terminated, truncated, info

@@ -54,27 +54,30 @@ def test_normalize_reward_wrapper():
 
 def reward_reset_func(self: gym.Env, seed=None, options=None):
     self.rewards = [0, 1, 2, 3, 4]
-    return np.array([self.rewards.pop(0)]), {}
+    reward = self.rewards.pop(0)
+    return np.array([reward]), {"reward": reward}
 
 
 def reward_step_func(self: gym.Env, action):
     reward = self.rewards.pop(0)
-    return np.array([reward]), reward, len(self.rewards), False, {}
+    return np.array([reward]), reward, len(self.rewards) == 0, False, {"reward": reward}
 
 
 def test_normalize_return():
     env = GenericTestEnv(reset_func=reward_reset_func, step_func=reward_step_func)
     env = NormalizeRewardV1(env)
     env.reset()
+
     env.step(env.action_space.sample())
     np.testing.assert_almost_equal(
         env.return_rms.mean,
         np.mean([1]),  # [first return]
         decimal=4,
     )
+
     env.step(env.action_space.sample())
     np.testing.assert_almost_equal(
         env.return_rms.mean,
-        np.mean([2 + env.gamma * 1, 1]),  # [second return, first return]
+        np.mean([2 + 1 * env.gamma, 1]),  # [second return, first return]
         decimal=4,
     )

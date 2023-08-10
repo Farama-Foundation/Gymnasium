@@ -452,7 +452,7 @@ class NormalizeObservationV0(
     def observation(self, observation: ObsType) -> WrapperObsType:
         """Normalises the observation using the running mean and variance of the observations."""
         if self._update_running_mean:
-            self.obs_rms.update(observation)
+            self.obs_rms.update(np.array([observation]))
         return (observation - self.obs_rms.mean) / np.sqrt(
             self.obs_rms.var + self.epsilon
         )

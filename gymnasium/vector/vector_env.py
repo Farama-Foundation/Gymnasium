@@ -304,21 +304,19 @@ class VectorWrapper(VectorEnv):
         Don't forget to call `super().__init__(env)` if the subclass overrides :meth:`__init__`.
     """
 
-    _observation_space: gym.Space | None = None
-    _action_space: gym.Space | None = None
-    _single_observation_space: gym.Space | None = None
-    _single_action_space: gym.Space | None = None
-
     def __init__(self, env: VectorEnv):
         """Initialize the vectorized environment wrapper.
 
         Args:
             env: The environment to wrap
         """
-        super().__init__()
-
-        assert isinstance(env, VectorEnv)
         self.env = env
+        assert isinstance(env, VectorEnv)
+
+        self._observation_space: gym.Space | None = None
+        self._action_space: gym.Space | None = None
+        self._single_observation_space: gym.Space | None = None
+        self._single_action_space: gym.Space | None = None
 
     def reset(
         self,
@@ -351,10 +349,6 @@ class VectorWrapper(VectorEnv):
     def __repr__(self):
         """Return the string representation of the vectorized environment."""
         return f"<{self.__class__.__name__}, {self.env}>"
-
-    def __del__(self):
-        """Close the vectorized environment."""
-        self.env.__del__()
 
     @property
     def spec(self) -> EnvSpec | None:
