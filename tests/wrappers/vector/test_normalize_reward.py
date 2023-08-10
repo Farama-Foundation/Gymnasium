@@ -49,7 +49,7 @@ def test_functionality(
     env.close()
 
     forward_rets = np.asarray(forward_rets)
-    assert np.allclose(np.std(forward_rets), 1, atol=0.2)
+    assert np.allclose(np.std(forward_rets, axis=0), 1.33, atol=0.1)
 
 
 def test_against_wrapper(n_envs=3, n_steps=100, rtol=0.01, atol=0):

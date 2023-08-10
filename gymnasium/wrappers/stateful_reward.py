@@ -75,9 +75,9 @@ class NormalizeRewardV1(
         obs, reward, terminated, truncated, info = super().step(action)
 
         # Using the `discounted_reward` rather than `reward` makes no sense but for backward compatibility, it is being kept
-        self.discounted_reward = float(reward) + self.discounted_reward * self.gamma * (
+        self.discounted_reward = self.discounted_reward * self.gamma * (
             1 - terminated
-        )
+        ) + float(reward)
         if self._update_running_mean:
             self.return_rms.update(self.discounted_reward)
 
