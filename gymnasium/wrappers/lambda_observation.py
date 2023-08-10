@@ -395,7 +395,7 @@ class ReshapeObservationV0(
             shape: The reshaped observation space
         """
         assert isinstance(env.observation_space, spaces.Box)
-        assert np.product(shape) == np.product(env.observation_space.shape)
+        assert np.prod(shape) == np.prod(env.observation_space.shape)
 
         assert isinstance(shape, tuple)
         assert all(np.issubdtype(type(elem), np.integer) for elem in shape)
@@ -475,9 +475,9 @@ class RescaleObservationV0(
         self.max_obs = max_obs
 
         # Imagine the x-axis between the old Box and the y-axis being the new Box
-        gradient = (max_obs - min_obs) / (
-            env.observation_space.high - env.observation_space.low
-        )
+        high_low_diff = np.array(env.observation_space.high, dtype=np.float128) - np.array(env.observation_space.low, dtype=np.float128)
+        gradient = np.array((max_obs - min_obs) / high_low_diff, dtype=env.observation_space.dtype)
+
         intercept = gradient * -env.observation_space.low + min_obs
 
         gym.utils.RecordConstructorArgs.__init__(self, min_obs=min_obs, max_obs=max_obs)

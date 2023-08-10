@@ -350,10 +350,6 @@ class VectorWrapper(VectorEnv):
         """Return the string representation of the vectorized environment."""
         return f"<{self.__class__.__name__}, {self.env}>"
 
-    def __del__(self):
-        """Close the vectorized environment."""
-        self.env.__del__()
-
     @property
     def spec(self) -> EnvSpec | None:
         """Gets the specification of the wrapped environment."""
