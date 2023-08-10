@@ -170,15 +170,16 @@ class RecordVideoV0(
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> trigger = lambda t: t % 10 == 0
-        >>> env = RecordVideoV0(env, video_folder="./save_videos", episode_trigger=trigger)
+        >>> env = RecordVideoV0(env, video_folder="./save_videos1", episode_trigger=trigger)
         >>> for i in range(50): # doctest: +ELLIPSIS
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
         ...     while not (termination or truncation):
         ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
         ...
+        Moviepy ... mp4
         >>> env.close()
-        >>> len(os.listdir("./save_videos"))
+        >>> len(os.listdir("./save_videos1"))
         5
 
         Run the environment for 3 episodes, save each episode starting from step 10:
@@ -186,30 +187,32 @@ class RecordVideoV0(
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> trigger = lambda t: t == 10
-        >>> env = RecordVideoV0(env, video_folder="./save_videos", step_trigger=trigger)
+        >>> env = RecordVideoV0(env, video_folder="./save_videos2", step_trigger=trigger)
         >>> for i in range(3): # doctest: +ELLIPSIS
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
         ...     while not (termination or truncation):
         ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
         ...
+        Moviepy ... mp4
         >>> env.close()
-        >>> len(os.listdir("./save_videos"))
+        >>> len(os.listdir("./save_videos2"))
         3
 
         Run 3 episodes, record everything, but in chunks of 1000 frames:
         >>> import os
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RecordVideoV0(env, video_folder="./save_videos", video_length=1000)
+        >>> env = RecordVideoV0(env, video_folder="./save_videos3", video_length=1000)
         >>> for i in range(3): # doctest: +ELLIPSIS
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
         ...     while not (termination or truncation):
         ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
         ...
+        Moviepy ... mp4
         >>> env.close()
-        >>> len(os.listdir("./save_videos"))
+        >>> len(os.listdir("./save_videos3"))
         2
 
     """
