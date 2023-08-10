@@ -53,7 +53,6 @@ class LambdaObservationV0(
         >>> env = LambdaObservationV0(env, lambda obs: obs + 0.1 * np.random.random(obs.shape), env.observation_space)
         >>> env.reset(seed=42)
         (array([0.08227695, 0.06540678, 0.09613613, 0.07422512]), {})
-
     """
 
     def __init__(
@@ -583,13 +582,10 @@ class RenderObservationV0(
         >>> obs, _ = env.reset(seed=123)
         >>> obs.keys()
         dict_keys(['state', 'pixels'])
-
         >>> obs["state"]
         array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
-
         >>> (obs["pixels"] == env.render()).all()
         True
-
     """
 
     def __init__(

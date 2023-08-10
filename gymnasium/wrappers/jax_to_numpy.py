@@ -111,21 +111,16 @@ class JaxToNumpyV0(
         >>> obs, _ = env.reset(seed=123)
         >>> type(obs)
         <class 'numpy.ndarray'>
-
         >>> action = env.action_space.sample()
         >>> obs, reward, terminated, truncated, info = env.step(action)
         >>> type(obs)
         <class 'numpy.ndarray'>
-
         >>> type(reward)
         <class 'float'>
-
         >>> type(terminated)
         <class 'bool'>
-
         >>> type(truncated)
         <class 'bool'>
-
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
