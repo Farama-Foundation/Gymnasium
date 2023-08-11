@@ -408,16 +408,21 @@ class NormalizeObservationV0(
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
         >>> obs, info = env.reset(seed=123)
-        >>> obs, info
-        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
-        >>> np.var(obs)
-        0.00056409097
+        >>> term, trunc = False, False
+        >>> while not (term or trunc):
+        ...     obs, _, term, trunc, _ = env.step(1)
+        ...
+        >>> obs
+        array([ 0.1511158 ,  1.7183299 , -0.25533703, -2.8914354 ], dtype=float32)
+        >>> env = gym.make("CartPole-v1")
         >>> env = NormalizeObservationV0(env)
         >>> obs, info = env.reset(seed=123)
-        >>> obs, info
-        (array([ 1.6538188 , -0.9636979 , -0.27014682, -0.42001915], dtype=float32), {})
-        >>> np.var(obs)
-        0.9783064
+        >>> term, trunc = False, False
+        >>> while not (term or trunc):
+        ...     obs, _, term, trunc, _ = env.step(1)
+        ...
+        >>> obs
+        array([ 2.0059888,  1.5676788, -1.9944268, -1.6120394], dtype=float32)
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
