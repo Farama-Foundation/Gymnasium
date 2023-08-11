@@ -177,7 +177,7 @@ class RecordVideoV0(
         ...     while not (termination or truncation):
         ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
         ...
-        Moviepy ... mp4
+        ...
         >>> env.close()
         >>> len(os.listdir("./save_videos1"))
         5
@@ -194,7 +194,7 @@ class RecordVideoV0(
         ...     while not (termination or truncation):
         ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
         ...
-        Moviepy ... mp4
+        ...
         >>> env.close()
         >>> len(os.listdir("./save_videos2"))
         3
@@ -210,7 +210,7 @@ class RecordVideoV0(
         ...     while not (termination or truncation):
         ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
         ...
-        Moviepy ... mp4
+        ...
         >>> env.close()
         >>> len(os.listdir("./save_videos3"))
         2
