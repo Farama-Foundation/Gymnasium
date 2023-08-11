@@ -145,6 +145,13 @@ _wrapper_to_class = {
     "NumpyToTorch": "numpy_to_torch",
 }
 
+_renamed_wrapper = {
+    "AutoResetWrapper": "Autoreset",
+    "FrameStack": "FrameStackObservation",
+    "PixelObservationWrapper": "RenderObservation",
+    "VectorListInfo": "vector.DictInfoToList",
+}
+
 
 def __getattr__(wrapper_name: str):
     """Load a wrapper by name.
@@ -167,5 +174,10 @@ def __getattr__(wrapper_name: str):
         import_stmt = f"gymnasium.wrappers.{_wrapper_to_class[wrapper_name]}"
         module = importlib.import_module(import_stmt)
         return getattr(module, wrapper_name)
+
+    elif wrapper_name in _renamed_wrapper:
+        raise AttributeError(
+            f"{wrapper_name!r} has been renamed with `wrappers.{_renamed_wrapper[wrapper_name]}`"
+        )
 
     raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")
