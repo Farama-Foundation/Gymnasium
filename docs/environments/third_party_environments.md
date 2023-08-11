@@ -17,6 +17,13 @@ many-agent RL ([MAgent2](https://magent2.farama.org/)),
 
 *If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/nHg2JRN489).*
 
+### [CARL: context adaptive RL](https://github.com/automl/CARL)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/automl/carl)
+
+Contextual extensions of popular reinforcement learning environments that enable training and test distributions for generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions. 
+
 ### [DACBench: a benchmark for Dynamic Algorithm Configuration](https://github.com/automl/DACBench)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
@@ -224,17 +231,9 @@ Connect-4-Gym is an environment designed for creating AIs that learn by playing 
 
 Reinforcement learning environments for compiler optimization tasks, such as LLVM phase ordering, GCC flag tuning, and CUDA loop nest code generation.
 
-### [CARL: context adaptive RL](https://github.com/automl/CARL)
-
-Configurable reinforcement learning environments for testing generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.
-
 ### [gym-sokoban: 2D Transportation Puzzles](https://github.com/mpSchrader/gym-sokoban)
 
 The environment consists of transportation puzzles in which the player's goal is to push all boxes to the warehouse's storage locations.
-
-### [DACBench: Benchmark Library for Dynamic Algorithm configuration](https://github.com/automl/DACBench)
-
-Environments for hyperparameter configuration using RL. Includes cheap surrogate benchmarks as well as real-world algorithms.
 
 ### [NLPGym: A toolkit to develop RL agents to solve NLP tasks](https://github.com/rajcscw/nlp-gym)
 
