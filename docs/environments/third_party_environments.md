@@ -22,7 +22,7 @@ many-agent RL ([MAgent2](https://magent2.farama.org/)),
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
 ![GitHub stars](https://img.shields.io/github/stars/automl/carl)
 
-Contextual extensions of popular reinforcement learning environments that enable training and test distributions for generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions. 
+Contextual extensions of popular reinforcement learning environments that enable training and test distributions for generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.
 
 ### [DACBench: a benchmark for Dynamic Algorithm Configuration](https://github.com/automl/DACBench)
 
