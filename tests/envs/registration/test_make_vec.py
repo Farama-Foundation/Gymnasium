@@ -3,6 +3,7 @@
 import pytest
 
 import gymnasium as gym
+from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import LambdaObservationV0, TimeLimitV0
 from tests.wrappers.utils import has_wrapper
@@ -96,3 +97,11 @@ def test_make_vec_with_spec(env_id: str, kwargs: dict):
 
     envs.close()
     recreated_envs.close()
+
+
+def test_async_with_dynamically_registered_env():
+    gym.register("TestEnv-v0", CartPoleEnv)
+
+    gym.make_vec("TestEnv-v0", vectorization_mode="async")
+
+    del gym.registry["TestEnv-v0"]
