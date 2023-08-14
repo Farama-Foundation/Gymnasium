@@ -195,7 +195,7 @@ class RecordVideoV0(
         ...
         >>> env.close()
         >>> len(os.listdir("./save_videos2"))
-        3
+        1
 
         Run 3 episodes, record everything, but in chunks of 1000 frames:
         >>> import os
