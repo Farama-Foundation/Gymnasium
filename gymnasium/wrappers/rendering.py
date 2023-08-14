@@ -154,15 +154,17 @@ class RecordVideoV0(
 
     .. py:currentmodule:: gymnasium.utils.save_video
 
-    Usually, you only want to record episodes intermittently, say every hundredth episode.
+    Usually, you only want to record episodes intermittently, say every hundredth episode or at every thousandth environment step.
     To do this, you can specify ``episode_trigger`` or ``step_trigger``.
     They should be functions returning a boolean that indicates whether a recording should be started at the
     current episode or step, respectively.
-    If neither :attr:`episode_trigger` nor ``step_trigger`` is passed, a default ``episode_trigger`` will be employed,
-    i.e. :func:`capped_cubic_video_schedule`. This function starts a video at every episode that is a power of 3 until 1000 and
-    then every 1000 episodes.
-    By default, the recording will be stopped once reset is called. However, you can also create recordings of fixed
-    length (possibly spanning several episodes) by passing a strictly positive value for ``video_length``.
+    The ``episode_trigger`` should return ``True`` on the episode when recording should start.
+    The ``step_trigger`` should return ``True`` on the n-th environment step that the recording should be started, where n sums over all previous episodes.
+    If neither :attr:`episode_trigger` nor ``step_trigger`` is passed, a default ``episode_trigger`` will be employed, i.e. :func:`capped_cubic_video_schedule`.
+    This function starts a video at every episode that is a power of 3 until 1000 and then every 1000 episodes.
+    By default, the recording will be stopped once reset is called.
+    However, you can also create recordings of fixed length (possibly spanning several episodes)
+    by passing a strictly positive value for ``video_length``.
 
     Example:
         Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:
@@ -181,13 +183,13 @@ class RecordVideoV0(
         >>> len(os.listdir("./save_videos1"))
         5
 
-        Run the environment for 3 episodes, save each episode starting from step 10:
+        Run the environment for 5 episodes, start the recording at the 100th step and record for 100 frames.
         >>> import os
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> trigger = lambda t: t == 10
-        >>> env = RecordVideoV0(env, video_folder="./save_videos2", step_trigger=trigger, disable_logger=True)
-        >>> for i in range(3):
+        >>> trigger = lambda t: t == 100
+        >>> env = RecordVideoV0(env, video_folder="./save_videos2", step_trigger=trigger, video_length=100, disable_logger=True)
+        >>> for i in range(5):
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
         ...     while not (termination or truncation):
