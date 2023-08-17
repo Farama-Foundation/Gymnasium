@@ -13,6 +13,20 @@ from gymnasium.utils import RecordConstructorArgs, seeding
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
+
+__all__ = [
+    "Env",
+    "Wrapper",
+    "ObservationWrapper",
+    "RewardWrapper",
+    "ActionWrapper",
+    "ObsType",
+    "ActType",
+    "RenderFrame",
+    "WrapperObsType",
+    "WrapperActType",
+]
+
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
 RenderFrame = TypeVar("RenderFrame")
@@ -296,7 +310,7 @@ class Wrapper(
             raise AttributeError(f"accessing private attribute '{name}' is prohibited")
         logger.warn(
             f"env.{name} to get variables from other wrappers is deprecated and will be removed in v1.0, "
-            f"to get this variable you can do `env.unwrapped.{name}` for environment variables or `env.get_attr('{name}')` that will search the reminding wrappers."
+            f"to get this variable you can do `env.unwrapped.{name}` for environment variables or `env.get_wrapper_attr('{name}')` that will search the reminding wrappers."
         )
         return getattr(self.env, name)
 
