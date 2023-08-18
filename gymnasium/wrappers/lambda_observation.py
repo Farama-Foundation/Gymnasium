@@ -475,8 +475,12 @@ class RescaleObservationV0(
         self.max_obs = max_obs
 
         # Imagine the x-axis between the old Box and the y-axis being the new Box
-        high_low_diff = np.array(env.observation_space.high, dtype=np.float128) - np.array(env.observation_space.low, dtype=np.float128)
-        gradient = np.array((max_obs - min_obs) / high_low_diff, dtype=env.observation_space.dtype)
+        high_low_diff = np.array(
+            env.observation_space.high, dtype=np.float128
+        ) - np.array(env.observation_space.low, dtype=np.float128)
+        gradient = np.array(
+            (max_obs - min_obs) / high_low_diff, dtype=env.observation_space.dtype
+        )
 
         intercept = gradient * -env.observation_space.low + min_obs
 

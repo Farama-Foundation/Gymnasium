@@ -191,7 +191,22 @@ class FilterObservationV0(VectorizeLambdaObservationV0):
 
 
 class FlattenObservationV0(VectorizeLambdaObservationV0):
-    """Observation wrapper that flattens the observation."""
+    """Observation wrapper that flattens the observation.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.shape
+        (3, 96, 96, 3)
+        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
+        >>> envs = FlattenObservationV0(envs)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.shape
+        (3, 27648)
+    """
 
     def __init__(self, env: VectorEnv):
         """Constructor for any environment's observation space that implements ``spaces.utils.flatten_space`` and ``spaces.utils.flatten``.
@@ -203,7 +218,22 @@ class FlattenObservationV0(VectorizeLambdaObservationV0):
 
 
 class GrayscaleObservationV0(VectorizeLambdaObservationV0):
-    """Observation wrapper that converts an RGB image to grayscale."""
+    """Observation wrapper that converts an RGB image to grayscale.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.shape
+        (3, 96, 96, 3)
+        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
+        >>> envs = GrayscaleObservationV0(envs)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.shape
+        (3, 96, 96)
+    """
 
     def __init__(self, env: VectorEnv, keep_dim: bool = False):
         """Constructor for an RGB image based environments to make the image grayscale.
@@ -218,7 +248,22 @@ class GrayscaleObservationV0(VectorizeLambdaObservationV0):
 
 
 class ResizeObservationV0(VectorizeLambdaObservationV0):
-    """Resizes image observations using OpenCV to shape."""
+    """Resizes image observations using OpenCV to shape.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.shape
+        (3, 96, 96, 3)
+        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
+        >>> envs = ResizeObservationV0(envs, shape=(28, 28))
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.shape
+        (3, 28, 28, 3)
+    """
 
     def __init__(self, env: VectorEnv, shape: tuple[int, ...]):
         """Constructor that requires an image environment observation space with a shape.
@@ -231,7 +276,22 @@ class ResizeObservationV0(VectorizeLambdaObservationV0):
 
 
 class ReshapeObservationV0(VectorizeLambdaObservationV0):
-    """Reshapes array based observations to shapes."""
+    """Reshapes array based observations to shapes.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.shape
+        (3, 96, 96, 3)
+        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
+        >>> envs = ReshapeObservationV0(envs, shape=(9216, 3))
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.shape
+        (3, 9216, 3)
+    """
 
     def __init__(self, env: VectorEnv, shape: int | tuple[int, ...]):
         """Constructor for env with Box observation space that has a shape product equal to the new shape product.
@@ -244,7 +304,25 @@ class ReshapeObservationV0(VectorizeLambdaObservationV0):
 
 
 class RescaleObservationV0(VectorizeLambdaObservationV0):
-    """Linearly rescales observation to between a minimum and maximum value."""
+    """Linearly rescales observation to between a minimum and maximum value.
+
+    Example:
+        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.min()
+        -0.0446179
+        >>> obs.max()
+        0.0469136
+        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> envs = RescaleObservationV0(envs, min_obs=-5.0, max_obs=5.0)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.min()
+        -0.33379582
+        >>> obs.max()
+        0.55998987
+    """
 
     def __init__(
         self,
@@ -268,7 +346,21 @@ class RescaleObservationV0(VectorizeLambdaObservationV0):
 
 
 class DtypeObservationV0(VectorizeLambdaObservationV0):
-    """Observation wrapper for transforming the dtype of an observation."""
+    """Observation wrapper for transforming the dtype of an observation.
+
+    Example:
+        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.dtype
+        float32
+        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> envs = DtypeObservationV0(envs, dtype=np.int32)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs.dtype
+        int32
+    """
 
     def __init__(self, env: VectorEnv, dtype: Any):
         """Constructor for Dtype observation wrapper.
