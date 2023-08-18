@@ -16,23 +16,9 @@ __all__ = ["RecordEpisodeStatisticsV0"]
 class RecordEpisodeStatisticsV0(VectorWrapper):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
-    At the end of an episode, the statistics of the episode will be added to ``info``
-    using the key ``episode``. If using a vectorized environment also the key
-    ``_episode`` is used which indicates whether the env at the respective index has
-    the episode statistics.
-
-    After the completion of an episode, ``info`` will look like this::
-
-        >>> info = {  # doctest: +SKIP
-        ...     ...
-        ...     "episode": {
-        ...         "r": "<cumulative reward>",
-        ...         "l": "<episode length>",
-        ...         "t": "<elapsed time since beginning of episode>"
-        ...     },
-        ... }
-
-    For a vectorized environments the output will be in the form of::
+    At the end of any episode within the vectorized env, the statistics of the episode
+    will be added to ``info`` using the key ``episode``, and the ``_episode`` key
+    is used to indicate the environment index which has a terminated or truncated episode.
 
         >>> infos = {  # doctest: +SKIP
         ...     ...
@@ -50,6 +36,30 @@ class RecordEpisodeStatisticsV0(VectorWrapper):
     Attributes:
         return_queue: The cumulative rewards of the last ``deque_size``-many episodes
         length_queue: The lengths of the last ``deque_size``-many episodes
+
+    Example:
+        >>> from pprint import pprint
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> envs = RecordEpisodeStatisticsV0(envs)
+        >>> obs, info = envs.reset(123)
+        >>> _ = envs.action_space.seed(123)
+        >>> end = False
+        >>> while not end:
+        ...     obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        ...     end = term.any() or trunc.any()
+        ...
+        >>> envs.close()
+        >>> pprint(info)
+        {'_episode': array([ True, False, False]),
+         '_final_info': array([ True, False, False]),
+         '_final_observation': array([ True, False, False]),
+         'episode': {'l': array([11,  0,  0], dtype=int32),
+                     'r': array([11.,  0.,  0.], dtype=float32),
+                     't': array([0.007812, 0.      , 0.      ], dtype=float32)},
+         'final_info': array([{}, None, None], dtype=object),
+         'final_observation': array([array([ 0.11448676,  0.9416149 , -0.20946532, -1.7619033 ], dtype=float32),
+               None, None], dtype=object)}
     """
 
     def __init__(self, env: VectorEnv, deque_size: int = 100):
