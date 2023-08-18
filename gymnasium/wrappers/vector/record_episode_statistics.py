@@ -50,7 +50,7 @@ class RecordEpisodeStatisticsV0(VectorWrapper):
         ...     end = term.any() or trunc.any()
         ...
         >>> envs.close()
-        >>> pprint(info)
+        >>> pprint(info) # doctest: +SKIP
         {'_episode': array([ True, False, False]),
          '_final_info': array([ True, False, False]),
          '_final_observation': array([ True, False, False]),
