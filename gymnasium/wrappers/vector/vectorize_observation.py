@@ -80,6 +80,10 @@ class LambdaObservationV0(VectorObservationWrapper):
 class VectorizeLambdaObservationV0(VectorObservationWrapper):
     """Vectorizes a single-agent lambda observation wrapper for vector environments.
 
+    Most of the lambda observation wrappers for single agent environments have vectorized implementations,
+    it is advised that users simply use those instead via importing from `gymnasium.wrappers.vector...`.
+    The following example illustrate use-cases where a custom lambda observation wrapper is required.
+
     Example:
         The normal observation:
         >>> import gymnasium as gym
@@ -91,34 +95,23 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
          [ 0.02852531  0.02858594  0.0469136   0.02480598]
          [ 0.03517495 -0.000635   -0.01098382 -0.03203924]]
 
-        Applying a rescale observation lambda wrapper that is built for single agent environments:
+        Applying a custom lambda observation wrapper that duplicates the observation from the environment
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import RescaleObservationV0
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-        >>> envs = VectorizeLambdaObservationV0(envs, wrapper=RescaleObservationV0, min_obs=-np.ones(4, dtype=np.float32), max_obs=np.ones(4, dtype=np.float32))
+        >>> old_space = envs.single_observation_space
+        >>> new_space = Box(low=np.array([old_space.low, old_space.low]), high=np.array([old_space.high, old_space.high]))
+        >>> envs = VectorizeLambdaObservationV0(envs, wrapper=LambdaObservationV0, func=lambda x: np.array([x, x]), observation_space=new_space)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        [[ 3.7989970e-03 -5.9604645e-08 -6.6759162e-02 -5.9604645e-08]
-         [ 5.9427731e-03 -5.9604645e-08  1.1199797e-01 -5.9604645e-08]
-         [ 7.3281140e-03 -5.9604645e-08 -2.6221942e-02 -5.9604645e-08]]
-
-        Applying a reshape observation lambda wrapper that is built for single agent environments:
-        >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import ReshapeObservationV0
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-        >>> envs = VectorizeLambdaObservationV0(envs, wrapper=ReshapeObservationV0, shape=(2, 2))
-        >>> obs, info = envs.reset(seed=123)
-        >>> envs.close()
-        >>> obs
-        [[[ 0.01823519 -0.0446179 ]
-          [-0.02796401 -0.03156282]]
+        [[[ 0.01823519 -0.0446179  -0.02796401 -0.03156282]
+          [ 0.01823519 -0.0446179  -0.02796401 -0.03156282]]
         <BLANKLINE>
-         [[ 0.02852531  0.02858594]
-          [ 0.0469136   0.02480598]]
+         [[ 0.02852531  0.02858594  0.0469136   0.02480598]
+          [ 0.02852531  0.02858594  0.0469136   0.02480598]]
         <BLANKLINE>
-         [[ 0.03517495 -0.000635  ]
-          [-0.01098382 -0.03203924]]]
+         [[ 0.03517495 -0.000635   -0.01098382 -0.03203924]
+          [ 0.03517495 -0.000635   -0.01098382 -0.03203924]]]
     """
 
     class _SingleEnv(Env):
