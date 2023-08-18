@@ -78,10 +78,51 @@ class LambdaObservationV0(VectorObservationWrapper):
 
 
 class VectorizeLambdaObservationV0(VectorObservationWrapper):
-    """Vectorizes a single-agent lambda observation wrapper for vector environments."""
+    """Vectorizes a single-agent lambda observation wrapper for vector environments.
 
-    class VectorizedEnv(Env):
-        """Fake single-agent environment used for the single-agent wrapper."""
+    Example:
+        The normal observation:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs
+        [[ 0.01823519 -0.0446179  -0.02796401 -0.03156282]
+         [ 0.02852531  0.02858594  0.0469136   0.02480598]
+         [ 0.03517495 -0.000635   -0.01098382 -0.03203924]]
+
+        Applying a rescale observation lambda wrapper that is built for single agent environments:
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import RescaleObservationV0
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> envs = VectorizeLambdaObservationV0(envs, wrapper=RescaleObservationV0, min_obs=-np.ones(4, dtype=np.float32), max_obs=np.ones(4, dtype=np.float32))
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs
+        [[ 3.7989970e-03 -5.9604645e-08 -6.6759162e-02 -5.9604645e-08]
+         [ 5.9427731e-03 -5.9604645e-08  1.1199797e-01 -5.9604645e-08]
+         [ 7.3281140e-03 -5.9604645e-08 -2.6221942e-02 -5.9604645e-08]]
+
+        Applying a reshape observation lambda wrapper that is built for single agent environments:
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import ReshapeObservationV0
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> envs = VectorizeLambdaObservationV0(envs, wrapper=ReshapeObservationV0, shape=(2, 2))
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs
+        [[[ 0.01823519 -0.0446179 ]
+          [-0.02796401 -0.03156282]]
+        <BLANKLINE>
+         [[ 0.02852531  0.02858594]
+          [ 0.0469136   0.02480598]]
+        <BLANKLINE>
+         [[ 0.03517495 -0.000635  ]
+          [-0.01098382 -0.03203924]]]
+    """
+
+    class _SingleEnv(Env):
+        """Fake single-agent environment used for the single-agent wrapper, meant to hold only the observation space for lambda wrappers to work."""
 
         def __init__(self, observation_space: Space):
             """Constructor for the fake environment."""
@@ -103,7 +144,7 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
         super().__init__(env)
 
         self.wrapper = wrapper(
-            self.VectorizedEnv(self.env.single_observation_space), **kwargs
+            self._SingleEnv(self.env.single_observation_space), **kwargs
         )
         self.single_observation_space = self.wrapper.observation_space
         self.observation_space = batch_space(
