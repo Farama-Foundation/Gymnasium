@@ -32,17 +32,18 @@ class LambdaObservationV0(VectorObservationWrapper):
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        [[ 0.01823519 -0.0446179  -0.02796401 -0.03156282]
-         [ 0.02852531  0.02858594  0.0469136   0.02480598]
-         [ 0.03517495 -0.000635   -0.01098382 -0.03203924]]
+        array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
+               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
+              dtype=float32)
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> envs = LambdaObservationV0(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        [[-1.9635296 -2.0892358 -2.055928  -2.0631256]
-         [-1.9429494 -1.9428282 -1.9061728 -1.9503881]
-         [-1.9296501 -2.00127   -2.0219676 -2.0640786]]
+        array([[-1.9635296, -2.0892358, -2.055928 , -2.0631256],
+               [-1.9429494, -1.9428282, -1.9061728, -1.9503881],
+               [-1.9296501, -2.00127  , -2.0219676, -2.0640786]], dtype=float32)
     """
 
     def __init__(
@@ -91,12 +92,16 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        [[ 0.01823519 -0.0446179  -0.02796401 -0.03156282]
-         [ 0.02852531  0.02858594  0.0469136   0.02480598]
-         [ 0.03517495 -0.000635   -0.01098382 -0.03203924]]
+        array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
+               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
+              dtype=float32)
 
         Applying a custom lambda observation wrapper that duplicates the observation from the environment
+        >>> import numpy as np
         >>> import gymnasium as gym
+        >>> from gymnasium.spaces import Box
+        >>> from gymnasium.wrappers import LambdaObservationV0
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> old_space = envs.single_observation_space
         >>> new_space = Box(low=np.array([old_space.low, old_space.low]), high=np.array([old_space.high, old_space.high]))
@@ -104,14 +109,15 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        [[[ 0.01823519 -0.0446179  -0.02796401 -0.03156282]
-          [ 0.01823519 -0.0446179  -0.02796401 -0.03156282]]
+        array([[[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+                [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],
         <BLANKLINE>
-         [[ 0.02852531  0.02858594  0.0469136   0.02480598]
-          [ 0.02852531  0.02858594  0.0469136   0.02480598]]
+               [[ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
+                [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598]],
         <BLANKLINE>
-         [[ 0.03517495 -0.000635   -0.01098382 -0.03203924]
-          [ 0.03517495 -0.000635   -0.01098382 -0.03203924]]]
+               [[ 0.03517495, -0.000635  , -0.01098382, -0.03203924],
+                [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]]],
+              dtype=float32)
     """
 
     class _SingleEnv(Env):
@@ -307,6 +313,7 @@ class RescaleObservationV0(VectorizeLambdaObservationV0):
     """Linearly rescales observation to between a minimum and maximum value.
 
     Example:
+        >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
@@ -349,17 +356,18 @@ class DtypeObservationV0(VectorizeLambdaObservationV0):
     """Observation wrapper for transforming the dtype of an observation.
 
     Example:
+        >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.dtype
-        float32
+        dtype('float32')
         >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
         >>> envs = DtypeObservationV0(envs, dtype=np.int32)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.dtype
-        int32
+        dtype('int32')
     """
 
     def __init__(self, env: VectorEnv, dtype: Any):
