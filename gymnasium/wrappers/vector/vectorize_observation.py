@@ -14,10 +14,35 @@ from gymnasium.wrappers import lambda_observation
 
 
 class LambdaObservationV0(VectorObservationWrapper):
-    """Transforms an observation via a function provided to the wrapper.
+    """Transforms an observation via a manually specified single-observation function and a vector-observation function.
 
-    The function :attr:`func` will be applied to all vector observations.
-    If the observations from :attr:`func` are outside the bounds of the ``env``'s observation space, provide an :attr:`observation_space`.
+    This function allows the manual specification of the vector-observation function as well as the single-observation function.
+    This is desirable when, for example, it is possible to process vector observations in parallel or via other more optimized methods.
+    Otherwise, the ``VectorizeLambdaObservationV0`` should be used instead, where only ``single_func`` needs to be defined.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> def scale_and_shift(obs):
+        ...     return (obs - 1.0) * 2.0
+        ...
+        >>> def vector_scale_and_shift(obs):
+        ...     return (obs - 1.0) * 2.0
+        ...
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs
+        [[ 0.01823519 -0.0446179  -0.02796401 -0.03156282]
+         [ 0.02852531  0.02858594  0.0469136   0.02480598]
+         [ 0.03517495 -0.000635   -0.01098382 -0.03203924]]
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> envs = LambdaObservationV0(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs
+        [[-1.9635296 -2.0892358 -2.055928  -2.0631256]
+         [-1.9429494 -1.9428282 -1.9061728 -1.9503881]
+         [-1.9296501 -2.00127   -2.0219676 -2.0640786]]
     """
 
     def __init__(
@@ -32,7 +57,7 @@ class LambdaObservationV0(VectorObservationWrapper):
         Args:
             env: The vector environment to wrap
             vector_func: A function that will transform the vector observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.
-            single_func: A function that will transform an individual observation.
+            single_func: A function that will transform an individual observation, this function will be used for the final observation from the environment and is returned under ``info`` and not the normal observation.
             observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as ``env.observation_space``.
         """
         super().__init__(env)
@@ -53,10 +78,10 @@ class LambdaObservationV0(VectorObservationWrapper):
 
 
 class VectorizeLambdaObservationV0(VectorObservationWrapper):
-    """Vectori`es a single-agent lambda observation wrapper for vector environments."""
+    """Vectorizes a single-agent lambda observation wrapper for vector environments."""
 
     class VectorizedEnv(Env):
-        """Fake single-agent environment uses for the single-agent wrapper."""
+        """Fake single-agent environment used for the single-agent wrapper."""
 
         def __init__(self, observation_space: Space):
             """Constructor for the fake environment."""
