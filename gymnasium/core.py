@@ -323,7 +323,7 @@ class Wrapper(
         Returns:
             The variable with name in wrapper or lower environments
         """
-        if hasattr(self, name):
+        if name in self.__dir__():  # todo change in v1.0.0 to `hasattr`
             return getattr(self, name)
         else:
             try:
