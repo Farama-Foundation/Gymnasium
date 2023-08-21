@@ -87,7 +87,7 @@ def test_step_async_vector_env(shared_memory, use_single_action_space):
     env_fns = [make_env("CartPole-v1", i) for i in range(8)]
 
     env = AsyncVectorEnv(env_fns, shared_memory=shared_memory)
-    observations = env.reset()
+    env.reset()
 
     assert isinstance(env.single_action_space, Discrete)
     assert isinstance(env.action_space, MultiDiscrete)
@@ -130,7 +130,7 @@ def test_call_async_vector_env(shared_memory):
     ]
 
     env = AsyncVectorEnv(env_fns, shared_memory=shared_memory)
-    _ = env.reset()
+    env.reset()
     images = env.call("render")
     gravity = env.call("gravity")
 
