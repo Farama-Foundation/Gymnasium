@@ -82,12 +82,12 @@ class SyncVectorEnv(VectorEnv):
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         self._check_spaces()
-        self.observations = create_empty_array(
+        self._observations = create_empty_array(
             self.single_observation_space, n=self.num_envs, fn=np.zeros
         )
         self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
-        self._terminateds = np.zeros((self.num_envs,), dtype=np.bool_)
-        self._truncateds = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
 
     def reset(
         self,
@@ -109,8 +109,8 @@ class SyncVectorEnv(VectorEnv):
             seed = [seed + i for i in range(self.num_envs)]
         assert len(seed) == self.num_envs
 
-        self._terminateds[:] = False
-        self._truncateds[:] = False
+        self._terminations[:] = False
+        self._truncations[:] = False
         observations = []
         infos = {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
@@ -124,10 +124,10 @@ class SyncVectorEnv(VectorEnv):
             observations.append(observation)
             infos = self._add_info(infos, info, i)
 
-        self.observations = concatenate(
-            self.single_observation_space, observations, self.observations
+        self._observations = concatenate(
+            self.single_observation_space, observations, self._observations
         )
-        return (deepcopy(self.observations) if self.copy else self.observations), infos
+        return (deepcopy(self._observations) if self.copy else self._observations), infos
 
     def step(
         self, actions: ActType
@@ -144,27 +144,27 @@ class SyncVectorEnv(VectorEnv):
             (
                 observation,
                 self._rewards[i],
-                self._terminateds[i],
-                self._truncateds[i],
+                self._terminations[i],
+                self._truncations[i],
                 info,
             ) = env.step(action)
 
-            if self._terminateds[i] or self._truncateds[i]:
+            if self._terminations[i] or self._truncations[i]:
                 old_observation, old_info = observation, info
                 observation, info = env.reset()
                 info["final_observation"] = old_observation
                 info["final_info"] = old_info
             observations.append(observation)
             infos = self._add_info(infos, info, i)
-        self.observations = concatenate(
-            self.single_observation_space, observations, self.observations
+        self._observations = concatenate(
+            self.single_observation_space, observations, self._observations
         )
 
         return (
-            deepcopy(self.observations) if self.copy else self.observations,
+            deepcopy(self._observations) if self.copy else self._observations,
             np.copy(self._rewards),
-            np.copy(self._terminateds),
-            np.copy(self._truncateds),
+            np.copy(self._terminations),
+            np.copy(self._truncations),
             infos,
         )
 
