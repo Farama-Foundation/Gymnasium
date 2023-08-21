@@ -34,7 +34,7 @@ from gymnasium.vector.utils import (
 from gymnasium.vector.vector_env import VectorEnv
 
 
-__all__ = ["AsyncVectorEnv"]
+__all__ = ["AsyncVectorEnv", "AsyncState"]
 
 
 class AsyncState(Enum):
@@ -111,15 +111,14 @@ class AsyncVectorEnv(VectorEnv):
             ValueError: If observation_space is a custom space (i.e. not a default space in Gym,
                 such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.
         """
-        super().__init__()
-
-        ctx = multiprocessing.get_context(context)
         self.env_fns = env_fns
-        self.num_envs = len(env_fns)
         self.shared_memory = shared_memory
         self.copy = copy
 
+        self.num_envs = len(env_fns)
+
         # This would be nice to get rid of, but without it there's a deadlock between shared memory and pipes
+        # Create a dummy environment to gather the metadata and observation / action space of the environment
         dummy_env = env_fns[0]()
         self.metadata = dummy_env.metadata
 
@@ -134,6 +133,8 @@ class AsyncVectorEnv(VectorEnv):
         dummy_env.close()
         del dummy_env
 
+        # Generate the multiprocessing context for the observation buffer
+        ctx = multiprocessing.get_context(context)
         if self.shared_memory:
             try:
                 _obs_buffer = create_shared_memory(
@@ -144,12 +145,9 @@ class AsyncVectorEnv(VectorEnv):
                 )
             except CustomSpaceError as e:
                 raise ValueError(
-                    "Using `shared_memory=True` in `AsyncVectorEnv` "
-                    "is incompatible with non-standard Gymnasium observation spaces "
-                    "(i.e. custom spaces inheriting from `gymnasium.Space`), and is "
-                    "only compatible with default Gymnasium spaces (e.g. `Box`, "
-                    "`Tuple`, `Dict`) for batching. Set `shared_memory=False` "
-                    "if you use custom observation spaces."
+                    "Using `shared_memory=True` in `AsyncVectorEnv` is incompatible with non-standard Gymnasium observation spaces (i.e. custom spaces inheriting from `gymnasium.Space`), "
+                    "and is only compatible with default Gymnasium spaces (e.g. `Box`, `Tuple`, `Dict`) for batching. "
+                    "Set `shared_memory=False` if you use custom observation spaces."
                 ) from e
         else:
             _obs_buffer = None
@@ -185,6 +183,24 @@ class AsyncVectorEnv(VectorEnv):
 
         self._state = AsyncState.DEFAULT
         self._check_spaces()
+
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict | None = None,
+    ):
+        """Resets all sub-environments in parallel and return a batch of concatenated observations and info.
+
+        Args:
+            seed: The environment reset seeds
+            options: If to return the options
+
+        Returns:
+            A batch of observations and info from the vectorized environment.
+        """
+        self.reset_async(seed=seed, options=options)
+        return self.reset_wait()
 
     def reset_async(
         self,
@@ -275,23 +291,17 @@ class AsyncVectorEnv(VectorEnv):
 
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
-    def reset(
-        self,
-        *,
-        seed: int | list[int] | None = None,
-        options: dict | None = None,
-    ):
-        """Reset all parallel environments and return a batch of initial observations and info.
+    def step(self, actions):
+        """Take an action for each parallel environment.
 
         Args:
-            seed: The environment reset seeds
-            options: If to return the options
+            actions: element of :attr:`action_space` Batch of actions.
 
         Returns:
-            A batch of observations and info from the vectorized environment.
+            Batch of (observations, rewards, terminations, truncations, infos)
         """
-        self.reset_async(seed=seed, options=options)
-        return self.reset_wait()
+        self.step_async(actions)
+        return self.step_wait()
 
     def step_async(self, actions: np.ndarray):
         """Send the calls to :obj:`step` to each sub-environment.
@@ -371,25 +381,30 @@ class AsyncVectorEnv(VectorEnv):
                 self.observations,
             )
 
+        if self.copy:
+            self.observations = deepcopy(self.observations)
+
         return (
-            deepcopy(self.observations) if self.copy else self.observations,
-            np.array(rewards),
+            self.observations,
+            np.array(rewards, dtype=np.float64),
             np.array(terminateds, dtype=np.bool_),
             np.array(truncateds, dtype=np.bool_),
             infos,
         )
 
-    def step(self, actions):
-        """Take an action for each parallel environment.
+    def call(self, name: str, *args, **kwargs) -> list[Any]:
+        """Call a method, or get a property, from each parallel environment.
 
         Args:
-            actions: element of :attr:`action_space` Batch of actions.
+            name (str): Name of the method or property to call.
+            *args: Arguments to apply to the method call.
+            **kwargs: Keyword arguments to apply to the method call.
 
         Returns:
-            Batch of (observations, rewards, terminations, truncations, infos)
+            List of the results of the individual calls to the method or property for each environment.
         """
-        self.step_async(actions)
-        return self.step_wait()
+        self.call_async(name, *args, **kwargs)
+        return self.call_wait()
 
     def call_async(self, name: str, *args, **kwargs):
         """Calls the method with name asynchronously and apply args and kwargs to the method.
@@ -406,8 +421,7 @@ class AsyncVectorEnv(VectorEnv):
         self._assert_is_running()
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
-                "Calling `call_async` while waiting "
-                f"for a pending call to `{self._state.value}` to complete.",
+                f"Calling `call_async` while waiting for a pending call to `{self._state.value}` to complete.",
                 str(self._state.value),
             )
 
@@ -448,20 +462,6 @@ class AsyncVectorEnv(VectorEnv):
 
         return results
 
-    def call(self, name: str, *args, **kwargs) -> list[Any]:
-        """Call a method, or get a property, from each parallel environment.
-
-        Args:
-            name (str): Name of the method or property to call.
-            *args: Arguments to apply to the method call.
-            **kwargs: Keyword arguments to apply to the method call.
-
-        Returns:
-            List of the results of the individual calls to the method or property for each environment.
-        """
-        self.call_async(name, *args, **kwargs)
-        return self.call_wait()
-
     def get_attr(self, name: str):
         """Get a property from each parallel environment.
 
@@ -491,15 +491,13 @@ class AsyncVectorEnv(VectorEnv):
             values = [values for _ in range(self.num_envs)]
         if len(values) != self.num_envs:
             raise ValueError(
-                "Values must be a list or tuple with length equal to the "
-                f"number of environments. Got `{len(values)}` values for "
-                f"{self.num_envs} environments."
+                "Values must be a list or tuple with length equal to the number of environments. "
+                f"Got `{len(values)}` values for {self.num_envs} environments."
             )
 
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
-                "Calling `set_attr` while waiting "
-                f"for a pending call to `{self._state.value}` to complete.",
+                f"Calling `set_attr` while waiting for a pending call to `{self._state.value}` to complete.",
                 str(self._state.value),
             )
 
@@ -690,9 +688,7 @@ def _worker(
                 )
             else:
                 raise RuntimeError(
-                    f"Received unknown command `{command}`. Must "
-                    "be one of {`reset`, `step`, `seed`, `close`, `_call`, "
-                    "`_setattr`, `_check_spaces`}."
+                    f"Received unknown command `{command}`. Must be one of [`reset`, `step`, `seed`, `close`, `_call`, `_setattr`, `_check_spaces`]."
                 )
     except (KeyboardInterrupt, Exception):
         error_queue.put((index,) + sys.exc_info()[:2])
