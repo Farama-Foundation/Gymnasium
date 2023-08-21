@@ -137,7 +137,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Take an action for each parallel environment.
 
         Args:
