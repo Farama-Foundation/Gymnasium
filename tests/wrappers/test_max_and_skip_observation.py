@@ -17,8 +17,12 @@ def test_max_and_skip_obs(skip: int = 4):
     assert obs in env.observation_space
 
     for i in range(10):
-        obs, _, _, _, _ = env.step(env.action_space.sample())
+        obs, _, term, trunc, _ = env.step(env.action_space.sample())
         assert obs in env.observation_space
+
+        if term or trunc:
+            obs, _ = env.reset()
+            assert obs in env.observation_space
 
 
 def test_skip_size_failures():

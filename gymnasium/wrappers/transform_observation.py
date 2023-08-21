@@ -50,6 +50,9 @@ class TransformObservation(
         >>> import numpy as np
         >>> np.random.seed(0)
         >>> env = gym.make("CartPole-v1")
+        >>> env.reset(seed=42)
+        (array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), {})
+        >>> env = gym.make("CartPole-v1")
         >>> env = TransformObservation(env, lambda obs: obs + 0.1 * np.random.random(obs.shape), env.observation_space)
         >>> env.reset(seed=42)
         (array([0.08227695, 0.06540678, 0.09613613, 0.07422512]), {})
@@ -395,7 +398,7 @@ class ReshapeObservation(
             shape: The reshaped observation space
         """
         assert isinstance(env.observation_space, spaces.Box)
-        assert np.product(shape) == np.product(env.observation_space.shape)
+        assert np.prod(shape) == np.prod(env.observation_space.shape)
 
         assert isinstance(shape, tuple)
         assert all(np.issubdtype(type(elem), np.integer) for elem in shape)
@@ -475,9 +478,13 @@ class RescaleObservation(
         self.max_obs = max_obs
 
         # Imagine the x-axis between the old Box and the y-axis being the new Box
-        gradient = (max_obs - min_obs) / (
-            env.observation_space.high - env.observation_space.low
+        high_low_diff = np.array(
+            env.observation_space.high, dtype=np.float128
+        ) - np.array(env.observation_space.low, dtype=np.float128)
+        gradient = np.array(
+            (max_obs - min_obs) / high_low_diff, dtype=env.observation_space.dtype
         )
+
         intercept = gradient * -env.observation_space.low + min_obs
 
         gym.utils.RecordConstructorArgs.__init__(self, min_obs=min_obs, max_obs=max_obs)
@@ -564,6 +571,40 @@ class RenderObservation(
 
     Notes:
        This was previously called ``PixelObservationWrapper``.
+
+    Example:
+        Replace the observation with the rendered image:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
+        >>> env = RenderObservationV0(env, render_only=True)
+        >>> env.observation_space
+        Box(0, 255, (400, 600, 3), uint8)
+        >>> obs, _ = env.reset(seed=123)
+        >>> image = env.render()
+        >>> np.all(obs == image)
+        True
+        >>> obs, *_ = env.step(env.action_space.sample())
+        >>> image = env.render()
+        >>> np.all(obs == image)
+        True
+
+        Add the rendered image to the original observation as a dictionary item:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
+        >>> env = RenderObservationV0(env, render_only=False)
+        >>> env.observation_space
+        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
+        >>> obs, _ = env.reset(seed=123)
+        >>> obs.keys()
+        dict_keys(['state', 'pixels'])
+        >>> obs["state"]
+        array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
+        >>> np.all(obs["pixels"] == env.render())
+        True
+        >>> obs, *_ = env.step(env.action_space.sample())
+        >>> image = env.render()
+        >>> np.all(obs["pixels"] == image)
+        True
     """
 
     def __init__(

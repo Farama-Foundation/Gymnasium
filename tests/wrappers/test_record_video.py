@@ -104,8 +104,9 @@ def test_record_video_length():
     env = RecordVideo(env, "videos", step_trigger=lambda x: x == 0, video_length=10)
     env.reset()
     for _ in range(10):
-        action = env.action_space.sample()
-        env.step(action)
+        _, _, term, trunc, _ = env.step(env.action_space.sample())
+        if term or trunc:
+            break
 
     assert env.recording
     action = env.action_space.sample()

@@ -31,6 +31,7 @@ class TransformReward(
         >>> _, rew, _, _, _ = env.step(0)
         >>> rew
         3.0
+
     """
 
     def __init__(

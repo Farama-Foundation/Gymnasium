@@ -137,7 +137,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Take an action for each parallel environment.
 
         Args:
@@ -349,10 +349,6 @@ class VectorWrapper(VectorEnv):
     def __repr__(self):
         """Return the string representation of the vectorized environment."""
         return f"<{self.__class__.__name__}, {self.env}>"
-
-    def __del__(self):
-        """Close the vectorized environment."""
-        self.env.__del__()
 
     @property
     def spec(self) -> EnvSpec | None:
