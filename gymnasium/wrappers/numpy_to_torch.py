@@ -100,7 +100,7 @@ class NumpyToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
         >>> import torch
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
-        >>> env = NumpyToTorchV0(env)
+        >>> env = NumpyToTorch(env)
         >>> obs, _ = env.reset(seed=123)
         >>> type(obs)
         <class 'torch.Tensor'>

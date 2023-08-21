@@ -32,7 +32,7 @@ class TransformAction(
         >>> obs
         array([-4.6397772e-01, -4.4808415e-04], dtype=float32)
         >>> env = gym.make("MountainCarContinuous-v0")
-        >>> env = LambdaActionV0(env, lambda a: 0.5 * a + 0.1, env.action_space)
+        >>> env = TransformAction(env, lambda a: 0.5 * a + 0.1, env.action_space)
         >>> _ = env.reset(seed=123)
         >>> obs, *_= env.step(np.array([0.0, 1.0]))
         >>> obs
@@ -129,7 +129,7 @@ class RescaleAction(
         >>> max_action = np.array([0.0, 0.5, 0.75], dtype=np.float32)
         >>> wrapped_env = RescaleAction(env, min_action=min_action, max_action=max_action)
         >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
-        >>> np.alltrue(obs == wrapped_env_obs)
+        >>> np.all(obs == wrapped_env_obs)
         True
     """
 

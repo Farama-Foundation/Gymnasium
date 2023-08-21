@@ -55,7 +55,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync", wrappers=(gym.wrappers.TimeAwareObservation,))
         >>> envs = gym.wrappers.vector.ClipReward(envs, min_reward=0.2, max_reward=0.8)
         >>> envs
-        <ClipRewardV0, SyncVectorEnv(CartPole-v1, num_envs=3)>
+        <ClipReward, SyncVectorEnv(CartPole-v1, num_envs=3)>
         >>> observations, infos = envs.reset(seed=123)
         >>> observations
         array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282,  0.        ],

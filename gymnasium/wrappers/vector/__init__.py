@@ -102,3 +102,5 @@ def __getattr__(wrapper_name: str):
         import_stmt = f"gymnasium.wrappers.vector.{_wrapper_to_class[wrapper_name]}"
         module = importlib.import_module(import_stmt)
         return getattr(module, wrapper_name)
+
+    raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")

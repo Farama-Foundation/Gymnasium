@@ -22,7 +22,7 @@ class StickyAction(
     Example:
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
-        >>> env = StickyActionV0(env, repeat_action_probability=0.9)
+        >>> env = StickyAction(env, repeat_action_probability=0.9)
         >>> env.reset(seed=123)
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
 

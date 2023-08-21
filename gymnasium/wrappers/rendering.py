@@ -34,7 +34,7 @@ class RenderCollection(
         Return the list of frames for the number of steps ``render`` wasn't called.
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RenderCollectionV0(env)
+        >>> env = RenderCollection(env)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
         ...     _ = env.step(env.action_space.sample())
@@ -50,7 +50,7 @@ class RenderCollection(
         Return the list of frames for the number of steps the episode was running.
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RenderCollectionV0(env, pop_frames=False)
+        >>> env = RenderCollection(env, pop_frames=False)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
         ...     _ = env.step(env.action_space.sample())
@@ -66,7 +66,7 @@ class RenderCollection(
         Collect all frames for all episodes, without clearing them when render is called
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RenderCollectionV0(env, pop_frames=False, reset_clean=False)
+        >>> env = RenderCollection(env, pop_frames=False, reset_clean=False)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
         ...     _ = env.step(env.action_space.sample())
@@ -172,7 +172,7 @@ class RecordVideo(
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> trigger = lambda t: t % 10 == 0
-        >>> env = RecordVideoV0(env, video_folder="./save_videos1", episode_trigger=trigger, disable_logger=True)
+        >>> env = RecordVideo(env, video_folder="./save_videos1", episode_trigger=trigger, disable_logger=True)
         >>> for i in range(50):
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
@@ -188,7 +188,7 @@ class RecordVideo(
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> trigger = lambda t: t % 200 == 0
-        >>> env = RecordVideoV0(env, video_folder="./save_videos2", step_trigger=trigger, video_length=100, disable_logger=True)
+        >>> env = RecordVideo(env, video_folder="./save_videos2", step_trigger=trigger, video_length=100, disable_logger=True)
         >>> for i in range(5):
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
@@ -204,7 +204,7 @@ class RecordVideo(
         >>> import os
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RecordVideoV0(env, video_folder="./save_videos3", video_length=1000, disable_logger=True)
+        >>> env = RecordVideo(env, video_folder="./save_videos3", video_length=1000, disable_logger=True)
         >>> for i in range(3):
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)

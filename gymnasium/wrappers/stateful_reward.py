@@ -51,7 +51,7 @@ class NormalizeReward(
         0.0008876301247721108
 
         >>> env = gym.make('MountainCarContinuous-v0')
-        >>> env = NormalizeRewardV1(env, gamma=0.99, epsilon=1e-8)
+        >>> env = NormalizeReward(env, gamma=0.99, epsilon=1e-8)
         >>> _ = env.reset(seed=123)
         >>> _ = env.action_space.seed(123)
         >>> episode_rewards = []

@@ -165,7 +165,7 @@ class TimeAwareObservation(
         *,
         dict_time_key: str = "time",
     ):
-        """Initialize :class:`TimeAwareObservationV0`.
+        """Initialize :class:`TimeAwareObservation`.
 
         Args:
             env: The environment to apply the wrapper
@@ -416,7 +416,7 @@ class NormalizeObservation(
         >>> obs
         array([ 0.1511158 ,  1.7183299 , -0.25533703, -2.8914354 ], dtype=float32)
         >>> env = gym.make("CartPole-v1")
-        >>> env = NormalizeObservationV0(env)
+        >>> env = NormalizeObservation(env)
         >>> obs, info = env.reset(seed=123)
         >>> term, trunc = False, False
         >>> while not (term or trunc):
@@ -480,7 +480,7 @@ class MaxAndSkipObservation(
         >>> obs4, *_ = env.step(1)
         >>> skip_and_max_obs = np.max(np.stack([obs3, obs4], axis=0), axis=0)
         >>> env = gym.make("CartPole-v1")
-        >>> wrapped_env = MaxAndSkipObservationV0(env)
+        >>> wrapped_env = MaxAndSkipObservation(env)
         >>> wrapped_obs0, *_ = wrapped_env.reset(seed=123)
         >>> wrapped_obs1, *_ = wrapped_env.step(1)
         >>> np.all(obs0 == wrapped_obs0)
@@ -539,6 +539,6 @@ class MaxAndSkipObservation(
             total_reward += float(reward)
             if terminated or truncated:
                 break
-        max_frame = self._obs_buffer.max(axis=0)
+        max_frame = np.max(self._obs_buffer, axis=0)
 
         return max_frame, total_reward, terminated, truncated, info

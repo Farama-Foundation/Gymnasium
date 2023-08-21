@@ -574,9 +574,8 @@ class RenderObservation(
 
     Example:
         Replace the observation with the rendered image:
-        >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
-        >>> env = RenderObservationV0(env, render_only=True)
+        >>> env = RenderObservation(env, render_only=True)
         >>> env.observation_space
         Box(0, 255, (400, 600, 3), uint8)
         >>> obs, _ = env.reset(seed=123)
@@ -589,9 +588,8 @@ class RenderObservation(
         True
 
         Add the rendered image to the original observation as a dictionary item:
-        >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
-        >>> env = RenderObservationV0(env, render_only=False)
+        >>> env = RenderObservation(env, render_only=False)
         >>> env.observation_space
         Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
         >>> obs, _ = env.reset(seed=123)
