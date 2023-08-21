@@ -131,8 +131,8 @@ class AsyncVectorEnv(VectorEnv):
         # Create a dummy environment to gather the metadata and observation / action space of the environment
         dummy_env = env_fns[0]()
 
+        # As we support `make_vec(spec)` then we can't include a `spec = dummy_env.spec` as this doesn't guarantee we can actual recreate the vector env.
         self.metadata = dummy_env.metadata
-        self.spec = dummy_env.spec
         self.render_mode = dummy_env.render_mode
 
         self.single_observation_space = dummy_env.observation_space

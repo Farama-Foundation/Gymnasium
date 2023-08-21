@@ -74,6 +74,7 @@ class SyncVectorEnv(VectorEnv):
         self.envs = [env_fn() for env_fn in env_fns]
 
         # Define core attributes using the sub-environments
+        # As we support `make_vec(spec)` then we can't include a `spec = self.envs[0].spec` as this doesn't guarantee we can actual recreate the vector env.
         self.num_envs = len(self.envs)
         self.metadata = self.envs[0].metadata
         self.render_mode = self.envs[0].render_mode
