@@ -38,6 +38,9 @@ class DelayObservationV0(
     Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
     the same shape as the observation space.
 
+    Note:
+        This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.
+
     Example:
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
@@ -51,9 +54,6 @@ class DelayObservationV0(
         (array([0., 0., 0., 0.], dtype=float32), 1.0, False, False, {})
         >>> env.step(env.action_space.sample())
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 1.0, False, False, {})
-
-    Note:
-        This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], delay: int):
@@ -402,6 +402,27 @@ class NormalizeObservationV0(
     Note:
         The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
         newly instantiated or the policy was changed recently.
+
+    Example:
+        >>> import numpy as np
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1")
+        >>> obs, info = env.reset(seed=123)
+        >>> term, trunc = False, False
+        >>> while not (term or trunc):
+        ...     obs, _, term, trunc, _ = env.step(1)
+        ...
+        >>> obs
+        array([ 0.1511158 ,  1.7183299 , -0.25533703, -2.8914354 ], dtype=float32)
+        >>> env = gym.make("CartPole-v1")
+        >>> env = NormalizeObservationV0(env)
+        >>> obs, info = env.reset(seed=123)
+        >>> term, trunc = False, False
+        >>> while not (term or trunc):
+        ...     obs, _, term, trunc, _ = env.step(1)
+        ...
+        >>> obs
+        array([ 2.0059888,  1.5676788, -1.9944268, -1.6120394], dtype=float32)
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
@@ -447,6 +468,24 @@ class MaxAndSkipObservationV0(
 
     Note:
         This wrapper is based on the wrapper from [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#MaxAndSkipEnv)
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1")
+        >>> obs0, *_ = env.reset(seed=123)
+        >>> obs1, *_ = env.step(1)
+        >>> obs2, *_ = env.step(1)
+        >>> obs3, *_ = env.step(1)
+        >>> obs4, *_ = env.step(1)
+        >>> skip_and_max_obs = np.max(np.stack([obs3, obs4], axis=0), axis=0)
+        >>> env = gym.make("CartPole-v1")
+        >>> wrapped_env = MaxAndSkipObservationV0(env)
+        >>> wrapped_obs0, *_ = wrapped_env.reset(seed=123)
+        >>> wrapped_obs1, *_ = wrapped_env.step(1)
+        >>> np.all(obs0 == wrapped_obs0)
+        True
+        >>> np.all(wrapped_obs1 == skip_and_max_obs)
+        True
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], skip: int = 4):
