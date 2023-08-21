@@ -73,7 +73,6 @@ class SyncVectorEnv(VectorEnv):
         # Define core attributes using the sub-environments
         self.num_envs = len(self.envs)
         self.metadata = self.envs[0].metadata
-        self.spec = self.envs[0].spec
 
         # Initialises the single spaces from the sub-environments
         self.single_observation_space = self.envs[0].observation_space
