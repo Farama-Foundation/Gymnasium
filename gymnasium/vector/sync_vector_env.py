@@ -73,6 +73,7 @@ class SyncVectorEnv(VectorEnv):
         # Define core attributes using the sub-environments
         self.num_envs = len(self.envs)
         self.metadata = self.envs[0].metadata
+        self.spec = self.envs[0].spec
 
         # Initialises the single spaces from the sub-environments
         self.single_observation_space = self.envs[0].observation_space
@@ -95,9 +96,10 @@ class SyncVectorEnv(VectorEnv):
 
     def reset(
         self,
+        *,
         seed: int | list[int] | None = None,
-        options: dict | None = None,
-    ):
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets each of the sub-environments and concatenate the results together.
 
         Args:
