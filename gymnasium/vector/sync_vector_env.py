@@ -7,7 +7,7 @@ from typing import Any, Callable, Iterator, Sequence
 import numpy as np
 
 from gymnasium import Env
-from gymnasium.core import ActType, ObsType
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import ArrayType, VectorEnv
 
@@ -74,8 +74,10 @@ class SyncVectorEnv(VectorEnv):
         self.envs = [env_fn() for env_fn in env_fns]
 
         # Define core attributes using the sub-environments
+        # As we support `make_vec(spec)` then we can't include a `spec = self.envs[0].spec` as this doesn't guarantee we can actual recreate the vector env.
         self.num_envs = len(self.envs)
         self.metadata = self.envs[0].metadata
+        self.render_mode = self.envs[0].render_mode
 
         # Initialises the single spaces from the sub-environments
         self.single_observation_space = self.envs[0].observation_space
@@ -131,10 +133,8 @@ class SyncVectorEnv(VectorEnv):
         self._observations = concatenate(
             self.single_observation_space, observations, self._observations
         )
-        if self.copy:
-            self._observations = deepcopy(self._observations)
 
-        return self._observations, infos
+        return deepcopy(self._observations) if self.copy else self._observations, infos
 
     def step(
         self, actions: ActType
@@ -171,16 +171,18 @@ class SyncVectorEnv(VectorEnv):
         self._observations = concatenate(
             self.single_observation_space, observations, self._observations
         )
-        if self.copy:
-            self._observations = deepcopy(self._observations)
 
         return (
-            self._observations,
+            deepcopy(self._observations) if self.copy else self._observations,
             np.copy(self._rewards),
             np.copy(self._terminations),
             np.copy(self._truncations),
             infos,
         )
+
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the rendered frames from the environments."""
+        return tuple(env.render() for env in self.envs)
 
     def call(self, name: str, *args: Any, **kwargs: Any) -> tuple[Any, ...]:
         """Calls a sub-environment method with name and applies args and kwargs.

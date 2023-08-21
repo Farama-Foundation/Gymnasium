@@ -43,9 +43,7 @@ def test_reset_sync_vector_env():
 @pytest.mark.parametrize("use_single_action_space", [True, False])
 def test_step_sync_vector_env(use_single_action_space):
     """Test sync vector `steps` function."""
-    env_fns = [make_env("FrozenLake-v1", i) for i in range(8)]
-
-    env = SyncVectorEnv(env_fns)
+    env = SyncVectorEnv([make_env("FrozenLake-v1", i) for i in range(8)])
     env.reset()
 
     assert isinstance(env.single_action_space, Discrete)
@@ -55,7 +53,7 @@ def test_step_sync_vector_env(use_single_action_space):
         actions = [env.single_action_space.sample() for _ in range(8)]
     else:
         actions = env.action_space.sample()
-    observations, rewards, terminateds, truncateds, _ = env.step(actions)
+    observations, rewards, terminations, truncations, _ = env.step(actions)
 
     env.close()
 
@@ -70,15 +68,31 @@ def test_step_sync_vector_env(use_single_action_space):
     assert rewards.ndim == 1
     assert rewards.size == 8
 
-    assert isinstance(terminateds, np.ndarray)
-    assert terminateds.dtype == np.bool_
-    assert terminateds.ndim == 1
-    assert terminateds.size == 8
+    assert isinstance(terminations, np.ndarray)
+    assert terminations.dtype == np.bool_
+    assert terminations.ndim == 1
+    assert terminations.size == 8
 
-    assert isinstance(truncateds, np.ndarray)
-    assert truncateds.dtype == np.bool_
-    assert truncateds.ndim == 1
-    assert truncateds.size == 8
+    assert isinstance(truncations, np.ndarray)
+    assert truncations.dtype == np.bool_
+    assert truncations.ndim == 1
+    assert truncations.size == 8
+
+
+def test_render_sync_vector():
+    envs = SyncVectorEnv(
+        [make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)]
+    )
+    assert envs.render_mode == "rgb_array"
+
+    envs.reset()
+    rendered_frames = envs.render()
+    assert isinstance(rendered_frames, tuple)
+    assert len(rendered_frames) == envs.num_envs
+    assert all(isinstance(frame, np.ndarray) for frame in rendered_frames)
+
+    envs = SyncVectorEnv([make_env("CartPole-v1", i) for i in range(3)])
+    assert envs.render_mode is None
 
 
 def test_call_sync_vector_env():

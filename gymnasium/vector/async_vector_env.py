@@ -13,7 +13,7 @@ from typing import Any, Callable, Sequence
 import numpy as np
 
 from gymnasium import logger
-from gymnasium.core import ActType, Env, ObsType
+from gymnasium.core import ActType, Env, ObsType, RenderFrame
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
@@ -130,7 +130,10 @@ class AsyncVectorEnv(VectorEnv):
         # This would be nice to get rid of, but without it there's a deadlock between shared memory and pipes
         # Create a dummy environment to gather the metadata and observation / action space of the environment
         dummy_env = env_fns[0]()
+
+        # As we support `make_vec(spec)` then we can't include a `spec = dummy_env.spec` as this doesn't guarantee we can actual recreate the vector env.
         self.metadata = dummy_env.metadata
+        self.render_mode = dummy_env.render_mode
 
         self.single_observation_space = dummy_env.observation_space
         self.single_action_space = dummy_env.action_space
@@ -408,6 +411,10 @@ class AsyncVectorEnv(VectorEnv):
         """
         self.call_async(name, *args, **kwargs)
         return self.call_wait()
+
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns a list of rendered frames from the environments."""
+        return self.call("render")
 
     def call_async(self, name: str, *args, **kwargs):
         """Calls the method with name asynchronously and apply args and kwargs to the method.
