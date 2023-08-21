@@ -226,7 +226,7 @@ class AsyncVectorEnv(VectorEnv):
 
         if seed is None:
             seed = [None for _ in range(self.num_envs)]
-        if isinstance(seed, int):
+        elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
         assert len(seed) == self.num_envs
 
@@ -236,14 +236,9 @@ class AsyncVectorEnv(VectorEnv):
                 str(self._state.value),
             )
 
-        for pipe, single_seed in zip(self.parent_pipes, seed):
-            single_kwargs = {}
-            if single_seed is not None:
-                single_kwargs["seed"] = single_seed
-            if options is not None:
-                single_kwargs["options"] = options
-
-            pipe.send(("reset", single_kwargs))
+        for pipe, env_seed in zip(self.parent_pipes, seed):
+            env_kwargs = {"seed": env_seed, "options": options}
+            pipe.send(("reset", env_kwargs))
         self._state = AsyncState.WAITING_RESET
 
     def reset_wait(
@@ -278,7 +273,6 @@ class AsyncVectorEnv(VectorEnv):
 
         results, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
         self._raise_if_errors(successes)
-        self._state = AsyncState.DEFAULT
 
         infos = {}
         results, info_data = zip(*results)
@@ -290,13 +284,14 @@ class AsyncVectorEnv(VectorEnv):
                 self.single_observation_space, results, self.observations
             )
 
+        self._state = AsyncState.DEFAULT
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
     def step(self, actions):
         """Take an action for each parallel environment.
 
         Args:
-            actions: element of :attr:`action_space` Batch of actions.
+            actions: element of :attr:`action_space` batch of actions.
 
         Returns:
             Batch of (observations, rewards, terminations, truncations, infos)
@@ -324,8 +319,8 @@ class AsyncVectorEnv(VectorEnv):
                 str(self._state.value),
             )
 
-        actions = iterate(self.action_space, actions)
-        for pipe, action in zip(self.parent_pipes, actions):
+        iter_actions = iterate(self.action_space, actions)
+        for pipe, action in zip(self.parent_pipes, iter_actions):
             pipe.send(("step", action))
         self._state = AsyncState.WAITING_STEP
 
@@ -358,35 +353,36 @@ class AsyncVectorEnv(VectorEnv):
                 f"The call to `step_wait` has timed out after {timeout} second(s)."
             )
 
-        observations_list, rewards, terminateds, truncateds, infos = [], [], [], [], {}
+        observations, rewards, terminations, truncations, infos = [], [], [], [], {}
         successes = []
-        for i, pipe in enumerate(self.parent_pipes):
-            result, success = pipe.recv()
-            obs, rew, terminated, truncated, info = result
+        for env_idx, pipe in enumerate(self.parent_pipes):
+            env_step_return, success = pipe.recv()
 
             successes.append(success)
             if success:
-                observations_list.append(obs)
-                rewards.append(rew)
-                terminateds.append(terminated)
-                truncateds.append(truncated)
-                infos = self._add_info(infos, info, i)
+                env_obs, env_reward, env_terminated, env_truncated, env_info = env_step_return
+
+                observations.append(env_obs)
+                rewards.append(env_reward)
+                terminations.append(env_terminated)
+                truncations.append(env_truncated)
+                infos = self._add_info(infos, env_info, env_idx)
 
         self._raise_if_errors(successes)
-        self._state = AsyncState.DEFAULT
 
         if not self.shared_memory:
             self.observations = concatenate(
                 self.single_observation_space,
-                observations_list,
+                observations,
                 self.observations,
             )
 
+        self._state = AsyncState.DEFAULT
         return (
             deepcopy(self.observations) if self.copy else self.observations,
             np.array(rewards, dtype=np.float64),
-            np.array(terminateds, dtype=np.bool_),
-            np.array(truncateds, dtype=np.bool_),
+            np.array(terminations, dtype=np.bool_),
+            np.array(truncations, dtype=np.bool_),
             infos,
         )
 
