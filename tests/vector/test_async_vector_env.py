@@ -63,7 +63,9 @@ def test_reset_async_vector_env(shared_memory):
 
 
 def test_render_sync_vector():
-    envs = AsyncVectorEnv([make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)])
+    envs = AsyncVectorEnv(
+        [make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)]
+    )
     assert envs.render_mode == "rgb_array"
 
     envs.reset()

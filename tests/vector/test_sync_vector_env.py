@@ -3,7 +3,6 @@
 import numpy as np
 import pytest
 
-import gymnasium
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from gymnasium.vector import SyncVectorEnv
@@ -81,7 +80,9 @@ def test_step_sync_vector_env(use_single_action_space):
 
 
 def test_render_sync_vector():
-    envs = SyncVectorEnv([make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)])
+    envs = SyncVectorEnv(
+        [make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)]
+    )
     assert envs.render_mode == "rgb_array"
 
     envs.reset()
