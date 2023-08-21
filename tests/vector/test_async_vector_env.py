@@ -73,9 +73,11 @@ def test_render_async_vector():
     assert isinstance(rendered_frames, tuple)
     assert len(rendered_frames) == envs.num_envs
     assert all(isinstance(frame, np.ndarray) for frame in rendered_frames)
+    envs.close()
 
-    # envs = AsyncVectorEnv([make_env("CartPole-v1", i) for i in range(3)])
-    # assert envs.render_mode is None
+    envs = AsyncVectorEnv([make_env("CartPole-v1", i) for i in range(3)])
+    assert envs.render_mode is None
+    envs.close()
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])
