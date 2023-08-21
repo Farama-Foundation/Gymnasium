@@ -1,5 +1,4 @@
 """Test suite for import wrappers."""
-
 import re
 
 import pytest
@@ -11,30 +10,6 @@ from gymnasium.wrappers import __all__
 
 def test_import_wrappers():
     """Test that all wrappers can be imported."""
-    # Test that a deprecated wrapper raises a DeprecatedWrapper
-    with pytest.raises(
-        wrappers.DeprecatedWrapper,
-        match=re.escape("'NormalizeRewardV0' is now deprecated"),
-    ):
-        getattr(wrappers, "NormalizeRewardV0")
-
-    # Test that an invalid version raises an AttributeError
-    with pytest.raises(
-        AttributeError,
-        match=re.escape(
-            "module 'gymnasium.wrappers' has no attribute 'ClipRewardVT', did you mean"
-        ),
-    ):
-        getattr(wrappers, "ClipRewardVT")
-
-    with pytest.raises(
-        AttributeError,
-        match=re.escape(
-            "module 'gymnasium.wrappers' has no attribute 'ClipRewardV99', did you mean"
-        ),
-    ):
-        getattr(wrappers, "ClipRewardV99")
-
     # Test that an invalid wrapper raises an AttributeError
     with pytest.raises(
         AttributeError,
@@ -56,3 +31,21 @@ def test_all_wrappers_shortened(wrapper_name):
 
 def test_wrapper_vector():
     assert gymnasium.wrappers.vector is not None
+
+
+@pytest.mark.parametrize(
+    "wrapper_name",
+    ("AutoResetWrapper", "FrameStack", "PixelObservationWrapper", "VectorListInfo"),
+)
+def test_renamed_wrappers(wrapper_name):
+    with pytest.raises(
+        AttributeError, match=f"{wrapper_name!r} has been renamed with"
+    ) as err_message:
+        getattr(wrappers, wrapper_name)
+
+    new_wrapper_name = err_message.value.args[0][len(wrapper_name) + 35 : -1]
+    if "vector." in new_wrapper_name:
+        no_vector_wrapper_name = new_wrapper_name[len("vector.") :]
+        assert getattr(gymnasium.wrappers.vector, no_vector_wrapper_name)
+    else:
+        assert getattr(gymnasium.wrappers, new_wrapper_name)

@@ -9,18 +9,18 @@
 ## Implemented Wrappers
 
 ```{eval-rst}
-.. autoclass:: gymnasium.wrappers.LambdaObservationV0
-.. autoclass:: gymnasium.wrappers.DelayObservationV0
-.. autoclass:: gymnasium.wrappers.DTypeObervationV0
-.. autoclass:: gymnasium.wrappers.FilterObservationV0
-.. autoclass:: gymnasium.wrappers.FlattenObservationV0
-.. autoclass:: gymnasium.wrappers.FrameStackObservationV0
-.. autoclass:: gymnasium.wrappers.GrayscaleObservationV0
-.. autoclass:: gymnasium.wrappers.MaxAndSkipObservationV0
-.. autoclass:: gymnasium.wrappers.NormalizeObservationV0
-.. autoclass:: gymnasium.wrappers.RenderObservationV0
-.. autoclass:: gymnasium.wrappers.ResizeObservationV0
-.. autoclass:: gymnasium.wrappers.ReshapeObservationV0
-.. autoclass:: gymnasium.wrappers.RescaleObservationV0
-.. autoclass:: gymnasium.wrappers.TimeAwareObservationV0
+.. autoclass:: gymnasium.wrappers.TransformObservation
+.. autoclass:: gymnasium.wrappers.DelayObservation
+.. autoclass:: gymnasium.wrappers.DtypeObservation
+.. autoclass:: gymnasium.wrappers.FilterObservation
+.. autoclass:: gymnasium.wrappers.FlattenObservation
+.. autoclass:: gymnasium.wrappers.FrameStackObservation
+.. autoclass:: gymnasium.wrappers.GrayscaleObservation
+.. autoclass:: gymnasium.wrappers.MaxAndSkipObservation
+.. autoclass:: gymnasium.wrappers.NormalizeObservation
+.. autoclass:: gymnasium.wrappers.RenderObservation
+.. autoclass:: gymnasium.wrappers.ResizeObservation
+.. autoclass:: gymnasium.wrappers.ReshapeObservation
+.. autoclass:: gymnasium.wrappers.RescaleObservation
+.. autoclass:: gymnasium.wrappers.TimeAwareObservation
 ```

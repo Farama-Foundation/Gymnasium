@@ -29,7 +29,7 @@ def test_functionality(
     n_steps=100,
 ):
     env = SyncVectorEnv([thunk for _ in range(n_envs)])
-    env = wrappers.vector.NormalizeRewardV1(env)
+    env = wrappers.vector.NormalizeReward(env)
 
     env.reset()
     for _ in range(n_steps):
@@ -54,14 +54,14 @@ def test_functionality(
 
 def test_against_wrapper(n_envs=3, n_steps=100, rtol=0.01, atol=0):
     vec_env = SyncVectorEnv([thunk for _ in range(n_envs)])
-    vec_env = wrappers.vector.NormalizeRewardV1(vec_env)
+    vec_env = wrappers.vector.NormalizeReward(vec_env)
     vec_env.reset()
     for _ in range(n_steps):
         action = vec_env.action_space.sample()
         vec_env.step(action)
 
-    env = wrappers.AutoresetV0(thunk())
-    env = wrappers.NormalizeRewardV1(env)
+    env = wrappers.Autoreset(thunk())
+    env = wrappers.NormalizeReward(env)
     env.reset()
     for _ in range(n_steps):
         action = env.action_space.sample()

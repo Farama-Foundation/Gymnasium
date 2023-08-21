@@ -23,14 +23,14 @@ def test_against_wrapper(
     var_rtol=np.array([0.15, 0.15, 0.18]),
 ):
     vec_env = SyncVectorEnv([thunk for _ in range(n_envs)])
-    vec_env = wrappers.vector.NormalizeObservationV0(vec_env)
+    vec_env = wrappers.vector.NormalizeObservation(vec_env)
 
     vec_env.reset()
     for _ in range(n_steps):
         vec_env.step(vec_env.action_space.sample())
 
-    env = wrappers.AutoresetV0(thunk())
-    env = wrappers.NormalizeObservationV0(env)
+    env = wrappers.Autoreset(thunk())
+    env = wrappers.NormalizeObservation(env)
     env.reset()
     for _ in range(n_envs * n_steps):
         env.step(env.action_space.sample())
@@ -41,7 +41,7 @@ def test_against_wrapper(
 
 def test_update_running_mean():
     env = SyncVectorEnv([thunk for _ in range(2)])
-    env = wrappers.vector.NormalizeObservationV0(env)
+    env = wrappers.vector.NormalizeObservation(env)
 
     # Default value is True
     assert env.update_running_mean

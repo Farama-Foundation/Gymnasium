@@ -5,7 +5,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.wrappers import DelayObservationV0
+from gymnasium.wrappers import DelayObservation
 from gymnasium.wrappers.utils import create_zero_array
 from tests.wrappers.utils import SEED, TESTING_OBS_ENVS, TESTING_OBS_ENVS_IDS
 
@@ -21,7 +21,7 @@ def test_env_obs(env, delay: int = 3, extra_steps: int = 4):
         obs, _, _, _, _ = env.step(env.action_space.sample())
         undelayed_obs.append(obs)
 
-    env = DelayObservationV0(env, delay=delay)
+    env = DelayObservation(env, delay=delay)
     example_zero_obs = create_zero_array(env.observation_space)
     env.action_space.seed(SEED)
     obs, _ = env.reset(seed=SEED)
@@ -46,7 +46,7 @@ def test_delay_values(delay):
     env = gym.make("CartPole-v1")
     first_obs, _ = env.reset(seed=123)
 
-    env = DelayObservationV0(gym.make("CartPole-v1"), delay=delay)
+    env = DelayObservation(gym.make("CartPole-v1"), delay=delay)
     zero_obs = create_zero_array(env.observation_space)
     obs, _ = env.reset(seed=123)
     assert data_equivalence(obs, zero_obs)
@@ -68,10 +68,10 @@ def test_delay_failures():
             "The delay is expected to be an integer, actual type: <class 'float'>"
         ),
     ):
-        DelayObservationV0(env, delay=1.0)
+        DelayObservation(env, delay=1.0)
 
     with pytest.raises(
         ValueError,
         match=re.escape("The delay needs to be greater than zero, actual value: -1"),
     ):
-        DelayObservationV0(env, delay=-1)
+        DelayObservation(env, delay=-1)

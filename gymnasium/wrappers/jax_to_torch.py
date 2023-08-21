@@ -40,7 +40,7 @@ except ImportError:
     )
 
 
-__all__ = ["JaxToTorchV0", "jax_to_torch", "torch_to_jax", "Device"]
+__all__ = ["JaxToTorch", "jax_to_torch", "torch_to_jax", "Device"]
 
 
 @functools.singledispatch
@@ -114,13 +114,32 @@ def _jax_iterable_to_torch(
     return type(value)(jax_to_torch(v, device) for v in value)
 
 
-class JaxToTorchV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
+class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
 
     Note:
         For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
+
+    Example:
+        >>> import torch                                                # doctest: +SKIP
+        >>> import gymnasium as gym                                     # doctest: +SKIP
+        >>> env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP
+        >>> env = JaxtoTorchV0(env)                                     # doctest: +SKIP
+        >>> obs, _ = env.reset(seed=123)                                # doctest: +SKIP
+        >>> type(obs)                                                   # doctest: +SKIP
+        <class 'torch.Tensor'>
+        >>> action = torch.tensor(env.action_space.sample())            # doctest: +SKIP
+        >>> obs, reward, terminated, truncated, info = env.step(action) # doctest: +SKIP
+        >>> type(obs)                                                   # doctest: +SKIP
+        <class 'torch.Tensor'>
+        >>> type(reward)                                                # doctest: +SKIP
+        <class 'float'>
+        >>> type(terminated)                                            # doctest: +SKIP
+        <class 'bool'>
+        >>> type(truncated)                                             # doctest: +SKIP
+        <class 'bool'>
     """
 
     def __init__(self, env: gym.Env, device: Device | None = None):

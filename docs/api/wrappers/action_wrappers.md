@@ -11,8 +11,8 @@
 ## Available Action Wrappers
 
 ```{eval-rst}
-.. autoclass:: gymnasium.wrappers.LambdaActionV0
-.. autoclass:: gymnasium.wrappers.ClipActionV0
-.. autoclass:: gymnasium.wrappers.RescaleActionV0
-.. autoclass:: gymnasium.wrappers.StickyActionV0
+.. autoclass:: gymnasium.wrappers.TransformAction
+.. autoclass:: gymnasium.wrappers.ClipAction
+.. autoclass:: gymnasium.wrappers.RescaleAction
+.. autoclass:: gymnasium.wrappers.StickyAction
 ```
