@@ -20,12 +20,15 @@ class SyncVectorEnv(VectorEnv):
 
     Example:
         >>> import gymnasium as gym
+        >>> envs = gym.make_vec("Pendulum-v1", num_envs=2, vectorization_mode="sync")
+        >>> envs
+        SyncVectorEnv(Pendulum-v1, num_envs=2)
         >>> envs = gym.vector.SyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
         >>> envs
-        SyncVectorEnv(Pendulum-v1, num_envs=2)
+        SyncVectorEnv(num_envs=2)
         >>> obs, infos = envs.reset(seed=42)
         >>> obs
         array([[-0.14995256,  0.9886932 , -0.12224312],
@@ -73,7 +76,6 @@ class SyncVectorEnv(VectorEnv):
         # Define core attributes using the sub-environments
         self.num_envs = len(self.envs)
         self.metadata = self.envs[0].metadata
-        self.spec = self.envs[0].spec
         self.render_mode = self.envs[0].render_mode
 
         # Initialises the single spaces from the sub-environments

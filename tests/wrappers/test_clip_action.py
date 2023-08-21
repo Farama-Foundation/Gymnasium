@@ -3,7 +3,7 @@
 import numpy as np
 
 from gymnasium.spaces import Box
-from gymnasium.wrappers import ClipActionV0
+from gymnasium.wrappers import ClipAction
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import record_action_step
 
@@ -14,7 +14,7 @@ def test_clip_action_wrapper():
         action_space=Box(np.array([0, 0, 3]), np.array([1, 2, 4])),
         step_func=record_action_step,
     )
-    wrapped_env = ClipActionV0(env)
+    wrapped_env = ClipAction(env)
 
     sampled_action = np.array([-1, 5, 3.5], dtype=np.float32)
     assert sampled_action not in env.action_space

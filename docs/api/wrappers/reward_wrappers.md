@@ -13,7 +13,7 @@ title: Reward Wrappers
 ## Implemented Wrappers
 
 ```{eval-rst}
-.. autoclass:: gymnasium.wrappers.LambdaRewardV0
-.. autoclass:: gymnasium.wrappers.NormalizeRewardV1
-.. autoclass:: gymnasium.wrappers.ClipRewardV0
+.. autoclass:: gymnasium.wrappers.TransformReward
+.. autoclass:: gymnasium.wrappers.NormalizeReward
+.. autoclass:: gymnasium.wrappers.ClipReward
 ```

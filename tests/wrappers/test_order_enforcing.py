@@ -3,7 +3,7 @@ import pytest
 
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.error import ResetNeeded
-from gymnasium.wrappers import OrderEnforcingV0
+from gymnasium.wrappers import OrderEnforcing
 from tests.wrappers.utils import has_wrapper
 
 
@@ -11,10 +11,10 @@ def test_order_enforcing():
     """Checks that the order enforcing works as expected, raising an error before reset is called and not after."""
     # The reason for not using gym.make is that all environments are by default wrapped in the order enforcing wrapper
     env = CartPoleEnv(render_mode="rgb_array_list")
-    assert not has_wrapper(env, OrderEnforcingV0)
+    assert not has_wrapper(env, OrderEnforcing)
 
     # Assert that the order enforcing works for step and render before reset
-    order_enforced_env = OrderEnforcingV0(env)
+    order_enforced_env = OrderEnforcing(env)
     assert order_enforced_env.has_reset is False
     with pytest.raises(ResetNeeded):
         order_enforced_env.step(0)
@@ -30,5 +30,5 @@ def test_order_enforcing():
 
     # Assert that with disable_render_order_enforcing works, the environment has already been reset
     env = CartPoleEnv(render_mode="rgb_array_list")
-    env = OrderEnforcingV0(env, disable_render_order_enforcing=True)
+    env = OrderEnforcing(env, disable_render_order_enforcing=True)
     env.render()  # no assertion error

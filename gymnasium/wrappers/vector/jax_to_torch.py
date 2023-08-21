@@ -9,10 +9,10 @@ from gymnasium.vector.vector_env import ArrayType
 from gymnasium.wrappers.jax_to_torch import Device, jax_to_torch, torch_to_jax
 
 
-__all__ = ["JaxToTorchV0"]
+__all__ = ["JaxToTorch"]
 
 
-class JaxToTorchV0(VectorWrapper):
+class JaxToTorch(VectorWrapper):
     """Wraps a Jax-based vector environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations, rewards, terminations and truncations will be returned as PyTorch Tensors.

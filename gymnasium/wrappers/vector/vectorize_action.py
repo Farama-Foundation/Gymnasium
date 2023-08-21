@@ -10,10 +10,10 @@ from gymnasium import Space
 from gymnasium.core import ActType, Env
 from gymnasium.vector import VectorActionWrapper, VectorEnv
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
-from gymnasium.wrappers import lambda_action
+from gymnasium.wrappers import transform_action
 
 
-class LambdaActionV0(VectorActionWrapper):
+class TransformAction(VectorActionWrapper):
     """Transforms an action via a function provided to the wrapper.
 
     The function :attr:`func` will be applied to all vector actions.
@@ -45,8 +45,8 @@ class LambdaActionV0(VectorActionWrapper):
         return self.func(actions)
 
 
-class VectorizeLambdaActionV0(VectorActionWrapper):
-    """Vectorizes a single-agent lambda action wrapper for vector environments."""
+class VectorizeTransformAction(VectorActionWrapper):
+    """Vectorizes a single-agent transform action wrapper for vector environments."""
 
     class VectorizedEnv(Env):
         """Fake single-agent environment uses for the single-agent wrapper."""
@@ -56,7 +56,10 @@ class VectorizeLambdaActionV0(VectorActionWrapper):
             self.action_space = action_space
 
     def __init__(
-        self, env: VectorEnv, wrapper: type[lambda_action.LambdaActionV0], **kwargs: Any
+        self,
+        env: VectorEnv,
+        wrapper: type[transform_action.TransformAction],
+        **kwargs: Any,
     ):
         """Constructor for the vectorized lambda action wrapper.
 
@@ -107,7 +110,7 @@ class VectorizeLambdaActionV0(VectorActionWrapper):
             )
 
 
-class ClipActionV0(VectorizeLambdaActionV0):
+class ClipAction(VectorizeTransformAction):
     """Clip the continuous action within the valid :class:`Box` observation space bound."""
 
     def __init__(self, env: VectorEnv):
@@ -116,10 +119,10 @@ class ClipActionV0(VectorizeLambdaActionV0):
         Args:
             env: The vector environment to wrap
         """
-        super().__init__(env, lambda_action.ClipActionV0)
+        super().__init__(env, transform_action.ClipAction)
 
 
-class RescaleActionV0(VectorizeLambdaActionV0):
+class RescaleAction(VectorizeTransformAction):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action]."""
 
     def __init__(
@@ -137,7 +140,7 @@ class RescaleActionV0(VectorizeLambdaActionV0):
         """
         super().__init__(
             env,
-            lambda_action.RescaleActionV0,
+            transform_action.RescaleAction,
             min_action=min_action,
             max_action=max_action,
         )

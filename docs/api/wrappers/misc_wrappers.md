@@ -8,26 +8,26 @@ title: Misc Wrappers
 ## Common Wrappers
 
 ```{eval-rst}
-.. autoclass:: gymnasium.wrappers.TimeLimitV0
-.. autoclass:: gymnasium.wrappers.RecordVideoV0
-.. autoclass:: gymnasium.wrappers.RecordEpisodeStatisticsV0
-.. autoclass:: gymnasium.wrappers.AtariPreprocessingV0
+.. autoclass:: gymnasium.wrappers.TimeLimit
+.. autoclass:: gymnasium.wrappers.RecordVideo
+.. autoclass:: gymnasium.wrappers.RecordEpisodeStatistics
+.. autoclass:: gymnasium.wrappers.AtariPreprocessing
 ```
 
 ## Uncommon Wrappers
 
 ```{eval-rst}
-.. autoclass:: gymnasium.wrappers.AutoresetV0
-.. autoclass:: gymnasium.wrappers.PassiveEnvCheckerV0
-.. autoclass:: gymnasium.wrappers.HumanRenderingV0
-.. autoclass:: gymnasium.wrappers.OrderEnforcingV0
-.. autoclass:: gymnasium.wrappers.RenderCollectionV0
+.. autoclass:: gymnasium.wrappers.Autoreset
+.. autoclass:: gymnasium.wrappers.PassiveEnvChecker
+.. autoclass:: gymnasium.wrappers.HumanRendering
+.. autoclass:: gymnasium.wrappers.OrderEnforcing
+.. autoclass:: gymnasium.wrappers.RenderCollection
 ```
 
 ## Data Conversion Wrappers
 
 ```{eval-rst}
-.. autoclass:: gymnasium.wrappers.JaxToNumpyV0
-.. autoclass:: gymnasium.wrappers.JaxToTorchV0
-.. autoclass:: gymnasium.wrappers.NumpyToTorchV0
+.. autoclass:: gymnasium.wrappers.JaxToNumpy
+.. autoclass:: gymnasium.wrappers.JaxToTorch
+.. autoclass:: gymnasium.wrappers.NumpyToTorch
 ```
