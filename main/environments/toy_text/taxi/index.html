@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Cliff Walking" href="../cliff_walking/" /><link rel="prev" title="Blackjack" href="../blackjack/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/toy_text/taxi.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Taxi - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -466,7 +466,7 @@
           <article role="main">
             
             <section id="taxi">
-<h1>Taxi<a class="headerlink" href="#taxi" title="Permalink to this heading">#</a></h1>
+<h1>Taxi<a class="headerlink" href="#taxi" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/taxi.gif"><img alt="../../../_images/taxi.gif" src="../../../_images/taxi.gif" style="width: 200px;" /></a>
 </figure>
@@ -494,7 +494,7 @@
 <p>The Taxi Problem involves navigating to passengers in a grid world, picking them up and dropping them
 off at one of four locations.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>There are four designated pick-up and drop-off locations (Red, Green, Yellow and Blue) in the
 5x5 grid world. The taxi starts off at a random square and the passenger at one of the
 designated locations.</p>
@@ -518,7 +518,7 @@ for each step where another reward is not received.</p>
 by Tom Dietterich [<a href="#taxi_ref">1</a>].</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
 <p>The action shape is <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> in the range <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">5}</span></code> indicating
 which direction to move the taxi or to pickup/drop off passengers.</p>
 <ul class="simple">
@@ -531,7 +531,7 @@ which direction to move the taxi or to pickup/drop off passengers.</p>
 </ul>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
 <p>There are 500 discrete states since there are 25 taxi positions, 5 possible
 locations of the passenger (including the case when the passenger is in the
 taxi), and 4 destination locations.</p>
@@ -561,11 +561,11 @@ successful episodes, when both the passenger and the taxi are at the destination
 This gives a total of 404 reachable discrete states.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
 <p>The episode starts with the player in a random state.</p>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>-1 per step unless other reward is triggered.</p></li>
 <li><p>+20 delivering passenger.</p></li>
@@ -575,7 +575,7 @@ This gives a total of 404 reachable discrete states.</p>
 penalty. Noops can be avoided by sampling the <code class="docutils literal notranslate"><span class="pre">action_mask</span></code> returned in <code class="docutils literal notranslate"><span class="pre">info</span></code>.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
 <p>The episode ends if the following happens:</p>
 <ul class="simple">
 <li><p>Termination:
@@ -585,7 +585,7 @@ penalty. Noops can be avoided by sampling the <code class="docutils literal notr
 </ul>
 </section>
 <section id="information">
-<h2>Information<a class="headerlink" href="#information" title="Permalink to this heading">#</a></h2>
+<h2>Information<a class="headerlink" href="#information" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">step()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> return a dict with the following keys:</p>
 <ul class="simple">
 <li><p>p - transition proability for the state.</p></li>
@@ -601,19 +601,19 @@ if the action will change the state.</p>
 Or with a Q-value based algorithm <code class="docutils literal notranslate"><span class="pre">action</span> <span class="pre">=</span> <span class="pre">np.argmax(q_values[obs,</span> <span class="pre">np.where(info[&quot;action_mask&quot;]</span> <span class="pre">==</span> <span class="pre">1)[0]])</span></code>.</p>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Taxi-v3&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <p><a id="taxi_ref"></a>[1] T. G. Dietterich, “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition,”
 Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.</p>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information</p></li>
 <li><p>v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.</p></li>
@@ -779,9 +779,9 @@ Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, 
         })()
       </script>
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

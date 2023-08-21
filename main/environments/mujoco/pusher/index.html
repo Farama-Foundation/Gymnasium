@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Reacher" href="../reacher/" /><link rel="prev" title="Inverted Pendulum" href="../inverted_pendulum/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/mujoco/pusher.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Pusher - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -466,7 +466,7 @@
           <article role="main">
             
             <section id="pusher">
-<h1>Pusher<a class="headerlink" href="#pusher" title="Permalink to this heading">#</a></h1>
+<h1>Pusher<a class="headerlink" href="#pusher" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/pusher.gif"><img alt="../../../_images/pusher.gif" src="../../../_images/pusher.gif" style="width: 200px;" /></a>
 </figure>
@@ -492,7 +492,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>“Pusher” is a multi-jointed robot arm which is very similar to that of a human.
 The goal is to move a target cylinder (called <em>object</em>) to a goal position using the robot’s end effector (called <em>fingertip</em>).
 The robot consists of shoulder, elbow, forearm, and wrist joints.</p>
@@ -524,7 +524,7 @@ The robot consists of shoulder, elbow, forearm, and wrist joints.</p>
 <p>For more information see section “Version History”.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
 <p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-2,</span> <span class="pre">2,</span> <span class="pre">(7,),</span> <span class="pre">float32)</span></code>. An action <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> represents the torques applied at the hinge joints.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -600,7 +600,7 @@ The robot consists of shoulder, elbow, forearm, and wrist joints.</p>
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
 <p>Observations consist of</p>
 <ul class="simple">
 <li><p>Angle of rotational joints on the pusher</p></li>
@@ -814,7 +814,7 @@ same as human joints.</p>
 </div>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
 <p>The total reward is: <em><strong>reward</strong></em> <em>=</em> <em>reward_dist + reward_ctrl + reward_near</em>.</p>
 <ul class="simple">
 <li><p><em>reward_near</em>:
@@ -835,7 +835,7 @@ where $w</em>{control}$ is the <code class="docutils literal notranslate"><span 
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
 <p>The initial position state of the Pusher arm is $0_{6}$.
 The initial position state of the object is $\mathcal{U}<em>{[[-0.3, -0.2], [0, 0.2]]}$.
 The position state of the goal is (permanently) $[0.45, -0.05, -0.323]$.
@@ -847,18 +847,18 @@ The velocity state of the goal is (permanently) $0_3$.</p>
 <p>The default frame rate is 5, with each frame lasting for 0.01, so <em>dt = 5 * 0.01 = 0.05</em>.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
 <section id="termination">
-<h3>Termination<a class="headerlink" href="#termination" title="Permalink to this heading">#</a></h3>
+<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">#</a></h3>
 <p>The Pusher never terminates.</p>
 </section>
 <section id="truncation">
-<h3>Truncation<a class="headerlink" href="#truncation" title="Permalink to this heading">#</a></h3>
+<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
 <p>The default duration of an episode is 100 timesteps</p>
 </section>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
 <p>Pusher provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
 These parameters can be applied during <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> in the following way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -900,7 +900,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v5:</p>
 <ul>
@@ -1090,9 +1090,9 @@ These parameters can be applied during <code class="docutils literal notranslate
         })()
       </script>
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

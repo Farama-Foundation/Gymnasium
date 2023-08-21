@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Functional Environment" href="functional/" /><link rel="prev" title="Utils" href="../utils/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/experimental.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Experimental - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -475,15 +475,15 @@
           <article role="main">
             
             <section id="experimental">
-<h1>Experimental<a class="headerlink" href="#experimental" title="Permalink to this heading">#</a></h1>
+<h1>Experimental<a class="headerlink" href="#experimental" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <section id="functional-environments">
-<h2>Functional Environments<a class="headerlink" href="#functional-environments" title="Permalink to this heading">#</a></h2>
+<h2>Functional Environments<a class="headerlink" href="#functional-environments" title="Link to this heading">#</a></h2>
 <p>The gymnasium <code class="docutils literal notranslate"><span class="pre">Env</span></code> provides high flexibility for the implementation of individual environments however this can complicate parallelism of environments. Therefore, we propose the <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.experimental.FuncEnv</span></code> where each part of environment has its own function related to it.</p>
 </section>
 <section id="wrappers">
-<h2>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this heading">#</a></h2>
+<h2>Wrappers<a class="headerlink" href="#wrappers" title="Link to this heading">#</a></h2>
 <p>Gymnasium already contains a large collection of wrappers, but we believe that the wrappers can be improved to</p>
 <ul class="simple">
 <li><p>(Work in progress) Support arbitrarily complex observation / action spaces. As RL has advanced, action and observation spaces are becoming more complex and the current wrappers were not implemented with this mind.</p></li>
@@ -494,7 +494,7 @@
 </ul>
 <p>We aimed to replace the wrappers in gymnasium v0.30.0 with these experimental wrappers.</p>
 <section id="observation-wrappers">
-<h3>Observation Wrappers<a class="headerlink" href="#observation-wrappers" title="Permalink to this heading">#</a></h3>
+<h3>Observation Wrappers<a class="headerlink" href="#observation-wrappers" title="Link to this heading">#</a></h3>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <thead>
@@ -547,7 +547,7 @@
 </div>
 </section>
 <section id="action-wrappers">
-<h3>Action Wrappers<a class="headerlink" href="#action-wrappers" title="Permalink to this heading">#</a></h3>
+<h3>Action Wrappers<a class="headerlink" href="#action-wrappers" title="Link to this heading">#</a></h3>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <thead>
@@ -573,7 +573,7 @@
 </div>
 </section>
 <section id="reward-wrappers">
-<h3>Reward Wrappers<a class="headerlink" href="#reward-wrappers" title="Permalink to this heading">#</a></h3>
+<h3>Reward Wrappers<a class="headerlink" href="#reward-wrappers" title="Link to this heading">#</a></h3>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <thead>
@@ -596,7 +596,7 @@
 </div>
 </section>
 <section id="common-wrappers">
-<h3>Common Wrappers<a class="headerlink" href="#common-wrappers" title="Permalink to this heading">#</a></h3>
+<h3>Common Wrappers<a class="headerlink" href="#common-wrappers" title="Link to this heading">#</a></h3>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <thead>
@@ -628,7 +628,7 @@
 </div>
 </section>
 <section id="rendering-wrappers">
-<h3>Rendering Wrappers<a class="headerlink" href="#rendering-wrappers" title="Permalink to this heading">#</a></h3>
+<h3>Rendering Wrappers<a class="headerlink" href="#rendering-wrappers" title="Link to this heading">#</a></h3>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <thead>
@@ -651,7 +651,7 @@
 </div>
 </section>
 <section id="environment-data-conversion">
-<h3>Environment data conversion<a class="headerlink" href="#environment-data-conversion" title="Permalink to this heading">#</a></h3>
+<h3>Environment data conversion<a class="headerlink" href="#environment-data-conversion" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.JaxToNumpyV0</span></code></p></li>
 <li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">experimental.wrappers.JaxToTorchV0</span></code></p></li>
@@ -827,9 +827,9 @@
         })()
       </script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

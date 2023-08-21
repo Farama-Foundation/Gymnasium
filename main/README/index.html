@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../genindex/" /><link rel="search" title="Search" href="../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/README.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Gymnasium-docs - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -475,28 +475,28 @@
           <article role="main">
             
             <section id="gymnasium-docs">
-<h1>Gymnasium-docs<a class="headerlink" href="#gymnasium-docs" title="Permalink to this heading">#</a></h1>
+<h1>Gymnasium-docs<a class="headerlink" href="#gymnasium-docs" title="Link to this heading">#</a></h1>
 <p>This folder contains the documentation for <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Gymnasium</a>.</p>
 <p>If you are modifying an atari environment page, please follow the instructions below. For more information about how to contribute to the documentation go to our <a class="reference external" href="https://github.com/Farama-Foundation/Celshast/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
 <section id="instructions-for-modifying-environment-pages">
-<h2>Instructions for modifying environment pages<a class="headerlink" href="#instructions-for-modifying-environment-pages" title="Permalink to this heading">#</a></h2>
+<h2>Instructions for modifying environment pages<a class="headerlink" href="#instructions-for-modifying-environment-pages" title="Link to this heading">#</a></h2>
 <section id="editing-an-environment-page">
-<h3>Editing an environment page<a class="headerlink" href="#editing-an-environment-page" title="Permalink to this heading">#</a></h3>
+<h3>Editing an environment page<a class="headerlink" href="#editing-an-environment-page" title="Link to this heading">#</a></h3>
 <p>If you are editing an Atari environment, directly edit the Markdown file in this repository.</p>
 <p>Otherwise, fork Gymnasium and edit the docstring in the environment’s Python file. Then, pip install your Gymnasium fork and run <code class="docutils literal notranslate"><span class="pre">docs/_scripts/gen_mds.py</span></code> in this repo. This will automatically generate a Markdown documentation file for the environment.</p>
 </section>
 <section id="adding-a-new-environment">
-<h3>Adding a new environment<a class="headerlink" href="#adding-a-new-environment" title="Permalink to this heading">#</a></h3>
+<h3>Adding a new environment<a class="headerlink" href="#adding-a-new-environment" title="Link to this heading">#</a></h3>
 <section id="atari-env">
-<h4>Atari env<a class="headerlink" href="#atari-env" title="Permalink to this heading">#</a></h4>
+<h4>Atari env<a class="headerlink" href="#atari-env" title="Link to this heading">#</a></h4>
 <p>For Atari envs, add a Markdown file into <code class="docutils literal notranslate"><span class="pre">docs/environments/atari</span></code> then complete the <a class="reference internal" href="#other-steps"><span class="xref myst">other steps</span></a>.</p>
 </section>
 <section id="non-atari-env">
-<h4>Non-Atari env<a class="headerlink" href="#non-atari-env" title="Permalink to this heading">#</a></h4>
+<h4>Non-Atari env<a class="headerlink" href="#non-atari-env" title="Link to this heading">#</a></h4>
 <p>Ensure the environment is in Gymnasium (or your fork). Ensure that the environment’s Python file has a properly formatted markdown docstring. Install using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> and then run <code class="docutils literal notranslate"><span class="pre">docs/_scripts/gen_mds.py</span></code>. This will automatically generate a md page for the environment. Then complete the <a class="reference internal" href="#other-steps"><span class="xref myst">other steps</span></a>.</p>
 </section>
 <section id="other-steps">
-<h4>Other steps<a class="headerlink" href="#other-steps" title="Permalink to this heading">#</a></h4>
+<h4>Other steps<a class="headerlink" href="#other-steps" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>Add the corresponding gif into the <code class="docutils literal notranslate"><span class="pre">docs/_static/videos/{ENV_TYPE}</span></code> folder, where <code class="docutils literal notranslate"><span class="pre">ENV_TYPE</span></code> is the category of your new environment (e.g. mujoco). Follow snake_case naming convention. Alternatively, run <code class="docutils literal notranslate"><span class="pre">docs/_scripts/gen_gifs.py</span></code>.</p></li>
 <li><p>Edit <code class="docutils literal notranslate"><span class="pre">docs/environments/{ENV_TYPE}/index.md</span></code>, and add the name of the file corresponding to your new environment to the <code class="docutils literal notranslate"><span class="pre">toctree</span></code>.</p></li>
@@ -505,7 +505,7 @@
 </section>
 </section>
 <section id="build-the-documentation">
-<h2>Build the Documentation<a class="headerlink" href="#build-the-documentation" title="Permalink to this heading">#</a></h2>
+<h2>Build the Documentation<a class="headerlink" href="#build-the-documentation" title="Link to this heading">#</a></h2>
 <p>Install the required packages and Gymnasium (or your fork):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">gymnasium</span>
 <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">docs</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
@@ -523,7 +523,7 @@
 </div>
 </section>
 <section id="writing-tutorials">
-<h2>Writing Tutorials<a class="headerlink" href="#writing-tutorials" title="Permalink to this heading">#</a></h2>
+<h2>Writing Tutorials<a class="headerlink" href="#writing-tutorials" title="Link to this heading">#</a></h2>
 <p>We use Sphinx-Gallery to build the tutorials inside the <code class="docutils literal notranslate"><span class="pre">docs/tutorials</span></code> directory. Check <code class="docutils literal notranslate"><span class="pre">docs/tutorials/demo.py</span></code> to see an example of a tutorial and <a class="reference external" href="https://sphinx-gallery.github.io/stable/syntax.html">Sphinx-Gallery documentation</a> for more information.</p>
 <p>To convert Jupyter Notebooks to the python tutorials you can use <a class="reference external" href="https://gist.github.com/mgoulao/f07f5f79f6cd9a721db8a34bba0a19a7">this script</a>.</p>
 <p>If you want Sphinx-Gallery to execute the tutorial (which adds outputs and plots) then the file name should start with <code class="docutils literal notranslate"><span class="pre">run_</span></code>. Note that this adds to the build time so make sure the script doesn’t take more than a few seconds to execute.</p>
@@ -676,9 +676,9 @@
         })()
       </script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

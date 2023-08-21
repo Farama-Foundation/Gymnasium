@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/envs/registration.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/envs/registration.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.envs.registration - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -543,7 +543,9 @@
     <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="EnvSpec"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.EnvSpec">[docs]</a><span class="nd">@dataclass</span>
+<div class="viewcode-block" id="EnvSpec">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.EnvSpec">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">EnvSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A specification for creating environments with :meth:`gymnasium.make`.</span>
 
@@ -721,12 +723,15 @@
             <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># Global registry of environments. Meant to be accessed through `register` and `make`</span>
 <span class="n">registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">current_namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="parse_env_id"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.parse_env_id">[docs]</a><span class="k">def</span> <span class="nf">parse_env_id</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<div class="viewcode-block" id="parse_env_id">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.parse_env_id">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_env_id</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse environment ID string format - ``[namespace/](env-name)[-v(version)]`` where the namespace and version are optional.</span>
 
 <span class="sd">    Args:</span>
@@ -750,7 +755,10 @@
     <span class="k">return</span> <span class="n">ns</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span></div>
 
 
-<div class="viewcode-block" id="get_env_id"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.get_env_id">[docs]</a><span class="k">def</span> <span class="nf">get_env_id</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="get_env_id">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.get_env_id">[docs]</a>
+<span class="k">def</span> <span class="nf">get_env_id</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the full env ID given a name and (optional) version and namespace. Inverse of :meth:`parse_env_id`.</span>
 
 <span class="sd">    Args:</span>
@@ -770,7 +778,10 @@
     <span class="k">return</span> <span class="n">full_name</span></div>
 
 
-<div class="viewcode-block" id="find_highest_version"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.find_highest_version">[docs]</a><span class="k">def</span> <span class="nf">find_highest_version</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="find_highest_version">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.find_highest_version">[docs]</a>
+<span class="k">def</span> <span class="nf">find_highest_version</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Finds the highest registered version of the environment given the namespace and name in the registry.</span>
 
 <span class="sd">    Args:</span>
@@ -788,6 +799,7 @@
         <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="p">]</span>
     <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_check_namespace_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
@@ -999,7 +1011,9 @@
     <span class="k">return</span> <span class="n">env_spec</span>
 
 
-<div class="viewcode-block" id="load_env_creator"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.load_env_creator">[docs]</a><span class="k">def</span> <span class="nf">load_env_creator</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvCreator</span> <span class="o">|</span> <span class="n">VectorEnvCreator</span><span class="p">:</span>
+<div class="viewcode-block" id="load_env_creator">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.load_env_creator">[docs]</a>
+<span class="k">def</span> <span class="nf">load_env_creator</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvCreator</span> <span class="o">|</span> <span class="n">VectorEnvCreator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads an environment with name of style ``&quot;(import path):(environment name)&quot;`` and returns the environment creation function, normally the environment class type.</span>
 
 <span class="sd">    Args:</span>
@@ -1014,7 +1028,10 @@
     <span class="k">return</span> <span class="n">fn</span></div>
 
 
-<div class="viewcode-block" id="load_plugin_envs"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.load_plugin_envs">[docs]</a><span class="k">def</span> <span class="nf">load_plugin_envs</span><span class="p">(</span><span class="n">entry_point</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gymnasium.envs&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="load_plugin_envs">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.load_plugin_envs">[docs]</a>
+<span class="k">def</span> <span class="nf">load_plugin_envs</span><span class="p">(</span><span class="n">entry_point</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gymnasium.envs&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load modules (plugins) using the gymnasium entry points in order to register external module&#39;s environments on ``import gymnasium``.</span>
 
 <span class="sd">    Args:</span>
@@ -1063,12 +1080,15 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;plugin: </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> raised </span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">register_envs</span><span class="p">(</span><span class="n">env_module</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A No-op function such that it can appear to IDEs that a module is used.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="namespace"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.namespace">[docs]</a><span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+<div class="viewcode-block" id="namespace">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.namespace">[docs]</a>
+<span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <span class="k">def</span> <span class="nf">namespace</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for modifying the current namespace.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">current_namespace</span>
@@ -1078,7 +1098,10 @@
     <span class="n">current_namespace</span> <span class="o">=</span> <span class="n">old_namespace</span></div>
 
 
-<div class="viewcode-block" id="register"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.register">[docs]</a><span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
+
+<div class="viewcode-block" id="register">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.register">[docs]</a>
+<span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">entry_point</span><span class="p">:</span> <span class="n">EnvCreator</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">reward_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1162,7 +1185,10 @@
     <span class="n">registry</span><span class="p">[</span><span class="n">new_spec</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_spec</span></div>
 
 
-<div class="viewcode-block" id="make"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.make">[docs]</a><span class="k">def</span> <span class="nf">make</span><span class="p">(</span>
+
+<div class="viewcode-block" id="make">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.make">[docs]</a>
+<span class="k">def</span> <span class="nf">make</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">max_episode_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">autoreset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1362,6 +1388,7 @@
     <span class="k">return</span> <span class="n">env</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">make_vec</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">num_envs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -1478,7 +1505,9 @@
     <span class="k">return</span> <span class="n">env</span>
 
 
-<div class="viewcode-block" id="spec"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.spec">[docs]</a><span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
+<div class="viewcode-block" id="spec">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.spec">[docs]</a>
+<span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the :class:`EnvSpec` for the environment id from the :attr:`registry`.</span>
 
 <span class="sd">    Args:</span>
@@ -1502,7 +1531,10 @@
         <span class="k">return</span> <span class="n">env_spec</span></div>
 
 
-<div class="viewcode-block" id="pprint_registry"><a class="viewcode-back" href="../../../../api/registry/#gymnasium.pprint_registry">[docs]</a><span class="k">def</span> <span class="nf">pprint_registry</span><span class="p">(</span>
+
+<div class="viewcode-block" id="pprint_registry">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.pprint_registry">[docs]</a>
+<span class="k">def</span> <span class="nf">pprint_registry</span><span class="p">(</span>
     <span class="n">print_registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">registry</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">num_cols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
@@ -1577,6 +1609,7 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">))</span></div>
+
 </pre></div>
           </article>
         </div>
@@ -1694,9 +1727,9 @@
         })()
       </script>
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

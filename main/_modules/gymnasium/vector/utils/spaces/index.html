@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/vector/utils/spaces.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/vector/utils/spaces.html" />
 
-    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.vector.utils.spaces - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -490,7 +490,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BaseGymSpaces&quot;</span><span class="p">,</span> <span class="s2">&quot;_BaseGymSpaces&quot;</span><span class="p">,</span> <span class="s2">&quot;batch_space&quot;</span><span class="p">,</span> <span class="s2">&quot;iterate&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="batch_space"><a class="viewcode-back" href="../../../../../api/spaces/vector_utils/#gymnasium.vector.utils.batch_space">[docs]</a><span class="nd">@singledispatch</span>
+<div class="viewcode-block" id="batch_space">
+<a class="viewcode-back" href="../../../../../api/spaces/vector_utils/#gymnasium.vector.utils.batch_space">[docs]</a>
+<span class="nd">@singledispatch</span>
 <span class="k">def</span> <span class="nf">batch_space</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a (batched) space, containing multiple copies of a single space.</span>
 
@@ -517,6 +519,7 @@
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Cannot batch space with type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">`. The space must be a valid `gymnasium.Space` instance.&quot;</span>
     <span class="p">)</span></div>
+
 
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
@@ -593,7 +596,9 @@
     <span class="k">return</span> <span class="n">batched_space</span>
 
 
-<div class="viewcode-block" id="iterate"><a class="viewcode-back" href="../../../../../api/spaces/vector_utils/#gymnasium.vector.utils.iterate">[docs]</a><span class="nd">@singledispatch</span>
+<div class="viewcode-block" id="iterate">
+<a class="viewcode-back" href="../../../../../api/spaces/vector_utils/#gymnasium.vector.utils.iterate">[docs]</a>
+<span class="nd">@singledispatch</span>
 <span class="k">def</span> <span class="nf">iterate</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Iterate over the elements of a (batched) space.</span>
 
@@ -627,6 +632,7 @@
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` is not a valid `gymnasium.Space` instance.&quot;</span>
     <span class="p">)</span></div>
+
 
 
 <span class="nd">@iterate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
@@ -797,9 +803,9 @@
         })()
       </script>
 
-    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

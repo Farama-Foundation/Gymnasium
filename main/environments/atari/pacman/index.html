@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Phoenix" href="../phoenix/" /><link rel="prev" title="Othello" href="../othello/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/atari/pacman.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Pacman - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -475,7 +475,7 @@
           <article role="main">
             
             <section id="pacman">
-<h1>Pacman<a class="headerlink" href="#pacman" title="Permalink to this heading">#</a></h1>
+<h1>Pacman<a class="headerlink" href="#pacman" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/pacman.gif"><img alt="../../../_images/pacman.gif" src="../../../_images/pacman.gif" style="width: 120px;" /></a>
 </figure>
@@ -502,11 +502,11 @@
 </div>
 <p>For more Pacman variants with different observation and action spaces, see the variants section.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>A classic arcade game. Move Pac Man around a maze collecting food and avoiding ghosts- unless you eat a Power Pellet, then you can eat the ghosts too!</p>
 </section>
 <section id="actions">
-<h2>Actions<a class="headerlink" href="#actions" title="Permalink to this heading">#</a></h2>
+<h2>Actions<a class="headerlink" href="#actions" title="Link to this heading">#</a></h2>
 <p>Pacman has the action space of <code class="docutils literal notranslate"><span class="pre">Discrete(5)</span></code> with the table below listing the meaning of each action’s meanings.
 To enable all 18 possible actions that can be performed on an Atari 2600, specify <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> during
 initialization or by passing <code class="docutils literal notranslate"><span class="pre">full_action_space=True</span></code> to <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.</p>
@@ -541,7 +541,7 @@ initialization or by passing <code class="docutils literal notranslate"><span cl
 </div>
 </section>
 <section id="observations">
-<h2>Observations<a class="headerlink" href="#observations" title="Permalink to this heading">#</a></h2>
+<h2>Observations<a class="headerlink" href="#observations" title="Link to this heading">#</a></h2>
 <p>Atari environments have three possible observation types: <code class="docutils literal notranslate"><span class="pre">&quot;rgb&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;grayscale&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;ram&quot;</span></code>.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;rgb&quot;</span> <span class="pre">-&gt;</span> <span class="pre">observation_space=Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160,</span> <span class="pre">3),</span> <span class="pre">np.uint8)</span></code></p></li>
@@ -551,7 +551,7 @@ initialization or by passing <code class="docutils literal notranslate"><span cl
 <p>See variants section for the type of observation used by each environment id by default.</p>
 </section>
 <section id="variants">
-<h2>Variants<a class="headerlink" href="#variants" title="Permalink to this heading">#</a></h2>
+<h2>Variants<a class="headerlink" href="#variants" title="Link to this heading">#</a></h2>
 <p>Pacman has the following variants of the environment id which have the following differences in observation,
 the number of frame-skips and the repeat action probability.</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -649,7 +649,7 @@ the number of frame-skips and the repeat action probability.</p>
 </div>
 </section>
 <section id="difficulty-and-modes">
-<h2>Difficulty and modes<a class="headerlink" href="#difficulty-and-modes" title="Permalink to this heading">#</a></h2>
+<h2>Difficulty and modes<a class="headerlink" href="#difficulty-and-modes" title="Link to this heading">#</a></h2>
 <p>It is possible to specify various flavors of the environment via the keyword arguments <code class="docutils literal notranslate"><span class="pre">difficulty</span></code> and <code class="docutils literal notranslate"><span class="pre">mode</span></code>.
 A flavor is a combination of a game mode and a difficulty setting. The table below lists the possible difficulty and mode values
 along with the default values.</p>
@@ -673,7 +673,7 @@ along with the default values.</p>
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <p>A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.</p>
 <ul class="simple">
 <li><p>v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the “ALE” namespace.</p></li>
@@ -845,9 +845,9 @@ along with the default values.</p>
         })()
       </script>
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Inverted Pendulum" href="../inverted_pendulum/" /><link rel="prev" title="Humanoid Standup" href="../humanoid_standup/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/mujoco/inverted_double_pendulum.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Inverted Double Pendulum - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -466,7 +466,7 @@
           <article role="main">
             
             <section id="inverted-double-pendulum">
-<h1>Inverted Double Pendulum<a class="headerlink" href="#inverted-double-pendulum" title="Permalink to this heading">#</a></h1>
+<h1>Inverted Double Pendulum<a class="headerlink" href="#inverted-double-pendulum" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/inverted_double_pendulum.gif"><img alt="../../../_images/inverted_double_pendulum.gif" src="../../../_images/inverted_double_pendulum.gif" style="width: 200px;" /></a>
 </figure>
@@ -492,7 +492,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>This environment originates from control theory and builds on the cartpole
 environment based on the work done by Barto, Sutton, and Anderson in
 <a class="reference external" href="https://ieeexplore.ieee.org/document/6313077">“Neuronlike adaptive elements that can solve difficult learning control problems”</a>,
@@ -530,7 +530,7 @@ cart, by applying continuous forces on the cart.</p>
 <p>For more information see section “Version History”.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
 <p>The agent take a 1-element vector for actions.
 The action space is a continuous <code class="docutils literal notranslate"><span class="pre">(action)</span></code> in <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code>, where <code class="docutils literal notranslate"><span class="pre">action</span></code> represents the
 numerical force applied to the cart (with magnitude representing the amount of force and
@@ -561,7 +561,7 @@ sign representing the direction)</p>
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
 <p>The state space consists of positional values of different body parts of the pendulum system,
 followed by the velocities of those individual parts (their derivatives) with all the
 positions ordered before all the velocities.</p>
@@ -679,7 +679,7 @@ Once can find more information in their <a class="reference external" href="http
 or in their paper <a class="reference external" href="https://homes.cs.washington.edu/~todorov/papers/TodorovICRA14.pdf">“Analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo”</a>.</p>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
 <p>The total reward is: <em><strong>reward</strong></em> <em>=</em> <em>alive_bonus - distance_penalty - velocity_penalty</em>.</p>
 <ul class="simple">
 <li><p><em>alive_bonus</em>:
@@ -697,27 +697,27 @@ where $\omega_1, \omega_2$ are the angular velocities of the hinges.</p></li>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
 <p>The initial position state is $\mathcal{U}<em>{[-reset_noise_scale \times 1</em>{3}, reset_noise_scale \times 1_{3}]}$.
 The initial velocity state is $\mathcal{N}(0_{3}, reset_noise_scale^2 \times I_{3})$.</p>
 <p>where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
 <section id="termination">
-<h3>Termination<a class="headerlink" href="#termination" title="Permalink to this heading">#</a></h3>
+<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">#</a></h3>
 <p>The environment terminates when the Inverted Double Pendulum is unhealthy.
 The Inverted Double Pendulum is unhealthy if any of the following happens:</p>
 <p>1.Termination: The y_coordinate of the tip of the second pole $\leq 1$.</p>
 <p>Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.</p>
 </section>
 <section id="truncation">
-<h3>Truncation<a class="headerlink" href="#truncation" title="Permalink to this heading">#</a></h3>
+<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
 <p>The default duration of an episode is 1000 timesteps</p>
 </section>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
 <p>InvertedDoublePendulum provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
 These parameters can be applied during <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> in the following way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -754,7 +754,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v5:</p>
 <ul>
@@ -945,9 +945,9 @@ These parameters can be applied during <code class="docutils literal notranslate
         })()
       </script>
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

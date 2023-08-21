@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../genindex/" /><link rel="search" title="Search" href="../search/" /><link rel="next" title="Gym Release Notes" href="../gym_release_notes/" /><link rel="prev" title="Frozenlake benchmark" href="../tutorials/training_agents/FrozenLake_tuto/" />
         <link rel="canonical" href="https://gymnasium.farama.org/gymnasium_release_notes/index.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Gymnasium Release Notes - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -475,9 +475,21 @@
           <article role="main">
             
             <section id="gymnasium-release-notes">
-<h1>Gymnasium Release Notes<a class="headerlink" href="#gymnasium-release-notes" title="Permalink to this heading">#</a></h1>
+<h1>Gymnasium Release Notes<a class="headerlink" href="#gymnasium-release-notes" title="Link to this heading">#</a></h1>
+<section id="release-v0-29-1">
+<h2>v0.29.1 <a class="headerlink" href="#release-v0-29-1" title="Link to this heading">#</a></h2>
+<p><em>Released on 2023-08-21 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.29.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.29.1/">PyPI</a></em></p>
+<p>A minimal release that fixes a warning produced by <code>Wrapper.__getattr__</code>.<br>
+In particular, this function will be removed in v1.0.0 however the reported solution for this was incorrect and the updated solution still caused the warning to show (due to technical python reasons).</p>
+<h2>Changes</h2>
+<ul>
+<li>The <code>Wrapper.__getattr__</code> warning reports the incorrect new function, <code>get_attr</code> rather than <code>get_wrapper_attr</code></li>
+<li>When using <code>get_wrapper_attr</code>, the <code>__getattr__</code> warning is still be raised due to <code>get_wrapper_attr</code> using <code>hasattr</code> which under the hood uses <code>__getattr__.</code> Therefore, updated to remove the unintended warning.</li>
+<li>Add warning to <code>VectorEnvWrapper.__getattr__</code> to specify that it also is deprecated in v1.0.0</li>
+</ul>
+<p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Gymnasium/compare/v0.29.0...v0.29.1"><tt>v0.29.0...v0.29.1</tt></a></p></section>
 <section id="release-v0-29-0">
-<h2>v0.29.0<a class="headerlink" href="#release-v0-29-0" title="Permalink to this heading">#</a></h2>
+<h2>v0.29.0<a class="headerlink" href="#release-v0-29-0" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-07-14 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.29.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.29.0/">PyPI</a></em></p>
 <h1>v0.29.0 Release notes</h1>
 <p>We finally have a software citation for Gymnasium with the plan to release an associated paper after v1.0, thank you to all the contributors over the last 3 years who have made helped Gym and Gymnasium (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1795048482" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/590" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/590/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/590">#590</a>)</p>
@@ -578,7 +590,7 @@
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Gymnasium/compare/v0.28.1...v0.29.0"><tt>v0.28.1...v0.29.0</tt></a></p></section>
 <section id="release-v0-28-1">
-<h2>v0.28.1<a class="headerlink" href="#release-v0-28-1" title="Permalink to this heading">#</a></h2>
+<h2>v0.28.1<a class="headerlink" href="#release-v0-28-1" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-03-25 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.28.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.28.1/">PyPI</a></em></p>
 <h1>v0.28.1 Release notes</h1>
 <p>Small emergency release to fix several issues</p>
@@ -589,7 +601,7 @@
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Gymnasium/compare/v0.28.0...v0.28.1"><tt>v0.28.0...v0.28.1</tt></a></p></section>
 <section id="release-v0-28-0">
-<h2>v0.28.0<a class="headerlink" href="#release-v0-28-0" title="Permalink to this heading">#</a></h2>
+<h2>v0.28.0<a class="headerlink" href="#release-v0-28-0" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-03-24 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.28.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.28.0/">PyPI</a></em></p>
 <h1>v0.28.0 Release notes</h1>
 <p>This release introduces improved support for the reproducibility of Gymnasium environments, particularly for offline reinforcement learning. <code>gym.make</code> can now create the entire environment stack, including wrappers, such that training libraries or offline datasets can specify all of the arguments and wrappers used for an environment. For a majority of standard usage (<code>gym.make(”EnvironmentName-v0”)</code>), this will be backwards compatible except  for certain fairly uncommon cases (i.e. <code>env.spec</code> and <code>env.unwrapped.spec</code> return different specs) this is a breaking change. See the reproducibility details section for more info.<br>
@@ -683,7 +695,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
 <p>Thank you to our new contributors in this release: <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Matyasch/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Matyasch">@Matyasch</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/DrRyanHuang/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/DrRyanHuang">@DrRyanHuang</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/nerdyespresso/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/nerdyespresso">@nerdyespresso</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/khoda81/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/khoda81">@khoda81</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/howardh/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/howardh">@howardh</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/mihaic/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/mihaic">@mihaic</a>, and @keyb0ardninja.</p>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Gymnasium/compare/v0.27.1...v0.28.0"><tt>v0.27.1...v0.28.0</tt></a></p></section>
 <section id="release-v0-27-1">
-<h2>v0.27.1<a class="headerlink" href="#release-v0-27-1" title="Permalink to this heading">#</a></h2>
+<h2>v0.27.1<a class="headerlink" href="#release-v0-27-1" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-01-20 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.27.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.27.1/">PyPI</a></em></p>
 <h1>Release Notes</h1>
 <h2>Bugs fixed</h2>
@@ -736,7 +748,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Gymnasium/compare/v0.27.0...v0.27.1"><tt>v0.27.0...v0.27.1</tt></a></p></section>
 <section id="release-v0-27-0">
-<h2>v0.27.0<a class="headerlink" href="#release-v0-27-0" title="Permalink to this heading">#</a></h2>
+<h2>v0.27.0<a class="headerlink" href="#release-v0-27-0" title="Link to this heading">#</a></h2>
 <p><em>Released on 2022-12-12 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.27.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.27.0/">PyPI</a></em></p>
 <h1>Release Notes</h1>
 <p>Gymnasium 0.27.0 is our first major release of Gymnasium. It has several significant new features, and numerous small bug fixes and code quality improvements as we work through our backlog. There should be no breaking changes beyond dropping Python 3.6 support and remove the mujoco <code>Viewer</code> class in favor of a <code>MujocoRendering</code> class. You should be able to upgrade your code that's using Gymnasium 0.26.x to 0.27.0 with little-to-no-effort.</p>
@@ -805,7 +817,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
 <li>Update and rerun <code>pre-commit</code> hooks for better code quality by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/XuehaiPan/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/XuehaiPan">@XuehaiPan</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1474822766" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/179" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/179/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/179">#179</a></li>
 </ul></section>
 <section id="release-v0-26-3">
-<h2>v0.26.3<a class="headerlink" href="#release-v0-26-3" title="Permalink to this heading">#</a></h2>
+<h2>v0.26.3<a class="headerlink" href="#release-v0-26-3" title="Link to this heading">#</a></h2>
 <p><em>Released on 2022-10-24 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.26.3">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.26.3/">PyPI</a></em></p>
 <h1>Release Notes</h1>
 <p>Note: ale-py (atari) has not updated to Gymnasium yet. Therefore <code>pip install gymnasium[atari]</code> will fail, this will be fixed in <code>v0.27</code>. In the meantime, use <code>pip install shimmy[atari]</code> for the fix.</p>
@@ -835,7 +847,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
 <li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Kallinteris-Andreas/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Kallinteris-Andreas">@Kallinteris-Andreas</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1419769959" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/70" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/70/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/70">#70</a></li>
 </ul></section>
 <section id="release-v0-26-2">
-<h2>v0.26.2 <a class="headerlink" href="#release-v0-26-2" title="Permalink to this heading">#</a></h2>
+<h2>v0.26.2 <a class="headerlink" href="#release-v0-26-2" title="Link to this heading">#</a></h2>
 <p><em>Released on 2022-10-05 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.26.2">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.26.2/">PyPI</a></em></p>
 <p>This Release is an upstreamed version of <a href="https://github.com/openai/gym/releases/tag/0.26.2">Gym v26.2</a></p>
 <h3>Bugs Fixes</h3>
@@ -847,12 +859,12 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
 <li>Clarify and fix typo in GraphInstance <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/ekalosak/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/ekalosak">@ekalosak</a></li>
 </ul></section>
 <section id="release-v0-26-1">
-<h2>v0.26.1<a class="headerlink" href="#release-v0-26-1" title="Permalink to this heading">#</a></h2>
+<h2>v0.26.1<a class="headerlink" href="#release-v0-26-1" title="Link to this heading">#</a></h2>
 <p><em>Released on 2022-09-16 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.26.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.26.1/">PyPI</a></em></p>
 <p>This Release is an upstreamed version of <a href="https://github.com/openai/gym/releases/tag/0.26.1">Gym v26.1</a></p>
 <p>In addition, the <a href="https://github.com/farama-Foundation/gym-docs">gym docs</a> repo has been merged in with the new website <a href="https://gymnasium.farama.org/" rel="nofollow">https://gymnasium.farama.org/</a></p></section>
 <section id="release-v0-26-0">
-<h2>v0.26.0: Initial Release<a class="headerlink" href="#release-v0-26-0" title="Permalink to this heading">#</a></h2>
+<h2>v0.26.0: Initial Release<a class="headerlink" href="#release-v0-26-0" title="Link to this heading">#</a></h2>
 <p><em>Released on 2022-09-13 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.26.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v0.26.0/">PyPI</a></em></p>
 <p>This is the first release of Gymnasium, a maintained fork of OpenAI Gym</p>
 <p>This release is identical to the Gym v0.26.0 except for the project name (Gymnasium) and Code of Conduct</p>
@@ -929,6 +941,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Gymnasium Release Notes</a><ul>
+<li><a class="reference internal" href="#release-v0-29-1">v0.29.1 </a></li>
 <li><a class="reference internal" href="#release-v0-29-0">v0.29.0</a></li>
 <li><a class="reference internal" href="#release-v0-28-1">v0.28.1</a></li>
 <li><a class="reference internal" href="#release-v0-28-0">v0.28.0</a></li>
@@ -1024,9 +1037,9 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
         })()
       </script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

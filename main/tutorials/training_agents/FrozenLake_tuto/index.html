@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Gymnasium Release Notes" href="../../../gymnasium_release_notes/" /><link rel="prev" title="Solving Blackjack with Q-Learning" href="../blackjack_tutorial/" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/FrozenLake_tuto.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Frozenlake benchmark - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -476,14 +476,14 @@
           <article role="main">
             
             <section class="sphx-glr-example-title" id="frozenlake-benchmark">
-<span id="sphx-glr-tutorials-training-agents-frozenlake-tuto-py"></span><h1>Frozenlake benchmark<a class="headerlink" href="#frozenlake-benchmark" title="Permalink to this heading">#</a></h1>
+<span id="sphx-glr-tutorials-training-agents-frozenlake-tuto-py"></span><h1>Frozenlake benchmark<a class="headerlink" href="#frozenlake-benchmark" title="Link to this heading">#</a></h1>
 <p>In this post we’ll compare a bunch of different map sizes on the
 <a class="reference external" href="https://gymnasium.farama.org/environments/toy_text/frozen_lake/">FrozenLake</a>
 environment from the reinforcement learning
 <a class="reference external" href="https://gymnasium.farama.org/">Gymnasium</a> using the Q-learning
 algorithm.</p>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">#</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
 <p>Let’s first import a few dependencies we’ll need.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Author: Andrea Pierré</span>
 <span class="c1"># License: MIT License</span>
@@ -509,7 +509,7 @@ algorithm.</p>
 </div>
 </section>
 <section id="parameters-we-ll-use">
-<h2>Parameters we’ll use<a class="headerlink" href="#parameters-we-ll-use" title="Permalink to this heading">#</a></h2>
+<h2>Parameters we’ll use<a class="headerlink" href="#parameters-we-ll-use" title="Link to this heading">#</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
     <span class="n">total_episodes</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># Total episodes</span>
     <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># Learning rate</span>
@@ -550,7 +550,7 @@ algorithm.</p>
 </div>
 </section>
 <section id="the-frozenlake-environment">
-<h2>The FrozenLake environment<a class="headerlink" href="#the-frozenlake-environment" title="Permalink to this heading">#</a></h2>
+<h2>The FrozenLake environment<a class="headerlink" href="#the-frozenlake-environment" title="Link to this heading">#</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
     <span class="s2">&quot;FrozenLake-v1&quot;</span><span class="p">,</span>
     <span class="n">is_slippery</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">is_slippery</span><span class="p">,</span>
@@ -562,7 +562,7 @@ algorithm.</p>
 </pre></div>
 </div>
 <section id="creating-the-q-table">
-<h3>Creating the Q-table<a class="headerlink" href="#creating-the-q-table" title="Permalink to this heading">#</a></h3>
+<h3>Creating the Q-table<a class="headerlink" href="#creating-the-q-table" title="Link to this heading">#</a></h3>
 <p>In this tutorial we’ll be using Q-learning as our learning algorithm and
 <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy to decide which action to pick at each step. You
 can have a look at the <a class="reference external" href="#References">References section</a> for some
@@ -624,7 +624,7 @@ zero with the states number as rows and the actions number as columns.</p>
 </div>
 </section>
 <section id="running-the-environment">
-<h3>Running the environment<a class="headerlink" href="#running-the-environment" title="Permalink to this heading">#</a></h3>
+<h3>Running the environment<a class="headerlink" href="#running-the-environment" title="Link to this heading">#</a></h3>
 <p>Let’s instantiate the learner and the explorer.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">learner</span> <span class="o">=</span> <span class="n">Qlearning</span><span class="p">(</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
@@ -693,7 +693,7 @@ stochasticity, we will also run our environment a few times.</p>
 </div>
 </section>
 <section id="visualization">
-<h3>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading">#</a></h3>
+<h3>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h3>
 <p>To make it easy to plot the results with Seaborn, we’ll save the main
 results of the simulation in Pandas dataframes.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="n">episodes</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
@@ -840,19 +840,19 @@ with the following function:</p>
 </pre></div>
 </div>
 <section id="map-size-4-times-4">
-<h4>Map size: <span class="math notranslate nohighlight">\(4 \times 4\)</span><a class="headerlink" href="#map-size-4-times-4" title="Permalink to this heading">#</a></h4>
+<h4>Map size: <span class="math notranslate nohighlight">\(4 \times 4\)</span><a class="headerlink" href="#map-size-4-times-4" title="Link to this heading">#</a></h4>
 <p><img alt="States actions histogram 4x4 map" src="../../../_images/frozenlake_states_actions_distrib_4x4.png" /> <img alt="Q-values 4x4 map" src="../../../_images/frozenlake_q_values_4x4.png" /></p>
 </section>
 <section id="map-size-7-times-7">
-<h4>Map size: <span class="math notranslate nohighlight">\(7 \times 7\)</span><a class="headerlink" href="#map-size-7-times-7" title="Permalink to this heading">#</a></h4>
+<h4>Map size: <span class="math notranslate nohighlight">\(7 \times 7\)</span><a class="headerlink" href="#map-size-7-times-7" title="Link to this heading">#</a></h4>
 <p><img alt="States actions histogram 7x7 map" src="../../../_images/frozenlake_states_actions_distrib_7x7.png" /> <img alt="Q-values 7x7 map" src="../../../_images/frozenlake_q_values_7x7.png" /></p>
 </section>
 <section id="map-size-9-times-9">
-<h4>Map size: <span class="math notranslate nohighlight">\(9 \times 9\)</span><a class="headerlink" href="#map-size-9-times-9" title="Permalink to this heading">#</a></h4>
+<h4>Map size: <span class="math notranslate nohighlight">\(9 \times 9\)</span><a class="headerlink" href="#map-size-9-times-9" title="Link to this heading">#</a></h4>
 <p><img alt="States actions histogram 9x9 map" src="../../../_images/frozenlake_states_actions_distrib_9x9.png" /> <img alt="Q-values 9x9 map" src="../../../_images/frozenlake_q_values_9x9.png" /></p>
 </section>
 <section id="map-size-11-times-11">
-<h4>Map size: <span class="math notranslate nohighlight">\(11 \times 11\)</span><a class="headerlink" href="#map-size-11-times-11" title="Permalink to this heading">#</a></h4>
+<h4>Map size: <span class="math notranslate nohighlight">\(11 \times 11\)</span><a class="headerlink" href="#map-size-11-times-11" title="Link to this heading">#</a></h4>
 <p><img alt="States actions histogram 11x11 map" src="../../../_images/frozenlake_states_actions_distrib_11x11.png" /> <img alt="Q-values 11x11 map" src="../../../_images/frozenlake_q_values_11x11.png" /></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">DOWN</span></code> and <code class="docutils literal notranslate"><span class="pre">RIGHT</span></code> actions get chosen more often, which makes
 sense as the agent starts at the top left of the map and needs to find
@@ -908,7 +908,7 @@ signal.</p>
 </section>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Code inspired from <a class="reference external" href="https://simoninithomas.github.io/Deep_reinforcement_learning_Course/">Deep Reinforcement Learning
 Course</a>
@@ -1111,9 +1111,9 @@ Miller (University of Melbourne)</p></li>
         })()
       </script>
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
