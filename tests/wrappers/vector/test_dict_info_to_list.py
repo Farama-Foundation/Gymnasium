@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers.vector import DictInfoToListV0, RecordEpisodeStatisticsV0
+from gymnasium.wrappers.vector import DictInfoToList, RecordEpisodeStatistics
 
 
 ENV_ID = "CartPole-v1"
@@ -17,15 +17,15 @@ def test_usage_in_vector_env():
     env = gym.make(ENV_ID, disable_env_checker=True)
     vector_env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
 
-    DictInfoToListV0(vector_env)
+    DictInfoToList(vector_env)
 
     with pytest.raises(AssertionError):
-        DictInfoToListV0(env)
+        DictInfoToList(env)
 
 
 def test_info_to_list():
     env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
-    wrapped_env = DictInfoToListV0(env_to_wrap)
+    wrapped_env = DictInfoToList(env_to_wrap)
     wrapped_env.action_space.seed(SEED)
     _, info = wrapped_env.reset(seed=SEED)
     assert isinstance(info, list)
@@ -43,7 +43,7 @@ def test_info_to_list():
 
 def test_info_to_list_statistics():
     env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
-    wrapped_env = DictInfoToListV0(RecordEpisodeStatisticsV0(env_to_wrap))
+    wrapped_env = DictInfoToList(RecordEpisodeStatistics(env_to_wrap))
     _, info = wrapped_env.reset(seed=SEED)
     wrapped_env.action_space.seed(SEED)
     assert isinstance(info, list)

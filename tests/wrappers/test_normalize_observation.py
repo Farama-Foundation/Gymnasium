@@ -1,13 +1,13 @@
 """Test suite for NormalizeObservation wrapper."""
 
-from gymnasium.wrappers import NormalizeObservationV0
+from gymnasium.wrappers import NormalizeObservation
 from tests.testing_env import GenericTestEnv
 
 
 def test_update_running_mean_property():
     """Tests that the property `_update_running_mean` freezes/continues the running statistics updating."""
     env = GenericTestEnv()
-    wrapped_env = NormalizeObservationV0(env)
+    wrapped_env = NormalizeObservation(env)
 
     # Default value is True
     assert wrapped_env.update_running_mean

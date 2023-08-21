@@ -4,7 +4,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType
-from gymnasium.wrappers import NormalizeRewardV1
+from gymnasium.wrappers import NormalizeReward
 from tests.testing_env import GenericTestEnv
 
 
@@ -15,7 +15,7 @@ def constant_reward_step_func(self, action: ActType):
 def test_running_mean_normalize_reward_wrapper():
     """Tests that the property `_update_running_mean` freezes/continues the running statistics updating."""
     env = GenericTestEnv(step_func=constant_reward_step_func)
-    wrapped_env = NormalizeRewardV1(env)
+    wrapped_env = NormalizeReward(env)
 
     # Default value is True
     assert wrapped_env.update_running_mean
@@ -45,7 +45,7 @@ def test_normalize_reward_wrapper():
     """Tests that the NormalizeReward does not throw an error."""
     # TODO: Functional correctness should be tested
     env = GenericTestEnv(step_func=constant_reward_step_func)
-    wrapped_env = NormalizeRewardV1(env)
+    wrapped_env = NormalizeReward(env)
     wrapped_env.reset()
     _, reward, _, _, _ = wrapped_env.step(None)
     assert np.ndim(reward) == 0
@@ -65,7 +65,7 @@ def reward_step_func(self: gym.Env, action):
 
 def test_normalize_return():
     env = GenericTestEnv(reset_func=reward_reset_func, step_func=reward_step_func)
-    env = NormalizeRewardV1(env)
+    env = NormalizeReward(env)
     env.reset()
 
     env.step(env.action_space.sample())

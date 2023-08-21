@@ -2,7 +2,7 @@
 import pytest
 
 from gymnasium.spaces import Box, Dict, Tuple
-from gymnasium.wrappers import FilterObservationV0
+from gymnasium.wrappers import FilterObservation
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import (
     check_obs,
@@ -19,7 +19,7 @@ def test_filter_observation_wrapper():
         step_func=record_random_obs_step,
     )
 
-    wrapped_env = FilterObservationV0(dict_env, ("arm_1", "arm_3"))
+    wrapped_env = FilterObservation(dict_env, ("arm_1", "arm_3"))
     obs, info = wrapped_env.reset()
     assert list(obs.keys()) == ["arm_1", "arm_3"]
     assert list(info["obs"].keys()) == ["arm_1", "arm_2", "arm_3"]
@@ -36,7 +36,7 @@ def test_filter_observation_wrapper():
         reset_func=record_random_obs_reset,
         step_func=record_random_obs_step,
     )
-    wrapped_env = FilterObservationV0(tuple_env, (2,))
+    wrapped_env = FilterObservation(tuple_env, (2,))
 
     obs, info = wrapped_env.reset()
     assert len(obs) == 1 and len(info["obs"]) == 3
@@ -78,4 +78,4 @@ def test_incorrect_arguments(filter_keys, error_type, error_match):
     )
 
     with pytest.raises(error_type, match=error_match):
-        FilterObservationV0(env, filter_keys=filter_keys)
+        FilterObservation(env, filter_keys=filter_keys)

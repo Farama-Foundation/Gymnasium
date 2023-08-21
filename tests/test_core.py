@@ -15,7 +15,7 @@ from gymnasium.core import (
 )
 from gymnasium.spaces import Box
 from gymnasium.utils import seeding
-from gymnasium.wrappers import OrderEnforcingV0, TimeLimitV0
+from gymnasium.wrappers import OrderEnforcing, TimeLimit
 from tests.testing_env import GenericTestEnv
 
 
@@ -171,8 +171,8 @@ def test_wrapper_property_forwarding(class_, props):
 def test_compatibility_with_old_style_env():
     """Test compatibility with old style environment."""
     env = OldStyleEnv()
-    env = OrderEnforcingV0(env)
-    env = TimeLimitV0(env, 100)
+    env = OrderEnforcing(env)
+    env = TimeLimit(env, 100)
     obs = env.reset()
     assert obs == 0
 

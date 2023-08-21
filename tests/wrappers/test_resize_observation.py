@@ -6,7 +6,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.spaces import Box
-from gymnasium.wrappers import ResizeObservationV0
+from gymnasium.wrappers import ResizeObservation
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import (
     check_obs,
@@ -33,7 +33,7 @@ from tests.wrappers.utils import (
 def test_resize_observation_wrapper(env):
     """Test the ``ResizeObservation`` that the observation has changed size."""
 
-    wrapped_env = ResizeObservationV0(env, (25, 25))
+    wrapped_env = ResizeObservation(env, (25, 25))
     assert isinstance(wrapped_env.observation_space, Box)
     assert wrapped_env.observation_space.shape[:2] == (25, 25)
 
@@ -46,7 +46,7 @@ def test_resize_observation_wrapper(env):
 
 @pytest.mark.parametrize("shape", ((10, 10), (20, 20), (60, 60), (100, 100)))
 def test_resize_shapes(shape: tuple[int, int]):
-    env = ResizeObservationV0(gym.make("CarRacing-v2"), shape)
+    env = ResizeObservation(gym.make("CarRacing-v2"), shape)
     assert env.observation_space == Box(
         low=0, high=255, shape=shape + (3,), dtype=np.uint8
     )
@@ -61,14 +61,14 @@ def test_invalid_input():
     env = gym.make("CarRacing-v2")
 
     with pytest.raises(AssertionError):
-        ResizeObservationV0(env, ())
+        ResizeObservation(env, ())
     with pytest.raises(AssertionError):
-        ResizeObservationV0(env, (1,))
+        ResizeObservation(env, (1,))
     with pytest.raises(AssertionError):
-        ResizeObservationV0(env, (1, 1, 1, 1))
+        ResizeObservation(env, (1, 1, 1, 1))
     with pytest.raises(AssertionError):
-        ResizeObservationV0(env, (-1, 1))
+        ResizeObservation(env, (-1, 1))
     with pytest.raises(AssertionError):
-        ResizeObservationV0(gym.make("CartPole-v1"), (1, 1))
+        ResizeObservation(gym.make("CartPole-v1"), (1, 1))
     with pytest.raises(AssertionError):
-        ResizeObservationV0(gym.make("Blackjack-v1"), (1, 1))
+        ResizeObservation(gym.make("Blackjack-v1"), (1, 1))

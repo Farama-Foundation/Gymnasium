@@ -1,8 +1,8 @@
 """A collection of wrappers that all use the LambdaAction class.
 
-* ``LambdaActionV0`` - Transforms the actions based on a function
-* ``ClipActionV0`` - Clips the action within a bounds
-* ``RescaleActionV0`` - Rescales the action within a minimum and maximum actions
+* ``TransformAction`` - Transforms the actions based on a function
+* ``ClipAction`` - Clips the action within a bounds
+* ``RescaleAction`` - Rescales the action within a minimum and maximum actions
 """
 from __future__ import annotations
 
@@ -15,10 +15,10 @@ from gymnasium.core import ActType, ObsType, WrapperActType
 from gymnasium.spaces import Box, Space
 
 
-__all__ = ["LambdaActionV0", "ClipActionV0", "RescaleActionV0"]
+__all__ = ["TransformAction", "ClipAction", "RescaleAction"]
 
 
-class LambdaActionV0(
+class TransformAction(
     gym.ActionWrapper[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Applies a function to the ``action`` before passing the modified value to the environment ``step`` function.
@@ -32,7 +32,7 @@ class LambdaActionV0(
         >>> obs
         array([-4.6397772e-01, -4.4808415e-04], dtype=float32)
         >>> env = gym.make("MountainCarContinuous-v0")
-        >>> env = LambdaActionV0(env, lambda a: 0.5 * a + 0.1, env.action_space)
+        >>> env = TransformAction(env, lambda a: 0.5 * a + 0.1, env.action_space)
         >>> _ = env.reset(seed=123)
         >>> obs, *_= env.step(np.array([0.0, 1.0]))
         >>> obs
@@ -45,7 +45,7 @@ class LambdaActionV0(
         func: Callable[[WrapperActType], ActType],
         action_space: Space[WrapperActType] | None,
     ):
-        """Initialize LambdaAction.
+        """Initialize TransformAction.
 
         Args:
             env: The environment to wrap
@@ -67,17 +67,17 @@ class LambdaActionV0(
         return self.func(action)
 
 
-class ClipActionV0(
-    LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
+class ClipAction(
+    TransformAction[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Clips the ``action`` pass to ``step`` to be within the environment's `action_space`.
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import ClipActionV0
+        >>> from gymnasium.wrappers import ClipAction
         >>> import numpy as np
         >>> env = gym.make("Hopper-v4", disable_env_checker=True)
-        >>> env = ClipActionV0(env)
+        >>> env = ClipAction(env)
         >>> env.action_space
         Box(-inf, inf, (3,), float32)
         >>> _ = env.reset(seed=42)
@@ -94,7 +94,7 @@ class ClipActionV0(
         assert isinstance(env.action_space, Box)
 
         gym.utils.RecordConstructorArgs.__init__(self)
-        LambdaActionV0.__init__(
+        TransformAction.__init__(
             self,
             env=env,
             func=lambda action: np.clip(
@@ -109,8 +109,8 @@ class ClipActionV0(
         )
 
 
-class RescaleActionV0(
-    LambdaActionV0[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
+class RescaleAction(
+    TransformAction[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Affinely (linearly) rescales a ``Box`` action space of the environment to within the range of ``[min_action, max_action]``.
 
@@ -119,7 +119,7 @@ class RescaleActionV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import RescaleActionV0
+        >>> from gymnasium.wrappers import RescaleAction
         >>> import numpy as np
         >>> env = gym.make("Hopper-v4", disable_env_checker=True)
         >>> _ = env.reset(seed=42)
@@ -127,9 +127,9 @@ class RescaleActionV0(
         >>> _ = env.reset(seed=42)
         >>> min_action = -0.5
         >>> max_action = np.array([0.0, 0.5, 0.75], dtype=np.float32)
-        >>> wrapped_env = RescaleActionV0(env, min_action=min_action, max_action=max_action)
+        >>> wrapped_env = RescaleAction(env, min_action=min_action, max_action=max_action)
         >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
-        >>> np.alltrue(obs == wrapped_env_obs)
+        >>> np.all(obs == wrapped_env_obs)
         True
     """
 
@@ -181,7 +181,7 @@ class RescaleActionV0(
         )
         intercept = gradient * -min_action + env.action_space.low
 
-        LambdaActionV0.__init__(
+        TransformAction.__init__(
             self,
             env=env,
             func=lambda action: gradient * action + intercept,

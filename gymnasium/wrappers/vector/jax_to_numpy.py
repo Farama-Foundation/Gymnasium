@@ -12,10 +12,10 @@ from gymnasium.vector.vector_env import ArrayType
 from gymnasium.wrappers.jax_to_numpy import jax_to_numpy, numpy_to_jax
 
 
-__all__ = ["JaxToNumpyV0"]
+__all__ = ["JaxToNumpy"]
 
 
-class JaxToNumpyV0(VectorWrapper):
+class JaxToNumpy(VectorWrapper):
     """Wraps a jax vector environment so that it can be interacted with through numpy arrays.
 
     Notes:

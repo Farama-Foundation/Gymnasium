@@ -33,24 +33,24 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-    "TimeLimitV0",
-    "AutoresetV0",
-    "PassiveEnvCheckerV0",
-    "OrderEnforcingV0",
-    "RecordEpisodeStatisticsV0",
+    "TimeLimit",
+    "Autoreset",
+    "PassiveEnvChecker",
+    "OrderEnforcing",
+    "RecordEpisodeStatistics",
 ]
 
 
-class TimeLimitV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
+class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Limits the number of steps for an environment through truncating the environment if a maximum number of timesteps is exceeded.
 
     If a truncation is not defined inside the environment itself, this is the only place that the truncation signal is issued.
     Critically, this is different from the `terminated` signal that originates from the underlying environment as part of the MDP.
 
     Example:
-       >>> from gymnasium.wrappers import TimeLimitV0
+       >>> from gymnasium.wrappers import TimeLimit
        >>> env = gym.make("CartPole-v1")
-       >>> env = TimeLimitV0(env, max_episode_steps=1000)
+       >>> env = TimeLimit(env, max_episode_steps=1000)
     """
 
     def __init__(
@@ -121,7 +121,7 @@ class TimeLimitV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
         return env_spec
 
 
-class AutoresetV0(
+class Autoreset(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """The wrapped environment is automatically reset when an terminated or truncated state is reached.
@@ -202,7 +202,7 @@ class AutoresetV0(
         return env_spec
 
 
-class PassiveEnvCheckerV0(
+class PassiveEnvChecker(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """A passive environment checker wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follows gymnasium's API."""
@@ -283,16 +283,16 @@ class PassiveEnvCheckerV0(
                 raise e
 
 
-class OrderEnforcingV0(
+class OrderEnforcing(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Will produce an error if ``step`` or ``render`` is called before ``render``.
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import OrderEnforcingV0
+        >>> from gymnasium.wrappers import OrderEnforcing
         >>> env = gym.make("CartPole-v1", render_mode="human")
-        >>> env = OrderEnforcingV0(env)
+        >>> env = OrderEnforcing(env)
         >>> env.step(0)
         Traceback (most recent call last):
             ...
@@ -368,7 +368,7 @@ class OrderEnforcingV0(
         return env_spec
 
 
-class RecordEpisodeStatisticsV0(
+class RecordEpisodeStatistics(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """This wrapper will keep track of cumulative rewards and episode lengths.

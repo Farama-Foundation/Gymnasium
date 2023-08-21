@@ -1,10 +1,10 @@
 """A collection of stateful observation wrappers.
 
-* ``DelayObservationV0`` - A wrapper for delaying the returned observation
-* ``TimeAwareObservationV0`` - A wrapper for adding time aware observations to environment observation
-* ``FrameStackObservationV0`` - Frame stack the observations
-* ``NormalizeObservationV0`` - Normalized the observations to have unit variance with a moving mean
-* ``MaxAndSkipObservationV0`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
+* ``DelayObservation`` - A wrapper for delaying the returned observation
+* ``TimeAwareObservation`` - A wrapper for adding time aware observations to environment observation
+* ``FrameStackObservation`` - Frame stack the observations
+* ``NormalizeObservation`` - Normalized the observations to have unit variance with a moving mean
+* ``MaxAndSkipObservation`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
 """
 from __future__ import annotations
 
@@ -23,14 +23,15 @@ from gymnasium.wrappers.utils import RunningMeanStd, create_zero_array
 
 
 __all__ = [
-    "DelayObservationV0",
-    "TimeAwareObservationV0",
-    "FrameStackObservationV0",
-    "NormalizeObservationV0",
+    "DelayObservation",
+    "TimeAwareObservation",
+    "FrameStackObservation",
+    "NormalizeObservation",
+    "MaxAndSkipObservation",
 ]
 
 
-class DelayObservationV0(
+class DelayObservation(
     gym.ObservationWrapper[ObsType, ActType, ObsType], gym.utils.RecordConstructorArgs
 ):
     """Adds a delay to the returned observation from the environment.
@@ -47,7 +48,7 @@ class DelayObservationV0(
         >>> env.reset(seed=123)
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
 
-        >>> env = DelayObservationV0(env, delay=2)
+        >>> env = DelayObservation(env, delay=2)
         >>> env.reset(seed=123)
         (array([0., 0., 0., 0.], dtype=float32), {})
         >>> env.step(env.action_space.sample())
@@ -96,7 +97,7 @@ class DelayObservationV0(
             return create_zero_array(self.observation_space)
 
 
-class TimeAwareObservationV0(
+class TimeAwareObservation(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
@@ -116,9 +117,9 @@ class TimeAwareObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import TimeAwareObservationV0
+        >>> from gymnasium.wrappers import TimeAwareObservation
         >>> env = gym.make("CartPole-v1")
-        >>> env = TimeAwareObservationV0(env)
+        >>> env = TimeAwareObservation(env)
         >>> env.observation_space
         Box([-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
           0.00000000e+00], [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
@@ -131,7 +132,7 @@ class TimeAwareObservationV0(
 
     Normalize time observation space example:
         >>> env = gym.make('CartPole-v1')
-        >>> env = TimeAwareObservationV0(env, normalize_time=True)
+        >>> env = TimeAwareObservation(env, normalize_time=True)
         >>> env.observation_space
         Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38
           0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 1.0000000e+00], (5,), float32)
@@ -145,7 +146,7 @@ class TimeAwareObservationV0(
 
     Flatten observation space example:
         >>> env = gym.make("CartPole-v1")
-        >>> env = TimeAwareObservationV0(env, flatten=False)
+        >>> env = TimeAwareObservation(env, flatten=False)
         >>> env.observation_space
         Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
         >>> env.reset(seed=42)[0]
@@ -164,7 +165,7 @@ class TimeAwareObservationV0(
         *,
         dict_time_key: str = "time",
     ):
-        """Initialize :class:`TimeAwareObservationV0`.
+        """Initialize :class:`TimeAwareObservation`.
 
         Args:
             env: The environment to apply the wrapper
@@ -277,7 +278,7 @@ class TimeAwareObservationV0(
         return super().reset(seed=seed, options=options)
 
 
-class FrameStackObservationV0(
+class FrameStackObservation(
     gym.Wrapper[WrapperObsType, ActType, ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
@@ -294,9 +295,9 @@ class FrameStackObservationV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import FrameStackObservationV0
+        >>> from gymnasium.wrappers import FrameStackObservation
         >>> env = gym.make("CarRacing-v2")
-        >>> env = FrameStackObservationV0(env, 4)
+        >>> env = FrameStackObservation(env, 4)
         >>> env.observation_space
         Box(0, 255, (4, 96, 96, 3), uint8)
         >>> obs, _ = env.reset()
@@ -389,7 +390,7 @@ class FrameStackObservationV0(
         return updated_obs, info
 
 
-class NormalizeObservationV0(
+class NormalizeObservation(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
@@ -415,7 +416,7 @@ class NormalizeObservationV0(
         >>> obs
         array([ 0.1511158 ,  1.7183299 , -0.25533703, -2.8914354 ], dtype=float32)
         >>> env = gym.make("CartPole-v1")
-        >>> env = NormalizeObservationV0(env)
+        >>> env = NormalizeObservation(env)
         >>> obs, info = env.reset(seed=123)
         >>> term, trunc = False, False
         >>> while not (term or trunc):
@@ -460,7 +461,7 @@ class NormalizeObservationV0(
         )
 
 
-class MaxAndSkipObservationV0(
+class MaxAndSkipObservation(
     gym.Wrapper[WrapperObsType, ActType, ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
@@ -479,7 +480,7 @@ class MaxAndSkipObservationV0(
         >>> obs4, *_ = env.step(1)
         >>> skip_and_max_obs = np.max(np.stack([obs3, obs4], axis=0), axis=0)
         >>> env = gym.make("CartPole-v1")
-        >>> wrapped_env = MaxAndSkipObservationV0(env)
+        >>> wrapped_env = MaxAndSkipObservation(env)
         >>> wrapped_obs0, *_ = wrapped_env.reset(seed=123)
         >>> wrapped_obs1, *_ = wrapped_env.step(1)
         >>> np.all(obs0 == wrapped_obs0)
@@ -538,6 +539,6 @@ class MaxAndSkipObservationV0(
             total_reward += float(reward)
             if terminated or truncated:
                 break
-        max_frame = self._obs_buffer.max(axis=0)
+        max_frame = np.max(self._obs_buffer, axis=0)
 
         return max_frame, total_reward, terminated, truncated, info

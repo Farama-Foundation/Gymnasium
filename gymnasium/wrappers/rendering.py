@@ -1,8 +1,8 @@
 """A collections of rendering-based wrappers.
 
-* ``RenderCollectionV0`` - Collects rendered frames into a list
-* ``RecordVideoV0`` - Records a video of the environments
-* ``HumanRenderingV0`` - Provides human rendering of environments with ``"rgb_array"``
+* ``RenderCollection`` - Collects rendered frames into a list
+* ``RecordVideo`` - Records a video of the environments
+* ``HumanRendering`` - Provides human rendering of environments with ``"rgb_array"``
 """
 from __future__ import annotations
 
@@ -19,13 +19,13 @@ from gymnasium.error import DependencyNotInstalled
 
 
 __all__ = [
-    "RenderCollectionV0",
-    "RecordVideoV0",
-    "HumanRenderingV0",
+    "RenderCollection",
+    "RecordVideo",
+    "HumanRendering",
 ]
 
 
-class RenderCollectionV0(
+class RenderCollection(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
@@ -34,7 +34,7 @@ class RenderCollectionV0(
         Return the list of frames for the number of steps ``render`` wasn't called.
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RenderCollectionV0(env)
+        >>> env = RenderCollection(env)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
         ...     _ = env.step(env.action_space.sample())
@@ -50,7 +50,7 @@ class RenderCollectionV0(
         Return the list of frames for the number of steps the episode was running.
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RenderCollectionV0(env, pop_frames=False)
+        >>> env = RenderCollection(env, pop_frames=False)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
         ...     _ = env.step(env.action_space.sample())
@@ -66,7 +66,7 @@ class RenderCollectionV0(
         Collect all frames for all episodes, without clearing them when render is called
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RenderCollectionV0(env, pop_frames=False, reset_clean=False)
+        >>> env = RenderCollection(env, pop_frames=False, reset_clean=False)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
         ...     _ = env.step(env.action_space.sample())
@@ -147,7 +147,7 @@ class RenderCollectionV0(
         return frames
 
 
-class RecordVideoV0(
+class RecordVideo(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Records videos of environment episodes using the environment's render function.
@@ -172,7 +172,7 @@ class RecordVideoV0(
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> trigger = lambda t: t % 10 == 0
-        >>> env = RecordVideoV0(env, video_folder="./save_videos1", episode_trigger=trigger, disable_logger=True)
+        >>> env = RecordVideo(env, video_folder="./save_videos1", episode_trigger=trigger, disable_logger=True)
         >>> for i in range(50):
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
@@ -188,7 +188,7 @@ class RecordVideoV0(
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> trigger = lambda t: t % 200 == 0
-        >>> env = RecordVideoV0(env, video_folder="./save_videos2", step_trigger=trigger, video_length=100, disable_logger=True)
+        >>> env = RecordVideo(env, video_folder="./save_videos2", step_trigger=trigger, video_length=100, disable_logger=True)
         >>> for i in range(5):
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
@@ -204,7 +204,7 @@ class RecordVideoV0(
         >>> import os
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> env = RecordVideoV0(env, video_folder="./save_videos3", video_length=1000, disable_logger=True)
+        >>> env = RecordVideo(env, video_folder="./save_videos3", video_length=1000, disable_logger=True)
         >>> for i in range(3):
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
@@ -407,7 +407,7 @@ class RecordVideoV0(
             logger.warn("Unable to save last video! Did you call close()?")
 
 
-class HumanRenderingV0(
+class HumanRendering(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Allows human like rendering for environments that support "rgb_array" rendering.
@@ -421,9 +421,9 @@ class HumanRenderingV0(
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import HumanRenderingV0
+        >>> from gymnasium.wrappers import HumanRendering
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> wrapped = HumanRenderingV0(env)
+        >>> wrapped = HumanRendering(env)
         >>> obs, _ = wrapped.reset()     # This will start rendering to the screen
 
         The wrapper can also be applied directly when the environment is instantiated, simply by passing
@@ -437,7 +437,7 @@ class HumanRenderingV0(
         will always return an empty list:
 
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array_list")
-        >>> wrapped = HumanRenderingV0(env)
+        >>> wrapped = HumanRendering(env)
         >>> obs, _ = wrapped.reset()
         >>> env.render() # env.render() will always return an empty list!
         []

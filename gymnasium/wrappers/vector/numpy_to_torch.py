@@ -10,10 +10,10 @@ from gymnasium.wrappers.jax_to_torch import Device
 from gymnasium.wrappers.numpy_to_torch import numpy_to_torch, torch_to_numpy
 
 
-__all__ = ["NumpyToTorchV0"]
+__all__ = ["NumpyToTorch"]
 
 
-class NumpyToTorchV0(VectorWrapper):
+class NumpyToTorch(VectorWrapper):
     """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors."""
 
     def __init__(self, env: VectorEnv, device: Device | None = None):

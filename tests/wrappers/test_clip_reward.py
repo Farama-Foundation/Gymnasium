@@ -4,7 +4,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.error import InvalidBound
-from gymnasium.wrappers import ClipRewardV0
+from gymnasium.wrappers import ClipReward
 from tests.wrappers.utils import DISCRETE_ACTION, ENV_ID, SEED
 
 
@@ -18,7 +18,7 @@ def test_clip_reward_wrapper(lower_bound, upper_bound, expected_reward):
     Test if reward is correctly clipped accordingly to the input args.
     """
     env = gym.make(ENV_ID)
-    env = ClipRewardV0(env, lower_bound, upper_bound)
+    env = ClipReward(env, lower_bound, upper_bound)
     env.reset(seed=SEED)
     _, rew, _, _, _ = env.step(DISCRETE_ACTION)
 
@@ -39,4 +39,4 @@ def test_clip_reward_incorrect_params(lower_bound, upper_bound):
     env = gym.make(ENV_ID)
 
     with pytest.raises(InvalidBound):
-        ClipRewardV0(env, lower_bound, upper_bound)
+        ClipReward(env, lower_bound, upper_bound)

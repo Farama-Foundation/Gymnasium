@@ -5,10 +5,10 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-__all__ = ["AtariPreprocessingV0"]
+__all__ = ["AtariPreprocessing"]
 
 
-class AtariPreprocessingV0(gym.Wrapper, gym.utils.RecordConstructorArgs):
+class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Implements the common preprocessing techniques for Atari environments (excluding frame stacking).
 
     For frame stacking use :class:`gymnasium.wrappers.FrameStackObservation`.

@@ -1,6 +1,6 @@
 """Test suite for ReshapeObservation wrapper."""
 from gymnasium.spaces import Box
-from gymnasium.wrappers import ReshapeObservationV0
+from gymnasium.wrappers import ReshapeObservation
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import (
     check_obs,
@@ -16,7 +16,7 @@ def test_reshape_observation_wrapper():
         reset_func=record_random_obs_reset,
         step_func=record_random_obs_step,
     )
-    wrapped_env = ReshapeObservationV0(env, (6, 2))
+    wrapped_env = ReshapeObservation(env, (6, 2))
 
     obs, info = wrapped_env.reset()
     check_obs(env, wrapped_env, obs, info["obs"])

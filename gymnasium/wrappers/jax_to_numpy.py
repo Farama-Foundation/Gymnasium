@@ -21,7 +21,7 @@ except ImportError:
         "Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install gymnasium[jax]`"
     )
 
-__all__ = ["JaxToNumpyV0", "jax_to_numpy", "numpy_to_jax"]
+__all__ = ["JaxToNumpy", "jax_to_numpy", "numpy_to_jax"]
 
 
 @functools.singledispatch
@@ -92,7 +92,7 @@ def _iterable_jax_to_numpy(
     return type(value)(jax_to_numpy(v) for v in value)
 
 
-class JaxToNumpyV0(
+class JaxToNumpy(
     gym.Wrapper[WrapperObsType, WrapperActType, ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
