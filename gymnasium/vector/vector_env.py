@@ -5,6 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 import gymnasium as gym
+from gymnasium import logger
 from gymnasium.vector.utils.spaces import batch_space
 
 
@@ -385,6 +386,10 @@ class VectorEnvWrapper(VectorEnv):
     def __getattr__(self, name):
         if name.startswith("_"):
             raise AttributeError(f"attempted to get missing private attribute '{name}'")
+        logger.warn(
+            f"env.{name} to get variables from other wrappers is deprecated and will be removed in v1.0, "
+            f"to get this variable you can do `env.unwrapped.{name}` for environment variables."
+        )
         return getattr(self.env, name)
 
     @property
