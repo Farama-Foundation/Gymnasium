@@ -833,16 +833,21 @@ def make_vec(
     """
     if vector_kwargs is None:
         vector_kwargs = {}
-
     if wrappers is None:
         wrappers = []
 
     if isinstance(id, EnvSpec):
         spec_ = id
+
+        _kwargs = spec_.kwargs.copy()
+        num_envs = _kwargs.pop("num_envs", num_envs)
+        vectorization_mode = _kwargs.pop("vectorization_mode", vectorization_mode)
+        vector_kwargs = _kwargs.pop("vector_kwargs", vector_kwargs)
+        wrappers = _kwargs.pop("wrappers", wrappers)
     else:
         spec_ = _find_spec(id)
+        _kwargs = spec_.kwargs.copy()
 
-    _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
 
     # Check if we have the necessary entry point
@@ -913,6 +918,14 @@ def make_vec(
     # Copies the environment creation specification and kwargs to add to the environment specification details
     spec_ = copy.deepcopy(spec_)
     spec_.kwargs = _kwargs
+    if num_envs != 1:
+        spec_.kwargs["num_envs"] = num_envs
+    if vectorization_mode != "async":
+        spec_.kwargs["vectorization_mode"] = vectorization_mode
+    if vector_kwargs is not None:
+        spec_.kwargs["vector_kwargs"] = vector_kwargs
+    if wrappers is not None:
+        spec_.kwargs["wrappers"] = wrappers
     env.unwrapped.spec = spec_
 
     return env

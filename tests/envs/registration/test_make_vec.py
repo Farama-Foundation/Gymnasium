@@ -70,15 +70,18 @@ def test_make_vec_wrappers():
     env.close()
 
 
-@pytest.mark.parametrize("env_id, kwargs", (
+@pytest.mark.parametrize(
+    "env_id, kwargs",
+    (
         ("CartPole-v1", {}),
         ("CartPole-v1", {"num_envs": 3}),
         ("CartPole-v1", {"vectorization_mode": "sync"}),
         ("CartPole-v1", {"vectorization_mode": "custom"}),
         ("CartPole-v1", {"vector_kwargs": {"copy": False}}),
         ("CartPole-v1", {"wrappers": (gym.wrappers.TimeAwareObservationV0,)}),
-        ("CartPole-v1", {"render_mode": "rgb_array"})
-))
+        ("CartPole-v1", {"render_mode": "rgb_array"}),
+    ),
+)
 def test_make_vec_with_spec(env_id: str, kwargs: dict):
     envs = gym.make_vec(env_id, **kwargs)
     assert envs.spec is not None
