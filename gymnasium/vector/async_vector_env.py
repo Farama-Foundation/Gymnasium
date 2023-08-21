@@ -38,6 +38,7 @@ __all__ = ["AsyncVectorEnv", "AsyncState"]
 
 
 class AsyncState(Enum):
+    """The AsyncVectorEnv possible states given the different actions."""
     DEFAULT = "default"
     WAITING_RESET = "reset"
     WAITING_STEP = "step"
@@ -381,11 +382,8 @@ class AsyncVectorEnv(VectorEnv):
                 self.observations,
             )
 
-        if self.copy:
-            self.observations = deepcopy(self.observations)
-
         return (
-            self.observations,
+            deepcopy(self.observations) if self.copy else self.observations,
             np.array(rewards, dtype=np.float64),
             np.array(terminateds, dtype=np.bool_),
             np.array(truncateds, dtype=np.bool_),
