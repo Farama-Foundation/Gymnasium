@@ -1,4 +1,4 @@
-"""A synchronous vector environment."""
+"""Implementation of a synchronous (for loop) vectorization method of any environment."""
 from __future__ import annotations
 
 from copy import deepcopy
@@ -65,25 +65,28 @@ class SyncVectorEnv(VectorEnv):
                 (or, by default, the observation space of the first sub-environment).
         """
         self.copy = copy
-
         self.env_fns = env_fns
+
+        # Initialise all sub-environments
         self.envs = [env_fn() for env_fn in env_fns]
 
+        # Define core attributes using the sub-environments
+        self.num_envs = len(self.envs)
         self.metadata = self.envs[0].metadata
         self.spec = self.envs[0].spec
-        self.render_mode = self.envs[0].render_mode
 
-        self.num_envs = len(self.envs)
-
+        # Initialises the single spaces from the sub-environments
         self.single_observation_space = self.envs[0].observation_space
         self.single_action_space = self.envs[0].action_space
+        self._check_spaces()
 
+        # Initialise the obs and action space based on the single versions and num of sub-environments
         self.observation_space = batch_space(
             self.single_observation_space, self.num_envs
         )
         self.action_space = batch_space(self.single_action_space, self.num_envs)
-        self._check_spaces()
 
+        # Initialise attributes used in `step` and `reset`
         self._observations = create_empty_array(
             self.single_observation_space, n=self.num_envs, fn=np.zeros
         )
@@ -93,49 +96,45 @@ class SyncVectorEnv(VectorEnv):
 
     def reset(
         self,
+        *,
         seed: int | list[int] | None = None,
-        options: dict | None = None,
-    ):
-        """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Resets each of the sub-environments and concatenate the results together.
 
         Args:
-            seed: The reset environment seed
-            options: Option information for the environment reset
+            seed: Seeds used to reset the sub-environments, either ``None`` (random seeds for all environment), ``int`` (seed, seed+1, ..., seed+n), or a list of ints or None (``List[int | None]``)
+            options: Option information used for each sub-environment
 
         Returns:
-            The reset observation of the environment and reset information
+            Concatenated observations and info from each sub-environment
         """
         if seed is None:
             seed = [None for _ in range(self.num_envs)]
-        if isinstance(seed, int):
+        elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
         assert len(seed) == self.num_envs
 
-        self._terminations[:] = False
-        self._truncations[:] = False
-        observations = []
-        infos = {}
+        self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
+        self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
+
+        observations, infos = [], {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
-            kwargs = {}
-            if single_seed is not None:
-                kwargs["seed"] = single_seed
-            if options is not None:
-                kwargs["options"] = options
+            env_obs, env_info = env.reset(seed=single_seed, options=options)
 
-            observation, info = env.reset(**kwargs)
-            observations.append(observation)
-            infos = self._add_info(infos, info, i)
+            observations.append(env_obs)
+            infos = self._add_info(infos, env_info, i)
 
+        # Concatenate the observations
         self._observations = concatenate(
             self.single_observation_space, observations, self._observations
         )
-        return (
-            deepcopy(self._observations) if self.copy else self._observations
-        ), infos
+
+        return deepcopy(self._observations) if self.copy else self._observations, infos
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
@@ -146,20 +145,25 @@ class SyncVectorEnv(VectorEnv):
         observations, infos = [], {}
         for i, (env, action) in enumerate(zip(self.envs, actions)):
             (
-                observation,
+                env_obs,
                 self._rewards[i],
                 self._terminations[i],
                 self._truncations[i],
-                info,
+                env_info,
             ) = env.step(action)
 
+            # If sub-environments terminates or truncates then save the obs and info to the batched info
             if self._terminations[i] or self._truncations[i]:
-                old_observation, old_info = observation, info
-                observation, info = env.reset()
-                info["final_observation"] = old_observation
-                info["final_info"] = old_info
-            observations.append(observation)
-            infos = self._add_info(infos, info, i)
+                old_observation, old_info = env_obs, env_info
+                env_obs, env_info = env.reset()
+
+                env_info["final_observation"] = old_observation
+                env_info["final_info"] = old_info
+
+            observations.append(env_obs)
+            infos = self._add_info(infos, env_info, i)
+
+        # Concatenate the observations
         self._observations = concatenate(
             self.single_observation_space, observations, self._observations
         )
@@ -177,7 +181,7 @@ class SyncVectorEnv(VectorEnv):
         return tuple(env.render() for env in self.envs)
 
     def call(self, name: str, *args: Any, **kwargs: Any) -> tuple[Any, ...]:
-        """Calls the method with name and applies args and kwargs.
+        """Calls a sub-environment method with name and applies args and kwargs.
 
         Args:
             name: The method name
@@ -190,6 +194,7 @@ class SyncVectorEnv(VectorEnv):
         results = []
         for env in self.envs:
             function = env.get_wrapper_attr(name)
+
             if callable(function):
                 results.append(function(*args, **kwargs))
             else:
@@ -222,11 +227,11 @@ class SyncVectorEnv(VectorEnv):
         """
         if not isinstance(values, (list, tuple)):
             values = [values for _ in range(self.num_envs)]
+
         if len(values) != self.num_envs:
             raise ValueError(
-                "Values must be a list or tuple with length equal to the "
-                f"number of environments. Got `{len(values)}` values for "
-                f"{self.num_envs} environments."
+                "Values must be a list or tuple with length equal to the number of environments. "
+                f"Got `{len(values)}` values for {self.num_envs} environments."
             )
 
         for env, value in zip(self.envs, values):
@@ -237,19 +242,18 @@ class SyncVectorEnv(VectorEnv):
         [env.close() for env in self.envs]
 
     def _check_spaces(self) -> bool:
+        """Check that each of the environments obs and action spaces are equivalent to the single obs and action space."""
         for env in self.envs:
             if not (env.observation_space == self.single_observation_space):
                 raise RuntimeError(
-                    "Some environments have an observation space different from "
-                    f"`{self.single_observation_space}`. In order to batch observations, "
-                    "the observation spaces from all environments must be equal."
+                    f"Some environments have an observation space different from `{self.single_observation_space}`. "
+                    "In order to batch observations, the observation spaces from all environments must be equal."
                 )
 
             if not (env.action_space == self.single_action_space):
                 raise RuntimeError(
-                    "Some environments have an action space different from "
-                    f"`{self.single_action_space}`. In order to batch actions, the "
-                    "action spaces from all environments must be equal."
+                    f"Some environments have an action space different from `{self.single_action_space}`. "
+                    "In order to batch actions, the action spaces from all environments must be equal."
                 )
 
         return True

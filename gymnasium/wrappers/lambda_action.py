@@ -21,7 +21,23 @@ __all__ = ["LambdaActionV0", "ClipActionV0", "RescaleActionV0"]
 class LambdaActionV0(
     gym.ActionWrapper[ObsType, WrapperActType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """Applies a function to the ``action`` before passing the modified value to the environment ``step`` function."""
+    """Applies a function to the ``action`` before passing the modified value to the environment ``step`` function.
+
+    Example:
+        >>> import numpy as np
+        >>> import gymnasium as gym
+        >>> env = gym.make("MountainCarContinuous-v0")
+        >>> _ = env.reset(seed=123)
+        >>> obs, *_= env.step(np.array([0.0, 1.0]))
+        >>> obs
+        array([-4.6397772e-01, -4.4808415e-04], dtype=float32)
+        >>> env = gym.make("MountainCarContinuous-v0")
+        >>> env = LambdaActionV0(env, lambda a: 0.5 * a + 0.1, env.action_space)
+        >>> _ = env.reset(seed=123)
+        >>> obs, *_= env.step(np.array([0.0, 1.0]))
+        >>> obs
+        array([-4.6382770e-01, -2.9808417e-04], dtype=float32)
+    """
 
     def __init__(
         self,
