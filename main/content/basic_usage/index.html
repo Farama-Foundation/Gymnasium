@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Compatibility with Gym" href="../gym_compatibility/" /><link rel="prev" title="&lt;no title&gt;" href="../../" />
         <link rel="canonical" href="https://gymnasium.farama.org/content/basic_usage.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Basic Usage - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -475,11 +475,11 @@
           <article role="main">
             
             <section id="basic-usage">
-<h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h1>
+<h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h1>
 <p>Gymnasium is a project that provides an API for all single agent reinforcement learning environments, and includes implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.</p>
 <p>The API contains four key functions: <code class="docutils literal notranslate"><span class="pre">make</span></code>, <code class="docutils literal notranslate"><span class="pre">reset</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">render</span></code>, that this basic usage will introduce you to. At the core of Gymnasium is <code class="docutils literal notranslate"><span class="pre">Env</span></code>, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (this is not a perfect reconstruction, and is missing several components of MDPs). Within gymnasium, environments (MDPs) are implemented as <code class="docutils literal notranslate"><span class="pre">Env</span></code> classes, along with <code class="docutils literal notranslate"><span class="pre">Wrappers</span></code>, which provide helpful utilities and can change the results passed to the user.</p>
 <section id="initializing-environments">
-<h2>Initializing Environments<a class="headerlink" href="#initializing-environments" title="Permalink to this heading">#</a></h2>
+<h2>Initializing Environments<a class="headerlink" href="#initializing-environments" title="Link to this heading">#</a></h2>
 <p>Initializing environments is very easy in Gymnasium and can be done via the <code class="docutils literal notranslate"><span class="pre">make</span></code> function:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">)</span>
@@ -488,7 +488,7 @@
 <p>This will return an <code class="docutils literal notranslate"><span class="pre">Env</span></code> for users to interact with. To see all environments you can create, use <code class="docutils literal notranslate"><span class="pre">gymnasium.envs.registry.keys()</span></code>.<code class="docutils literal notranslate"><span class="pre">make</span></code> includes a number of additional parameters to adding wrappers, specifying keywords to the environment and more.</p>
 </section>
 <section id="interacting-with-the-environment">
-<h2>Interacting with the Environment<a class="headerlink" href="#interacting-with-the-environment" title="Permalink to this heading">#</a></h2>
+<h2>Interacting with the Environment<a class="headerlink" href="#interacting-with-the-environment" title="Link to this heading">#</a></h2>
 <p>The classic “agent-environment loop” pictured below is simplified representation of reinforcement learning that Gymnasium implements.</p>
 <a class="only-light reference internal image-reference" href="../../_images/AE_loop.png"><img alt="../../_images/AE_loop.png" class="only-light align-center" src="../../_images/AE_loop.png" style="width: 50%;" /></a>
 <a class="only-dark reference internal image-reference" href="../../_images/AE_loop_dark.png"><img alt="../../_images/AE_loop_dark.png" class="only-dark align-center" src="../../_images/AE_loop_dark.png" style="width: 50%;" /></a>
@@ -512,7 +512,7 @@
 <a class="reference internal image-reference" href="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif"><img alt="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif" src="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif" style="width: 50%;" /></a>
 </figure>
 <section id="explaining-the-code">
-<h3>Explaining the code<a class="headerlink" href="#explaining-the-code" title="Permalink to this heading">#</a></h3>
+<h3>Explaining the code<a class="headerlink" href="#explaining-the-code" title="Link to this heading">#</a></h3>
 <p>First, an environment is created using <code class="docutils literal notranslate"><span class="pre">make</span></code> with an additional keyword <code class="docutils literal notranslate"><span class="pre">&quot;render_mode&quot;</span></code> that specifies how the environment should be visualised. See <code class="docutils literal notranslate"><span class="pre">render</span></code> for details on the default meaning of different render modes. In this example, we use the <code class="docutils literal notranslate"><span class="pre">&quot;LunarLander&quot;</span></code> environment where the agent controls a spaceship that needs to land safely.</p>
 <p>After initializing the environment, we <code class="docutils literal notranslate"><span class="pre">reset</span></code> the environment to get the first observation of the environment. For initializing the environment with a particular random seed or options (see environment documentation for possible values) use the <code class="docutils literal notranslate"><span class="pre">seed</span></code> or <code class="docutils literal notranslate"><span class="pre">options</span></code> parameters with <code class="docutils literal notranslate"><span class="pre">reset</span></code>.</p>
 <p>Next, the agent performs an action in the environment, <code class="docutils literal notranslate"><span class="pre">step</span></code>, this can be imagined as moving a robot or pressing a button on a games’ controller that causes a change within the environment. As a result, the agent receives a new observation from the updated environment along with a reward for taking the action. This reward could be for instance positive for destroying an enemy or a negative reward for moving into lava. One such action-observation exchange is referred to as a <em>timestep</em>.</p>
@@ -520,7 +520,7 @@
 </section>
 </section>
 <section id="action-and-observation-spaces">
-<h2>Action and observation spaces<a class="headerlink" href="#action-and-observation-spaces" title="Permalink to this heading">#</a></h2>
+<h2>Action and observation spaces<a class="headerlink" href="#action-and-observation-spaces" title="Link to this heading">#</a></h2>
 <p>Every environment specifies the format of valid actions and observations with the <code class="docutils literal notranslate"><span class="pre">env.action_space</span></code> and <code class="docutils literal notranslate"><span class="pre">env.observation_space</span></code> attributes. This is helpful for both knowing the expected input and output of the environment as all valid actions and observation should be contained with the respective space.</p>
 <p>In the example, we sampled random actions via <code class="docutils literal notranslate"><span class="pre">env.action_space.sample()</span></code> instead of using an agent policy, mapping observations to actions which users will want to make. See one of the agent tutorials for an example of creating and training an agent policy.</p>
 <p>Every environment should have the attributes <code class="docutils literal notranslate"><span class="pre">action_space</span></code> and <code class="docutils literal notranslate"><span class="pre">observation_space</span></code>, both of which should be instances of classes that inherit from <code class="docutils literal notranslate"><span class="pre">Space</span></code>. Gymnasium has support for a majority of possible spaces users might need:</p>
@@ -537,7 +537,7 @@ Values can be shifted to {a, a+1, …, a+n-1} using an optional argument.</p></l
 <p>For example usage of spaces, see their <a class="reference internal" href="../../api/spaces/"><span class="doc std std-doc">documentation</span></a> along with <a class="reference internal" href="../../api/spaces/utils/"><span class="doc std std-doc">utility functions</span></a>. There are a couple of more niche spaces <code class="docutils literal notranslate"><span class="pre">Graph</span></code>, <code class="docutils literal notranslate"><span class="pre">Sequence</span></code> and <code class="docutils literal notranslate"><span class="pre">Text</span></code>.</p>
 </section>
 <section id="modifying-the-environment">
-<h2>Modifying the environment<a class="headerlink" href="#modifying-the-environment" title="Permalink to this heading">#</a></h2>
+<h2>Modifying the environment<a class="headerlink" href="#modifying-the-environment" title="Link to this heading">#</a></h2>
 <p>Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly. Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can also be chained to combine their effects. Most environments that are generated via <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> will already be wrapped by default using the <code class="docutils literal notranslate"><span class="pre">TimeLimit</span></code>, <code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code> and <code class="docutils literal notranslate"><span class="pre">PassiveEnvChecker</span></code>.</p>
 <p>In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along with (possibly optional) parameters to the wrapper’s constructor:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -569,7 +569,7 @@ Values can be shifted to {a, a+1, …, a+n-1} using an optional argument.</p></l
 </div>
 </section>
 <section id="more-information">
-<h2>More information<a class="headerlink" href="#more-information" title="Permalink to this heading">#</a></h2>
+<h2>More information<a class="headerlink" href="#more-information" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/"><span class="doc std std-doc">Making a Custom environment using the Gymnasium API</span></a></p></li>
 <li><p><a class="reference internal" href="../../tutorials/training_agents/blackjack_tutorial/"><span class="doc std std-doc">Training an agent to play blackjack</span></a></p></li>
@@ -730,9 +730,9 @@ Values can be shifted to {a, a+1, …, a+n-1} using an optional argument.</p></l
         })()
       </script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

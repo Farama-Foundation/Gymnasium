@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Make your own custom environment" href="../environment_creation/" /><link rel="prev" title="Handling Time Limits" href="../handling_time_limits/" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/gymnasium_basics/implementing_custom_wrappers.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Implementing Custom Wrappers - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -476,7 +476,7 @@
           <article role="main">
             
             <section class="sphx-glr-example-title" id="implementing-custom-wrappers">
-<span id="sphx-glr-tutorials-gymnasium-basics-implementing-custom-wrappers-py"></span><h1>Implementing Custom Wrappers<a class="headerlink" href="#implementing-custom-wrappers" title="Permalink to this heading">#</a></h1>
+<span id="sphx-glr-tutorials-gymnasium-basics-implementing-custom-wrappers-py"></span><h1>Implementing Custom Wrappers<a class="headerlink" href="#implementing-custom-wrappers" title="Link to this heading">#</a></h1>
 <p>In this tutorial we will describe how to implement your own custom wrappers.
 Wrappers are a great way to add functionality to your environments in a modular way.
 This will save you a lot of boilerplate code.</p>
@@ -489,7 +489,7 @@ This will save you a lot of boilerplate code.</p>
 </ul>
 <p>Before following this tutorial, make sure to check out the docs of the <a class="reference internal" href="../../../api/wrappers/#module-gymnasium.wrappers" title="gymnasium.wrappers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gymnasium.wrappers</span></code></a> module.</p>
 <section id="inheriting-from-gymnasium-observationwrapper">
-<h2>Inheriting from <a class="reference internal" href="../../../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-observationwrapper" title="Permalink to this heading">#</a></h2>
+<h2>Inheriting from <a class="reference internal" href="../../../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-observationwrapper" title="Link to this heading">#</a></h2>
 <p>Observation wrappers are useful if you want to apply some function to the observations that are returned
 by an environment. If you implement an observation wrapper, you only need to define this transformation
 by implementing the <a class="reference internal" href="../../../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper.observation" title="gymnasium.ObservationWrapper.observation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper.observation()</span></code></a> method. Moreover, you should remember to
@@ -518,7 +518,7 @@ observation wrapper like this:</p>
 </div>
 </section>
 <section id="inheriting-from-gymnasium-actionwrapper">
-<h2>Inheriting from <a class="reference internal" href="../../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper" title="gymnasium.ActionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-actionwrapper" title="Permalink to this heading">#</a></h2>
+<h2>Inheriting from <a class="reference internal" href="../../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper" title="gymnasium.ActionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-actionwrapper" title="Link to this heading">#</a></h2>
 <p>Action wrappers can be used to apply a transformation to actions before applying them to the environment.
 If you implement an action wrapper, you need to define that transformation by implementing
 <a class="reference internal" href="../../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper.action" title="gymnasium.ActionWrapper.action"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper.action()</span></code></a>. Moreover, you should specify the domain of that transformation
@@ -545,7 +545,7 @@ to use a finite subset of actions. Then, you might want to implement the followi
 </div>
 </section>
 <section id="inheriting-from-gymnasium-rewardwrapper">
-<h2>Inheriting from <a class="reference internal" href="../../../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper" title="gymnasium.RewardWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-rewardwrapper" title="Permalink to this heading">#</a></h2>
+<h2>Inheriting from <a class="reference internal" href="../../../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper" title="gymnasium.RewardWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-rewardwrapper" title="Link to this heading">#</a></h2>
 <p>Reward wrappers are used to transform the reward that is returned by an environment.
 As for the previous wrappers, you need to specify that transformation by implementing the
 <a class="reference internal" href="../../../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper.reward" title="gymnasium.RewardWrapper.reward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper.reward()</span></code></a> method. Also, you might want to update the reward range of the wrapper.</p>
@@ -568,7 +568,7 @@ To do that, we could, for instance, implement the following wrapper:</p>
 </div>
 </section>
 <section id="inheriting-from-gymnasium-wrapper">
-<h2>Inheriting from <a class="reference internal" href="../../../api/wrappers/#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-wrapper" title="Permalink to this heading">#</a></h2>
+<h2>Inheriting from <a class="reference internal" href="../../../api/wrappers/#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a><a class="headerlink" href="#inheriting-from-gymnasium-wrapper" title="Link to this heading">#</a></h2>
 <p>Sometimes you might need to implement a wrapper that does some more complicated modifications (e.g. modify the
 reward based on data in <code class="docutils literal notranslate"><span class="pre">info</span></code> or change the rendering behavior).
 Such wrappers can be implemented by inheriting from <a class="reference internal" href="../../../api/wrappers/#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a>.</p>
@@ -770,9 +770,9 @@ of the reward are returned in <cite>info</cite>, so let us build a wrapper for R
         })()
       </script>
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

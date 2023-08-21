@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/spaces/discrete.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/spaces/discrete.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.spaces.discrete - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -475,7 +475,9 @@
 <span class="kn">from</span> <span class="nn">gymnasium.spaces.space</span> <span class="kn">import</span> <span class="n">MaskNDArray</span><span class="p">,</span> <span class="n">Space</span>
 
 
-<div class="viewcode-block" id="Discrete"><a class="viewcode-back" href="../../../../api/spaces/fundamental/#gymnasium.spaces.Discrete">[docs]</a><span class="k">class</span> <span class="nc">Discrete</span><span class="p">(</span><span class="n">Space</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]):</span>
+<div class="viewcode-block" id="Discrete">
+<a class="viewcode-back" href="../../../../api/spaces/fundamental/#gymnasium.spaces.Discrete">[docs]</a>
+<span class="k">class</span> <span class="nc">Discrete</span><span class="p">(</span><span class="n">Space</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A space consisting of finitely many elements.</span>
 
 <span class="sd">    This class represents a finite subset of integers, more specifically a set of the form :math:`\{ a, a+1, \dots, a+n-1 \}`.</span>
@@ -522,7 +524,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether this space can be flattened to a :class:`spaces.Box`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="Discrete.sample"><a class="viewcode-back" href="../../../../api/spaces/fundamental/#gymnasium.spaces.Discrete.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">MaskNDArray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span>
+<div class="viewcode-block" id="Discrete.sample">
+<a class="viewcode-back" href="../../../../api/spaces/fundamental/#gymnasium.spaces.Discrete.sample">[docs]</a>
+    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">MaskNDArray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a single random sample from this space.</span>
 
 <span class="sd">        A sample will be chosen uniformly at random with the mask if provided</span>
@@ -557,6 +561,7 @@
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return boolean specifying if x is a valid member of this space.&quot;&quot;&quot;</span>
@@ -610,6 +615,7 @@
     <span class="k">def</span> <span class="nf">from_jsonable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a list of json samples to a list of np.int64.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_n</span><span class="p">]</span></div>
+
 </pre></div>
           </article>
         </div>
@@ -727,9 +733,9 @@
         })()
       </script>
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

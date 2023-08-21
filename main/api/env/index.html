@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Register and Make" href="../registry/" /><link rel="prev" title="v21 to v26 Migration Guide" href="../../content/migration-guide/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/env.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Env - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -475,12 +475,12 @@
           <article role="main">
             
             <section id="env">
-<h1>Env<a class="headerlink" href="#env" title="Permalink to this heading">#</a></h1>
+<h1>Env<a class="headerlink" href="#env" title="Link to this heading">#</a></h1>
 <section id="gymnasium-env">
-<h2>gymnasium.Env<a class="headerlink" href="#gymnasium-env" title="Permalink to this heading">#</a></h2>
+<h2>gymnasium.Env<a class="headerlink" href="#gymnasium-env" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.Env">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">Env</span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Env" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">Env</span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Env" title="Link to this definition">#</a></dt>
 <dd><p>The main Gymnasium class for implementing Reinforcement Learning Agents environments.</p>
 <p>The class encapsulates an environment with arbitrary behind-the-scenes dynamics through the <a class="reference internal" href="#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> and <a class="reference internal" href="#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> functions.
 An environment can be partially or fully observed by single agents. For multi-agent environments, see PettingZoo.</p>
@@ -515,10 +515,10 @@ The default reward range is set to <span class="math notranslate nohighlight">\(
 </dd></dl>
 
 <section id="methods">
-<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">#</a></h3>
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.Env.step">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.Env.step" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.Env.step" title="Link to this definition">#</a></dt>
 <dd><p>Run one timestep of the environment’s dynamics using the agent actions.</p>
 <p>When the end of an episode is reached (<code class="docutils literal notranslate"><span class="pre">terminated</span> <span class="pre">or</span> <span class="pre">truncated</span></code>), it is necessary to call <a class="reference internal" href="#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> to
 reset this environment’s state for the next episode.</p>
@@ -559,7 +559,7 @@ a certain timelimit was exceeded, or the physics simulation has entered an inval
 
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.Env.reset">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.Env.reset" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.Env.reset" title="Link to this definition">#</a></dt>
 <dd><p>Resets the environment to an initial internal state, returning an initial observation and info.</p>
 <p>This method generates a new starting state often with some randomness to ensure that the agent explores the
 state space and learns a generalised policy about the environment. This randomness can be controlled
@@ -598,7 +598,7 @@ the <code class="docutils literal notranslate"><span class="pre">info</span></co
 
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.Env.render">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RenderFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">RenderFrame</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#gymnasium.Env.render" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RenderFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">RenderFrame</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#gymnasium.Env.render" title="Link to this definition">#</a></dt>
 <dd><p>Compute the render frames as specified by <a class="reference internal" href="#gymnasium.Env.render_mode" title="gymnasium.Env.render_mode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">render_mode</span></code></a> during the initialization of the environment.</p>
 <p>The environment’s <a class="reference internal" href="#gymnasium.Env.metadata" title="gymnasium.Env.metadata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">metadata</span></code></a> render modes (<cite>env.metadata[“render_modes”]</cite>) should contain the possible
 ways to implement the render modes. In addition, list versions for most render modes is achieved through
@@ -633,10 +633,10 @@ in the environment initialised, i.e., <code class="docutils literal notranslate"
 
 </section>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h3>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.Env.action_space">
-<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">action_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Env.action_space" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">action_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Env.action_space" title="Link to this definition">#</a></dt>
 <dd><p>The Space object corresponding to valid actions, all valid actions should be contained with the space. For example, if the action space is of type <cite>Discrete</cite> and gives the value <cite>Discrete(2)</cite>, this means there are two valid discrete actions: 0 &amp; 1.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
 <span class="go">Discrete(2)</span>
@@ -648,7 +648,7 @@ in the environment initialised, i.e., <code class="docutils literal notranslate"
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.Env.observation_space">
-<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">observation_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Env.observation_space" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">observation_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Env.observation_space" title="Link to this definition">#</a></dt>
 <dd><p>The Space object corresponding to valid observations, all valid observations should be contained with the space. For example, if the observation space is of type <code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code> and the shape of the object is <code class="docutils literal notranslate"><span class="pre">(4,)</span></code>, this denotes a valid observation will be an array of 4 numbers. We can check the box bounds as well with attributes.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span>
 <span class="go">array([4.8000002e+00, 3.4028235e+38, 4.1887903e-01, 3.4028235e+38], dtype=float32)</span>
@@ -660,34 +660,34 @@ in the environment initialised, i.e., <code class="docutils literal notranslate"
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.Env.metadata">
-<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'render_modes':</span> <span class="pre">[]}</span></em><a class="headerlink" href="#gymnasium.Env.metadata" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'render_modes':</span> <span class="pre">[]}</span></em><a class="headerlink" href="#gymnasium.Env.metadata" title="Link to this definition">#</a></dt>
 <dd><p>The metadata of the environment containing rendering modes, rendering fps, etc</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.Env.render_mode">
-<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">render_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.Env.render_mode" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">render_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.Env.render_mode" title="Link to this definition">#</a></dt>
 <dd><p>The render mode of the environment determined at initialisation</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.Env.reward_range">
-<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">reward_range</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(-inf,</span> <span class="pre">inf)</span></em><a class="headerlink" href="#gymnasium.Env.reward_range" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">reward_range</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(-inf,</span> <span class="pre">inf)</span></em><a class="headerlink" href="#gymnasium.Env.reward_range" title="Link to this definition">#</a></dt>
 <dd><p>A tuple corresponding to the minimum and maximum possible rewards for an agent over an episode. The default reward range is set to <span class="math notranslate nohighlight">\((-\infty,+\infty)\)</span>.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.Env.spec">
-<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../registry/#gymnasium.envs.registration.EnvSpec" title="gymnasium.envs.registration.EnvSpec"><span class="pre">EnvSpec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.Env.spec" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../registry/#gymnasium.envs.registration.EnvSpec" title="gymnasium.envs.registration.EnvSpec"><span class="pre">EnvSpec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.Env.spec" title="Link to this definition">#</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">EnvSpec</span></code> of the environment normally set during <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a></p>
 </dd></dl>
 
 </section>
 <section id="additional-methods">
-<h3>Additional Methods<a class="headerlink" href="#additional-methods" title="Permalink to this heading">#</a></h3>
+<h3>Additional Methods<a class="headerlink" href="#additional-methods" title="Link to this heading">#</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.Env.close">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.Env.close" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">gymnasium.Env.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.Env.close" title="Link to this definition">#</a></dt>
 <dd><p>After the user has finished using the environment, close contains the code necessary to “clean up” the environment.</p>
 <p>This is critical for closing rendering windows, database or HTTP connections.
 Calling <code class="docutils literal notranslate"><span class="pre">close</span></code> on an already closed environment has no effect and won’t raise an error.</p>
@@ -695,7 +695,7 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.Env.unwrapped">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">unwrapped</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Env.unwrapped" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">unwrapped</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Env.unwrapped" title="Link to this definition">#</a></dt>
 <dd><p>Returns the base non-wrapped environment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -706,7 +706,7 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.Env.np_random">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#gymnasium.Env.np_random" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#gymnasium.Env.np_random" title="Link to this definition">#</a></dt>
 <dd><p>Returns the environment’s internal <code class="xref py py-attr docutils literal notranslate"><span class="pre">_np_random</span></code> that if not set will initialise with a random seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -717,7 +717,7 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 
 </section>
 <section id="implementing-environments">
-<h3>Implementing environments<a class="headerlink" href="#implementing-environments" title="Permalink to this heading">#</a></h3>
+<h3>Implementing environments<a class="headerlink" href="#implementing-environments" title="Link to this heading">#</a></h3>
 <p>When implementing an environment, the <a class="reference internal" href="#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> and <a class="reference internal" href="#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code></a> functions much be created describing the
 dynamics of the environment.
 For more information see the environment creation tutorial.</p>
@@ -907,9 +907,9 @@ For more information see the environment creation tutorial.</p>
         })()
       </script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     

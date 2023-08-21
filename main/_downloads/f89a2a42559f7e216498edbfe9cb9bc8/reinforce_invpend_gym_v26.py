@@ -135,7 +135,7 @@ class Policy_Network(nn.Module):
 # Now that we are done building the policy, let us develop **REINFORCE** which gives life to the policy network.
 # The algorithm of REINFORCE could be found above. As mentioned before, REINFORCE aims to maximize the Monte-Carlo returns.
 #
-# Fun Fact: REINFROCE is an acronym for " 'RE'ward 'I'ncrement 'N'on-negative 'F'actor times 'O'ffset 'R'einforcement times 'C'haracteristic 'E'ligibility
+# Fun Fact: REINFORCE is an acronym for " 'RE'ward 'I'ncrement 'N'on-negative 'F'actor times 'O'ffset 'R'einforcement times 'C'haracteristic 'E'ligibility
 #
 # Note: The choice of hyperparameters is to train a decently performing agent. No extensive hyperparameter
 # tuning was done.

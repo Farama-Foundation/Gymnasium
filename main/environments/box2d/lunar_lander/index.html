@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Toy Text" href="../../toy_text/" /><link rel="prev" title="Car Racing" href="../car_racing/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/box2d/lunar_lander.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Lunar Lander - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -466,7 +466,7 @@
           <article role="main">
             
             <section id="lunar-lander">
-<h1>Lunar Lander<a class="headerlink" href="#lunar-lander" title="Permalink to this heading">#</a></h1>
+<h1>Lunar Lander<a class="headerlink" href="#lunar-lander" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/lunar_lander.gif"><img alt="../../../_images/lunar_lander.gif" src="../../../_images/lunar_lander.gif" style="width: 200px;" /></a>
 </figure>
@@ -492,7 +492,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>This environment is a classic rocket trajectory optimization problem.
 According to Pontryagin’s maximum principle, it is optimal to fire the
 engine at full throttle or turn it off. This is the reason why this
@@ -510,7 +510,7 @@ can learn to fly and then land on its first attempt.</p>
 <!-- python examples/agents/keyboard_agent.py LunarLander-v2 -->
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
 <p>There are four discrete actions available:</p>
 <ul class="simple">
 <li><p>0: do nothing</p></li>
@@ -520,13 +520,13 @@ can learn to fly and then land on its first attempt.</p>
 </ul>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
 <p>The state is an 8-dimensional vector: the coordinates of the lander in <code class="docutils literal notranslate"><span class="pre">x</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">y</span></code>, its linear
 velocities in <code class="docutils literal notranslate"><span class="pre">x</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">y</span></code>, its angle, its angular velocity, and two booleans
 that represent whether each leg is in contact with the ground or not.</p>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Permalink to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
 <p>After every step a reward is granted. The total reward of an episode is the
 sum of the rewards for all the steps within that episode.</p>
 <p>For each step, the reward:</p>
@@ -542,12 +542,12 @@ sum of the rewards for all the steps within that episode.</p>
 <p>An episode is considered a solution if it scores at least 200 points.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
 <p>The lander starts at the top center of the viewport with a random initial
 force applied to its center of mass.</p>
 </section>
 <section id="episode-termination">
-<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Permalink to this heading">#</a></h2>
+<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">#</a></h2>
 <p>The episode finishes if:</p>
 <ol class="arabic simple">
 <li><p>the lander crashes (the lander body gets in contact with the moon);</p></li>
@@ -565,7 +565,7 @@ them is destroyed.</p>
 </div></blockquote>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
 <p>To use to the <em>continuous</em> environment, you need to specify the
 <code class="docutils literal notranslate"><span class="pre">continuous=True</span></code> argument like below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -598,7 +598,7 @@ The wind is generated using the function <code class="docutils literal notransla
 <code class="docutils literal notranslate"><span class="pre">turbulence_power</span></code> dictates the maximum magnitude of rotational wind applied to the craft. The recommended value for <code class="docutils literal notranslate"><span class="pre">turbulence_power</span></code> is between 0.0 and 2.0.</p>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters</p></li>
 <li><p>v1: Legs contact with ground added in state vector; contact with ground
@@ -608,7 +608,7 @@ renormalized to 200; harder initial random push.</p></li>
 </ul>
 </section>
 <section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">#</a></h2>
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
 <p>There are several unexpected bugs with the implementation of the environment.</p>
 <ol class="arabic simple">
 <li><p>The position of the side thursters on the body of the lander changes, depending on the orientation of the lander.
@@ -635,7 +635,7 @@ This in turn results in an orientation depentant torque being applied to the lan
 <!-- ## References -->
 </section>
 <section id="credits">
-<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this heading">#</a></h2>
+<h2>Credits<a class="headerlink" href="#credits" title="Link to this heading">#</a></h2>
 <p>Created by Oleg Klimov</p>
 </section>
 </section>
@@ -796,9 +796,9 @@ This in turn results in an orientation depentant torque being applied to the lan
         })()
       </script>
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

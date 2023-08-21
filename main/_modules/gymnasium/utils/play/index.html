@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/utils/play.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/utils/play.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.utils.play - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -501,7 +501,9 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when the environment does not have a default ``keys_to_action`` mapping.&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="PlayableGame"><a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayableGame">[docs]</a><span class="k">class</span> <span class="nc">PlayableGame</span><span class="p">:</span>
+<div class="viewcode-block" id="PlayableGame">
+<a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayableGame">[docs]</a>
+<span class="k">class</span> <span class="nc">PlayableGame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps an environment allowing keyboard inputs to interact with the environment.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -562,7 +564,9 @@
 
         <span class="k">return</span> <span class="n">video_size</span>
 
-<div class="viewcode-block" id="PlayableGame.process_event"><a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayableGame.process_event">[docs]</a>    <span class="k">def</span> <span class="nf">process_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">):</span>
+<div class="viewcode-block" id="PlayableGame.process_event">
+<a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayableGame.process_event">[docs]</a>
+    <span class="k">def</span> <span class="nf">process_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a PyGame event.</span>
 
 <span class="sd">        In particular, this function is used to keep track of which buttons are currently pressed</span>
@@ -586,7 +590,9 @@
             <span class="n">scale_width</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">scale_height</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">scale</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">scale_height</span><span class="p">,</span> <span class="n">scale_width</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+</div>
+
 
 
 <span class="k">def</span> <span class="nf">display_arr</span><span class="p">(</span>
@@ -612,7 +618,9 @@
     <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">pyg_img</span><span class="p">,</span> <span class="p">(</span><span class="n">width_offset</span><span class="p">,</span> <span class="n">height_offset</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="play"><a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.play">[docs]</a><span class="k">def</span> <span class="nf">play</span><span class="p">(</span>
+<div class="viewcode-block" id="play">
+<a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.play">[docs]</a>
+<span class="k">def</span> <span class="nf">play</span><span class="p">(</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
     <span class="n">transpose</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">fps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -759,7 +767,10 @@
     <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="PlayPlot"><a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayPlot">[docs]</a><span class="k">class</span> <span class="nc">PlayPlot</span><span class="p">:</span>
+
+<div class="viewcode-block" id="PlayPlot">
+<a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayPlot">[docs]</a>
+<span class="k">class</span> <span class="nc">PlayPlot</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides a callback to create live plots of arbitrary metrics when using :func:`play`.</span>
 
 <span class="sd">    This class is instantiated with a function that accepts information about a single environment transition:</span>
@@ -825,7 +836,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cur_plot</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_plots</span><span class="p">)]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">horizon_timesteps</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_plots</span><span class="p">)]</span>
 
-<div class="viewcode-block" id="PlayPlot.callback"><a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayPlot.callback">[docs]</a>    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span>
+<div class="viewcode-block" id="PlayPlot.callback">
+<a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayPlot.callback">[docs]</a>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">obs_t</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">,</span>
         <span class="n">obs_tp1</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">,</span>
@@ -867,7 +880,9 @@
             <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
                 <span class="s2">&quot;matplotlib is not installed, run `pip install gymnasium[other]`&quot;</span>
             <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="mf">0.000001</span><span class="p">)</span></div></div>
+        <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="mf">0.000001</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
           </article>
         </div>
@@ -985,9 +1000,9 @@
         })()
       </script>
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

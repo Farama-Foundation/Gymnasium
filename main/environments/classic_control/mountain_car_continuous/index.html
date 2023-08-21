@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Mountain Car" href="../mountain_car/" /><link rel="prev" title="Cart Pole" href="../cart_pole/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/classic_control/mountain_car_continuous.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.2 and Furo 2023.08.19.dev1 -->
         <title>Mountain Car Continuous - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -466,7 +466,7 @@
           <article role="main">
             
             <section id="mountain-car-continuous">
-<h1>Mountain Car Continuous<a class="headerlink" href="#mountain-car-continuous" title="Permalink to this heading">#</a></h1>
+<h1>Mountain Car Continuous<a class="headerlink" href="#mountain-car-continuous" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/mountain_car_continuous.gif"><img alt="../../../_images/mountain_car_continuous.gif" src="../../../_images/mountain_car_continuous.gif" style="width: 200px;" /></a>
 </figure>
@@ -492,7 +492,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>The Mountain Car MDP is a deterministic MDP that consists of a car placed stochastically
 at the bottom of a sinusoidal valley, with the only possible actions being the accelerations
 that can be applied to the car in either direction. The goal of the MDP is to strategically
@@ -510,7 +510,7 @@ This version is the one with continuous actions.</p>
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Permalink to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
 <p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(2,)</span></code> where the elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -540,12 +540,12 @@ This version is the one with continuous actions.</p>
 </div>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Permalink to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
 <p>The action is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(1,)</span></code>, representing the directional force applied on the car.
 The action is clipped in the range <code class="docutils literal notranslate"><span class="pre">[-1,1]</span></code> and multiplied by a power of 0.0015.</p>
 </section>
 <section id="transition-dynamics">
-<h2>Transition Dynamics:<a class="headerlink" href="#transition-dynamics" title="Permalink to this heading">#</a></h2>
+<h2>Transition Dynamics:<a class="headerlink" href="#transition-dynamics" title="Link to this heading">#</a></h2>
 <p>Given an action, the mountain car follows the following transition dynamics:</p>
 <p><em>velocity<sub>t+1</sub> = velocity<sub>t+1</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)</em></p>
 <p><em>position<sub>t+1</sub> = position<sub>t</sub> + velocity<sub>t+1</sub></em></p>
@@ -554,18 +554,18 @@ The collisions at either end are inelastic with the velocity set to 0 upon colli
 The position is clipped to the range [-1.2, 0.6] and velocity is clipped to the range [-0.07, 0.07].</p>
 </section>
 <section id="reward">
-<h2>Reward<a class="headerlink" href="#reward" title="Permalink to this heading">#</a></h2>
+<h2>Reward<a class="headerlink" href="#reward" title="Link to this heading">#</a></h2>
 <p>A negative reward of <em>-0.1 * action<sup>2</sup></em> is received at each timestep to penalise for
 taking actions of large magnitude. If the mountain car reaches the goal then a positive reward of +100
 is added to the negative reward for that timestep.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Permalink to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
 <p>The position of the car is assigned a uniform random value in <code class="docutils literal notranslate"><span class="pre">[-0.6</span> <span class="pre">,</span> <span class="pre">-0.4]</span></code>.
 The starting velocity of the car is always assigned to 0.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Permalink to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
 <p>The episode ends if either of the following happens:</p>
 <ol class="arabic simple">
 <li><p>Termination: The position of the car is greater than or equal to 0.45 (the goal position on top of the right hill)</p></li>
@@ -573,7 +573,7 @@ The starting velocity of the car is always assigned to 0.</p>
 </ol>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;MountainCarContinuous-v0&#39;</span><span class="p">)</span>
 </pre></div>
@@ -582,7 +582,7 @@ The starting velocity of the car is always assigned to 0.</p>
 the new random state.</p>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v0: Initial versions release (1.0.0)</p></li>
 </ul>
@@ -754,9 +754,9 @@ the new random state.</p>
         })()
       </script>
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5ba28104"></script>
+    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>
