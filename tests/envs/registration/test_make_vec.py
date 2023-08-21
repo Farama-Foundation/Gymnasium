@@ -78,7 +78,7 @@ def test_make_vec_wrappers():
         ("CartPole-v1", {"vectorization_mode": "sync"}),
         ("CartPole-v1", {"vectorization_mode": "custom"}),
         ("CartPole-v1", {"vector_kwargs": {"copy": False}}),
-        ("CartPole-v1", {"wrappers": (gym.wrappers.TimeAwareObservationV0,)}),
+        ("CartPole-v1", {"wrappers": (gym.wrappers.TimeAwareObservation,)}),
         ("CartPole-v1", {"render_mode": "rgb_array"}),
     ),
 )
