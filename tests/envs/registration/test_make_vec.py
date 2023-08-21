@@ -3,6 +3,7 @@
 import pytest
 
 import gymnasium as gym
+from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
@@ -67,3 +68,43 @@ def test_make_vec_wrappers():
     assert all(has_wrapper(sub_env, TransformObservation) for sub_env in env.envs)
 
     env.close()
+
+
+@pytest.mark.parametrize(
+    "env_id, kwargs",
+    (
+        ("CartPole-v1", {}),
+        ("CartPole-v1", {"num_envs": 3}),
+        ("CartPole-v1", {"vectorization_mode": "sync"}),
+        ("CartPole-v1", {"vectorization_mode": "custom"}),
+        ("CartPole-v1", {"vector_kwargs": {"copy": False}}),
+        ("CartPole-v1", {"wrappers": (gym.wrappers.TimeAwareObservation,)}),
+        ("CartPole-v1", {"render_mode": "rgb_array"}),
+    ),
+)
+def test_make_vec_with_spec(env_id: str, kwargs: dict):
+    envs = gym.make_vec(env_id, **kwargs)
+    assert envs.spec is not None
+    recreated_envs = gym.make_vec(envs.spec)
+
+    # Assert equivalence
+    assert envs.spec == recreated_envs.spec
+    assert envs.num_envs == recreated_envs.num_envs
+
+    assert envs.observation_space == recreated_envs.observation_space
+    assert envs.single_observation_space == recreated_envs.single_observation_space
+    assert envs.action_space == recreated_envs.action_space
+    assert envs.single_action_space == recreated_envs.single_action_space
+
+    assert type(envs) == type(recreated_envs)
+
+    envs.close()
+    recreated_envs.close()
+
+
+def test_async_with_dynamically_registered_env():
+    gym.register("TestEnv-v0", CartPoleEnv)
+
+    gym.make_vec("TestEnv-v0", vectorization_mode="async")
+
+    del gym.registry["TestEnv-v0"]
