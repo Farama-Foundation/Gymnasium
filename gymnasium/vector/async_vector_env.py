@@ -53,10 +53,15 @@ class AsyncVectorEnv(VectorEnv):
 
     Example:
         >>> import gymnasium as gym
+        >>> envs = gym.make_vec("Pendulum-v1", num_envs=2, vectorization_mode="async")
+        >>> envs
+        AsyncVectorEnv(Pendulum-v1, num_envs=2)
         >>> envs = gym.vector.AsyncVectorEnv([
         ...     lambda: gym.make("Pendulum-v1", g=9.81),
         ...     lambda: gym.make("Pendulum-v1", g=1.62)
         ... ])
+        >>> envs
+        AsyncVectorEnv(num_envs=2)
         >>> observations, infos = envs.reset(seed=42)
         >>> observations
         array([[-0.14995256,  0.9886932 , -0.12224312],
