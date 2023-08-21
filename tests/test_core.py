@@ -1,10 +1,12 @@
 """Checks that the core Gymnasium API is implemented as expected."""
 import re
+import warnings
 from typing import Any, Dict, Optional, SupportsFloat, Tuple
 
 import numpy as np
 import pytest
 
+import gymnasium as gym
 from gymnasium import Env, ObservationWrapper, RewardWrapper, Wrapper, spaces
 from gymnasium.core import (
     ActionWrapper,
@@ -326,3 +328,22 @@ def test_wrapper_types():
     action_env = ExampleActionWrapper(env)
     obs, _, _, _, _ = action_env.step(0)
     assert obs == np.array([1])
+
+
+def test_get_wrapper_attr():
+    env = gym.make("CartPole-v1")
+
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        gravity = env.get_wrapper_attr("gravity")
+
+    assert gravity == env.unwrapped.gravity
+    assert len(caught_warnings) == 0
+
+    with pytest.warns(
+        UserWarning,
+        match=re.escape(
+            "env.gravity to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.gravity` for environment variables or `env.get_wrapper_attr('gravity')` that will search the reminding wrappers."
+        ),
+    ):
+        gravity = env.gravity
+        assert gravity == env.unwrapped.gravity
