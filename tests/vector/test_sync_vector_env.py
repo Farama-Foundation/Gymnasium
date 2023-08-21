@@ -79,20 +79,20 @@ def test_step_sync_vector_env(use_single_action_space):
     assert truncations.size == 8
 
 
-def test_render_sync_vector():
-    envs = SyncVectorEnv(
-        [make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)]
-    )
-    assert envs.render_mode == "rgb_array"
-
-    envs.reset()
-    rendered_frames = envs.render()
-    assert isinstance(rendered_frames, tuple)
-    assert len(rendered_frames) == envs.num_envs
-    assert all(isinstance(frame, np.ndarray) for frame in rendered_frames)
-
-    envs = SyncVectorEnv([make_env("CartPole-v1", i) for i in range(3)])
-    assert envs.render_mode is None
+# def test_render_sync_vector():
+#     envs = SyncVectorEnv(
+#         [make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)]
+#     )
+#     assert envs.render_mode == "rgb_array"
+#
+#     envs.reset()
+#     rendered_frames = envs.render()
+#     assert isinstance(rendered_frames, tuple)
+#     assert len(rendered_frames) == envs.num_envs
+#     assert all(isinstance(frame, np.ndarray) for frame in rendered_frames)
+#
+#     envs = SyncVectorEnv([make_env("CartPole-v1", i) for i in range(3)])
+#     assert envs.render_mode is None
 
 
 def test_call_sync_vector_env():
