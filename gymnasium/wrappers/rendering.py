@@ -183,21 +183,22 @@ class RecordVideoV0(
         >>> len(os.listdir("./save_videos1"))
         5
 
-        Run the environment for 5 episodes, start the recording at the 100th step and record for 100 frames.
+        Run the environment for 5 episodes, start a recording every 200th step, making sure each video is 100 frames long:
         >>> import os
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> trigger = lambda t: t == 100
+        >>> trigger = lambda t: t % 200 == 0
         >>> env = RecordVideoV0(env, video_folder="./save_videos2", step_trigger=trigger, video_length=100, disable_logger=True)
         >>> for i in range(5):
         ...     termination, truncation = False, False
         ...     _ = env.reset(seed=123)
+        ...     _ = env.action_space.seed(123)
         ...     while not (termination or truncation):
         ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
         ...
         >>> env.close()
         >>> len(os.listdir("./save_videos2"))
-        1
+        2
 
         Run 3 episodes, record everything, but in chunks of 1000 frames:
         >>> import os
