@@ -104,21 +104,16 @@ class NumpyToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
         >>> obs, _ = env.reset(seed=123)
         >>> type(obs)
         <class 'torch.Tensor'>
-
         >>> action = torch.tensor(env.action_space.sample())
         >>> obs, reward, terminated, truncated, info = env.step(action)
         >>> type(obs)
         <class 'torch.Tensor'>
-
         >>> type(reward)
         <class 'float'>
-
         >>> type(terminated)
         <class 'bool'>
-
         >>> type(truncated)
         <class 'bool'>
-
     """
 
     def __init__(self, env: gym.Env, device: Device | None = None):

@@ -439,16 +439,13 @@ class Wrapper(
 
 
 class ObservationWrapper(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
-    """Superclass of wrappers that can modify observations using :meth:`observation` for :meth:`reset` and :meth:`step`.
+    """Modify observations from :meth:`Env.reset` and :meth:`Env.step` using :meth:`observation` function.
 
     If you would like to apply a function to only the observation before
     passing it to the learning code, you can simply inherit from :class:`ObservationWrapper` and overwrite the method
     :meth:`observation` to implement that transformation. The transformation defined in that method must be
     reflected by the :attr:`env` observation space. Otherwise, you need to specify the new observation space of the
     wrapper by setting :attr:`self.observation_space` in the :meth:`__init__` method of your wrapper.
-
-    Among others, Gymnasium provides the observation wrapper :class:`TimeAwareObservation`, which adds information about the
-    index of the timestep to the observation.
     """
 
     def __init__(self, env: Env[ObsType, ActType]):

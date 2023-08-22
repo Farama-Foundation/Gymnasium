@@ -1,5 +1,5 @@
 
-# List of Gymnasium Wrappers
+# List of Wrappers
 
 Gymnasium provides a number of commonly used wrappers listed below. More information can be found on the particular
 wrapper in the page on the wrapper type
@@ -99,5 +99,4 @@ wrapper in the page on the wrapper type
       - Vectorizes a single-agent transform observation wrapper for vector environments.
     * - :class:`VectorizeTransformReward`
       - Vectorizes a single-agent transform reward wrapper for vector environments.
-
 ```
