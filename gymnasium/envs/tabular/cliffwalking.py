@@ -13,9 +13,9 @@ from jax.random import PRNGKey
 
 from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
-from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
+from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
+from gymnasium.utils.functional_jax_env import FunctionalJaxEnv
 from gymnasium.wrappers import HumanRendering
 
 
@@ -200,7 +200,7 @@ class CliffWalkingFunctional(
         reward = -1 + (-99 * state.fallen[0])
         return jax.lax.convert_element_type(reward, jnp.float32)
 
-    def render_init(
+    def render_initialise(
         self, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
         """Returns an initial render state."""

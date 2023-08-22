@@ -5,14 +5,13 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 
-try:
-    import cv2
-except ImportError:
-    cv2 = None
+__all__ = ["AtariPreprocessing"]
 
 
 class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """Atari 2600 preprocessing wrapper.
+    """Implements the common preprocessing techniques for Atari environments (excluding frame stacking).
+
+    For frame stacking use :class:`gymnasium.wrappers.FrameStackObservation`.
 
     This class follows the guidelines in Machado et al. (2018),
     "Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents".
@@ -20,13 +19,19 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     Specifically, the following preprocess stages applies to the atari environment:
 
     - Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.
-    - Frame skipping: The number of frames skipped between steps, 4 by default
-    - Max-pooling: Pools over the most recent two observations from the frame skips
+    - Frame skipping: The number of frames skipped between steps, 4 by default.
+    - Max-pooling: Pools over the most recent two observations from the frame skips.
     - Termination signal when a life is lost: When the agent losses a life during the environment, then the environment is terminated.
         Turned off by default. Not recommended by Machado et al. (2018).
-    - Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default
-    - Grayscale observation: If the observation is colour or greyscale, by default, greyscale.
-    - Scale observation: If to scale the observation between [0, 1) or [0, 255), by default, not scaled.
+    - Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default.
+    - Grayscale observation: Makes the observation greyscale, enabled by default.
+    - Grayscale new axis: Extends the last channel of the observation such that the image is 3-dimensional, not enabled by default.
+    - Scale observation: Whether to scale the observation between [0, 1) or [0, 255), not scaled by default.
+
+    Example:
+        >>> import gymnasium as gym # doctest: +SKIP
+        >>> env = gym.make("ALE/Adventure-v5") # doctest: +SKIP
+        >>> env = AtariPreprocessingV0(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False) # doctest: +SKIP
     """
 
     def __init__(
@@ -46,7 +51,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
             env (Env): The environment to apply the preprocessing
             noop_max (int): For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.
             frame_skip (int): The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.
-            screen_size (int): resize Atari frame
+            screen_size (int): resize Atari frame.
             terminal_on_life_loss (bool): `if True`, then :meth:`step()` returns `terminated=True` whenever a
                 life is lost.
             grayscale_obs (bool): if True, then gray scale observation is returned, otherwise, RGB observation
@@ -72,10 +77,13 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         )
         gym.Wrapper.__init__(self, env)
 
-        if cv2 is None:
+        try:
+            import cv2  # noqa: F401
+        except ImportError:
             raise gym.error.DependencyNotInstalled(
                 "opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari"
             )
+
         assert frame_skip > 0
         assert screen_size > 0
         assert noop_max >= 0
@@ -187,7 +195,9 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     def _get_obs(self):
         if self.frame_skip > 1:  # more efficient in-place pooling
             np.maximum(self.obs_buffer[0], self.obs_buffer[1], out=self.obs_buffer[0])
-        assert cv2 is not None
+
+        import cv2
+
         obs = cv2.resize(
             self.obs_buffer[0],
             (self.screen_size, self.screen_size),

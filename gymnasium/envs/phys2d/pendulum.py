@@ -11,12 +11,9 @@ from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
-from gymnasium.experimental.functional_jax_env import (
-    FunctionalJaxEnv,
-    FunctionalJaxVectorEnv,
-)
+from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
+from gymnasium.utils.functional_jax_env import FunctionalJaxEnv, FunctionalJaxVectorEnv
 
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
@@ -163,7 +160,7 @@ class PendulumFunctional(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
         )
 
-    def render_init(
+    def render_initialise(
         self, screen_width: int = 600, screen_height: int = 400
     ) -> RenderStateType:
         """Initialises the render state."""

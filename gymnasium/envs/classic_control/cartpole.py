@@ -12,7 +12,7 @@ import gymnasium as gym
 from gymnasium import logger, spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.vector import VectorEnv
+from gymnasium.vector import VectorEnv
 from gymnasium.vector.utils import batch_space
 
 
@@ -464,6 +464,7 @@ class CartPoleVectorEnv(VectorEnv):
 
     def render(self):
         if self.render_mode is None:
+            assert self.spec is not None
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "

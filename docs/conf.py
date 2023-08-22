@@ -38,10 +38,10 @@ release = gymnasium.__version__
 # ones.
 extensions = [
     "sphinx.ext.napoleon",
-    "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
     "sphinx.ext.viewcode",
+    "sphinx.ext.coverage",
     "myst_parser",
     "furo.gen_tutorials",
     "sphinx_gallery.gen_gallery",

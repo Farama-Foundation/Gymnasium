@@ -1,22 +1,29 @@
 """Set of random number generator functions: seeding, generator, hashing seeds."""
-from typing import Any, Optional, Tuple
+from __future__ import annotations
 
 import numpy as np
 
 from gymnasium import error
 
 
-def np_random(seed: Optional[int] = None) -> Tuple[np.random.Generator, Any]:
-    """Generates a random number generator from the seed and returns the Generator and seed.
+def np_random(seed: int | None = None) -> tuple[np.random.Generator, int]:
+    """Returns a NumPy random number generator (RNG) along with seed value from the inputted seed.
+
+    If ``seed`` is ``None`` then a **random** seed will be generated as the RNG's initial seed.
+    This randomly selected seed is returned as the second value of the tuple.
+
+    .. py:currentmodule:: gymnasium.Env
+
+    This function is called in :meth:`reset` to reset an environment's initial RNG.
 
     Args:
         seed: The seed used to create the generator
 
     Returns:
-        The generator and resulting seed
+        A NumPy-based Random Number Generator and generator seed
 
     Raises:
-        Error: Seed must be a non-negative integer or omitted
+        Error: Seed must be a non-negative integer
     """
     if seed is not None and not (isinstance(seed, int) and 0 <= seed):
         if isinstance(seed, int) is False:

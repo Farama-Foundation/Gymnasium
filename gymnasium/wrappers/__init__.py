@@ -46,27 +46,138 @@ If you need a wrapper to do more complicated tasks, you can inherit from the :cl
 
 If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/implementing_custom_wrappers>`_.
 """
+# pyright: reportUnsupportedDunderAll=false
+import importlib
+import re
+
+from gymnasium.error import DeprecatedWrapper
+from gymnasium.wrappers import vector
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
-from gymnasium.wrappers.autoreset import AutoResetWrapper
-from gymnasium.wrappers.clip_action import ClipAction
-from gymnasium.wrappers.compatibility import EnvCompatibility
-from gymnasium.wrappers.env_checker import PassiveEnvChecker
-from gymnasium.wrappers.filter_observation import FilterObservation
-from gymnasium.wrappers.flatten_observation import FlattenObservation
-from gymnasium.wrappers.frame_stack import FrameStack, LazyFrames
-from gymnasium.wrappers.gray_scale_observation import GrayScaleObservation
-from gymnasium.wrappers.human_rendering import HumanRendering
-from gymnasium.wrappers.normalize import NormalizeObservation, NormalizeReward
-from gymnasium.wrappers.order_enforcing import OrderEnforcing
-from gymnasium.wrappers.pixel_observation import PixelObservationWrapper
-from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
-from gymnasium.wrappers.record_video import RecordVideo, capped_cubic_video_schedule
-from gymnasium.wrappers.render_collection import RenderCollection
-from gymnasium.wrappers.rescale_action import RescaleAction
-from gymnasium.wrappers.resize_observation import ResizeObservation
-from gymnasium.wrappers.step_api_compatibility import StepAPICompatibility
-from gymnasium.wrappers.time_aware_observation import TimeAwareObservation
-from gymnasium.wrappers.time_limit import TimeLimit
-from gymnasium.wrappers.transform_observation import TransformObservation
-from gymnasium.wrappers.transform_reward import TransformReward
-from gymnasium.wrappers.vector_list_info import VectorListInfo
+from gymnasium.wrappers.common import (
+    Autoreset,
+    OrderEnforcing,
+    PassiveEnvChecker,
+    RecordEpisodeStatistics,
+    TimeLimit,
+)
+from gymnasium.wrappers.rendering import HumanRendering, RecordVideo, RenderCollection
+from gymnasium.wrappers.stateful_action import StickyAction
+from gymnasium.wrappers.stateful_observation import (
+    DelayObservation,
+    FrameStackObservation,
+    MaxAndSkipObservation,
+    NormalizeObservation,
+    TimeAwareObservation,
+)
+from gymnasium.wrappers.stateful_reward import NormalizeReward
+from gymnasium.wrappers.transform_action import (
+    ClipAction,
+    RescaleAction,
+    TransformAction,
+)
+from gymnasium.wrappers.transform_observation import (
+    DtypeObservation,
+    FilterObservation,
+    FlattenObservation,
+    GrayscaleObservation,
+    RenderObservation,
+    RescaleObservation,
+    ReshapeObservation,
+    ResizeObservation,
+    TransformObservation,
+)
+from gymnasium.wrappers.transform_reward import ClipReward, TransformReward
+
+
+# Todo - Add legacy wrapper to new wrapper error for users when merged into gymnasium.wrappers
+
+
+__all__ = [
+    "vector",
+    # --- Observation wrappers ---
+    "AtariPreprocessing",
+    "DelayObservation",
+    "DtypeObservation",
+    "FilterObservation",
+    "FlattenObservation",
+    "FrameStackObservation",
+    "GrayscaleObservation",
+    "TransformObservation",
+    "MaxAndSkipObservation",
+    "NormalizeObservation",
+    "RenderObservation",
+    "ResizeObservation",
+    "ReshapeObservation",
+    "RescaleObservation",
+    "TimeAwareObservation",
+    # --- Action Wrappers ---
+    "ClipAction",
+    "TransformAction",
+    "RescaleAction",
+    # "NanAction",
+    "StickyAction",
+    # --- Reward wrappers ---
+    "ClipReward",
+    "TransformReward",
+    "NormalizeReward",
+    # --- Common ---
+    "TimeLimit",
+    "Autoreset",
+    "PassiveEnvChecker",
+    "OrderEnforcing",
+    "RecordEpisodeStatistics",
+    # --- Rendering ---
+    "RenderCollection",
+    "RecordVideo",
+    "HumanRendering",
+    # --- Conversion ---
+    "JaxToNumpy",
+    "JaxToTorch",
+    "NumpyToTorch",
+]
+
+# As these wrappers requires `jax` or `torch`, they are loaded by runtime for users trying to access them
+#   to avoid `import jax` or `import torch` on `import gymnasium`.
+_wrapper_to_class = {
+    # data converters
+    "JaxToNumpy": "jax_to_numpy",
+    "JaxToTorch": "jax_to_torch",
+    "NumpyToTorch": "numpy_to_torch",
+}
+
+_renamed_wrapper = {
+    "AutoResetWrapper": "Autoreset",
+    "FrameStack": "FrameStackObservation",
+    "PixelObservationWrapper": "RenderObservation",
+    "VectorListInfo": "vector.DictInfoToList",
+}
+
+
+def __getattr__(wrapper_name: str):
+    """Load a wrapper by name.
+
+    This optimizes the loading of gymnasium wrappers by only loading the wrapper if it is used.
+    Errors will be raised if the wrapper does not exist or if the version is not the latest.
+
+    Args:
+        wrapper_name: The name of a wrapper to load.
+
+    Returns:
+        The specified wrapper.
+
+    Raises:
+        AttributeError: If the wrapper does not exist.
+        DeprecatedWrapper: If the version is not the latest.
+    """
+    # Check if the requested wrapper is in the _wrapper_to_class dictionary
+    if wrapper_name in _wrapper_to_class:
+        import_stmt = f"gymnasium.wrappers.{_wrapper_to_class[wrapper_name]}"
+        module = importlib.import_module(import_stmt)
+        return getattr(module, wrapper_name)
+
+    elif wrapper_name in _renamed_wrapper:
+        raise AttributeError(
+            f"{wrapper_name!r} has been renamed with `wrappers.{_renamed_wrapper[wrapper_name]}`"
+        )
+
+    raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")

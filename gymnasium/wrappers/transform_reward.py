@@ -1,46 +1,103 @@
-"""Wrapper for transforming the reward."""
-from typing import Callable
+"""A collection of wrappers for modifying the reward.
+
+* ``TransformReward`` - Transforms the reward by a function
+* ``ClipReward`` - Clips the reward between a minimum and maximum value
+"""
+from __future__ import annotations
+
+from typing import Callable, SupportsFloat
+
+import numpy as np
 
 import gymnasium as gym
+from gymnasium.core import ActType, ObsType
+from gymnasium.error import InvalidBound
 
 
-class TransformReward(gym.RewardWrapper, gym.utils.RecordConstructorArgs):
-    """Transform the reward via an arbitrary function.
+__all__ = ["TransformReward", "ClipReward"]
 
-    Warning:
-        If the base environment specifies a reward range which is not invariant under :attr:`f`, the :attr:`reward_range` of the wrapped environment will be incorrect.
+
+class TransformReward(
+    gym.RewardWrapper[ObsType, ActType], gym.utils.RecordConstructorArgs
+):
+    """Applies a function to the ``reward`` received from the environment's ``step``.
 
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import TransformReward
         >>> env = gym.make("CartPole-v1")
-        >>> env = TransformReward(env, lambda r: 0.01*r)
+        >>> env = TransformReward(env, lambda r: 2 * r + 1)
         >>> _ = env.reset()
-        >>> observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
-        >>> reward
-        0.01
+        >>> _, rew, _, _, _ = env.step(0)
+        >>> rew
+        3.0
+
     """
 
-    def __init__(self, env: gym.Env, f: Callable[[float], float]):
-        """Initialize the :class:`TransformReward` wrapper with an environment and reward transform function :attr:`f`.
+    def __init__(
+        self,
+        env: gym.Env[ObsType, ActType],
+        func: Callable[[SupportsFloat], SupportsFloat],
+    ):
+        """Initialize TransformReward wrapper.
 
         Args:
-            env: The environment to apply the wrapper
-            f: A function that transforms the reward
+            env (Env): The environment to wrap
+            func: (Callable): The function to apply to reward
         """
-        gym.utils.RecordConstructorArgs.__init__(self, f=f)
+        gym.utils.RecordConstructorArgs.__init__(self, func=func)
         gym.RewardWrapper.__init__(self, env)
 
-        assert callable(f)
-        self.f = f
+        self.func = func
 
-    def reward(self, reward):
-        """Transforms the reward using callable :attr:`f`.
+    def reward(self, reward: SupportsFloat) -> SupportsFloat:
+        """Apply function to reward.
 
         Args:
-            reward: The reward to transform
-
-        Returns:
-            The transformed reward
+            reward (Union[float, int, np.ndarray]): environment's reward
         """
-        return self.f(reward)
+        return self.func(reward)
+
+
+class ClipReward(TransformReward[ObsType, ActType], gym.utils.RecordConstructorArgs):
+    """Clips the rewards for an environment between an upper and lower bound.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import ClipReward
+        >>> env = gym.make("CartPole-v1")
+        >>> env = ClipReward(env, 0, 0.5)
+        >>> _ = env.reset()
+        >>> _, rew, _, _, _ = env.step(1)
+        >>> rew
+        0.5
+    """
+
+    def __init__(
+        self,
+        env: gym.Env[ObsType, ActType],
+        min_reward: float | np.ndarray | None = None,
+        max_reward: float | np.ndarray | None = None,
+    ):
+        """Initialize ClipRewardsV0 wrapper.
+
+        Args:
+            env (Env): The environment to wrap
+            min_reward (Union[float, np.ndarray]): lower bound to apply
+            max_reward (Union[float, np.ndarray]): higher bound to apply
+        """
+        if min_reward is None and max_reward is None:
+            raise InvalidBound("Both `min_reward` and `max_reward` cannot be None")
+
+        elif max_reward is not None and min_reward is not None:
+            if np.any(max_reward - min_reward < 0):
+                raise InvalidBound(
+                    f"Min reward ({min_reward}) must be smaller than max reward ({max_reward})"
+                )
+
+        gym.utils.RecordConstructorArgs.__init__(
+            self, min_reward=min_reward, max_reward=max_reward
+        )
+        TransformReward.__init__(
+            self, env=env, func=lambda x: np.clip(x, a_min=min_reward, a_max=max_reward)
+        )

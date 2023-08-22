@@ -13,9 +13,9 @@ from jax.random import PRNGKey
 
 from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
-from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
+from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
+from gymnasium.utils.functional_jax_env import FunctionalJaxEnv
 from gymnasium.wrappers import HumanRendering
 
 
@@ -330,7 +330,7 @@ class BlackjackFunctional(
             reward = reward * jnp.logical_not(condition) + 1 * condition
         return reward
 
-    def render_init(
+    def render_initialise(
         self, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
         """Returns an initial render state."""

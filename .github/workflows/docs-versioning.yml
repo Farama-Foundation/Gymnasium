@@ -1,10 +1,13 @@
 name: Docs Versioning
+
 on:
   push:
     tags:
       - 'v?*.*.*'
+      -
 permissions:
   contents: write
+
 jobs:
   docs:
     name: Generate Website for new version
