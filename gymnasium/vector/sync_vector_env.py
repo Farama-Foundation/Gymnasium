@@ -217,7 +217,7 @@ class SyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any, level: str | None = None):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any):
         """Sets an attribute of the sub-environments.
 
         Args:

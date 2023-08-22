@@ -368,6 +368,12 @@ class Wrapper(
                 ) from e
 
     def set_wrapper_attr(self, name: str, value: Any):
+        """Sets an attribute on this wrapper or lower environment if `name` is already defined.
+
+        Args:
+            name: The variable name
+            value: The new variable value
+        """
         sub_env = self.env
         attr_set = False
 
