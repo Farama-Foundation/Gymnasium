@@ -30,8 +30,9 @@ wrappers/vector_wrappers
 .. automethod:: gymnasium.Wrapper.reset
 .. automethod:: gymnasium.Wrapper.render
 .. automethod:: gymnasium.Wrapper.close
-.. automethod:: gymnasium.Wrapper.get_wrapper_attr
 .. automethod:: gymnasium.Wrapper.wrapper_spec
+.. automethod:: gymnasium.Wrapper.get_wrapper_attr
+.. automethod:: gymnasium.Wrapper.set_wrapper_attr
 ```
 
 ## Attributes

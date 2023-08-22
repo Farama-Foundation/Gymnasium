@@ -239,7 +239,7 @@ class SyncVectorEnv(VectorEnv):
             )
 
         for env, value in zip(self.envs, values):
-            setattr(env, name, value)
+            env.set_wrapper_attr(name, value)
 
     def close_extras(self, **kwargs: Any):
         """Close the environments."""

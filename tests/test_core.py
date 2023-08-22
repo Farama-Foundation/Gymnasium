@@ -7,10 +7,12 @@ from typing import Any, SupportsFloat
 import numpy as np
 import pytest
 
+import gymnasium as gym
 from gymnasium import ActionWrapper, Env, ObservationWrapper, RewardWrapper, Wrapper
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.spaces import Box
 from gymnasium.utils import seeding
+from gymnasium.wrappers import OrderEnforcing
 from tests.testing_env import GenericTestEnv
 
 
@@ -156,3 +158,47 @@ def test_reward_observation_action_wrapper():
     action_env = ExampleActionWrapper(env)
     obs, _, _, _, _ = action_env.step(0)
     assert obs == np.array([1])
+
+
+def test_get_set_wrapper_attr():
+    env = gym.make("CartPole-v1")
+
+    # Test get_wrapper_attr
+    with pytest.raises(AttributeError):
+        env.gravity
+    assert env.unwrapped.gravity is not None
+    assert env.get_wrapper_attr("gravity") is not None
+
+    with pytest.raises(AttributeError):
+        env.unknown_attr
+    with pytest.raises(AttributeError):
+        env.get_wrapper_attr("unknown_attr")
+
+    # Test set_wrapper_attr
+    env.set_wrapper_attr("gravity", 10.0)
+    with pytest.raises(AttributeError):
+        env.gravity
+    assert env.unwrapped.gravity == 10.0
+    assert env.get_wrapper_attr("gravity") == 10.0
+
+    env.gravity = 5.0
+    assert env.gravity == 5.0
+    assert env.get_wrapper_attr("gravity") == 5.0
+    assert env.env.get_wrapper_attr("gravity") == 10.0
+
+    # Test with OrderEnforcing (intermediate wrapper)
+    assert not isinstance(env, OrderEnforcing)
+
+    with pytest.raises(AttributeError):
+        env._disable_render_order_enforcing
+    with pytest.raises(AttributeError):
+        env.unwrapped._disable_render_order_enforcing
+    assert env.get_wrapper_attr("_disable_render_order_enforcing") is False
+
+    env.set_wrapper_attr("_disable_render_order_enforcing", True)
+
+    with pytest.raises(AttributeError):
+        env._disable_render_order_enforcing
+    with pytest.raises(AttributeError):
+        env.unwrapped._disable_render_order_enforcing
+    assert env.get_wrapper_attr("_disable_render_order_enforcing") is True
