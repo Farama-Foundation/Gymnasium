@@ -217,7 +217,7 @@ class SyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any, level: str | None = None):
         """Sets an attribute of the sub-environments.
 
         Args:
@@ -239,7 +239,7 @@ class SyncVectorEnv(VectorEnv):
             )
 
         for env, value in zip(self.envs, values):
-            setattr(env, name, value)
+            env.set_wrapper_attr(name, value)
 
     def close_extras(self, **kwargs: Any):
         """Close the environments."""
