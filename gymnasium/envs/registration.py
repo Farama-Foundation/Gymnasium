@@ -805,7 +805,7 @@ def make(
 def make_vec(
     id: str | EnvSpec,
     num_envs: int = 1,
-    vectorization_mode: str = "async",
+    vectorization_mode: str = "vector_entry_point",
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
@@ -820,7 +820,7 @@ def make_vec(
     Args:
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
-        vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom"
+        vectorization_mode: The vectorization method used, defaults to "vector_entry_point". Valid modes are "async", "sync" or "vector_entry_point"
         vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
         wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
         **kwargs: Additional arguments to pass to the environment constructor.
@@ -857,7 +857,7 @@ def make_vec(
                 f"Cannot create vectorized environment for {id} because it doesn't have an entry point defined."
             )
         entry_point = spec_.entry_point
-    elif vectorization_mode in ("custom",):
+    elif vectorization_mode in ("vector_entry_point",):
         if spec_.vector_entry_point is None:
             raise error.Error(
                 f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
@@ -907,10 +907,9 @@ def make_vec(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )
-    elif vectorization_mode == "custom":
+    elif vectorization_mode == "vector_entry_point":
         if len(wrappers) > 0:
             raise error.Error("Cannot use custom vectorization mode with wrappers.")
-        vector_kwargs["max_episode_steps"] = spec_.max_episode_steps
         env = env_creator(num_envs=num_envs, **vector_kwargs)
     else:
         raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
