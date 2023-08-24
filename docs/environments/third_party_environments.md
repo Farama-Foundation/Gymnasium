@@ -108,6 +108,13 @@ PyBullet based simulations of a robotic arm moving objects.
 
 Highly scalable and customizable Safe Reinforcement Learning library.
 
+### [SimpleGrid: a simple grid environment for Gymnasium](https://github.com/damat-le/gym-simplegrid)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/damat-le/gym-simplegrid)
+
+SimpleGrid is a super simple and minimal grid environment for Gymnasium. It is easy to use and customise and it is intended to offer an environment for rapidly testing and prototyping different RL algorithms.
+
 ### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/Farama-Foundation/stable-retro)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
