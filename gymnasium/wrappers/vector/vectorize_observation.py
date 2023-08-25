@@ -177,7 +177,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
                     self.single_observation_space,
                     tuple(
                         self.wrapper.func(obs)
-                        for obs in iterate(self.observation_space, observation)
+                        for obs in iterate(self.env.observation_space, observation)
                     ),
                     self.out,
                 )

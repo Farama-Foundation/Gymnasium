@@ -161,7 +161,7 @@ class VectorizeTransformAction(VectorActionWrapper):
                     self.single_action_space,
                     tuple(
                         self.wrapper.func(action)
-                        for action in iterate(self.action_space, actions)
+                        for action in iterate(self.env.action_space, actions)
                     ),
                     self.out,
                 )
