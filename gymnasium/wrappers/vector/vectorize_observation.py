@@ -22,14 +22,15 @@ class TransformObservation(VectorObservationWrapper):
 
     Example:
         Without observation transformation:
+        >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-        >>> envs = TransformObservation(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        array([[-1.9635296, -2.0892358, -2.055928 , -2.0631256],
-               [-1.9429494, -1.9428282, -1.9061728, -1.9503881],
-               [-1.9296501, -2.00127  , -2.0219676, -2.0640786]], dtype=float32)
+        array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
+               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
+              dtype=float32)
 
         With observation transformation:
         >>> import gymnasium as gym
@@ -39,14 +40,15 @@ class TransformObservation(VectorObservationWrapper):
         >>> def vector_scale_and_shift(obs):
         ...     return (obs - 1.0) * 2.0
         ...
+        >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> envs = TransformObservation(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
-               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
-               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
-              dtype=float32)
+        array([[-1.9635296, -2.0892358, -2.055928 , -2.0631256],
+               [-1.9429494, -1.9428282, -1.9061728, -1.9503881],
+               [-1.9296501, -2.00127  , -2.0219676, -2.0640786]], dtype=float32)
     """
 
     def __init__(
