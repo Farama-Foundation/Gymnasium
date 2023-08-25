@@ -10,15 +10,15 @@ from gymnasium import Space
 from gymnasium.core import Env, ObsType
 from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
-from gymnasium.wrappers import lambda_observation
+from gymnasium.wrappers import transform_observation
 
 
-class LambdaObservationV0(VectorObservationWrapper):
-    """Transforms an observation via a manually specified single-observation function and a vector-observation function.
+class TransformObservation(VectorObservationWrapper):
+    """Transforms an observation via a function provided to the wrapper.
 
     This function allows the manual specification of the vector-observation function as well as the single-observation function.
     This is desirable when, for example, it is possible to process vector observations in parallel or via other more optimized methods.
-    Otherwise, the ``VectorizeLambdaObservationV0`` should be used instead, where only ``single_func`` needs to be defined.
+    Otherwise, the ``VectorizeTransformObservation`` should be used instead, where only ``single_func`` needs to be defined.
 
     Example:
         >>> import gymnasium as gym
@@ -37,7 +37,7 @@ class LambdaObservationV0(VectorObservationWrapper):
                [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
               dtype=float32)
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-        >>> envs = LambdaObservationV0(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
+        >>> envs = TransformObservation(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
@@ -53,7 +53,7 @@ class LambdaObservationV0(VectorObservationWrapper):
         single_func: Callable[[ObsType], Any],
         observation_space: Space | None = None,
     ):
-        """Constructor for the lambda observation wrapper.
+        """Constructor for the transform observation wrapper.
 
         Args:
             env: The vector environment to wrap
@@ -78,8 +78,8 @@ class LambdaObservationV0(VectorObservationWrapper):
         return self.single_func(observation)
 
 
-class VectorizeLambdaObservationV0(VectorObservationWrapper):
-    """Vectorizes a single-agent lambda observation wrapper for vector environments.
+class VectorizeTransformObservation(VectorObservationWrapper):
+    """Vectorizes a single-agent transform observation wrapper for vector environments.
 
     Most of the lambda observation wrappers for single agent environments have vectorized implementations,
     it is advised that users simply use those instead via importing from `gymnasium.wrappers.vector...`.
@@ -101,11 +101,11 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
         >>> import numpy as np
         >>> import gymnasium as gym
         >>> from gymnasium.spaces import Box
-        >>> from gymnasium.wrappers import LambdaObservationV0
+        >>> from gymnasium.wrappers import TransformObservation
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> old_space = envs.single_observation_space
         >>> new_space = Box(low=np.array([old_space.low, old_space.low]), high=np.array([old_space.high, old_space.high]))
-        >>> envs = VectorizeLambdaObservationV0(envs, wrapper=LambdaObservationV0, func=lambda x: np.array([x, x]), observation_space=new_space)
+        >>> envs = VectorizeTransformObservation(envs, wrapper=TransformObservation, func=lambda x: np.array([x, x]), observation_space=new_space)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
@@ -121,7 +121,7 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
     """
 
     class _SingleEnv(Env):
-        """Fake single-agent environment used for the single-agent wrapper, meant to hold only the observation space for lambda wrappers to work."""
+        """Fake single-agent environment uses for the single-agent wrapper."""
 
         def __init__(self, observation_space: Space):
             """Constructor for the fake environment."""
@@ -130,10 +130,10 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
     def __init__(
         self,
         env: VectorEnv,
-        wrapper: type[lambda_observation.LambdaObservationV0],
+        wrapper: type[transform_observation.TransformObservation],
         **kwargs: Any,
     ):
-        """Constructor for the vectorized lambda observation wrapper.
+        """Constructor for the vectorized transform observation wrapper.
 
         Args:
             env: The vector environment to wrap.
@@ -181,7 +181,7 @@ class VectorizeLambdaObservationV0(VectorObservationWrapper):
         return self.wrapper.func(observation)
 
 
-class FilterObservationV0(VectorizeLambdaObservationV0):
+class FilterObservation(VectorizeTransformObservation):
     """Vector wrapper for filtering dict or tuple observation spaces."""
 
     def __init__(self, env: VectorEnv, filter_keys: Sequence[str | int]):
@@ -192,11 +192,11 @@ class FilterObservationV0(VectorizeLambdaObservationV0):
             filter_keys: The subspaces to be included, use a list of strings or integers for ``Dict`` and ``Tuple`` spaces respectivesly
         """
         super().__init__(
-            env, lambda_observation.FilterObservationV0, filter_keys=filter_keys
+            env, transform_observation.FilterObservation, filter_keys=filter_keys
         )
 
 
-class FlattenObservationV0(VectorizeLambdaObservationV0):
+class FlattenObservation(VectorizeTransformObservation):
     """Observation wrapper that flattens the observation.
 
     Example:
@@ -207,7 +207,7 @@ class FlattenObservationV0(VectorizeLambdaObservationV0):
         >>> obs.shape
         (3, 96, 96, 3)
         >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
-        >>> envs = FlattenObservationV0(envs)
+        >>> envs = FlattenObservation(envs)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.shape
@@ -220,10 +220,10 @@ class FlattenObservationV0(VectorizeLambdaObservationV0):
         Args:
             env:  The vector environment to wrap
         """
-        super().__init__(env, lambda_observation.FlattenObservationV0)
+        super().__init__(env, transform_observation.FlattenObservation)
 
 
-class GrayscaleObservationV0(VectorizeLambdaObservationV0):
+class GrayscaleObservation(VectorizeTransformObservation):
     """Observation wrapper that converts an RGB image to grayscale.
 
     Example:
@@ -234,7 +234,7 @@ class GrayscaleObservationV0(VectorizeLambdaObservationV0):
         >>> obs.shape
         (3, 96, 96, 3)
         >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
-        >>> envs = GrayscaleObservationV0(envs)
+        >>> envs = GrayscaleObservation(envs)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.shape
@@ -249,11 +249,11 @@ class GrayscaleObservationV0(VectorizeLambdaObservationV0):
             keep_dim: If to keep the channel in the observation, if ``True``, ``obs.shape == 3`` else ``obs.shape == 2``
         """
         super().__init__(
-            env, lambda_observation.GrayscaleObservationV0, keep_dim=keep_dim
+            env, transform_observation.GrayscaleObservation, keep_dim=keep_dim
         )
 
 
-class ResizeObservationV0(VectorizeLambdaObservationV0):
+class ResizeObservation(VectorizeTransformObservation):
     """Resizes image observations using OpenCV to shape.
 
     Example:
@@ -264,7 +264,7 @@ class ResizeObservationV0(VectorizeLambdaObservationV0):
         >>> obs.shape
         (3, 96, 96, 3)
         >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
-        >>> envs = ResizeObservationV0(envs, shape=(28, 28))
+        >>> envs = ResizeObservation(envs, shape=(28, 28))
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.shape
@@ -278,10 +278,10 @@ class ResizeObservationV0(VectorizeLambdaObservationV0):
             env: The vector environment to wrap
             shape: The resized observation shape
         """
-        super().__init__(env, lambda_observation.ResizeObservationV0, shape=shape)
+        super().__init__(env, transform_observation.ResizeObservation, shape=shape)
 
 
-class ReshapeObservationV0(VectorizeLambdaObservationV0):
+class ReshapeObservation(VectorizeTransformObservation):
     """Reshapes array based observations to shapes.
 
     Example:
@@ -292,7 +292,7 @@ class ReshapeObservationV0(VectorizeLambdaObservationV0):
         >>> obs.shape
         (3, 96, 96, 3)
         >>> envs = gym.make_vec("CarRacing-v2", num_envs=3)
-        >>> envs = ReshapeObservationV0(envs, shape=(9216, 3))
+        >>> envs = ReshapeObservation(envs, shape=(9216, 3))
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.shape
@@ -306,10 +306,10 @@ class ReshapeObservationV0(VectorizeLambdaObservationV0):
             env: The vector environment to wrap
             shape: The reshaped observation space
         """
-        super().__init__(env, lambda_observation.ReshapeObservationV0, shape=shape)
+        super().__init__(env, transform_observation.ReshapeObservation, shape=shape)
 
 
-class RescaleObservationV0(VectorizeLambdaObservationV0):
+class RescaleObservation(VectorizeTransformObservation):
     """Linearly rescales observation to between a minimum and maximum value.
 
     Example:
@@ -322,7 +322,7 @@ class RescaleObservationV0(VectorizeLambdaObservationV0):
         >>> obs.max()
         0.0469136
         >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
-        >>> envs = RescaleObservationV0(envs, min_obs=-5.0, max_obs=5.0)
+        >>> envs = RescaleObservation(envs, min_obs=-5.0, max_obs=5.0)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.min()
@@ -346,13 +346,13 @@ class RescaleObservationV0(VectorizeLambdaObservationV0):
         """
         super().__init__(
             env,
-            lambda_observation.RescaleObservationV0,
+            transform_observation.RescaleObservation,
             min_obs=min_obs,
             max_obs=max_obs,
         )
 
 
-class DtypeObservationV0(VectorizeLambdaObservationV0):
+class DtypeObservation(VectorizeTransformObservation):
     """Observation wrapper for transforming the dtype of an observation.
 
     Example:
@@ -363,7 +363,7 @@ class DtypeObservationV0(VectorizeLambdaObservationV0):
         >>> obs.dtype
         dtype('float32')
         >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
-        >>> envs = DtypeObservationV0(envs, dtype=np.int32)
+        >>> envs = DtypeObservation(envs, dtype=np.int32)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.dtype
@@ -377,4 +377,4 @@ class DtypeObservationV0(VectorizeLambdaObservationV0):
             env: The vector environment to wrap
             dtype: The new dtype of the observation
         """
-        super().__init__(env, lambda_observation.DtypeObservationV0, dtype=dtype)
+        super().__init__(env, transform_observation.DtypeObservation, dtype=dtype)

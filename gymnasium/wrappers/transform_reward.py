@@ -1,7 +1,7 @@
 """A collection of wrappers for modifying the reward.
 
-* ``LambdaRewardV0`` - Transforms the reward by a function
-* ``ClipRewardV0`` - Clips the reward between a minimum and maximum value
+* ``TransformReward`` - Transforms the reward by a function
+* ``ClipReward`` - Clips the reward between a minimum and maximum value
 """
 from __future__ import annotations
 
@@ -14,23 +14,24 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidBound
 
 
-__all__ = ["LambdaRewardV0", "ClipRewardV0"]
+__all__ = ["TransformReward", "ClipReward"]
 
 
-class LambdaRewardV0(
+class TransformReward(
     gym.RewardWrapper[ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Applies a function to the ``reward`` received from the environment's ``step``.
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import LambdaRewardV0
+        >>> from gymnasium.wrappers import TransformReward
         >>> env = gym.make("CartPole-v1")
-        >>> env = LambdaRewardV0(env, lambda r: 2 * r + 1)
+        >>> env = TransformReward(env, lambda r: 2 * r + 1)
         >>> _ = env.reset()
         >>> _, rew, _, _, _ = env.step(0)
         >>> rew
         3.0
+
     """
 
     def __init__(
@@ -38,7 +39,7 @@ class LambdaRewardV0(
         env: gym.Env[ObsType, ActType],
         func: Callable[[SupportsFloat], SupportsFloat],
     ):
-        """Initialize LambdaRewardV0 wrapper.
+        """Initialize TransformReward wrapper.
 
         Args:
             env (Env): The environment to wrap
@@ -58,14 +59,14 @@ class LambdaRewardV0(
         return self.func(reward)
 
 
-class ClipRewardV0(LambdaRewardV0[ObsType, ActType], gym.utils.RecordConstructorArgs):
+class ClipReward(TransformReward[ObsType, ActType], gym.utils.RecordConstructorArgs):
     """Clips the rewards for an environment between an upper and lower bound.
 
     Example:
         >>> import gymnasium as gym
-        >>> from gymnasium.wrappers import ClipRewardV0
+        >>> from gymnasium.wrappers import ClipReward
         >>> env = gym.make("CartPole-v1")
-        >>> env = ClipRewardV0(env, 0, 0.5)
+        >>> env = ClipReward(env, 0, 0.5)
         >>> _ = env.reset()
         >>> _, rew, _, _, _ = env.step(1)
         >>> rew
@@ -97,6 +98,6 @@ class ClipRewardV0(LambdaRewardV0[ObsType, ActType], gym.utils.RecordConstructor
         gym.utils.RecordConstructorArgs.__init__(
             self, min_reward=min_reward, max_reward=max_reward
         )
-        LambdaRewardV0.__init__(
+        TransformReward.__init__(
             self, env=env, func=lambda x: np.clip(x, a_min=min_reward, a_max=max_reward)
         )

@@ -1,6 +1,6 @@
 """A collection of stateful observation wrappers.
 
-* ``NormalizeObservationV0`` - Normalize the observations
+* ``NormalizeObservation`` - Normalize the observations
 """
 from __future__ import annotations
 
@@ -12,10 +12,10 @@ from gymnasium.vector.vector_env import VectorEnv, VectorObservationWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 
-__all__ = ["NormalizeObservationV0"]
+__all__ = ["NormalizeObservation"]
 
 
-class NormalizeObservationV0(VectorObservationWrapper, gym.utils.RecordConstructorArgs):
+class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructorArgs):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation

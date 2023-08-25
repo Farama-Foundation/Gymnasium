@@ -3,14 +3,14 @@ import numpy as np
 import pytest
 
 from gymnasium.error import InvalidProbability
-from gymnasium.wrappers import StickyActionV0
+from gymnasium.wrappers import StickyAction
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import NUM_STEPS, record_action_as_obs_step
 
 
 def test_sticky_action():
     """Tests the sticky action wrapper."""
-    env = StickyActionV0(
+    env = StickyAction(
         GenericTestEnv(step_func=record_action_as_obs_step),
         repeat_action_probability=0.5,
     )
@@ -30,6 +30,6 @@ def test_sticky_action():
 def test_sticky_action_raise(repeat_action_probability):
     """Tests the stick action wrapper with probabilities that should raise an error."""
     with pytest.raises(InvalidProbability):
-        StickyActionV0(
+        StickyAction(
             GenericTestEnv(), repeat_action_probability=repeat_action_probability
         )

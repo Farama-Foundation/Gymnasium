@@ -2,7 +2,7 @@
 import numpy as np
 
 from gymnasium.spaces import Box
-from gymnasium.wrappers import RescaleActionV0
+from gymnasium.wrappers import RescaleAction
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import record_action_step
 
@@ -13,7 +13,7 @@ def test_rescale_action_wrapper():
         step_func=record_action_step,
         action_space=Box(np.array([0, 1]), np.array([1, 3])),
     )
-    wrapped_env = RescaleActionV0(
+    wrapped_env = RescaleAction(
         env, min_action=np.array([-5, 0]), max_action=np.array([5, 1])
     )
     assert wrapped_env.action_space == Box(np.array([-5, 0]), np.array([5, 1]))

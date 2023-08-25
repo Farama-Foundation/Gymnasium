@@ -1,6 +1,6 @@
 """A collection of wrappers for modifying the reward with an internal state.
 
-* ``NormalizeRewardV0`` - Normalizes the rewards to a mean and standard deviation
+* ``NormalizeReward`` - Normalizes the rewards to a mean and standard deviation
 """
 from __future__ import annotations
 
@@ -14,10 +14,10 @@ from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 
-__all__ = ["NormalizeRewardV1"]
+__all__ = ["NormalizeReward"]
 
 
-class NormalizeRewardV1(VectorWrapper, gym.utils.RecordConstructorArgs):
+class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.

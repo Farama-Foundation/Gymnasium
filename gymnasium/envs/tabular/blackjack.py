@@ -16,7 +16,7 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
 from gymnasium.utils.functional_jax_env import FunctionalJaxEnv
-from gymnasium.wrappers import HumanRenderingV0
+from gymnasium.wrappers import HumanRendering
 
 
 RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
@@ -501,7 +501,7 @@ if __name__ == "__main__":
     Temporary environment tester function.
     """
 
-    env = HumanRenderingV0(BlackJackJaxEnv(render_mode="rgb_array"))
+    env = HumanRendering(BlackJackJaxEnv(render_mode="rgb_array"))
 
     obs, info = env.reset()
     print(obs, info)

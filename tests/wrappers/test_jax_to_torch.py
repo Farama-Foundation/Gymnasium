@@ -9,7 +9,7 @@ jnp = pytest.importorskip("jax.numpy")
 torch = pytest.importorskip("torch")
 
 from gymnasium.wrappers.jax_to_torch import (  # noqa: E402
-    JaxToTorchV0,
+    JaxToTorch,
     jax_to_torch,
     torch_to_jax,
 )
@@ -100,7 +100,7 @@ def test_jax_to_torch_wrapper():
     assert isinstance(info, dict) and isinstance(info["data"], jax.Array)
 
     # Check that the wrapped version is correct.
-    wrapped_env = JaxToTorchV0(env)
+    wrapped_env = JaxToTorch(env)
     obs, info = wrapped_env.reset()
     assert isinstance(obs, torch.Tensor)
     assert isinstance(info, dict) and isinstance(info["data"], torch.Tensor)

@@ -2,7 +2,7 @@
 import numpy as np
 
 from gymnasium.spaces import Box
-from gymnasium.wrappers import GrayscaleObservationV0
+from gymnasium.wrappers import GrayscaleObservation
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import (
     check_obs,
@@ -18,7 +18,7 @@ def test_grayscale_observation_wrapper():
         reset_func=record_random_obs_reset,
         step_func=record_random_obs_step,
     )
-    wrapped_env = GrayscaleObservationV0(env)
+    wrapped_env = GrayscaleObservation(env)
 
     obs, info = wrapped_env.reset()
     check_obs(env, wrapped_env, obs, info["obs"])
@@ -28,7 +28,7 @@ def test_grayscale_observation_wrapper():
     check_obs(env, wrapped_env, obs, info["obs"])
 
     # Keep_dim
-    wrapped_env = GrayscaleObservationV0(env, keep_dim=True)
+    wrapped_env = GrayscaleObservation(env, keep_dim=True)
 
     obs, info = wrapped_env.reset()
     check_obs(env, wrapped_env, obs, info["obs"])

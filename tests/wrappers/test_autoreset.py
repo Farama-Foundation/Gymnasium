@@ -2,7 +2,7 @@
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.wrappers import AutoresetV0
+from gymnasium.wrappers import Autoreset
 from tests.testing_env import GenericTestEnv
 
 
@@ -25,7 +25,7 @@ def autoreset_step_func(self: gym.Env, action: int):
 def test_autoreset_wrapper_autoreset():
     """Tests the autoreset wrapper actually automatically resets correctly."""
     env = GenericTestEnv(reset_func=autoreset_reset_func, step_func=autoreset_step_func)
-    env = AutoresetV0(env)
+    env = Autoreset(env)
 
     obs, info = env.reset()
     assert obs == np.array([0])

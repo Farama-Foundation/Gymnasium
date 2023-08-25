@@ -235,6 +235,10 @@ class Env(Generic[ObsType, ActType]):
         """Gets the attribute `name` from the environment."""
         return getattr(self, name)
 
+    def set_wrapper_attr(self, name: str, value: Any):
+        """Sets the attribute `name` on the environment with `value`."""
+        setattr(self, name, value)
+
 
 WrapperObsType = TypeVar("WrapperObsType")
 WrapperActType = TypeVar("WrapperActType")
@@ -273,24 +277,33 @@ class Wrapper(
 
         self._cached_spec: EnvSpec | None = None
 
-    def get_wrapper_attr(self, name: str) -> Any:
-        """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        """Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data."""
+        return self.env.step(action)
 
-        Args:
-            name: The variable name to get
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
+        """Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data."""
+        return self.env.reset(seed=seed, options=options)
 
-        Returns:
-            The variable with name in wrapper or lower environments
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
+        """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
+        return self.env.render()
+
+    def close(self):
+        """Closes the wrapper and :attr:`env`."""
+        return self.env.close()
+
+    @property
+    def unwrapped(self) -> Env[ObsType, ActType]:
+        """Returns the base environment of the wrapper.
+
+        This will be the bare :class:`gymnasium.Env` environment, underneath all layers of wrappers.
         """
-        if hasattr(self, name):
-            return getattr(self, name)
-        else:
-            try:
-                return self.env.get_wrapper_attr(name)
-            except AttributeError as e:
-                raise AttributeError(
-                    f"wrapper {self.class_name()} has no attribute {name!r}"
-                ) from e
+        return self.env.unwrapped
 
     @property
     def spec(self) -> EnvSpec | None:
@@ -334,6 +347,53 @@ class Wrapper(
             entry_point=f"{cls.__module__}:{cls.__name__}",
             kwargs=kwargs,
         )
+
+    def get_wrapper_attr(self, name: str) -> Any:
+        """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.
+
+        Args:
+            name: The variable name to get
+
+        Returns:
+            The variable with name in wrapper or lower environments
+        """
+        if hasattr(self, name):
+            return getattr(self, name)
+        else:
+            try:
+                return self.env.get_wrapper_attr(name)
+            except AttributeError as e:
+                raise AttributeError(
+                    f"wrapper {self.class_name()} has no attribute {name!r}"
+                ) from e
+
+    def set_wrapper_attr(self, name: str, value: Any):
+        """Sets an attribute on this wrapper or lower environment if `name` is already defined.
+
+        Args:
+            name: The variable name
+            value: The new variable value
+        """
+        sub_env = self.env
+        attr_set = False
+
+        while attr_set is False and isinstance(sub_env, Wrapper):
+            if hasattr(sub_env, name):
+                setattr(sub_env, name, value)
+                attr_set = True
+            else:
+                sub_env = sub_env.env
+
+        if attr_set is False:
+            setattr(sub_env, name, value)
+
+    def __str__(self):
+        """Returns the wrapper name and the :attr:`env` representation string."""
+        return f"<{type(self).__name__}{self.env}>"
+
+    def __repr__(self):
+        """Returns the string representation of the wrapper."""
+        return str(self)
 
     @classmethod
     def class_name(cls) -> str:
@@ -400,42 +460,6 @@ class Wrapper(
         raise AttributeError(
             "Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."
         )
-
-    def step(
-        self, action: WrapperActType
-    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
-        """Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.step(action)
-
-    def reset(
-        self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
-        """Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.reset(seed=seed, options=options)
-
-    def render(self) -> RenderFrame | list[RenderFrame] | None:
-        """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.render()
-
-    def close(self):
-        """Closes the wrapper and :attr:`env`."""
-        return self.env.close()
-
-    def __str__(self):
-        """Returns the wrapper name and the :attr:`env` representation string."""
-        return f"<{type(self).__name__}{self.env}>"
-
-    def __repr__(self):
-        """Returns the string representation of the wrapper."""
-        return str(self)
-
-    @property
-    def unwrapped(self) -> Env[ObsType, ActType]:
-        """Returns the base environment of the wrapper.
-
-        This will be the bare :class:`gymnasium.Env` environment, underneath all layers of wrappers.
-        """
-        return self.env.unwrapped
 
 
 class ObservationWrapper(Wrapper[WrapperObsType, ActType, ObsType, ActType]):

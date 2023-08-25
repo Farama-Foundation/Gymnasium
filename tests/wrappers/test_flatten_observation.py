@@ -1,7 +1,7 @@
 """Test suite for FlattenObservation wrapper."""
 
 from gymnasium.spaces import Box, Dict, flatten_space
-from gymnasium.wrappers import FlattenObservationV0
+from gymnasium.wrappers import FlattenObservation
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import (
     check_obs,
@@ -17,7 +17,7 @@ def test_flatten_observation_wrapper():
         reset_func=record_random_obs_reset,
         step_func=record_random_obs_step,
     )
-    wrapped_env = FlattenObservationV0(env)
+    wrapped_env = FlattenObservation(env)
 
     assert wrapped_env.observation_space == flatten_space(env.observation_space)
     assert wrapped_env.action_space == env.action_space

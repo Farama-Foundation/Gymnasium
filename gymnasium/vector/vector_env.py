@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, TypeVar
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.utils import seeding
 
 
@@ -52,10 +52,10 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     Examples:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync", wrappers=(gym.wrappers.TimeAwareObservationV0,))
-        >>> envs = gym.wrappers.vector.ClipRewardV0(envs, min_reward=0.2, max_reward=0.8)
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync", wrappers=(gym.wrappers.TimeAwareObservation,))
+        >>> envs = gym.wrappers.vector.ClipReward(envs, min_reward=0.2, max_reward=0.8)
         >>> envs
-        <ClipRewardV0, SyncVectorEnv(CartPole-v1, num_envs=3)>
+        <ClipReward, SyncVectorEnv(CartPole-v1, num_envs=3)>
         >>> observations, infos = envs.reset(seed=123)
         >>> observations
         array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282,  0.        ],
@@ -93,6 +93,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     """
 
     spec: EnvSpec | None = None
+    render_mode: str | None = None
+    closed: bool = False
 
     observation_space: gym.Space
     action_space: gym.Space
@@ -100,8 +102,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     single_action_space: gym.Space
 
     num_envs: int
-
-    closed: bool = False
 
     _np_random: np.random.Generator | None = None
 
@@ -137,7 +137,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Take an action for each parallel environment.
 
         Args:
@@ -172,6 +172,16 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             >>> infos
             {}
         """
+
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the rendered frames from the parallel environments.
+
+        Returns:
+            A tuple of rendered frames from the parallel environments
+        """
+        raise NotImplementedError(
+            f"{self.__str__()} render function is not implemented."
+        )
 
     def close(self, **kwargs: Any):
         """Close all parallel environments and release resources.
@@ -333,6 +343,10 @@ class VectorWrapper(VectorEnv):
         """Step through all environments using the actions returning the batched data."""
         return self.env.step(actions)
 
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the render mode from the base vector environment."""
+        return self.env.render()
+
     def close(self, **kwargs: Any):
         """Close all environments."""
         return self.env.close(**kwargs)
@@ -407,6 +421,11 @@ class VectorWrapper(VectorEnv):
     def num_envs(self) -> int:
         """Gets the wrapped vector environment's num of the sub-environments."""
         return self.env.num_envs
+
+    @property
+    def render_mode(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the `render_mode` from the base environment."""
+        return self.env.render_mode
 
 
 class VectorObservationWrapper(VectorWrapper):

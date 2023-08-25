@@ -5,14 +5,14 @@ import pytest
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.spaces import Box, Dict, Tuple
-from gymnasium.wrappers import TimeAwareObservationV0
+from gymnasium.wrappers import TimeAwareObservation
 from tests.testing_env import GenericTestEnv
 
 
 @pytest.mark.parametrize("env_id", ["CartPole-v1", "Pendulum-v1"])
 def test_default(env_id):
     env = gym.make(env_id, disable_env_checker=True)
-    wrapped_env = TimeAwareObservationV0(env)
+    wrapped_env = TimeAwareObservation(env)
 
     assert isinstance(env.observation_space, spaces.Box)
     assert isinstance(wrapped_env.observation_space, spaces.Box)
@@ -43,7 +43,7 @@ def test_default(env_id):
 def test_no_flatten():
     """Test the TimeAwareObservation wrapper without flattening the space."""
     env = GenericTestEnv(observation_space=Box(0, 1))
-    wrapped_env = TimeAwareObservationV0(env)
+    wrapped_env = TimeAwareObservation(env)
     assert isinstance(wrapped_env.observation_space, Box)
     reset_obs, _ = wrapped_env.reset()
     step_obs, _, _, _, _ = wrapped_env.step(None)
@@ -56,7 +56,7 @@ def test_no_flatten():
 def test_with_flatten():
     """Test the flatten parameter for the TimeAwareObservation wrapper on three types of observation spaces."""
     env = GenericTestEnv(observation_space=Dict(arm_1=Box(0, 1), arm_2=Box(2, 3)))
-    wrapped_env = TimeAwareObservationV0(env, flatten=False)
+    wrapped_env = TimeAwareObservation(env, flatten=False)
     assert isinstance(wrapped_env.observation_space, Dict)
     reset_obs, _ = wrapped_env.reset()
     step_obs, _, _, _, _ = wrapped_env.step(None)
@@ -66,7 +66,7 @@ def test_with_flatten():
     assert step_obs in wrapped_env.observation_space
 
     env = GenericTestEnv(observation_space=Tuple((Box(0, 1), Box(2, 3))))
-    wrapped_env = TimeAwareObservationV0(env, flatten=False)
+    wrapped_env = TimeAwareObservation(env, flatten=False)
     assert isinstance(wrapped_env.observation_space, Tuple)
     reset_obs, _ = wrapped_env.reset()
     step_obs, _, _, _, _ = wrapped_env.step(None)
@@ -76,7 +76,7 @@ def test_with_flatten():
     assert step_obs in wrapped_env.observation_space
 
     env = GenericTestEnv(observation_space=Box(0, 1))
-    wrapped_env = TimeAwareObservationV0(env, flatten=False)
+    wrapped_env = TimeAwareObservation(env, flatten=False)
     assert isinstance(wrapped_env.observation_space, Dict)
     reset_obs, _ = wrapped_env.reset()
     step_obs, _, _, _, _ = wrapped_env.step(None)
@@ -91,7 +91,7 @@ def test_with_flatten():
 def test_normalize_time():
     """Test the normalize time parameter for DelayObservation wrappers."""
     env = GenericTestEnv(observation_space=Box(0, 1))
-    wrapped_env = TimeAwareObservationV0(env, flatten=False, normalize_time=False)
+    wrapped_env = TimeAwareObservation(env, flatten=False, normalize_time=False)
     reset_obs, _ = wrapped_env.reset()
     step_obs, _, _, _, _ = wrapped_env.step(None)
     assert reset_obs["time"] == np.array([0], dtype=np.int32) and step_obs[
@@ -102,7 +102,7 @@ def test_normalize_time():
     assert step_obs in wrapped_env.observation_space
 
     env = GenericTestEnv(observation_space=Box(0, 1))
-    wrapped_env = TimeAwareObservationV0(env, flatten=False, normalize_time=True)
+    wrapped_env = TimeAwareObservation(env, flatten=False, normalize_time=True)
     reset_obs, _ = wrapped_env.reset()
     step_obs, _, _, _, _ = wrapped_env.step(None)
     assert reset_obs["time"] == 0.0 and step_obs["time"] == 0.01

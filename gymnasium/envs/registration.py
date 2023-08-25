@@ -773,17 +773,17 @@ def make(
     if disable_env_checker is False or (
         disable_env_checker is None and env_spec.disable_env_checker is False
     ):
-        env = gym.wrappers.PassiveEnvCheckerV0(env)
+        env = gym.wrappers.PassiveEnvChecker(env)
 
     # Add the order enforcing wrapper
     if env_spec.order_enforce:
-        env = gym.wrappers.OrderEnforcingV0(env)
+        env = gym.wrappers.OrderEnforcing(env)
 
     # Add the time limit wrapper
     if max_episode_steps is not None:
-        env = gym.wrappers.TimeLimitV0(env, max_episode_steps)
+        env = gym.wrappers.TimeLimit(env, max_episode_steps)
     elif env_spec.max_episode_steps is not None:
-        env = gym.wrappers.TimeLimitV0(env, env_spec.max_episode_steps)
+        env = gym.wrappers.TimeLimit(env, env_spec.max_episode_steps)
 
     for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
@@ -795,9 +795,9 @@ def make(
 
     # Add human rendering wrapper
     if apply_human_rendering:
-        env = gym.wrappers.HumanRenderingV0(env)
+        env = gym.wrappers.HumanRendering(env)
     elif apply_render_collection:
-        env = gym.wrappers.RenderCollectionV0(env)
+        env = gym.wrappers.RenderCollection(env)
 
     return env
 
@@ -833,16 +833,21 @@ def make_vec(
     """
     if vector_kwargs is None:
         vector_kwargs = {}
-
     if wrappers is None:
         wrappers = []
 
     if isinstance(id, EnvSpec):
         spec_ = id
+
+        _kwargs = spec_.kwargs.copy()
+        num_envs = _kwargs.pop("num_envs", num_envs)
+        vectorization_mode = _kwargs.pop("vectorization_mode", vectorization_mode)
+        vector_kwargs = _kwargs.pop("vector_kwargs", vector_kwargs)
+        wrappers = _kwargs.pop("wrappers", wrappers)
     else:
         spec_ = _find_spec(id)
+        _kwargs = spec_.kwargs.copy()
 
-    _kwargs = spec_.kwargs.copy()
     _kwargs.update(kwargs)
 
     # Check if we have the necessary entry point
@@ -883,10 +888,10 @@ def make_vec(
         _env = env_creator(**_kwargs_copy)
         _env.spec = spec_
         if spec_.max_episode_steps is not None:
-            _env = gym.wrappers.TimeLimitV0(_env, spec_.max_episode_steps)
+            _env = gym.wrappers.TimeLimit(_env, spec_.max_episode_steps)
 
         if render_mode is not None and render_mode.endswith("_list"):
-            _env = gym.wrappers.RenderCollectionV0(_env)
+            _env = gym.wrappers.RenderCollection(_env)
 
         for wrapper in wrappers:
             _env = wrapper(_env)
@@ -913,6 +918,14 @@ def make_vec(
     # Copies the environment creation specification and kwargs to add to the environment specification details
     spec_ = copy.deepcopy(spec_)
     spec_.kwargs = _kwargs
+    if num_envs != 1:
+        spec_.kwargs["num_envs"] = num_envs
+    if vectorization_mode != "async":
+        spec_.kwargs["vectorization_mode"] = vectorization_mode
+    if vector_kwargs is not None:
+        spec_.kwargs["vector_kwargs"] = vector_kwargs
+    if wrappers is not None:
+        spec_.kwargs["wrappers"] = wrappers
     env.unwrapped.spec = spec_
 
     return env
