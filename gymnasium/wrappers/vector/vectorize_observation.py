@@ -189,7 +189,28 @@ class VectorizeTransformObservation(VectorObservationWrapper):
 
 
 class FilterObservation(VectorizeTransformObservation):
-    """Vector wrapper for filtering dict or tuple observation spaces."""
+    """Vector wrapper for filtering dict or tuple observation spaces.
+
+    Example:
+        Create a vectorized environment with a Dict space to demonstrate how to filter keys:
+        >>> import numpy as np
+        >>> import gymnasium as gym
+        >>> from gymnasium.spaces import Dict, Box
+        >>> from gymnasium.wrappers import TransformObservation
+        >>> from gymnasium.wrappers.vector import VectorizeTransformObservation, FilterObservation
+        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> make_dict = lambda x: {"obs": x, "junk": np.array([0.0])}
+        >>> new_space = Dict({"obs": envs.single_observation_space, "junk": Box(low=-1.0, high=1.0)})
+        >>> envs = VectorizeTransformObservation(env=envs, wrapper=TransformObservation, func=make_dict, observation_space=new_space)
+        >>> envs = FilterObservation(envs, ["obs"])
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs
+        >>> OrderedDict([('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
+               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
+              dtype=float32))])
+    """
 
     def __init__(self, env: VectorEnv, filter_keys: Sequence[str | int]):
         """Constructor for the filter observation wrapper.
