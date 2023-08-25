@@ -18,6 +18,36 @@ class TransformAction(VectorActionWrapper):
 
     The function :attr:`func` will be applied to all vector actions.
     If the observations from :attr:`func` are outside the bounds of the ``env``'s action space, provide an :attr:`action_space`.
+
+    Example:
+        Without action transformation:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
+        >>> _ = envs.action_space.seed(123)
+        >>> obs, info = envs.reset(seed=123)
+        >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> obs
+        array([[-4.6343064e-01,  9.8971417e-05],
+               [-4.4488689e-01, -1.9375233e-03],
+               [-4.3118435e-01, -1.5342437e-03]], dtype=float32)
+
+        With action transformation:
+        >>> import gymnasium as gym
+        >>> from gymnasium.spaces import Box
+        >>> from gymnasium.wrappers import TransformAction
+        >>> def scale_and_shift(act):
+        ...     return (act - 1.0) * 2.0
+        ...
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
+        >>> new_action_space = Box(low=scale_and_shift(envs.single_action_space.low), high=scale_and_shift(envs.single_action_space.high))
+        >>> envs = VectorizeTransformAction(env=envs, wrapper=TransformAction, func=scale_and_shift, action_space=new_action_space)
+        >>> _ = envs.action_space.seed(123)
+        >>> obs, info = envs.reset(seed=123)
+        >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> obs
+        array([[-0.4654777 , -0.00194808],
+               [-0.44504836, -0.00209899],
+               [-0.43184543, -0.00219532]], dtype=float32)
     """
 
     def __init__(
@@ -48,8 +78,8 @@ class TransformAction(VectorActionWrapper):
 class VectorizeTransformAction(VectorActionWrapper):
     """Vectorizes a single-agent transform action wrapper for vector environments."""
 
-    class VectorizedEnv(Env):
-        """Fake single-agent environment uses for the single-agent wrapper."""
+    class _SingleEnv(Env):
+        """Fake single-agent environment used for the single-agent wrapper."""
 
         def __init__(self, action_space: Space):
             """Constructor for the fake environment."""
@@ -71,7 +101,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         super().__init__(env)
 
         self.wrapper = wrapper(
-            self.VectorizedEnv(self.env.single_action_space), **kwargs
+            self._SingleEnv(self.env.single_action_space), **kwargs
         )
         self.single_action_space = self.wrapper.action_space
         self.action_space = batch_space(self.single_action_space, self.num_envs)

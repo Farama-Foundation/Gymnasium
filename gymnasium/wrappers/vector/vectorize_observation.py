@@ -21,6 +21,17 @@ class TransformObservation(VectorObservationWrapper):
     Otherwise, the ``VectorizeTransformObservation`` should be used instead, where only ``single_func`` needs to be defined.
 
     Example:
+        Without observation transformation:
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> envs = TransformObservation(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
+        >>> obs, info = envs.reset(seed=123)
+        >>> envs.close()
+        >>> obs
+        array([[-1.9635296, -2.0892358, -2.055928 , -2.0631256],
+               [-1.9429494, -1.9428282, -1.9061728, -1.9503881],
+               [-1.9296501, -2.00127  , -2.0219676, -2.0640786]], dtype=float32)
+
+        With observation transformation:
         >>> import gymnasium as gym
         >>> def scale_and_shift(obs):
         ...     return (obs - 1.0) * 2.0
@@ -36,14 +47,6 @@ class TransformObservation(VectorObservationWrapper):
                [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
                [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
               dtype=float32)
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-        >>> envs = TransformObservation(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
-        >>> obs, info = envs.reset(seed=123)
-        >>> envs.close()
-        >>> obs
-        array([[-1.9635296, -2.0892358, -2.055928 , -2.0631256],
-               [-1.9429494, -1.9428282, -1.9061728, -1.9503881],
-               [-1.9296501, -2.00127  , -2.0219676, -2.0640786]], dtype=float32)
     """
 
     def __init__(
@@ -121,7 +124,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
     """
 
     class _SingleEnv(Env):
-        """Fake single-agent environment uses for the single-agent wrapper."""
+        """Fake single-agent environment used for the single-agent wrapper."""
 
         def __init__(self, observation_space: Space):
             """Constructor for the fake environment."""
