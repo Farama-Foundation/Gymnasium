@@ -18,7 +18,7 @@ class TransformAction(VectorActionWrapper):
 
     The function :attr:`func` will be applied to all vector actions.
     If the observations from :attr:`func` are outside the bounds of the ``env``'s action space,
-    provide an :attr:`action_space` which specifies the action space for a single environment.
+    provide an :attr:`action_space` which specifies the action space for the vectorized environment.
 
     Example:
         Without action transformation:
@@ -26,29 +26,32 @@ class TransformAction(VectorActionWrapper):
         >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
-        >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> for _ in range(10):
+        ...     obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        ...
         >>> obs
-        array([[-4.6343064e-01,  9.8971417e-05],
-               [-4.4488689e-01, -1.9375233e-03],
-               [-4.3118435e-01, -1.5342437e-03]], dtype=float32)
+        array([[-0.46553135, -0.00142543],
+               [-0.498371  , -0.00715587],
+               [-0.4651575 , -0.00624371]], dtype=float32)
 
         With action transformation:
         >>> import gymnasium as gym
         >>> from gymnasium.spaces import Box
-        >>> from gymnasium.wrappers import TransformAction
-        >>> def scale_and_shift(act):
-        ...     return (act - 1.0) * 2.0
+        >>> def shrink_action(act):
+        ...     return act * 0.3
         ...
         >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
-        >>> new_action_space = Box(low=scale_and_shift(envs.single_action_space.low), high=scale_and_shift(envs.single_action_space.high))
-        >>> envs = VectorizeTransformAction(env=envs, wrapper=TransformAction, func=scale_and_shift, action_space=new_action_space)
+        >>> new_action_space = Box(low=shrink_action(envs.action_space.low), high=shrink_action(envs.action_space.high))
+        >>> envs = TransformAction(env=envs, func=shrink_action, action_space=new_action_space)
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
-        >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> for _ in range(10):
+        ...     obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        ...
         >>> obs
-        array([[-0.4654777 , -0.00194808],
-               [-0.44504836, -0.00209899],
-               [-0.43184543, -0.00219532]], dtype=float32)
+        array([[-0.48468155, -0.00372536],
+               [-0.47599354, -0.00545912],
+               [-0.46543318, -0.00615723]], dtype=float32)
     """
 
     def __init__(
