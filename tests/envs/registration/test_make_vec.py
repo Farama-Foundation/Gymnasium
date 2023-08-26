@@ -4,6 +4,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.envs.classic_control import CartPoleEnv
+from gymnasium.envs.classic_control.cartpole import CartPoleVectorEnv
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
@@ -12,21 +13,32 @@ from tests.wrappers.utils import has_wrapper
 def test_make_vec_env_id():
     """Ensure that the `gym.make_vec` creates the right environment."""
     env = gym.make_vec("CartPole-v1")
-    assert isinstance(env, AsyncVectorEnv)
+    assert isinstance(env, CartPoleVectorEnv)
     assert env.num_envs == 1
     env.close()
 
 
 @pytest.mark.parametrize("num_envs", [1, 3, 10])
-def test_make_vec_num_envs(num_envs):
+@pytest.mark.parametrize("vectorization_mode", ["vector_entry_point", "async", "sync"])
+def test_make_vec_num_envs(num_envs, vectorization_mode):
     """Test that the `gym.make_vec` num_envs parameter works."""
-    env = gym.make_vec("CartPole-v1", num_envs=num_envs)
+    env = gym.make_vec(
+        "CartPole-v1", num_envs=num_envs, vectorization_mode=vectorization_mode
+    )
     assert env.num_envs == num_envs
     env.close()
 
 
 def test_make_vec_vectorization_mode():
     """Tests the `gym.make_vec` vectorization mode works."""
+    env = gym.make_vec("CartPole-v1")
+    assert isinstance(env, CartPoleVectorEnv)
+    env.close()
+
+    env = gym.make_vec("CartPole-v1", vectorization_mode="vector_entry_point")
+    assert isinstance(env, CartPoleVectorEnv)
+    env.close()
+
     env = gym.make_vec("CartPole-v1", vectorization_mode="async")
     assert isinstance(env, AsyncVectorEnv)
     env.close()
@@ -76,9 +88,18 @@ def test_make_vec_wrappers():
         ("CartPole-v1", {}),
         ("CartPole-v1", {"num_envs": 3}),
         ("CartPole-v1", {"vectorization_mode": "sync"}),
-        ("CartPole-v1", {"vectorization_mode": "custom"}),
-        ("CartPole-v1", {"vector_kwargs": {"copy": False}}),
-        ("CartPole-v1", {"wrappers": (gym.wrappers.TimeAwareObservation,)}),
+        ("CartPole-v1", {"vectorization_mode": "vector_entry_point"}),
+        (
+            "CartPole-v1",
+            {"vector_kwargs": {"copy": False}, "vectorization_mode": "sync"},
+        ),
+        (
+            "CartPole-v1",
+            {
+                "wrappers": (gym.wrappers.TimeAwareObservation,),
+                "vectorization_mode": "sync",
+            },
+        ),
         ("CartPole-v1", {"render_mode": "rgb_array"}),
     ),
 )

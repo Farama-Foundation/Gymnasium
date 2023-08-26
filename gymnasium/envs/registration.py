@@ -910,6 +910,8 @@ def make_vec(
     elif vectorization_mode == "vector_entry_point":
         if len(wrappers) > 0:
             raise error.Error("Cannot use custom vectorization mode with wrappers.")
+        if "max_episode_steps" not in vector_kwargs:
+            vector_kwargs["max_episode_steps"] = spec_.max_episode_steps
         env = env_creator(num_envs=num_envs, **vector_kwargs)
     else:
         raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
