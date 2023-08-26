@@ -654,7 +654,6 @@ def _async_worker(
                     )
                     observation = None
                 pipe.send(((observation, info), True))
-
             elif command == "step":
                 (
                     observation,
@@ -676,26 +675,24 @@ def _async_worker(
                     observation = None
 
                 pipe.send(((observation, reward, terminated, truncated, info), True))
-            elif command == "seed":
-                env.seed(data)
-                pipe.send((None, True))
             elif command == "close":
                 pipe.send((None, True))
                 break
             elif command == "_call":
                 name, args, kwargs = data
-                if name in ["reset", "step", "seed", "close"]:
+                if name in ["reset", "step", "close", "set_wrapper_attr"]:
                     raise ValueError(
-                        f"Trying to call function `{name}` with `_call`. Use `{name}` directly instead."
+                        f"Trying to call function `{name}` with `call`, use `{name}` directly instead."
                     )
-                function = env.get_wrapper_attr(name)
-                if callable(function):
-                    pipe.send((function(*args, **kwargs), True))
+
+                attr = env.get_wrapper_attr(name)
+                if callable(attr):
+                    pipe.send((attr(*args, **kwargs), True))
                 else:
-                    pipe.send((function, True))
+                    pipe.send((attr, True))
             elif command == "_setattr":
                 name, value = data
-                setattr(env, name, value)
+                env.set_wrapper_attr(name, value)
                 pipe.send((None, True))
             elif command == "_check_spaces":
                 pipe.send(
@@ -706,7 +703,7 @@ def _async_worker(
                 )
             else:
                 raise RuntimeError(
-                    f"Received unknown command `{command}`. Must be one of [`reset`, `step`, `seed`, `close`, `_call`, `_setattr`, `_check_spaces`]."
+                    f"Received unknown command `{command}`. Must be one of [`reset`, `step`, `close`, `_call`, `_setattr`, `_check_spaces`]."
                 )
     except (KeyboardInterrupt, Exception):
         error_queue.put((index,) + sys.exc_info()[:2])
