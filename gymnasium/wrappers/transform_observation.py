@@ -39,10 +39,10 @@ class TransformObservation(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Applies a function to the ``observation`` received from the environment's ``reset`` and ``step`` that is passed back to the user.
+    """Applies a function to the ``observation`` received from the environment's :meth:`Env.reset` and :meth:`Env.step` that is passed back to the user.
 
     The function :attr:`func` will be applied to all observations.
-    If the observations from :attr:`func` are outside the bounds of the ``env``'s observation space, provide an :attr:`observation_space`.
+    If the observations from :attr:`func` are outside the bounds of the ``env``'s observation space, provide an updated :attr:`observation_space`.
 
     Example:
         >>> import gymnasium as gym
@@ -572,8 +572,7 @@ class RenderObservation(
     Notes:
        This was previously called ``PixelObservationWrapper``.
 
-    Example:
-        Replace the observation with the rendered image:
+    Example - Replace the observation with the rendered image:
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = RenderObservation(env, render_only=True)
         >>> env.observation_space
@@ -587,19 +586,19 @@ class RenderObservation(
         >>> np.all(obs == image)
         True
 
-        Add the rendered image to the original observation as a dictionary item:
+    Example - Add the rendered image to the original observation as a dictionary item:
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = RenderObservation(env, render_only=False)
         >>> env.observation_space
         Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
-        >>> obs, _ = env.reset(seed=123)
+        >>> obs, info = env.reset(seed=123)
         >>> obs.keys()
         dict_keys(['state', 'pixels'])
         >>> obs["state"]
         array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
         >>> np.all(obs["pixels"] == env.render())
         True
-        >>> obs, *_ = env.step(env.action_space.sample())
+        >>> obs, reward, terminates, truncates, info = env.step(env.action_space.sample())
         >>> image = env.render()
         >>> np.all(obs["pixels"] == image)
         True

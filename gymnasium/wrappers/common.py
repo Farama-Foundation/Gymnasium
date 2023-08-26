@@ -300,7 +300,7 @@ class OrderEnforcing(
         >>> env.render()
         Traceback (most recent call last):
             ...
-        gymnasium.error.ResetNeeded: Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.
+        gymnasium.error.ResetNeeded: Cannot call `env.render()` before calling `env.reset()`, if this is an intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.
         >>> _ = env.reset()
         >>> env.render()
         >>> _ = env.step(0)
@@ -343,7 +343,7 @@ class OrderEnforcing(
         """Renders the environment with `kwargs`."""
         if not self._disable_render_order_enforcing and not self._has_reset:
             raise ResetNeeded(
-                "Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, "
+                "Cannot call `env.render()` before calling `env.reset()`, if this is an intended action, "
                 "set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper."
             )
         return super().render()
