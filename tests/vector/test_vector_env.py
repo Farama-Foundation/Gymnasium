@@ -124,3 +124,5 @@ def test_final_obs_info(vectoriser):
     assert info["final_observation"] == np.array([0]) and info["final_info"] == {
         "action": 3
     }
+
+    env.close()

@@ -38,6 +38,8 @@ def test_vector_env_wrapper_inheritance():
     wrapped.reset()
     assert wrapped.counter == 1
 
+    env.close()
+
 
 def test_vector_env_wrapper_attributes():
     """Test if `set_attr`, `call` methods for VecEnvWrapper get correctly forwarded to the vector env it is wrapping."""
@@ -50,3 +52,5 @@ def test_vector_env_wrapper_attributes():
     env.set_attr("gravity", [20.0, 20.0, 20.0])
     wrapped.env.set_attr("gravity", [20.0, 20.0, 20.0])
     assert np.allclose(wrapped.env.get_attr("gravity"), env.get_attr("gravity"))
+
+    env.close()

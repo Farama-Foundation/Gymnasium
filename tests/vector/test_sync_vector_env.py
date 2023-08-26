@@ -155,7 +155,7 @@ def test_custom_space_sync_vector_env():
     assert isinstance(env.action_space, Tuple)
 
     actions = ("action-2", "action-3", "action-5", "action-7")
-    step_observations, rewards, terminateds, truncateds, _ = env.step(actions)
+    step_observations, _, _, _, _ = env.step(actions)
 
     env.close()
 
@@ -185,6 +185,8 @@ def test_sync_vector_env_seed():
         vector_action = sync_vector_env.action_space.sample()
         assert np.all(env_action == vector_action)
 
+    env.close()
+
 
 @pytest.mark.parametrize(
     "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
@@ -199,3 +201,6 @@ def test_sync_vector_determinism(spec: EnvSpec, seed: int = 123, n: int = 3):
         env_1_samples = env_1.action_space.sample()
         env_2_samples = env_2.action_space.sample()
         assert np.all(env_1_samples == env_2_samples)
+
+    env_1.close()
+    env_2.close()

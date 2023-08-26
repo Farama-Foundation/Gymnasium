@@ -40,6 +40,8 @@ def test_vector_env_info(vectorization_mode: str):
                     assert not infos["_final_observation"][i]
                     assert infos["final_observation"][i] is None
 
+    env.close()
+
 
 @pytest.mark.parametrize("concurrent_ends", [1, 2, 3])
 def test_vector_env_info_concurrent_termination(concurrent_ends):
@@ -60,3 +62,5 @@ def test_vector_env_info_concurrent_termination(concurrent_ends):
                     assert not infos["_final_observation"][i]
                     assert infos["final_observation"][i] is None
             return
+
+    envs.close()
