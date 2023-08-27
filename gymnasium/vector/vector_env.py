@@ -442,7 +442,7 @@ class VectorObservationWrapper(VectorWrapper):
     ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
         obs, info = self.env.reset(seed=seed, options=options)
-        return self.vector_observation(obs), info
+        return self.observations(obs), info
 
     def step(
         self, actions: ActType
@@ -450,42 +450,23 @@ class VectorObservationWrapper(VectorWrapper):
         """Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""
         observation, reward, termination, truncation, info = self.env.step(actions)
         return (
-            self.vector_observation(observation),
+            self.observations(observation),
             reward,
             termination,
             truncation,
-            self.update_final_obs(info),
+            info,
         )
 
-    def vector_observation(self, observation: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Defines the vector observation transformation.
 
         Args:
-            observation: A vector observation from the environment
+            observations: A vector observation from the environment
 
         Returns:
             the transformed observation
         """
         raise NotImplementedError
-
-    def single_observation(self, observation: ObsType) -> ObsType:
-        """Defines the single observation transformation.
-
-        Args:
-            observation: A single observation from the environment
-
-        Returns:
-            The transformed observation
-        """
-        raise NotImplementedError
-
-    def update_final_obs(self, info: dict[str, Any]) -> dict[str, Any]:
-        """Updates the `final_obs` in the info using `single_observation`."""
-        if "final_observation" in info:
-            for i, obs in enumerate(info["final_observation"]):
-                if obs is not None:
-                    info["final_observation"][i] = self.single_observation(obs)
-        return info
 
 
 class VectorActionWrapper(VectorWrapper):
@@ -525,11 +506,11 @@ class VectorRewardWrapper(VectorWrapper):
         observation, reward, termination, truncation, info = self.env.step(actions)
         return observation, self.rewards(reward), termination, truncation, info
 
-    def rewards(self, reward: ArrayType) -> ArrayType:
+    def rewards(self, rewards: ArrayType) -> ArrayType:
         """Transform the reward before returning it.
 
         Args:
-            reward (array): the reward to transform
+            rewards (array): the reward to transform
 
         Returns:
             array: the transformed reward

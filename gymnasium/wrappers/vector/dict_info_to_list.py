@@ -47,6 +47,7 @@ class DictInfoToList(VectorWrapper):
     ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, list[dict[str, Any]]]:
         """Steps through the environment, convert dict info to list."""
         observation, reward, terminated, truncated, infos = self.env.step(actions)
+        assert isinstance(infos, dict)
         list_info = self._convert_info_to_list(infos)
 
         return observation, reward, terminated, truncated, list_info
@@ -59,6 +60,7 @@ class DictInfoToList(VectorWrapper):
     ) -> tuple[ObsType, list[dict[str, Any]]]:
         """Resets the environment using kwargs."""
         obs, infos = self.env.reset(seed=seed, options=options)
+        assert isinstance(infos, dict)
         list_info = self._convert_info_to_list(infos)
 
         return obs, list_info
@@ -84,7 +86,9 @@ class DictInfoToList(VectorWrapper):
 
             if isinstance(value, dict):
                 value_list_info = self._convert_info_to_list(value)
-                for env_num, (env_info, has_info) in enumerate(zip(value_list_info, vector_infos[f'_{key}'])):
+                for env_num, (env_info, has_info) in enumerate(
+                    zip(value_list_info, vector_infos[f"_{key}"])
+                ):
                     if has_info:
                         list_info[env_num][key] = env_info
             else:

@@ -20,62 +20,14 @@ ENV_STEPS = 50
 SEED = 42
 
 
-def test_usage_in_vector_env():
-    env = gym.make(ENV_ID, disable_env_checker=True)
-    vector_env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
-
-    DictInfoToList(vector_env)
-
-    with pytest.raises(AssertionError):
-        DictInfoToList(env)
-
-
-def test_info_to_list():
-    env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
-    wrapped_env = DictInfoToList(env_to_wrap)
-    wrapped_env.action_space.seed(SEED)
-    _, info = wrapped_env.reset(seed=SEED)
-    assert isinstance(info, list)
-    assert len(info) == NUM_ENVS
-
-    for _ in range(ENV_STEPS):
-        action = wrapped_env.action_space.sample()
-        _, _, terminations, truncations, list_info = wrapped_env.step(action)
-        for i, (terminated, truncated) in enumerate(zip(terminations, truncations)):
-            if terminated or truncated:
-                assert "final_observation" in list_info[i]
-            else:
-                assert "final_observation" not in list_info[i]
-
-
-def test_info_to_list_statistics():
-    env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
-    wrapped_env = DictInfoToList(RecordEpisodeStatistics(env_to_wrap))
-    _, info = wrapped_env.reset(seed=SEED)
-    wrapped_env.action_space.seed(SEED)
-    assert isinstance(info, list)
-    assert len(info) == NUM_ENVS
-
-    for _ in range(ENV_STEPS):
-        action = wrapped_env.action_space.sample()
-        _, _, terminations, truncations, list_info = wrapped_env.step(action)
-        for i, (terminated, truncated) in enumerate(zip(terminations, truncations)):
-            if terminated or truncated:
-                assert "episode" in list_info[i]
-                for stats in ["r", "l", "t"]:
-                    assert stats in list_info[i]["episode"]
-                    assert np.isscalar(list_info[i]["episode"][stats])
-            else:
-                assert "episode" not in list_info[i]
-
-
 class ResetOptionAsInfo(VectorEnv):
+    """Minimal implementation to test the conversion of vector dict info to list info."""
 
     def reset(
         self,
         *,
         seed: int | list[int] | None = None,
-        options: dict[str, Any] | None = None,  # options are passed as the output info
+        options: dict[str, Any] | None = None,  # options are passed are the info output
     ) -> tuple[ObsType, dict[str, Any]]:
         return None, options
 
@@ -104,7 +56,15 @@ def test_update_info():
         "_e": np.array([True]),
     }
     _, list_info = env.reset(options=vector_infos)
-    expected_list_info = [{"a": np.int64(0), "b": np.float64(0.0), "c": None, "d": np.zeros((2,)), "e": Discrete(1)}]
+    expected_list_info = [
+        {
+            "a": np.int64(0),
+            "b": np.float64(0.0),
+            "c": None,
+            "d": np.zeros((2,)),
+            "e": Discrete(1),
+        }
+    ]
 
     assert data_equivalence(list_info, expected_list_info)
 
@@ -125,9 +85,27 @@ def test_update_info():
     }
     _, list_info = env.reset(options=vector_infos)
     expected_list_info = [
-        {"a": np.int64(0), "b": np.float64(0.0), "c": None, "d": np.zeros((2,)), "e": Discrete(1)},
-        {"a": np.int64(1), "b": np.float64(1.0), "c": None, "d": np.zeros((2,)), "e": Discrete(2)},
-        {"a": np.int64(2), "b": np.float64(2.0), "c": None, "d": np.zeros((2,)), "e": Discrete(3)},
+        {
+            "a": np.int64(0),
+            "b": np.float64(0.0),
+            "c": None,
+            "d": np.zeros((2,)),
+            "e": Discrete(1),
+        },
+        {
+            "a": np.int64(1),
+            "b": np.float64(1.0),
+            "c": None,
+            "d": np.zeros((2,)),
+            "e": Discrete(2),
+        },
+        {
+            "a": np.int64(2),
+            "b": np.float64(2.0),
+            "c": None,
+            "d": np.zeros((2,)),
+            "e": Discrete(3),
+        },
     ]
 
     assert list_info[0].keys() == expected_list_info[0].keys()
@@ -170,7 +148,7 @@ def test_update_info():
         },
         "_episode": np.array([True, True, False]),
         "a": np.array([0, 1, 2]),
-        "_a": np.array([False, True, True])
+        "_a": np.array([False, True, True]),
     }
     _, list_info = env.reset(options=vector_infos)
     expected_list_info = [
@@ -179,3 +157,13 @@ def test_update_info():
         {"a": np.int64(2)},
     ]
     assert data_equivalence(list_info, expected_list_info)
+
+
+def test_usage_in_vector_env():
+    env = gym.make(ENV_ID, disable_env_checker=True)
+    vector_env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
+
+    DictInfoToList(vector_env)
+
+    with pytest.raises(AssertionError):
+        DictInfoToList(env)

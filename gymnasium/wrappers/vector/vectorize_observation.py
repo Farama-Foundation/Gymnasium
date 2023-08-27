@@ -23,16 +23,14 @@ class TransformObservation(VectorObservationWrapper):
     def __init__(
         self,
         env: VectorEnv,
-        vector_func: Callable[[ObsType], Any],
-        single_func: Callable[[ObsType], Any],
+        func: Callable[[ObsType], Any],
         observation_space: Space | None = None,
     ):
         """Constructor for the transform observation wrapper.
 
         Args:
             env: The vector environment to wrap
-            vector_func: A function that will transform the vector observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.
-            single_func: A function that will transform an individual observation.
+            func: A function that will transform the vector observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.
             observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as ``env.observation_space``.
         """
         super().__init__(env)
@@ -40,16 +38,11 @@ class TransformObservation(VectorObservationWrapper):
         if observation_space is not None:
             self.observation_space = observation_space
 
-        self.vector_func = vector_func
-        self.single_func = single_func
+        self.func = func
 
-    def vector_observation(self, observation: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Apply function to the vector observation."""
-        return self.vector_func(observation)
-
-    def single_observation(self, observation: ObsType) -> ObsType:
-        """Apply function to the single observation."""
-        return self.single_func(observation)
+        return self.func(observations)
 
 
 class VectorizeTransformObservation(VectorObservationWrapper):
@@ -88,16 +81,16 @@ class VectorizeTransformObservation(VectorObservationWrapper):
         self.same_out = self.observation_space == self.env.observation_space
         self.out = create_empty_array(self.single_observation_space, self.num_envs)
 
-    def vector_observation(self, observation: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""
         if self.same_out:
             return concatenate(
                 self.single_observation_space,
                 tuple(
                     self.wrapper.func(obs)
-                    for obs in iterate(self.observation_space, observation)
+                    for obs in iterate(self.observation_space, observations)
                 ),
-                observation,
+                observations,
             )
         else:
             return deepcopy(
@@ -105,15 +98,11 @@ class VectorizeTransformObservation(VectorObservationWrapper):
                     self.single_observation_space,
                     tuple(
                         self.wrapper.func(obs)
-                        for obs in iterate(self.observation_space, observation)
+                        for obs in iterate(self.observation_space, observations)
                     ),
                     self.out,
                 )
             )
-
-    def single_observation(self, observation: ObsType) -> ObsType:
-        """Transforms a single observation using the wrapper transformation function."""
-        return self.wrapper.func(observation)
 
 
 class FilterObservation(VectorizeTransformObservation):
