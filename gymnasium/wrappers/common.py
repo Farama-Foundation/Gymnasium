@@ -13,8 +13,6 @@ from collections import deque
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, SupportsFloat
 
-import numpy as np
-
 import gymnasium as gym
 from gymnasium import logger
 from gymnasium.core import ActType, ObsType, RenderFrame, WrapperObsType
@@ -41,7 +39,9 @@ __all__ = [
 ]
 
 
-class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
+class TimeLimit(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
     """Limits the number of steps for an environment through truncating the environment if a maximum number of timesteps is exceeded.
 
     If a truncation is not defined inside the environment itself, this is the only place that the truncation signal is issued.
@@ -72,7 +72,9 @@ class TimeLimit(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self._max_episode_steps = max_episode_steps
         self._elapsed_steps = None
 
-    def step(self, action):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment and if the number of steps elapsed exceeds ``max_episode_steps`` then truncate.
 
         Args:
@@ -184,20 +186,6 @@ class Autoreset(
         self.autoreset = terminated or truncated
         return obs, reward, terminated, truncated, info
 
-    @property
-    def spec(self) -> EnvSpec | None:
-        """Modifies the environment spec to specify the `autoreset=True`."""
-        if self._cached_spec is not None:
-            return self._cached_spec
-
-        env_spec = self.env.spec
-        if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.autoreset = True
-
-        self._cached_spec = env_spec
-        return env_spec
-
 
 class PassiveEnvChecker(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
@@ -297,7 +285,7 @@ class OrderEnforcing(
         >>> env.render()
         Traceback (most recent call last):
             ...
-        gymnasium.error.ResetNeeded: Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.
+        gymnasium.error.ResetNeeded: Cannot call `env.render()` before calling `env.reset()`, if this is an intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.
         >>> _ = env.reset()
         >>> env.render()
         >>> _ = env.step(0)
@@ -340,7 +328,7 @@ class OrderEnforcing(
         """Renders the environment with `kwargs`."""
         if not self._disable_render_order_enforcing and not self._has_reset:
             raise ResetNeeded(
-                "Cannot call `env.render()` before calling `env.reset()`, if this is a intended action, "
+                "Cannot call `env.render()` before calling `env.reset()`, if this is an intended action, "
                 "set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper."
             )
         return super().render()
@@ -432,7 +420,7 @@ class RecordEpisodeStatistics(
         self.episode_returns: float = 0.0
         self.episode_lengths: int = 0
 
-        self.time_queue: deque[int] = deque(maxlen=buffer_length)
+        self.time_queue: deque[float] = deque(maxlen=buffer_length)
         self.return_queue: deque[float] = deque(maxlen=buffer_length)
         self.length_queue: deque[int] = deque(maxlen=buffer_length)
 
@@ -448,7 +436,7 @@ class RecordEpisodeStatistics(
         if terminated or truncated:
             assert self._stats_key not in info
 
-            episode_time_length = np.round(
+            episode_time_length = round(
                 time.perf_counter() - self.episode_start_time, 6
             )
             info[self._stats_key] = {

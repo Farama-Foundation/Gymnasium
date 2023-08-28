@@ -154,7 +154,6 @@ class TimeAwareObservation(
         >>> _ = env.action_space.seed(42)
         >>> env.step(env.action_space.sample())[0]
         {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': array([1], dtype=int32)}
-
     """
 
     def __init__(
@@ -396,9 +395,9 @@ class NormalizeObservation(
 ):
     """Normalizes observations to be centered at the mean with unit variance.
 
-    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
-    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.observation()` is called.
-    If `False`, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+    The property :prop:`_update_running_mean` allows to freeze/continue the running mean calculation of the observation
+    statistics. If ``True`` (default), the ``RunningMeanStd`` will get updated every time ``step`` or ``reset`` is called.
+    If ``False``, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 
     Note:
         The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
