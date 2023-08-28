@@ -96,7 +96,7 @@ class CliffWalkingFunctional(
     the positions of the first 3 rows plus the bottom-left cell.
 
     The observation is a value representing the player's current position as
-    current_row * nrows + current_col (where both the row and col start at 0).
+    current_row * ncols + current_col (where both the row and col start at 0).
 
     For example, the stating position can be calculated as follows: 3 * 12 + 0 = 36.
 
