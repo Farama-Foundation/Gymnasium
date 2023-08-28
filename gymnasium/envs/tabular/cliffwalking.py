@@ -98,7 +98,7 @@ class CliffWalkingFunctional(
     The observation is a value representing the player's current position as
     current_row * ncols + current_col (where both the row and col start at 0).
 
-    For example, the stating position can be calculated as follows: 3 * 12 + 0 = 36.
+    For example, the starting position can be calculated as follows: 3 * 12 + 0 = 36.
 
     The observation is returned as an `numpy.ndarray` with shape `(1,)` and dtype `numpy.int32` .
 
