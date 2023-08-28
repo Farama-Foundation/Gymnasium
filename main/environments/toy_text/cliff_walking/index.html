@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Frozen Lake" href="../frozen_lake/" /><link rel="prev" title="Taxi" href="../taxi/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/toy_text/cliff_walking.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.3 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.4 and Furo 2023.08.19.dev1 -->
         <title>Cliff Walking - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -521,8 +521,8 @@ which direction to move the player.</p>
 the goal as the latter results in the end of the episode. What remains are all
 the positions of the first 3 rows plus the bottom-left cell.</p>
 <p>The observation is a value representing the player’s current position as
-current_row * nrows + current_col (where both the row and col start at 0).</p>
-<p>For example, the stating position can be calculated as follows: 3 * 12 + 0 = 36.</p>
+current_row * ncols + current_col (where both the row and col start at 0).</p>
+<p>For example, the starting position can be calculated as follows: 3 * 12 + 0 = 36.</p>
 <p>The observation is returned as an <code class="docutils literal notranslate"><span class="pre">int()</span></code>.</p>
 </section>
 <section id="starting-state">
