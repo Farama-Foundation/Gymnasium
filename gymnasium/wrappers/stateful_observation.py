@@ -39,6 +39,8 @@ class DelayObservation(
     Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
     the same shape as the observation space.
 
+    No vector version of the wrapper exists.
+
     Note:
         This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.
 
@@ -55,6 +57,9 @@ class DelayObservation(
         (array([0., 0., 0., 0.], dtype=float32), 1.0, False, False, {})
         >>> env.step(env.action_space.sample())
         (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 1.0, False, False, {})
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], delay: int):
@@ -115,6 +120,8 @@ class TimeAwareObservation(
     To flatten the observation, use the :attr:`flatten` parameter which will use the
     :func:`gymnasium.spaces.utils.flatten` function.
 
+    No vector version of the wrapper exists.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import TimeAwareObservation
@@ -155,6 +162,9 @@ class TimeAwareObservation(
         >>> env.step(env.action_space.sample())[0]
         {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': array([1], dtype=int32)}
 
+    Change logs:
+     * v0.18.0 - Initially added
+     * v1.0.0 - Remove vector environment support, add ``flatten`` and ``normalize_time`` parameters
     """
 
     def __init__(
@@ -289,6 +299,8 @@ class FrameStackObservation(
     is an array with shape [3], so if we stack 4 observations, the processed observation
     has shape [4, 3].
 
+    No vector version of the wrapper exists.
+
     Note:
         - After :meth:`reset` is called, the frame buffer will be filled with the initial observation.
           I.e. the observation returned by :meth:`reset` will consist of `num_stack` many identical frames.
@@ -303,6 +315,10 @@ class FrameStackObservation(
         >>> obs, _ = env.reset()
         >>> obs.shape
         (4, 96, 96, 3)
+
+    Change logs:
+     * v0.15.0 - Initially add as ``FrameStack`` with support for lz4
+     * v1.0.0 - Rename to ``FrameStackObservation`` and remove lz4 and ``LazyFrame`` support
     """
 
     def __init__(
@@ -400,6 +416,8 @@ class NormalizeObservation(
     statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.observation()` is called.
     If `False`, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.NormalizeObservation`.
+
     Note:
         The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
         newly instantiated or the policy was changed recently.
@@ -421,9 +439,12 @@ class NormalizeObservation(
         >>> term, trunc = False, False
         >>> while not (term or trunc):
         ...     obs, _, term, trunc, _ = env.step(1)
-        ...
         >>> obs
         array([ 2.0059888,  1.5676788, -1.9944268, -1.6120394], dtype=float32)
+
+    Change logs:
+     * v0.21.0 - Initially add
+     * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
@@ -467,6 +488,8 @@ class MaxAndSkipObservation(
 ):
     """Skips the N-th frame (observation) and return the max values between the two last observations.
 
+    No vector version of the wrapper exists.
+
     Note:
         This wrapper is based on the wrapper from [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#MaxAndSkipEnv)
 
@@ -487,6 +510,9 @@ class MaxAndSkipObservation(
         True
         >>> np.all(wrapped_obs1 == skip_and_max_obs)
         True
+
+    Change logs:
+     * v1.0.0 - Initially add
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], skip: int = 4):

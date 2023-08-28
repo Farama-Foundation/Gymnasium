@@ -66,7 +66,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         Args:
             env: The vector environment to wrap
             wrapper: The wrapper to vectorize
-            **kwargs: Arguments for the LambdaActionV0 wrapper
+            **kwargs: Arguments for the LambdaAction wrapper
         """
         super().__init__(env)
 

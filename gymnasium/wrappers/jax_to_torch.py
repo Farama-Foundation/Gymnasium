@@ -118,6 +118,7 @@ class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
+    A vector version of the wrapper exists, :class:`gymnasium.wrappers.vector.JaxToTorch`.
 
     Note:
         For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
@@ -126,7 +127,7 @@ class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
         >>> import torch                                                # doctest: +SKIP
         >>> import gymnasium as gym                                     # doctest: +SKIP
         >>> env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP
-        >>> env = JaxtoTorchV0(env)                                     # doctest: +SKIP
+        >>> env = JaxtoTorch(env)                                     # doctest: +SKIP
         >>> obs, _ = env.reset(seed=123)                                # doctest: +SKIP
         >>> type(obs)                                                   # doctest: +SKIP
         <class 'torch.Tensor'>
@@ -140,6 +141,9 @@ class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
         <class 'bool'>
         >>> type(truncated)                                             # doctest: +SKIP
         <class 'bool'>
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(self, env: gym.Env, device: Device | None = None):
