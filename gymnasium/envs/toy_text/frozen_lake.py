@@ -114,7 +114,7 @@ class FrozenLakeEnv(Env):
 
     ## Observation Space
     The observation is a value representing the player's current position as
-    current_row * nrows + current_col (where both the row and col start at 0).
+    current_row * ncols + current_col (where both the row and col start at 0).
 
     For example, the goal position in the 4x4 map can be calculated as follows: 3 * 4 + 3 = 15.
     The number of possible observations is dependent on the size of the map.
