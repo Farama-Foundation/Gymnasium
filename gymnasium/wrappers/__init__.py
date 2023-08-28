@@ -1,9 +1,8 @@
-"""Module of wrapper classes.
+"""Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.
 
-Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.
-Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can
-also be chained to combine their effects.
-Most environments that are generated via :meth:`gymnasium.make` will already be wrapped by default.
+Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular.
+Importantly wrappers can be chained to combine their effects and most environments that are generated via
+:meth:`gymnasium.make` will already be wrapped by default.
 
 In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along
 with (possibly optional) parameters to the wrapper's constructor.
@@ -87,9 +86,6 @@ from gymnasium.wrappers.transform_observation import (
     TransformObservation,
 )
 from gymnasium.wrappers.transform_reward import ClipReward, TransformReward
-
-
-# Todo - Add legacy wrapper to new wrapper error for users when merged into gymnasium.wrappers
 
 
 __all__ = [
