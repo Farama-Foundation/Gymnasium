@@ -163,6 +163,7 @@ class Autoreset(
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[WrapperObsType, dict[str, Any]]:
+        """Set ``autoreset`` to ``False`` and reset the environment like normal."""
         self.autoreset = False
         return super().reset(seed=seed, options=options)
 

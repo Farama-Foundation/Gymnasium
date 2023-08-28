@@ -11,7 +11,7 @@ from gymnasium.core import ObsType
 from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import VectorEnv
-from gymnasium.wrappers.vector import DictInfoToList, RecordEpisodeStatistics
+from gymnasium.wrappers.vector import DictInfoToList
 
 
 ENV_ID = "CartPole-v1"

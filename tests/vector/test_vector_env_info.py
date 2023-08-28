@@ -18,7 +18,9 @@ def test_examples():
     # Test num-envs==1 then expand_dims(sub-env-info) == vector-infos
     env.num_envs = 1
     sub_env_info = {"a": 0, "b": 0.0, "c": None, "d": np.zeros((2,)), "e": Discrete(1)}
-    vector_infos = env._add_info({}, sub_env_info, 0)
+    vector_infos = env._add_info(  # pyright: ignore [reportPrivateUsage]
+        {}, sub_env_info, 0
+    )
     expected_vector_infos = {
         "a": np.array([0]),
         "b": np.array([0.0]),
@@ -48,7 +50,9 @@ def test_examples():
 
     vector_infos = {}
     for i, info in enumerate(sub_env_infos):
-        vector_infos = env._add_info(vector_infos, info, i)
+        vector_infos = env._add_info(  # pyright: ignore [reportPrivateUsage]
+            vector_infos, info, i
+        )
 
     expected_vector_infos = {
         "a": np.array([0, 1, 2]),
@@ -74,7 +78,9 @@ def test_examples():
 
     vector_infos = {}
     for i, info in enumerate(sub_env_infos):
-        vector_infos = env._add_info(vector_infos, info, i)
+        vector_infos = env._add_info(  # pyright: ignore [reportPrivateUsage]
+            vector_infos, info, i
+        )
 
     expected_vector_infos = {
         "a": np.array([1, 0, 0]),
@@ -100,7 +106,9 @@ def test_examples():
 
     vector_infos = {}
     for i, info in enumerate(sub_env_infos):
-        vector_infos = env._add_info(vector_infos, info, i)
+        vector_infos = env._add_info(  # pyright: ignore [reportPrivateUsage]
+            vector_infos, info, i
+        )
 
     expected_vector_infos = {
         "episode": {

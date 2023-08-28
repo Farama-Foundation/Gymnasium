@@ -56,7 +56,7 @@ def custom_environments():
             "RescaleAction",
             {"min_action": 1, "max_action": 2},
         ),
-        ("CartPole-v1", "ClipReward", {"min_reward": 0.25, "max_reward": 0.75}),
+        ("CartPole-v1", "ClipReward", {"min_reward": -0.25, "max_reward": 0.75}),
     ),
 )
 def test_vector_wrapper_equivalence(
