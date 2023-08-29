@@ -12,6 +12,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Implements the common preprocessing techniques for Atari environments (excluding frame stacking).
 
     For frame stacking use :class:`gymnasium.wrappers.FrameStackObservation`.
+    No vector version of the wrapper exists
 
     This class follows the guidelines in Machado et al. (2018),
     "Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents".
@@ -32,6 +33,9 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         >>> import gymnasium as gym # doctest: +SKIP
         >>> env = gym.make("ALE/Adventure-v5") # doctest: +SKIP
         >>> env = AtariPreprocessing(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False) # doctest: +SKIP
+
+    Change logs:
+     * Added in gym v0.12.2 (gym #1455)
     """
 
     def __init__(

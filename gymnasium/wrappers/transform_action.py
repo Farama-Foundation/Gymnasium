@@ -23,6 +23,8 @@ class TransformAction(
 ):
     """Applies a function to the ``action`` before passing the modified value to the environment ``step`` function.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.TransformAction`.
+
     Example:
         >>> import numpy as np
         >>> import gymnasium as gym
@@ -37,6 +39,9 @@ class TransformAction(
         >>> obs, *_= env.step(np.array([0.0, 1.0]))
         >>> obs
         array([-4.6382770e-01, -2.9808417e-04], dtype=float32)
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(
@@ -72,6 +77,8 @@ class ClipAction(
 ):
     """Clips the ``action`` pass to ``step`` to be within the environment's `action_space`.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.ClipAction`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ClipAction
@@ -83,6 +90,10 @@ class ClipAction(
         >>> _ = env.reset(seed=42)
         >>> _ = env.step(np.array([5.0, -2.0, 0.0], dtype=np.float32))
         ... # Executes the action np.array([1.0, -1.0, 0]) in the base environment
+
+    Change logs:
+     * v0.12.6 - Initially added
+     * v1.0.0 - Action space is updated to infinite bounds as is technically correct
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
@@ -117,6 +128,8 @@ class RescaleAction(
     The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`
     or :attr:`max_action` are numpy arrays, the shape must match the shape of the environment's action space.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleAction`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import RescaleAction
@@ -131,6 +144,9 @@ class RescaleAction(
         >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
         >>> np.all(obs == wrapped_env_obs)
         True
+
+    Change logs:
+     * v0.15.4 - Initially added
     """
 
     def __init__(

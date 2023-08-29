@@ -27,6 +27,8 @@ class NormalizeReward(
     statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.
     If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.NormalizeReward`.
+
     Note:
         In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrectly computed in Gym v0.25+.
         For more detail, read [#3154](https://github.com/openai/gym/pull/3152).
@@ -61,9 +63,12 @@ class NormalizeReward(
         >>> while not (terminated or truncated):
         ...     observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
         ...     episode_rewards.append(reward)
-        ...
         >>> np.var(episode_rewards)
         0.0008876301247721108
+
+    Change logs:
+     * v0.21.0 - Initially added
+     * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard
     """
 
     def __init__(
