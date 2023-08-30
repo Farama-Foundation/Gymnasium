@@ -85,8 +85,7 @@ class SyncVectorEnv(VectorEnv):
             seed = [seed + i for i in range(self.num_envs)]
         assert len(seed) == self.num_envs
 
-        for env, single_seed in zip(self.envs, seed):
-            env.seed(single_seed)
+        _ = list(map(lambda env_seed: env_seed[0].seed(env_seed[1]), zip(self.envs, seed)))
 
     def reset_wait(
         self,
