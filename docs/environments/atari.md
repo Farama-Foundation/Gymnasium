@@ -207,11 +207,11 @@ action space will be reduced to a subset.
 All Atari games are available in three versions. They differ in the default settings of the arguments above.
 The differences are listed in the following table:
 
-| Version | `frameskip=` | `repeat_action_probability=` | `full_action_space=` |
-|---------|--------------|------------------------------|----------------------|
-| v0      | `(2, 5,)`    | `0.25`                       | `False`              |
-| v4      | `(2, 5,)`    | `0.0`                        | `False`              |
-| v5      | `4`          | `0.25`                       | `False`              |
+| Version | `frameskip=`                        | `repeat_action_probability=` | `full_action_space=` |
+|---------|-------------------------------------|------------------------------|----------------------|
+| v0      | Varies with the suffix (see below). | `0.25`                       | `False`              |
+| v4      | Varies with the suffix (see below). | `0.0`                        | `False`              |
+| v5      | `4`                                 | `0.25`                       | `False`              |
 
 > Version v5 follows the best practices outlined in [[2]](#2). Thus, it is recommended to transition to v5 and
 customize the environment using the arguments above, if necessary.
