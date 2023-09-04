@@ -31,26 +31,24 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
     >>> envs = gym.make_vec("CartPole-v1", 3)
     >>> obs, info = envs.reset(seed=123)
     >>> _ = envs.action_space.seed(123)
-    >>> for _ in range(10):
+    >>> for _ in range(100):
     ...     obs, *_ = envs.step(envs.action_space.sample())
     >>> envs.close()
-    >>> obs
-    array([[ 0.0995913 ,  0.74477303, -0.18109497, -1.4185175 ],
-           [-0.04076844, -0.37464437,  0.18291584,  0.91038454],
-           [ 0.03129957,  0.00146274, -0.01493431, -0.07832056]],
-          dtype=float32)
+    >>> np.mean(obs)
+    -0.017698428
+    >>> np.std(obs)
+    0.62041104
     >>> envs = gym.make_vec("CartPole-v1", 3)
     >>> envs = NormalizeObservation(envs)
     >>> obs, info = envs.reset(seed=123)
     >>> _ = envs.action_space.seed(123)
-    >>> for _ in range(10):
+    >>> for _ in range(100):
     ...     obs, *_ = envs.step(envs.action_space.sample())
     >>> envs.close()
-    >>> obs
-    array([[ 2.5189981 ,  1.8260887 , -2.1393917 , -1.8810682 ],
-           [-2.2795758 , -1.0086528 ,  2.08996   ,  1.3193977 ],
-           [ 0.18426241, -0.05622307, -0.20881197, -0.03931855]],
-          dtype=float32)
+    >>> np.mean(obs)
+    -0.28381696
+    >>> np.std(obs)
+    1.21742
     """
 
     def __init__(self, env: VectorEnv, epsilon: float = 1e-8):
