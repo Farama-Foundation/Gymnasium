@@ -21,6 +21,7 @@ class TransformReward(VectorRewardWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
         >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
         >>> rew
         array([-0.01330088, -0.07963027, -0.03127944])
 
@@ -35,6 +36,7 @@ class TransformReward(VectorRewardWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
         >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
         >>> obs
         array([[-4.6343064e-01,  9.8971417e-05],
                [-4.4488689e-01, -1.9375233e-03],
@@ -67,6 +69,7 @@ class VectorizeTransformReward(VectorRewardWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
         >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
         >>> rew
         array([-0.01330088, -0.07963027, -0.03127944])
 
@@ -78,6 +81,7 @@ class VectorizeTransformReward(VectorRewardWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
         >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
         >>> rew
         array([-0., -0., -0.])
     """
@@ -119,6 +123,7 @@ class ClipReward(VectorizeTransformReward):
         >>> for _ in range(10):
         ...     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))
         ...
+        >>> envs.close()
         >>> rew
         array([-0.025, -0.025, -0.025])
 
@@ -132,6 +137,7 @@ class ClipReward(VectorizeTransformReward):
         >>> for _ in range(10):
         ...     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))
         ...
+        >>> envs.close()
         >>> rew
         array([0., 0., 0.])
     """

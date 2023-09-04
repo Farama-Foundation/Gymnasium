@@ -29,6 +29,7 @@ class TransformAction(VectorActionWrapper):
         >>> for _ in range(10):
         ...     obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
         ...
+        >>> envs.close()
         >>> obs
         array([[-0.46553135, -0.00142543],
                [-0.498371  , -0.00715587],
@@ -48,6 +49,7 @@ class TransformAction(VectorActionWrapper):
         >>> for _ in range(10):
         ...     obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
         ...
+        >>> envs.close()
         >>> obs
         array([[-0.48468155, -0.00372536],
                [-0.47599354, -0.00545912],
@@ -89,6 +91,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
         >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
         >>> obs
         array([[-4.6343064e-01,  9.8971417e-05],
                [-4.4488689e-01, -1.9375233e-03],
@@ -102,6 +105,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
         >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
         >>> obs
         array([[-4.6343064e-01,  9.8971417e-05],
                [-4.4354835e-01, -5.9898634e-04],
@@ -180,6 +184,7 @@ class ClipAction(VectorizeTransformAction):
         >>> _ = envs.action_space.seed(123)
         >>> obs, info = envs.reset(seed=123)
         >>> obs, rew, term, trunc, info = envs.step(np.array([5.0, -5.0, 2.0]))
+        >>> envs.close()
         >>> obs
         array([[-0.4624777 ,  0.00105192],
                [-0.44504836, -0.00209899],
@@ -208,6 +213,7 @@ class RescaleAction(VectorizeTransformAction):
         >>> for _ in range(10):
         ...     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))
         ...
+        >>> envs.close()
         >>> obs
         array([[-0.44799727,  0.00266526],
                [-0.4351738 ,  0.00133522],
@@ -223,6 +229,7 @@ class RescaleAction(VectorizeTransformAction):
         >>> for _ in range(10):
         ...     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))
         ...
+        >>> envs.close()
         >>> obs
         array([[-0.48657528, -0.00395268],
                [-0.47377947, -0.00529102],
