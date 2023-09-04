@@ -99,6 +99,7 @@ class JaxToNumpy(
     """Wraps a Jax-based environment such that it can be interacted with NumPy arrays.
 
     Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
+    A vector version of the wrapper exists, :class:`gymnasium.wrappers.vector.JaxToNumpy`.
 
     Notes:
         The Jax To Numpy and Numpy to Jax conversion does not guarantee a roundtrip (jax -> numpy -> jax) and vice versa.
@@ -107,7 +108,7 @@ class JaxToNumpy(
     Example:
         >>> import gymnasium as gym                                     # doctest: +SKIP
         >>> env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP
-        >>> env = JaxToNumpyV0(env)                                     # doctest: +SKIP
+        >>> env = JaxToNumpy(env)                                     # doctest: +SKIP
         >>> obs, _ = env.reset(seed=123)                                # doctest: +SKIP
         >>> type(obs)                                                   # doctest: +SKIP
         <class 'numpy.ndarray'>
@@ -121,6 +122,9 @@ class JaxToNumpy(
         <class 'bool'>
         >>> type(truncated)                                             # doctest: +SKIP
         <class 'bool'>
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):

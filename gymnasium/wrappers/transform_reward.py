@@ -22,6 +22,8 @@ class TransformReward(
 ):
     """Applies a function to the ``reward`` received from the environment's ``step``.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.TransformReward`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import TransformReward
@@ -32,6 +34,8 @@ class TransformReward(
         >>> rew
         3.0
 
+    Change logs:
+     * v0.15.0 - Initially added
     """
 
     def __init__(
@@ -62,6 +66,8 @@ class TransformReward(
 class ClipReward(TransformReward[ObsType, ActType], gym.utils.RecordConstructorArgs):
     """Clips the rewards for an environment between an upper and lower bound.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.ClipReward`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ClipReward
@@ -71,6 +77,9 @@ class ClipReward(TransformReward[ObsType, ActType], gym.utils.RecordConstructorA
         >>> _, rew, _, _, _ = env.step(1)
         >>> rew
         0.5
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(
@@ -79,7 +88,7 @@ class ClipReward(TransformReward[ObsType, ActType], gym.utils.RecordConstructorA
         min_reward: float | np.ndarray | None = None,
         max_reward: float | np.ndarray | None = None,
     ):
-        """Initialize ClipRewardsV0 wrapper.
+        """Initialize ClipRewards wrapper.
 
         Args:
             env (Env): The environment to wrap

@@ -24,7 +24,7 @@ wrappers/vector_wrappers
 .. autoclass:: gymnasium.Wrapper
 ```
 
-### Methods
+## Methods
 ```{eval-rst}
 .. automethod:: gymnasium.Wrapper.step
 .. automethod:: gymnasium.Wrapper.reset

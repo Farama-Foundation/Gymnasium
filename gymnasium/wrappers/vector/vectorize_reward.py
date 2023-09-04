@@ -42,7 +42,7 @@ class TransformReward(VectorRewardWrapper):
     """
 
     def __init__(self, env: VectorEnv, func: Callable[[ArrayType], ArrayType]):
-        """Initialize LambdaRewardV0 wrapper.
+        """Initialize LambdaReward wrapper.
 
         Args:
             env (Env): The vector environment to wrap
