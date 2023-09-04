@@ -34,23 +34,13 @@ class DictInfoToList(VectorWrapper):
         >>> new_space = Dict({"obs": envs.single_observation_space, "junk": Box(low=-1.0, high=1.0)})
         >>> envs = VectorizeTransformObservation(env=envs, wrapper=TransformObservation, func=make_dict, observation_space=new_space)
         >>> obs, info = envs.reset(seed=123)
-        >>> obs
-        OrderedDict([('junk', array([[0.],
-               [0.],
-               [0.]], dtype=float32)), ('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
-               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
-               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
-              dtype=float32))])
+        >>> info
+        {}
         >>> obs, info = envs.reset(seed=123)
         >>> envs = DictInfoToList(envs)
         >>> obs, info = envs.reset(seed=123)
-        >>> obs
-        OrderedDict([('junk', array([[0.],
-               [0.],
-               [0.]], dtype=float32)), ('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
-               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
-               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
-              dtype=float32))])
+        >>> info
+        [{}, {}, {}]
 
     Change logs:
      * v0.24.0 - Initially added as ``VectorListInfo``
