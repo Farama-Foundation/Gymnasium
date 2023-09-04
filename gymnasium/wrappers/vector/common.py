@@ -41,7 +41,7 @@ class RecordEpisodeStatistics(VectorWrapper):
         >>> from pprint import pprint
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-        >>> envs = RecordEpisodeStatisticsV0(envs)
+        >>> envs = RecordEpisodeStatistics(envs)
         >>> obs, info = envs.reset(123)
         >>> _ = envs.action_space.seed(123)
         >>> end = False

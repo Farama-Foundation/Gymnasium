@@ -40,29 +40,32 @@ class NormalizeReward(
     Example with the normalize reward wrapper:
         >>> import numpy as np
         >>> import gymnasium as gym
-        >>> env = gym.make('MountainCarContinuous-v0')
-        >>> env = NormalizeReward(env, gamma=0.99, epsilon=1e-8)
-        >>> _ = env.reset(seed=123)
-        >>> _ = env.action_space.seed(123)
+        >>> envs = gym.make('MountainCarContinuous-v0')
+        >>> envs = NormalizeReward(envs, gamma=0.99, epsilon=1e-8)
+        >>> _ = envs.reset(seed=123)
+        >>> _ = envs.action_space.seed(123)
         >>> episode_rewards = []
         >>> terminated, truncated = False, False
         >>> while not (terminated or truncated):
-        ...     observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
+        ...     observation, reward, terminated, truncated, info = envs.step(envs.action_space.sample())
         ...     episode_rewards.append(reward)
         ...
+        >>> envs.close()
         >>> # will approach 0.99 with more episodes
         >>> np.var(episode_rewards)
         0.010162116476634746
 
     Example without the normalize reward wrapper
-        >>> env = gym.make('MountainCarContinuous-v0')
-        >>> _ = env.reset(seed=123)
-        >>> _ = env.action_space.seed(123)
+        >>> envs = gym.make('MountainCarContinuous-v0')
+        >>> _ = envs.reset(seed=123)
+        >>> _ = envs.action_space.seed(123)
         >>> episode_rewards = []
         >>> terminated, truncated = False, False
         >>> while not (terminated or truncated):
-        ...     observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
+        ...     observation, reward, terminated, truncated, info = envs.step(envs.action_space.sample())
         ...     episode_rewards.append(reward)
+        ...
+        >>> envs.close()
         >>> np.var(episode_rewards)
         0.0008876301247721108
 
