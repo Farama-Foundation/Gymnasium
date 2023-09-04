@@ -38,6 +38,8 @@ class NormalizeReward(
         instantiated or the policy was changed recently.
 
     Example without the normalize reward wrapper:
+        >>> import numpy as np
+        >>> import gymnasium as gym
         >>> env = gym.make("MountainCarContinuous-v0")
         >>> _ = env.reset(seed=123)
         >>> _ = env.action_space.seed(123)

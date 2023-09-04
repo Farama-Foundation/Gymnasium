@@ -206,7 +206,7 @@ class FilterObservation(VectorizeTransformObservation):
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        >>> OrderedDict([('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+        OrderedDict([('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
                [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
                [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
               dtype=float32))])
@@ -384,6 +384,7 @@ class DtypeObservation(VectorizeTransformObservation):
     """Observation wrapper for transforming the dtype of an observation.
 
     Example:
+        >>> import numpy as np
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> obs, info = envs.reset(seed=123)
@@ -391,11 +392,11 @@ class DtypeObservation(VectorizeTransformObservation):
         >>> obs.dtype
         dtype('float32')
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-        >>> envs = DtypeObservation(envs, dtype=np.int32)
+        >>> envs = DtypeObservation(envs, dtype=np.float64)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.dtype
-        dtype('int32')
+        dtype('float64')
     """
 
     def __init__(self, env: VectorEnv, dtype: Any):
