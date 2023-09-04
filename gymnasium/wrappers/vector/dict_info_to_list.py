@@ -23,20 +23,13 @@ class DictInfoToList(VectorWrapper):
     i.e. ``DictInfoToList(RecordEpisodeStatistics(vector_env))``
 
     Example:
-        Making an environment with a ``Dict`` observation space, then flattening it into a list:
         >>> import numpy as np
         >>> import gymnasium as gym
         >>> from gymnasium.spaces import Dict, Box
-        >>> from gymnasium.wrappers import TransformObservation
-        >>> from gymnasium.wrappers.vector import VectorizeTransformObservation
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
-        >>> make_dict = lambda x: {"obs": x, "junk": np.array([0.0])}
-        >>> new_space = Dict({"obs": envs.single_observation_space, "junk": Box(low=-1.0, high=1.0)})
-        >>> envs = VectorizeTransformObservation(env=envs, wrapper=TransformObservation, func=make_dict, observation_space=new_space)
         >>> obs, info = envs.reset(seed=123)
         >>> info
         {}
-        >>> obs, info = envs.reset(seed=123)
         >>> envs = DictInfoToList(envs)
         >>> obs, info = envs.reset(seed=123)
         >>> info
