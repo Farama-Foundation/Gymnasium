@@ -23,27 +23,34 @@ class DictInfoToList(VectorWrapper):
     i.e. ``DictInfoToList(RecordEpisodeStatistics(vector_env))``
 
     Example:
+        Making an environment with a ``Dict`` observation space, then flattening it into a list:
         >>> import numpy as np
-        >>> dict_info = {
-        ...      "k": np.array([0., 0., 0.5, 0.3]),
-        ...      "_k": np.array([False, False, True, True])
-        ...  }
-        >>> list_info = [{}, {}, {"k": 0.5}, {"k": 0.3}]
-
-    Example for vector environments:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("HalfCheetah-v4", num_envs=3)
-        >>> _ = envs.reset(seed=123)
-        >>> _ = envs.action_space.seed(123)
-        >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
-        >>> infos
-        {'x_position': array([0.03332211, 0.10172355, 0.08920531]), '_x_position': array([ True,  True,  True]), 'x_velocity': array([-0.06296527,  0.89345848,  0.37710836]), '_x_velocity': array([ True,  True,  True]), 'reward_run': array([-0.06296527,  0.89345848,  0.37710836]), '_reward_run': array([ True,  True,  True]), 'reward_ctrl': array([-0.24503503, -0.21944423, -0.20672209]), '_reward_ctrl': array([ True,  True,  True])}
+        >>> from gymnasium.spaces import Dict, Box
+        >>> from gymnasium.wrappers import TransformObservation
+        >>> from gymnasium.wrappers.vector import VectorizeTransformObservation
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> make_dict = lambda x: {"obs": x, "junk": np.array([0.0])}
+        >>> new_space = Dict({"obs": envs.single_observation_space, "junk": Box(low=-1.0, high=1.0)})
+        >>> envs = VectorizeTransformObservation(env=envs, wrapper=TransformObservation, func=make_dict, observation_space=new_space)
+        >>> obs, info = envs.reset(seed=123)
+        >>> obs
+        OrderedDict([('junk', array([[0.],
+               [0.],
+               [0.]], dtype=float32)), ('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
+               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
+              dtype=float32))])
+        >>> obs, info = envs.reset(seed=123)
         >>> envs = DictInfoToList(envs)
-        >>> _ = envs.reset(seed=123)
-        >>> _ = envs.action_space.seed(123)
-        >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
-        >>> infos
-        [{'x_position': 0.03332210900362942, 'x_velocity': -0.06296527291998533, 'reward_run': -0.06296527291998533, 'reward_ctrl': -0.2450350284576416}, {'x_position': 0.10172354684460166, 'x_velocity': 0.8934584807363616, 'reward_run': 0.8934584807363616, 'reward_ctrl': -0.21944422721862794}, {'x_position': 0.08920531470057845, 'x_velocity': 0.3771083596080768, 'reward_run': 0.3771083596080768, 'reward_ctrl': -0.20672209262847902}]
+        >>> obs, info = envs.reset(seed=123)
+        >>> obs
+        OrderedDict([('junk', array([[0.],
+               [0.],
+               [0.]], dtype=float32)), ('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
+               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
+              dtype=float32))])
 
     Change logs:
      * v0.24.0 - Initially added as ``VectorListInfo``

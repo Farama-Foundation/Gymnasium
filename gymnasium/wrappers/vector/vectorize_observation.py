@@ -198,7 +198,7 @@ class FilterObservation(VectorizeTransformObservation):
         >>> from gymnasium.spaces import Dict, Box
         >>> from gymnasium.wrappers import TransformObservation
         >>> from gymnasium.wrappers.vector import VectorizeTransformObservation, FilterObservation
-        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> make_dict = lambda x: {"obs": x, "junk": np.array([0.0])}
         >>> new_space = Dict({"obs": envs.single_observation_space, "junk": Box(low=-1.0, high=1.0)})
         >>> envs = VectorizeTransformObservation(env=envs, wrapper=TransformObservation, func=make_dict, observation_space=new_space)
@@ -342,14 +342,14 @@ class RescaleObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.min()
         -0.0446179
         >>> obs.max()
         0.0469136
-        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> envs = RescaleObservation(envs, min_obs=-5.0, max_obs=5.0)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
@@ -385,12 +385,12 @@ class DtypeObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs.dtype
         dtype('float32')
-        >>> envs = gym.make_vec("CartPole-v0", num_envs=3)
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> envs = DtypeObservation(envs, dtype=np.int32)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
