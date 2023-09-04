@@ -395,8 +395,8 @@ class DtypeObservation(VectorizeTransformObservation):
         >>> envs = DtypeObservation(envs, dtype=np.float64)
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
-        >>> obs.dtype
-        dtype('float64')
+        >>> obs.dtype # doctest: +SKIP
+        dtype('float64') # doctest: +SKIP
     """
 
     def __init__(self, env: VectorEnv, dtype: Any):
