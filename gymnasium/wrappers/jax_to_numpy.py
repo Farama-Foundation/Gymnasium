@@ -108,7 +108,7 @@ class JaxToNumpy(
     Example:
         >>> import gymnasium as gym                                     # doctest: +SKIP
         >>> env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP
-        >>> env = JaxToNumpy(env)                                     # doctest: +SKIP
+        >>> env = JaxToNumpy(env)                                       # doctest: +SKIP
         >>> obs, _ = env.reset(seed=123)                                # doctest: +SKIP
         >>> type(obs)                                                   # doctest: +SKIP
         <class 'numpy.ndarray'>

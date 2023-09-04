@@ -127,7 +127,7 @@ class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
         >>> import torch                                                # doctest: +SKIP
         >>> import gymnasium as gym                                     # doctest: +SKIP
         >>> env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP
-        >>> env = JaxtoTorch(env)                                     # doctest: +SKIP
+        >>> env = JaxtoTorch(env)                                       # doctest: +SKIP
         >>> obs, _ = env.reset(seed=123)                                # doctest: +SKIP
         >>> type(obs)                                                   # doctest: +SKIP
         <class 'torch.Tensor'>

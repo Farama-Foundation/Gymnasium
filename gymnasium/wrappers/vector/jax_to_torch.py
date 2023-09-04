@@ -16,6 +16,11 @@ class JaxToTorch(VectorWrapper):
     """Wraps a Jax-based vector environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations, rewards, terminations and truncations will be returned as PyTorch Tensors.
+
+    Example:
+        >>> import gymnasium as gym                                         # doctest: +SKIP
+        >>> envs = gym.make_vec("JaxEnv-vx", 3)                             # doctest: +SKIP
+        >>> envs = JaxToTorch(envs)                                         # doctest: +SKIP
     """
 
     def __init__(self, env: VectorEnv, device: Device | None = None):
