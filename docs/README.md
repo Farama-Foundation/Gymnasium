@@ -47,8 +47,10 @@ To rebuild the documentation automatically every time a change is made:
 
 ```
 cd docs
-sphinx-autobuild -b dirhtml . _build
+sphinx-autobuild -b dirhtml --watch ../gymnasium --re-ignore "pickle$" . _build
 ```
+
+You can then open http://localhost:8000 in your browser to watch a live updated version of the documentation.
 
 ## Writing Tutorials
 
