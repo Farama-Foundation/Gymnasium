@@ -12,7 +12,36 @@ from gymnasium.wrappers import transform_reward
 
 
 class TransformReward(VectorRewardWrapper):
-    """A reward wrapper that allows a custom function to modify the step reward."""
+    """A reward wrapper that allows a custom function to modify the step reward.
+
+    Example:
+        Without reward transformation:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
+        >>> _ = envs.action_space.seed(123)
+        >>> obs, info = envs.reset(seed=123)
+        >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
+        >>> rew
+        array([-0.01330088, -0.07963027, -0.03127944])
+
+        With reward transformation:
+        >>> import gymnasium as gym
+        >>> from gymnasium.spaces import Box
+        >>> def scale_and_shift(rew):
+        ...     return (rew - 1.0) * 2.0
+        ...
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
+        >>> envs = TransformReward(env=envs, func=scale_and_shift)
+        >>> _ = envs.action_space.seed(123)
+        >>> obs, info = envs.reset(seed=123)
+        >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
+        >>> obs
+        array([[-4.6343064e-01,  9.8971417e-05],
+               [-4.4488689e-01, -1.9375233e-03],
+               [-4.3118435e-01, -1.5342437e-03]], dtype=float32)
+    """
 
     def __init__(self, env: VectorEnv, func: Callable[[ArrayType], ArrayType]):
         """Initialize LambdaReward wrapper.
@@ -31,7 +60,31 @@ class TransformReward(VectorRewardWrapper):
 
 
 class VectorizeTransformReward(VectorRewardWrapper):
-    """Vectorizes a single-agent transform reward wrapper for vector environments."""
+    """Vectorizes a single-agent transform reward wrapper for vector environments.
+
+    Example:
+        Without reward transformation:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
+        >>> _ = envs.action_space.seed(123)
+        >>> obs, info = envs.reset(seed=123)
+        >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
+        >>> rew
+        array([-0.01330088, -0.07963027, -0.03127944])
+
+        Adding a transform that applies a ReLU to the reward:
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers import TransformReward
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
+        >>> envs = VectorizeTransformReward(envs, wrapper=TransformReward, func=lambda x: (x > 0.0) * x)
+        >>> _ = envs.action_space.seed(123)
+        >>> obs, info = envs.reset(seed=123)
+        >>> obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
+        >>> envs.close()
+        >>> rew
+        array([-0., -0., -0.])
+    """
 
     def __init__(
         self,
@@ -58,7 +111,36 @@ class VectorizeTransformReward(VectorRewardWrapper):
 
 
 class ClipReward(VectorizeTransformReward):
-    """A wrapper that clips the rewards for an environment between an upper and lower bound."""
+    """A wrapper that clips the rewards for an environment between an upper and lower bound.
+
+    Example:
+        Without clipping rewards:
+        >>> import numpy as np
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
+        >>> _ = envs.action_space.seed(123)
+        >>> obs, info = envs.reset(seed=123)
+        >>> for _ in range(10):
+        ...     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))
+        ...
+        >>> envs.close()
+        >>> rew
+        array([-0.025, -0.025, -0.025])
+
+        With clipped rewards:
+        >>> import numpy as np
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
+        >>> envs = ClipReward(envs, 0.0, 2.0)
+        >>> _ = envs.action_space.seed(123)
+        >>> obs, info = envs.reset(seed=123)
+        >>> for _ in range(10):
+        ...     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))
+        ...
+        >>> envs.close()
+        >>> rew
+        array([0., 0., 0.])
+    """
 
     def __init__(
         self,

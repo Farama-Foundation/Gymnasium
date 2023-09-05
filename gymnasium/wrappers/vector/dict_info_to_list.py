@@ -28,9 +28,24 @@ class DictInfoToList(VectorWrapper):
         ...      "k": np.array([0., 0., 0.5, 0.3]),
         ...      "_k": np.array([False, False, True, True])
         ...  }
+        ...
         >>> list_info = [{}, {}, {"k": 0.5}, {"k": 0.3}]
 
     Example for vector environments:
+        >>> import numpy as np
+        >>> import gymnasium as gym
+        >>> from gymnasium.spaces import Dict, Box
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
+        >>> obs, info = envs.reset(seed=123)
+        >>> info
+        {}
+        >>> envs = DictInfoToList(envs)
+        >>> obs, info = envs.reset(seed=123)
+        >>> info
+        [{}, {}, {}]
+
+    Another example for vector environments:
+        >>> import numpy as np
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("HalfCheetah-v4", num_envs=3)
         >>> _ = envs.reset(seed=123)
