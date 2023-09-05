@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../genindex/" /><link rel="search" title="Search" href="../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/README.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.2.4 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19.dev1 -->
         <title>Gymnasium-docs - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=3e7f4c72" />
@@ -518,9 +518,10 @@
 </div>
 <p>To rebuild the documentation automatically every time a change is made:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">docs</span>
-<span class="n">sphinx</span><span class="o">-</span><span class="n">autobuild</span> <span class="o">-</span><span class="n">b</span> <span class="n">dirhtml</span> <span class="o">.</span> <span class="n">_build</span>
+<span class="n">sphinx</span><span class="o">-</span><span class="n">autobuild</span> <span class="o">-</span><span class="n">b</span> <span class="n">dirhtml</span> <span class="o">--</span><span class="n">watch</span> <span class="o">../</span><span class="n">gymnasium</span> <span class="o">--</span><span class="n">re</span><span class="o">-</span><span class="n">ignore</span> <span class="s2">&quot;pickle$&quot;</span> <span class="o">.</span> <span class="n">_build</span>
 </pre></div>
 </div>
+<p>You can then open http://localhost:8000 in your browser to watch a live updated version of the documentation.</p>
 </section>
 <section id="writing-tutorials">
 <h2>Writing Tutorials<a class="headerlink" href="#writing-tutorials" title="Link to this heading">#</a></h2>
