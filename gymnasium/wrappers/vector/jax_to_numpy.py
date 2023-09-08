@@ -19,9 +19,14 @@ class JaxToNumpy(VectorWrapper):
     """Wraps a jax vector environment so that it can be interacted with through numpy arrays.
 
     Notes:
-        A vectorized version of ``gymnasium.wrappers.JaxToNumpyV0``
+        A vectorized version of ``gymnasium.wrappers.JaxToNumpy``
 
     Actions must be provided as numpy arrays and observations, rewards, terminations and truncations will be returned as numpy arrays.
+
+    Example:
+        >>> import gymnasium as gym                                         # doctest: +SKIP
+        >>> envs = gym.make_vec("JaxEnv-vx", 3)                             # doctest: +SKIP
+        >>> envs = JaxToNumpy(envs)                                         # doctest: +SKIP
     """
 
     def __init__(self, env: VectorEnv):

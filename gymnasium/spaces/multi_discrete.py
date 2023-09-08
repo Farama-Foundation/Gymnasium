@@ -206,6 +206,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         """Check whether ``other`` is equivalent to this instance."""
         return bool(
             isinstance(other, MultiDiscrete)
+            and self.dtype == other.dtype
             and np.all(self.nvec == other.nvec)
             and np.all(self.start == other.start)
         )

@@ -14,7 +14,29 @@ __all__ = ["NumpyToTorch"]
 
 
 class NumpyToTorch(VectorWrapper):
-    """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors."""
+    """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors.
+
+    Example:
+        >>> import torch
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers.vector import NumpyToTorch
+        >>> envs = gym.make_vec("CartPole-v1", 3)
+        >>> envs = NumpyToTorch(envs)
+        >>> obs, _ = envs.reset(seed=123)
+        >>> type(obs)
+        <class 'torch.Tensor'>
+        >>> action = torch.tensor(envs.action_space.sample())
+        >>> obs, reward, terminated, truncated, info = envs.step(action)
+        >>> envs.close()
+        >>> type(obs)
+        <class 'torch.Tensor'>
+        >>> type(reward)
+        <class 'torch.Tensor'>
+        >>> type(terminated)
+        <class 'torch.Tensor'>
+        >>> type(truncated)
+        <class 'torch.Tensor'>
+    """
 
     def __init__(self, env: VectorEnv, device: Device | None = None):
         """Wrapper class to change inputs and outputs of environment to PyTorch tensors.
