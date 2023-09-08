@@ -30,6 +30,8 @@ class RenderCollection(
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
 
+    No vector version of the wrapper exists.
+
     Example:
         Return the list of frames for the number of steps ``render`` wasn't called.
         >>> import gymnasium as gym
@@ -82,6 +84,9 @@ class RenderCollection(
         >>> frames = env.render()
         >>> len(frames)
         12
+
+    Change logs:
+     * v0.26.2 - Initially added
     """
 
     def __init__(
@@ -158,6 +163,7 @@ class RecordVideo(
     To do this, you can specify ``episode_trigger`` or ``step_trigger``.
     They should be functions returning a boolean that indicates whether a recording should be started at the
     current episode or step, respectively.
+
     The ``episode_trigger`` should return ``True`` on the episode when recording should start.
     The ``step_trigger`` should return ``True`` on the n-th environment step that the recording should be started, where n sums over all previous episodes.
     If neither :attr:`episode_trigger` nor ``step_trigger`` is passed, a default ``episode_trigger`` will be employed, i.e. :func:`capped_cubic_video_schedule`.
@@ -166,8 +172,9 @@ class RecordVideo(
     However, you can also create recordings of fixed length (possibly spanning several episodes)
     by passing a strictly positive value for ``video_length``.
 
-    Example:
-        Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:
+    No vector version of the wrapper exists.
+
+    Examples - Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:
         >>> import os
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
@@ -183,7 +190,7 @@ class RecordVideo(
         >>> len(os.listdir("./save_videos1"))
         5
 
-        Run the environment for 5 episodes, start a recording every 200th step, making sure each video is 100 frames long:
+    Examples - Run the environment for 5 episodes, start a recording every 200th step, making sure each video is 100 frames long:
         >>> import os
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
@@ -200,7 +207,7 @@ class RecordVideo(
         >>> len(os.listdir("./save_videos2"))
         2
 
-        Run 3 episodes, record everything, but in chunks of 1000 frames:
+    Examples - Run 3 episodes, record everything, but in chunks of 1000 frames:
         >>> import os
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
@@ -215,6 +222,8 @@ class RecordVideo(
         >>> len(os.listdir("./save_videos3"))
         2
 
+    Change logs:
+     * v0.25.0 - Initially added to replace ``wrappers.monitoring.VideoRecorder``
     """
 
     def __init__(
@@ -351,6 +360,25 @@ class RecordVideo(
 
         return obs, rew, terminated, truncated, info
 
+    def render(self) -> RenderFrame | list[RenderFrame]:
+        """Compute the render frames as specified by render_mode attribute during initialization of the environment."""
+        render_out = super().render()
+        if self.recording and isinstance(render_out, List):
+            self.recorded_frames += render_out
+
+        if len(self.render_history) > 0:
+            tmp_history = self.render_history
+            self.render_history = []
+            return tmp_history + render_out
+        else:
+            return render_out
+
+    def close(self):
+        """Closes the wrapper then the video recorder."""
+        super().close()
+        if self.recording:
+            self.stop_recording()
+
     def start_recording(self, video_name: str):
         """Start a new recording. If it is already recording, stops the current recording before starting the new one."""
         if self.recording:
@@ -382,25 +410,6 @@ class RecordVideo(
         self.recording = False
         self._video_name = None
 
-    def render(self) -> RenderFrame | list[RenderFrame]:
-        """Compute the render frames as specified by render_mode attribute during initialization of the environment."""
-        render_out = super().render()
-        if self.recording and isinstance(render_out, List):
-            self.recorded_frames += render_out
-
-        if len(self.render_history) > 0:
-            tmp_history = self.render_history
-            self.render_history = []
-            return tmp_history + render_out
-        else:
-            return render_out
-
-    def close(self):
-        """Closes the wrapper then the video recorder."""
-        super().close()
-        if self.recording:
-            self.stop_recording()
-
     def __del__(self):
         """Warn the user in case last video wasn't saved."""
         if len(self.recorded_frames) > 0:
@@ -418,6 +427,8 @@ class HumanRendering(
     in the metadata of your environment.
 
     The ``render_mode`` of the wrapped environment must be either ``'rgb_array'`` or ``'rgb_array_list'``.
+
+    No vector version of the wrapper exists.
 
     Example:
         >>> import gymnasium as gym
@@ -442,6 +453,8 @@ class HumanRendering(
         >>> env.render() # env.render() will always return an empty list!
         []
 
+    Change logs:
+     * v0.25.0 - Initially added
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):

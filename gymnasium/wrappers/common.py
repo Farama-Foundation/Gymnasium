@@ -1,10 +1,10 @@
 """A collection of common wrappers.
 
-* ``TimeLimitV0`` - Provides a time limit on the number of steps for an environment before it truncates
-* ``AutoresetV0`` - Auto-resets the environment
-* ``PassiveEnvCheckerV0`` - Passive environment checker that does not modify any environment data
-* ``OrderEnforcingV0`` - Enforces the order of function calls to environments
-* ``RecordEpisodeStatisticsV0`` - Records the episode statistics
+* ``TimeLimit`` - Provides a time limit on the number of steps for an environment before it truncates
+* ``Autoreset`` - Auto-resets the environment
+* ``PassiveEnvChecker`` - Passive environment checker that does not modify any environment data
+* ``OrderEnforcing`` - Enforces the order of function calls to environments
+* ``RecordEpisodeStatistics`` - Records the episode statistics
 """
 from __future__ import annotations
 
@@ -46,11 +46,44 @@ class TimeLimit(
 
     If a truncation is not defined inside the environment itself, this is the only place that the truncation signal is issued.
     Critically, this is different from the `terminated` signal that originates from the underlying environment as part of the MDP.
+    No vector wrapper exists.
 
-    Example:
-       >>> from gymnasium.wrappers import TimeLimit
-       >>> env = gym.make("CartPole-v1")
-       >>> env = TimeLimit(env, max_episode_steps=1000)
+    Example using the TimeLimit wrapper:
+        >>> from gymnasium.wrappers import TimeLimit
+        >>> from gymnasium.envs.classic_control import CartPoleEnv
+
+        >>> spec = gym.spec("CartPole-v1")
+        >>> spec.max_episode_steps
+        500
+        >>> env = gym.make("CartPole-v1")
+        >>> env  # TimeLimit is included within the environment stack
+        <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
+        >>> env.spec  # doctest: +ELLIPSIS
+        EnvSpec(id='CartPole-v1', ..., max_episode_steps=500, ...)
+        >>> env = gym.make("CartPole-v1", max_episode_steps=3)
+        >>> env.spec  # doctest: +ELLIPSIS
+        EnvSpec(id='CartPole-v1', ..., max_episode_steps=3, ...)
+        >>> env = TimeLimit(CartPoleEnv(), max_episode_steps=10)
+        >>> env
+        <TimeLimit<CartPoleEnv instance>>
+
+    Example of `TimeLimit` determining the episode step
+        >>> env = gym.make("CartPole-v1", max_episode_steps=3)
+        >>> _ = env.reset(seed=123)
+        >>> _ = env.action_space.seed(123)
+        >>> _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        >>> terminated, truncated
+        (False, False)
+        >>> _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        >>> terminated, truncated
+        (False, False)
+        >>> _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        >>> terminated, truncated
+        (False, True)
+
+    Change logs:
+     * v0.10.6 - Initially added
+     * v0.25.0 - With the step API update, the termination and truncation signal is returned separately.
     """
 
     def __init__(
@@ -131,6 +164,7 @@ class Autoreset(
     When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,
     and the return format of :meth:`self.step` is as follows: ``(new_obs, final_reward, final_terminated, final_truncated, info)``
     with new step API and ``(new_obs, final_reward, final_done, info)`` with the old step API.
+    No vector version of the wrapper exists.
 
      - ``obs`` is the first observation after calling :meth:`self.env.reset`
      - ``final_reward`` is the reward after calling :meth:`self.env.step`, prior to calling :meth:`self.env.reset`.
@@ -147,6 +181,10 @@ class Autoreset(
         If you need the final state from the previous episode, you need to retrieve it via the
         "final_observation" key in the info dict.
         Make sure you know what you're doing if you use this wrapper!
+
+    Change logs:
+     * v0.24.0 - Initially added as `AutoResetWrapper`
+     * v1.0.0 - renamed to `Autoreset` and autoreset order was changed to reset on the step after the environment terminates or truncates. As a result, `"final_observation"` and `"final_info"` is removed.
     """
 
     def __init__(self, env: gym.Env):
@@ -191,7 +229,25 @@ class Autoreset(
 class PassiveEnvChecker(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """A passive environment checker wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follows gymnasium's API."""
+    """A passive wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follow Gymnasium's API.
+
+    This wrapper is automatically applied during make and can be disabled with `disable_env_checker`.
+    No vector version of the wrapper exists.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1")
+        >>> env
+        <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
+        >>> env = gym.make("CartPole-v1", disable_env_checker=True)
+        >>> env
+        <TimeLimit<OrderEnforcing<CartPoleEnv<CartPole-v1>>>>
+
+    Change logs:
+     * v0.24.1 - Initially added however broken in several ways
+     * v0.25.0 - Bugs was all fixed
+     * v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and inregular bound shapes
+    """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
         """Initialises the wrapper with the environments, run the observation and action space tests."""
@@ -272,7 +328,9 @@ class PassiveEnvChecker(
 class OrderEnforcing(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """Will produce an error if ``step`` or ``render`` is called before ``render``.
+    """Will produce an error if ``step`` or ``render`` is called before ``reset``.
+
+    No vector version of the wrapper exists.
 
     Example:
         >>> import gymnasium as gym
@@ -291,6 +349,10 @@ class OrderEnforcing(
         >>> env.render()
         >>> _ = env.step(0)
         >>> env.close()
+
+    Change logs:
+     * v0.22.0 - Initially added
+     * v0.24.0 - Added order enforcing for the render function
     """
 
     def __init__(
@@ -363,6 +425,7 @@ class RecordEpisodeStatistics(
     using the key ``episode``. If using a vectorized environment also the key
     ``_episode`` is used which indicates whether the env at the respective index has
     the episode statistics.
+    A vector version of the wrapper exists, :class:`gymnasium.wrappers.vector.RecordEpisodeStatistics`.
 
     After the completion of an episode, ``info`` will look like this::
 
@@ -389,13 +452,17 @@ class RecordEpisodeStatistics(
         ...     "_episode": "<boolean array of length num-envs>"
         ... }
 
-
     Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
     :attr:`wrapped_env.return_queue` and :attr:`wrapped_env.length_queue` respectively.
 
     Attributes:
-        return_queue: The cumulative rewards of the last ``deque_size``-many episodes
-        length_queue: The lengths of the last ``deque_size``-many episodes
+     * time_queue: The time length of the last ``deque_size``-many episodes
+     * return_queue: The cumulative rewards of the last ``deque_size``-many episodes
+     * length_queue: The lengths of the last ``deque_size``-many episodes
+
+    Change logs:
+     * v0.15.4 - Initially added
+     * v1.0.0 - Removed vector environment support for `wrappers.vector.RecordEpisodeStatistics` and add attribute ``time_queue``
     """
 
     def __init__(

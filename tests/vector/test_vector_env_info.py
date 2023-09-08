@@ -122,3 +122,5 @@ def test_examples():
         "_a": np.array([False, True, True]),
     }
     assert data_equivalence(vector_infos, expected_vector_infos)
+
+    env.close()

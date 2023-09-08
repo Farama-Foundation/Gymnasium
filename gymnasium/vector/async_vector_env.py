@@ -101,7 +101,7 @@ class AsyncVectorEnv(VectorEnv):
             env_fns: Functions that create the environments.
             shared_memory: If ``True``, then the observations from the worker processes are communicated back through
                 shared variables. This can improve the efficiency if the observations are large (e.g. images).
-            copy: If ``True``, then the :meth:`~AsyncVectorEnv.reset` and :meth:`~AsyncVectorEnv.step` methods
+            copy: If ``True``, then the :meth:`AsyncVectorEnv.reset` and :meth:`AsyncVectorEnv.step` methods
                 return a copy of the observations.
             context: Context for `multiprocessing`. If ``None``, then the default context is used.
             daemon: If ``True``, then subprocesses have ``daemon`` flag turned on; that is, they will quit if
@@ -260,7 +260,7 @@ class AsyncVectorEnv(VectorEnv):
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
-            timeout: Number of seconds before the call to `reset_wait` times out. If `None`, the call to `reset_wait` never times out.
+            timeout: Number of seconds before the call to ``reset_wait`` times out. If `None`, the call to ``reset_wait`` never times out.
 
         Returns:
             A tuple of batched observations and list of dictionaries
@@ -314,10 +314,10 @@ class AsyncVectorEnv(VectorEnv):
         return self.step_wait()
 
     def step_async(self, actions: np.ndarray):
-        """Send the calls to :obj:`step` to each sub-environment.
+        """Send the calls to :meth:`Env.step` to each sub-environment.
 
         Args:
-            actions: Batch of actions. element of :attr:`~VectorEnv.action_space`
+            actions: Batch of actions. element of :attr:`VectorEnv.action_space`
 
         Raises:
             ClosedEnvironmentError: If the environment was closed (if :meth:`close` was previously called).
@@ -443,15 +443,15 @@ class AsyncVectorEnv(VectorEnv):
         """Calls all parent pipes and waits for the results.
 
         Args:
-            timeout: Number of seconds before the call to `step_wait` times out.
-                If `None` (default), the call to `step_wait` never times out.
+            timeout: Number of seconds before the call to :meth:`step_wait` times out.
+                If ``None`` (default), the call to :meth:`step_wait` never times out.
 
         Returns:
             List of the results of the individual calls to the method or property for each environment.
 
         Raises:
-            NoAsyncCallError: Calling `call_wait` without any prior call to `call_async`.
-            TimeoutError: The call to `call_wait` has timed out after timeout second(s).
+            NoAsyncCallError: Calling :meth:`call_wait` without any prior call to :meth:`call_async`.
+            TimeoutError: The call to :meth:`call_wait` has timed out after timeout second(s).
         """
         self._assert_is_running()
         if self._state != AsyncState.WAITING_CALL:
@@ -494,7 +494,7 @@ class AsyncVectorEnv(VectorEnv):
 
         Raises:
             ValueError: Values must be a list or tuple with length equal to the number of environments.
-            AlreadyPendingCallError: Calling `set_attr` while waiting for a pending call to complete.
+            AlreadyPendingCallError: Calling :meth:`set_attr` while waiting for a pending call to complete.
         """
         self._assert_is_running()
         if not isinstance(values, (list, tuple)):

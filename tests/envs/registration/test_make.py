@@ -92,6 +92,18 @@ def test_max_episode_steps(register_parameter_envs):
         assert env.spec.max_episode_steps == 100
         assert has_wrapper(env, TimeLimit)
 
+    # Override max_episode_step to prevent applying the wrapper
+    for env_id in [
+        "CartPole-v1",
+        gym.spec("CartPole-v1"),
+        "NoMaxEpisodeStepsEnv-v0",
+        gym.spec("NoMaxEpisodeStepsEnv-v0"),
+    ]:
+        env = gym.make(env_id, max_episode_steps=0)
+        assert env.spec is not None
+        assert env.spec.max_episode_steps is None
+        assert has_wrapper(env, TimeLimit) is False
+
 
 @pytest.mark.parametrize(
     "registration_disabled, make_disabled, if_disabled",

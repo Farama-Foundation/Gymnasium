@@ -6,10 +6,10 @@ title: Vector
 
 ```{toctree}
 :hidden:
+vector/wrappers
 vector/async_vector_env
 vector/sync_vector_env
 vector/utils
-vector/wrappers
 ```
 
 ## Gymnasium.vector.VectorEnv
@@ -64,5 +64,5 @@ vector/wrappers
 ## Making Vector Environments
 
 ```{eval-rst}
-.. autofunction:: gymnasium.make_vec
+To create vector environments, gymnasium provides :func:`gymnasium.make_vec` as an equivalent function to :func:`gymnasium.make`.
 ```

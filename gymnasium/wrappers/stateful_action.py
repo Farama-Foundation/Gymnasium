@@ -19,6 +19,8 @@ class StickyAction(
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_
     in Section 5.2 on page 12.
 
+    No vector version of the wrapper exists.
+
     Example:
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
@@ -33,6 +35,9 @@ class StickyAction(
         (array([ 0.02728892,  0.5420062 , -0.04794393, -0.9380709 ], dtype=float32), 1.0, False, False, {})
         >>> env.step(0)
         (array([ 0.03812904,  0.34756234, -0.06670535, -0.6608303 ], dtype=float32), 1.0, False, False, {})
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(

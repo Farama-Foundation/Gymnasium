@@ -161,7 +161,7 @@ def test_update_info():
 
 def test_usage_in_vector_env():
     env = gym.make(ENV_ID, disable_env_checker=True)
-    vector_env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
+    vector_env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS, vectorization_mode="sync")
 
     DictInfoToList(vector_env)
 

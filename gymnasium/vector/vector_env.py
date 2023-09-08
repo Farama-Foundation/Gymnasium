@@ -311,7 +311,7 @@ class VectorWrapper(VectorEnv):
     without touching the original code.
 
     Note:
-        Don't forget to call `super().__init__(env)` if the subclass overrides :meth:`__init__`.
+        Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.
     """
 
     def __init__(self, env: VectorEnv):

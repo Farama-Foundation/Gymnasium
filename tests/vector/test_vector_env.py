@@ -119,3 +119,5 @@ def test_final_obs_info(vectoriser):
         and termination == np.array([True])
         and info["reset"] == np.array([True])
     )
+
+    env.close()

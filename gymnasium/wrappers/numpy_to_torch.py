@@ -92,6 +92,7 @@ class NumpyToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
+    A vector version of the wrapper exists, :class:`gymnasium.wrappers.vector.NumpyToTorch`.
 
     Note:
         For ``rendered`` this is returned as a NumPy array not a pytorch Tensor.
@@ -114,6 +115,9 @@ class NumpyToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
         <class 'bool'>
         >>> type(truncated)
         <class 'bool'>
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(self, env: gym.Env, device: Device | None = None):

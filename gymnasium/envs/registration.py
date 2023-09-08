@@ -645,8 +645,9 @@ def make(
     Args:
         id: A string for the environment id or a :class:`EnvSpec`. Optionally if using a string, a module to import can be included, e.g. ``'module:Env-v0'``.
             This is equivalent to importing the module first to register the environment followed by making the environment.
-        max_episode_steps: Maximum length of an episode, can override the registered :class:`EnvSpec` ``max_episode_steps``.
-            The value is used by :class:`gymnasium.wrappers.TimeLimit`.
+        max_episode_steps: Maximum length of an episode, can override the registered :class:`EnvSpec` ``max_episode_steps``
+            with the value being passed to :class:`gymnasium.wrappers.TimeLimit`.
+            Using ``max_episode_steps=0`` will not apply the wrapper to the environment.
         disable_env_checker: If to add :class:`gymnasium.wrappers.PassiveEnvChecker`, ``None`` will default to the
             :class:`EnvSpec` ``disable_env_checker`` value otherwise use this value will be used.
         kwargs: Additional arguments to pass to the environment constructor.
@@ -780,10 +781,11 @@ def make(
         env = gym.wrappers.OrderEnforcing(env)
 
     # Add the time limit wrapper
-    if max_episode_steps is not None:
-        env = gym.wrappers.TimeLimit(env, max_episode_steps)
-    elif env_spec.max_episode_steps is not None:
-        env = gym.wrappers.TimeLimit(env, env_spec.max_episode_steps)
+    if max_episode_steps != 0:
+        if max_episode_steps is not None:
+            env = gym.wrappers.TimeLimit(env, max_episode_steps)
+        elif env_spec.max_episode_steps is not None:
+            env = gym.wrappers.TimeLimit(env, env_spec.max_episode_steps)
 
     for wrapper_spec in env_spec.additional_wrappers[num_prior_wrappers:]:
         if wrapper_spec.kwargs is None:
@@ -805,25 +807,25 @@ def make(
 def make_vec(
     id: str | EnvSpec,
     num_envs: int = 1,
-    vectorization_mode: str = "async",
+    vectorization_mode: str | None = None,
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
 ) -> gym.vector.VectorEnv:
     """Create a vector environment according to the given ID.
 
-    Note:
-        This feature is experimental, and is likely to change in future releases.
-
-    To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
+    To find all available environments use :func:`gymnasium.pprint_registry` or ``gymnasium.registry.keys()`` for all valid ids.
+    We refer to the Vector environment as the vectorizor while the environment being vectorized is the base or vectorized environment (``vectorizor(vectorized env)``).
 
     Args:
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
-        vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom"
-        vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
-        wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
-        **kwargs: Additional arguments to pass to the environment constructor.
+        vectorization_mode: The vectorization method used, defaults to ``None`` such that if a ``vector_entry_point`` exists,
+            this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.
+            Valid modes are ``"async"``, ``"sync"`` or ``"vector_entry_point"``.
+        vector_kwargs: Additional arguments to pass to the vectorizor environment constructor, i.e., ``SyncVectorEnv(..., **vector_kwargs)``.
+        wrappers: A sequence of wrapper functions to apply to the base environment. Can only be used in ``"sync"`` or ``"async"`` mode.
+        **kwargs: Additional arguments passed to the base environment constructor.
 
     Returns:
         An instance of the environment.
@@ -837,96 +839,89 @@ def make_vec(
         wrappers = []
 
     if isinstance(id, EnvSpec):
-        spec_ = id
+        id_env_spec = id
+        env_spec_kwargs = id_env_spec.kwargs.copy()
 
-        _kwargs = spec_.kwargs.copy()
-        num_envs = _kwargs.pop("num_envs", num_envs)
-        vectorization_mode = _kwargs.pop("vectorization_mode", vectorization_mode)
-        vector_kwargs = _kwargs.pop("vector_kwargs", vector_kwargs)
-        wrappers = _kwargs.pop("wrappers", wrappers)
+        num_envs = env_spec_kwargs.pop("num_envs", num_envs)
+        vectorization_mode = env_spec_kwargs.pop(
+            "vectorization_mode", vectorization_mode
+        )
+        vector_kwargs = env_spec_kwargs.pop("vector_kwargs", vector_kwargs)
+        wrappers = env_spec_kwargs.pop("wrappers", wrappers)
     else:
-        spec_ = _find_spec(id)
-        _kwargs = spec_.kwargs.copy()
+        id_env_spec = _find_spec(id)
+        env_spec_kwargs = id_env_spec.kwargs.copy()
 
-    _kwargs.update(kwargs)
+    env_spec_kwargs.update(kwargs)
 
-    # Check if we have the necessary entry point
-    if vectorization_mode in ("sync", "async"):
-        if spec_.entry_point is None:
-            raise error.Error(
-                f"Cannot create vectorized environment for {id} because it doesn't have an entry point defined."
-            )
-        entry_point = spec_.entry_point
-    elif vectorization_mode in ("custom",):
-        if spec_.vector_entry_point is None:
-            raise error.Error(
-                f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
-            )
-        entry_point = spec_.vector_entry_point
-    else:
-        raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
+    # Update the vectorization_mode if None
+    if vectorization_mode is None:
+        if id_env_spec.vector_entry_point is not None:
+            vectorization_mode = "vector_entry_point"
+        else:
+            vectorization_mode = "sync"
 
-    if callable(entry_point):
-        env_creator = entry_point
-    else:
-        # Assume it's a string
-        env_creator = load_env_creator(entry_point)
-
-    def _create_env() -> Env:
-        # Env creator for use with sync and async modes
-        _kwargs_copy = _kwargs.copy()
-
-        render_mode = _kwargs.get("render_mode", None)
-        if render_mode is not None:
-            inner_render_mode = (
-                render_mode[: -len("_list")]
-                if render_mode.endswith("_list")
-                else render_mode
-            )
-            _kwargs_copy["render_mode"] = inner_render_mode
-
-        _env = env_creator(**_kwargs_copy)
-        _env.spec = spec_
-        if spec_.max_episode_steps is not None:
-            _env = gym.wrappers.TimeLimit(_env, spec_.max_episode_steps)
-
-        if render_mode is not None and render_mode.endswith("_list"):
-            _env = gym.wrappers.RenderCollection(_env)
+    def create_single_env() -> Env:
+        single_env = make(id_env_spec.id, **env_spec_kwargs.copy())
 
         for wrapper in wrappers:
-            _env = wrapper(_env)
-        return _env
+            single_env = wrapper(single_env)
+        return single_env
 
     if vectorization_mode == "sync":
+        if id_env_spec.entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id_env_spec.id} because it doesn't have an entry point defined."
+            )
+
         env = gym.vector.SyncVectorEnv(
-            env_fns=(_create_env for _ in range(num_envs)),
+            env_fns=(create_single_env for _ in range(num_envs)),
             **vector_kwargs,
         )
     elif vectorization_mode == "async":
+        if id_env_spec.entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id_env_spec.id} because it doesn't have an entry point defined."
+            )
+
         env = gym.vector.AsyncVectorEnv(
-            env_fns=[_create_env for _ in range(num_envs)],
+            env_fns=[create_single_env for _ in range(num_envs)],
             **vector_kwargs,
         )
-    elif vectorization_mode == "custom":
+    elif vectorization_mode == "vector_entry_point":
+        entry_point = id_env_spec.vector_entry_point
+        if entry_point is None:
+            raise error.Error(
+                f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
+            )
+        elif callable(entry_point):
+            env_creator = entry_point
+        else:  # Assume it's a string
+            env_creator = load_env_creator(entry_point)
+
         if len(wrappers) > 0:
-            raise error.Error("Cannot use custom vectorization mode with wrappers.")
-        vector_kwargs["max_episode_steps"] = spec_.max_episode_steps
+            raise error.Error(
+                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
+            )
+        if "max_episode_steps" not in vector_kwargs:
+            vector_kwargs["max_episode_steps"] = id_env_spec.max_episode_steps
+
         env = env_creator(num_envs=num_envs, **vector_kwargs)
     else:
         raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
 
     # Copies the environment creation specification and kwargs to add to the environment specification details
-    spec_ = copy.deepcopy(spec_)
-    spec_.kwargs = _kwargs
+    copied_id_spec = copy.deepcopy(id_env_spec)
+    copied_id_spec.kwargs = env_spec_kwargs
     if num_envs != 1:
-        spec_.kwargs["num_envs"] = num_envs
+        copied_id_spec.kwargs["num_envs"] = num_envs
     if vectorization_mode != "async":
-        spec_.kwargs["vectorization_mode"] = vectorization_mode
+        copied_id_spec.kwargs["vectorization_mode"] = vectorization_mode
     if vector_kwargs is not None:
-        spec_.kwargs["vector_kwargs"] = vector_kwargs
+        copied_id_spec.kwargs["vector_kwargs"] = vector_kwargs
     if wrappers is not None:
-        spec_.kwargs["wrappers"] = wrappers
-    env.unwrapped.spec = spec_
+        copied_id_spec.kwargs["wrappers"] = wrappers
+    env.unwrapped.spec = copied_id_spec
 
     return env
 

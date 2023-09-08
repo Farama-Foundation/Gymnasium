@@ -74,13 +74,29 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     ## Arguments
 
-    ```python
-    import gymnasium as gym
-    gym.make('CartPole-v1')
-    ```
+    Cartpole only has ``render_mode`` as a keyword for ``gymnasium.make``.
+    On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
-    On reset, the `options` parameter allows the user to change the bounds used to determine
-    the new random state.
+    Examples:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
+        >>> env
+        <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
+        >>> env.reset(seed=123, options={"low": 0, "high": 1})
+        (array([0.6823519 , 0.05382102, 0.22035988, 0.18437181], dtype=float32), {})
+
+    ## Vectorized environment
+
+    To increase steps per seconds, users can use a custom vector environment or with an environment vectorizor.
+
+    Examples:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="vector_entry_point")
+        >>> envs
+        CartPoleVectorEnv(CartPole-v1, num_envs=3)
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+        >>> envs
+        SyncVectorEnv(CartPole-v1, num_envs=3)
     """
 
     metadata = {
@@ -328,8 +344,10 @@ class CartPoleVectorEnv(VectorEnv):
         max_episode_steps: int = 500,
         render_mode: Optional[str] = None,
     ):
-        super().__init__()
         self.num_envs = num_envs
+        self.max_episode_steps = max_episode_steps
+        self.render_mode = render_mode
+
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
@@ -339,7 +357,6 @@ class CartPoleVectorEnv(VectorEnv):
         self.force_mag = 10.0
         self.tau = 0.02  # seconds between state updates
         self.kinematics_integrator = "euler"
-        self.max_episode_steps = max_episode_steps
 
         self.steps = np.zeros(num_envs, dtype=np.int32)
 
@@ -366,8 +383,6 @@ class CartPoleVectorEnv(VectorEnv):
         self.action_space = batch_space(self.single_action_space, num_envs)
         self.single_observation_space = spaces.Box(-high, high, dtype=np.float32)
         self.observation_space = batch_space(self.single_observation_space, num_envs)
-
-        self.render_mode = render_mode
 
         self.screen_width = 600
         self.screen_height = 400
