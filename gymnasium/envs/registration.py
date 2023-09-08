@@ -807,25 +807,25 @@ def make(
 def make_vec(
     id: str | EnvSpec,
     num_envs: int = 1,
-    vectorization_mode: str = "vector_entry_point",
+    vectorization_mode: str | None = None,
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
 ) -> gym.vector.VectorEnv:
     """Create a vector environment according to the given ID.
 
-    Note:
-        This feature is experimental, and is likely to change in future releases.
-
-    To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
+    To find all available environments use :func:`gymnasium.pprint_registry` or ``gymnasium.registry.keys()`` for all valid ids.
+    We refer to the Vector environment as the vectorizor while the environment being vectorized is the base or vectorized environment (``vectorizor(vectorized env)``).
 
     Args:
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
-        vectorization_mode: The vectorization method used, defaults to "vector_entry_point". Valid modes are "async", "sync" or "vector_entry_point"
-        vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
-        wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
-        **kwargs: Additional arguments to pass to the environment constructor.
+        vectorization_mode: The vectorization method used, defaults to ``None`` such that if a ``vector_entry_point`` exists,
+            this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.
+            Valid modes are ``"async"``, ``"sync"`` or ``"vector_entry_point"``.
+        vector_kwargs: Additional arguments to pass to the vectorizor environment constructor, i.e., ``SyncVectorEnv(..., **vector_kwargs)``.
+        wrappers: A sequence of wrapper functions to apply to the base environment. Can only be used in ``"sync"`` or ``"async"` mode.
+        **kwargs: Additional arguments passed to the base environment constructor.
 
     Returns:
         An instance of the environment.
@@ -851,6 +851,13 @@ def make_vec(
         _kwargs = spec_.kwargs.copy()
 
     _kwargs.update(kwargs)
+
+    # Update the vectorization_mode if None
+    if vectorization_mode is None:
+        if spec_.vector_entry_point is not None:
+            vectorization_mode = "vector_entry_point"
+        else:
+            vectorization_mode = "sync"
 
     # Check if we have the necessary entry point
     if vectorization_mode in ("sync", "async"):

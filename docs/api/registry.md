@@ -8,6 +8,7 @@ title: Registry
 Gymnasium allows users to automatically load environments, pre-wrapped with several important wrappers through the :meth:`gymnasium.make` function. To do this, the environment must be registered prior with :meth:`gymnasium.register`. To get the environment specifications for a registered environment, use :meth:`gymnasium.spec` and to print the whole registry, use :meth:`gymnasium.pprint_registry`.
 
 .. autofunction:: gymnasium.make
+.. autofunction:: gymnasium.make_vec
 .. autofunction:: gymnasium.register
 .. autofunction:: gymnasium.spec
 .. autofunction:: gymnasium.pprint_registry
