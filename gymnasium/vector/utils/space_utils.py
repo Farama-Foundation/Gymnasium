@@ -150,7 +150,7 @@ def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
         The output object. This object is a (possibly nested) numpy array.
 
     Raises:
-        ValueError: Space is not an instance of :class:`gym.Space`
+        ValueError: Space is not an instance of :class:`gymnasium.Space`
 
     Example:
         >>> from gymnasium.spaces import Box, Dict
@@ -311,14 +311,14 @@ def create_empty_array(
 
     Args:
         space: Observation space of a single environment in the vectorized environment.
-        n: Number of environments in the vectorized environment. If `None`, creates an empty sample from `space`.
-        fn: Function to apply when creating the empty numpy array. Examples of such functions are `np.empty` or `np.zeros`.
+        n: Number of environments in the vectorized environment. If ``None``, creates an empty sample from ``space``.
+        fn: Function to apply when creating the empty numpy array. Examples of such functions are ``np.empty`` or ``np.zeros``.
 
     Returns:
         The output object. This object is a (possibly nested) numpy array.
 
     Raises:
-        ValueError: Space is not a valid :class:`gym.Space` instance
+        ValueError: Space is not a valid :class:`gymnasium.Space` instance
 
     Example:
         >>> from gymnasium.spaces import Box, Dict

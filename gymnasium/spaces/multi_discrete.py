@@ -87,12 +87,12 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         """Generates a single random sample this space.
 
         Args:
-            mask: An optional mask for multi-discrete, expects tuples with a `np.ndarray` mask in the position of each
-                action with shape `(n,)` where `n` is the number of actions and `dtype=np.int8`.
-                Only mask values == 1 are possible to sample unless all mask values for an action are 0 then the default action `self.start` (the smallest element) is sampled.
+            mask: An optional mask for multi-discrete, expects tuples with a ``np.ndarray`` mask in the position of each
+                action with shape ``(n,)`` where ``n`` is the number of actions and ``dtype=np.int8``.
+                Only ``mask values == 1`` are possible to sample unless all mask values for an action are ``0`` then the default action ``self.start`` (the smallest element) is sampled.
 
         Returns:
-            An `np.ndarray` of shape `space.shape`
+            An ``np.ndarray`` of :meth:`Space.shape`
         """
         if mask is not None:
 

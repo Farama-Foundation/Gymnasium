@@ -824,7 +824,7 @@ def make_vec(
             this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.
             Valid modes are ``"async"``, ``"sync"`` or ``"vector_entry_point"``.
         vector_kwargs: Additional arguments to pass to the vectorizor environment constructor, i.e., ``SyncVectorEnv(..., **vector_kwargs)``.
-        wrappers: A sequence of wrapper functions to apply to the base environment. Can only be used in ``"sync"`` or ``"async"` mode.
+        wrappers: A sequence of wrapper functions to apply to the base environment. Can only be used in ``"sync"`` or ``"async"`` mode.
         **kwargs: Additional arguments passed to the base environment constructor.
 
     Returns:
