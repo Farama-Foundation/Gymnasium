@@ -862,7 +862,7 @@ def make_vec(
             vectorization_mode = "sync"
 
     def create_single_env() -> Env:
-        single_env = make(id_env_spec, **env_spec_kwargs.copy())
+        single_env = make(id_env_spec.id, **env_spec_kwargs.copy())
 
         for wrapper in wrappers:
             single_env = wrapper(single_env)
@@ -871,7 +871,7 @@ def make_vec(
     if vectorization_mode == "sync":
         if id_env_spec.entry_point is None:
             raise error.Error(
-                f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
+                f"Cannot create vectorized environment for {id_env_spec.id} because it doesn't have an entry point defined."
             )
 
         env = gym.vector.SyncVectorEnv(
@@ -881,7 +881,7 @@ def make_vec(
     elif vectorization_mode == "async":
         if id_env_spec.entry_point is None:
             raise error.Error(
-                f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
+                f"Cannot create vectorized environment for {id_env_spec.id} because it doesn't have an entry point defined."
             )
 
         env = gym.vector.AsyncVectorEnv(
@@ -889,13 +889,6 @@ def make_vec(
             **vector_kwargs,
         )
     elif vectorization_mode == "vector_entry_point":
-        if len(wrappers) > 0:
-            raise error.Error(
-                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
-            )
-        if "max_episode_steps" not in vector_kwargs:
-            vector_kwargs["max_episode_steps"] = id_env_spec.max_episode_steps
-
         entry_point = id_env_spec.vector_entry_point
         if entry_point is None:
             raise error.Error(
@@ -905,6 +898,13 @@ def make_vec(
             env_creator = entry_point
         else:  # Assume it's a string
             env_creator = load_env_creator(entry_point)
+
+        if len(wrappers) > 0:
+            raise error.Error(
+                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
+            )
+        if "max_episode_steps" not in vector_kwargs:
+            vector_kwargs["max_episode_steps"] = id_env_spec.max_episode_steps
 
         env = env_creator(num_envs=num_envs, **vector_kwargs)
     else:
