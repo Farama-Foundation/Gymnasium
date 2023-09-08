@@ -37,13 +37,10 @@ class TransformObservation(VectorObservationWrapper):
         >>> def scale_and_shift(obs):
         ...     return (obs - 1.0) * 2.0
         ...
-        >>> def vector_scale_and_shift(obs):
-        ...     return (obs - 1.0) * 2.0
-        ...
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
         >>> new_obs_space = Box(low=envs.observation_space.low, high=envs.observation_space.high)
-        >>> envs = TransformObservation(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)
+        >>> envs = TransformObservation(envs, func=scale_and_shift, observation_space=new_obs_space)
         >>> obs, info = envs.reset(seed=123)
         >>> obs
         array([[-1.9635296, -2.0892358, -2.055928 , -2.0631256],
