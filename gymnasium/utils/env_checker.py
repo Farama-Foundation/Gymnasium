@@ -63,7 +63,7 @@ def data_equivalence(data_1, data_2) -> bool:
         return False
 
 
-def check_reset_seed(env: gym.Env):
+def check_reset_seed(env: gym.Env) -> None:
     """Check that the environment can be reset with a seed.
 
     Args:
@@ -132,7 +132,7 @@ def check_reset_seed(env: gym.Env):
         )
 
 
-def check_reset_options(env: gym.Env):
+def check_reset_options(env: gym.Env) -> None:
     """Check that the environment can be reset with options.
 
     Args:
@@ -160,7 +160,7 @@ def check_reset_options(env: gym.Env):
         )
 
 
-def check_reset_return_info_deprecation(env: gym.Env):
+def check_reset_return_info_deprecation(env: gym.Env) -> None:
     """Makes sure support for deprecated `return_info` argument is dropped.
 
     Args:
@@ -177,7 +177,7 @@ def check_reset_return_info_deprecation(env: gym.Env):
         )
 
 
-def check_seed_deprecation(env: gym.Env):
+def check_seed_deprecation(env: gym.Env) -> None:
     """Makes sure support for deprecated function `seed` is dropped.
 
     Args:
@@ -193,7 +193,7 @@ def check_seed_deprecation(env: gym.Env):
         )
 
 
-def check_reset_return_type(env: gym.Env):
+def check_reset_return_type(env: gym.Env) -> None:
     """Checks that :meth:`reset` correctly returns a tuple of the form `(obs , info)`.
 
     Args:
@@ -218,7 +218,7 @@ def check_reset_return_type(env: gym.Env):
     ), f"The second element returned by `env.reset()` was not a dictionary, actual type: {type(info)}"
 
 
-def check_space_limit(space, space_type: str):
+def check_space_limit(space: spaces.Space, space_type: str) -> None:
     """Check the space limit for only the Box space as a test that only runs as part of `check_env`."""
     if isinstance(space, spaces.Box):
         if np.any(np.equal(space.low, -np.inf)):
@@ -227,7 +227,7 @@ def check_space_limit(space, space_type: str):
             )
         if np.any(np.equal(space.high, np.inf)):
             logger.warn(
-                f"A Box {space_type} space maximum value is -infinity. This is probably too high."
+                f"A Box {space_type} space maximum value is infinity. This is probably too high."
             )
 
         # Check that the Box space is normalized
@@ -256,7 +256,7 @@ def check_space_limit(space, space_type: str):
             check_space_limit(subspace, space_type)
 
 
-def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
+def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False) -> None:
     """Check that an environment follows Gym API.
 
     This is an invasive function that calls the environment's reset and step.

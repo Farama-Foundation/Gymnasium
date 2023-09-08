@@ -199,7 +199,7 @@ CHECK_ENV_IGNORE_WARNINGS = [
     f"\x1b[33mWARN: {message}\x1b[0m"
     for message in [
         "A Box observation space minimum value is -infinity. This is probably too low.",
-        "A Box observation space maximum value is -infinity. This is probably too high.",
+        "A Box observation space maximum value is infinity. This is probably too high.",
         "For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1]). See https://stable-baselines3.readthedocs.io/en/master/guide/rl_tips.html for more information.",
     ]
 ]
