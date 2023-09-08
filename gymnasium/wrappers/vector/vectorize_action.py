@@ -20,8 +20,7 @@ class TransformAction(VectorActionWrapper):
     If the observations from :attr:`func` are outside the bounds of the ``env``'s action space,
     provide an :attr:`action_space` which specifies the action space for the vectorized environment.
 
-    Example:
-        Without action transformation:
+    Example - Without action transformation:
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
         >>> _ = envs.action_space.seed(123)
@@ -35,7 +34,7 @@ class TransformAction(VectorActionWrapper):
                [-0.498371  , -0.00715587],
                [-0.4651575 , -0.00624371]], dtype=float32)
 
-        With action transformation:
+    Example - With action transformation:
         >>> import gymnasium as gym
         >>> from gymnasium.spaces import Box
         >>> def shrink_action(act):
@@ -84,8 +83,7 @@ class TransformAction(VectorActionWrapper):
 class VectorizeTransformAction(VectorActionWrapper):
     """Vectorizes a single-agent transform action wrapper for vector environments.
 
-    Example:
-        Without action transformation:
+    Example - Without action transformation:
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
         >>> _ = envs.action_space.seed(123)
@@ -97,7 +95,7 @@ class VectorizeTransformAction(VectorActionWrapper):
                [-4.4488689e-01, -1.9375233e-03],
                [-4.3118435e-01, -1.5342437e-03]], dtype=float32)
 
-        Adding a transform that applies a ReLU to the action:
+    Example - Adding a transform that applies a ReLU to the action:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import TransformAction
         >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
@@ -175,8 +173,7 @@ class VectorizeTransformAction(VectorActionWrapper):
 class ClipAction(VectorizeTransformAction):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
-    Example:
-        Passing an out-of-bounds action to the environment to be clipped.
+    Example - Passing an out-of-bounds action to the environment to be clipped.
         >>> import numpy as np
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
@@ -203,8 +200,7 @@ class ClipAction(VectorizeTransformAction):
 class RescaleAction(VectorizeTransformAction):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
-    Example:
-        Without action scaling:
+    Example - Without action scaling:
         >>> import numpy as np
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)
@@ -219,7 +215,7 @@ class RescaleAction(VectorizeTransformAction):
                [-0.4351738 ,  0.00133522],
                [-0.42683297,  0.00048403]], dtype=float32)
 
-        With action scaling:
+    Example - With action scaling:
         >>> import numpy as np
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)

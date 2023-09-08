@@ -6,10 +6,10 @@ title: Vector
 
 ```{toctree}
 :hidden:
+vector/wrappers
 vector/async_vector_env
 vector/sync_vector_env
 vector/utils
-vector/wrappers
 ```
 
 ## Gymnasium.vector.VectorEnv

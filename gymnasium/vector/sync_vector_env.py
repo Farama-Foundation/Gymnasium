@@ -107,7 +107,10 @@ class SyncVectorEnv(VectorEnv):
         """Resets each of the sub-environments and concatenate the results together.
 
         Args:
-            seed: Seeds used to reset the sub-environments, either ``None`` (random seeds for all environment), ``int`` (seed, seed+1, ..., seed+n), or a list of ints or None (``List[int | None]``)
+            seed: Seeds used to reset the sub-environments, either
+                * ``None`` - random seeds for all environment
+                * ``int`` - ``[seed, seed+1, ..., seed+n]``
+                * List of ints - ``[1, 2, 3, ..., n]``
             options: Option information used for each sub-environment
 
         Returns:
@@ -210,7 +213,7 @@ class SyncVectorEnv(VectorEnv):
         """Get a property from each parallel environment.
 
         Args:
-            name (str): Name of the property to be get from each individual environment.
+            name (str): Name of the property to get from each individual environment.
 
         Returns:
             The property with name

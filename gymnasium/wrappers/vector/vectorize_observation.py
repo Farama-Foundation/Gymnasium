@@ -20,8 +20,7 @@ class TransformObservation(VectorObservationWrapper):
     This is desirable when, for example, it is possible to process vector observations in parallel or via other more optimized methods.
     Otherwise, the ``VectorizeTransformObservation`` should be used instead, where only ``single_func`` needs to be defined.
 
-    Example:
-        Without observation transformation:
+    Example - Without observation transformation:
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
@@ -32,7 +31,7 @@ class TransformObservation(VectorObservationWrapper):
               dtype=float32)
           >>> envs.close()
 
-        With observation transformation:
+    Example - With observation transformation:
         >>> import gymnasium as gym
         >>> from gymnasium.spaces import Box
         >>> def scale_and_shift(obs):
@@ -92,8 +91,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
     it is advised that users simply use those instead via importing from `gymnasium.wrappers.vector...`.
     The following example illustrate use-cases where a custom lambda observation wrapper is required.
 
-    Example:
-        The normal observation:
+    Example - The normal observation:
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
@@ -104,7 +102,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
                [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
               dtype=float32)
 
-        Applying a custom lambda observation wrapper that duplicates the observation from the environment
+    Example - Applying a custom lambda observation wrapper that duplicates the observation from the environment
         >>> import numpy as np
         >>> import gymnasium as gym
         >>> from gymnasium.spaces import Box
@@ -191,8 +189,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
 class FilterObservation(VectorizeTransformObservation):
     """Vector wrapper for filtering dict or tuple observation spaces.
 
-    Example:
-        Create a vectorized environment with a Dict space to demonstrate how to filter keys:
+    Example - Create a vectorized environment with a Dict space to demonstrate how to filter keys:
         >>> import numpy as np
         >>> import gymnasium as gym
         >>> from gymnasium.spaces import Dict, Box

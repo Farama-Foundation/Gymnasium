@@ -428,8 +428,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
     Raises:
         NotImplementedError: if the space is not defined in :mod:`gymnasium.spaces`.
 
-    Example:
-        Flatten spaces.Box:
+    Example - Flatten spaces.Box:
         >>> from gymnasium.spaces import Box
         >>> box = Box(0.0, 1.0, shape=(3, 4, 5))
         >>> box
@@ -439,7 +438,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> flatten(box, box.sample()) in flatten_space(box)
         True
 
-        Flatten spaces.Discrete:
+    Example - Flatten spaces.Discrete:
         >>> from gymnasium.spaces import Discrete
         >>> discrete = Discrete(5)
         >>> flatten_space(discrete)
@@ -447,7 +446,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> flatten(discrete, discrete.sample()) in flatten_space(discrete)
         True
 
-        Flatten spaces.Dict:
+    Example - Flatten spaces.Dict:
         >>> from gymnasium.spaces import Dict, Discrete, Box
         >>> space = Dict({"position": Discrete(2), "velocity": Box(0, 1, shape=(2, 2))})
         >>> flatten_space(space)
@@ -455,7 +454,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> flatten(space, space.sample()) in flatten_space(space)
         True
 
-        Flatten spaces.Graph:
+    Example - Flatten spaces.Graph:
         >>> from gymnasium.spaces import Graph, Discrete, Box
         >>> space = Graph(node_space=Box(low=-100, high=100, shape=(3, 4)), edge_space=Discrete(5))
         >>> flatten_space(space)
