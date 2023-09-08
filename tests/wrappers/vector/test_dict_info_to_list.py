@@ -15,7 +15,7 @@ SEED = 42
 
 def test_usage_in_vector_env():
     env = gym.make(ENV_ID, disable_env_checker=True)
-    vector_env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
+    vector_env = gym.make_vec(ENV_ID, num_envs=NUM_ENVS, vectorization_mode="sync")
 
     DictInfoToList(vector_env)
 
@@ -24,7 +24,7 @@ def test_usage_in_vector_env():
 
 
 def test_info_to_list():
-    env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
+    env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS, vectorization_mode="sync")
     wrapped_env = DictInfoToList(env_to_wrap)
     wrapped_env.action_space.seed(SEED)
     _, info = wrapped_env.reset(seed=SEED)
@@ -42,7 +42,7 @@ def test_info_to_list():
 
 
 def test_info_to_list_statistics():
-    env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS)
+    env_to_wrap = gym.make_vec(ENV_ID, num_envs=NUM_ENVS, vectorization_mode="sync")
     wrapped_env = DictInfoToList(RecordEpisodeStatistics(env_to_wrap))
     _, info = wrapped_env.reset(seed=SEED)
     wrapped_env.action_space.seed(SEED)

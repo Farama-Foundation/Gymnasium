@@ -807,25 +807,25 @@ def make(
 def make_vec(
     id: str | EnvSpec,
     num_envs: int = 1,
-    vectorization_mode: str = "async",
+    vectorization_mode: str | None = None,
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
 ) -> gym.vector.VectorEnv:
     """Create a vector environment according to the given ID.
 
-    Note:
-        This feature is experimental, and is likely to change in future releases.
-
-    To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.
+    To find all available environments use :func:`gymnasium.pprint_registry` or ``gymnasium.registry.keys()`` for all valid ids.
+    We refer to the Vector environment as the vectorizor while the environment being vectorized is the base or vectorized environment (``vectorizor(vectorized env)``).
 
     Args:
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
-        vectorization_mode: How to vectorize the environment. Can be either "async", "sync" or "custom"
-        vector_kwargs: Additional arguments to pass to the vectorized environment constructor.
-        wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in "sync" or "async" mode.
-        **kwargs: Additional arguments to pass to the environment constructor.
+        vectorization_mode: The vectorization method used, defaults to ``None`` such that if a ``vector_entry_point`` exists,
+            this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.
+            Valid modes are ``"async"``, ``"sync"`` or ``"vector_entry_point"``.
+        vector_kwargs: Additional arguments to pass to the vectorizor environment constructor, i.e., ``SyncVectorEnv(..., **vector_kwargs)``.
+        wrappers: A sequence of wrapper functions to apply to the base environment. Can only be used in ``"sync"`` or ``"async"` mode.
+        **kwargs: Additional arguments passed to the base environment constructor.
 
     Returns:
         An instance of the environment.
@@ -852,6 +852,13 @@ def make_vec(
 
     _kwargs.update(kwargs)
 
+    # Update the vectorization_mode if None
+    if vectorization_mode is None:
+        if spec_.vector_entry_point is not None:
+            vectorization_mode = "vector_entry_point"
+        else:
+            vectorization_mode = "sync"
+
     # Check if we have the necessary entry point
     if vectorization_mode in ("sync", "async"):
         if spec_.entry_point is None:
@@ -859,7 +866,7 @@ def make_vec(
                 f"Cannot create vectorized environment for {id} because it doesn't have an entry point defined."
             )
         entry_point = spec_.entry_point
-    elif vectorization_mode in ("custom",):
+    elif vectorization_mode in ("vector_entry_point",):
         if spec_.vector_entry_point is None:
             raise error.Error(
                 f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
@@ -909,10 +916,11 @@ def make_vec(
             env_fns=[_create_env for _ in range(num_envs)],
             **vector_kwargs,
         )
-    elif vectorization_mode == "custom":
+    elif vectorization_mode == "vector_entry_point":
         if len(wrappers) > 0:
             raise error.Error("Cannot use custom vectorization mode with wrappers.")
-        vector_kwargs["max_episode_steps"] = spec_.max_episode_steps
+        if "max_episode_steps" not in vector_kwargs:
+            vector_kwargs["max_episode_steps"] = spec_.max_episode_steps
         env = env_creator(num_envs=num_envs, **vector_kwargs)
     else:
         raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
