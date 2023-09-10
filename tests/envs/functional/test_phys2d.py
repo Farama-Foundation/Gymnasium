@@ -11,7 +11,7 @@ from gymnasium.envs.phys2d.pendulum import PendulumFunctional  # noqa: E402
 
 
 @pytest.mark.parametrize("env_class", [CartPoleFunctional, PendulumFunctional])
-def test_normal(env_class):
+def test_functional(env_class):
     env = env_class()
     rng = jrng.PRNGKey(0)
 

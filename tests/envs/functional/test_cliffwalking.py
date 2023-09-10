@@ -11,7 +11,7 @@ import jax.random as jrng  # noqa: E402
 from gymnasium.envs.tabular.cliffwalking import CliffWalkingFunctional  # noqa: E402
 
 
-def test_normal_CliffWalkingFunctional():
+def test_cliffwalking():
     """Tests to ensure that cliffwalking env step and reset functions return the correct types."""
     env = CliffWalkingFunctional()
     rng = jrng.PRNGKey(0)
@@ -51,7 +51,7 @@ def test_normal_CliffWalkingFunctional():
         state = next_state
 
 
-def test_jit_CliffWalkingFunctional():
+def test_jit():
     """Tests the Jax CliffWalkingFunctional env, but in a jitted context."""
     env = CliffWalkingFunctional()
     rng = jrng.PRNGKey(0)
@@ -90,7 +90,7 @@ def test_jit_CliffWalkingFunctional():
         state = next_state
 
 
-def test_vmap_BlackJack():
+def test_vmap():
     """Tests the Jax CliffWalking env with vmap."""
     env = CliffWalkingFunctional()
     num_envs = 10
