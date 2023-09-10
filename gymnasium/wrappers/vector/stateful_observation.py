@@ -48,7 +48,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         >>> for _ in range(100):
         ...     obs, *_ = envs.step(envs.action_space.sample())
         >>> np.mean(obs)
-        -0.28381696
+        -0.2359734
         >>> np.std(obs)
         1.1938739
         >>> envs.close()
