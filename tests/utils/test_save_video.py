@@ -84,7 +84,7 @@ def test_record_video_within_vector():
     envs = gym.make_vec(
         "CartPole-v1",
         num_envs=2,
-        vectorization_mode="async",
+        vectorization_mode="sync",
         render_mode="rgb_array_list",
     )
     envs.reset()

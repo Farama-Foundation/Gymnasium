@@ -1,9 +1,11 @@
 """Testing of the `gym.make_vec` function."""
+import re
 
 import pytest
 
 import gymnasium as gym
 from gymnasium.envs.classic_control import CartPoleEnv
+from gymnasium.envs.classic_control.cartpole import CartPoleVectorEnv
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
@@ -12,24 +14,64 @@ from tests.wrappers.utils import has_wrapper
 def test_make_vec_env_id():
     """Ensure that the `gym.make_vec` creates the right environment."""
     env = gym.make_vec("CartPole-v1")
-    assert isinstance(env, AsyncVectorEnv)
+    assert isinstance(env, CartPoleVectorEnv)
     assert env.num_envs == 1
     env.close()
 
 
 @pytest.mark.parametrize("num_envs", [1, 3, 10])
-def test_make_vec_num_envs(num_envs):
+@pytest.mark.parametrize("vectorization_mode", ["vector_entry_point", "async", "sync"])
+def test_make_vec_num_envs(num_envs, vectorization_mode):
     """Test that the `gym.make_vec` num_envs parameter works."""
-    env = gym.make_vec("CartPole-v1", num_envs=num_envs)
+    env = gym.make_vec(
+        "CartPole-v1", num_envs=num_envs, vectorization_mode=vectorization_mode
+    )
     assert env.num_envs == num_envs
     env.close()
 
 
 def test_make_vec_vectorization_mode():
     """Tests the `gym.make_vec` vectorization mode works."""
+    # Test the default value for spec with and without `vector_entry_point`
+    env_spec = gym.spec("CartPole-v1")
+    assert env_spec is not None and env_spec.vector_entry_point is not None
+    env = gym.make_vec("CartPole-v1")
+    assert isinstance(env, CartPoleVectorEnv)
+    env.close()
+
+    env_spec = gym.spec("Pendulum-v1")
+    assert env_spec is not None and env_spec.vector_entry_point is None
+    env = gym.make_vec("Pendulum-v1")
+    assert isinstance(env, SyncVectorEnv)
+    env.close()
+
+    # Test `vector_entry_point`
+    env = gym.make_vec("CartPole-v1", vectorization_mode="vector_entry_point")
+    assert isinstance(env, CartPoleVectorEnv)
+    env.close()
+
+    with pytest.raises(
+        gym.error.Error,
+        match=re.escape(
+            "Cannot create vectorized environment for Pendulum-v1 because it doesn't have a vector entry point defined."
+        ),
+    ):
+        gym.make_vec("Pendulum-v1", vectorization_mode="vector_entry_point")
+
+    # Test `async`
     env = gym.make_vec("CartPole-v1", vectorization_mode="async")
     assert isinstance(env, AsyncVectorEnv)
     env.close()
+
+    gym.register("VecOnlyEnv-v0", vector_entry_point=CartPoleVectorEnv)
+    with pytest.raises(
+        gym.error.Error,
+        match=re.escape(
+            "Cannot create vectorized environment for VecOnlyEnv-v0 because it doesn't have an entry point defined."
+        ),
+    ):
+        gym.make_vec("VecOnlyEnv-v0", vectorization_mode="async")
+    del gym.registry["VecOnlyEnv-v0"]
 
     env = gym.make_vec("CartPole-v1", vectorization_mode="sync")
     assert isinstance(env, SyncVectorEnv)
@@ -76,9 +118,18 @@ def test_make_vec_wrappers():
         ("CartPole-v1", {}),
         ("CartPole-v1", {"num_envs": 3}),
         ("CartPole-v1", {"vectorization_mode": "sync"}),
-        ("CartPole-v1", {"vectorization_mode": "custom"}),
-        ("CartPole-v1", {"vector_kwargs": {"copy": False}}),
-        ("CartPole-v1", {"wrappers": (gym.wrappers.TimeAwareObservation,)}),
+        ("CartPole-v1", {"vectorization_mode": "vector_entry_point"}),
+        (
+            "CartPole-v1",
+            {"vector_kwargs": {"copy": False}, "vectorization_mode": "sync"},
+        ),
+        (
+            "CartPole-v1",
+            {
+                "wrappers": (gym.wrappers.TimeAwareObservation,),
+                "vectorization_mode": "sync",
+            },
+        ),
         ("CartPole-v1", {"render_mode": "rgb_array"}),
     ),
 )

@@ -29,6 +29,41 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
         instantiated or the policy was changed recently.
+
+    Example without the normalize reward wrapper:
+        >>> import gymnasium as gym
+        >>> import numpy as np
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", 3)
+        >>> _ = envs.reset(seed=123)
+        >>> _ = envs.action_space.seed(123)
+        >>> episode_rewards = []
+        >>> for _ in range(100):
+        ...     observation, reward, *_ = envs.step(envs.action_space.sample())
+        ...     episode_rewards.append(reward)
+        ...
+        >>> envs.close()
+        >>> np.mean(episode_rewards)
+        -0.03359492141887935
+        >>> np.std(episode_rewards)
+        0.029028230434438706
+
+    Example with the normalize reward wrapper:
+        >>> import gymnasium as gym
+        >>> import numpy as np
+        >>> envs = gym.make_vec("MountainCarContinuous-v0", 3)
+        >>> envs = NormalizeReward(envs)
+        >>> _ = envs.reset(seed=123)
+        >>> _ = envs.action_space.seed(123)
+        >>> episode_rewards = []
+        >>> for _ in range(100):
+        ...     observation, reward, *_ = envs.step(envs.action_space.sample())
+        ...     episode_rewards.append(reward)
+        ...
+        >>> envs.close()
+        >>> np.mean(episode_rewards)
+        -0.1598639586606745
+        >>> np.std(episode_rewards)
+        0.27800309628058434
     """
 
     def __init__(

@@ -39,10 +39,12 @@ class TransformObservation(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Applies a function to the ``observation`` received from the environment's ``reset`` and ``step`` that is passed back to the user.
+    """Applies a function to the ``observation`` received from the environment's :meth:`Env.reset` and :meth:`Env.step` that is passed back to the user.
 
     The function :attr:`func` will be applied to all observations.
-    If the observations from :attr:`func` are outside the bounds of the ``env``'s observation space, provide an :attr:`observation_space`.
+    If the observations from :attr:`func` are outside the bounds of the ``env``'s observation space, provide an updated :attr:`observation_space`.
+
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.TransformObservation`.
 
     Example:
         >>> import gymnasium as gym
@@ -56,6 +58,10 @@ class TransformObservation(
         >>> env = TransformObservation(env, lambda obs: obs + 0.1 * np.random.random(obs.shape), env.observation_space)
         >>> env.reset(seed=42)
         (array([0.08227695, 0.06540678, 0.09613613, 0.07422512]), {})
+
+    Change logs:
+     * v0.15.4 - Initially added
+     * v1.0.0 - Add requirement of ``observation_space``
     """
 
     def __init__(
@@ -92,6 +98,8 @@ class FilterObservation(
 ):
     """Filters a Dict or Tuple observation spaces by a set of keys or indexes.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.FilterObservation`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FilterObservation
@@ -106,6 +114,10 @@ class FilterObservation(
         ({'time': array([0], dtype=int32)}, {})
         >>> env.step(0)
         ({'time': array([1], dtype=int32)}, 1.0, False, False, {})
+
+    Change logs:
+     * v0.12.3 - Initially added, originally called `FilterObservationWrapper`
+     * v1.0.0 - Rename to `FilterObservation` and add support for tuple observation spaces with integer ``filter_keys``
     """
 
     def __init__(
@@ -205,6 +217,8 @@ class FlattenObservation(
 ):
     """Flattens the environment's observation space and each observation from ``reset`` and ``step`` functions.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.FlattenObservation`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FlattenObservation
@@ -217,6 +231,9 @@ class FlattenObservation(
         >>> obs, _ = env.reset()
         >>> obs.shape
         (27648,)
+
+    Change logs:
+     * v0.15.0 - Initially added
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
@@ -242,6 +259,8 @@ class GrayscaleObservation(
 
     The :attr:`keep_dim` will keep the channel dimension.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.GrayscaleObservation`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import GrayscaleObservation
@@ -254,6 +273,10 @@ class GrayscaleObservation(
         >>> grayscale_env = GrayscaleObservation(env, keep_dim=True)
         >>> grayscale_env.observation_space.shape
         (96, 96, 1)
+
+    Change logs:
+     * v0.15.0 - Initially added, originally called ``GrayScaleObservation``
+     * v1.0.0 - Renamed to ``GrayscaleObservation``
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], keep_dim: bool = False):
@@ -314,6 +337,8 @@ class ResizeObservation(
 ):
     """Resizes image observations using OpenCV to a specified shape.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.ResizeObservation`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ResizeObservation
@@ -323,6 +348,10 @@ class ResizeObservation(
         >>> resized_env = ResizeObservation(env, (32, 32))
         >>> resized_env.observation_space.shape
         (32, 32, 3)
+
+    Change logs:
+     * v0.12.6 - Initially added
+     * v1.0.0 - Requires ``shape`` with a tuple of two integers
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], shape: tuple[int, int]):
@@ -379,6 +408,8 @@ class ReshapeObservation(
 ):
     """Reshapes Array based observations to a specified shape.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleObservation`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ReshapeObservation
@@ -388,6 +419,9 @@ class ReshapeObservation(
         >>> reshape_env = ReshapeObservation(env, (24, 4, 96, 1, 3))
         >>> reshape_env.observation_space.shape
         (24, 4, 96, 1, 3)
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], shape: int | tuple[int, ...]):
@@ -427,6 +461,8 @@ class RescaleObservation(
 ):
     """Affinely (linearly) rescales a ``Box`` observation space of the environment to within the range of ``[min_obs, max_obs]``.
 
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleObservation`.
+
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import RescaleObservation
@@ -436,6 +472,9 @@ class RescaleObservation(
         >>> env = RescaleObservation(env, np.array([-2, -1, -10], dtype=np.float32), np.array([1, 0, 1], dtype=np.float32))
         >>> env.observation_space
         Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32)
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(
@@ -509,6 +548,11 @@ class DtypeObservation(
 
     Note:
         This is only compatible with :class:`Box`, :class:`Discrete`, :class:`MultiDiscrete` and :class:`MultiBinary` observation spaces
+
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.DtypeObservation`.
+
+    Change logs:
+     * v1.0.0 - Initially added
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], dtype: Any):
@@ -572,8 +616,9 @@ class RenderObservation(
     Notes:
        This was previously called ``PixelObservationWrapper``.
 
-    Example:
-        Replace the observation with the rendered image:
+    No vector version of the wrapper exists.
+
+    Example - Replace the observation with the rendered image:
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = RenderObservation(env, render_only=True)
         >>> env.observation_space
@@ -587,22 +632,26 @@ class RenderObservation(
         >>> np.all(obs == image)
         True
 
-        Add the rendered image to the original observation as a dictionary item:
+    Example - Add the rendered image to the original observation as a dictionary item:
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = RenderObservation(env, render_only=False)
         >>> env.observation_space
         Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
-        >>> obs, _ = env.reset(seed=123)
+        >>> obs, info = env.reset(seed=123)
         >>> obs.keys()
         dict_keys(['state', 'pixels'])
         >>> obs["state"]
         array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
         >>> np.all(obs["pixels"] == env.render())
         True
-        >>> obs, *_ = env.step(env.action_space.sample())
+        >>> obs, reward, terminates, truncates, info = env.step(env.action_space.sample())
         >>> image = env.render()
         >>> np.all(obs["pixels"] == image)
         True
+
+    Change logs:
+     * v0.15.0 - Initially added as ``PixelObservationWrapper``
+     * v1.0.0 - Renamed to ``RenderObservation``
     """
 
     def __init__(

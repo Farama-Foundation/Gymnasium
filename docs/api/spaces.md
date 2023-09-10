@@ -79,9 +79,9 @@ This can be important for passing information to neural networks.
 .. py:currentmodule:: gymnasium.spaces
 
 * :class:`utils.flatdim` - The number of dimensions the flattened space will contain
-* :class:`utils.flatten_space` - Flattens a space for which the `flattened` space instances will contain
+* :class:`utils.flatten_space` - Flattens a space for which the :class:`utils.flattened` space instances will contain
 * :class:`utils.flatten` - Flattens an instance of a space that is contained within the flattened version of the space
-* :class:`utils.unflatten` - The reverse of the `flatten_space` function
+* :class:`utils.unflatten` - The reverse of the :class:`utils.flatten_space` function
 ```
 
 ## Vector Utility functions

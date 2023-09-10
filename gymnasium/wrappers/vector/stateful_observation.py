@@ -25,6 +25,33 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
     Note:
         The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
         newly instantiated or the policy was changed recently.
+
+    Example without the normalize reward wrapper:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+        >>> obs, info = envs.reset(seed=123)
+        >>> _ = envs.action_space.seed(123)
+        >>> for _ in range(100):
+        ...     obs, *_ = envs.step(envs.action_space.sample())
+        >>> np.mean(obs)
+        -0.017698428
+        >>> np.std(obs)
+        0.62041104
+        >>> envs.close()
+
+    Example with the normalize reward wrapper:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+        >>> envs = NormalizeObservation(envs)
+        >>> obs, info = envs.reset(seed=123)
+        >>> _ = envs.action_space.seed(123)
+        >>> for _ in range(100):
+        ...     obs, *_ = envs.step(envs.action_space.sample())
+        >>> np.mean(obs)
+        -0.28381696
+        >>> np.std(obs)
+        1.21742
+        >>> envs.close()
     """
 
     def __init__(self, env: VectorEnv, epsilon: float = 1e-8):
