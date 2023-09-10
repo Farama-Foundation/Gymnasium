@@ -6,6 +6,7 @@ from typing import Any
 import jax
 import jax.numpy as jnp
 import jax.random as jrng
+import numpy as np
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
@@ -37,6 +38,8 @@ class FunctionalJaxEnv(gym.Env):
 
         self.observation_space = func_env.observation_space
         self.action_space = func_env.action_space
+
+        self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
         self.metadata = metadata
         self.render_mode = render_mode
@@ -73,6 +76,13 @@ class FunctionalJaxEnv(gym.Env):
 
     def step(self, action: ActType):
         """Steps through the environment using the action."""
+        # This doesn't make much sense as you would love to pass a jax array however this will fail a dim check test, to investigate
+        if self._is_box_action_space:
+            assert isinstance(self.action_space, gym.spaces.Box)  # For typing
+            action = np.clip(action, self.action_space.low, self.action_space.high)
+        else:
+            assert self.action_space.contains(action)
+
         rng, self.rng = jrng.split(self.rng)
 
         next_state = self.func_env.transition(self.state, action, rng)
