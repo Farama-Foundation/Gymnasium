@@ -22,5 +22,8 @@ These environments all involve toy games based around physics control, using [bo
 The unique dependencies for this set of environments can be installed via:
 
 ````bash
+pip install swig
 pip install gymnasium[box2d]
 ````
+
+[SWIG](https://swig.org/) is necessary for building the wheel for [box2d-py](https://pypi.org/project/box2d-py/), the Python package that provides bindings to box2d.

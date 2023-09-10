@@ -227,7 +227,7 @@ def check_space_limit(space, space_type: str):
             )
         if np.any(np.equal(space.high, np.inf)):
             logger.warn(
-                f"A Box {space_type} space maximum value is -infinity. This is probably too high."
+                f"A Box {space_type} space maximum value is infinity. This is probably too high."
             )
 
         # Check that the Box space is normalized

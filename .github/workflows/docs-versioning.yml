@@ -21,10 +21,6 @@ jobs:
         with:
             python-version: '3.9'
 
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
-
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
 
@@ -50,11 +46,12 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: _build
-          target-folder: ${{steps.tag.outputs.tag}}
+          target-folder: ${{github.ref_name}}
           clean: false
 
       - name: Upload to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ !contains(github.ref_name, 'a') }}
         with:
           folder: _build
           clean-exclude: |
