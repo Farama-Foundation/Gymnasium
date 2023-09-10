@@ -11,7 +11,7 @@ import jax.random as jrng  # noqa: E402
 from gymnasium.envs.tabular.blackjack import BlackjackFunctional  # noqa: E402
 
 
-def test_normal_BlackjackFunctional():
+def test_blackjack():
     """Tests to ensure that blackjack env step and reset functions return the correct types."""
     env = BlackjackFunctional()
     rng = jrng.PRNGKey(0)
@@ -55,7 +55,7 @@ def test_normal_BlackjackFunctional():
         state = next_state
 
 
-def test_jit_BlackjackFunctional():
+def test_jit():
     """Tests the Jax BlackJack env, but in a jitted context."""
     env = BlackjackFunctional()
     rng = jrng.PRNGKey(0)
@@ -98,7 +98,7 @@ def test_jit_BlackjackFunctional():
         state = next_state
 
 
-def test_vmap_BlackJack():
+def test_vmap():
     """Tests the Jax Blackjack env with vmap."""
     env = BlackjackFunctional()
     num_envs = 10
