@@ -1,6 +1,6 @@
 import numpy as np
 
-from gymnasium.envs.classic_control.cartpole import CartPoleVectorEnv, CartPoleEnv
+from gymnasium.envs.classic_control.cartpole import CartPoleEnv, CartPoleVectorEnv
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.wrappers import TimeLimit
 
@@ -19,8 +19,12 @@ def test_num_env_1_equivalence():
     while not episode_over:
         actions = envs.action_space.sample()
 
-        env_obs, env_reward, env_terminated, env_truncated, env_info = env.step(actions[0])
-        envs_obs, envs_reward, envs_terminated, envs_truncated, envs_info = envs.step(actions)
+        env_obs, env_reward, env_terminated, env_truncated, env_info = env.step(
+            actions[0]
+        )
+        envs_obs, envs_reward, envs_terminated, envs_truncated, envs_info = envs.step(
+            actions
+        )
 
         assert np.allclose(env_obs, envs_obs[0])
         assert env_reward == envs_reward[0]
@@ -32,9 +36,11 @@ def test_num_env_1_equivalence():
 
     actions = envs.action_space.sample()
     env_obs, env_info = env.reset()
-    envs_obs, envs_reward, envs_terminated, envs_truncated, envs_info = envs.step(actions)
+    envs_obs, envs_reward, envs_terminated, envs_truncated, envs_info = envs.step(
+        actions
+    )
     assert np.allclose(env_obs, envs_obs[0])
-    assert np.all(envs_reward == np.array([0.]))
+    assert np.all(envs_reward == np.array([0.0]))
     assert np.all(envs_terminated == np.array([False]))
     assert np.all(envs_truncated == np.array([False]))
     assert data_equivalence(env_info, envs_info)
@@ -48,7 +54,7 @@ def test_timelimit(time_limit=5):
     env.reset(seed=123)
     envs.reset(seed=123)
 
-    for _ in range(time_limit-1):
+    for _ in range(time_limit - 1):
         actions = envs.action_space.sample()
         _, _, env_terminated, env_truncated, _ = env.step(actions[0])
         _, _, envs_terminated, envs_truncated, _ = envs.step(actions)
@@ -65,9 +71,11 @@ def test_timelimit(time_limit=5):
 
     actions = envs.action_space.sample()
     env_obs, env_info = env.reset()
-    envs_obs, envs_reward, envs_terminated, envs_truncated, envs_info = envs.step(actions)
+    envs_obs, envs_reward, envs_terminated, envs_truncated, envs_info = envs.step(
+        actions
+    )
     assert np.allclose(env_obs, envs_obs[0])
-    assert np.all(envs_reward == np.array([0.]))
+    assert np.all(envs_reward == np.array([0.0]))
     assert np.all(envs_terminated == np.array([False]))
     assert np.all(envs_truncated == np.array([False]))
     assert data_equivalence(env_info, envs_info)

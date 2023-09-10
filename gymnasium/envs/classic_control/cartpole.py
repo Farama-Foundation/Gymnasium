@@ -447,7 +447,9 @@ class CartPoleVectorEnv(VectorEnv):
             | (self.state[2] < -self.theta_threshold_radians)
             | (self.state[2] > self.theta_threshold_radians)
         )
-        truncations: np.ndarray = np.logical_and(self.max_episode_steps > 0, self.env_steps >= self.max_episode_steps)
+        truncations: np.ndarray = np.logical_and(
+            self.max_episode_steps > 0, self.env_steps >= self.max_episode_steps
+        )
         rewards = np.logical_not(self.autoreset_env).astype(np.float32)
 
         self.autoreset_env = np.logical_or(terminations, truncations)

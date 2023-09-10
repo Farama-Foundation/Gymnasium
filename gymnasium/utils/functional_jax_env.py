@@ -6,7 +6,6 @@ from typing import Any
 import jax
 import jax.numpy as jnp
 import jax.random as jrng
-import numpy as np
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
@@ -16,10 +15,7 @@ from gymnasium.vector.utils import batch_space
 from gymnasium.wrappers.jax_to_numpy import jax_to_numpy
 
 
-__all__ = [
-    "FunctionalJaxEnv",
-    "FunctionalJaxVectorEnv"
-]
+__all__ = ["FunctionalJaxEnv", "FunctionalJaxVectorEnv"]
 
 
 class FunctionalJaxEnv(gym.Env):
@@ -179,11 +175,17 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         rng, self.rng = jrng.split(self.rng)
         rng = jrng.split(rng, self.num_envs)
 
-        next_state = jnp.where(self.autoreset, self.func_env.initial(rng), self.func_env.transition(self.state, action, rng))
-        self.steps = jnp.where(self.autoreset, 0, self.steps+1)
+        next_state = jnp.where(
+            self.autoreset,
+            self.func_env.initial(rng),
+            self.func_env.transition(self.state, action, rng),
+        )
+        self.steps = jnp.where(self.autoreset, 0, self.steps + 1)
 
         observation = jax_to_numpy(self.func_env.observation(next_state))
-        reward = jnp.where(self.autoreset, 0.0, self.func_env.reward(self.state, action, next_state))
+        reward = jnp.where(
+            self.autoreset, 0.0, self.func_env.reward(self.state, action, next_state)
+        )
         terminated = self.func_env.terminal(next_state)
         truncated = jnp.logical_and(self.time_limit > 0, self.steps >= self.time_limit)
         info = self.func_env.transition_info(self.state, action, next_state)
