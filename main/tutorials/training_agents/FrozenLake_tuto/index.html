@@ -480,8 +480,8 @@
 <p>In this post we’ll compare a bunch of different map sizes on the
 <a class="reference external" href="https://gymnasium.farama.org/environments/toy_text/frozen_lake/">FrozenLake</a>
 environment from the reinforcement learning
-<a class="reference external" href="https://gymnasium.farama.org/">Gymnasium</a> using the Q-learning
-algorithm.</p>
+<a class="reference external" href="https://gymnasium.farama.org/">Gymnasium</a> package using the
+Q-learning algorithm.</p>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
 <p>Let’s first import a few dependencies we’ll need.</p>
@@ -701,8 +701,8 @@ results of the simulation in Pandas dataframes.</p>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="n">data</span><span class="o">=</span><span class="p">{</span>
             <span class="s2">&quot;Episodes&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">episodes</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">n_runs</span><span class="p">),</span>
-            <span class="s2">&quot;Rewards&quot;</span><span class="p">:</span> <span class="n">rewards</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-            <span class="s2">&quot;Steps&quot;</span><span class="p">:</span> <span class="n">steps</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="s2">&quot;Rewards&quot;</span><span class="p">:</span> <span class="n">rewards</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;Steps&quot;</span><span class="p">:</span> <span class="n">steps</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">),</span>
         <span class="p">}</span>
     <span class="p">)</span>
     <span class="n">res</span><span class="p">[</span><span class="s2">&quot;cum_rewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">)</span>
