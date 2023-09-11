@@ -9,8 +9,8 @@ Frozenlake benchmark
 # In this post we'll compare a bunch of different map sizes on the
 # `FrozenLake <https://gymnasium.farama.org/environments/toy_text/frozen_lake/>`__
 # environment from the reinforcement learning
-# `Gymnasium <https://gymnasium.farama.org/>`__ using the Q-learning
-# algorithm.
+# `Gymnasium <https://gymnasium.farama.org/>`__ package using the
+# Q-learning algorithm.
 #
 
 
@@ -263,8 +263,8 @@ def postprocess(episodes, params, rewards, steps, map_size):
     res = pd.DataFrame(
         data={
             "Episodes": np.tile(episodes, reps=params.n_runs),
-            "Rewards": rewards.flatten(),
-            "Steps": steps.flatten(),
+            "Rewards": rewards.flatten(order="F"),
+            "Steps": steps.flatten(order="F"),
         }
     )
     res["cum_rewards"] = rewards.cumsum(axis=0).flatten(order="F")

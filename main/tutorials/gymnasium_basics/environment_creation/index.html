@@ -479,40 +479,68 @@
 <span id="sphx-glr-tutorials-gymnasium-basics-environment-creation-py"></span><h1>Make your own custom environment<a class="headerlink" href="#make-your-own-custom-environment" title="Link to this heading">#</a></h1>
 <p>This documentation overviews creating new environments and relevant
 useful wrappers, utilities and tests included in Gymnasium designed for
-the creation of new environments. You can clone gym-examples to play
-with the code that is presented here. We recommend that you use a virtual environment:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone https://github.com/Farama-Foundation/gym-examples</span>
-<span class="go">cd gym-examples</span>
-<span class="go">python -m venv .env</span>
-<span class="go">source .env/bin/activate</span>
-<span class="go">pip install -e .</span>
+the creation of new environments.</p>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<section id="recommended-solution">
+<h3>Recommended solution<a class="headerlink" href="#recommended-solution" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Install <code class="docutils literal notranslate"><span class="pre">pipx</span></code> following the <a class="reference external" href="https://pypa.github.io/pipx/installation/">pipx documentation</a>.</p></li>
+<li><p>Then install Copier:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pipx install copier</span>
 </pre></div>
 </div>
+</section>
+<section id="alternative-solutions">
+<h3>Alternative solutions<a class="headerlink" href="#alternative-solutions" title="Link to this heading">#</a></h3>
+<p>Install Copier with Pip or Conda:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install copier</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">conda install -c conda-forge copier</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="generate-your-environment">
+<h2>Generate your environment<a class="headerlink" href="#generate-your-environment" title="Link to this heading">#</a></h2>
+<p>You can check that <code class="docutils literal notranslate"><span class="pre">Copier</span></code> has been correctly installed by running the following command, which should output a version number:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">copier --version</span>
+</pre></div>
+</div>
+<p>Then you can just run the following command and replace the string <code class="docutils literal notranslate"><span class="pre">path/to/directory</span></code> by the path to the directory where you want to create your new project.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">copier copy https://github.com/Farama-Foundation/gymnasium-env-template.git &quot;path/to/directory&quot;</span>
+</pre></div>
+</div>
+<p>Answer the questions, and when it’s finished you should get a project structure like the following:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>.
+├──<span class="w"> </span>gymnasium_env
+│<span class="w">   </span>├──<span class="w"> </span>envs
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>grid_world.py
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>__init__.py
+│<span class="w">   </span>├──<span class="w"> </span>__init__.py
+│<span class="w">   </span>└──<span class="w"> </span>wrappers
+│<span class="w">       </span>├──<span class="w"> </span>clip_reward.py
+│<span class="w">       </span>├──<span class="w"> </span>discrete_actions.py
+│<span class="w">       </span>├──<span class="w"> </span>__init__.py
+│<span class="w">       </span>├──<span class="w"> </span>reacher_weighted_reward.py
+│<span class="w">       </span>└──<span class="w"> </span>relative_position.py
+├──<span class="w"> </span>LICENSE
+├──<span class="w"> </span>pyproject.toml
+└──<span class="w"> </span>README.md
+</pre></div>
+</div>
+</section>
 <section id="subclassing-gymnasium-env">
 <h2>Subclassing gymnasium.Env<a class="headerlink" href="#subclassing-gymnasium-env" title="Link to this heading">#</a></h2>
 <p>Before learning how to create your own environment you should check out
 <a class="reference external" href="/api/env">the documentation of Gymnasium’s API</a>.</p>
-<p>We will be concerned with a subset of gym-examples that looks like this:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gym-examples/
-<span class="w">  </span>README.md
-<span class="w">  </span>setup.py
-<span class="w">  </span>gym_examples/
-<span class="w">    </span>__init__.py
-<span class="w">    </span>envs/
-<span class="w">      </span>__init__.py
-<span class="w">      </span>grid_world.py
-<span class="w">    </span>wrappers/
-<span class="w">      </span>__init__.py
-<span class="w">      </span>relative_position.py
-<span class="w">      </span>reacher_weighted_reward.py
-<span class="w">      </span>discrete_action.py
-<span class="w">      </span>clip_reward.py
-</pre></div>
-</div>
 <p>To illustrate the process of subclassing <code class="docutils literal notranslate"><span class="pre">gymnasium.Env</span></code>, we will
 implement a very simplistic game, called <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>. We will write
 the code for our custom environment in
-<code class="docutils literal notranslate"><span class="pre">gym-examples/gym_examples/envs/grid_world.py</span></code>. The environment
+<code class="docutils literal notranslate"><span class="pre">gymnasium_env/envs/grid_world.py</span></code>. The environment
 consists of a 2-dimensional square grid of fixed size (specified via the
 <code class="docutils literal notranslate"><span class="pre">size</span></code> parameter during construction). The agent can move vertically
 or horizontally between grid cells in each timestep. The goal of the
@@ -552,11 +580,21 @@ may look like <code class="docutils literal notranslate"><span class="pre">{&quo
 Since we have 4 actions in our environment (“right”, “up”, “left”,
 “down”), we will use <code class="docutils literal notranslate"><span class="pre">Discrete(4)</span></code> as an action space. Here is the
 declaration of <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code> and the implementation of <code class="docutils literal notranslate"><span class="pre">__init__</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># gymnasium_env/envs/grid_world.py</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pygame</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">spaces</span>
+
+
+<span class="k">class</span> <span class="nc">Actions</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">up</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">down</span> <span class="o">=</span> <span class="mi">3</span>
 
 
 <span class="k">class</span> <span class="nc">GridWorldEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
@@ -581,13 +619,13 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The following dictionary maps abstract actions from `self.action_space` to</span>
 <span class="sd">        the direction we will walk in if that action is taken.</span>
-<span class="sd">        I.e. 0 corresponds to &quot;right&quot;, 1 to &quot;up&quot; etc.</span>
+<span class="sd">        i.e. 0 corresponds to &quot;right&quot;, 1 to &quot;up&quot; etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="mi">0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
-            <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
-            <span class="mi">2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
-            <span class="mi">3</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">right</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">up</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">left</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">down</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
         <span class="p">}</span>
 
         <span class="k">assert</span> <span class="n">render_mode</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">render_mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]</span>
@@ -803,21 +841,20 @@ after having called <code class="docutils literal notranslate"><span class="pre"
 <h2>Registering Envs<a class="headerlink" href="#registering-envs" title="Link to this heading">#</a></h2>
 <p>In order for the custom environments to be detected by Gymnasium, they
 must be registered as follows. We will choose to put this code in
-<code class="docutils literal notranslate"><span class="pre">gym-examples/gym_examples/__init__.py</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">gymnasium_env/__init__.py</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">register</span>
 
 <span class="n">register</span><span class="p">(</span>
-     <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;gym_examples/GridWorld-v0&quot;</span><span class="p">,</span>
-     <span class="n">entry_point</span><span class="o">=</span><span class="s2">&quot;gym_examples.envs:GridWorldEnv&quot;</span><span class="p">,</span>
-     <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;gymnasium_env/GridWorld-v0&quot;</span><span class="p">,</span>
+    <span class="n">entry_point</span><span class="o">=</span><span class="s2">&quot;gymnasium_env.envs:GridWorldEnv&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>The environment ID consists of three components, two of which are
-optional: an optional namespace (here: <code class="docutils literal notranslate"><span class="pre">gym_examples</span></code>), a mandatory
+optional: an optional namespace (here: <code class="docutils literal notranslate"><span class="pre">gymnasium_env</span></code>), a mandatory
 name (here: <code class="docutils literal notranslate"><span class="pre">GridWorld</span></code>) and an optional but recommended version
 (here: v0). It might have also been registered as <code class="docutils literal notranslate"><span class="pre">GridWorld-v0</span></code> (the
-recommended approach), <code class="docutils literal notranslate"><span class="pre">GridWorld</span></code> or <code class="docutils literal notranslate"><span class="pre">gym_examples/GridWorld</span></code>, and
+recommended approach), <code class="docutils literal notranslate"><span class="pre">GridWorld</span></code> or <code class="docutils literal notranslate"><span class="pre">gymnasium_env/GridWorld</span></code>, and
 the appropriate ID should then be used during environment creation.</p>
 <p>The keyword argument <code class="docutils literal notranslate"><span class="pre">max_episode_steps=300</span></code> will ensure that
 GridWorld environments that are instantiated via <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> will
@@ -876,18 +913,18 @@ additional keyword arguments to <code class="docutils literal notranslate"><span
 environment instances but merely provide some extra information about
 your environment. After registration, our custom <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>
 environment can be created with
-<code class="docutils literal notranslate"><span class="pre">env</span> <span class="pre">=</span> <span class="pre">gymnasium.make('gym_examples/GridWorld-v0')</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">gym-examples/gym_examples/envs/__init__.py</span></code> should have:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gym_examples.envs.grid_world</span> <span class="kn">import</span> <span class="n">GridWorldEnv</span>
+<code class="docutils literal notranslate"><span class="pre">env</span> <span class="pre">=</span> <span class="pre">gymnasium.make('gymnasium_env/GridWorld-v0')</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">gymnasium_env/envs/__init__.py</span></code> should have:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gymnasium_env.envs.grid_world</span> <span class="kn">import</span> <span class="n">GridWorldEnv</span>
 </pre></div>
 </div>
 <p>If your environment is not registered, you may optionally pass a module
 to import, that would register your environment before creating it like
 this - <code class="docutils literal notranslate"><span class="pre">env</span> <span class="pre">=</span> <span class="pre">gymnasium.make('module:Env-v0')</span></code>, where <code class="docutils literal notranslate"><span class="pre">module</span></code>
 contains the registration code. For the GridWorld env, the registration
-code is run by importing <code class="docutils literal notranslate"><span class="pre">gym_examples</span></code> so if it were not possible to
-import gym_examples explicitly, you could register while making by
-<code class="docutils literal notranslate"><span class="pre">env</span> <span class="pre">=</span> <span class="pre">gymnasium.make('gym_examples:gym_examples/GridWorld-v0)</span></code>. This
+code is run by importing <code class="docutils literal notranslate"><span class="pre">gymnasium_env</span></code> so if it were not possible to
+import gymnasium_env explicitly, you could register while making by
+<code class="docutils literal notranslate"><span class="pre">env</span> <span class="pre">=</span> <span class="pre">gymnasium.make('gymnasium_env:gymnasium_env/GridWorld-v0)</span></code>. This
 is especially useful when you’re allowed to pass only the environment ID
 into a third-party codebase (eg. learning library). This lets you
 register your environment without needing to edit the library’s source
@@ -896,31 +933,41 @@ code.</p>
 <section id="creating-a-package">
 <h2>Creating a Package<a class="headerlink" href="#creating-a-package" title="Link to this heading">#</a></h2>
 <p>The last step is to structure our code as a Python package. This
-involves configuring <code class="docutils literal notranslate"><span class="pre">gym-examples/setup.py</span></code>. A minimal example of how
+involves configuring <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>. A minimal example of how
 to do so is as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;hatchling&quot;</span><span class="p">]</span>
+<span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;hatchling.build&quot;</span>
 
-<span class="n">setup</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gym_examples&quot;</span><span class="p">,</span>
-    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
-    <span class="n">install_requires</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;gymnasium==0.26.0&quot;</span><span class="p">,</span> <span class="s2">&quot;pygame==2.1.0&quot;</span><span class="p">],</span>
-<span class="p">)</span>
+<span class="k">[project]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;gymnasium_env&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0.0.1&quot;</span>
+<span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="s">&quot;gymnasium&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;pygame==2.1.3&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;pre-commit&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 </section>
 <section id="creating-environment-instances">
 <h2>Creating Environment Instances<a class="headerlink" href="#creating-environment-instances" title="Link to this heading">#</a></h2>
-<p>After you have installed your package locally with
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">gym-examples</span></code>, you can create an instance of the
-environment via:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym_examples</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
+<p>Now you can install your package locally with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install -e .</span>
+</pre></div>
+</div>
+<p>And you can create an instance of the environment via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run_gymnasium_env.py</span>
+
+<span class="kn">import</span> <span class="nn">gymnasium</span>
+<span class="kn">import</span> <span class="nn">gymnasium_env</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gymnasium_env/GridWorld-v0&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can also pass keyword arguments of your environment’s constructor to
 <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> to customize the environment. In our case, we could
 do:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gymnasium_env/GridWorld-v0&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Sometimes, you may find it more convenient to skip registration and call
@@ -941,10 +988,11 @@ they are dictionaries. However, we don’t actually need to touch our
 environment implementation to fix this! We can simply add a wrapper on
 top of environment instances to flatten observations into a single
 array:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym_examples</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
+<span class="kn">import</span> <span class="nn">gymnasium_env</span>
 <span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">FlattenObservation</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gymnasium_env/GridWorld-v0&#39;</span><span class="p">)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">())</span>     <span class="c1"># E.g.  [3 0 3 3], {}</span>
 </pre></div>
@@ -953,13 +1001,14 @@ array:</p>
 modular. For instance, instead of flattening the observations from
 GridWorld, you might only want to look at the relative position of the
 target and the agent. In the section on
-<a class="reference external" href="/api/wrappers/#observationwrapper">ObservationWrappers</a> we have
+<a class="reference external" href="/api/wrappers/observation_wrappers/#observation-wrappers">ObservationWrappers</a> we have
 implemented a wrapper that does this job. This wrapper is also available
-in gym-examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym_examples</span>
-<span class="kn">from</span> <span class="nn">gym_examples.wrappers</span> <span class="kn">import</span> <span class="n">RelativePosition</span>
+in <code class="docutils literal notranslate"><span class="pre">gymnasium_env/wrappers/relative_position.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
+<span class="kn">import</span> <span class="nn">gymnasium_env</span>
+<span class="kn">from</span> <span class="nn">gymnasium_env.wrappers</span> <span class="kn">import</span> <span class="n">RelativePosition</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gym_examples/GridWorld-v0&#39;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gymnasium_env/GridWorld-v0&#39;</span><span class="p">)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RelativePosition</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">())</span>     <span class="c1"># E.g.  [-3  3], {}</span>
 </pre></div>
@@ -1045,6 +1094,12 @@ in gym-examples:</p>
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Make your own custom environment</a><ul>
+<li><a class="reference internal" href="#setup">Setup</a><ul>
+<li><a class="reference internal" href="#recommended-solution">Recommended solution</a></li>
+<li><a class="reference internal" href="#alternative-solutions">Alternative solutions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generate-your-environment">Generate your environment</a></li>
 <li><a class="reference internal" href="#subclassing-gymnasium-env">Subclassing gymnasium.Env</a><ul>
 <li><a class="reference internal" href="#declaration-and-initialization">Declaration and Initialization</a></li>
 <li><a class="reference internal" href="#constructing-observations-from-environment-states">Constructing Observations From Environment States</a></li>
