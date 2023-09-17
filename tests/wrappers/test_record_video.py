@@ -54,6 +54,24 @@ def test_record_video_while_rendering():
     shutil.rmtree("videos")
 
 
+def test_record_video_frames_to_disk():
+    env = gym.make("CartPole-v1", render_mode="rgb_array", disable_env_checker=True)
+    env = gym.wrappers.RecordVideo(
+        env, "videos", episode_trigger=lambda x: x % 100 == 0, frames_to_disk=True
+    )
+    ob_space = env.observation_space
+    obs, info = env.reset()
+    assert os.path.isdir(os.path.join("videos", "frames"))
+    assert os.path.isfile(os.path.join("videos", "frames", "frame_0.png"))
+    env.close()
+    assert os.path.isdir("videos")
+    assert any(file.endswith(".mp4") for file in os.listdir("videos"))
+    assert not os.path.isdir(os.path.join("videos", "frames"))
+    shutil.rmtree("videos")
+    assert ob_space.contains(obs)
+    assert isinstance(info, dict)
+
+
 def test_record_video_step_trigger():
     """Test RecordVideo defining step trigger function."""
     env = gym.make("CartPole-v1", render_mode="rgb_array", disable_env_checker=True)
