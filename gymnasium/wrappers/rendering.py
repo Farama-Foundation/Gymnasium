@@ -304,6 +304,9 @@ class RecordVideo(
                 f"(try specifying a different `video_folder` for the `RecordVideo` wrapper if this is not desired)"
             )
         os.makedirs(self.video_folder, exist_ok=True)
+        if self.frames_to_disk:
+            self.frames_folder = os.path.join(self.video_folder, "frames")
+            os.makedirs(self.frames_folder, exist_ok=True)
 
         if fps is None:
             fps = self.metadata.get("render_fps", 30)
