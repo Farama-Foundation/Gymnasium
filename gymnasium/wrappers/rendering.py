@@ -229,11 +229,10 @@ class RecordVideo(
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> env = RecordVideo(env, video_folder="./save_videos4", frames_to_disk=True, disable_logger=True)
-        >>> for i in range(3):
-        ...     termination, truncation = False, False
-        ...     _ = env.reset(seed=123)
-        ...     while not (termination or truncation):
-        ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())
+        >>> termination, truncation = False, False
+        >>> _ = env.reset(seed=123)
+        >>> while not (termination or truncation):
+        ...    obs, rew, termination, truncation, info = env.step(env.action_space.sample())
         ...
         >>> env.close()
         >>> len(os.listdir("./save_videos4"))
@@ -419,6 +418,10 @@ class RecordVideo(
 
         self.recording = True
         self._video_name = video_name
+
+        if self.frames_to_disk:
+            self.frames_folder = os.path.join(self.video_folder, "frames")
+            os.makedirs(self.frames_folder, exist_ok=True)
 
     def stop_recording(self):
         """Stop current recording and saves the video."""
