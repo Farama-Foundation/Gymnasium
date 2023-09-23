@@ -269,3 +269,7 @@ The OpenModelica Microgrid Gym (OMG) package is a software toolbox for the simul
 ### [GymFC: A flight control tuning and training framework](https://github.com/wil3/gymfc/)
 
 GymFC is a modular framework for synthesizing neuro-flight controllers. Has been used to generate policies for the world's first open-source neural network flight control firmware [Neuroflight](https://github.com/wil3/neuroflight).
+
+### [spark-sched-sim: Environments for scheduling DAG jobs in Apache Spark](https://github.com/ArchieGertsman/spark-sched-sim)
+
+spark-sched-sim simulates Spark clusters for RL-based job scheduling algorithms. Spark jobs are encoded as directed acyclic graphs (DAGs), providing opportunities to experiment with graph neural networks (GNN's) in the RL context.
