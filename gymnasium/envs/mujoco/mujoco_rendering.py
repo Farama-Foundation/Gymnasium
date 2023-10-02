@@ -134,9 +134,42 @@ class BaseRender:
 class OffScreenViewer(BaseRender):
     """Offscreen rendering class with opengl context."""
 
-    def __init__(self, model: "mujoco.MjMujoco", data: "mujoco.MjData"):
-        width = model.vis.global_.offwidth
-        height = model.vis.global_.offheight
+    def __init__(
+        self,
+        model: "mujoco.MjMujoco",
+        data: "mujoco.MjData",
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+    ):
+        buffer_width = model.vis.global_.offwidth
+        buffer_height = model.vis.global_.offheight
+
+        width = width or buffer_width
+        height = height or buffer_height
+
+        # check if the framebuffer is large enough to handle the requested image dimensions.
+        # same check as in `mujoco.Renderer` class
+        if width > buffer_width:
+            raise ValueError(
+                f"""
+Image width {width} > framebuffer width {buffer_width}. Either reduce the image
+width or specify a larger offscreen framebuffer in the model XML using the
+clause:
+<visual>
+<global offwidth="my_width"/>
+</visual>""".lstrip()
+            )
+
+        if height > buffer_height:
+            raise ValueError(
+                f"""
+Image height {height} > framebuffer height {buffer_height}. Either reduce the
+image height or specify a larger offscreen framebuffer in the model XML using
+the clause:
+<visual>
+<global offheight="my_height"/>
+</visual>""".lstrip()
+            )
 
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
@@ -632,6 +665,8 @@ class MujocoRenderer:
             model: MjModel data structure of the MuJoCo simulation
             data: MjData data structure of the MuJoCo simulation
             default_cam_config: dictionary with attribute values of the viewer's default camera, https://mujoco.readthedocs.io/en/latest/XMLreference.html?highlight=camera#visual-global
+            width: width of the OpenGL rendering context
+            height: height of the OpenGL rendering context
         """
         self.model = model
         self.data = data
@@ -695,16 +730,15 @@ class MujocoRenderer:
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
             if render_mode == "human":
-                self.viewer = WindowViewer(
-                    self.model, self.data, self.width, self.height
-                )
-
+                viewer_class = WindowViewer
             elif render_mode in {"rgb_array", "depth_array"}:
-                self.viewer = OffScreenViewer(self.model, self.data)
+                viewer_class = OffScreenViewer
             else:
                 raise AttributeError(
                     f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, or depth_array"
                 )
+            self.viewer = viewer_class(self.model, self.data, self.width, self.height)
+
             # Add default camera parameters
             self._set_cam_config()
             self._viewers[render_mode] = self.viewer
