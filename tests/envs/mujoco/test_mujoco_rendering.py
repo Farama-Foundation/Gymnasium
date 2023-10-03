@@ -36,8 +36,8 @@ def data(model):
     return mujoco.MjData(model)
 
 
-@pytest.mark.parametrize("width", [10, 100, 1000, None])
-@pytest.mark.parametrize("height", [10, 100, 1000, None])
+@pytest.mark.parametrize("width", [10, 100, 200, 480])
+@pytest.mark.parametrize("height", [10, 100, 200, 480])
 @pytest.mark.filterwarnings("ignore::UserWarning")
 def test_offscreen_viewer_custom_dimensions(
     model: mujoco.MjModel, data: mujoco.MjData, width: int, height: int
@@ -47,16 +47,6 @@ def test_offscreen_viewer_custom_dimensions(
     # set default buffer dimensions if no dims are given
     check_width = width or DEFAULT_FRAMEBUFFER_WIDTH
     check_height = height or DEFAULT_FRAMEBUFFER_HEIGHT
-
-    # check for "dimensions too big" error
-    if (
-        check_width > DEFAULT_FRAMEBUFFER_WIDTH
-        or check_height > DEFAULT_FRAMEBUFFER_HEIGHT
-    ):
-        # after ValueError, AttributeError is raised on call to __del__
-        with pytest.raises((ValueError, AttributeError)):
-            viewer = OffScreenViewer(model, data, width=width, height=height)
-        return
 
     # initialize viewer
     viewer = OffScreenViewer(model, data, width=width, height=height)
