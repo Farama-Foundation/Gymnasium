@@ -43,7 +43,7 @@ class BaseRender:
         data: "mujoco.MjData",
         width: int,
         height: int,
-        max_geom: Optional[int] = None,
+        max_geom: int = 1000,
     ):
         """Render context superclass for offscreen and window rendering."""
         self.model = model
@@ -55,7 +55,7 @@ class BaseRender:
         self.viewport = mujoco.MjrRect(0, 0, width, height)
 
         # This goes to specific visualizer
-        self.scn = mujoco.MjvScene(self.model, max_geom or 1000)
+        self.scn = mujoco.MjvScene(self.model, max_geom)
         self.cam = mujoco.MjvCamera()
         self.vopt = mujoco.MjvOption()
         self.pert = mujoco.MjvPerturb()
@@ -145,7 +145,7 @@ class OffScreenViewer(BaseRender):
         data: "mujoco.MjData",
         width: Optional[int] = None,
         height: Optional[int] = None,
-        max_geom: Optional[int] = None,
+        max_geom: int = 1000,
     ):
         buffer_width = model.vis.global_.offwidth
         buffer_height = model.vis.global_.offheight
@@ -326,7 +326,7 @@ class WindowViewer(BaseRender):
         data: "mujoco.MjData",
         width: Optional[int] = None,
         height: Optional[int] = None,
-        max_geom: Optional[int] = None,
+        max_geom: int = 1000,
     ):
         glfw.init()
 
@@ -665,7 +665,7 @@ class MujocoRenderer:
         default_cam_config: Optional[dict] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        max_geom: Optional[int] = None,
+        max_geom: int = 1000,
     ):
         """A wrapper for clipping continuous actions within the valid bound.
 
