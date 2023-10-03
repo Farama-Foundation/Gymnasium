@@ -147,35 +147,9 @@ class OffScreenViewer(BaseRender):
         height: Optional[int] = None,
         max_geom: int = 1000,
     ):
-        buffer_width = model.vis.global_.offwidth
-        buffer_height = model.vis.global_.offheight
-
-        width = width or buffer_width
-        height = height or buffer_height
-
-        # check if the framebuffer is large enough to handle the requested image dimensions.
-        # same check as in `mujoco.Renderer` class
-        if width > buffer_width:
-            raise ValueError(
-                f"""
-Image width {width} > framebuffer width {buffer_width}. Either reduce the image
-width or specify a larger offscreen framebuffer in the model XML using the
-clause:
-<visual>
-<global offwidth="my_width"/>
-</visual>""".lstrip()
-            )
-
-        if height > buffer_height:
-            raise ValueError(
-                f"""
-Image height {height} > framebuffer height {buffer_height}. Either reduce the
-image height or specify a larger offscreen framebuffer in the model XML using
-the clause:
-<visual>
-<global offheight="my_height"/>
-</visual>""".lstrip()
-            )
+        # set default buffer dimensions (as defined in the model) if no dims are given
+        width = width or model.vis.global_.offwidth
+        height = height or model.vis.global_.offheight
 
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
