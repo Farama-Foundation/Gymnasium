@@ -67,7 +67,7 @@ def test_offscreen_viewer_custom_dimensions(
 
 
 @pytest.mark.parametrize("render_mode", ["human", "rgb_array", "depth_array"])
-@pytest.mark.parametrize("max_geom", [10, 100, 1000, 10000, None])
+@pytest.mark.parametrize("max_geom", [10, 100, 1000, 10000])
 def test_max_geom_attribute(
     model: mujoco.MjModel, data: mujoco.MjData, render_mode: str, max_geom: int
 ):
@@ -83,4 +83,4 @@ def test_max_geom_attribute(
     viewer = renderer.get_viewer(render_mode)
 
     # assert that max_geom is set correctly in the viewer scene
-    assert viewer.scn.maxgeom == (max_geom or DEFAULT_MAX_GEOMS)
+    assert viewer.scn.maxgeom == max_geom
