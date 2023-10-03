@@ -3,14 +3,13 @@ import os
 import mujoco
 import pytest
 
+from gymnasium.envs.mujoco.mujoco_env import DEFAULT_SIZE
 from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer, OffScreenViewer
 
 
 ASSET_PATH = os.path.join(
     os.path.dirname(__file__), "assets", "walker2d_v5_uneven_feet.xml"
 )
-DEFAULT_FRAMEBUFFER_WIDTH = 480
-DEFAULT_FRAMEBUFFER_HEIGHT = 480
 DEFAULT_MAX_GEOMS = 1000
 
 
@@ -25,8 +24,8 @@ class ExposedViewerRenderer(MujocoRenderer):
 def model():
     """Initialize a model."""
     model = mujoco.MjModel.from_xml_path(ASSET_PATH)
-    model.vis.global_.offwidth = DEFAULT_FRAMEBUFFER_WIDTH
-    model.vis.global_.offheight = DEFAULT_FRAMEBUFFER_HEIGHT
+    model.vis.global_.offwidth = DEFAULT_SIZE
+    model.vis.global_.offheight = DEFAULT_SIZE
     return model
 
 
@@ -44,16 +43,12 @@ def test_offscreen_viewer_custom_dimensions(
 ):
     """Test that the offscreen viewer has the correct dimensions."""
 
-    # set default buffer dimensions if no dims are given
-    check_width = width or DEFAULT_FRAMEBUFFER_WIDTH
-    check_height = height or DEFAULT_FRAMEBUFFER_HEIGHT
-
     # initialize viewer
     viewer = OffScreenViewer(model, data, width=width, height=height)
 
     # assert viewer dimensions
-    assert viewer.viewport.width == check_width
-    assert viewer.viewport.height == check_height
+    assert viewer.viewport.width == width
+    assert viewer.viewport.height == height
 
 
 @pytest.mark.parametrize("render_mode", ["human", "rgb_array", "depth_array"])
