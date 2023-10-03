@@ -9,7 +9,7 @@ from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer, OffScreenView
 ASSET_PATH = os.path.join(
     os.path.dirname(__file__), "assets", "walker2d_v5_uneven_feet.xml"
 )
-DEFAULT_FRAMEBUFFER_WIDTH = 640
+DEFAULT_FRAMEBUFFER_WIDTH = 480
 DEFAULT_FRAMEBUFFER_HEIGHT = 480
 DEFAULT_MAX_GEOMS = 1000
 
