@@ -717,12 +717,10 @@ class MujocoRenderer:
                 self.viewer = WindowViewer(
                     self.model, self.data, self.width, self.height, self.max_geom
                 )
-
             elif render_mode in {"rgb_array", "depth_array"}:
                 self.viewer = OffScreenViewer(
                     self.model, self.data, self.width, self.height, self.max_geom
                 )
-
             else:
                 raise AttributeError(
                     f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, or depth_array"
