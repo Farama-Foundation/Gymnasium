@@ -50,6 +50,10 @@ def test_offscreen_viewer_custom_dimensions(
     assert viewer.viewport.width == width
     assert viewer.viewport.height == height
 
+    # check that the render method returns an image of the correct shape
+    img = viewer.render(render_mode="rgb_array")
+    assert img.shape == (height, width, 3)
+
 
 @pytest.mark.parametrize("render_mode", ["human", "rgb_array", "depth_array"])
 @pytest.mark.parametrize("max_geom", [10, 100, 1000, 10000])
