@@ -17,13 +17,6 @@ many-agent RL ([MAgent2](https://magent2.farama.org/)),
 
 *If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/nHg2JRN489).*
 
-### [QWOP: An environment for Bennet Foddy's game QWOP](https://github.com/smanolloff/qwop-gym)
-
-![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
-![GitHub stars](https://img.shields.io/github/stars/smanolloff/qwop-gym)
-
-QWOP is a game about running extremely fast down a 100 meter track. With this Gymnasium environment you can train your own agents and try to beat the current world record (5.0 in-game seconds for humans and 4.7 for AI).
-
 ### [CARL: context adaptive RL](https://github.com/automl/CARL)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
@@ -107,6 +100,13 @@ An open, minimalist Gymnasium environment for autonomous coordination in wireles
 ![GitHub stars](https://img.shields.io/github/stars/qgallouedec/panda-gym)
 
 PyBullet based simulations of a robotic arm moving objects.
+
+### [QWOP: An environment for Bennet Foddy's game QWOP](https://github.com/smanolloff/qwop-gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/smanolloff/qwop-gym)
+
+QWOP is a game about running extremely fast down a 100 meter track. With this Gymnasium environment you can train your own agents and try to beat the current world record (5.0 in-game seconds for humans and 4.7 for AI).
 
 ### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
 
