@@ -63,7 +63,9 @@ def test_max_geom_attribute(
     """Test that the max_geom attribute is set correctly."""
 
     # initialize renderer
-    renderer = ExposedViewerRenderer(model, data, max_geom=max_geom)
+    renderer = ExposedViewerRenderer(
+        model, data, width=DEFAULT_SIZE, height=DEFAULT_SIZE, max_geom=max_geom
+    )
 
     # assert max_geom attribute
     assert renderer.max_geom == max_geom
