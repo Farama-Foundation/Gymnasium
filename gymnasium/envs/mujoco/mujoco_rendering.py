@@ -143,14 +143,10 @@ class OffScreenViewer(BaseRender):
         self,
         model: "mujoco.MjMujoco",
         data: "mujoco.MjData",
-        width: Optional[int] = None,
-        height: Optional[int] = None,
+        width: int,
+        height: int,
         max_geom: int = 1000,
     ):
-        # set default buffer dimensions (as defined in the model) if no dims are given
-        width = width or model.vis.global_.offwidth
-        height = height or model.vis.global_.offheight
-
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
 
