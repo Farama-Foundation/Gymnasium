@@ -54,6 +54,9 @@ def test_offscreen_viewer_custom_dimensions(
     img = viewer.render(render_mode="rgb_array")
     assert img.shape == (height, width, 3)
 
+    # close viewer after usage
+    viewer.close()
+
 
 @pytest.mark.parametrize("render_mode", ["human", "rgb_array", "depth_array"])
 @pytest.mark.parametrize("max_geom", [10, 100, 1000, 10000])
@@ -75,3 +78,6 @@ def test_max_geom_attribute(
 
     # assert that max_geom is set correctly in the viewer scene
     assert viewer.scn.maxgeom == max_geom
+
+    # close viewer after usage
+    viewer.close()
