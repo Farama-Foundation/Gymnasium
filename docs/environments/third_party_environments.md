@@ -101,6 +101,13 @@ An open, minimalist Gymnasium environment for autonomous coordination in wireles
 
 PyBullet based simulations of a robotic arm moving objects.
 
+### [QWOP: An environment for Bennet Foddy's game QWOP](https://github.com/smanolloff/qwop-gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/smanolloff/qwop-gym)
+
+QWOP is a game about running extremely fast down a 100 meter track. With this Gymnasium environment you can train your own agents and try to beat the current world record (5.0 in-game seconds for humans and 4.7 for AI).
+
 ### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
