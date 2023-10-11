@@ -95,7 +95,7 @@ class FuncEnv(
         """Show the state."""
         raise NotImplementedError
 
-    def render_initialise(self, **kwargs) -> RenderStateType:
+    def render_init(self, **kwargs) -> RenderStateType:
         """Initialize the render state."""
         raise NotImplementedError
 

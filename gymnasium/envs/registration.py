@@ -90,7 +90,7 @@ class EnvSpec:
     * **additional_wrappers**: A tuple of additional wrappers applied to the environment (WrapperSpec)
     * **vector_entry_point**: The location of the vectorized environment to create from
 
-    Deprecated:
+    Changelogs:
         v1.0.0 - Autoreset attribute removed
     """
 
@@ -589,7 +589,7 @@ def register(
         vector_entry_point: The entry point for creating the vector environment
         **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.
 
-    Deprecated:
+    Changelogs:
         v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed
     """
     assert (
@@ -658,7 +658,7 @@ def make(
     Raises:
         Error: If the ``id`` doesn't exist in the :attr:`registry`
 
-    Deprecated:
+    Changelogs:
         v1.0.0 - `autoreset` and `apply_api_compatibility` was removed
     """
     if isinstance(id, EnvSpec):

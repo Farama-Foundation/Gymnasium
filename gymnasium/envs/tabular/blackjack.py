@@ -330,7 +330,7 @@ class BlackjackFunctional(
             reward = reward * jnp.logical_not(condition) + 1 * condition
         return reward
 
-    def render_initialise(
+    def render_init(
         self, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
         """Returns an initial render state."""

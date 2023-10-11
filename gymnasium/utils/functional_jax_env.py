@@ -48,7 +48,7 @@ class FunctionalJaxEnv(gym.Env):
         self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
         if self.render_mode == "rgb_array":
-            self.render_state = self.func_env.render_initialise()
+            self.render_state = self.func_env.render_init()
         else:
             self.render_state = None
 
@@ -154,7 +154,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
         if self.render_mode == "rgb_array":
-            self.render_state = self.func_env.render_initialise()
+            self.render_state = self.func_env.render_init()
         else:
             self.render_state = None
 

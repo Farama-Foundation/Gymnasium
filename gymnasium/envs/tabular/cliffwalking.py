@@ -200,7 +200,7 @@ class CliffWalkingFunctional(
         reward = -1 + (-99 * state.fallen[0])
         return jax.lax.convert_element_type(reward, jnp.float32)
 
-    def render_initialise(
+    def render_init(
         self, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
         """Returns an initial render state."""
