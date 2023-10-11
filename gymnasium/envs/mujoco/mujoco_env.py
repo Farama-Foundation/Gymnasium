@@ -354,6 +354,7 @@ class MujocoEnv(BaseMujocoEnv):
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
         default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
+        max_geom: int = 1000,
     ):
         if MUJOCO_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(
@@ -375,7 +376,12 @@ class MujocoEnv(BaseMujocoEnv):
         from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
 
         self.mujoco_renderer = MujocoRenderer(
-            self.model, self.data, default_camera_config, self.width, self.height
+            self.model,
+            self.data,
+            default_camera_config,
+            self.width,
+            self.height,
+            max_geom,
         )
 
     def _initialize_simulation(
