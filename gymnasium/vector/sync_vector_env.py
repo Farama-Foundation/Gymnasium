@@ -98,8 +98,6 @@ class SyncVectorEnv(VectorEnv):
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
 
-        self._autoreset_env = np.zeros((self.num_envs,), dtype=np.bool_)
-
     def reset(
         self,
         *,
@@ -126,7 +124,6 @@ class SyncVectorEnv(VectorEnv):
 
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
-        self._autoreset_env = np.zeros((self.num_envs,), dtype=np.bool_)
 
         observations, infos = [], {}
         for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
@@ -153,21 +150,22 @@ class SyncVectorEnv(VectorEnv):
         actions = iterate(self.action_space, actions)
 
         observations, infos = [], {}
-        for i, action in enumerate(actions):
-            if self._autoreset_env[i]:
-                env_obs, env_info = self.envs[i].reset()
+        for i, (env, action) in enumerate(zip(self.envs, actions)):
+            (
+                env_obs,
+                self._rewards[i],
+                self._terminations[i],
+                self._truncations[i],
+                env_info,
+            ) = env.step(action)
 
-                self._rewards[i] = 0.0
-                self._terminations[i] = False
-                self._truncations[i] = False
-            else:
-                (
-                    env_obs,
-                    self._rewards[i],
-                    self._terminations[i],
-                    self._truncations[i],
-                    env_info,
-                ) = self.envs[i].step(action)
+            # If sub-environments terminates or truncates then save the obs and info to the batched info
+            if self._terminations[i] or self._truncations[i]:
+                old_observation, old_info = env_obs, env_info
+                env_obs, env_info = env.reset()
+
+                env_info["final_observation"] = old_observation
+                env_info["final_info"] = old_info
 
             observations.append(env_obs)
             infos = self._add_info(infos, env_info, i)
@@ -176,8 +174,6 @@ class SyncVectorEnv(VectorEnv):
         self._observations = concatenate(
             self.single_observation_space, observations, self._observations
         )
-
-        self._autoreset_env = np.logical_or(self._terminations, self._truncations)
 
         return (
             deepcopy(self._observations) if self.copy else self._observations,

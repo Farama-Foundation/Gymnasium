@@ -16,11 +16,11 @@ from gymnasium.vector.utils import batch_space
 from gymnasium.wrappers.jax_to_numpy import jax_to_numpy
 
 
-__all__ = ["FunctionalJaxEnv", "FunctionalJaxVectorEnv"]
-
-
 class FunctionalJaxEnv(gym.Env):
     """A conversion layer for jax-based environments."""
+
+    state: StateType
+    rng: jrng.PRNGKey
 
     def __init__(
         self,
@@ -39,15 +39,13 @@ class FunctionalJaxEnv(gym.Env):
         self.observation_space = func_env.observation_space
         self.action_space = func_env.action_space
 
-        self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
-
         self.metadata = metadata
         self.render_mode = render_mode
         self.reward_range = reward_range
+
         self.spec = spec
 
-        self.state: StateType = None
-        self.rng: jrng.PRNGKey = None
+        self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
         if self.render_mode == "rgb_array":
             self.render_state = self.func_env.render_initialise()
@@ -56,6 +54,7 @@ class FunctionalJaxEnv(gym.Env):
 
         np_random, _ = seeding.np_random()
         seed = np_random.integers(0, 2**32 - 1, dtype="uint32")
+
         self.rng = jrng.PRNGKey(seed)
 
     def reset(self, *, seed: int | None = None, options: dict | None = None):
@@ -68,7 +67,7 @@ class FunctionalJaxEnv(gym.Env):
 
         self.state = self.func_env.initial(rng=rng)
         obs = self.func_env.observation(self.state)
-        info = self.func_env.initial_info(self.state)
+        info = self.func_env.state_info(self.state)
 
         obs = jax_to_numpy(obs)
 
@@ -76,12 +75,13 @@ class FunctionalJaxEnv(gym.Env):
 
     def step(self, action: ActType):
         """Steps through the environment using the action."""
-        # This doesn't make much sense as you would love to pass a jax array however this will fail a dim check test, to investigate
         if self._is_box_action_space:
             assert isinstance(self.action_space, gym.spaces.Box)  # For typing
             action = np.clip(action, self.action_space.low, self.action_space.high)
-        else:
-            assert self.action_space.contains(action)
+        else:  # Discrete
+            # For now we assume jax envs don't use complex spaces
+            err_msg = f"{action!r} ({type(action)}) invalid"
+            assert self.action_space.contains(action), err_msg
 
         rng, self.rng = jrng.split(self.rng)
 
@@ -89,7 +89,7 @@ class FunctionalJaxEnv(gym.Env):
         observation = self.func_env.observation(next_state)
         reward = self.func_env.reward(self.state, action, next_state)
         terminated = self.func_env.terminal(next_state)
-        info = self.func_env.transition_info(self.state, action, next_state)
+        info = self.func_env.step_info(self.state, action, next_state)
         self.state = next_state
 
         observation = jax_to_numpy(observation)
@@ -115,6 +115,9 @@ class FunctionalJaxEnv(gym.Env):
 
 class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
     """A vector env implementation for functional Jax envs."""
+
+    state: StateType
+    rng: jrng.PRNGKey
 
     def __init__(
         self,
@@ -146,10 +149,9 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         self.spec = spec
         self.time_limit = max_episode_steps
 
-        self.state: StateType = None
-        self.rng: jrng.PRNGKey = None
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
-        self.autoreset = jnp.zeros(self.num_envs, dtype=jnp.bool_)
+
+        self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
         if self.render_mode == "rgb_array":
             self.render_state = self.func_env.render_initialise()
@@ -158,6 +160,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         np_random, _ = seeding.np_random()
         seed = np_random.integers(0, 2**32 - 1, dtype="uint32")
+
         self.rng = jrng.PRNGKey(seed)
 
         self.func_env.transform(jax.vmap)
@@ -169,39 +172,91 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
             self.rng = jrng.PRNGKey(seed)
 
         rng, self.rng = jrng.split(self.rng)
+
         rng = jrng.split(rng, self.num_envs)
 
         self.state = self.func_env.initial(rng=rng)
-        obs = jax_to_numpy(self.func_env.observation(self.state))
-        info = self.func_env.initial_info(self.state)
+        obs = self.func_env.observation(self.state)
+        info = self.func_env.state_info(self.state)
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
-        self.autoreset = jnp.zeros(self.num_envs, dtype=jnp.bool_)
+
+        obs = jax_to_numpy(obs)
 
         return obs, info
 
     def step(self, action: ActType):
         """Steps through the environment using the action."""
+        if self._is_box_action_space:
+            assert isinstance(self.action_space, gym.spaces.Box)  # For typing
+            action = np.clip(action, self.action_space.low, self.action_space.high)
+        else:  # Discrete
+            # For now we assume jax envs don't use complex spaces
+            assert self.action_space.contains(
+                action
+            ), f"{action!r} ({type(action)}) invalid"
+        self.steps += 1
+
         rng, self.rng = jrng.split(self.rng)
+
         rng = jrng.split(rng, self.num_envs)
 
-        next_state = jnp.where(
-            self.autoreset,
-            self.func_env.initial(rng),
-            self.func_env.transition(self.state, action, rng),
-        )
-        self.steps = jnp.where(self.autoreset, 0, self.steps + 1)
+        next_state = self.func_env.transition(self.state, action, rng)
+        reward = self.func_env.reward(self.state, action, next_state)
 
-        observation = jax_to_numpy(self.func_env.observation(next_state))
-        reward = jnp.where(
-            self.autoreset, 0.0, self.func_env.reward(self.state, action, next_state)
-        )
         terminated = self.func_env.terminal(next_state)
-        truncated = jnp.logical_and(self.time_limit > 0, self.steps >= self.time_limit)
-        info = self.func_env.transition_info(self.state, action, next_state)
+        truncated = (
+            self.steps >= self.time_limit
+            if self.time_limit > 0
+            else jnp.zeros_like(terminated)
+        )
+
+        info = self.func_env.step_info(self.state, action, next_state)
+
+        done = jnp.logical_or(terminated, truncated)
+        if jnp.any(done):
+            final_obs = self.func_env.observation(next_state)
+
+            to_reset = jnp.where(done)[0]
+            reset_count = to_reset.shape[0]
+
+            rng, self.rng = jrng.split(self.rng)
+            rng = jrng.split(rng, reset_count)
+
+            new_initials = self.func_env.initial(rng)
+
+            next_state = self.state.at[to_reset].set(new_initials)
+            self.steps = self.steps.at[to_reset].set(0)
+
+            # Get the final observations and infos
+            info["final_observation"] = np.array([None for _ in range(self.num_envs)])
+            info["final_info"] = np.array([None for _ in range(self.num_envs)])
+
+            info["_final_observation"] = np.array([False for _ in range(self.num_envs)])
+            info["_final_info"] = np.array([False for _ in range(self.num_envs)])
+
+            # TODO: this can maybe be optimized, but right now I don't know how
+            for i in to_reset:
+                info["final_observation"][i] = final_obs[i]
+                info["final_info"][i] = {
+                    k: v[i]
+                    for k, v in info.items()
+                    if k
+                    not in {
+                        "final_observation",
+                        "final_info",
+                        "_final_observation",
+                        "_final_info",
+                    }
+                }
+
+                info["_final_observation"][i] = True
+                info["_final_info"][i] = True
+
+        observation = self.func_env.observation(next_state)
+        observation = jax_to_numpy(observation)
 
         self.state = next_state
-        self.autoreset = jnp.logical_or(terminated, truncated)
 
         return observation, reward, terminated, truncated, info
 

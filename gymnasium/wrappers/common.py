@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any, SupportsFloat
 
 import gymnasium as gym
 from gymnasium import logger
-from gymnasium.core import ActType, ObsType, RenderFrame, WrapperObsType
+from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import ResetNeeded
 from gymnasium.utils.passive_env_checker import (
     check_action_space,
@@ -196,15 +196,6 @@ class Autoreset(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
-        self.autoreset = False
-
-    def reset(
-        self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
-        """Set ``autoreset`` to ``False`` and reset the environment like normal."""
-        self.autoreset = False
-        return super().reset(seed=seed, options=options)
-
     def step(
         self, action: ActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
@@ -216,13 +207,24 @@ class Autoreset(
         Returns:
             The autoreset environment :meth:`step`
         """
-        if self.autoreset:
-            obs, info = self.env.reset()
-            reward, terminated, truncated = 0.0, False, False
-        else:
-            obs, reward, terminated, truncated, info = self.env.step(action)
+        obs, reward, terminated, truncated, info = self.env.step(action)
 
-        self.autoreset = terminated or truncated
+        if terminated or truncated:
+            new_obs, new_info = self.env.reset()
+
+            assert (
+                "final_observation" not in new_info
+            ), f'new info dict already contains "final_observation", info keys: {new_info.keys()}'
+            assert (
+                "final_info" not in new_info
+            ), f'new info dict already contains "final_observation", info keys: {new_info.keys()}'
+
+            new_info["final_observation"] = obs
+            new_info["final_info"] = info
+
+            obs = new_obs
+            info = new_info
+
         return obs, reward, terminated, truncated, info
 
 

@@ -444,7 +444,7 @@ class NormalizeObservation(
 
     Change logs:
      * v0.21.0 - Initially add
-     * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard, particularly useful for evaluation time.
+     * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):

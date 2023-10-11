@@ -88,9 +88,11 @@ class RecordEpisodeStatistics(VectorWrapper):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
         obs, info = super().reset(seed=seed, options=options)
 
-        self.episode_start_times = np.full(self.num_envs, time.perf_counter())
-        self.episode_returns = np.zeros(self.num_envs)
-        self.episode_lengths = np.zeros(self.num_envs)
+        self.episode_start_times = np.full(
+            self.num_envs, time.perf_counter(), dtype=np.float32
+        )
+        self.episode_returns = np.zeros(self.num_envs, dtype=np.float32)
+        self.episode_lengths = np.zeros(self.num_envs, dtype=np.int32)
 
         return obs, info
 
@@ -108,7 +110,7 @@ class RecordEpisodeStatistics(VectorWrapper):
 
         assert isinstance(
             infos, dict
-        ), f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
+        ), f"`info` dtype is {type(infos)} while supported dtype is `dict`. This may be due to usage of other wrappers in the wrong order."
 
         self.episode_returns += rewards
         self.episode_lengths += 1
