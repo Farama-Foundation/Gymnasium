@@ -3,7 +3,7 @@ layout: "contents"
 title: Compatibility With Gym
 ---
 
-# Compatibility with Gym
+# Compatibility with OpenAI Gym
 
 Gymnasium provides a number of compatibility methods for a range of Environment implementations.
 

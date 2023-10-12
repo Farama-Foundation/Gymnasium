@@ -47,8 +47,12 @@ env.close()
 :caption: Introduction
 
 introduction/basic_usage
+introduction/training_agents
+introduction/creating_custom_env
+introduction/recording_agents
+introduction/speeding_up_env
 introduction/gym_compatibility
-introduction/migration-guide
+introduction/migration_guide
 ```
 
 ```{toctree}

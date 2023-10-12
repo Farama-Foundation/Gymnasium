@@ -3,7 +3,7 @@ layout: "contents"
 title: Migration Guide
 ---
 
-# v0.21 to v0.26 Migration Guide
+# Gym v0.21 to v0.26 Migration Guide
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
