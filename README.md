@@ -72,6 +72,8 @@ If you are financially able to do so and would like to support the development o
 
 You can cite Gymnasium as:
 
+
+
 ```
 @misc{towers_gymnasium_2023,
         title = {Gymnasium},
