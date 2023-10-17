@@ -44,7 +44,7 @@ Among Gymnasium environments, this set of environments can be considered as more
 Environments can be configured by changing the XML files or by tweaking the parameters of their classes.
 
 ## Arguments
-The all MuJoCo Environments besides the general Gymnasium arguments and environment specific arguments they also take the following arguments for confuguring renderer:
+The all MuJoCo Environments besides the general Gymnasium arguments and environment specific arguments they also take the following arguments for configuring the renderer:
 
 
 | Parameter                                  | Type       | Default      |Description                    |
