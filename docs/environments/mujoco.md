@@ -42,3 +42,17 @@ There are eleven Mujoco environments: Ant, HalfCheetah, Hopper, Humanoid, Humano
 Among Gymnasium environments, this set of environments can be considered as more difficult ones to solve by a policy.
 
 Environments can be configured by changing the XML files or by tweaking the parameters of their classes.
+
+## Arguments
+The all MuJoCo Environments besides the general Gymnasium arguments and environment specific arguments they also take the following arguments for confuguring renderer:
+
+
+| Parameter                                  | Type       | Default      |Description                    |
+|--------------------------------------------|------------|--------------|-------------------------------|
+|`width`                                     | **int**    | `480`        | The width of the render window. |
+|`height`                                    | **int**    | `480`        | The width of the render window. |
+|`camera_id`                                 |**int \| None**| `None`     | The camera ID used for the render window. |
+|`camera_name`                               |**str \| None**| `None`     | The name of the camera used (mutally exclusive option with `camera_id`). |
+|`default_camera_config`                     |**Dict[str, Union[float, int]] \| None**  | `None` |  The [mjvcamera](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html?highlight=camera#mjvcamera) properties. |
+|`max_geom`                                  | **int**    | `1000`       | Max number of geometrical objects to render (useful for 3rd-party environments).|
+
