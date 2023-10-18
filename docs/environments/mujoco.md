@@ -43,9 +43,12 @@ Among Gymnasium environments, this set of environments can be considered as more
 
 Environments can be configured by changing the XML files or by tweaking the parameters of their classes.
 
-## Arguments
+## Rendering Arguments
 The all MuJoCo Environments besides the general Gymnasium arguments and environment specific arguments they also take the following arguments for configuring the renderer:
 
+```python
+env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
+```
 
 | Parameter                                  | Type       | Default      |Description                    |
 |--------------------------------------------|------------|--------------|-------------------------------|
@@ -55,4 +58,3 @@ The all MuJoCo Environments besides the general Gymnasium arguments and environm
 |`camera_name`                               |**str \| None**| `None`     | The name of the camera used (mutally exclusive option with `camera_id`). |
 |`default_camera_config`                     |**Dict[str, Union[float, int]] \| None**  | `None` |  The [mjvcamera](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html?highlight=camera#mjvcamera) properties. |
 |`max_geom`                                  | **int**    | `1000`       | Max number of geometrical objects to render (useful for 3rd-party environments).|
-
