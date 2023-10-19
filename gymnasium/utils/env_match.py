@@ -38,8 +38,8 @@ def check_environments_match(
     """
     skip_render = (
         skip_render
-        or env_a.unwrapped.render_mode not in [None, "human"]
-        or env_b.unwrapped.render not in [None, "human"]
+        or env_a.unwrapped.render_mode in [None, "human"]
+        or env_b.unwrapped.render in [None, "human"]
     )
 
     assert info_comparison in [
