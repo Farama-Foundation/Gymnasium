@@ -151,5 +151,7 @@ reportGeneralTypeIssues = "none"  # -> commented out raises 489 errors
 reportPrivateUsage = "warning"
 reportUnboundVariable = "warning"
 
+reportPrivateImportUsage = "none"  # -> commented out raises 144 errors
+
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning:gymnasium.*:"]
