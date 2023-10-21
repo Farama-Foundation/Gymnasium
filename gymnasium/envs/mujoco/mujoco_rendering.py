@@ -616,8 +616,8 @@ class WindowViewer(BaseRender):
             )
         elif mujoco.__version__ < "3.0.0":
             self.add_overlay(
-            bottomleft, "Solver iterations", str(self.data.solver_iter + 1)
-        )
+                bottomleft, "Solver iterations", str(self.data.solver_iter + 1)
+            )
         self.add_overlay(
             bottomleft, "Step", str(round(self.data.time / self.model.opt.timestep))
         )
