@@ -610,14 +610,17 @@ class WindowViewer(BaseRender):
         self.add_overlay(topleft, "Toggle geomgroup visibility", "0-4")
 
         self.add_overlay(bottomleft, "FPS", "%d%s" % (1 / self._time_per_render, ""))
-        if mujoco.__version__ => "3.0.0":
+        if mujoco.__version__ >= "3.0.0":
             self.add_overlay(
                 bottomleft, "Solver iterations", str(self.data.solver_niter[0] + 1)
             )
         elif mujoco.__version__ < "3.0.0":
             self.add_overlay(
-                bottomleft, "Solver iterations", str(self.data.solver_iter + 1)
-            )
+            bottomleft, "Solver iterations", str(self.data.solver_iter + 1)
+        )
+        self.add_overlay(
+            bottomleft, "Solver iterations", str(self.data.solver_niter[0] + 1)
+        )
         self.add_overlay(
             bottomleft, "Step", str(round(self.data.time / self.model.opt.timestep))
         )
