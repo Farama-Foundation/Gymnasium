@@ -449,6 +449,15 @@ register(
 )
 
 
+# new A1 soccer env
+register(
+    id = "A1Soccer",
+    entry_point = "gymnasium.envs.mujoco.a1_soccer:A1SoccerEnv",
+    max_episode_steps = 1000,
+    reward_threshold = 4800.0,
+)
+
+
 # --- For shimmy compatibility
 def _raise_shimmy_error(*args: Any, **kwargs: Any):
     raise ImportError(
