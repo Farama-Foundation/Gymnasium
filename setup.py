@@ -31,7 +31,7 @@ def get_description():
                 long_description += line
             else:
                 break
-    return long_description
+    return long_descriptiona
 
 
 setup(name="gymnasium", version=get_version(), long_description=get_description())
