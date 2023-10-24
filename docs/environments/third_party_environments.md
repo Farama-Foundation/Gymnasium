@@ -150,6 +150,13 @@ Gymnasium wrapper for various environments in the SUMO traffic simulator. Suppor
 
 tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
+### [SuperTuxKart](https://github.com/bpiwowar/pystk2-gymnasium)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/bpiwowar/pystk2-gymnasium)
+
+Uses a [python wrapper](https://github.com/bpiwowar/pystk2) around [SuperTuxKart](https://supertuxkart.net/fr/Main_Page) that allows to access the world state and to control a race.
+
 ## Third-Party Environments using Gym
 
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
