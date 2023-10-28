@@ -101,6 +101,13 @@ An open, minimalist Gymnasium environment for autonomous coordination in wireles
 
 PyBullet based simulations of a robotic arm moving objects.
 
+### [pystk2-gymnasium: SuperTuxKart races gymnasium wrapper](https://github.com/bpiwowar/pystk2-gymnasium)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/bpiwowar/pystk2-gymnasium)
+
+Uses a [python wrapper](https://github.com/bpiwowar/pystk2) around [SuperTuxKart](https://supertuxkart.net/fr/Main_Page) that allows to access the world state and to control a race.
+
 ### [QWOP: An environment for Bennet Foddy's game QWOP](https://github.com/smanolloff/qwop-gym)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
