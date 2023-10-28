@@ -13,3 +13,6 @@ from gymnasium.envs.mujoco.pusher import PusherEnv
 from gymnasium.envs.mujoco.reacher import ReacherEnv
 from gymnasium.envs.mujoco.swimmer import SwimmerEnv
 from gymnasium.envs.mujoco.walker2d import Walker2dEnv
+
+
+from gymnasium.envs.mujoco.a1_soccer import A1SoccerEnv
