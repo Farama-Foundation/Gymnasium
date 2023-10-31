@@ -9,7 +9,4 @@ ppo_params = {
     "clip_range": 0.2,
     "clip_range_vf": None,
     "tensorboard_log": "./tensorboard/",
-    # Remove or comment out the line below
-    # "create_eval_env": False,
-    # ... (any other parameters you have set)
 }

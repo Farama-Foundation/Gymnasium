@@ -17,116 +17,53 @@ DEFAULT_CAMERA_CONFIG = {
 class A1SoccerEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
-    This environment is based on{insert problem description here}
+    This environment simulates the A1 robot in a soccer-like scenario where the robot aims to control the ball and score goals. It integrates the physics of the A1 robot, the ball, and the dynamics of their interactions.
 
     Gymnasium includes the following versions of the environment:
 
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | A1SoccerEnv               | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
+    | Environment | Binding         | Notes                                       |
+    | ----------- | --------------- | ------------------------------------------- |
+    | A1SoccerEnv | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
 
     For more information see section "Version History".
 
 
     ## Action Space
-    The action space is a `Box(-1, 1, (6,), float32)`. An action represents the torques applied at the hinge joints.
+    The action space is a `Box(-1, 1, (12,), float32)`. An action represents the torques applied at the hinge joints of the A1 robot.
 
     | Num | Action                                  | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     | --- | --------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
-    | 0   | Torque applied on the back thigh rotor  | -1          | 1           | bthigh                           | hinge | torque (N m) |
-    | 1   | Torque applied on the back shin rotor   | -1          | 1           | bshin                            | hinge | torque (N m) |
-    | 2   | Torque applied on the back foot rotor   | -1          | 1           | bfoot                            | hinge | torque (N m) |
-    | 3   | Torque applied on the front thigh rotor | -1          | 1           | fthigh                           | hinge | torque (N m) |
-    | 4   | Torque applied on the front shin rotor  | -1          | 1           | fshin                            | hinge | torque (N m) |
-    | 5   | Torque applied on the front foot rotor  | -1          | 1           | ffoot                            | hinge | torque (N m) |
+    | ... | (Fill in details for the A1 joints)     | ...         | ...         | ...                              | ...   | ...          |
 
 
     ## Observation Space
-    The observation Space consists of the following parts (in order):
-
-    - qpos (8 elements by default):* Position values of the robots's body parts.
-    - qvel (9 elements):* The velocities of these individual body parts,
-    (their derivatives).
-
-    By default, the observation does not include the robot's x-coordinate (`rootx`).
-    This can be be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In this case, the observation space will be a `Box(-Inf, Inf, (18,), float64)`, where the first observation element is the x--coordinate of the robot.
-    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
-
-    However, by default, the observation is a `Box(-Inf, Inf, (17,), float64)` where the elements correspond to the following:
+    The observation space primarily consists of the A1 robot's joint states and the ball's position and velocity.
 
     | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
-    | 0   | z-coordinate of the front tip        | -Inf | Inf | rootz                            | slide | position (m)             |
-    | 1   | angle of the front tip               | -Inf | Inf | rooty                            | hinge | angle (rad)              |
-    | 2   | angle of the second rotor            | -Inf | Inf | bthigh                           | hinge | angle (rad)              |
-    | 3   | angle of the second rotor            | -Inf | Inf | bshin                            | hinge | angle (rad)              |
-    | 4   | velocity of the tip along the x-axis | -Inf | Inf | bfoot                            | hinge | angle (rad)              |
-    | 5   | velocity of the tip along the y-axis | -Inf | Inf | fthigh                           | hinge | angle (rad)              |
-    | 6   | angular velocity of front tip        | -Inf | Inf | fshin                            | hinge | angle (rad)              |
-    | 7   | angular velocity of second rotor     | -Inf | Inf | ffoot                            | hinge | angle (rad)              |
-    | 8   | x-coordinate of the front tip        | -Inf | Inf | rootx                            | slide | velocity (m/s)           |
-    | 9   | y-coordinate of the front tip        | -Inf | Inf | rootz                            | slide | velocity (m/s)           |
-    | 10  | angle of the front tip               | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
-    | 11  | angle of the second rotor            | -Inf | Inf | bthigh                           | hinge | angular velocity (rad/s) |
-    | 12  | angle of the second rotor            | -Inf | Inf | bshin                            | hinge | angular velocity (rad/s) |
-    | 13  | velocity of the tip along the x-axis | -Inf | Inf | bfoot                            | hinge | angular velocity (rad/s) |
-    | 14  | velocity of the tip along the y-axis | -Inf | Inf | fthigh                           | hinge | angular velocity (rad/s) |
-    | 15  | angular velocity of front tip        | -Inf | Inf | fshin                            | hinge | angular velocity (rad/s) |
-    | 16  | angular velocity of second rotor     | -Inf | Inf | ffoot                            | hinge | angular velocity (rad/s) |
-    | excluded |  x-coordinate of the front tip  | -Inf | Inf | rootx                            | slide | position (m)             |
+    | ... | (Fill in details for the A1 joints and ball) | ... | ... | ...                              | ...   | ...                       |
 
 
     ## Rewards
-    The total reward is: ***reward*** *=* *forward_reward - ctrl_cost*.
-
-    - *forward_reward*:
-    A reward for moving forward,
-    this reward would be positive if the Half Cheetah moves forward (in the positive $x$ direction / in the right direction).
-    $w_{forward} \times \frac{dx}{dt}$, where
-    $dx$ is the displacement of the "tip" ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions which is depends on the `frame_skip` parameter (default is 5),
-    and `frametime` which is 0.01 - so the default is $dt = 5 \times 0.01 = 0.05$,
-    $w_{forward}$ is the `forward_reward_weight` (default is $1$).
-    - *ctrl_cost*:
-    A negative reward to penalize the Half Cheetah for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
-    where $w_{control}$ is the `ctrl_cost_weight` (default is $0.1$).
-
-    `info` contains the individual reward terms.
-
+    The total reward is designed to encourage the A1 robot to move the ball forward and potentially score a goal while minimizing control costs. The detailed reward components can be customized based on the specific problem setup.
 
     ## Starting State
-    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{9}, reset\_noise\_scale \times 1_{9}]}$.
-    The initial velocity state is $\mathcal{N}(0_{9}, reset\_noise\_scale^2 \times I_{9})$.
-
-    where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
-
+    The initial states of the robot and the ball can be randomized to various extents, allowing for a diverse range of scenarios during training.
 
     ## Episode End
-    #### Termination
-    The Half Cheetah never terminates.
-
-    #### Truncation
-    The default duration of an episode is 1000 timesteps
-
+    The episode can terminate when a goal is scored or after a certain number of timesteps. Specific termination conditions can be adapted based on requirements.
 
     ## Arguments
-    HalfCheetah provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
-    These parameters can be applied during `gymnasium.make` in the following way:
+    A1SoccerEnv provides several parameters to customize the environment, from robot dynamics to reward shaping. These can be passed during environment instantiation.
+
+    | Parameter | Type      | Default | Description             |
+    | --------- | --------- | ------- | ----------------------- |
+    | ...       | ...       | ...     | ...                     |
 
     ```python
     import gymnasium as gym
     env = gym.make('A1Soccer', ctrl_cost_weight=0.1, ....)
     ```
-
-    | Parameter                                    | Type      | Default              | Description                                                                                                                                                       |
-    | -------------------------------------------- | --------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `xml_file`                                   | **str**   | `"half_cheetah.xml"` | Path to a MuJoCo model                                                                                                                                            |
-    | `forward_reward_weight`                      | **float** | `1`                  | Weight for _forward_reward_ term (see section on reward)                                                                                                          |
-    | `ctrl_cost_weight`                           | **float** | `0.1`                | Weight for _ctrl_cost_ weight (see section on reward)                                                                                                             |
-    | `reset_noise_scale`                          | **float** | `0.1`                | Scale of random perturbations of initial position and velocity (see section on Starting State)                                                                    |
-    | `exclude_current_positions_from_observation` | **bool**  | `True`               | Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
 
     ## Version History
     * v0: Initial versions release (1.0.0)
@@ -210,24 +147,27 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
         
         # Ball and robot indices in qpos and qvel, given their order in their xml file
         #ball indices
-        self.ball_position_indices = np.arange(0, 3)  # x, y, z for ball
-        self.ball_velocity_indices = np.arange(0, 3)  # dx, dy, dz for ball
+        #x, y, z for ball
+        self.ball_position_indices = np.arange(0, 3)
+        #dx, dy, dz for ball 
+        self.ball_velocity_indices = np.arange(0, 3)
 
         #robot root indices
-        self.robot_root_position_indices = np.arange(3, 7)  # quaternion for robot root (qw, qx, qy, qz)
-        self.robot_root_velocity_indices = np.arange(3, 6)  # angular velocity (wx, wy, wz) for robot root
+        #quaternion for robot root (qw, qx, qy, qz)
+        self.robot_root_position_indices = np.arange(3, 7)
+        #angular velocity (wx, wy, wz) for robot root 
+        self.robot_root_velocity_indices = np.arange(3, 6)  
 
         #robot joint indices
         self.robot_joint_position_indices = np.arange(7, 7 + self.robot_joint_count)
         self.robot_joint_velocity_indices = np.arange(6, 6 + self.robot_joint_count)
 
 
-
         #observation space
         self.observation_space = spaces.Box(
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64)
 
-        # #action space
+        # #action spacea
         # self.action_space = spaces.Dict({
         #     "bezier_parameters": spaces.Box(low=-1, high=1, shape=(3, 5))})
 
@@ -282,28 +222,28 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
         control_cost = self._ctrl_cost_weight * np.sum(np.square(action))
         return control_cost
 
-    def step(self, action):
-        x_position_before = self.data.qpos[0]
-        self.do_simulation(action, self.frame_skip)
-        x_position_after = self.data.qpos[0]
-        x_velocity = (x_position_after - x_position_before) / self.dt
+    # def step(self, action):
+    #     x_position_before = self.data.qpos[0]
+    #     self.do_simulation(action, self.frame_skip)
+    #     x_position_after = self.data.qpos[0]
+    #     x_velocity = (x_position_after - x_position_before) / self.dt
 
-        ctrl_cost = self.control_cost(action)
+    #     ctrl_cost = self.control_cost(action)
 
-        forward_reward = self._forward_reward_weight * x_velocity
+    #     forward_reward = self._forward_reward_weight * x_velocity
 
-        observation = self._get_obs()
-        reward = forward_reward - ctrl_cost
-        info = {
-            "x_position": x_position_after,
-            "x_velocity": x_velocity,
-            "reward_forward": forward_reward,
-            "reward_ctrl": -ctrl_cost,
-        }
+    #     observation = self._get_obs()
+    #     reward = forward_reward - ctrl_cost
+    #     info = {
+    #         "x_position": x_position_after,
+    #         "x_velocity": x_velocity,
+    #         "reward_forward": forward_reward,
+    #         "reward_ctrl": -ctrl_cost,
+    #     }
 
-        if self.render_mode == "human":
-            self.render()
-        return observation, reward, False, False, info
+    #     if self.render_mode == "human":
+    #         self.render()
+    #     return observation, reward, False, False, info
 
     def _get_obs(self):
         qpos = self.data.qpos
