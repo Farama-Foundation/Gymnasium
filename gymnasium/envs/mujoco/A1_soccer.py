@@ -190,60 +190,61 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
 
         return reward
     
-    def step(self, action):
-        # Ball's position before the action
-        ball_position_before = self.data.qpos[self.ball_qpos_index]
+    # new step function
+    # def step(self, action):
+    #     # Ball's position before the action
+    #     ball_position_before = self.data.qpos[self.ball_qpos_index]
         
-        self.do_simulation(action, self.frame_skip)
+    #     self.do_simulation(action, self.frame_skip)
         
-        # Ball's position after the action
-        ball_position_after = self.data.qpos[self.ball_qpos_index]
+    #     # Ball's position after the action
+    #     ball_position_after = self.data.qpos[self.ball_qpos_index]
         
-        ctrl_cost = self.control_cost(action)
+    #     ctrl_cost = self.control_cost(action)
         
-        # Calculate reward using a separate method
-        reward = self.calculate_reward(ball_position_before, ball_position_after, ctrl_cost)
+    #     # Calculate reward using a separate method
+    #     reward = self.calculate_reward(ball_position_before, ball_position_after, ctrl_cost)
         
-        observation = self._get_obs()
+    #     observation = self._get_obs()
         
-        info = {
-            "ball_position": ball_position_after,
-            "ball_movement_towards_goal": ball_position_after - ball_position_before,
-            "reward_forward": self._forward_reward_weight * (ball_position_after - ball_position_before),
-            "reward_ctrl": -ctrl_cost,
-        }
+    #     info = {
+    #         "ball_position": ball_position_after,
+    #         "ball_movement_towards_goal": ball_position_after - ball_position_before,
+    #         "reward_forward": self._forward_reward_weight * (ball_position_after - ball_position_before),
+    #         "reward_ctrl": -ctrl_cost,
+    #     }
         
-        if self.render_mode == "human":
-            self.render()
+    #     if self.render_mode == "human":
+    #         self.render()
         
-        return observation, reward, False, info
+    #     return observation, reward, False, info
 
     def control_cost(self, action):
         control_cost = self._ctrl_cost_weight * np.sum(np.square(action))
         return control_cost
 
-    # def step(self, action):
-    #     x_position_before = self.data.qpos[0]
-    #     self.do_simulation(action, self.frame_skip)
-    #     x_position_after = self.data.qpos[0]
-    #     x_velocity = (x_position_after - x_position_before) / self.dt
+    def step(self, action):
+        x_position_before = self.data.qpos[0]
+        self.do_simulation(action, self.frame_skip)
+        x_position_after = self.data.qpos[0]
+        x_velocity = (x_position_after - x_position_before) / self.dt
 
-    #     ctrl_cost = self.control_cost(action)
+        ctrl_cost = self.control_cost(action)
 
-    #     forward_reward = self._forward_reward_weight * x_velocity
+        forward_reward = self._forward_reward_weight * x_velocity
 
-    #     observation = self._get_obs()
-    #     reward = forward_reward - ctrl_cost
-    #     info = {
-    #         "x_position": x_position_after,
-    #         "x_velocity": x_velocity,
-    #         "reward_forward": forward_reward,
-    #         "reward_ctrl": -ctrl_cost,
-    #     }
+        observation = self._get_obs()
+        reward = forward_reward - ctrl_cost
+        info = {
+            "x_position": x_position_after,
+            "x_velocity": x_velocity,
+            "reward_forward": forward_reward,
+            "reward_ctrl": -ctrl_cost,
+        }
 
-    #     if self.render_mode == "human":
-    #         self.render()
-    #     return observation, reward, False, False, info
+        if self.render_mode == "human":
+            self.render()
+        return observation, reward, False, False, info
 
     def _get_obs(self):
         qpos = self.data.qpos
