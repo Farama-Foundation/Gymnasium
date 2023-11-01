@@ -13,6 +13,7 @@ def check_environments_match(
     skip_rew: bool = False,
     skip_terminal: bool = False,
     skip_truncated: bool = False,
+    skip_render: bool = False,
     info_comparison: str = "equivalence",
 ):
     """Checks if the environments `env_a` & `env_b` are identical.
@@ -27,6 +28,7 @@ def check_environments_match(
         skip_terminal: If `True` it does not check for equivalence of the observation.
         skip_truncated: If `True` it does not check for equivalence of the observation.
         skip_info: If `True` it does not check for equivalence of the observation.
+        skip_render: If `True` it does not check for equivalent renders. note:the render checked are automatically skipped if `render_mode` is not set or is "human".
         info_comparison: The options are
             If "equivalence" then checks if the `info`s are identical,
             If "superset" checks if `info_b` is a (non-strict) superset of `info_a`
@@ -34,6 +36,12 @@ def check_environments_match(
             If "keys-superset" checks if the `info_b`s keys are a superset of `info_a`'s keys.
             If "skip" no checks are made at the `info`.
     """
+    skip_render = (
+        skip_render
+        or env_a.unwrapped.render_mode in [None, "human"]
+        or env_b.unwrapped.render in [None, "human"]
+    )
+
     assert info_comparison in [
         "equivalence",
         "superset",
@@ -64,7 +72,12 @@ def check_environments_match(
     elif info_comparison == "keys-superset":
         assert info_b.keys() >= info_a.keys(), "resetting info keys are not a superset"
 
-    for _ in range(num_steps):
+    if not skip_render:
+        assert (
+            env_a.render() == env_b.render()
+        ).all(), "resetting render is not equivalent"
+
+    for step in range(num_steps):
         action = env_a.action_space.sample()
         obs_a, rew_a, terminal_a, truncated_a, info_a = env_a.step(action)
         obs_b, rew_b, terminal_b, truncated_b, info_b = env_b.step(action)
@@ -95,6 +108,10 @@ def check_environments_match(
             assert (
                 info_b.keys() >= info_a.keys()
             ), "stepping info keys are not a superset"
+        if not skip_render:
+            assert (
+                env_a.render() == env_b.render()
+            ).all(), "stepping render is not equivalent"
 
         if terminal_a or truncated_a or terminal_b or truncated_b:
             obs_a, info_a = env_a.reset(seed=seed)
@@ -119,3 +136,7 @@ def check_environments_match(
                 assert (
                     info_b.keys() >= info_a.keys()
                 ), "resetting info keys are not a superset"
+            if not skip_render:
+                assert (
+                    env_a.render() == env_b.render()
+                ).all(), "resetting render is not equivalent"
