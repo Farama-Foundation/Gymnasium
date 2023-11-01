@@ -66,7 +66,7 @@ wrapper in the page on the wrapper type
       - Description
     * - :class:`AtariPreprocessing`
       - Misc Wrapper
-      - Implements the common preprocessing applied tp Atari environments
+      - Implements the common preprocessing applied to Atari environments
     * - :class:`AutoResetWrapper`
       - Misc Wrapper
       - The wrapped environment will automatically reset when the terminated or truncated  state is reached.
