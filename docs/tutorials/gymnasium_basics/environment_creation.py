@@ -5,16 +5,72 @@ Make your own custom environment
 
 This documentation overviews creating new environments and relevant
 useful wrappers, utilities and tests included in Gymnasium designed for
-the creation of new environments. You can clone gym-examples to play
-with the code that is presented here. We recommend that you use a virtual environment:
+the creation of new environments.
+
+
+Setup
+------
+
+Recommended solution
+~~~~~~~~~~~~~~~~~~~~
+
+1. Install ``pipx`` following the `pipx documentation <https://pypa.github.io/pipx/installation/>`_.
+2. Then install Copier:
 
 .. code:: console
 
-   git clone https://github.com/Farama-Foundation/gym-examples
-   cd gym-examples
-   python -m venv .env
-   source .env/bin/activate
-   pip install -e .
+    pipx install copier
+
+Alternative solutions
+~~~~~~~~~~~~~~~~~~~~
+
+Install Copier with Pip or Conda:
+
+.. code:: console
+
+    pip install copier
+
+or
+
+.. code:: console
+
+    conda install -c conda-forge copier
+
+
+Generate your environment
+------------------------------
+
+You can check that ``Copier`` has been correctly installed by running the following command, which should output a version number:
+
+.. code:: console
+
+    copier --version
+
+Then you can just run the following command and replace the string ``path/to/directory`` by the path to the directory where you want to create your new project.
+
+.. code:: console
+
+    copier copy https://github.com/Farama-Foundation/gymnasium-env-template.git "path/to/directory"
+
+Answer the questions, and when it's finished you should get a project structure like the following:
+
+.. code:: sh
+
+    .
+    ├── gymnasium_env
+    │   ├── envs
+    │   │   ├── grid_world.py
+    │   │   └── __init__.py
+    │   ├── __init__.py
+    │   └── wrappers
+    │       ├── clip_reward.py
+    │       ├── discrete_actions.py
+    │       ├── __init__.py
+    │       ├── reacher_weighted_reward.py
+    │       └── relative_position.py
+    ├── LICENSE
+    ├── pyproject.toml
+    └── README.md
 
 Subclassing gymnasium.Env
 -------------------------
@@ -22,29 +78,10 @@ Subclassing gymnasium.Env
 Before learning how to create your own environment you should check out
 `the documentation of Gymnasium’s API </api/env>`__.
 
-We will be concerned with a subset of gym-examples that looks like this:
-
-.. code:: sh
-
-   gym-examples/
-     README.md
-     setup.py
-     gym_examples/
-       __init__.py
-       envs/
-         __init__.py
-         grid_world.py
-       wrappers/
-         __init__.py
-         relative_position.py
-         reacher_weighted_reward.py
-         discrete_action.py
-         clip_reward.py
-
 To illustrate the process of subclassing ``gymnasium.Env``, we will
 implement a very simplistic game, called ``GridWorldEnv``. We will write
 the code for our custom environment in
-``gym-examples/gym_examples/envs/grid_world.py``. The environment
+``gymnasium_env/envs/grid_world.py``. The environment
 consists of a 2-dimensional square grid of fixed size (specified via the
 ``size`` parameter during construction). The agent can move vertically
 or horizontally between grid cells in each timestep. The goal of the
@@ -92,11 +129,22 @@ Let us look at the source code of ``GridWorldEnv`` piece by piece:
 # “down”), we will use ``Discrete(4)`` as an action space. Here is the
 # declaration of ``GridWorldEnv`` and the implementation of ``__init__``:
 
+
+# gymnasium_env/envs/grid_world.py
+from enum import Enum
+
 import numpy as np
 import pygame
 
 import gymnasium as gym
 from gymnasium import spaces
+
+
+class Actions(Enum):
+    right = 0
+    up = 1
+    left = 2
+    down = 3
 
 
 class GridWorldEnv(gym.Env):
@@ -121,13 +169,13 @@ class GridWorldEnv(gym.Env):
         """
         The following dictionary maps abstract actions from `self.action_space` to
         the direction we will walk in if that action is taken.
-        I.e. 0 corresponds to "right", 1 to "up" etc.
+        i.e. 0 corresponds to "right", 1 to "up" etc.
         """
         self._action_to_direction = {
-            0: np.array([1, 0]),
-            1: np.array([0, 1]),
-            2: np.array([-1, 0]),
-            3: np.array([0, -1]),
+            Actions.right: np.array([1, 0]),
+            Actions.up: np.array([0, 1]),
+            Actions.left: np.array([-1, 0]),
+            Actions.down: np.array([0, -1]),
         }
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
@@ -354,24 +402,23 @@ class GridWorldEnv(gym.Env):
 #
 # In order for the custom environments to be detected by Gymnasium, they
 # must be registered as follows. We will choose to put this code in
-# ``gym-examples/gym_examples/__init__.py``.
+# ``gymnasium_env/__init__.py``.
 #
 # .. code:: python
 #
-#   from gymnasium.envs.registration import register
+#    from gymnasium.envs.registration import register
 #
-#   register(
-#        id="gym_examples/GridWorld-v0",
-#        entry_point="gym_examples.envs:GridWorldEnv",
-#        max_episode_steps=300,
-#   )
+#    register(
+#        id="gymnasium_env/GridWorld-v0",
+#        entry_point="gymnasium_env.envs:GridWorldEnv",
+#    )
 
 # %%
 # The environment ID consists of three components, two of which are
-# optional: an optional namespace (here: ``gym_examples``), a mandatory
+# optional: an optional namespace (here: ``gymnasium_env``), a mandatory
 # name (here: ``GridWorld``) and an optional but recommended version
 # (here: v0). It might have also been registered as ``GridWorld-v0`` (the
-# recommended approach), ``GridWorld`` or ``gym_examples/GridWorld``, and
+# recommended approach), ``GridWorld`` or ``gymnasium_env/GridWorld``, and
 # the appropriate ID should then be used during environment creation.
 #
 # The keyword argument ``max_episode_steps=300`` will ensure that
@@ -406,21 +453,21 @@ class GridWorldEnv(gym.Env):
 # environment instances but merely provide some extra information about
 # your environment. After registration, our custom ``GridWorldEnv``
 # environment can be created with
-# ``env = gymnasium.make('gym_examples/GridWorld-v0')``.
+# ``env = gymnasium.make('gymnasium_env/GridWorld-v0')``.
 #
-# ``gym-examples/gym_examples/envs/__init__.py`` should have:
+# ``gymnasium_env/envs/__init__.py`` should have:
 #
 # .. code:: python
 #
-#    from gym_examples.envs.grid_world import GridWorldEnv
+#    from gymnasium_env.envs.grid_world import GridWorldEnv
 #
 # If your environment is not registered, you may optionally pass a module
 # to import, that would register your environment before creating it like
 # this - ``env = gymnasium.make('module:Env-v0')``, where ``module``
 # contains the registration code. For the GridWorld env, the registration
-# code is run by importing ``gym_examples`` so if it were not possible to
-# import gym_examples explicitly, you could register while making by
-# ``env = gymnasium.make('gym_examples:gym_examples/GridWorld-v0)``. This
+# code is run by importing ``gymnasium_env`` so if it were not possible to
+# import gymnasium_env explicitly, you could register while making by
+# ``env = gymnasium.make('gymnasium_env:gymnasium_env/GridWorld-v0)``. This
 # is especially useful when you’re allowed to pass only the environment ID
 # into a third-party codebase (eg. learning library). This lets you
 # register your environment without needing to edit the library’s source
@@ -431,30 +478,42 @@ class GridWorldEnv(gym.Env):
 # ------------------
 #
 # The last step is to structure our code as a Python package. This
-# involves configuring ``gym-examples/setup.py``. A minimal example of how
+# involves configuring ``pyproject.toml``. A minimal example of how
 # to do so is as follows:
 #
-# .. code:: python
+# .. code:: toml
 #
-#    from setuptools import setup
+#    [build-system]
+#    requires = ["hatchling"]
+#    build-backend = "hatchling.build"
 #
-#    setup(
-#        name="gym_examples",
-#        version="0.0.1",
-#        install_requires=["gymnasium==0.26.0", "pygame==2.1.0"],
-#    )
+#    [project]
+#    name = "gymnasium_env"
+#    version = "0.0.1"
+#    dependencies = [
+#      "gymnasium",
+#      "pygame==2.1.3",
+#      "pre-commit",
+#    ]
 #
 # Creating Environment Instances
 # ------------------------------
 #
-# After you have installed your package locally with
-# ``pip install -e gym-examples``, you can create an instance of the
-# environment via:
+# Now you can install your package locally with:
+#
+# .. code:: console
+#
+#    pip install -e .
+#
+# And you can create an instance of the environment via:
 #
 # .. code:: python
 #
-#    import gym_examples
-#    env = gymnasium.make('gym_examples/GridWorld-v0')
+#    # run_gymnasium_env.py
+#
+#    import gymnasium
+#    import gymnasium_env
+#    env = gymnasium.make('gymnasium_env/GridWorld-v0')
 #
 # You can also pass keyword arguments of your environment’s constructor to
 # ``gymnasium.make`` to customize the environment. In our case, we could
@@ -462,7 +521,7 @@ class GridWorldEnv(gym.Env):
 #
 # .. code:: python
 #
-#    env = gymnasium.make('gym_examples/GridWorld-v0', size=10)
+#    env = gymnasium.make('gymnasium_env/GridWorld-v0', size=10)
 #
 # Sometimes, you may find it more convenient to skip registration and call
 # the environment’s constructor yourself. Some may find this approach more
@@ -486,10 +545,11 @@ class GridWorldEnv(gym.Env):
 #
 # .. code:: python
 #
-#    import gym_examples
+#    import gymnasium
+#    import gymnasium_env
 #    from gymnasium.wrappers import FlattenObservation
 #
-#    env = gymnasium.make('gym_examples/GridWorld-v0')
+#    env = gymnasium.make('gymnasium_env/GridWorld-v0')
 #    wrapped_env = FlattenObservation(env)
 #    print(wrapped_env.reset())     # E.g.  [3 0 3 3], {}
 #
@@ -497,15 +557,16 @@ class GridWorldEnv(gym.Env):
 # modular. For instance, instead of flattening the observations from
 # GridWorld, you might only want to look at the relative position of the
 # target and the agent. In the section on
-# `ObservationWrappers </api/wrappers/#observationwrapper>`__ we have
+# `ObservationWrappers </api/wrappers/observation_wrappers/#observation-wrappers>`__ we have
 # implemented a wrapper that does this job. This wrapper is also available
-# in gym-examples:
+# in ``gymnasium_env/wrappers/relative_position.py``:
 #
 # .. code:: python
 #
-#    import gym_examples
-#    from gym_examples.wrappers import RelativePosition
+#    import gymnasium
+#    import gymnasium_env
+#    from gymnasium_env.wrappers import RelativePosition
 #
-#    env = gymnasium.make('gym_examples/GridWorld-v0')
+#    env = gymnasium.make('gymnasium_env/GridWorld-v0')
 #    wrapped_env = RelativePosition(env)
 #    print(wrapped_env.reset())     # E.g.  [-3  3], {}

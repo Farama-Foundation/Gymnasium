@@ -101,6 +101,20 @@ An open, minimalist Gymnasium environment for autonomous coordination in wireles
 
 PyBullet based simulations of a robotic arm moving objects.
 
+### [pystk2-gymnasium: SuperTuxKart races gymnasium wrapper](https://github.com/bpiwowar/pystk2-gymnasium)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/bpiwowar/pystk2-gymnasium)
+
+Uses a [python wrapper](https://github.com/bpiwowar/pystk2) around [SuperTuxKart](https://supertuxkart.net/fr/Main_Page) that allows to access the world state and to control a race.
+
+### [QWOP: An environment for Bennet Foddy's game QWOP](https://github.com/smanolloff/qwop-gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/smanolloff/qwop-gym)
+
+QWOP is a game about running extremely fast down a 100 meter track. With this Gymnasium environment you can train your own agents and try to beat the current world record (5.0 in-game seconds for humans and 4.7 for AI).
+
 ### [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
@@ -114,6 +128,13 @@ Highly scalable and customizable Safe Reinforcement Learning library.
 ![GitHub stars](https://img.shields.io/github/stars/damat-le/gym-simplegrid)
 
 SimpleGrid is a super simple and minimal grid environment for Gymnasium. It is easy to use and customise and it is intended to offer an environment for rapidly testing and prototyping different RL algorithms.
+
+### [spark-sched-sim: Environments for scheduling DAG jobs in Apache Spark](https://github.com/ArchieGertsman/spark-sched-sim)
+
+spark-sched-sim simulates Spark clusters for RL-based job scheduling algorithms. Spark jobs are encoded as directed acyclic graphs (DAGs), providing opportunities to experiment with graph neural networks (GNN's) in the RL context.
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/ArchieGertsman/spark-sched-sim)
 
 ### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/Farama-Foundation/stable-retro)
 

@@ -9,8 +9,8 @@ Frozenlake benchmark
 # In this post we'll compare a bunch of different map sizes on the
 # `FrozenLake <https://gymnasium.farama.org/environments/toy_text/frozen_lake/>`__
 # environment from the reinforcement learning
-# `Gymnasium <https://gymnasium.farama.org/>`__ using the Q-learning
-# algorithm.
+# `Gymnasium <https://gymnasium.farama.org/>`__ package using the
+# Q-learning algorithm.
 #
 
 
@@ -86,7 +86,7 @@ params
 # Set the seed
 rng = np.random.default_rng(params.seed)
 
-# Create the figure folder if it doesn't exists
+# Create the figure folder if it doesn't exist
 params.savefig_folder.mkdir(parents=True, exist_ok=True)
 
 
@@ -263,8 +263,8 @@ def postprocess(episodes, params, rewards, steps, map_size):
     res = pd.DataFrame(
         data={
             "Episodes": np.tile(episodes, reps=params.n_runs),
-            "Rewards": rewards.flatten(),
-            "Steps": steps.flatten(),
+            "Rewards": rewards.flatten(order="F"),
+            "Steps": steps.flatten(order="F"),
         }
     )
     res["cum_rewards"] = rewards.cumsum(axis=0).flatten(order="F")
@@ -529,7 +529,7 @@ plot_steps_and_rewards(res_all, st_all)
 # whereas on the :math:`7 \times 7` map, the agent needs :math:`\sim 300`
 # episodes, on the :math:`9 \times 9` map it needs :math:`\sim 800`
 # episodes, and the :math:`11 \times 11` map, it needs :math:`\sim 1800`
-# episodes to converge. Interestingely, the agent seems to be getting more
+# episodes to converge. Interestingly, the agent seems to be getting more
 # rewards on the :math:`9 \times 9` map than on the :math:`7 \times 7`
 # map, which could mean it didn't reach an optimal policy on the
 # :math:`7 \times 7` map.
@@ -554,12 +554,12 @@ plot_steps_and_rewards(res_all, st_all)
 # References
 # ----------
 #
-# -  Code inspired from `Deep Reinforcement Learning
+# -  Code inspired by `Deep Reinforcement Learning
 #    Course <https://simoninithomas.github.io/Deep_reinforcement_learning_Course/>`__
 #    by Thomas Simonini (http://simoninithomas.com/)
 # -  `Dissecting Reinforcement
 #    Learning-Part.2 <https://mpatacchiola.github.io/blog/2017/01/15/dissecting-reinforcement-learning-2.html>`__
-# -  `Dadid Silver’s course <https://www.davidsilver.uk/teaching/>`__ in
+# -  `David Silver’s course <https://www.davidsilver.uk/teaching/>`__ in
 #    particular lesson 4 and lesson 5
 # -  `Q-learning article on
 #    Wikipedia <https://en.wikipedia.org/wiki/Q-learning>`__
