@@ -149,6 +149,11 @@ class NormalizeReward(gym.core.Wrapper, gym.utils.RecordConstructorArgs):
             rews = rews[0]
         return obs, rews, terminateds, truncateds, infos
 
+    def reset(self, **kwargs):
+        """Resets the environment and returns."""
+        self.returns = np.zeros(self.num_envs)
+        return self.env.reset(**kwargs)
+
     def normalize(self, rews):
         """Normalizes the rewards with the running mean rewards and their variance."""
         self.return_rms.update(self.returns)
