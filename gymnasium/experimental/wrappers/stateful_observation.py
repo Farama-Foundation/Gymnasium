@@ -10,8 +10,7 @@ from __future__ import annotations
 
 from collections import deque
 from copy import deepcopy
-from typing import Any, SupportsFloat
-from typing_extensions import Final
+from typing import Any, Final, SupportsFloat
 
 import numpy as np
 
@@ -186,9 +185,8 @@ class TimeAwareObservationV0(
         self.flatten: Final[bool] = flatten
         self.normalize_time: Final[bool] = normalize_time
 
-        if hasattr(env, "_max_episode_steps"):
-            self.max_timesteps = getattr(env, "_max_episode_steps")
-        elif env.spec is not None and env.spec.max_episode_steps is not None:
+        # We don't need to keep if a TimeLimit wrapper exists as `spec` will do that work for us now
+        if env.spec is not None and env.spec.max_episode_steps is not None:
             self.max_timesteps = env.spec.max_episode_steps
         else:
             raise ValueError(

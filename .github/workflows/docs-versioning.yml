@@ -18,15 +18,11 @@ jobs:
         with:
             python-version: '3.9'
 
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
-
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
 
       - name: Install Gymnasium
-        run: pip install .[box2d,mujoco]
+        run: pip install .[box2d,mujoco,jax] torch
 
       - name: Build Envs Docs
         run: python docs/_scripts/gen_mds.py && python docs/_scripts/gen_envs_display.py
@@ -47,11 +43,12 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: _build
-          target-folder: ${{steps.tag.outputs.tag}}
+          target-folder: ${{github.ref_name}}
           clean: false
 
       - name: Upload to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ !contains(github.ref_name, 'a') }}
         with:
           folder: _build
           clean-exclude: |

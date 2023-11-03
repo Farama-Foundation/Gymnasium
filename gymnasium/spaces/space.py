@@ -33,7 +33,7 @@ class Space(Generic[T_cov]):
     Warning:
         Custom observation & action spaces can inherit from the ``Space``
         class. However, most use-cases should be covered by the existing space
-        classes (e.g. :class:`Box`, :class:`Discrete`, etc...), and container classes (:class`Tuple` &
+        classes (e.g. :class:`Box`, :class:`Discrete`, etc...), and container classes (:class:`Tuple` &
         :class:`Dict`). Note that parametrized probability distributions (through the
         :meth:`Space.sample()` method), and batching functions (in :class:`gym.vector.VectorEnv`), are
         only well-defined for instances of spaces provided in gym by default.

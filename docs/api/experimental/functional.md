@@ -7,23 +7,23 @@ title: Functional
 ## gymnasium.experimental.FuncEnv
 
 ```{eval-rst}
-.. autoclass:: gymnasium.experimental.FuncEnv
+.. autoclass:: gymnasium.experimental.functional.FuncEnv
 
-.. autofunction:: gymnasium.experimental.FuncEnv.initial
-.. autofunction:: gymnasium.experimental.FuncEnv.transition
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.initial
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.transition
 
-.. autofunction:: gymnasium.experimental.FuncEnv.observation
-.. autofunction:: gymnasium.experimental.FuncEnv.reward
-.. autofunction:: gymnasium.experimental.FuncEnv.terminal
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.observation
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.reward
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.terminal
 
-.. autofunction:: gymnasium.experimental.FuncEnv.state_info
-.. autofunction:: gymnasium.experimental.FuncEnv.step_info
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.state_info
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.step_info
 
-.. autofunction:: gymnasium.experimental.FuncEnv.transform
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.transform
 
-.. autofunction:: gymnasium.experimental.FuncEnv.render_image
-.. autofunction:: gymnasium.experimental.FuncEnv.render_init
-.. autofunction:: gymnasium.experimental.FuncEnv.render_close
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.render_image
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.render_init
+.. autofunction:: gymnasium.experimental.functional.FuncEnv.render_close
 ```
 
 ## gymnasium.experimental.func2env.FunctionalJaxCompatibilityEnv

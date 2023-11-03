@@ -88,7 +88,7 @@ CHECK_ENV_IGNORE_WARNINGS = [
     f"\x1b[33mWARN: {message}\x1b[0m"
     for message in [
         "A Box observation space minimum value is -infinity. This is probably too low.",
-        "A Box observation space maximum value is -infinity. This is probably too high.",
+        "A Box observation space maximum value is infinity. This is probably too high.",
         "For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1]). See https://stable-baselines3.readthedocs.io/en/master/guide/rl_tips.html for more information.",
     ]
 ]
@@ -111,12 +111,14 @@ def test_frame_skip(frame_skip):
 def test_xml_file():
     """Verify that the loading of a custom XML file works"""
     relative_path = "./tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
-    env = PointEnv(xml_file=relative_path)
-    assert env.unwrapped.data.qpos.size == 9
+    env = PointEnv(xml_file=relative_path).unwrapped
+    assert isinstance(env, MujocoEnv)
+    assert env.data.qpos.size == 9
 
     full_path = os.getcwd() + "/tests/envs/mujoco/assets/walker2d_v5_uneven_feet.xml"
-    env = PointEnv(xml_file=full_path)
-    assert env.unwrapped.data.qpos.size == 9
+    env = PointEnv(xml_file=full_path).unwrapped
+    assert isinstance(env, MujocoEnv)
+    assert env.data.qpos.size == 9
 
     # note can not test user home path (with '~') because github CI does not have a home folder
 

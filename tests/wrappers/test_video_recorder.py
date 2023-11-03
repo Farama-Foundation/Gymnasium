@@ -52,12 +52,12 @@ def test_no_frames():
 
 
 def test_record_unrecordable_method():
-    with pytest.warns(
-        UserWarning,
-        match=re.escape(
-            "\x1b[33mWARN: Disabling video recorder because environment <UnrecordableEnv instance> was not initialized with any compatible video mode between `rgb_array` and `rgb_array_list`\x1b[0m"
-        ),
-    ):
+    error_message = (
+        "Render mode is None, which is incompatible with RecordVideo."
+        " Initialize your environment with a render_mode that returns an"
+        " image, such as rgb_array."
+    )
+    with pytest.raises(ValueError, match=re.escape(error_message)):
         env = UnrecordableEnv()
         rec = VideoRecorder(env)
         assert not rec.enabled

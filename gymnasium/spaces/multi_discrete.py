@@ -1,7 +1,7 @@
 """Implementation of a space that represents the cartesian product of `Discrete` spaces."""
 from __future__ import annotations
 
-from typing import Any, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
 from numpy.typing import NDArray
@@ -143,9 +143,9 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
             return np.array(_apply_mask(mask, self.nvec, self.start), dtype=self.dtype)
 
-        return (self.np_random.random(self.nvec.shape) * self.nvec + self.start).astype(
+        return (self.np_random.random(self.nvec.shape) * self.nvec).astype(
             self.dtype
-        )
+        ) + self.start
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
@@ -180,7 +180,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             return f"MultiDiscrete({self.nvec}, start={self.start})"
         return f"MultiDiscrete({self.nvec})"
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int | tuple[int, ...]):
         """Extract a subspace from this ``MultiDiscrete`` space."""
         nvec = self.nvec[index]
         start = self.start[index]
@@ -209,3 +209,18 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             and np.all(self.nvec == other.nvec)
             and np.all(self.start == other.start)
         )
+
+    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
+        """Used when loading a pickled space.
+
+        This method has to be implemented explicitly to allow for loading of legacy states.
+
+        Args:
+            state: The new state
+        """
+        state = dict(state)
+
+        if "start" not in state:
+            state["start"] = np.zeros(state["_shape"], dtype=state["dtype"])
+
+        super().__setstate__(state)

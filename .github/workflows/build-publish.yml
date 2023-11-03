@@ -21,9 +21,6 @@ jobs:
       matrix:
         include:
         - os: ubuntu-latest
-          python: 37
-          platform: manylinux_x86_64
-        - os: ubuntu-latest
           python: 38
           platform: manylinux_x86_64
         - os: ubuntu-latest

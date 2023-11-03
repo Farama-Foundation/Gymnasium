@@ -176,6 +176,7 @@ observation, reward, terminated, truncated, info = env.step(action)
 class BlackjackAgent:
     def __init__(
         self,
+        env,
         learning_rate: float,
         initial_epsilon: float,
         epsilon_decay: float,
@@ -203,7 +204,7 @@ class BlackjackAgent:
 
         self.training_error = []
 
-    def get_action(self, obs: tuple[int, int, bool]) -> int:
+    def get_action(self, env, obs: tuple[int, int, bool]) -> int:
         """
         Returns the best action with probability (1 - epsilon)
         otherwise a random action with probability epsilon to ensure exploration.
@@ -236,14 +237,16 @@ class BlackjackAgent:
         self.training_error.append(temporal_difference)
 
     def decay_epsilon(self):
-        self.epsilon = max(self.final_epsilon, self.epsilon - epsilon_decay)
+        self.epsilon = max(self.final_epsilon, self.epsilon - self.epsilon_decay)
 
 
 # %%
 # To train the agent, we will let the agent play one episode (one complete
 # game is called an episode) at a time and then update it’s Q-values after
-# each episode. The agent will have to experience a lot of episodes to
-# explore the environment sufficiently.
+# each step (one single action in a game is called a step).
+#
+# The agent will have to experience a lot of episodes to explore the
+# environment sufficiently.
 #
 # Now we should be ready to build the training loop.
 #
@@ -256,6 +259,7 @@ epsilon_decay = start_epsilon / (n_episodes / 2)  # reduce the exploration over 
 final_epsilon = 0.1
 
 agent = BlackjackAgent(
+    env=env,
     learning_rate=learning_rate,
     initial_epsilon=start_epsilon,
     epsilon_decay=epsilon_decay,
@@ -278,7 +282,7 @@ for episode in tqdm(range(n_episodes)):
 
     # play one episode
     while not done:
-        action = agent.get_action(obs)
+        action = agent.get_action(env, obs)
         next_obs, reward, terminated, truncated, info = env.step(action)
 
         # update the agent
