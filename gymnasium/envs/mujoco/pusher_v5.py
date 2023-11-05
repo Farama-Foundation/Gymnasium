@@ -34,6 +34,10 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Action Space
+    ```{figure} action_space_figures/pusher.png
+    :name: pusher
+    ```
+
     The action space is a `Box(-2, 2, (7,), float32)`. An action `(a, b)` represents the torques applied at the hinge joints.
 
     | Num | Action                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |

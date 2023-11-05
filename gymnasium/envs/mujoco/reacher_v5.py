@@ -30,6 +30,10 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Action Space
+    ```{figure} action_space_figures/reacher.png
+    :name: reacher
+    ```
+
     The action space is a `Box(-1, 1, (2,), float32)`. An action `(a, b)` represents the torques applied at the hinge joints.
 
     | Num | Action                                                                          | Control Min | Control Max |Name (in corresponding XML file)| Joint | Type (Unit)  |

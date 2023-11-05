@@ -38,6 +38,10 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     For more information see section "Version History".
 
     ## Action Space
+    ```{figure} action_space_figures/ant.png
+    :name: ant
+    ```
+
     The action space is a `Box(-1, 1, (8,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                                                            | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
