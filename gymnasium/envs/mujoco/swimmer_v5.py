@@ -47,6 +47,10 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Action Space
+    ```{figure} action_space_figures/swimmer.png
+    :name: swimmer
+    ```
+
     The action space is a `Box(-1, 1, (2,), float32)`. An action represents the torques applied between *links*
 
     | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
