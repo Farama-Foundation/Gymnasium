@@ -8,6 +8,7 @@ from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.envs.classic_control.cartpole import CartPoleVectorEnv
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
+from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import has_wrapper
 
 
@@ -159,3 +160,9 @@ def test_async_with_dynamically_registered_env():
     gym.make_vec("TestEnv-v0", vectorization_mode="async")
 
     del gym.registry["TestEnv-v0"]
+
+
+def test_async_registry():
+    gym.register("async-registry-test-env-v0", GenericTestEnv)
+    gym.make_vec("async-registry-test-env-v0", num_envs=2, vectorization_mode="async")
+    del gym.registry["async-registry-test-env-v0"]
