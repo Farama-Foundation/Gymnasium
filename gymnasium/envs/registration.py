@@ -647,7 +647,7 @@ def make(
             This is equivalent to importing the module first to register the environment followed by making the environment.
         max_episode_steps: Maximum length of an episode, can override the registered :class:`EnvSpec` ``max_episode_steps``
             with the value being passed to :class:`gymnasium.wrappers.TimeLimit`.
-            Using ``max_episode_steps=0`` will not apply the wrapper to the environment.
+            Using ``max_episode_steps=-1`` will not apply the wrapper to the environment.
         disable_env_checker: If to add :class:`gymnasium.wrappers.PassiveEnvChecker`, ``None`` will default to the
             :class:`EnvSpec` ``disable_env_checker`` value otherwise use this value will be used.
         kwargs: Additional arguments to pass to the environment constructor.
@@ -781,7 +781,7 @@ def make(
         env = gym.wrappers.OrderEnforcing(env)
 
     # Add the time limit wrapper
-    if max_episode_steps != 0:
+    if max_episode_steps != -1:
         if max_episode_steps is not None:
             env = gym.wrappers.TimeLimit(env, max_episode_steps)
         elif env_spec.max_episode_steps is not None:

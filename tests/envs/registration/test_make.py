@@ -99,7 +99,7 @@ def test_max_episode_steps(register_parameter_envs):
         "NoMaxEpisodeStepsEnv-v0",
         gym.spec("NoMaxEpisodeStepsEnv-v0"),
     ]:
-        env = gym.make(env_id, max_episode_steps=0)
+        env = gym.make(env_id, max_episode_steps=-1)
         assert env.spec is not None
         assert env.spec.max_episode_steps is None
         assert has_wrapper(env, TimeLimit) is False
