@@ -58,7 +58,7 @@ class DictInfoToList(VectorWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
         >>> infos
-        [{'x_position': 0.03332210900362942, 'x_velocity': -0.06296527291998533, 'reward_run': -0.06296527291998533, 'reward_ctrl': -0.2450350284576416}, {'x_position': 0.10172354684460166, 'x_velocity': 0.8934584807363616, 'reward_run': 0.8934584807363616, 'reward_ctrl': -0.21944422721862794}, {'x_position': 0.08920531470057845, 'x_velocity': 0.3771083596080768, 'reward_run': 0.3771083596080768, 'reward_ctrl': -0.20672209262847902}]
+        [{'x_position': 0.03332210900362942, 'x_velocity': -0.06296527291998533, 'reward_run': -0.06296527291998533, 'reward_ctrl': -0.2450350284576416}, {'x_position': 0.10172354684460168, 'x_velocity': 0.8934584807363618, 'reward_run': 0.8934584807363618, 'reward_ctrl': -0.21944422721862794}, {'x_position': 0.08920531470057845, 'x_velocity': 0.3771083596080768, 'reward_run': 0.3771083596080768, 'reward_ctrl': -0.20672209262847902}]
 
     Change logs:
      * v0.24.0 - Initially added as ``VectorListInfo``
