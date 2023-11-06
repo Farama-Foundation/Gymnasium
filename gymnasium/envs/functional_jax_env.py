@@ -89,7 +89,7 @@ class FunctionalJaxEnv(gym.Env):
         observation = self.func_env.observation(next_state)
         reward = self.func_env.reward(self.state, action, next_state)
         terminated = self.func_env.terminal(next_state)
-        info = self.func_env.step_info(self.state, action, next_state)
+        info = self.func_env.transition_info(self.state, action, next_state)
         self.state = next_state
 
         observation = jax_to_numpy(observation)
@@ -211,7 +211,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
             else jnp.zeros_like(terminated)
         )
 
-        info = self.func_env.step_info(self.state, action, next_state)
+        info = self.func_env.transition_info(self.state, action, next_state)
 
         done = jnp.logical_or(terminated, truncated)
         if jnp.any(done):
