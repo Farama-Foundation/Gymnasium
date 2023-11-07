@@ -12,9 +12,9 @@ from jax import random
 from jax.random import PRNGKey
 
 from gymnasium import spaces
+from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
-from gymnasium.experimental.functional_jax_env import FunctionalJaxEnv
+from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
 from gymnasium.wrappers import HumanRendering
 

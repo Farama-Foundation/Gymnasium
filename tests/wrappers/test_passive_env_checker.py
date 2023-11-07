@@ -1,3 +1,5 @@
+"""Test suite for PassiveEnvChecker wrapper."""
+
 import re
 import warnings
 
@@ -5,7 +7,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers.env_checker import PassiveEnvChecker
+from gymnasium.wrappers import PassiveEnvChecker
 from tests.envs.test_envs import PASSIVE_CHECK_IGNORE_WARNING
 from tests.envs.utils import all_testing_initialised_envs
 from tests.testing_env import GenericTestEnv

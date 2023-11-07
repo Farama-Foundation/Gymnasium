@@ -274,7 +274,7 @@ class Box(Space[NDArray[Any]]):
         return (
             isinstance(other, Box)
             and (self.shape == other.shape)
-            # and (self.dtype == other.dtype)
+            and (self.dtype == other.dtype)
             and np.allclose(self.low, other.low)
             and np.allclose(self.high, other.high)
         )
