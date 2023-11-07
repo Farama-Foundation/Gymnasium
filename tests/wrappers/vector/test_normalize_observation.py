@@ -25,13 +25,15 @@ def test_against_wrapper(
     vec_env = SyncVectorEnv([thunk for _ in range(n_envs)])
     vec_env = wrappers.vector.NormalizeObservation(vec_env)
 
-    vec_env.reset()
+    vec_env.reset(seed=123)
+    vec_env.action_space.seed(123)
     for _ in range(n_steps):
         vec_env.step(vec_env.action_space.sample())
 
     env = wrappers.Autoreset(thunk())
     env = wrappers.NormalizeObservation(env)
-    env.reset()
+    env.reset(seed=123)
+    env.action_space.seed(123)
     for _ in range(n_envs * n_steps):
         env.step(env.action_space.sample())
 
