@@ -17,6 +17,7 @@ from gymnasium.envs.registration import (
     pprint_registry,
     make_vec,
     register_envs,
+    VectorizeMode,
 )
 
 # necessary for `envs.__init__` which registers all gymnasium environments and loads plugins
@@ -35,6 +36,7 @@ __all__ = [
     # registration
     "make",
     "make_vec",
+    "VectorizeMode",
     "spec",
     "register",
     "registry",

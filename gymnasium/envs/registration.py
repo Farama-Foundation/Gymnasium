@@ -12,6 +12,7 @@ import re
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
+from enum import Enum
 from types import ModuleType
 from typing import Any, Callable, Iterable, Sequence
 
@@ -37,6 +38,7 @@ __all__ = [
     "current_namespace",
     "EnvSpec",
     "WrapperSpec",
+    "VectorizeMode",
     # Functions
     "register",
     "make",
@@ -57,7 +59,7 @@ class EnvCreator(Protocol):
 class VectorEnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> gym.experimental.vector.VectorEnv:
+    def __call__(self, **kwargs: Any) -> gym.vector.VectorEnv:
         ...
 
 
@@ -247,6 +249,14 @@ class EnvSpec:
             return output
         else:
             print(output)
+
+
+class VectorizeMode(Enum):
+    """All possible vectorization modes used in `make_vec`."""
+
+    ASYNC = "async"
+    SYNC = "sync"
+    VECTOR_ENTRY_POINT = "vector_entry_point"
 
 
 # Global registry of environments. Meant to be accessed through `register` and `make`
@@ -807,7 +817,7 @@ def make(
 def make_vec(
     id: str | EnvSpec,
     num_envs: int = 1,
-    vectorization_mode: str | None = None,
+    vectorization_mode: VectorizeMode | str | None = None,
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
@@ -820,9 +830,9 @@ def make_vec(
     Args:
         id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
         num_envs: Number of environments to create
-        vectorization_mode: The vectorization method used, defaults to ``None`` such that if a ``vector_entry_point`` exists,
+        vectorization_mode: The vectorization method used, defaults to ``None`` such that if env id' spec has a ``vector_entry_point`` (not ``None``),
             this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.
-            Valid modes are ``"async"``, ``"sync"`` or ``"vector_entry_point"``.
+            Valid modes are ``"async"``, ``"sync"`` or ``"vector_entry_point"``. Recommended to use the ``VectorizeMode`` enum rather than strings.
         vector_kwargs: Additional arguments to pass to the vectorizor environment constructor, i.e., ``SyncVectorEnv(..., **vector_kwargs)``.
         wrappers: A sequence of wrapper functions to apply to the base environment. Can only be used in ``"sync"`` or ``"async"`` mode.
         **kwargs: Additional arguments passed to the base environment constructor.
@@ -857,9 +867,18 @@ def make_vec(
     # Update the vectorization_mode if None
     if vectorization_mode is None:
         if id_env_spec.vector_entry_point is not None:
-            vectorization_mode = "vector_entry_point"
+            vectorization_mode = VectorizeMode.VECTOR_ENTRY_POINT
         else:
-            vectorization_mode = "sync"
+            vectorization_mode = VectorizeMode.SYNC
+    else:
+        try:
+            vectorization_mode = VectorizeMode(vectorization_mode)
+        except ValueError:
+            raise ValueError(
+                f"Invalid `vectorization_mode` passed to `gymnasium.make_vec`: {vectorization_mode!r}, "
+                f"valid modes: {[mode.value for mode in VectorizeMode]}"
+            )
+    assert isinstance(vectorization_mode, VectorizeMode)
 
     def create_single_env() -> Env:
         single_env = make(id_env_spec.id, **env_spec_kwargs.copy())
@@ -868,7 +887,7 @@ def make_vec(
             single_env = wrapper(single_env)
         return single_env
 
-    if vectorization_mode == "sync":
+    if vectorization_mode == VectorizeMode.SYNC:
         if id_env_spec.entry_point is None:
             raise error.Error(
                 f"Cannot create vectorized environment for {id_env_spec.id} because it doesn't have an entry point defined."
@@ -878,7 +897,7 @@ def make_vec(
             env_fns=(create_single_env for _ in range(num_envs)),
             **vector_kwargs,
         )
-    elif vectorization_mode == "async":
+    elif vectorization_mode == VectorizeMode.ASYNC:
         if id_env_spec.entry_point is None:
             raise error.Error(
                 f"Cannot create vectorized environment for {id_env_spec.id} because it doesn't have an entry point defined."
@@ -888,7 +907,7 @@ def make_vec(
             env_fns=[create_single_env for _ in range(num_envs)],
             **vector_kwargs,
         )
-    elif vectorization_mode == "vector_entry_point":
+    elif vectorization_mode == VectorizeMode.VECTOR_ENTRY_POINT:
         entry_point = id_env_spec.vector_entry_point
         if entry_point is None:
             raise error.Error(
