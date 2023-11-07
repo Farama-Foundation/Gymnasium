@@ -215,38 +215,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -466,19 +467,21 @@
             
             <h1>Source code for gymnasium.vector.async_vector_env</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;An async vector environment.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.connection</span> <span class="kn">import</span> <span class="n">Connection</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">Env</span><span class="p">,</span> <span class="n">ObsType</span>
+<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">Env</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">RenderFrame</span>
 <span class="kn">from</span> <span class="nn">gymnasium.error</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AlreadyPendingCallError</span><span class="p">,</span>
     <span class="n">ClosedEnvironmentError</span><span class="p">,</span>
@@ -487,6 +490,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">gymnasium.vector.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CloudpickleWrapper</span><span class="p">,</span>
+    <span class="n">batch_space</span><span class="p">,</span>
     <span class="n">clear_mpi_env_vars</span><span class="p">,</span>
     <span class="n">concatenate</span><span class="p">,</span>
     <span class="n">create_empty_array</span><span class="p">,</span>
@@ -495,13 +499,15 @@
     <span class="n">read_from_shared_memory</span><span class="p">,</span>
     <span class="n">write_to_shared_memory</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">gymnasium.vector.vector_env</span> <span class="kn">import</span> <span class="n">VectorEnv</span>
+<span class="kn">from</span> <span class="nn">gymnasium.vector.vector_env</span> <span class="kn">import</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">VectorEnv</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AsyncVectorEnv&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AsyncVectorEnv&quot;</span><span class="p">,</span> <span class="s2">&quot;AsyncState&quot;</span><span class="p">]</span>
 
 
 <span class="k">class</span> <span class="nc">AsyncState</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The AsyncVectorEnv possible states given the different actions.&quot;&quot;&quot;</span>
+
     <span class="n">DEFAULT</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
     <span class="n">WAITING_RESET</span> <span class="o">=</span> <span class="s2">&quot;reset&quot;</span>
     <span class="n">WAITING_STEP</span> <span class="o">=</span> <span class="s2">&quot;step&quot;</span>
@@ -509,7 +515,7 @@
 
 
 <div class="viewcode-block" id="AsyncVectorEnv">
-<a class="viewcode-back" href="../../../../api/vector/#gymnasium.vector.AsyncVectorEnv">[docs]</a>
+<a class="viewcode-back" href="../../../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv">[docs]</a>
 <span class="k">class</span> <span class="nc">AsyncVectorEnv</span><span class="p">(</span><span class="n">VectorEnv</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorized environment that runs multiple environments in parallel.</span>
 
@@ -517,39 +523,57 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.vector.AsyncVectorEnv([</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;Pendulum-v1&quot;, num_envs=2, vectorization_mode=&quot;async&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs</span>
+<span class="sd">        AsyncVectorEnv(Pendulum-v1, num_envs=2)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.vector.AsyncVectorEnv([</span>
 <span class="sd">        ...     lambda: gym.make(&quot;Pendulum-v1&quot;, g=9.81),</span>
 <span class="sd">        ...     lambda: gym.make(&quot;Pendulum-v1&quot;, g=1.62)</span>
 <span class="sd">        ... ])</span>
-<span class="sd">        &gt;&gt;&gt; env.reset(seed=42)</span>
-<span class="sd">        (array([[-0.14995256,  0.9886932 , -0.12224312],</span>
-<span class="sd">               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})</span>
+<span class="sd">        &gt;&gt;&gt; envs</span>
+<span class="sd">        AsyncVectorEnv(num_envs=2)</span>
+<span class="sd">        &gt;&gt;&gt; observations, infos = envs.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; observations</span>
+<span class="sd">        array([[-0.14995256,  0.9886932 , -0.12224312],</span>
+<span class="sd">               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; infos</span>
+<span class="sd">        {}</span>
+<span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
+<span class="sd">        &gt;&gt;&gt; observations, rewards, terminations, truncations, infos = envs.step(envs.action_space.sample())</span>
+<span class="sd">        &gt;&gt;&gt; observations</span>
+<span class="sd">        array([[-0.1851753 ,  0.98270553,  0.714599  ],</span>
+<span class="sd">               [ 0.6193494 ,  0.7851154 , -1.0808398 ]], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; rewards</span>
+<span class="sd">        array([-2.96495728, -1.00214607])</span>
+<span class="sd">        &gt;&gt;&gt; terminations</span>
+<span class="sd">        array([False, False])</span>
+<span class="sd">        &gt;&gt;&gt; truncations</span>
+<span class="sd">        array([False, False])</span>
+<span class="sd">        &gt;&gt;&gt; infos</span>
+<span class="sd">        {}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env_fns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">]],</span>
-        <span class="n">observation_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">action_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">shared_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">daemon</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">worker</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">worker</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">],</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Connection</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Queue</span><span class="p">],</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Vectorized environment that runs multiple environments in parallel.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env_fns: Functions that create the environments.</span>
-<span class="sd">            observation_space: Observation space of a single environment. If ``None``,</span>
-<span class="sd">                then the observation space of the first environment is taken.</span>
-<span class="sd">            action_space: Action space of a single environment. If ``None``,</span>
-<span class="sd">                then the action space of the first environment is taken.</span>
 <span class="sd">            shared_memory: If ``True``, then the observations from the worker processes are communicated back through</span>
 <span class="sd">                shared variables. This can improve the efficiency if the observations are large (e.g. images).</span>
-<span class="sd">            copy: If ``True``, then the :meth:`~AsyncVectorEnv.reset` and :meth:`~AsyncVectorEnv.step` methods</span>
+<span class="sd">            copy: If ``True``, then the :meth:`AsyncVectorEnv.reset` and :meth:`AsyncVectorEnv.step` methods</span>
 <span class="sd">                return a copy of the observations.</span>
-<span class="sd">            context: Context for `multiprocessing`_. If ``None``, then the default context is used.</span>
+<span class="sd">            context: Context for `multiprocessing`. If ``None``, then the default context is used.</span>
 <span class="sd">            daemon: If ``True``, then subprocesses have ``daemon`` flag turned on; that is, they will quit if</span>
 <span class="sd">                the head process quits. However, ``daemon=True`` prevents subprocesses to spawn children,</span>
 <span class="sd">                so for some environments you may want to have it set to ``False``.</span>
@@ -567,24 +591,33 @@
 <span class="sd">            ValueError: If observation_space is a custom space (i.e. not a default space in Gym,</span>
 <span class="sd">                such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ctx</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env_fns</span> <span class="o">=</span> <span class="n">env_fns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span> <span class="o">=</span> <span class="n">shared_memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="o">=</span> <span class="n">copy</span>
-        <span class="n">dummy_env</span> <span class="o">=</span> <span class="n">env_fns</span><span class="p">[</span><span class="mi">0</span><span class="p">]()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">metadata</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">observation_space</span> <span class="o">=</span> <span class="n">observation_space</span> <span class="ow">or</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">observation_space</span>
-            <span class="n">action_space</span> <span class="o">=</span> <span class="n">action_space</span> <span class="ow">or</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">action_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">)</span>
+
+        <span class="c1"># This would be nice to get rid of, but without it there&#39;s a deadlock between shared memory and pipes</span>
+        <span class="c1"># Create a dummy environment to gather the metadata and observation / action space of the environment</span>
+        <span class="n">dummy_env</span> <span class="o">=</span> <span class="n">env_fns</span><span class="p">[</span><span class="mi">0</span><span class="p">]()</span>
+
+        <span class="c1"># As we support `make_vec(spec)` then we can&#39;t include a `spec = dummy_env.spec` as this doesn&#39;t guarantee we can actual recreate the vector env.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">render_mode</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">observation_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">action_space</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
+
         <span class="n">dummy_env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">del</span> <span class="n">dummy_env</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">num_envs</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">),</span>
-            <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space</span><span class="p">,</span>
-            <span class="n">action_space</span><span class="o">=</span><span class="n">action_space</span><span class="p">,</span>
-        <span class="p">)</span>
 
+        <span class="c1"># Generate the multiprocessing context for the observation buffer</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">_obs_buffer</span> <span class="o">=</span> <span class="n">create_shared_memory</span><span class="p">(</span>
@@ -595,12 +628,9 @@
                 <span class="p">)</span>
             <span class="k">except</span> <span class="n">CustomSpaceError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Using `shared_memory=True` in `AsyncVectorEnv` &quot;</span>
-                    <span class="s2">&quot;is incompatible with non-standard Gymnasium observation spaces &quot;</span>
-                    <span class="s2">&quot;(i.e. custom spaces inheriting from `gymnasium.Space`), and is &quot;</span>
-                    <span class="s2">&quot;only compatible with default Gymnasium spaces (e.g. `Box`, &quot;</span>
-                    <span class="s2">&quot;`Tuple`, `Dict`) for batching. Set `shared_memory=False` &quot;</span>
-                    <span class="s2">&quot;if you use custom observation spaces.&quot;</span>
+                    <span class="s2">&quot;Using `shared_memory=True` in `AsyncVectorEnv` is incompatible with non-standard Gymnasium observation spaces (i.e. custom spaces inheriting from `gymnasium.Space`), &quot;</span>
+                    <span class="s2">&quot;and is only compatible with default Gymnasium spaces (e.g. `Box`, `Tuple`, `Dict`) for batching. &quot;</span>
+                    <span class="s2">&quot;Set `shared_memory=False` if you use custom observation spaces.&quot;</span>
                 <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_obs_buffer</span> <span class="o">=</span> <span class="kc">None</span>
@@ -610,8 +640,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error_queue</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">_worker_shared_memory</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span> <span class="k">else</span> <span class="n">_worker</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">worker</span> <span class="ow">or</span> <span class="n">target</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">worker</span> <span class="ow">or</span> <span class="n">_async_worker</span>
         <span class="k">with</span> <span class="n">clear_mpi_env_vars</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">env_fn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_fns</span><span class="p">):</span>
                 <span class="n">parent_pipe</span><span class="p">,</span> <span class="n">child_pipe</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Pipe</span><span class="p">()</span>
@@ -638,10 +667,31 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_spaces</span><span class="p">()</span>
 
+<div class="viewcode-block" id="AsyncVectorEnv.reset">
+<a class="viewcode-back" href="../../../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv.reset">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets all sub-environments in parallel and return a batch of concatenated observations and info.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed: The environment reset seeds</span>
+<span class="sd">            options: If to return the options</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A batch of observations and info from the vectorized environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_async</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_wait</span><span class="p">()</span></div>
+
+
     <span class="k">def</span> <span class="nf">reset_async</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Send calls to the :obj:`reset` methods of the sub-environments.</span>
 
@@ -661,38 +711,29 @@
 
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">seed</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">seed</span> <span class="o">=</span> <span class="p">[</span><span class="n">seed</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AlreadyPendingCallError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Calling `reset_async` while waiting for a pending call to `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">` to complete&quot;</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">single_seed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
-            <span class="n">single_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">if</span> <span class="n">single_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">single_kwargs</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">single_seed</span>
-            <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">single_kwargs</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">options</span>
-
-            <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="n">single_kwargs</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">env_seed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+            <span class="n">env_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="n">env_seed</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">}</span>
+            <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_RESET</span>
 
     <span class="k">def</span> <span class="nf">reset_wait</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]:</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            timeout: Number of seconds before the call to `reset_wait` times out. If `None`, the call to `reset_wait` never times out.</span>
-<span class="sd">            seed: ignored</span>
-<span class="sd">            options: ignored</span>
+<span class="sd">            timeout: Number of seconds before the call to ``reset_wait`` times out. If `None`, the call to ``reset_wait`` never times out.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple of batched observations and list of dictionaries</span>
@@ -709,15 +750,14 @@
                 <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_RESET</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_pipe_envs</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
-            <span class="k">raise</span> <span class="n">mp</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The call to `reset_wait` has timed out after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> second(s).&quot;</span>
             <span class="p">)</span>
 
         <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
 
         <span class="n">infos</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">results</span><span class="p">,</span> <span class="n">info_data</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">)</span>
@@ -729,13 +769,31 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span>
             <span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">),</span> <span class="n">infos</span>
 
-    <span class="k">def</span> <span class="nf">step_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send the calls to :obj:`step` to each sub-environment.</span>
+<div class="viewcode-block" id="AsyncVectorEnv.step">
+<a class="viewcode-back" href="../../../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv.step">[docs]</a>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Take an action for each parallel environment.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            actions: Batch of actions. element of :attr:`~VectorEnv.action_space`</span>
+<span class="sd">            actions: element of :attr:`action_space` batch of actions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Batch of (observations, rewards, terminations, truncations, infos)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_async</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_wait</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">step_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send the calls to :meth:`Env.step` to each sub-environment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            actions: Batch of actions. element of :attr:`VectorEnv.action_space`</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ClosedEnvironmentError: If the environment was closed (if :meth:`close` was previously called).</span>
@@ -748,17 +806,17 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AlreadyPendingCallError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Calling `step_async` while waiting for a pending call to `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">` to complete.&quot;</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
 
-        <span class="n">actions</span> <span class="o">=</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+        <span class="n">iter_actions</span> <span class="o">=</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">iter_actions</span><span class="p">):</span>
             <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">action</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_STEP</span>
 
     <span class="k">def</span> <span class="nf">step_wait</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for the calls to :obj:`step` in each sub-environment to finish.</span>
 
 <span class="sd">        Args:</span>
@@ -779,43 +837,63 @@
                 <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_STEP</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_pipe_envs</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
-            <span class="k">raise</span> <span class="n">mp</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The call to `step_wait` has timed out after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> second(s).&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">observations_list</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminateds</span><span class="p">,</span> <span class="n">truncateds</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">{}</span>
+        <span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">{}</span>
         <span class="n">successes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">):</span>
-            <span class="n">result</span><span class="p">,</span> <span class="n">success</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">env_idx</span><span class="p">,</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">):</span>
+            <span class="n">env_step_return</span><span class="p">,</span> <span class="n">success</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+
             <span class="n">successes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">success</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
-                <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">result</span>
-
-                <span class="n">observations_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-                <span class="n">rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rew</span><span class="p">)</span>
-                <span class="n">terminateds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>
-                <span class="n">truncateds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>
-                <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="n">observations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_step_return</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_step_return</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">terminations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_step_return</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">truncations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_step_return</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+                <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">env_step_return</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">env_idx</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span>
-                <span class="n">observations_list</span><span class="p">,</span>
+                <span class="n">observations</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewards</span><span class="p">),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">terminateds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truncateds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">terminations</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truncations</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">),</span>
             <span class="n">infos</span><span class="p">,</span>
         <span class="p">)</span>
+
+<div class="viewcode-block" id="AsyncVectorEnv.call">
+<a class="viewcode-back" href="../../../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv.call">[docs]</a>
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call a method from each parallel environment with args and kwargs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Name of the method or property to call.</span>
+<span class="sd">            *args: Position arguments to apply to the method call.</span>
+<span class="sd">            **kwargs: Keyword arguments to apply to the method call.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of the results of the individual calls to the method or property for each environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_async</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_wait</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of rendered frames from the environments.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s2">&quot;render&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">call_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls the method with name asynchronously and apply args and kwargs to the method.</span>
@@ -832,28 +910,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_running</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AlreadyPendingCallError</span><span class="p">(</span>
-                <span class="s2">&quot;Calling `call_async` while waiting &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;for a pending call to `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">` to complete.&quot;</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Calling `call_async` while waiting for a pending call to `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">` to complete.&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">:</span>
             <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;_call&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_CALL</span>
 
-    <span class="k">def</span> <span class="nf">call_wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">call_wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls all parent pipes and waits for the results.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            timeout: Number of seconds before the call to `step_wait` times out.</span>
-<span class="sd">                If `None` (default), the call to `step_wait` never times out.</span>
+<span class="sd">            timeout: Number of seconds before the call to :meth:`step_wait` times out.</span>
+<span class="sd">                If ``None`` (default), the call to :meth:`step_wait` never times out.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List of the results of the individual calls to the method or property for each environment.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            NoAsyncCallError: Calling `call_wait` without any prior call to `call_async`.</span>
-<span class="sd">            TimeoutError: The call to `call_wait` has timed out after timeout second(s).</span>
+<span class="sd">            NoAsyncCallError: Calling :meth:`call_wait` without any prior call to :meth:`call_async`.</span>
+<span class="sd">            TimeoutError: The call to :meth:`call_wait` has timed out after timeout second(s).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_running</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_CALL</span><span class="p">:</span>
@@ -862,9 +939,9 @@
                 <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_CALL</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_pipe_envs</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
-            <span class="k">raise</span> <span class="n">mp</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The call to `call_wait` has timed out after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> second(s).&quot;</span>
             <span class="p">)</span>
 
@@ -874,7 +951,23 @@
 
         <span class="k">return</span> <span class="n">results</span>
 
-    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">object</span><span class="p">]):</span>
+<div class="viewcode-block" id="AsyncVectorEnv.get_attr">
+<a class="viewcode-back" href="../../../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv.get_attr">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a property from each parallel environment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Name of the property to be get from each individual environment.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The property with name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncVectorEnv.set_attr">
+<a class="viewcode-back" href="../../../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv.set_attr">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">object</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets an attribute of the sub-environments.</span>
 
 <span class="sd">        Args:</span>
@@ -885,33 +978,30 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: Values must be a list or tuple with length equal to the number of environments.</span>
-<span class="sd">            AlreadyPendingCallError: Calling `set_attr` while waiting for a pending call to complete.</span>
+<span class="sd">            AlreadyPendingCallError: Calling :meth:`set_attr` while waiting for a pending call to complete.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_running</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">values</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Values must be a list or tuple with length equal to the &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;number of environments. Got `</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">` values for &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2"> environments.&quot;</span>
+                <span class="s2">&quot;Values must be a list or tuple with length equal to the number of environments. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got `</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">` values for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2"> environments.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AlreadyPendingCallError</span><span class="p">(</span>
-                <span class="s2">&quot;Calling `set_attr` while waiting &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;for a pending call to `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">` to complete.&quot;</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Calling `set_attr` while waiting for a pending call to `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">` to complete.&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
             <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;_setattr&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)))</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">close_extras</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">terminate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">close_extras</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">terminate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the environments &amp; clean up the extra resources (processes and pipes).</span>
 
 <span class="sd">        Args:</span>
@@ -931,7 +1021,7 @@
                 <span class="p">)</span>
                 <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">_wait&quot;</span><span class="p">)</span>
                 <span class="n">function</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">mp</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
             <span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">terminate</span><span class="p">:</span>
@@ -952,14 +1042,16 @@
         <span class="k">for</span> <span class="n">process</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span><span class="p">:</span>
             <span class="n">process</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_poll_pipe_envs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_running</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
+
         <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
-        <span class="n">delta</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">:</span>
             <span class="n">delta</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="n">pipe</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="n">pipe</span><span class="o">.</span><span class="n">closed</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">pipe</span><span class="o">.</span><span class="n">poll</span><span class="p">(</span><span class="n">delta</span><span class="p">)):</span>
@@ -969,22 +1061,23 @@
     <span class="k">def</span> <span class="nf">_check_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_running</span><span class="p">()</span>
         <span class="n">spaces</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">:</span>
             <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;_check_spaces&quot;</span><span class="p">,</span> <span class="n">spaces</span><span class="p">))</span>
+
         <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span>
         <span class="n">same_observation_spaces</span><span class="p">,</span> <span class="n">same_action_spaces</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">same_observation_spaces</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;Some environments have an observation space different from &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="si">}</span><span class="s2">`. In order to batch observations, &quot;</span>
-                <span class="s2">&quot;the observation spaces from all environments must be equal.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Some environments have an observation space different from `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="si">}</span><span class="s2">`. &quot;</span>
+                <span class="s2">&quot;In order to batch observations, the observation spaces from all environments must be equal.&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">same_action_spaces</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;Some environments have an action space different from &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="si">}</span><span class="s2">`. In order to batch actions, the &quot;</span>
-                <span class="s2">&quot;action spaces from all environments must be equal.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Some environments have an action space different from `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="si">}</span><span class="s2">`. &quot;</span>
+                <span class="s2">&quot;In order to batch actions, the action spaces from all environments must be equal.&quot;</span>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_assert_is_running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -993,7 +1086,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Trying to operate on `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">`, after a call to `close()`.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_raise_if_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">successes</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_raise_if_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">successes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bool</span><span class="p">]):</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">successes</span><span class="p">):</span>
             <span class="k">return</span>
 
@@ -1001,10 +1094,12 @@
         <span class="k">assert</span> <span class="n">num_errors</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_errors</span><span class="p">):</span>
             <span class="n">index</span><span class="p">,</span> <span class="n">exctype</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Received the following error from Worker-</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exctype</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shutting down Worker-</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -1019,17 +1114,32 @@
 
 
 
-<span class="k">def</span> <span class="nf">_worker</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">env_fn</span><span class="p">,</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">parent_pipe</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">error_queue</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="n">shared_memory</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="k">def</span> <span class="nf">_async_worker</span><span class="p">(</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">env_fn</span><span class="p">:</span> <span class="nb">callable</span><span class="p">,</span>
+    <span class="n">pipe</span><span class="p">:</span> <span class="n">Connection</span><span class="p">,</span>
+    <span class="n">parent_pipe</span><span class="p">:</span> <span class="n">Connection</span><span class="p">,</span>
+    <span class="n">shared_memory</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">error_queue</span><span class="p">:</span> <span class="n">Queue</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">env_fn</span><span class="p">()</span>
+    <span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+    <span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+
     <span class="n">parent_pipe</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">command</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+
             <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
                 <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">shared_memory</span><span class="p">:</span>
+                    <span class="n">write_to_shared_memory</span><span class="p">(</span>
+                        <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
+                    <span class="p">)</span>
+                    <span class="n">observation</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="n">observation</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
-
             <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span>
                 <span class="p">(</span>
                     <span class="n">observation</span><span class="p">,</span>
@@ -1043,112 +1153,43 @@
                     <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
                     <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_observation</span>
                     <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_info</span>
+
+                <span class="k">if</span> <span class="n">shared_memory</span><span class="p">:</span>
+                    <span class="n">write_to_shared_memory</span><span class="p">(</span>
+                        <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
+                    <span class="p">)</span>
+                    <span class="n">observation</span> <span class="o">=</span> <span class="kc">None</span>
+
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;seed&quot;</span><span class="p">:</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;close&quot;</span><span class="p">:</span>
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
                 <span class="k">break</span>
             <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;_call&quot;</span><span class="p">:</span>
                 <span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="s2">&quot;close&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="s2">&quot;close&quot;</span><span class="p">,</span> <span class="s2">&quot;set_wrapper_attr&quot;</span><span class="p">]:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Trying to call function `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` with &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;`_call`. Use `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` directly instead.&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Trying to call function `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` with `call`, use `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` directly instead.&quot;</span>
                     <span class="p">)</span>
-                <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
-                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
+
+                <span class="n">attr</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">attr</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">function</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">attr</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;_setattr&quot;</span><span class="p">:</span>
                 <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="n">env</span><span class="o">.</span><span class="n">set_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;_check_spaces&quot;</span><span class="p">:</span>
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
                     <span class="p">(</span>
-                        <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">observation_space</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">action_space</span><span class="p">),</span>
                         <span class="kc">True</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Received unknown command `</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">`. Must &quot;</span>
-                    <span class="s2">&quot;be one of {`reset`, `step`, `seed`, `close`, `_call`, &quot;</span>
-                    <span class="s2">&quot;`_setattr`, `_check_spaces`}.&quot;</span>
-                <span class="p">)</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
-        <span class="n">error_queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">index</span><span class="p">,)</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[:</span><span class="mi">2</span><span class="p">])</span>
-        <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-
-<span class="k">def</span> <span class="nf">_worker_shared_memory</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">env_fn</span><span class="p">,</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">parent_pipe</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">error_queue</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="n">shared_memory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">env_fn</span><span class="p">()</span>
-    <span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-    <span class="n">parent_pipe</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">command</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
-                <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-                <span class="n">write_to_shared_memory</span><span class="p">(</span>
-                    <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
-                <span class="p">)</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="kc">None</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
-
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span>
-                <span class="p">(</span>
-                    <span class="n">observation</span><span class="p">,</span>
-                    <span class="n">reward</span><span class="p">,</span>
-                    <span class="n">terminated</span><span class="p">,</span>
-                    <span class="n">truncated</span><span class="p">,</span>
-                    <span class="n">info</span><span class="p">,</span>
-                <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
-                    <span class="n">old_observation</span><span class="p">,</span> <span class="n">old_info</span> <span class="o">=</span> <span class="n">observation</span><span class="p">,</span> <span class="n">info</span>
-                    <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_observation</span>
-                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_info</span>
-                <span class="n">write_to_shared_memory</span><span class="p">(</span>
-                    <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
-                <span class="p">)</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="kc">None</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;seed&quot;</span><span class="p">:</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;close&quot;</span><span class="p">:</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
-                <span class="k">break</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;_call&quot;</span><span class="p">:</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="s2">&quot;close&quot;</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Trying to call function `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` with &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;`_call`. Use `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` directly instead.&quot;</span>
-                    <span class="p">)</span>
-                <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
-                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">function</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;_setattr&quot;</span><span class="p">:</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;_check_spaces&quot;</span><span class="p">:</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
-                    <span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">observation_space</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Received unknown command `</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">`. Must &quot;</span>
-                    <span class="s2">&quot;be one of {`reset`, `step`, `seed`, `close`, `_call`, &quot;</span>
-                    <span class="s2">&quot;`_setattr`, `_check_spaces`}.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Received unknown command `</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">`. Must be one of [`reset`, `step`, `close`, `_call`, `_setattr`, `_check_spaces`].&quot;</span>
                 <span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
         <span class="n">error_queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">index</span><span class="p">,)</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[:</span><span class="mi">2</span><span class="p">])</span>
@@ -1272,7 +1313,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>

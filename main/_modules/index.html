@@ -215,38 +215,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../api/vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -467,34 +468,7 @@
             <h1>All modules for which code is available</h1>
 <ul><li><a href="gymnasium/core/">gymnasium.core</a></li>
 <li><a href="gymnasium/envs/registration/">gymnasium.envs.registration</a></li>
-<li><a href="gymnasium/experimental/functional/">gymnasium.experimental.functional</a></li>
-<li><a href="gymnasium/experimental/functional_jax_env/">gymnasium.experimental.functional_jax_env</a></li>
-<li><a href="gymnasium/experimental/vector/async_vector_env/">gymnasium.experimental.vector.async_vector_env</a></li>
-<li><a href="gymnasium/experimental/vector/sync_vector_env/">gymnasium.experimental.vector.sync_vector_env</a></li>
-<li><a href="gymnasium/experimental/vector/utils/misc/">gymnasium.experimental.vector.utils.misc</a></li>
-<li><a href="gymnasium/experimental/vector/utils/shared_memory/">gymnasium.experimental.vector.utils.shared_memory</a></li>
-<li><a href="gymnasium/experimental/vector/utils/space_utils/">gymnasium.experimental.vector.utils.space_utils</a></li>
-<li><a href="gymnasium/experimental/vector/vector_env/">gymnasium.experimental.vector.vector_env</a></li>
-<li><a href="gymnasium/experimental/wrappers/atari_preprocessing/">gymnasium.experimental.wrappers.atari_preprocessing</a></li>
-<li><a href="gymnasium/experimental/wrappers/common/">gymnasium.experimental.wrappers.common</a></li>
-<li><a href="gymnasium/experimental/wrappers/jax_to_numpy/">gymnasium.experimental.wrappers.jax_to_numpy</a></li>
-<li><a href="gymnasium/experimental/wrappers/jax_to_torch/">gymnasium.experimental.wrappers.jax_to_torch</a></li>
-<li><a href="gymnasium/experimental/wrappers/lambda_action/">gymnasium.experimental.wrappers.lambda_action</a></li>
-<li><a href="gymnasium/experimental/wrappers/lambda_observation/">gymnasium.experimental.wrappers.lambda_observation</a></li>
-<li><a href="gymnasium/experimental/wrappers/lambda_reward/">gymnasium.experimental.wrappers.lambda_reward</a></li>
-<li><a href="gymnasium/experimental/wrappers/numpy_to_torch/">gymnasium.experimental.wrappers.numpy_to_torch</a></li>
-<li><a href="gymnasium/experimental/wrappers/rendering/">gymnasium.experimental.wrappers.rendering</a></li>
-<li><a href="gymnasium/experimental/wrappers/stateful_action/">gymnasium.experimental.wrappers.stateful_action</a></li>
-<li><a href="gymnasium/experimental/wrappers/stateful_observation/">gymnasium.experimental.wrappers.stateful_observation</a></li>
-<li><a href="gymnasium/experimental/wrappers/stateful_reward/">gymnasium.experimental.wrappers.stateful_reward</a></li>
-<li><a href="gymnasium/experimental/wrappers/vector/dict_info_to_list/">gymnasium.experimental.wrappers.vector.dict_info_to_list</a></li>
-<li><a href="gymnasium/experimental/wrappers/vector/jax_to_numpy/">gymnasium.experimental.wrappers.vector.jax_to_numpy</a></li>
-<li><a href="gymnasium/experimental/wrappers/vector/jax_to_torch/">gymnasium.experimental.wrappers.vector.jax_to_torch</a></li>
-<li><a href="gymnasium/experimental/wrappers/vector/numpy_to_torch/">gymnasium.experimental.wrappers.vector.numpy_to_torch</a></li>
-<li><a href="gymnasium/experimental/wrappers/vector/record_episode_statistics/">gymnasium.experimental.wrappers.vector.record_episode_statistics</a></li>
-<li><a href="gymnasium/experimental/wrappers/vector/vectorize_action/">gymnasium.experimental.wrappers.vector.vectorize_action</a></li>
-<li><a href="gymnasium/experimental/wrappers/vector/vectorize_observation/">gymnasium.experimental.wrappers.vector.vectorize_observation</a></li>
-<li><a href="gymnasium/experimental/wrappers/vector/vectorize_reward/">gymnasium.experimental.wrappers.vector.vectorize_reward</a></li>
+<li><a href="gymnasium/functional/">gymnasium.functional</a></li>
 <li><a href="gymnasium/spaces/box/">gymnasium.spaces.box</a></li>
 <li><a href="gymnasium/spaces/dict/">gymnasium.spaces.dict</a></li>
 <li><a href="gymnasium/spaces/discrete/">gymnasium.spaces.discrete</a></li>
@@ -507,41 +481,33 @@
 <li><a href="gymnasium/spaces/tuple/">gymnasium.spaces.tuple</a></li>
 <li><a href="gymnasium/spaces/utils/">gymnasium.spaces.utils</a></li>
 <li><a href="gymnasium/utils/env_checker/">gymnasium.utils.env_checker</a></li>
+<li><a href="gymnasium/utils/ezpickle/">gymnasium.utils.ezpickle</a></li>
 <li><a href="gymnasium/utils/play/">gymnasium.utils.play</a></li>
 <li><a href="gymnasium/utils/save_video/">gymnasium.utils.save_video</a></li>
 <li><a href="gymnasium/utils/seeding/">gymnasium.utils.seeding</a></li>
 <li><a href="gymnasium/utils/step_api_compatibility/">gymnasium.utils.step_api_compatibility</a></li>
-<li><a href="gymnasium/vector/">gymnasium.vector</a></li>
-<ul><li><a href="gymnasium/vector/async_vector_env/">gymnasium.vector.async_vector_env</a></li>
+<li><a href="gymnasium/vector/async_vector_env/">gymnasium.vector.async_vector_env</a></li>
 <li><a href="gymnasium/vector/sync_vector_env/">gymnasium.vector.sync_vector_env</a></li>
-<li><a href="gymnasium/vector/utils/numpy_utils/">gymnasium.vector.utils.numpy_utils</a></li>
+<li><a href="gymnasium/vector/utils/misc/">gymnasium.vector.utils.misc</a></li>
 <li><a href="gymnasium/vector/utils/shared_memory/">gymnasium.vector.utils.shared_memory</a></li>
-<li><a href="gymnasium/vector/utils/spaces/">gymnasium.vector.utils.spaces</a></li>
+<li><a href="gymnasium/vector/utils/space_utils/">gymnasium.vector.utils.space_utils</a></li>
 <li><a href="gymnasium/vector/vector_env/">gymnasium.vector.vector_env</a></li>
-</ul><li><a href="gymnasium/wrappers/atari_preprocessing/">gymnasium.wrappers.atari_preprocessing</a></li>
-<li><a href="gymnasium/wrappers/autoreset/">gymnasium.wrappers.autoreset</a></li>
-<li><a href="gymnasium/wrappers/clip_action/">gymnasium.wrappers.clip_action</a></li>
-<li><a href="gymnasium/wrappers/compatibility/">gymnasium.wrappers.compatibility</a></li>
-<li><a href="gymnasium/wrappers/env_checker/">gymnasium.wrappers.env_checker</a></li>
-<li><a href="gymnasium/wrappers/filter_observation/">gymnasium.wrappers.filter_observation</a></li>
-<li><a href="gymnasium/wrappers/flatten_observation/">gymnasium.wrappers.flatten_observation</a></li>
-<li><a href="gymnasium/wrappers/frame_stack/">gymnasium.wrappers.frame_stack</a></li>
-<li><a href="gymnasium/wrappers/gray_scale_observation/">gymnasium.wrappers.gray_scale_observation</a></li>
-<li><a href="gymnasium/wrappers/human_rendering/">gymnasium.wrappers.human_rendering</a></li>
-<li><a href="gymnasium/wrappers/normalize/">gymnasium.wrappers.normalize</a></li>
-<li><a href="gymnasium/wrappers/order_enforcing/">gymnasium.wrappers.order_enforcing</a></li>
-<li><a href="gymnasium/wrappers/pixel_observation/">gymnasium.wrappers.pixel_observation</a></li>
-<li><a href="gymnasium/wrappers/record_episode_statistics/">gymnasium.wrappers.record_episode_statistics</a></li>
-<li><a href="gymnasium/wrappers/record_video/">gymnasium.wrappers.record_video</a></li>
-<li><a href="gymnasium/wrappers/render_collection/">gymnasium.wrappers.render_collection</a></li>
-<li><a href="gymnasium/wrappers/rescale_action/">gymnasium.wrappers.rescale_action</a></li>
-<li><a href="gymnasium/wrappers/resize_observation/">gymnasium.wrappers.resize_observation</a></li>
-<li><a href="gymnasium/wrappers/step_api_compatibility/">gymnasium.wrappers.step_api_compatibility</a></li>
-<li><a href="gymnasium/wrappers/time_aware_observation/">gymnasium.wrappers.time_aware_observation</a></li>
-<li><a href="gymnasium/wrappers/time_limit/">gymnasium.wrappers.time_limit</a></li>
+<li><a href="gymnasium/wrappers/atari_preprocessing/">gymnasium.wrappers.atari_preprocessing</a></li>
+<li><a href="gymnasium/wrappers/common/">gymnasium.wrappers.common</a></li>
+<li><a href="gymnasium/wrappers/jax_to_numpy/">gymnasium.wrappers.jax_to_numpy</a></li>
+<li><a href="gymnasium/wrappers/jax_to_torch/">gymnasium.wrappers.jax_to_torch</a></li>
+<li><a href="gymnasium/wrappers/numpy_to_torch/">gymnasium.wrappers.numpy_to_torch</a></li>
+<li><a href="gymnasium/wrappers/rendering/">gymnasium.wrappers.rendering</a></li>
+<li><a href="gymnasium/wrappers/stateful_action/">gymnasium.wrappers.stateful_action</a></li>
+<li><a href="gymnasium/wrappers/stateful_observation/">gymnasium.wrappers.stateful_observation</a></li>
+<li><a href="gymnasium/wrappers/stateful_reward/">gymnasium.wrappers.stateful_reward</a></li>
+<li><a href="gymnasium/wrappers/transform_action/">gymnasium.wrappers.transform_action</a></li>
 <li><a href="gymnasium/wrappers/transform_observation/">gymnasium.wrappers.transform_observation</a></li>
 <li><a href="gymnasium/wrappers/transform_reward/">gymnasium.wrappers.transform_reward</a></li>
-<li><a href="gymnasium/wrappers/vector_list_info/">gymnasium.wrappers.vector_list_info</a></li>
+<li><a href="gymnasium/wrappers/vector/dict_info_to_list/">gymnasium.wrappers.vector.dict_info_to_list</a></li>
+<li><a href="gymnasium/wrappers/vector/vectorize_action/">gymnasium.wrappers.vector.vectorize_action</a></li>
+<li><a href="gymnasium/wrappers/vector/vectorize_observation/">gymnasium.wrappers.vector.vectorize_observation</a></li>
+<li><a href="gymnasium/wrappers/vector/vectorize_reward/">gymnasium.wrappers.vector.vectorize_reward</a></li>
 </ul>
           </article>
         </div>
@@ -659,7 +625,7 @@
         })()
       </script>
 
-    <script src="../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=7660844c"></script>

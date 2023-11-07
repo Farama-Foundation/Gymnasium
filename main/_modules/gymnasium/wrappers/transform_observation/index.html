@@ -215,38 +215,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -465,20 +466,55 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.transform_observation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper for transforming observations.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span></span><span class="sd">&quot;&quot;&quot;A collection of observation wrappers using a lambda function.</span>
+
+<span class="sd">* ``TransformObservation`` - Transforms the observation with a function</span>
+<span class="sd">* ``FilterObservation`` - Filters a ``Tuple`` or ``Dict`` to only include certain keys</span>
+<span class="sd">* ``FlattenObservation`` - Flattens the observations</span>
+<span class="sd">* ``GrayscaleObservation`` - Converts a RGB observation to a grayscale observation</span>
+<span class="sd">* ``ResizeObservation`` - Resizes an array-based observation (normally a RGB observation)</span>
+<span class="sd">* ``ReshapeObservation`` - Reshapes an array-based observation</span>
+<span class="sd">* ``RescaleObservation`` - Rescales an observation to between a minimum and maximum value</span>
+<span class="sd">* ``DtypeObservation`` - Convert an observation to a dtype</span>
+<span class="sd">* ``RenderObservation`` - Allows the observation to the rendered frame</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">spaces</span>
+<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperObsType</span>
+<span class="kn">from</span> <span class="nn">gymnasium.error</span> <span class="kn">import</span> <span class="n">DependencyNotInstalled</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;TransformObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FilterObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FlattenObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GrayscaleObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ResizeObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ReshapeObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RescaleObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DtypeObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RenderObservation&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="TransformObservation">
 <a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.TransformObservation">[docs]</a>
-<span class="k">class</span> <span class="nc">TransformObservation</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform the observation via an arbitrary function :attr:`f`.</span>
+<span class="k">class</span> <span class="nc">TransformObservation</span><span class="p">(</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies a function to the ``observation`` received from the environment&#39;s :meth:`Env.reset` and :meth:`Env.step` that is passed back to the user.</span>
 
-<span class="sd">    The function :attr:`f` should be defined on the observation space of the base environment, ``env``, and should, ideally, return values in the same space.</span>
+<span class="sd">    The function :attr:`func` will be applied to all observations.</span>
+<span class="sd">    If the observations from :attr:`func` are outside the bounds of the ``env``&#39;s observation space, provide an updated :attr:`observation_space`.</span>
 
-<span class="sd">    If the transformation you wish to apply to observations returns values in a *different* space, you should subclass :class:`ObservationWrapper`, implement the transformation, and set the new observation space accordingly. If you were to use this wrapper instead, the observation space would be set incorrectly.</span>
+<span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.TransformObservation`.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
@@ -486,34 +522,691 @@
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; np.random.seed(0)</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; env = TransformObservation(env, lambda obs: obs + 0.1 * np.random.randn(*obs.shape))</span>
 <span class="sd">        &gt;&gt;&gt; env.reset(seed=42)</span>
-<span class="sd">        (array([0.20380084, 0.03390356, 0.13373359, 0.24382612]), {})</span>
+<span class="sd">        (array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), {})</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = TransformObservation(env, lambda obs: obs + 0.1 * np.random.random(obs.shape), env.observation_space)</span>
+<span class="sd">        &gt;&gt;&gt; env.reset(seed=42)</span>
+<span class="sd">        (array([0.08227695, 0.06540678, 0.09613613, 0.07422512]), {})</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v0.15.4 - Initially added</span>
+<span class="sd">     * v1.0.0 - Add requirement of ``observation_space``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the :class:`TransformObservation` wrapper with an environment and a transform function :attr:`f`.</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">observation_space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the transform observation wrapper.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            env: The environment to apply the wrapper</span>
-<span class="sd">            f: A function that transforms the observation</span>
+<span class="sd">            env: The environment to wrap</span>
+<span class="sd">            func: A function that will transform an observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an `observation_space`.</span>
+<span class="sd">            observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as ``env.observation_space``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space</span>
+        <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">observation_space</span>
 
-    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms the observations with callable :attr:`f`.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to the observation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="FilterObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.FilterObservation">[docs]</a>
+<span class="k">class</span> <span class="nc">FilterObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filters a Dict or Tuple observation spaces by a set of keys or indexes.</span>
+
+<span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.FilterObservation`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
+<span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import FilterObservation</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.wrappers.TimeAwareObservation(env, flatten=False)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Dict(&#39;obs&#39;: Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), &#39;time&#39;: Box(0, 500, (1,), int32))</span>
+<span class="sd">        &gt;&gt;&gt; env.reset(seed=42)</span>
+<span class="sd">        ({&#39;obs&#39;: array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), &#39;time&#39;: array([0], dtype=int32)}, {})</span>
+<span class="sd">        &gt;&gt;&gt; env = FilterObservation(env, filter_keys=[&#39;time&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; env.reset(seed=42)</span>
+<span class="sd">        ({&#39;time&#39;: array([0], dtype=int32)}, {})</span>
+<span class="sd">        &gt;&gt;&gt; env.step(0)</span>
+<span class="sd">        ({&#39;time&#39;: array([1], dtype=int32)}, 1.0, False, False, {})</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v0.12.3 - Initially added, originally called `FilterObservationWrapper`</span>
+<span class="sd">     * v1.0.0 - Rename to `FilterObservation` and add support for tuple observation spaces with integer ``filter_keys``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">filter_keys</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the filter observation wrapper.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            observation: The observation to transform</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The transformed observation</span>
+<span class="sd">            env: The environment to wrap</span>
+<span class="sd">            filter_keys: The set of subspaces to be *included*, use a list of strings for ``Dict`` and integers for ``Tuple`` spaces</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filter_keys</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Expects `filter_keys` to be a Sequence, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">filter_keys</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_keys</span><span class="o">=</span><span class="n">filter_keys</span><span class="p">)</span>
+
+        <span class="c1"># Filters for dictionary space</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span>
+            <span class="p">):</span>
+                <span class="n">missing_keys</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">key</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="p">]</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;All the `filter_keys` must be included in the observation space.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Filter keys: </span><span class="si">{</span><span class="n">filter_keys</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Observation keys: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Missing keys: </span><span class="si">{</span><span class="n">missing_keys</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
+                <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_observation_space</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The observation space is empty due to filtering all of the keys.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span><span class="p">},</span>
+                <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_space</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Filter for tuple observation</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">filter_keys</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">filter_keys</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Duplicate keys exist, filter_keys: </span><span class="si">{</span><span class="n">filter_keys</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span>
+            <span class="p">):</span>
+                <span class="n">missing_index</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">key</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span>
+                    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;All the `filter_keys` must be included in the length of the observation space.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Filter keys: </span><span class="si">{</span><span class="n">filter_keys</span><span class="si">}</span><span class="s2">, length of observation: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;missing indexes: </span><span class="si">{</span><span class="n">missing_index</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">new_observation_spaces</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span>
+                <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_observation_spaces</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The observation space is empty due to filtering all keys.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span><span class="p">),</span>
+                <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_spaces</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;FilterObservation wrapper is only usable with `Dict` and `Tuple` observations, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_keys</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">filter_keys</span></div>
+
+
+
+<div class="viewcode-block" id="FlattenObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation">[docs]</a>
+<span class="k">class</span> <span class="nc">FlattenObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flattens the environment&#39;s observation space and each observation from ``reset`` and ``step`` functions.</span>
+
+<span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.FlattenObservation`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
+<span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import FlattenObservation</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
+<span class="sd">        (96, 96, 3)</span>
+<span class="sd">        &gt;&gt;&gt; env = FlattenObservation(env)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
+<span class="sd">        (27648,)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset()</span>
+<span class="sd">        &gt;&gt;&gt; obs.shape</span>
+<span class="sd">        (27648,)</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v0.15.0 - Initially added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for any environment&#39;s observation space that implements ``spaces.utils.flatten_space`` and ``spaces.utils.flatten``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env:  The environment to wrap</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">obs</span><span class="p">),</span>
+            <span class="n">observation_space</span><span class="o">=</span><span class="n">spaces</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">flatten_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="GrayscaleObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.GrayscaleObservation">[docs]</a>
+<span class="k">class</span> <span class="nc">GrayscaleObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts an image observation computed by ``reset`` and ``step`` from RGB to Grayscale.</span>
+
+<span class="sd">    The :attr:`keep_dim` will keep the channel dimension.</span>
+
+<span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.GrayscaleObservation`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
+<span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import GrayscaleObservation</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
+<span class="sd">        (96, 96, 3)</span>
+<span class="sd">        &gt;&gt;&gt; grayscale_env = GrayscaleObservation(env)</span>
+<span class="sd">        &gt;&gt;&gt; grayscale_env.observation_space.shape</span>
+<span class="sd">        (96, 96)</span>
+<span class="sd">        &gt;&gt;&gt; grayscale_env = GrayscaleObservation(env, keep_dim=True)</span>
+<span class="sd">        &gt;&gt;&gt; grayscale_env.observation_space.shape</span>
+<span class="sd">        (96, 96, 1)</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v0.15.0 - Initially added, originally called ``GrayScaleObservation``</span>
+<span class="sd">     * v1.0.0 - Renamed to ``GrayscaleObservation``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">keep_dim</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for an RGB image based environments to make the image grayscale.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment to wrap</span>
+<span class="sd">            keep_dim: If to keep the channel in the observation, if ``True``, ``obs.shape == 3`` else ``obs.shape == 2``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+            <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span> <span class="o">==</span> <span class="mi">255</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
+        <span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_dim</span><span class="o">=</span><span class="n">keep_dim</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_dim</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">keep_dim</span>
+        <span class="k">if</span> <span class="n">keep_dim</span><span class="p">:</span>
+            <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">high</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2125</span><span class="p">,</span> <span class="mf">0.7154</span><span class="p">,</span> <span class="mf">0.0721</span><span class="p">])),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+                    <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_space</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
+            <span class="p">)</span>
+            <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2125</span><span class="p">,</span> <span class="mf">0.7154</span><span class="p">,</span> <span class="mf">0.0721</span><span class="p">])),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+                <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_space</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ResizeObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.ResizeObservation">[docs]</a>
+<span class="k">class</span> <span class="nc">ResizeObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resizes image observations using OpenCV to a specified shape.</span>
+
+<span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.ResizeObservation`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
+<span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import ResizeObservation</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
+<span class="sd">        (96, 96, 3)</span>
+<span class="sd">        &gt;&gt;&gt; resized_env = ResizeObservation(env, (32, 32))</span>
+<span class="sd">        &gt;&gt;&gt; resized_env.observation_space.shape</span>
+<span class="sd">        (32, 32, 3)</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v0.12.6 - Initially added</span>
+<span class="sd">     * v1.0.0 - Requires ``shape`` with a tuple of two integers</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor that requires an image environment observation space with a shape.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment to wrap</span>
+<span class="sd">            shape: The resized observation shape</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span> <span class="o">==</span> <span class="mi">255</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">elem</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">cv2</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
+                <span class="s2">&quot;opencv (cv2) is not installed, run `pip install gymnasium[other]`&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="c1"># for some reason, cv2.resize will return the shape in reverse, todo confirm implementation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cv2_shape</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+            <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">high</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
+                <span class="n">obs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv2_shape</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span>
+            <span class="p">),</span>
+            <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_space</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ReshapeObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.ReshapeObservation">[docs]</a>
+<span class="k">class</span> <span class="nc">ReshapeObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reshapes Array based observations to a specified shape.</span>
+
+<span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleObservation`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
+<span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import ReshapeObservation</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
+<span class="sd">        (96, 96, 3)</span>
+<span class="sd">        &gt;&gt;&gt; reshape_env = ReshapeObservation(env, (24, 4, 96, 1, 3))</span>
+<span class="sd">        &gt;&gt;&gt; reshape_env.observation_space.shape</span>
+<span class="sd">        (24, 4, 96, 1, 3)</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v1.0.0 - Initially added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for env with ``Box`` observation space that has a shape product equal to the new shape product.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment to wrap</span>
+<span class="sd">            shape: The reshaped observation space</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">elem</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+            <span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span><span class="p">),</span> <span class="n">shape</span><span class="p">),</span>
+            <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span><span class="p">),</span> <span class="n">shape</span><span class="p">),</span>
+            <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">shape</span><span class="p">),</span>
+            <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_space</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RescaleObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.RescaleObservation">[docs]</a>
+<span class="k">class</span> <span class="nc">RescaleObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Affinely (linearly) rescales a ``Box`` observation space of the environment to within the range of ``[min_obs, max_obs]``.</span>
+
+<span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleObservation`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
+<span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import RescaleObservation</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Pendulum-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)</span>
+<span class="sd">        &gt;&gt;&gt; env = RescaleObservation(env, np.array([-2, -1, -10], dtype=np.float32), np.array([1, 0, 1], dtype=np.float32))</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32)</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v1.0.0 - Initially added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
+        <span class="n">min_obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">max_obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor that requires the env observation spaces to be a :class:`Box`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment to wrap</span>
+<span class="sd">            min_obs: The new minimum observation bound</span>
+<span class="sd">            max_obs: The new maximum observation bound</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">min_obs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">min_obs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">max_obs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span>
+            <span class="p">)</span>
+            <span class="n">min_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">min_obs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">min_obs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">min_obs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">min_obs</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">min_obs</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_obs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">max_obs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">max_obs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span>
+            <span class="p">)</span>
+            <span class="n">max_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">max_obs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">max_obs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">max_obs</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_obs</span> <span class="o">=</span> <span class="n">min_obs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_obs</span> <span class="o">=</span> <span class="n">max_obs</span>
+
+        <span class="c1"># Imagine the x-axis between the old Box and the y-axis being the new Box</span>
+        <span class="n">high_low_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">)</span>
+        <span class="n">gradient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">max_obs</span> <span class="o">-</span> <span class="n">min_obs</span><span class="p">)</span> <span class="o">/</span> <span class="n">high_low_diff</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="p">)</span>
+
+        <span class="n">intercept</span> <span class="o">=</span> <span class="n">gradient</span> <span class="o">*</span> <span class="o">-</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span> <span class="o">+</span> <span class="n">min_obs</span>
+
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_obs</span><span class="o">=</span><span class="n">min_obs</span><span class="p">,</span> <span class="n">max_obs</span><span class="o">=</span><span class="n">max_obs</span><span class="p">)</span>
+        <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">gradient</span> <span class="o">*</span> <span class="n">obs</span> <span class="o">+</span> <span class="n">intercept</span><span class="p">,</span>
+            <span class="n">observation_space</span><span class="o">=</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=</span><span class="n">min_obs</span><span class="p">,</span>
+                <span class="n">high</span><span class="o">=</span><span class="n">max_obs</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DtypeObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.DtypeObservation">[docs]</a>
+<span class="k">class</span> <span class="nc">DtypeObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modifies the dtype of an observation array to a specified dtype.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This is only compatible with :class:`Box`, :class:`Discrete`, :class:`MultiDiscrete` and :class:`MultiBinary` observation spaces</span>
+
+<span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.DtypeObservation`.</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v1.0.0 - Initially added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for Dtype observation wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment to wrap</span>
+<span class="sd">            dtype: The new dtype of the observation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">MultiDiscrete</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">MultiBinary</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
+            <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span>
+                <span class="n">high</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">):</span>
+            <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+                <span class="n">high</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">(),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">MultiDiscrete</span><span class="p">):</span>
+            <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">MultiDiscrete</span><span class="p">(</span>
+                <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">nvec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">MultiBinary</span><span class="p">):</span>
+            <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;DtypeObservation is only compatible with value / array-based observations.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">dtype</span><span class="p">(</span><span class="n">obs</span><span class="p">),</span>
+            <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_space</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RenderObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.RenderObservation">[docs]</a>
+<span class="k">class</span> <span class="nc">RenderObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Includes the rendered observations in the environment&#39;s observations.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">       This was previously called ``PixelObservationWrapper``.</span>
+
+<span class="sd">    No vector version of the wrapper exists.</span>
+
+<span class="sd">    Example - Replace the observation with the rendered image:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = RenderObservation(env, render_only=True)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Box(0, 255, (400, 600, 3), uint8)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)</span>
+<span class="sd">        &gt;&gt;&gt; image = env.render()</span>
+<span class="sd">        &gt;&gt;&gt; np.all(obs == image)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(env.action_space.sample())</span>
+<span class="sd">        &gt;&gt;&gt; image = env.render()</span>
+<span class="sd">        &gt;&gt;&gt; np.all(obs == image)</span>
+<span class="sd">        True</span>
+
+<span class="sd">    Example - Add the rendered image to the original observation as a dictionary item:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = RenderObservation(env, render_only=False)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Dict(&#39;pixels&#39;: Box(0, 255, (400, 600, 3), uint8), &#39;state&#39;: Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))</span>
+<span class="sd">        &gt;&gt;&gt; obs, info = env.reset(seed=123)</span>
+<span class="sd">        &gt;&gt;&gt; obs.keys()</span>
+<span class="sd">        dict_keys([&#39;state&#39;, &#39;pixels&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; obs[&quot;state&quot;]</span>
+<span class="sd">        array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; np.all(obs[&quot;pixels&quot;] == env.render())</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; obs, reward, terminates, truncates, info = env.step(env.action_space.sample())</span>
+<span class="sd">        &gt;&gt;&gt; image = env.render()</span>
+<span class="sd">        &gt;&gt;&gt; np.all(obs[&quot;pixels&quot;] == image)</span>
+<span class="sd">        True</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * v0.15.0 - Initially added as ``PixelObservationWrapper``</span>
+<span class="sd">     * v1.0.0 - Renamed to ``RenderObservation``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
+        <span class="n">render_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">render_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pixels&quot;</span><span class="p">,</span>
+        <span class="n">obs_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of the pixel observation wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment to wrap.</span>
+<span class="sd">            render_only (bool): If ``True`` (default), the original observation returned</span>
+<span class="sd">                by the wrapped environment will be discarded, and a dictionary</span>
+<span class="sd">                observation will only include pixels. If ``False``, the</span>
+<span class="sd">                observation dictionary will contain both the original</span>
+<span class="sd">                observations and the pixel observations.</span>
+<span class="sd">            render_key: Optional custom string specifying the pixel key. Defaults to &quot;pixels&quot;</span>
+<span class="sd">            obs_key: Optional custom string specifying the obs key. Defaults to &quot;state&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">pixels_only</span><span class="o">=</span><span class="n">render_only</span><span class="p">,</span>
+            <span class="n">pixels_key</span><span class="o">=</span><span class="n">render_key</span><span class="p">,</span>
+            <span class="n">obs_key</span><span class="o">=</span><span class="n">obs_key</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">!=</span> <span class="s2">&quot;human&quot;</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="n">pixels</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">pixels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+        <span class="n">pixel_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">render_only</span><span class="p">:</span>
+            <span class="n">obs_space</span> <span class="o">=</span> <span class="n">pixel_space</span>
+            <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(),</span> <span class="n">observation_space</span><span class="o">=</span><span class="n">obs_space</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">render_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+            <span class="n">obs_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
+                <span class="p">{</span><span class="n">render_key</span><span class="p">:</span> <span class="n">pixel_space</span><span class="p">,</span> <span class="o">**</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">spaces</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="p">{</span><span class="n">render_key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(),</span> <span class="o">**</span><span class="n">obs</span><span class="p">},</span>
+                <span class="n">observation_space</span><span class="o">=</span><span class="n">obs_space</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obs_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
+                <span class="p">{</span><span class="n">obs_key</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">render_key</span><span class="p">:</span> <span class="n">pixel_space</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="p">{</span><span class="n">obs_key</span><span class="p">:</span> <span class="n">obs</span><span class="p">,</span> <span class="n">render_key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">()},</span>
+                <span class="n">observation_space</span><span class="o">=</span><span class="n">obs_space</span><span class="p">,</span>
+            <span class="p">)</span></div>
 
 </pre></div>
           </article>
@@ -632,7 +1325,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>

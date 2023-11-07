@@ -216,38 +216,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../registry/">Make and register</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Spaces</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -476,8 +477,6 @@
             
             <section id="fundamental-spaces">
 <h1>Fundamental Spaces<a class="headerlink" href="#fundamental-spaces" title="Link to this heading">#</a></h1>
-<section id="box">
-<h2>Box<a class="headerlink" href="#box" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Box">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">np.floating</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">np.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/spaces/box/#Box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Box" title="Link to this definition">#</a></dt>
@@ -516,11 +515,9 @@ Each interval has the form of one of <span class="math notranslate nohighlight">
     value error is raised.</p>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Box.sample">
-<span class="sig-prename descclassname"><span class="pre">Box.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/box/#Box.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Box.sample" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/box/#Box.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Box.sample" title="Link to this definition">#</a></dt>
 <dd><p>Generates a single random sample inside the Box.</p>
 <p>In creating a sample of the box, each coordinate is sampled (independently) from a distribution
 that is chosen according to the form of the interval:</p>
@@ -542,13 +539,13 @@ that is chosen according to the form of the interval:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Box.seed">
-<span class="sig-prename descclassname"><span class="pre">Box.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Box.seed" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Box.seed" title="Link to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Box.is_bounded">
-<span class="sig-prename descclassname"><span class="pre">Box.</span></span><span class="sig-name descname"><span class="pre">is_bounded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/box/#Box.is_bounded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Box.is_bounded" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">is_bounded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/box/#Box.is_bounded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Box.is_bounded" title="Link to this definition">#</a></dt>
 <dd><p>Checks whether the box is bounded in some sense.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -563,9 +560,8 @@ that is chosen according to the form of the interval:</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="discrete">
-<h2>Discrete<a class="headerlink" href="#discrete" title="Link to this heading">#</a></h2>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Discrete">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Discrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/spaces/discrete/#Discrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Discrete" title="Link to this definition">#</a></dt>
@@ -590,18 +586,16 @@ that is chosen according to the form of the interval:</p>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Discrete.sample">
-<span class="sig-prename descclassname"><span class="pre">Discrete.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MaskNDArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.int64</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/discrete/#Discrete.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Discrete.sample" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MaskNDArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.int64</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/discrete/#Discrete.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Discrete.sample" title="Link to this definition">#</a></dt>
 <dd><p>Generates a single random sample from this space.</p>
 <p>A sample will be chosen uniformly at random with the mask if provided</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mask</strong> – An optional mask for if an action can be selected.
-Expected <cite>np.ndarray</cite> of shape <cite>(n,)</cite> and dtype <cite>np.int8</cite> where <cite>1</cite> represents valid actions and <cite>0</cite> invalid / infeasible actions.
-If there are no possible actions (i.e. <cite>np.all(mask == 0)</cite>) then <cite>space.start</cite> will be returned.</p>
+Expected <cite>np.ndarray</cite> of shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> and dtype <code class="docutils literal notranslate"><span class="pre">np.int8</span></code> where <code class="docutils literal notranslate"><span class="pre">1</span></code> represents valid actions and <code class="docutils literal notranslate"><span class="pre">0</span></code> invalid / infeasible actions.
+If there are no possible actions (i.e. <code class="docutils literal notranslate"><span class="pre">np.all(mask</span> <span class="pre">==</span> <span class="pre">0)</span></code>) then <code class="docutils literal notranslate"><span class="pre">space.start</span></code> will be returned.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>A sampled integer from the space</strong></p>
@@ -611,13 +605,12 @@ If there are no possible actions (i.e. <cite>np.all(mask == 0)</cite>) then <cit
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Discrete.seed">
-<span class="sig-prename descclassname"><span class="pre">Discrete.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Discrete.seed" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Discrete.seed" title="Link to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
 </dd></dl>
 
-</section>
-<section id="multibinary">
-<h2>MultiBinary<a class="headerlink" href="#multibinary" title="Link to this heading">#</a></h2>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.MultiBinary">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">MultiBinary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/spaces/multi_binary/#MultiBinary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.MultiBinary" title="Link to this definition">#</a></dt>
@@ -644,18 +637,16 @@ or some sort of sequence (tuple, list or np.ndarray) if there are multiple axes.
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.MultiBinary.sample">
-<span class="sig-prename descclassname"><span class="pre">MultiBinary.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MaskNDArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int8</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/multi_binary/#MultiBinary.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.MultiBinary.sample" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MaskNDArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int8</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/multi_binary/#MultiBinary.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.MultiBinary.sample" title="Link to this definition">#</a></dt>
 <dd><p>Generates a single random sample from this space.</p>
 <p>A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mask</strong> – An optional np.ndarray to mask samples with expected shape of <code class="docutils literal notranslate"><span class="pre">space.shape</span></code>.
-For mask == 0 then the samples will be 0 and mask == 1 then random samples will be generated.
-The expected mask shape is the space shape and mask dtype is <cite>np.int8</cite>.</p>
+For <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">==</span> <span class="pre">0</span></code> then the samples will be <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">==</span> <span class="pre">1`</span> <span class="pre">then</span> <span class="pre">random</span> <span class="pre">samples</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">generated.</span>
+<span class="pre">The</span> <span class="pre">expected</span> <span class="pre">mask</span> <span class="pre">shape</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">space</span> <span class="pre">shape</span> <span class="pre">and</span> <span class="pre">mask</span> <span class="pre">dtype</span> <span class="pre">is</span> <span class="pre">``np.int8</span></code>.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Sampled values from space</strong></p>
@@ -665,13 +656,12 @@ The expected mask shape is the space shape and mask dtype is <cite>np.int8</cite
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.MultiBinary.seed">
-<span class="sig-prename descclassname"><span class="pre">MultiBinary.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.MultiBinary.seed" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.MultiBinary.seed" title="Link to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
 </dd></dl>
 
-</section>
-<section id="multidiscrete">
-<h2>MultiDiscrete<a class="headerlink" href="#multidiscrete" title="Link to this heading">#</a></h2>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.MultiDiscrete">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">MultiDiscrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">np.int64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/spaces/multi_discrete/#MultiDiscrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.MultiDiscrete" title="Link to this definition">#</a></dt>
@@ -710,33 +700,30 @@ you may also pass a more complicated numpy array if you’d like the space to ha
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.MultiDiscrete.sample">
-<span class="sig-prename descclassname"><span class="pre">MultiDiscrete.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">MaskNDArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/multi_discrete/#MultiDiscrete.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.MultiDiscrete.sample" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">MaskNDArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.integer</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/multi_discrete/#MultiDiscrete.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.MultiDiscrete.sample" title="Link to this definition">#</a></dt>
 <dd><p>Generates a single random sample this space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mask</strong> – An optional mask for multi-discrete, expects tuples with a <cite>np.ndarray</cite> mask in the position of each
-action with shape <cite>(n,)</cite> where <cite>n</cite> is the number of actions and <cite>dtype=np.int8</cite>.
-Only mask values == 1 are possible to sample unless all mask values for an action are 0 then the default action <cite>self.start</cite> (the smallest element) is sampled.</p>
+<dd class="field-odd"><p><strong>mask</strong> – An optional mask for multi-discrete, expects tuples with a <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> mask in the position of each
+action with shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of actions and <code class="docutils literal notranslate"><span class="pre">dtype=np.int8</span></code>.
+Only <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">values</span> <span class="pre">==</span> <span class="pre">1</span></code> are possible to sample unless all mask values for an action are <code class="docutils literal notranslate"><span class="pre">0</span></code> then the default action <code class="docutils literal notranslate"><span class="pre">self.start</span></code> (the smallest element) is sampled.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>An `np.ndarray` of shape `space.shape`</strong></p>
+<dd class="field-even"><p><strong>An ``np.ndarray`` of :meth:`Space.shape`</strong></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.MultiDiscrete.seed">
-<span class="sig-prename descclassname"><span class="pre">MultiDiscrete.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.MultiDiscrete.seed" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.MultiDiscrete.seed" title="Link to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
 </dd></dl>
 
-</section>
-<section id="text">
-<h2>Text<a class="headerlink" href="#text" title="Link to this heading">#</a></h2>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Text">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">frozenset</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">alphanumeric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/spaces/text/#Text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Text" title="Link to this definition">#</a></dt>
@@ -764,18 +751,16 @@ Only mask values == 1 are possible to sample unless all mask values for an actio
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Text.sample">
-<span class="sig-prename descclassname"><span class="pre">Text.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int8</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/text/#Text.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Text.sample" title="Link to this definition">#</a></dt>
-<dd><p>Generates a single random sample from this space with by default a random length between <cite>min_length</cite> and <cite>max_length</cite> and sampled from the <cite>charset</cite>.</p>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int8</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/text/#Text.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Text.sample" title="Link to this definition">#</a></dt>
+<dd><p>Generates a single random sample from this space with by default a random length between <code class="docutils literal notranslate"><span class="pre">min_length</span></code> and <code class="docutils literal notranslate"><span class="pre">max_length</span></code> and sampled from the <code class="docutils literal notranslate"><span class="pre">charset</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mask</strong> – An optional tuples of length and mask for the text.
-The length is expected to be between the <cite>min_length</cite> and <cite>max_length</cite> otherwise a random integer between <cite>min_length</cite> and <cite>max_length</cite> is selected.
-For the mask, we expect a numpy array of length of the charset passed with <cite>dtype == np.int8</cite>.
-If the charlist mask is all zero then an empty string is returned no matter the <cite>min_length</cite></p>
+The length is expected to be between the <code class="docutils literal notranslate"><span class="pre">min_length</span></code> and <code class="docutils literal notranslate"><span class="pre">max_length</span></code> otherwise a random integer between <code class="docutils literal notranslate"><span class="pre">min_length</span></code> and <code class="docutils literal notranslate"><span class="pre">max_length</span></code> is selected.
+For the mask, we expect a numpy array of length of the charset passed with <code class="docutils literal notranslate"><span class="pre">dtype</span> <span class="pre">==</span> <span class="pre">np.int8</span></code>.
+If the charlist mask is all zero then an empty string is returned no matter the <code class="docutils literal notranslate"><span class="pre">min_length</span></code></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>A sampled string from the space</strong></p>
@@ -785,11 +770,12 @@ If the charlist mask is all zero then an empty string is returned no matter the 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Text.seed">
-<span class="sig-prename descclassname"><span class="pre">Text.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Text.seed" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.spaces.Text.seed" title="Link to this definition">#</a></dt>
 <dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
 </dd></dl>
 
-</section>
+</dd></dl>
+
 </section>
 
           </article>
@@ -862,45 +848,30 @@ If the charlist mask is all zero then an empty string is returned no matter the 
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Fundamental Spaces</a><ul>
-<li><a class="reference internal" href="#box">Box</a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.Box"><code class="docutils literal notranslate"><span class="pre">Box</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.Box.sample"><code class="docutils literal notranslate"><span class="pre">Box.sample()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.spaces.Box.seed"><code class="docutils literal notranslate"><span class="pre">Box.seed()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.spaces.Box.is_bounded"><code class="docutils literal notranslate"><span class="pre">Box.is_bounded()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference internal" href="#discrete">Discrete</a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.Discrete"><code class="docutils literal notranslate"><span class="pre">Discrete</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.Discrete.sample"><code class="docutils literal notranslate"><span class="pre">Discrete.sample()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.spaces.Discrete.seed"><code class="docutils literal notranslate"><span class="pre">Discrete.seed()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference internal" href="#multibinary">MultiBinary</a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.MultiBinary"><code class="docutils literal notranslate"><span class="pre">MultiBinary</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.MultiBinary.sample"><code class="docutils literal notranslate"><span class="pre">MultiBinary.sample()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.spaces.MultiBinary.seed"><code class="docutils literal notranslate"><span class="pre">MultiBinary.seed()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference internal" href="#multidiscrete">MultiDiscrete</a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.MultiDiscrete"><code class="docutils literal notranslate"><span class="pre">MultiDiscrete</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.MultiDiscrete.sample"><code class="docutils literal notranslate"><span class="pre">MultiDiscrete.sample()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.spaces.MultiDiscrete.seed"><code class="docutils literal notranslate"><span class="pre">MultiDiscrete.seed()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference internal" href="#text">Text</a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.Text"><code class="docutils literal notranslate"><span class="pre">Text</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.Text.sample"><code class="docutils literal notranslate"><span class="pre">Text.sample()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.spaces.Text.seed"><code class="docutils literal notranslate"><span class="pre">Text.seed()</span></code></a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -989,7 +960,7 @@ If the charlist mask is all zero then an empty string is returned no matter the 
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

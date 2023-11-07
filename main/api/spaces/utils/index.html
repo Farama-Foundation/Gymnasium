@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/api/spaces/utils.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Spaces Vector Utils" href="../vector_utils/" /><link rel="prev" title="Composite Spaces" href="../composite/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Utility functions" href="../../vector/utils/" /><link rel="prev" title="Composite Spaces" href="../composite/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/spaces/utils.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
@@ -216,38 +216,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../registry/">Make and register</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Spaces</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../composite/">Composite Spaces</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -524,9 +525,8 @@ errors or non-uniform sampling.</p>
 <dd class="field-odd"><p><strong>NotImplementedError</strong> – if the space is not defined in <a class="reference internal" href="../#module-gymnasium.spaces" title="gymnasium.spaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gymnasium.spaces</span></code></a>.</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<p>Flatten spaces.Box:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
+<dl>
+<dt>Example - Flatten spaces.Box:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">box</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">box</span>
 <span class="go">Box(0.0, 1.0, (3, 4, 5), float32)</span>
@@ -536,8 +536,8 @@ errors or non-uniform sampling.</p>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>Flatten spaces.Discrete:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Discrete</span>
+</dd>
+<dt>Example - Flatten spaces.Discrete:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Discrete</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">discrete</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">discrete</span><span class="p">)</span>
 <span class="go">Box(0, 1, (5,), int64)</span>
@@ -545,8 +545,8 @@ errors or non-uniform sampling.</p>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>Flatten spaces.Dict:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Box</span>
+</dd>
+<dt>Example - Flatten spaces.Dict:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Box</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
 <span class="go">Box(0.0, 1.0, (6,), float64)</span>
@@ -554,8 +554,8 @@ errors or non-uniform sampling.</p>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>Flatten spaces.Graph:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Box</span>
+</dd>
+<dt>Example - Flatten spaces.Graph:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">Box</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">node_space</span><span class="o">=</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span> <span class="n">edge_space</span><span class="o">=</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
 <span class="go">Graph(Box(-100.0, 100.0, (12,), float32), Box(0, 1, (5,), int64))</span>
@@ -563,6 +563,8 @@ errors or non-uniform sampling.</p>
 <span class="go">True</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -737,12 +739,12 @@ that the <code class="docutils literal notranslate"><span class="pre">space</spa
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../vector_utils/">
+            <a class="next-page" href="../../vector/utils/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Spaces Vector Utils</div>
+                <div class="title">Utility functions</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
@@ -892,7 +894,7 @@ that the <code class="docutils literal notranslate"><span class="pre">space</spa
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

@@ -215,38 +215,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -465,179 +466,207 @@
           <article role="main">
             
             <h1>Source code for gymnasium.vector.sync_vector_env</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A synchronous vector environment.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Implementation of a synchronous (for loop) vectorization method of any environment.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
 
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Env</span>
-<span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Space</span>
-<span class="kn">from</span> <span class="nn">gymnasium.vector.utils</span> <span class="kn">import</span> <span class="n">concatenate</span><span class="p">,</span> <span class="n">create_empty_array</span><span class="p">,</span> <span class="n">iterate</span>
-<span class="kn">from</span> <span class="nn">gymnasium.vector.vector_env</span> <span class="kn">import</span> <span class="n">VectorEnv</span>
+<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">RenderFrame</span>
+<span class="kn">from</span> <span class="nn">gymnasium.vector.utils</span> <span class="kn">import</span> <span class="n">batch_space</span><span class="p">,</span> <span class="n">concatenate</span><span class="p">,</span> <span class="n">create_empty_array</span><span class="p">,</span> <span class="n">iterate</span>
+<span class="kn">from</span> <span class="nn">gymnasium.vector.vector_env</span> <span class="kn">import</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">VectorEnv</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SyncVectorEnv&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="SyncVectorEnv">
-<a class="viewcode-back" href="../../../../api/vector/#gymnasium.vector.SyncVectorEnv">[docs]</a>
+<a class="viewcode-back" href="../../../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv">[docs]</a>
 <span class="k">class</span> <span class="nc">SyncVectorEnv</span><span class="p">(</span><span class="n">VectorEnv</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorized environment that serially runs multiple environments.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.vector.SyncVectorEnv([</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;Pendulum-v1&quot;, num_envs=2, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs</span>
+<span class="sd">        SyncVectorEnv(Pendulum-v1, num_envs=2)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.vector.SyncVectorEnv([</span>
 <span class="sd">        ...     lambda: gym.make(&quot;Pendulum-v1&quot;, g=9.81),</span>
 <span class="sd">        ...     lambda: gym.make(&quot;Pendulum-v1&quot;, g=1.62)</span>
 <span class="sd">        ... ])</span>
-<span class="sd">        &gt;&gt;&gt; env.reset(seed=42)</span>
-<span class="sd">        (array([[-0.14995256,  0.9886932 , -0.12224312],</span>
-<span class="sd">               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})</span>
+<span class="sd">        &gt;&gt;&gt; envs</span>
+<span class="sd">        SyncVectorEnv(num_envs=2)</span>
+<span class="sd">        &gt;&gt;&gt; obs, infos = envs.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([[-0.14995256,  0.9886932 , -0.12224312],</span>
+<span class="sd">               [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; infos</span>
+<span class="sd">        {}</span>
+<span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(42)</span>
+<span class="sd">        &gt;&gt;&gt; actions = envs.action_space.sample()</span>
+<span class="sd">        &gt;&gt;&gt; obs, rewards, terminates, truncates, infos = envs.step(actions)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([[-0.1878752 ,  0.98219293,  0.7695615 ],</span>
+<span class="sd">               [ 0.6102389 ,  0.79221743, -0.8498053 ]], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; rewards</span>
+<span class="sd">        array([-2.96562607, -0.99902063])</span>
+<span class="sd">        &gt;&gt;&gt; terminates</span>
+<span class="sd">        array([False, False])</span>
+<span class="sd">        &gt;&gt;&gt; truncates</span>
+<span class="sd">        array([False, False])</span>
+<span class="sd">        &gt;&gt;&gt; infos</span>
+<span class="sd">        {}</span>
+<span class="sd">        &gt;&gt;&gt; envs.close()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">env_fns</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">]],</span>
-        <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">action_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">env_fns</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">]],</span>
         <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Vectorized environment that serially runs multiple environments.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env_fns: iterable of callable functions that create the environments.</span>
-<span class="sd">            observation_space: Observation space of a single environment. If ``None``,</span>
-<span class="sd">                then the observation space of the first environment is taken.</span>
-<span class="sd">            action_space: Action space of a single environment. If ``None``,</span>
-<span class="sd">                then the action space of the first environment is taken.</span>
 <span class="sd">            copy: If ``True``, then the :meth:`reset` and :meth:`step` methods return a copy of the observations.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            RuntimeError: If the observation space of some sub-environment does not match observation_space</span>
 <span class="sd">                (or, by default, the observation space of the first sub-environment).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">env_fns</span> <span class="o">=</span> <span class="n">env_fns</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">envs</span> <span class="o">=</span> <span class="p">[</span><span class="n">env_fn</span><span class="p">()</span> <span class="k">for</span> <span class="n">env_fn</span> <span class="ow">in</span> <span class="n">env_fns</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="o">=</span> <span class="n">copy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_fns</span> <span class="o">=</span> <span class="n">env_fns</span>
+
+        <span class="c1"># Initialise all sub-environments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">envs</span> <span class="o">=</span> <span class="p">[</span><span class="n">env_fn</span><span class="p">()</span> <span class="k">for</span> <span class="n">env_fn</span> <span class="ow">in</span> <span class="n">env_fns</span><span class="p">]</span>
+
+        <span class="c1"># Define core attributes using the sub-environments</span>
+        <span class="c1"># As we support `make_vec(spec)` then we can&#39;t include a `spec = self.envs[0].spec` as this doesn&#39;t guarantee we can actual recreate the vector env.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">render_mode</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">observation_space</span> <span class="o">=</span> <span class="n">observation_space</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation_space</span>
-            <span class="n">action_space</span> <span class="o">=</span> <span class="n">action_space</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">action_space</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">num_envs</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">),</span>
-            <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space</span><span class="p">,</span>
-            <span class="n">action_space</span><span class="o">=</span><span class="n">action_space</span><span class="p">,</span>
-        <span class="p">)</span>
-
+        <span class="c1"># Initialises the single spaces from the sub-environments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">action_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_spaces</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="n">create_empty_array</span><span class="p">(</span>
+
+        <span class="c1"># Initialise the obs and action space based on the single versions and num of sub-environments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
+
+        <span class="c1"># Initialise attributes used in `step` and `reset`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span> <span class="o">=</span> <span class="n">create_empty_array</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_terminateds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_truncateds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the seed in all sub-environments.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            seed: The seed</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">seed</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">seed</span> <span class="o">=</span> <span class="p">[</span><span class="n">seed</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
-
-        <span class="k">for</span> <span class="n">env</span><span class="p">,</span> <span class="n">single_seed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
-            <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">single_seed</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">reset_wait</span><span class="p">(</span>
+<div class="viewcode-block" id="SyncVectorEnv.reset">
+<a class="viewcode-back" href="../../../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv.reset">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets each of the sub-environments and concatenate the results together.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            seed: The reset environment seed</span>
-<span class="sd">            options: Option information for the environment reset</span>
+<span class="sd">            seed: Seeds used to reset the sub-environments, either</span>
+<span class="sd">                * ``None`` - random seeds for all environment</span>
+<span class="sd">                * ``int`` - ``[seed, seed+1, ..., seed+n]``</span>
+<span class="sd">                * List of ints - ``[1, 2, 3, ..., n]``</span>
+<span class="sd">            options: Option information used for each sub-environment</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The reset observation of the environment and reset information</span>
+<span class="sd">            Concatenated observations and info from each sub-environment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">seed</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">seed</span> <span class="o">=</span> <span class="p">[</span><span class="n">seed</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_terminateds</span><span class="p">[:]</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_truncateds</span><span class="p">[:]</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="n">observations</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">infos</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+
+        <span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">single_seed</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">,</span> <span class="n">seed</span><span class="p">)):</span>
-            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">if</span> <span class="n">single_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">single_seed</span>
-            <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">options</span>
+            <span class="n">env_obs</span><span class="p">,</span> <span class="n">env_info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">single_seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
-            <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">observations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
-            <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">observations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_obs</span><span class="p">)</span>
+            <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">env_info</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span>
+        <span class="c1"># Concatenate the observations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">),</span> <span class="n">infos</span>
 
-    <span class="k">def</span> <span class="nf">step_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets :attr:`_actions` for use by the :meth:`step_wait` by converting the ``actions`` to an iterable version.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span> <span class="o">=</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="p">,</span> <span class="n">infos</span></div>
 
-    <span class="k">def</span> <span class="nf">step_wait</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="SyncVectorEnv.step">
+<a class="viewcode-back" href="../../../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv.step">[docs]</a>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through each of the environments returning the batched results.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The batched environment step results</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
+
         <span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">,</span> <span class="n">actions</span><span class="p">)):</span>
             <span class="p">(</span>
-                <span class="n">observation</span><span class="p">,</span>
+                <span class="n">env_obs</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_rewards</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_terminateds</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_truncateds</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                <span class="n">info</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">env_info</span><span class="p">,</span>
             <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_terminateds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncateds</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">old_observation</span><span class="p">,</span> <span class="n">old_info</span> <span class="o">=</span> <span class="n">observation</span><span class="p">,</span> <span class="n">info</span>
-                <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-                <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_observation</span>
-                <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_info</span>
-            <span class="n">observations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
-            <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span>
+            <span class="c1"># If sub-environments terminates or truncates then save the obs and info to the batched info</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">old_observation</span><span class="p">,</span> <span class="n">old_info</span> <span class="o">=</span> <span class="n">env_obs</span><span class="p">,</span> <span class="n">env_info</span>
+                <span class="n">env_obs</span><span class="p">,</span> <span class="n">env_info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+                <span class="n">env_info</span><span class="p">[</span><span class="s2">&quot;final_observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_observation</span>
+                <span class="n">env_info</span><span class="p">[</span><span class="s2">&quot;final_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_info</span>
+
+            <span class="n">observations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_obs</span><span class="p">)</span>
+            <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">env_info</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># Concatenate the observations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span>
-            <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span>
+            <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="p">,</span>
             <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rewards</span><span class="p">),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terminateds</span><span class="p">),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truncateds</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span><span class="p">),</span>
             <span class="n">infos</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls the method with name and applies args and kwargs.</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the rendered frames from the environments.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SyncVectorEnv.call">
+<a class="viewcode-back" href="../../../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv.call">[docs]</a>
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls a sub-environment method with name and applies args and kwargs.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: The method name</span>
@@ -649,15 +678,33 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">:</span>
-            <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">function</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+
+<div class="viewcode-block" id="SyncVectorEnv.get_attr">
+<a class="viewcode-back" href="../../../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv.get_attr">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a property from each parallel environment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Name of the property to get from each individual environment.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The property with name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SyncVectorEnv.set_attr">
+<a class="viewcode-back" href="../../../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv.set_attr">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets an attribute of the sub-environments.</span>
 
 <span class="sd">        Args:</span>
@@ -671,34 +718,34 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">values</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Values must be a list or tuple with length equal to the &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;number of environments. Got `</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">` values for &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2"> environments.&quot;</span>
+                <span class="s2">&quot;Values must be a list or tuple with length equal to the number of environments. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got `</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">` values for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2"> environments.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">env</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">set_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">close_extras</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">close_extras</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the environments.&quot;&quot;&quot;</span>
         <span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_check_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that each of the environments obs and action spaces are equivalent to the single obs and action space.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Some environments have an observation space different from &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="si">}</span><span class="s2">`. In order to batch observations, &quot;</span>
-                    <span class="s2">&quot;the observation spaces from all environments must be equal.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Some environments have an observation space different from `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="si">}</span><span class="s2">`. &quot;</span>
+                    <span class="s2">&quot;In order to batch observations, the observation spaces from all environments must be equal.&quot;</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Some environments have an action space different from &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="si">}</span><span class="s2">`. In order to batch actions, the &quot;</span>
-                    <span class="s2">&quot;action spaces from all environments must be equal.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Some environments have an action space different from `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="si">}</span><span class="s2">`. &quot;</span>
+                    <span class="s2">&quot;In order to batch actions, the action spaces from all environments must be equal.&quot;</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">True</span></div>
@@ -820,7 +867,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
