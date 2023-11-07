@@ -46,6 +46,10 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Action Space
+    ```{figure} action_space_figures/humanoid.png
+    :name: humanoid
+    ```
+
     The action space is a `Box(-1, 1, (17,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
