@@ -46,7 +46,8 @@ def test_update_running_mean():
     # Default value is True
     assert env.update_running_mean
 
-    obs, _ = env.reset()
+    obs, _ = env.reset(seed=123)
+    env.action_space.seed(123)
     for _ in range(100):
         env.step(env.action_space.sample())
 
@@ -57,7 +58,6 @@ def test_update_running_mean():
 
     val_step = 25
     obs_buffer = create_empty_array(env.observation_space, val_step)
-    env.action_space.seed(123)
     for i in range(val_step):
         obs, _, _, _, _ = env.step(env.action_space.sample())
         obs_buffer[i] = obs
