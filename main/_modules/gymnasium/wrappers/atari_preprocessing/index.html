@@ -215,38 +215,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -472,16 +473,16 @@
 <span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
 
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">cv2</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">cv2</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtariPreprocessing&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="AtariPreprocessing">
 <a class="viewcode-back" href="../../../../api/wrappers/misc_wrappers/#gymnasium.wrappers.AtariPreprocessing">[docs]</a>
 <span class="k">class</span> <span class="nc">AtariPreprocessing</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Atari 2600 preprocessing wrapper.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements the common preprocessing techniques for Atari environments (excluding frame stacking).</span>
+
+<span class="sd">    For frame stacking use :class:`gymnasium.wrappers.FrameStackObservation`.</span>
+<span class="sd">    No vector version of the wrapper exists</span>
 
 <span class="sd">    This class follows the guidelines in Machado et al. (2018),</span>
 <span class="sd">    &quot;Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents&quot;.</span>
@@ -489,13 +490,22 @@
 <span class="sd">    Specifically, the following preprocess stages applies to the atari environment:</span>
 
 <span class="sd">    - Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.</span>
-<span class="sd">    - Frame skipping: The number of frames skipped between steps, 4 by default</span>
-<span class="sd">    - Max-pooling: Pools over the most recent two observations from the frame skips</span>
+<span class="sd">    - Frame skipping: The number of frames skipped between steps, 4 by default.</span>
+<span class="sd">    - Max-pooling: Pools over the most recent two observations from the frame skips.</span>
 <span class="sd">    - Termination signal when a life is lost: When the agent losses a life during the environment, then the environment is terminated.</span>
 <span class="sd">        Turned off by default. Not recommended by Machado et al. (2018).</span>
-<span class="sd">    - Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default</span>
-<span class="sd">    - Grayscale observation: If the observation is colour or greyscale, by default, greyscale.</span>
-<span class="sd">    - Scale observation: If to scale the observation between [0, 1) or [0, 255), by default, not scaled.</span>
+<span class="sd">    - Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default.</span>
+<span class="sd">    - Grayscale observation: Makes the observation greyscale, enabled by default.</span>
+<span class="sd">    - Grayscale new axis: Extends the last channel of the observation such that the image is 3-dimensional, not enabled by default.</span>
+<span class="sd">    - Scale observation: Whether to scale the observation between [0, 1) or [0, 255), not scaled by default.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import gymnasium as gym # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;ALE/Adventure-v5&quot;) # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; env = AtariPreprocessing(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False) # doctest: +SKIP</span>
+
+<span class="sd">    Change logs:</span>
+<span class="sd">     * Added in gym v0.12.2 (gym #1455)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -515,7 +525,7 @@
 <span class="sd">            env (Env): The environment to apply the preprocessing</span>
 <span class="sd">            noop_max (int): For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.</span>
 <span class="sd">            frame_skip (int): The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.</span>
-<span class="sd">            screen_size (int): resize Atari frame</span>
+<span class="sd">            screen_size (int): resize Atari frame.</span>
 <span class="sd">            terminal_on_life_loss (bool): `if True`, then :meth:`step()` returns `terminated=True` whenever a</span>
 <span class="sd">                life is lost.</span>
 <span class="sd">            grayscale_obs (bool): if True, then gray scale observation is returned, otherwise, RGB observation</span>
@@ -541,10 +551,13 @@
         <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">cv2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">cv2</span>  <span class="c1"># noqa: F401</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">DependencyNotInstalled</span><span class="p">(</span>
                 <span class="s2">&quot;opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari&quot;</span>
             <span class="p">)</span>
+
         <span class="k">assert</span> <span class="n">frame_skip</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="k">assert</span> <span class="n">screen_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="k">assert</span> <span class="n">noop_max</span> <span class="o">&gt;=</span> <span class="mi">0</span>
@@ -656,7 +669,9 @@
     <span class="k">def</span> <span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_skip</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># more efficient in-place pooling</span>
             <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">assert</span> <span class="n">cv2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="kn">import</span> <span class="nn">cv2</span>
+
         <span class="n">obs</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="p">),</span>
@@ -789,7 +804,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>

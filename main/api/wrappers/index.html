@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/api/wrappers.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Misc Wrappers" href="misc_wrappers/" /><link rel="prev" title="Spaces Vector Utils" href="../spaces/vector_utils/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="List of Wrappers" href="table/" /><link rel="prev" title="Utility functions" href="../vector/utils/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/wrappers.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
@@ -216,38 +216,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Wrappers</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -478,11 +479,10 @@
 <h1>Wrappers<a class="headerlink" href="#wrappers" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<p id="module-gymnasium.wrappers">Module of wrapper classes.</p>
-<p>Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.
-Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can
-also be chained to combine their effects.
-Most environments that are generated via <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a> will already be wrapped by default.</p>
+<p id="module-gymnasium.wrappers">Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly.</p>
+<p>Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular.
+Importantly wrappers can be chained to combine their effects and most environments that are generated via
+<a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a> will already be wrapped by default.</p>
 <p>In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along
 with (possibly optional) parameters to the wrapper’s constructor.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -495,8 +495,8 @@ with (possibly optional) parameters to the wrapper’s constructor.</p>
 <span class="go">Box(0.0, 1.0, (3,), float32)</span>
 </pre></div>
 </div>
-<p>You can access the environment underneath the <strong>first</strong> wrapper by using the <a class="reference internal" href="#gymnasium.wrappers.gymnasium.Wrapper.env" title="gymnasium.wrappers.gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.env</span></code></a> attribute.
-As the <a class="reference internal" href="#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a> class inherits from <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code></a> then <a class="reference internal" href="#gymnasium.wrappers.gymnasium.Wrapper.env" title="gymnasium.wrappers.gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.env</span></code></a> can be another wrapper.</p>
+<p>You can access the environment underneath the <strong>first</strong> wrapper by using the <a class="reference internal" href="#gymnasium.Wrapper.env" title="gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.env</span></code></a> attribute.
+As the <a class="reference internal" href="#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a> class inherits from <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code></a> then <a class="reference internal" href="#gymnasium.Wrapper.env" title="gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.env</span></code></a> can be another wrapper.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
 <span class="go">&lt;RescaleAction&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;HopperEnv&lt;Hopper-v4&gt;&gt;&gt;&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">env</span>
@@ -522,18 +522,16 @@ If the environment is already a bare environment, the <a class="reference intern
 <a class="reference internal" href="observation_wrappers/#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></a>, or <a class="reference internal" href="reward_wrappers/#gymnasium.RewardWrapper" title="gymnasium.RewardWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper</span></code></a> and implementing the respective transformation.
 If you need a wrapper to do more complicated tasks, you can inherit from the <a class="reference internal" href="#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a> class directly.</p>
 <p>If you’d like to implement your own custom wrapper, check out <a class="reference external" href="../../tutorials/implementing_custom_wrappers">the corresponding tutorial</a>.</p>
-<section id="gymnasium-wrapper">
-<h2>gymnasium.Wrapper<a class="headerlink" href="#gymnasium-wrapper" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.Wrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">Wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/core/#Wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Wrapper" title="Link to this definition">#</a></dt>
 <dd><p>Wraps a <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code></a> to allow a modular transformation of the <a class="reference internal" href="#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> and <a class="reference internal" href="#gymnasium.Wrapper.reset" title="gymnasium.Wrapper.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> methods.</p>
 <p>This class is the base class of all wrappers to change the behavior of the underlying environment.
-Wrappers that inherit from this class can modify the <a class="reference internal" href="../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a>, <a class="reference internal" href="../vector/#observation_space" title="observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a>,
-<a class="reference internal" href="#gymnasium.Wrapper.reward_range" title="gymnasium.Wrapper.reward_range"><code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code></a> and <a class="reference internal" href="#gymnasium.Wrapper.metadata" title="gymnasium.Wrapper.metadata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">metadata</span></code></a> attributes, without changing the underlying environment’s attributes.
+Wrappers that inherit from this class can modify the <a class="reference internal" href="#gymnasium.Wrapper.action_space" title="gymnasium.Wrapper.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a>, <a class="reference internal" href="#gymnasium.Wrapper.observation_space" title="gymnasium.Wrapper.observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a>,
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code> and <a class="reference internal" href="#gymnasium.Wrapper.metadata" title="gymnasium.Wrapper.metadata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">metadata</span></code></a> attributes, without changing the underlying environment’s attributes.
 Moreover, the behavior of the <a class="reference internal" href="#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> and <a class="reference internal" href="#gymnasium.Wrapper.reset" title="gymnasium.Wrapper.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> methods can be changed by these wrappers.</p>
 <p>Some attributes (<a class="reference internal" href="../registry/#gymnasium.spec" title="gymnasium.spec"><code class="xref py py-attr docutils literal notranslate"><span class="pre">spec</span></code></a>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">render_mode</span></code>, <a class="reference internal" href="#gymnasium.Wrapper.np_random" title="gymnasium.Wrapper.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a>) will point back to the wrapper’s environment
-(i.e. to the corresponding attributes of <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code>).</p>
+(i.e. to the corresponding attributes of <a class="reference internal" href="#gymnasium.Wrapper.env" title="gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code></a>).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you inherit from <a class="reference internal" href="#gymnasium.Wrapper" title="gymnasium.Wrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Wrapper</span></code></a>, don’t forget to call <code class="docutils literal notranslate"><span class="pre">super().__init__(env)</span></code></p>
@@ -546,44 +544,85 @@ Moreover, the behavior of the <a class="reference internal" href="#gymnasium.Wra
 </dd></dl>
 
 <section id="methods">
-<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h3>
-<dl class="py function">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h2>
+<dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.Wrapper.step">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.Wrapper.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WrapperActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">WrapperObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.Wrapper.step" title="Link to this definition">#</a></dt>
-<dd><p>Uses the <a class="reference internal" href="#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> that can be overwritten to change the returned data.</p>
+<span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WrapperActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">WrapperObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Wrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Wrapper.step" title="Link to this definition">#</a></dt>
+<dd><p>Uses the <a class="reference internal" href="#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> of the <a class="reference internal" href="#gymnasium.Wrapper.env" title="gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code></a> that can be overwritten to change the returned data.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.Wrapper.reset">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.Wrapper.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">WrapperObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#gymnasium.Wrapper.reset" title="Link to this definition">#</a></dt>
-<dd><p>Uses the <a class="reference internal" href="#gymnasium.Wrapper.reset" title="gymnasium.Wrapper.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> that can be overwritten to change the returned data.</p>
+<span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">WrapperObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Wrapper.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Wrapper.reset" title="Link to this definition">#</a></dt>
+<dd><p>Uses the <a class="reference internal" href="#gymnasium.Wrapper.reset" title="gymnasium.Wrapper.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> of the <a class="reference internal" href="#gymnasium.Wrapper.env" title="gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code></a> that can be overwritten to change the returned data.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.render">
+<span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RenderFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">RenderFrame</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Wrapper.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Wrapper.render" title="Link to this definition">#</a></dt>
+<dd><p>Uses the <a class="reference internal" href="#gymnasium.Wrapper.render" title="gymnasium.Wrapper.render"><code class="xref py py-meth docutils literal notranslate"><span class="pre">render()</span></code></a> of the <a class="reference internal" href="#gymnasium.Wrapper.env" title="gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code></a> that can be overwritten to change the returned data.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.Wrapper.close">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.Wrapper.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gymnasium.Wrapper.close" title="Link to this definition">#</a></dt>
-<dd><p>Closes the wrapper and <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code>.</p>
+<span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/core/#Wrapper.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Wrapper.close" title="Link to this definition">#</a></dt>
+<dd><p>Closes the wrapper and <a class="reference internal" href="#gymnasium.Wrapper.env" title="gymnasium.Wrapper.env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.wrapper_spec">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">wrapper_spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../registry/#gymnasium.envs.registration.WrapperSpec" title="gymnasium.envs.registration.WrapperSpec"><span class="pre">WrapperSpec</span></a></span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Wrapper.wrapper_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Wrapper.wrapper_spec" title="Link to this definition">#</a></dt>
+<dd><p>Generates a <cite>WrapperSpec</cite> for the wrappers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.get_wrapper_attr">
+<span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">get_wrapper_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Wrapper.get_wrapper_attr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Wrapper.get_wrapper_attr" title="Link to this definition">#</a></dt>
+<dd><p>Gets an attribute from the wrapper and lower environments if <cite>name</cite> doesn’t exist in this object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The variable name to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>The variable with name in wrapper or lower environments</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.set_wrapper_attr">
+<span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">set_wrapper_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/core/#Wrapper.set_wrapper_attr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Wrapper.set_wrapper_attr" title="Link to this definition">#</a></dt>
+<dd><p>Sets an attribute on this wrapper or lower environment if <cite>name</cite> is already defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The variable name</p></li>
+<li><p><strong>value</strong> – The new variable value</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h3>
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gymnasium.Wrapper.env">
+<span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">env</span></span><a class="headerlink" href="#gymnasium.Wrapper.env" title="Link to this definition">#</a></dt>
+<dd><p>The environment (one level underneath) this wrapper.</p>
+<p>This may itself be a wrapped environment. To obtain the environment underneath all layers of wrappers, use <a class="reference internal" href="#gymnasium.Wrapper.unwrapped" title="gymnasium.Wrapper.unwrapped"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.unwrapped</span></code></a>.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.Wrapper.action_space">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">action_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">WrapperActType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Wrapper.action_space" title="Link to this definition">#</a></dt>
-<dd><p>Return the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> unless overwritten then the wrapper <a class="reference internal" href="../vector/#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> is used.</p>
+<dd><p>Return the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="#gymnasium.Wrapper.action_space" title="gymnasium.Wrapper.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> unless overwritten then the wrapper <a class="reference internal" href="#gymnasium.Wrapper.action_space" title="gymnasium.Wrapper.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> is used.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.Wrapper.observation_space">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">observation_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">WrapperObsType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Wrapper.observation_space" title="Link to this definition">#</a></dt>
-<dd><p>Return the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="../vector/#observation_space" title="observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> unless overwritten then the wrapper <a class="reference internal" href="../vector/#observation_space" title="observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> is used.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="gymnasium.Wrapper.reward_range">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">reward_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Wrapper.reward_range" title="Link to this definition">#</a></dt>
-<dd><p>Return the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="#gymnasium.Wrapper.reward_range" title="gymnasium.Wrapper.reward_range"><code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code></a> unless overwritten then the wrapper <a class="reference internal" href="#gymnasium.Wrapper.reward_range" title="gymnasium.Wrapper.reward_range"><code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code></a> is used.</p>
+<dd><p>Return the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="#gymnasium.Wrapper.observation_space" title="gymnasium.Wrapper.observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> unless overwritten then the wrapper <a class="reference internal" href="#gymnasium.Wrapper.observation_space" title="gymnasium.Wrapper.observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> is used.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -604,14 +643,6 @@ Moreover, the behavior of the <a class="reference internal" href="#gymnasium.Wra
 <dd><p>Returns the <a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Env</span></code></a> <a class="reference internal" href="#gymnasium.Wrapper.np_random" title="gymnasium.Wrapper.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a> attribute.</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gymnasium.wrappers.gymnasium.Wrapper.env">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.Wrapper.</span></span><span class="sig-name descname"><span class="pre">env</span></span><a class="headerlink" href="#gymnasium.wrappers.gymnasium.Wrapper.env" title="Link to this definition">#</a></dt>
-<dd><p>The environment (one level underneath) this wrapper.</p>
-<p>This may itself be a wrapped environment.
-To obtain the environment underneath all layers of wrappers, use <a class="reference internal" href="#gymnasium.Wrapper.unwrapped" title="gymnasium.Wrapper.unwrapped"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gymnasium.Wrapper.unwrapped</span></code></a>.</p>
-</dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.Wrapper.unwrapped">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Wrapper.</span></span><span class="sig-name descname"><span class="pre">unwrapped</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Wrapper.unwrapped" title="Link to this definition">#</a></dt>
@@ -621,138 +652,24 @@ To obtain the environment underneath all layers of wrappers, use <a class="refer
 
 </section>
 </section>
-<section id="gymnasium-wrappers">
-<h2>Gymnasium Wrappers<a class="headerlink" href="#gymnasium-wrappers" title="Link to this heading">#</a></h2>
-<p>Gymnasium provides a number of commonly used wrappers listed below. More information can be found on the particular
-wrapper in the page on the wrapper type</p>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Name</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.AtariPreprocessing" title="gymnasium.wrappers.AtariPreprocessing"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>Implements the common preprocessing applied to Atari environments</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.AutoResetWrapper" title="gymnasium.wrappers.AutoResetWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoResetWrapper</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>The wrapped environment will automatically reset when the terminated or truncated  state is reached.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="action_wrappers/#gymnasium.wrappers.ClipAction" title="gymnasium.wrappers.ClipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClipAction</span></code></a></p></td>
-<td><p>Action Wrapper</p></td>
-<td><p>Clip the continuous action to the valid bound specified by the environment’s <cite>action_space</cite></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.EnvCompatibility" title="gymnasium.wrappers.EnvCompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvCompatibility</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>Provides compatibility for environments written in the OpenAI Gym v0.21 API to look like Gymnasium environments</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.FilterObservation" title="gymnasium.wrappers.FilterObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterObservation</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>Filters a dictionary observation spaces to only requested keys</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlattenObservation</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>An Observation wrapper that flattens the observation</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.FrameStack" title="gymnasium.wrappers.FrameStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameStack</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>AnObservation wrapper that stacks the observations in a rolling manner.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.GrayScaleObservation" title="gymnasium.wrappers.GrayScaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GrayScaleObservation</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>Convert the image observation from RGB to gray scale.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.HumanRendering" title="gymnasium.wrappers.HumanRendering"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>Allows human like rendering for environments that support “rgb_array” rendering</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.NormalizeObservation" title="gymnasium.wrappers.NormalizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="reward_wrappers/#gymnasium.wrappers.NormalizeReward" title="gymnasium.wrappers.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeReward</span></code></a></p></td>
-<td><p>Reward Wrapper</p></td>
-<td><p>This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.OrderEnforcing" title="gymnasium.wrappers.OrderEnforcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrderEnforcing</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>This will produce an error if <cite>step</cite> or <cite>render</cite> is called before <cite>reset</cite></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.PixelObservationWrapper" title="gymnasium.wrappers.PixelObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">PixelObservationWrapper</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>Augment observations by pixel values obtained via <cite>render</cite> that can be added to or replaces the environments observation.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>This will keep track of cumulative rewards and episode lengths returning them at the end.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>This wrapper will record videos of rollouts.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.RenderCollection" title="gymnasium.wrappers.RenderCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RenderCollection</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>Enable list versions of render modes, i.e. “rgb_array_list” for “rgb_array” such that the rendering for each step are saved in a list until <cite>render</cite> is called.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="action_wrappers/#gymnasium.wrappers.RescaleAction" title="gymnasium.wrappers.RescaleAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleAction</span></code></a></p></td>
-<td><p>Action Wrapper</p></td>
-<td><p>Rescales the continuous action space of the environment to a range [<cite>min_action</cite>, <cite>max_action</cite>], where <cite>min_action</cite> and <cite>max_action</cite> are numpy arrays or floats.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.ResizeObservation" title="gymnasium.wrappers.ResizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResizeObservation</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>This wrapper works on environments with image observations (or more generally observations of shape AxBxC) and resizes the observation to the shape given by the tuple <cite>shape</cite>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.StepAPICompatibility" title="gymnasium.wrappers.StepAPICompatibility"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepAPICompatibility</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>Modifies an environment step function from (old) done to the (new) termination / truncation API.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.TimeAwareObservation" title="gymnasium.wrappers.TimeAwareObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>Augment the observation with current time step in the trajectory (by appending it to the observation).</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>This wrapper will emit a truncated signal if the specified number of steps is exceeded in an episode.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="observation_wrappers/#gymnasium.wrappers.TransformObservation" title="gymnasium.wrappers.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></p></td>
-<td><p>Observation Wrapper</p></td>
-<td><p>This wrapper will apply function to observations</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformReward</span></code></a></p></td>
-<td><p>Reward Wrapper</p></td>
-<td><p>This wrapper will apply function to rewards</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="misc_wrappers/#gymnasium.wrappers.VectorListInfo" title="gymnasium.wrappers.VectorListInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VectorListInfo</span></code></a></p></td>
-<td><p>Misc Wrapper</p></td>
-<td><p>This wrapper will convert the info of a vectorized environment from the <cite>dict</cite> format to a <cite>list</cite> of dictionaries where the i-th dictionary contains info of the i-th environment.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-</section>
 
           </article>
         </div>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="misc_wrappers/">
+            <a class="next-page" href="table/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Misc Wrappers</div>
+                <div class="title">List of Wrappers</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../spaces/vector_utils/">
+            <a class="prev-page" href="../vector/utils/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -761,7 +678,7 @@ wrapper in the page on the wrapper type</p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Spaces Vector Utils</div>
+                <div class="title">Utility functions</div>
                 
               </div>
             </a>
@@ -806,28 +723,27 @@ wrapper in the page on the wrapper type</p>
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Wrappers</a><ul>
-<li><a class="reference internal" href="#gymnasium-wrapper">gymnasium.Wrapper</a><ul>
 <li><a class="reference internal" href="#gymnasium.Wrapper"><code class="docutils literal notranslate"><span class="pre">Wrapper</span></code></a></li>
 <li><a class="reference internal" href="#methods">Methods</a><ul>
-<li><a class="reference internal" href="#gymnasium.Wrapper.step"><code class="docutils literal notranslate"><span class="pre">step()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.Wrapper.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.Wrapper.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.step"><code class="docutils literal notranslate"><span class="pre">Wrapper.step()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.reset"><code class="docutils literal notranslate"><span class="pre">Wrapper.reset()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.render"><code class="docutils literal notranslate"><span class="pre">Wrapper.render()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.close"><code class="docutils literal notranslate"><span class="pre">Wrapper.close()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.wrapper_spec"><code class="docutils literal notranslate"><span class="pre">Wrapper.wrapper_spec()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.get_wrapper_attr"><code class="docutils literal notranslate"><span class="pre">Wrapper.get_wrapper_attr()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Wrapper.set_wrapper_attr"><code class="docutils literal notranslate"><span class="pre">Wrapper.set_wrapper_attr()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#gymnasium.Wrapper.env"><code class="docutils literal notranslate"><span class="pre">Wrapper.env</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Wrapper.action_space"><code class="docutils literal notranslate"><span class="pre">Wrapper.action_space</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Wrapper.observation_space"><code class="docutils literal notranslate"><span class="pre">Wrapper.observation_space</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.Wrapper.reward_range"><code class="docutils literal notranslate"><span class="pre">Wrapper.reward_range</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Wrapper.spec"><code class="docutils literal notranslate"><span class="pre">Wrapper.spec</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Wrapper.metadata"><code class="docutils literal notranslate"><span class="pre">Wrapper.metadata</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Wrapper.np_random"><code class="docutils literal notranslate"><span class="pre">Wrapper.np_random</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.wrappers.gymnasium.Wrapper.env"><code class="docutils literal notranslate"><span class="pre">gymnasium.Wrapper.env</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Wrapper.unwrapped"><code class="docutils literal notranslate"><span class="pre">Wrapper.unwrapped</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference internal" href="#gymnasium-wrappers">Gymnasium Wrappers</a></li>
 </ul>
 </li>
 </ul>
@@ -914,7 +830,7 @@ wrapper in the page on the wrapper type</p>
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>

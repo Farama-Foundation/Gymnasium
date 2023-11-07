@@ -215,38 +215,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -477,7 +478,6 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">ModuleType</span>
@@ -529,6 +529,8 @@
         <span class="o">...</span>
 
 
+<div class="viewcode-block" id="WrapperSpec">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.WrapperSpec">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">WrapperSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A specification for recording wrapper configs.</span>
@@ -540,7 +542,8 @@
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">entry_point</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span></div>
+
 
 
 <div class="viewcode-block" id="EnvSpec">
@@ -555,11 +558,13 @@
 <span class="sd">    * **nondeterministic**: If the observation of an environment cannot be repeated with the same initial state, random number generator state and actions.</span>
 <span class="sd">    * **max_episode_steps**: The max number of steps that the environment can take before truncation</span>
 <span class="sd">    * **order_enforce**: If to enforce the order of :meth:`gymnasium.Env.reset` before :meth:`gymnasium.Env.step` and :meth:`gymnasium.Env.render` functions</span>
-<span class="sd">    * **autoreset**: If to automatically reset the environment on episode end</span>
 <span class="sd">    * **disable_env_checker**: If to disable the environment checker wrapper in :meth:`gymnasium.make`, by default False (runs the environment checker)</span>
 <span class="sd">    * **kwargs**: Additional keyword arguments passed to the environment during initialisation</span>
 <span class="sd">    * **additional_wrappers**: A tuple of additional wrappers applied to the environment (WrapperSpec)</span>
 <span class="sd">    * **vector_entry_point**: The location of the vectorized environment to create from</span>
+
+<span class="sd">    Changelogs:</span>
+<span class="sd">        v1.0.0 - Autoreset attribute removed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
@@ -572,9 +577,7 @@
     <span class="c1"># Wrappers</span>
     <span class="n">max_episode_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">order_enforce</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">autoreset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">disable_env_checker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">apply_api_compatibility</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Environment arguments</span>
     <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -693,12 +696,8 @@
             <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">max_episode_steps=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_episode_steps</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">print_all</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_enforce</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">order_enforce=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">order_enforce</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="n">print_all</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoreset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">autoreset=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">autoreset</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">print_all</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_env_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">disable_env_checker=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">disable_env_checker</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="n">print_all</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_api_compatibility</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">applied_api_compatibility=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_api_compatibility</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="k">if</span> <span class="n">print_all</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">:</span>
             <span class="n">wrapper_output</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1029,58 +1028,6 @@
 
 
 
-<div class="viewcode-block" id="load_plugin_envs">
-<a class="viewcode-back" href="../../../../api/registry/#gymnasium.load_plugin_envs">[docs]</a>
-<span class="k">def</span> <span class="nf">load_plugin_envs</span><span class="p">(</span><span class="n">entry_point</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gymnasium.envs&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load modules (plugins) using the gymnasium entry points in order to register external module&#39;s environments on ``import gymnasium``.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        entry_point: The string for the entry point.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Load third-party environments</span>
-    <span class="k">for</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">entry_points</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="n">entry_point</span><span class="p">):</span>
-        <span class="c1"># Python 3.8 doesn&#39;t support plugin.module, plugin.attr</span>
-        <span class="c1"># So we&#39;ll have to try and parse this ourselves</span>
-        <span class="n">module</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">module</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="n">plugin</span><span class="o">.</span><span class="n">attr</span>  <span class="c1"># type: ignore  ## error: Cannot access member &quot;attr&quot; for type &quot;EntryPoint&quot;</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">plugin</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-                <span class="n">module</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">module</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While trying to load plugin `</span><span class="si">{</span><span class="n">plugin</span><span class="si">}</span><span class="s2">` from </span><span class="si">{</span><span class="n">entry_point</span><span class="si">}</span><span class="s2">, an exception occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-            <span class="n">module</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Gymnasium environment plugin `</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">` must specify a function to execute, not a root module&quot;</span>
-                <span class="p">)</span>
-
-        <span class="n">context</span> <span class="o">=</span> <span class="n">namespace</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">):</span>
-            <span class="c1"># `__internal__` is an artifact of the plugin system when the root namespace had an allow-list.</span>
-            <span class="c1"># The allow-list is now removed and plugins can register environments in the root namespace with the `__root__` magic key.</span>
-            <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;__root__&quot;</span> <span class="ow">or</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;__internal__&quot;</span><span class="p">:</span>
-                <span class="n">context</span> <span class="o">=</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">nullcontext</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The environment namespace magic key `</span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">` is unsupported. &quot;</span>
-                    <span class="s2">&quot;To register an environment at the root namespace you should specify the `__root__` namespace.&quot;</span>
-                <span class="p">)</span>
-
-        <span class="k">with</span> <span class="n">context</span><span class="p">:</span>
-            <span class="n">fn</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">fn</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;plugin: </span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> raised </span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
-
-
 <span class="k">def</span> <span class="nf">register_envs</span><span class="p">(</span><span class="n">env_module</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A No-op function such that it can appear to IDEs that a module is used.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
@@ -1108,9 +1055,7 @@
     <span class="n">nondeterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">max_episode_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">order_enforce</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">autoreset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">disable_env_checker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">apply_api_compatibility</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">additional_wrappers</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperSpec</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
     <span class="n">vector_entry_point</span><span class="p">:</span> <span class="n">VectorEnvCreator</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -1130,13 +1075,13 @@
 <span class="sd">        max_episode_steps: The maximum number of episodes steps before truncation. Used by the :class:`gymnasium.wrappers.TimeLimit` wrapper if not ``None``.</span>
 <span class="sd">        order_enforce: If to enable the order enforcer wrapper to ensure users run functions in the correct order.</span>
 <span class="sd">            If ``True``, then the :class:`gymnasium.wrappers.OrderEnforcing` is applied to the environment.</span>
-<span class="sd">        autoreset: If to add the :class:`gymnasium.wrappers.AutoResetWrapper` such that on ``(terminated or truncated) is True``, :meth:`gymnasium.Env.reset` is called.</span>
 <span class="sd">        disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.</span>
-<span class="sd">        apply_api_compatibility: If to apply the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper to the environment.</span>
-<span class="sd">            Use if the environment is implemented in the gym v0.21 environment API.</span>
 <span class="sd">        additional_wrappers: Additional wrappers to apply the environment.</span>
 <span class="sd">        vector_entry_point: The entry point for creating the vector environment</span>
 <span class="sd">        **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.</span>
+
+<span class="sd">    Changelogs:</span>
+<span class="sd">        v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="p">(</span>
         <span class="n">entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">vector_entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -1159,11 +1104,6 @@
         <span class="n">ns_id</span> <span class="o">=</span> <span class="n">ns</span>
     <span class="n">full_env_id</span> <span class="o">=</span> <span class="n">get_env_id</span><span class="p">(</span><span class="n">ns_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`gymnasium.register(..., autoreset=True)` is deprecated and will be removed in v1.0. If users wish to use it then add the auto reset wrapper in the `addition_wrappers` argument.&quot;</span>
-        <span class="p">)</span>
-
     <span class="n">new_spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
         <span class="nb">id</span><span class="o">=</span><span class="n">full_env_id</span><span class="p">,</span>
         <span class="n">entry_point</span><span class="o">=</span><span class="n">entry_point</span><span class="p">,</span>
@@ -1171,9 +1111,7 @@
         <span class="n">nondeterministic</span><span class="o">=</span><span class="n">nondeterministic</span><span class="p">,</span>
         <span class="n">max_episode_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span>
         <span class="n">order_enforce</span><span class="o">=</span><span class="n">order_enforce</span><span class="p">,</span>
-        <span class="n">autoreset</span><span class="o">=</span><span class="n">autoreset</span><span class="p">,</span>
         <span class="n">disable_env_checker</span><span class="o">=</span><span class="n">disable_env_checker</span><span class="p">,</span>
-        <span class="n">apply_api_compatibility</span><span class="o">=</span><span class="n">apply_api_compatibility</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="n">additional_wrappers</span><span class="o">=</span><span class="n">additional_wrappers</span><span class="p">,</span>
         <span class="n">vector_entry_point</span><span class="o">=</span><span class="n">vector_entry_point</span><span class="p">,</span>
@@ -1191,8 +1129,6 @@
 <span class="k">def</span> <span class="nf">make</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">max_episode_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">autoreset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">apply_api_compatibility</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">disable_env_checker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
@@ -1203,12 +1139,9 @@
 <span class="sd">    Args:</span>
 <span class="sd">        id: A string for the environment id or a :class:`EnvSpec`. Optionally if using a string, a module to import can be included, e.g. ``&#39;module:Env-v0&#39;``.</span>
 <span class="sd">            This is equivalent to importing the module first to register the environment followed by making the environment.</span>
-<span class="sd">        max_episode_steps: Maximum length of an episode, can override the registered :class:`EnvSpec` ``max_episode_steps``.</span>
-<span class="sd">            The value is used by :class:`gymnasium.wrappers.TimeLimit`.</span>
-<span class="sd">        autoreset: Whether to automatically reset the environment after each episode (:class:`gymnasium.wrappers.AutoResetWrapper`).</span>
-<span class="sd">        apply_api_compatibility: Whether to wrap the environment with the :class:`gymnasium.wrappers.StepAPICompatibility` wrapper that</span>
-<span class="sd">            converts the environment step from a done bool to return termination and truncation bools.</span>
-<span class="sd">            By default, the argument is None in which the :class:`EnvSpec` ``apply_api_compatibility`` is used, otherwise this variable is used in favor.</span>
+<span class="sd">        max_episode_steps: Maximum length of an episode, can override the registered :class:`EnvSpec` ``max_episode_steps``</span>
+<span class="sd">            with the value being passed to :class:`gymnasium.wrappers.TimeLimit`.</span>
+<span class="sd">            Using ``max_episode_steps=-1`` will not apply the wrapper to the environment.</span>
 <span class="sd">        disable_env_checker: If to add :class:`gymnasium.wrappers.PassiveEnvChecker`, ``None`` will default to the</span>
 <span class="sd">            :class:`EnvSpec` ``disable_env_checker`` value otherwise use this value will be used.</span>
 <span class="sd">        kwargs: Additional arguments to pass to the environment constructor.</span>
@@ -1218,6 +1151,9 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        Error: If the ``id`` doesn&#39;t exist in the :attr:`registry`</span>
+
+<span class="sd">    Changelogs:</span>
+<span class="sd">        v1.0.0 - `autoreset` and `apply_api_compatibility` was removed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">):</span>
         <span class="n">env_spec</span> <span class="o">=</span> <span class="nb">id</span>
@@ -1283,14 +1219,6 @@
                 <span class="sa">f</span><span class="s2">&quot;that is not in the possible render_modes (</span><span class="si">{</span><span class="n">render_modes</span><span class="si">}</span><span class="s2">).&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">apply_api_compatibility</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="n">apply_api_compatibility</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">apply_api_compatibility</span>
-    <span class="p">):</span>
-        <span class="c1"># If we use the compatibility layer, we treat the render mode explicitly and don&#39;t pass it to the env creator</span>
-        <span class="n">render_mode</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;render_mode&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">render_mode</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="k">try</span><span class="p">:</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="o">**</span><span class="n">env_spec_kwargs</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -1316,9 +1244,7 @@
         <span class="n">nondeterministic</span><span class="o">=</span><span class="n">env_spec</span><span class="o">.</span><span class="n">nondeterministic</span><span class="p">,</span>
         <span class="n">max_episode_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">order_enforce</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">autoreset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">disable_env_checker</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">apply_api_compatibility</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">kwargs</span><span class="o">=</span><span class="n">env_spec_kwargs</span><span class="p">,</span>
         <span class="n">additional_wrappers</span><span class="o">=</span><span class="p">(),</span>
         <span class="n">vector_entry_point</span><span class="o">=</span><span class="n">env_spec</span><span class="o">.</span><span class="n">vector_entry_point</span><span class="p">,</span>
@@ -1338,15 +1264,6 @@
                 <span class="sa">f</span><span class="s2">&quot;The environment&#39;s wrapper spec </span><span class="si">{</span><span class="n">recreated_wrapper_spec</span><span class="si">}</span><span class="s2"> is different from the saved `EnvSpec` additional wrapper </span><span class="si">{</span><span class="n">env_spec_wrapper_spec</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-    <span class="c1"># Add step API wrapper</span>
-    <span class="k">if</span> <span class="n">apply_api_compatibility</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="n">apply_api_compatibility</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">apply_api_compatibility</span> <span class="ow">is</span> <span class="kc">True</span>
-    <span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`gymnasium.make(..., apply_api_compatibility=True)` and `env_spec.apply_api_compatibility` is deprecated and will be removed in v1.0&quot;</span>
-        <span class="p">)</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">EnvCompatibility</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">render_mode</span><span class="p">)</span>
-
     <span class="c1"># Run the environment checker as the lowest level wrapper</span>
     <span class="k">if</span> <span class="n">disable_env_checker</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">or</span> <span class="p">(</span>
         <span class="n">disable_env_checker</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">disable_env_checker</span> <span class="ow">is</span> <span class="kc">False</span>
@@ -1358,18 +1275,11 @@
         <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">OrderEnforcing</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
     <span class="c1"># Add the time limit wrapper</span>
-    <span class="k">if</span> <span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeLimit</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeLimit</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span><span class="p">)</span>
-
-    <span class="c1"># Add the auto-reset wrapper</span>
-    <span class="k">if</span> <span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span><span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">AutoResetWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-
-        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`gymnasium.make(..., autoreset=True)` is deprecated and will be removed in v1.0&quot;</span>
-        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_episode_steps</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeLimit</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeLimit</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">wrapper_spec</span> <span class="ow">in</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">[</span><span class="n">num_prior_wrappers</span><span class="p">:]:</span>
         <span class="k">if</span> <span class="n">wrapper_spec</span><span class="o">.</span><span class="n">kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1389,28 +1299,30 @@
 
 
 
+<div class="viewcode-block" id="make_vec">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.make_vec">[docs]</a>
 <span class="k">def</span> <span class="nf">make_vec</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">num_envs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">vectorization_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;async&quot;</span><span class="p">,</span>
+    <span class="n">vectorization_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">vector_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">wrappers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Env</span><span class="p">],</span> <span class="n">Wrapper</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a vector environment according to the given ID.</span>
 
-<span class="sd">    Note:</span>
-<span class="sd">        This feature is experimental, and is likely to change in future releases.</span>
-
-<span class="sd">    To find all available environments use `gymnasium.envs.registry.keys()` for all valid ids.</span>
+<span class="sd">    To find all available environments use :func:`gymnasium.pprint_registry` or ``gymnasium.registry.keys()`` for all valid ids.</span>
+<span class="sd">    We refer to the Vector environment as the vectorizor while the environment being vectorized is the base or vectorized environment (``vectorizor(vectorized env)``).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        id: Name of the environment. Optionally, a module to import can be included, eg. &#39;module:Env-v0&#39;</span>
 <span class="sd">        num_envs: Number of environments to create</span>
-<span class="sd">        vectorization_mode: How to vectorize the environment. Can be either &quot;async&quot;, &quot;sync&quot; or &quot;custom&quot;</span>
-<span class="sd">        vector_kwargs: Additional arguments to pass to the vectorized environment constructor.</span>
-<span class="sd">        wrappers: A sequence of wrapper functions to apply to the environment. Can only be used in &quot;sync&quot; or &quot;async&quot; mode.</span>
-<span class="sd">        **kwargs: Additional arguments to pass to the environment constructor.</span>
+<span class="sd">        vectorization_mode: The vectorization method used, defaults to ``None`` such that if a ``vector_entry_point`` exists,</span>
+<span class="sd">            this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.</span>
+<span class="sd">            Valid modes are ``&quot;async&quot;``, ``&quot;sync&quot;`` or ``&quot;vector_entry_point&quot;``.</span>
+<span class="sd">        vector_kwargs: Additional arguments to pass to the vectorizor environment constructor, i.e., ``SyncVectorEnv(..., **vector_kwargs)``.</span>
+<span class="sd">        wrappers: A sequence of wrapper functions to apply to the base environment. Can only be used in ``&quot;sync&quot;`` or ``&quot;async&quot;`` mode.</span>
+<span class="sd">        **kwargs: Additional arguments passed to the base environment constructor.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An instance of the environment.</span>
@@ -1420,89 +1332,96 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">vector_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">vector_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-
     <span class="k">if</span> <span class="n">wrappers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">wrappers</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">):</span>
-        <span class="n">spec_</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="n">id_env_spec</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="n">env_spec_kwargs</span> <span class="o">=</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">num_envs</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_envs&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="p">)</span>
+        <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;vectorization_mode&quot;</span><span class="p">,</span> <span class="n">vectorization_mode</span>
+        <span class="p">)</span>
+        <span class="n">vector_kwargs</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;vector_kwargs&quot;</span><span class="p">,</span> <span class="n">vector_kwargs</span><span class="p">)</span>
+        <span class="n">wrappers</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;wrappers&quot;</span><span class="p">,</span> <span class="n">wrappers</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">spec_</span> <span class="o">=</span> <span class="n">_find_spec</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">id_env_spec</span> <span class="o">=</span> <span class="n">_find_spec</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">env_spec_kwargs</span> <span class="o">=</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">spec_</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="c1"># Check if we have the necessary entry point</span>
-    <span class="k">if</span> <span class="n">vectorization_mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;sync&quot;</span><span class="p">,</span> <span class="s2">&quot;async&quot;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">spec_</span><span class="o">.</span><span class="n">entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Cannot create vectorized environment for </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> because it doesn&#39;t have an entry point defined.&quot;</span>
-            <span class="p">)</span>
-        <span class="n">entry_point</span> <span class="o">=</span> <span class="n">spec_</span><span class="o">.</span><span class="n">entry_point</span>
-    <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,):</span>
-        <span class="k">if</span> <span class="n">spec_</span><span class="o">.</span><span class="n">vector_entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Cannot create vectorized environment for </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> because it doesn&#39;t have a vector entry point defined.&quot;</span>
-            <span class="p">)</span>
-        <span class="n">entry_point</span> <span class="o">=</span> <span class="n">spec_</span><span class="o">.</span><span class="n">vector_entry_point</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid vectorization mode: </span><span class="si">{</span><span class="n">vectorization_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Update the vectorization_mode if None</span>
+    <span class="k">if</span> <span class="n">vectorization_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">vector_entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="s2">&quot;vector_entry_point&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="s2">&quot;sync&quot;</span>
 
-    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">entry_point</span><span class="p">):</span>
-        <span class="n">env_creator</span> <span class="o">=</span> <span class="n">entry_point</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Assume it&#39;s a string</span>
-        <span class="n">env_creator</span> <span class="o">=</span> <span class="n">load_env_creator</span><span class="p">(</span><span class="n">entry_point</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_create_env</span><span class="p">():</span>
-        <span class="c1"># Env creator for use with sync and async modes</span>
-        <span class="n">_kwargs_copy</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="n">render_mode</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_mode&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">render_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">inner_render_mode</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">render_mode</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">)]</span>
-                <span class="k">if</span> <span class="n">render_mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">)</span>
-                <span class="k">else</span> <span class="n">render_mode</span>
-            <span class="p">)</span>
-            <span class="n">_kwargs_copy</span><span class="p">[</span><span class="s2">&quot;render_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inner_render_mode</span>
-
-        <span class="n">_env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs_copy</span><span class="p">)</span>
-        <span class="n">_env</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">spec_</span>
-        <span class="k">if</span> <span class="n">spec_</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeLimit</span><span class="p">(</span><span class="n">_env</span><span class="p">,</span> <span class="n">spec_</span><span class="o">.</span><span class="n">max_episode_steps</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">render_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">render_mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">):</span>
-            <span class="n">_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RenderCollection</span><span class="p">(</span><span class="n">_env</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">create_single_env</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
+        <span class="n">single_env</span> <span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">id_env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="o">**</span><span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
         <span class="k">for</span> <span class="n">wrapper</span> <span class="ow">in</span> <span class="n">wrappers</span><span class="p">:</span>
-            <span class="n">_env</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">_env</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">_env</span>
+            <span class="n">single_env</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">single_env</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">single_env</span>
 
     <span class="k">if</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="s2">&quot;sync&quot;</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">SyncVectorEnv</span><span class="p">(</span>
-            <span class="n">env_fns</span><span class="o">=</span><span class="p">[</span><span class="n">_create_env</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)],</span>
+        <span class="k">if</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot create vectorized environment for </span><span class="si">{</span><span class="n">id_env_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> because it doesn&#39;t have an entry point defined.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">SyncVectorEnv</span><span class="p">(</span>
+            <span class="n">env_fns</span><span class="o">=</span><span class="p">(</span><span class="n">create_single_env</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)),</span>
             <span class="o">**</span><span class="n">vector_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="s2">&quot;async&quot;</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">(</span>
-            <span class="n">env_fns</span><span class="o">=</span><span class="p">[</span><span class="n">_create_env</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)],</span>
+        <span class="k">if</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot create vectorized environment for </span><span class="si">{</span><span class="n">id_env_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> because it doesn&#39;t have an entry point defined.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">(</span>
+            <span class="n">env_fns</span><span class="o">=</span><span class="p">[</span><span class="n">create_single_env</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)],</span>
             <span class="o">**</span><span class="n">vector_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="s2">&quot;custom&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="s2">&quot;vector_entry_point&quot;</span><span class="p">:</span>
+        <span class="n">entry_point</span> <span class="o">=</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">vector_entry_point</span>
+        <span class="k">if</span> <span class="n">entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot create vectorized environment for </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> because it doesn&#39;t have a vector entry point defined.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">entry_point</span><span class="p">):</span>
+            <span class="n">env_creator</span> <span class="o">=</span> <span class="n">entry_point</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Assume it&#39;s a string</span>
+            <span class="n">env_creator</span> <span class="o">=</span> <span class="n">load_env_creator</span><span class="p">(</span><span class="n">entry_point</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wrappers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s2">&quot;Cannot use custom vectorization mode with wrappers.&quot;</span><span class="p">)</span>
-        <span class="n">vector_kwargs</span><span class="p">[</span><span class="s2">&quot;max_episode_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec_</span><span class="o">.</span><span class="n">max_episode_steps</span>
+            <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot use `vector_entry_point` vectorization mode with the wrappers argument.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;max_episode_steps&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vector_kwargs</span><span class="p">:</span>
+            <span class="n">vector_kwargs</span><span class="p">[</span><span class="s2">&quot;max_episode_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
+
         <span class="n">env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="n">num_envs</span><span class="o">=</span><span class="n">num_envs</span><span class="p">,</span> <span class="o">**</span><span class="n">vector_kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid vectorization mode: </span><span class="si">{</span><span class="n">vectorization_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Copies the environment creation specification and kwargs to add to the environment specification details</span>
-    <span class="n">spec_</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">spec_</span><span class="p">)</span>
-    <span class="n">spec_</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">_kwargs</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">spec_</span>
+    <span class="n">copied_id_spec</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">id_env_spec</span><span class="p">)</span>
+    <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span>
+    <span class="k">if</span> <span class="n">num_envs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_envs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_envs</span>
+    <span class="k">if</span> <span class="n">vectorization_mode</span> <span class="o">!=</span> <span class="s2">&quot;async&quot;</span><span class="p">:</span>
+        <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vectorization_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vectorization_mode</span>
+    <span class="k">if</span> <span class="n">vector_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vector_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector_kwargs</span>
+    <span class="k">if</span> <span class="n">wrappers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;wrappers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrappers</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">copied_id_spec</span>
 
-    <span class="k">return</span> <span class="n">env</span>
+    <span class="k">return</span> <span class="n">env</span></div>
+
 
 
 <div class="viewcode-block" id="spec">
@@ -1727,7 +1646,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>

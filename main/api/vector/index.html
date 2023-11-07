@@ -8,11 +8,11 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/api/vector.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Utils" href="../utils/" /><link rel="prev" title="Reward Wrappers" href="../wrappers/reward_wrappers/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Vector Wrappers" href="wrappers/" /><link rel="prev" title="Vector wrappers" href="../wrappers/vector_wrappers/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/vector.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
-        <title>Vector - Gymnasium Documentation</title>
+        <title>Vector environments - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
@@ -216,38 +216,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Vector environments</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -474,63 +475,86 @@
           </div>
           <article role="main">
             
-            <section id="vector">
-<h1>Vector<a class="headerlink" href="#vector" title="Link to this heading">#</a></h1>
+            <section id="vector-environments">
+<h1>Vector environments<a class="headerlink" href="#vector-environments" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
 <section id="gymnasium-vector-vectorenv">
 <h2>Gymnasium.vector.VectorEnv<a class="headerlink" href="#gymnasium-vector-vectorenv" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.vector.VectorEnv">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">VectorEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_envs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">VectorEnv</span></span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv" title="Link to this definition">#</a></dt>
 <dd><p>Base class for vectorized environments to run multiple independent copies of the same environment in parallel.</p>
 <p>Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
 sub-environments at the same time. To prevent terminated environments waiting until all sub-environments have
-terminated or truncated, the vector environments autoreset sub-environments after they terminate or truncated.
-As a result, the final step’s observation and info are overwritten by the reset’s observation and info.
-Therefore, the observation and info for the final step of a sub-environment is stored in the info parameter,
+terminated or truncated, the vector environments automatically reset sub-environments after they terminate or truncated (within the same step call).
+As a result, the step’s observation and info are overwritten by the reset’s observation and info.
+To preserve this data, the observation and info for the final step of a sub-environment is stored in the info parameter,
 using <cite>“final_observation”</cite> and <cite>“final_info”</cite> respectively. See <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> for more information.</p>
-<p>The vector environments batch <cite>observations</cite>, <cite>rewards</cite>, <cite>terminations</cite>, <cite>truncations</cite> and <cite>info</cite> for each
-parallel environment. In addition, <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> expects to receive a batch of actions for each parallel environment.</p>
-<p>Gymnasium contains two types of Vector environments: <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></a> and <a class="reference internal" href="#gymnasium.vector.SyncVectorEnv" title="gymnasium.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></a>.</p>
+<p>The vector environments batches <cite>observations</cite>, <cite>rewards</cite>, <cite>terminations</cite>, <cite>truncations</cite> and <cite>info</cite> for each
+sub-environment. In addition, <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> expects to receive a batch of actions for each parallel environment.</p>
+<p>Gymnasium contains two generalised Vector environments: <a class="reference internal" href="async_vector_env/#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></a> and <a class="reference internal" href="sync_vector_env/#gymnasium.vector.SyncVectorEnv" title="gymnasium.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></a> along with
+several custom vector environment implementations.</p>
 <p>The Vector Environments have the additional attributes for users to understand the implementation</p>
 <ul class="simple">
-<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_envs</span></code> - The number of sub-environment in the vector environment</p></li>
-<li><p><a class="reference internal" href="#observation_space" title="observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> - The batched observation space of the vector environment</p></li>
-<li><p><a class="reference internal" href="#single_observation_space" title="single_observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_observation_space</span></code></a> - The observation space of a single sub-environment</p></li>
-<li><p><a class="reference internal" href="#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> - The batched action space of the vector environment</p></li>
-<li><p><a class="reference internal" href="#single_action_space" title="single_action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_action_space</span></code></a> - The action space of a single sub-environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.num_envs" title="gymnasium.vector.VectorEnv.num_envs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_envs</span></code></a> - The number of sub-environment in the vector environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.observation_space" title="gymnasium.vector.VectorEnv.observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> - The batched observation space of the vector environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_observation_space" title="gymnasium.vector.VectorEnv.single_observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_observation_space</span></code></a> - The observation space of a single sub-environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.action_space" title="gymnasium.vector.VectorEnv.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> - The batched action space of the vector environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_action_space" title="gymnasium.vector.VectorEnv.single_action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_action_space</span></code></a> - The action space of a single sub-environment</p></li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The info parameter of <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> was originally implemented before OpenAI Gym v25 was a list
-of dictionary for each sub-environment. However, this was modified in OpenAI Gym v25+ and in Gymnasium to a
-dictionary with a NumPy array for each key. To use the old info style using the <code class="xref py py-class docutils literal notranslate"><span class="pre">VectorListInfo</span></code>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">&quot;sync&quot;</span><span class="p">,</span> <span class="n">wrappers</span><span class="o">=</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeAwareObservation</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ClipReward</span><span class="p">(</span><span class="n">envs</span><span class="p">,</span> <span class="n">min_reward</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">max_reward</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span>
+<span class="go">&lt;ClipReward, SyncVectorEnv(CartPole-v1, num_envs=3)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
+<span class="go">array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282,  0.        ],</span>
+<span class="go">       [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598,  0.        ],</span>
+<span class="go">       [ 0.03517495, -0.000635  , -0.01098382, -0.03203924,  0.        ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
+<span class="go">array([[ 0.01734283,  0.15089367, -0.02859527, -0.33293587,  1.        ],</span>
+<span class="go">       [ 0.02909703, -0.16717631,  0.04740972,  0.3319138 ,  1.        ],</span>
+<span class="go">       [ 0.03516225, -0.19559774, -0.01162461,  0.25715804,  1.        ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rewards</span>
+<span class="go">array([0.8, 0.8, 0.8])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">terminations</span>
+<span class="go">array([False, False, False])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">truncations</span>
+<span class="go">array([False, False, False])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>To render the sub-environments, use <code class="xref py py-meth docutils literal notranslate"><span class="pre">call()</span></code> with “render” arguments. Remember to set the <cite>render_modes</cite>
-for all the sub-environments during initialization.</p>
+<p>The info parameter of <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> was originally implemented before v0.25 as a list
+of dictionary for each sub-environment. However, this was modified in v0.25+ to be a
+dictionary with a NumPy array for each key. To use the old info style, utilise the <code class="xref py py-class docutils literal notranslate"><span class="pre">DictInfoToList</span></code> wrapper.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>All parallel environments should share the identical observation and action spaces.
 In other words, a vector of multiple different environments is not supported.</p>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>num_envs</strong> – Number of environments in the vectorized environment.</p></li>
-<li><p><strong>observation_space</strong> – Observation space of a single environment.</p></li>
-<li><p><strong>action_space</strong> – Action space of a single environment.</p></li>
-</ul>
-</dd>
-</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">make_vec()</span></code> is the equivalent function to <code class="xref py py-func docutils literal notranslate"><span class="pre">make()</span></code> for vector environments.</p>
+</div>
 </dd></dl>
 
 <section id="methods">
 <h3>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h3>
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.reset">
-<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv.reset" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv.reset" title="Link to this definition">#</a></dt>
 <dd><p>Reset all parallel environments and return a batch of initial observations and info.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -545,23 +569,26 @@ In other words, a vector of multiple different environments is not supported.</p
 </dl>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="go">(array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">&quot;sync&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
+<span class="go">array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],</span>
 <span class="go">       [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],</span>
 <span class="go">       [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],</span>
-<span class="go">      dtype=float32), {})</span>
+<span class="go">      dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
+<span class="go">{}</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.step">
-<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actions</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv.step" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv.step" title="Link to this definition">#</a></dt>
 <dd><p>Take an action for each parallel environment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>actions</strong> – element of <a class="reference internal" href="#action_space" title="action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> Batch of actions.</p>
+<dd class="field-odd"><p><strong>actions</strong> – Batch of actions with the <a class="reference internal" href="#gymnasium.vector.VectorEnv.action_space" title="gymnasium.vector.VectorEnv.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> shape.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Batch of</strong> (<em>observations, rewards, terminations, truncations, infos</em>)</p>
@@ -576,10 +603,10 @@ info as <cite>“final_observation”</cite> and <cite>“final_info”</cite>.<
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">&quot;sync&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
 <span class="go">array([[ 0.02727336,  0.18847767,  0.03625453, -0.26141977],</span>
 <span class="go">       [ 0.01431748, -0.24002443, -0.04731862,  0.3110827 ],</span>
@@ -587,9 +614,9 @@ info as <cite>“final_observation”</cite> and <cite>“final_info”</cite>.<
 <span class="go">      dtype=float32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rewards</span>
 <span class="go">array([1., 1., 1.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">termination</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">terminations</span>
 <span class="go">array([False, False, False])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">truncation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">terminations</span>
 <span class="go">array([False, False, False])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
 <span class="go">{}</span>
@@ -599,7 +626,7 @@ info as <cite>“final_observation”</cite> and <cite>“final_info”</cite>.<
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.close">
-<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv.close" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv.close" title="Link to this definition">#</a></dt>
 <dd><p>Close all parallel environments and release resources.</p>
 <p>It also closes all the existing image viewers, then calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">close_extras()</span></code> and set
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">closed</span></code> as <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
@@ -624,179 +651,66 @@ vectorized environments.</p>
 <section id="attributes">
 <h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h3>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="action_space">
-<span class="sig-name descname"><span class="pre">action_space</span></span><a class="headerlink" href="#action_space" title="Link to this definition">#</a></dt>
-<dd><p>The (batched) action space. The input actions of <cite>step</cite> must be valid elements of <cite>action_space</cite>.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span>
-<span class="go">MultiDiscrete([2 2 2])</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.num_envs">
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">num_envs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.num_envs" title="Link to this definition">#</a></dt>
+<dd><p>The number of sub-environments in the vector environment.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="observation_space">
-<span class="sig-name descname"><span class="pre">observation_space</span></span><a class="headerlink" href="#observation_space" title="Link to this definition">#</a></dt>
-<dd><p>The (batched) observation space. The observations returned by <cite>reset</cite> and <cite>step</cite> are valid elements of <cite>observation_space</cite>.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">observation_space</span>
-<span class="go">Box([[-4.8 ...]], [[4.8 ...]], (3, 4), float32)</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.action_space">
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">action_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">gym.Space</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.action_space" title="Link to this definition">#</a></dt>
+<dd><p>The (batched) action space. The input actions of <cite>step</cite> must be valid elements of <cite>action_space</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="single_action_space">
-<span class="sig-name descname"><span class="pre">single_action_space</span></span><a class="headerlink" href="#single_action_space" title="Link to this definition">#</a></dt>
-<dd><p>The action space of an environment copy.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">single_action_space</span>
-<span class="go">Discrete(2)</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.observation_space">
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">observation_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">gym.Space</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.observation_space" title="Link to this definition">#</a></dt>
+<dd><p>The (batched) observation space. The observations returned by <cite>reset</cite> and <cite>step</cite> are valid elements of <cite>observation_space</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="single_observation_space">
-<span class="sig-name descname"><span class="pre">single_observation_space</span></span><a class="headerlink" href="#single_observation_space" title="Link to this definition">#</a></dt>
-<dd><p>The observation space of an environment copy.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">single_observation_space</span>
-<span class="go">Box([-4.8 ...], [4.8 ...], (4,), float32)</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.single_action_space">
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">single_action_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">gym.Space</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.single_action_space" title="Link to this definition">#</a></dt>
+<dd><p>The action space of a sub-environment.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.single_observation_space">
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">single_observation_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">gym.Space</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.single_observation_space" title="Link to this definition">#</a></dt>
+<dd><p>The observation space of an environment copy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.spec">
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../registry/#gymnasium.envs.registration.EnvSpec" title="gymnasium.envs.registration.EnvSpec"><span class="pre">EnvSpec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.spec" title="Link to this definition">#</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">EnvSpec</span></code> of the environment normally set during <a class="reference internal" href="../registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make_vec()</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="additional-methods">
+<h3>Additional Methods<a class="headerlink" href="#additional-methods" title="Link to this heading">#</a></h3>
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.unwrapped">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">unwrapped</span></span><a class="headerlink" href="#gymnasium.vector.VectorEnv.unwrapped" title="Link to this definition">#</a></dt>
+<dd><p>Return the base environment.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.np_random">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.np_random" title="Link to this definition">#</a></dt>
+<dd><p>Returns the environment’s internal <code class="xref py py-attr docutils literal notranslate"><span class="pre">_np_random</span></code> that if not set will initialise with a random seed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Instances of `np.random.Generator`</strong></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
 </section>
 <section id="making-vector-environments">
 <h2>Making Vector Environments<a class="headerlink" href="#making-vector-environments" title="Link to this heading">#</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="gymnasium.vector.make">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">make</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_envs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrappers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_env_checker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a></span></span><a class="reference internal" href="../../_modules/gymnasium/vector/#make"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.make" title="Link to this definition">#</a></dt>
-<dd><p>Create a vectorized environment from multiple copies of an environment, from its id.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> – The environment ID. This must be a valid ID from the registry.</p></li>
-<li><p><strong>num_envs</strong> – Number of copies of the environment.</p></li>
-<li><p><strong>asynchronous</strong> – If <cite>True</cite>, wraps the environments in an <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></a> (which uses <cite>multiprocessing</cite> to run the environments in parallel). If <code class="docutils literal notranslate"><span class="pre">False</span></code>, wraps the environments in a <a class="reference internal" href="#gymnasium.vector.SyncVectorEnv" title="gymnasium.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></a>.</p></li>
-<li><p><strong>wrappers</strong> – If not <code class="docutils literal notranslate"><span class="pre">None</span></code>, then apply the wrappers to each internal environment during creation.</p></li>
-<li><p><strong>disable_env_checker</strong> – If to run the env checker for the first environment only. None will default to the environment spec <cite>disable_env_checker</cite> parameter
-(that is by default False), otherwise will run according to this argument (True = not run, False = run)</p></li>
-<li><p><strong>**kwargs</strong> – Keywords arguments applied during <cite>gym.make</cite></p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>The vectorized environment.</strong></p>
-</dd>
-</dl>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="go">(array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],</span>
-<span class="go">       [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],</span>
-<span class="go">       [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],</span>
-<span class="go">      dtype=float32), {})</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</section>
-<section id="async-vector-env">
-<h2>Async Vector Env<a class="headerlink" href="#async-vector-env" title="Link to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">AsyncVectorEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_fns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daemon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/vector/async_vector_env/#AsyncVectorEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv" title="Link to this definition">#</a></dt>
-<dd><p>Vectorized environment that runs multiple environments in parallel.</p>
-<p>It uses <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> processes, and pipes for communication.</p>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">([</span>
-<span class="gp">... </span>    <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">),</span>
-<span class="gp">... </span>    <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">1.62</span><span class="p">)</span>
-<span class="gp">... </span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="go">(array([[-0.14995256,  0.9886932 , -0.12224312],</span>
-<span class="go">       [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env_fns</strong> – Functions that create the environments.</p></li>
-<li><p><strong>observation_space</strong> – Observation space of a single environment. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
-then the observation space of the first environment is taken.</p></li>
-<li><p><strong>action_space</strong> – Action space of a single environment. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
-then the action space of the first environment is taken.</p></li>
-<li><p><strong>shared_memory</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the observations from the worker processes are communicated back through
-shared variables. This can improve the efficiency if the observations are large (e.g. images).</p></li>
-<li><p><strong>copy</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> methods
-return a copy of the observations.</p></li>
-<li><p><strong>context</strong> – Context for <a href="#id1"><span class="problematic" id="id2">`multiprocessing`_</span></a>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the default context is used.</p></li>
-<li><p><strong>daemon</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then subprocesses have <code class="docutils literal notranslate"><span class="pre">daemon</span></code> flag turned on; that is, they will quit if
-the head process quits. However, <code class="docutils literal notranslate"><span class="pre">daemon=True</span></code> prevents subprocesses to spawn children,
-so for some environments you may want to have it set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>worker</strong> – If set, then use that worker in a subprocess instead of a default one.
-Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>worker is an advanced mode option. It provides a high degree of flexibility and a high chance
-to shoot yourself in the foot; thus, if you are writing your own worker, it is recommended to start
-from the code for <code class="docutils literal notranslate"><span class="pre">_worker</span></code> (or <code class="docutils literal notranslate"><span class="pre">_worker_shared_memory</span></code>) method, and add changes.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>RuntimeError</strong> – If the observation space of some sub-environment does not match observation_space
-    (or, by default, the observation space of the first sub-environment).</p></li>
-<li><p><strong>ValueError</strong> – If observation_space is a custom space (i.e. not a default space in Gym,
-    such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="sync-vector-env">
-<h2>Sync Vector Env<a class="headerlink" href="#sync-vector-env" title="Link to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="gymnasium.vector.SyncVectorEnv">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">SyncVectorEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_fns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/vector/sync_vector_env/#SyncVectorEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.SyncVectorEnv" title="Link to this definition">#</a></dt>
-<dd><p>Vectorized environment that serially runs multiple environments.</p>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">SyncVectorEnv</span><span class="p">([</span>
-<span class="gp">... </span>    <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">),</span>
-<span class="gp">... </span>    <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">1.62</span><span class="p">)</span>
-<span class="gp">... </span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="go">(array([[-0.14995256,  0.9886932 , -0.12224312],</span>
-<span class="go">       [ 0.5760367 ,  0.8174238 , -0.91244936]], dtype=float32), {})</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env_fns</strong> – iterable of callable functions that create the environments.</p></li>
-<li><p><strong>observation_space</strong> – Observation space of a single environment. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
-then the observation space of the first environment is taken.</p></li>
-<li><p><strong>action_space</strong> – Action space of a single environment. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
-then the action space of the first environment is taken.</p></li>
-<li><p><strong>copy</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> methods return a copy of the observations.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If the observation space of some sub-environment does not match observation_space
-    (or, by default, the observation space of the first sub-environment).</p>
-</dd>
-</dl>
-</dd></dl>
-
+<p>To create vector environments, gymnasium provides <a class="reference internal" href="../registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.make_vec()</span></code></a> as an equivalent function to <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a>.</p>
 </section>
 </section>
 
@@ -805,18 +719,18 @@ then the action space of the first environment is taken.</p></li>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../utils/">
+            <a class="next-page" href="wrappers/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Utils</div>
+                <div class="title">Vector Wrappers</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../wrappers/reward_wrappers/">
+            <a class="prev-page" href="../wrappers/vector_wrappers/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -825,7 +739,7 @@ then the action space of the first environment is taken.</p></li>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Reward Wrappers</div>
+                <div class="title">Vector wrappers</div>
                 
               </div>
             </a>
@@ -869,7 +783,7 @@ then the action space of the first environment is taken.</p></li>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Vector</a><ul>
+<li><a class="reference internal" href="#">Vector environments</a><ul>
 <li><a class="reference internal" href="#gymnasium-vector-vectorenv">Gymnasium.vector.VectorEnv</a><ul>
 <li><a class="reference internal" href="#gymnasium.vector.VectorEnv"><code class="docutils literal notranslate"><span class="pre">VectorEnv</span></code></a></li>
 <li><a class="reference internal" href="#methods">Methods</a><ul>
@@ -879,26 +793,22 @@ then the action space of the first environment is taken.</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#attributes">Attributes</a><ul>
-<li><a class="reference internal" href="#action_space"><code class="docutils literal notranslate"><span class="pre">action_space</span></code></a></li>
-<li><a class="reference internal" href="#observation_space"><code class="docutils literal notranslate"><span class="pre">observation_space</span></code></a></li>
-<li><a class="reference internal" href="#single_action_space"><code class="docutils literal notranslate"><span class="pre">single_action_space</span></code></a></li>
-<li><a class="reference internal" href="#single_observation_space"><code class="docutils literal notranslate"><span class="pre">single_observation_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.num_envs"><code class="docutils literal notranslate"><span class="pre">VectorEnv.num_envs</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.action_space"><code class="docutils literal notranslate"><span class="pre">VectorEnv.action_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.observation_space"><code class="docutils literal notranslate"><span class="pre">VectorEnv.observation_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_action_space"><code class="docutils literal notranslate"><span class="pre">VectorEnv.single_action_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_observation_space"><code class="docutils literal notranslate"><span class="pre">VectorEnv.single_observation_space</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.spec"><code class="docutils literal notranslate"><span class="pre">VectorEnv.spec</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-methods">Additional Methods</a><ul>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.unwrapped"><code class="docutils literal notranslate"><span class="pre">VectorEnv.unwrapped</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.np_random"><code class="docutils literal notranslate"><span class="pre">VectorEnv.np_random</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#making-vector-environments">Making Vector Environments</a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.make"><code class="docutils literal notranslate"><span class="pre">make()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#async-vector-env">Async Vector Env</a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#sync-vector-env">Sync Vector Env</a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.SyncVectorEnv"><code class="docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#making-vector-environments">Making Vector Environments</a></li>
 </ul>
 </li>
 </ul>
@@ -985,7 +895,7 @@ then the action space of the first environment is taken.</p></li>
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>

@@ -215,38 +215,39 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -466,6 +467,8 @@
             
             <h1>Source code for gymnasium.utils.step_api_compatibility</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Contains methods for step compatibility, from old-to-new and new-to-old API.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -492,13 +495,15 @@
 <div class="viewcode-block" id="convert_to_terminated_truncated_step_api">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api">[docs]</a>
 <span class="k">def</span> <span class="nf">convert_to_terminated_truncated_step_api</span><span class="p">(</span>
-    <span class="n">step_returns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DoneStepType</span><span class="p">,</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">],</span> <span class="n">is_vector_env</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">step_returns</span><span class="p">:</span> <span class="n">DoneStepType</span> <span class="o">|</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">,</span> <span class="n">is_vector_env</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to new step API irrespective of input API.</span>
 
+<span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)</span>
-<span class="sd">        is_vector_env (bool): Whether the step_returns are from a vector environment</span>
+<span class="sd">        step_returns (tuple): Items returned by :meth:`step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``</span>
+<span class="sd">        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_returns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">step_returns</span>
@@ -547,14 +552,16 @@
 <div class="viewcode-block" id="convert_to_done_step_api">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_done_step_api">[docs]</a>
 <span class="k">def</span> <span class="nf">convert_to_done_step_api</span><span class="p">(</span>
-    <span class="n">step_returns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TerminatedTruncatedStepType</span><span class="p">,</span> <span class="n">DoneStepType</span><span class="p">],</span>
+    <span class="n">step_returns</span><span class="p">:</span> <span class="n">TerminatedTruncatedStepType</span> <span class="o">|</span> <span class="n">DoneStepType</span><span class="p">,</span>
     <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DoneStepType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to old step API irrespective of input API.</span>
 
+<span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)</span>
-<span class="sd">        is_vector_env (bool): Whether the step_returns are from a vector environment</span>
+<span class="sd">        step_returns (tuple): Items returned by :meth:`step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``</span>
+<span class="sd">        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_returns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">step_returns</span>
@@ -605,38 +612,41 @@
 <div class="viewcode-block" id="step_api_compatibility">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.step_api_compatibility">[docs]</a>
 <span class="k">def</span> <span class="nf">step_api_compatibility</span><span class="p">(</span>
-    <span class="n">step_returns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TerminatedTruncatedStepType</span><span class="p">,</span> <span class="n">DoneStepType</span><span class="p">],</span>
+    <span class="n">step_returns</span><span class="p">:</span> <span class="n">TerminatedTruncatedStepType</span> <span class="o">|</span> <span class="n">DoneStepType</span><span class="p">,</span>
     <span class="n">output_truncation_bool</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">TerminatedTruncatedStepType</span><span class="p">,</span> <span class="n">DoneStepType</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to the API specified by `output_truncation_bool` bool.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span> <span class="o">|</span> <span class="n">DoneStepType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to the API specified by ``output_truncation_bool``.</span>
 
-<span class="sd">    Done (old) step API refers to step() method returning (observation, reward, done, info)</span>
-<span class="sd">    Terminated Truncated (new) step API refers to step() method returning (observation, reward, terminated, truncated, info)</span>
+<span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
+
+<span class="sd">    Done (old) step API refers to :meth:`step` method returning ``(observation, reward, done, info)``</span>
+<span class="sd">    Terminated Truncated (new) step API refers to :meth:`step` method returning ``(observation, reward, terminated, truncated, info)``</span>
 <span class="sd">    (Refer to docs for details on the API change)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)</span>
-<span class="sd">        output_truncation_bool (bool): Whether the output should return two booleans (new API) or one (old) (True by default)</span>
-<span class="sd">        is_vector_env (bool): Whether the step_returns are from a vector environment</span>
+<span class="sd">        step_returns (tuple): Items returned by :meth:`step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``</span>
+<span class="sd">        output_truncation_bool (bool): Whether the output should return two booleans (new API) or one (old) (``True`` by default)</span>
+<span class="sd">        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        step_returns (tuple): Depending on `output_truncation_bool` bool, it can return `(obs, rew, done, info)` or `(obs, rew, terminated, truncated, info)`</span>
+<span class="sd">        step_returns (tuple): Depending on ``output_truncation_bool``, it can return ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        This function can be used to ensure compatibility in step interfaces with conflicting API. Eg. if env is written in old API,</span>
-<span class="sd">         wrapper is written in new API, and the final step output is desired to be in old API.</span>
+<span class="sd">        This function can be used to ensure compatibility in step interfaces with conflicting API. E.g. if env is written in old API,</span>
+<span class="sd">        wrapper is written in new API, and the final step output is desired to be in old API.</span>
 
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v0&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; _ = env.reset()</span>
-<span class="sd">        &gt;&gt;&gt; obs, rewards, done, info = step_api_compatibility(env.step(0), output_truncation_bool=False)</span>
-<span class="sd">        &gt;&gt;&gt; obs, rewards, terminated, truncated, info = step_api_compatibility(env.step(0), output_truncation_bool=True)</span>
+<span class="sd">        &gt;&gt;&gt; _, _ = env.reset()</span>
+<span class="sd">        &gt;&gt;&gt; obs, reward, done, info = step_api_compatibility(env.step(0), output_truncation_bool=False)</span>
+<span class="sd">        &gt;&gt;&gt; obs, reward, terminated, truncated, info = step_api_compatibility(env.step(0), output_truncation_bool=True)</span>
 
-<span class="sd">        &gt;&gt;&gt; vec_env = gym.vector.make(&quot;CartPole-v0&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; _ = vec_env.reset()</span>
+<span class="sd">        &gt;&gt;&gt; vec_env = gym.make_vec(&quot;CartPole-v0&quot;, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; _, _ = vec_env.reset()</span>
 <span class="sd">        &gt;&gt;&gt; obs, rewards, dones, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=False)</span>
-<span class="sd">        &gt;&gt;&gt; obs, rewards, terminated, truncated, info = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)</span>
+<span class="sd">        &gt;&gt;&gt; obs, rewards, terminations, truncations, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">output_truncation_bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">convert_to_terminated_truncated_step_api</span><span class="p">(</span><span class="n">step_returns</span><span class="p">,</span> <span class="n">is_vector_env</span><span class="p">)</span>
@@ -760,7 +770,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
+    <script src="../../../../_static/documentation_options.js?v=a4d19d35"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
