@@ -100,7 +100,7 @@ def test_make_vec_vectorization_mode():
     with pytest.raises(
         ValueError,
         match=re.escape(
-            "Invalid `vectorization_mode` passed to `gymnasium.make_vec`: 'invalid', valid modes: ['async', 'sync', 'vector_entry_point']"
+            "Invalid vectorization mode: 'invalid', valid modes: ['async', 'sync', 'vector_entry_point']"
         ),
     ):
         gym.make_vec("CartPole-v1", vectorization_mode="invalid")
@@ -108,7 +108,7 @@ def test_make_vec_vectorization_mode():
     with pytest.raises(
         ValueError,
         match=re.escape(
-            "Invalid `vectorization_mode` passed to `gymnasium.make_vec`: 123, valid modes: ['async', 'sync', 'vector_entry_point']"
+            "Invalid vectorization mode: 123, valid modes: ['async', 'sync', 'vector_entry_point']"
         ),
     ):
         gym.make_vec("CartPole-v1", vectorization_mode=123)
