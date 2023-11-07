@@ -1,4 +1,5 @@
 name: Manual Docs Versioning
+
 on:
   workflow_dispatch:
     inputs:
@@ -14,6 +15,7 @@ on:
 
 permissions:
   contents: write
+
 jobs:
   docs:
     name: Generate Website for new version

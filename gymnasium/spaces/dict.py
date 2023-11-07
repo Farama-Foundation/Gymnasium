@@ -45,7 +45,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
 
     It can be convenient to use :class:`Dict` spaces if you want to make complex observations or actions more human-readable.
     Usually, it will not be possible to use elements of this space directly in learning code. However, you can easily
-    convert `Dict` observations to flat arrays by using a :class:`gymnasium.wrappers.FlattenObservation` wrapper.
+    convert :class:`Dict` observations to flat arrays by using a :class:`gymnasium.wrappers.FlattenObservation` wrapper.
     Similar wrappers can be implemented to deal with :class:`Dict` actions.
     """
 

@@ -840,7 +840,7 @@ def heuristic(env, s):
             -(s[3]) * 0.5
         )  # override to reduce fall speed, that's all we need after contact
 
-    if env.continuous:
+    if env.unwrapped.continuous:
         a = np.array([hover_todo * 20 - 1, -angle_todo * 20])
         a = np.clip(a, -1, +1)
     else:

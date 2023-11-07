@@ -1,4 +1,4 @@
-"""A set of functions for checking an environment details.
+"""A set of functions for checking an environment implementation.
 
 This file is originally from the Stable Baselines3 repository hosted on GitHub
 (https://github.com/DLR-RM/stable-baselines3/)
@@ -63,7 +63,7 @@ def data_equivalence(data_1, data_2) -> bool:
         return False
 
 
-def check_reset_seed(env: gym.Env) -> None:
+def check_reset_seed(env: gym.Env):
     """Check that the environment can be reset with a seed.
 
     Args:
@@ -132,7 +132,7 @@ def check_reset_seed(env: gym.Env) -> None:
         )
 
 
-def check_reset_options(env: gym.Env) -> None:
+def check_reset_options(env: gym.Env):
     """Check that the environment can be reset with options.
 
     Args:
@@ -160,7 +160,7 @@ def check_reset_options(env: gym.Env) -> None:
         )
 
 
-def check_reset_return_info_deprecation(env: gym.Env) -> None:
+def check_reset_return_info_deprecation(env: gym.Env):
     """Makes sure support for deprecated `return_info` argument is dropped.
 
     Args:
@@ -177,7 +177,7 @@ def check_reset_return_info_deprecation(env: gym.Env) -> None:
         )
 
 
-def check_seed_deprecation(env: gym.Env) -> None:
+def check_seed_deprecation(env: gym.Env):
     """Makes sure support for deprecated function `seed` is dropped.
 
     Args:
@@ -193,7 +193,7 @@ def check_seed_deprecation(env: gym.Env) -> None:
         )
 
 
-def check_reset_return_type(env: gym.Env) -> None:
+def check_reset_return_type(env: gym.Env):
     """Checks that :meth:`reset` correctly returns a tuple of the form `(obs , info)`.
 
     Args:
@@ -218,7 +218,7 @@ def check_reset_return_type(env: gym.Env) -> None:
     ), f"The second element returned by `env.reset()` was not a dictionary, actual type: {type(info)}"
 
 
-def check_space_limit(space: spaces.Space, space_type: str) -> None:
+def check_space_limit(space, space_type: str):
     """Check the space limit for only the Box space as a test that only runs as part of `check_env`."""
     if isinstance(space, spaces.Box):
         if np.any(np.equal(space.low, -np.inf)):
@@ -256,18 +256,19 @@ def check_space_limit(space: spaces.Space, space_type: str) -> None:
             check_space_limit(subspace, space_type)
 
 
-def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False) -> None:
-    """Check that an environment follows Gym API.
+def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
+    """Check that an environment follows Gymnasium's API.
 
-    This is an invasive function that calls the environment's reset and step.
+    .. py:currentmodule:: gymnasium.Env
 
-    This is particularly useful when using a custom environment.
-    Please take a look at https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/
-    for more information about the API.
+    To ensure that an environment is implemented "correctly", ``check_env`` checks that the :attr:`observation_space` and :attr:`action_space` are correct.
+    Furthermore, the function will call the :meth:`reset`, :meth:`step` and :meth:`render` functions with a variety of values.
+
+    We highly recommend users calling this function after an environment is constructed and within a projects continuous integration to keep an environment update with Gymnasium's API.
 
     Args:
         env: The Gym environment that will be checked
-        warn: Ignored
+        warn: Ignored, previously silenced particular warnings
         skip_render_check: Whether to skip the checks for the render method. True by default (useful for the CI)
     """
     if warn is not None:

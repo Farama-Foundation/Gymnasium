@@ -1,3 +1,5 @@
+"""Test suite for TimeLimit wrapper."""
+
 import pytest
 
 import gymnasium as gym

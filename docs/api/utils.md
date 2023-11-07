@@ -1,8 +1,20 @@
 ---
-title: Utils
+title: Utility functions
 ---
 
-# Utils
+# Utility functions
+
+## Seeding
+
+```{eval-rst}
+.. autofunction:: gymnasium.utils.seeding.np_random
+```
+
+## Environment Checking
+
+```{eval-rst}
+.. autofunction:: gymnasium.utils.env_checker.check_env
+```
 
 ## Visualization
 
@@ -15,6 +27,12 @@ title: Utils
 .. autoclass:: gymnasium.utils.play.PlayableGame
 
     .. automethod:: process_event
+```
+
+## Environment pickling
+
+```{eval-rst}
+.. autoclass:: gymnasium.utils.ezpickle.EzPickle
 ```
 
 ## Save Rendering Videos
@@ -30,16 +48,4 @@ title: Utils
 .. autofunction:: gymnasium.utils.step_api_compatibility.step_api_compatibility
 .. autofunction:: gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api
 .. autofunction:: gymnasium.utils.step_api_compatibility.convert_to_done_step_api
-```
-
-## Seeding
-
-```{eval-rst}
-.. autofunction:: gymnasium.utils.seeding.np_random
-```
-
-## Environment Checking
-
-```{eval-rst}
-.. autofunction:: gymnasium.utils.env_checker.check_env
 ```

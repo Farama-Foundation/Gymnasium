@@ -1,15 +1,19 @@
 name: Build main branch documentation website
+
 on:
   push:
     branches: [main]
+
 permissions:
   contents: write
+
 jobs:
   docs:
     name: Generate Website
     runs-on: ubuntu-latest
     env:
       SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - uses: actions/checkout@v3
 

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
-from gymnasium import logger, spaces
+from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 
@@ -37,12 +37,10 @@ class Env(Generic[ObsType, ActType]):
 
     - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.
     - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.
-    - :attr:`reward_range` - A tuple corresponding to the minimum and maximum possible rewards for an agent over an episode.
-      The default reward range is set to :math:`(-\infty,+\infty)`.
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
     - :attr:`metadata` - The metadata of the environment, i.e. render modes, render fps
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
-      ``super().reset(seed=seed)`` and when assessing ``self.np_random``.
+      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
 
     .. seealso:: For modifying or extending environments use the :py:class:`gymnasium.Wrapper` class
 
@@ -54,7 +52,6 @@ class Env(Generic[ObsType, ActType]):
     metadata: dict[str, Any] = {"render_modes": []}
     # define render_mode if your environment supports rendering
     render_mode: str | None = None
-    reward_range = (-float("inf"), float("inf"))
     spec: EnvSpec | None = None
 
     # Set these in ALL subclasses
@@ -238,6 +235,10 @@ class Env(Generic[ObsType, ActType]):
         """Gets the attribute `name` from the environment."""
         return getattr(self, name)
 
+    def set_wrapper_attr(self, name: str, value: Any):
+        """Sets the attribute `name` on the environment with `value`."""
+        setattr(self, name, value)
+
 
 WrapperObsType = TypeVar("WrapperObsType")
 WrapperActType = TypeVar("WrapperActType")
@@ -268,56 +269,41 @@ class Wrapper(
             env: The environment to wrap
         """
         self.env = env
+        assert isinstance(env, Env)
 
         self._action_space: spaces.Space[WrapperActType] | None = None
         self._observation_space: spaces.Space[WrapperObsType] | None = None
-        self._reward_range: tuple[SupportsFloat, SupportsFloat] | None = None
         self._metadata: dict[str, Any] | None = None
 
         self._cached_spec: EnvSpec | None = None
 
-    def __getattr__(self, name: str) -> Any:
-        """Returns an attribute with ``name``, unless ``name`` starts with an underscore.
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        """Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data."""
+        return self.env.step(action)
 
-        Args:
-            name: The variable name
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
+        """Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data."""
+        return self.env.reset(seed=seed, options=options)
 
-        Returns:
-            The value of the variable in the wrapper stack
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
+        """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
+        return self.env.render()
 
-        Warnings:
-            This feature is deprecated and removed in v1.0 and replaced with `env.get_attr(name})`
+    def close(self):
+        """Closes the wrapper and :attr:`env`."""
+        return self.env.close()
+
+    @property
+    def unwrapped(self) -> Env[ObsType, ActType]:
+        """Returns the base environment of the wrapper.
+
+        This will be the bare :class:`gymnasium.Env` environment, underneath all layers of wrappers.
         """
-        if name == "_np_random":
-            raise AttributeError(
-                "Can't access `_np_random` of a wrapper, use `self.unwrapped._np_random` or `self.np_random`."
-            )
-        elif name.startswith("_"):
-            raise AttributeError(f"accessing private attribute '{name}' is prohibited")
-        logger.warn(
-            f"env.{name} to get variables from other wrappers is deprecated and will be removed in v1.0, "
-            f"to get this variable you can do `env.unwrapped.{name}` for environment variables or `env.get_attr('{name}')` that will search the remaining wrappers."
-        )
-        return getattr(self.env, name)
-
-    def get_wrapper_attr(self, name: str) -> Any:
-        """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.
-
-        Args:
-            name: The variable name to get
-
-        Returns:
-            The variable with name in wrapper or lower environments
-        """
-        if hasattr(self, name):
-            return getattr(self, name)
-        else:
-            try:
-                return self.env.get_wrapper_attr(name)
-            except AttributeError as e:
-                raise AttributeError(
-                    f"wrapper {self.class_name()} has no attribute {name!r}"
-                ) from e
+        return self.env.unwrapped
 
     @property
     def spec(self) -> EnvSpec | None:
@@ -362,6 +348,53 @@ class Wrapper(
             kwargs=kwargs,
         )
 
+    def get_wrapper_attr(self, name: str) -> Any:
+        """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.
+
+        Args:
+            name: The variable name to get
+
+        Returns:
+            The variable with name in wrapper or lower environments
+        """
+        if hasattr(self, name):
+            return getattr(self, name)
+        else:
+            try:
+                return self.env.get_wrapper_attr(name)
+            except AttributeError as e:
+                raise AttributeError(
+                    f"wrapper {self.class_name()} has no attribute {name!r}"
+                ) from e
+
+    def set_wrapper_attr(self, name: str, value: Any):
+        """Sets an attribute on this wrapper or lower environment if `name` is already defined.
+
+        Args:
+            name: The variable name
+            value: The new variable value
+        """
+        sub_env = self.env
+        attr_set = False
+
+        while attr_set is False and isinstance(sub_env, Wrapper):
+            if hasattr(sub_env, name):
+                setattr(sub_env, name, value)
+                attr_set = True
+            else:
+                sub_env = sub_env.env
+
+        if attr_set is False:
+            setattr(sub_env, name, value)
+
+    def __str__(self):
+        """Returns the wrapper name and the :attr:`env` representation string."""
+        return f"<{type(self).__name__}{self.env}>"
+
+    def __repr__(self):
+        """Returns the string representation of the wrapper."""
+        return str(self)
+
     @classmethod
     def class_name(cls) -> str:
         """Returns the class name of the wrapper."""
@@ -392,18 +425,6 @@ class Wrapper(
     @observation_space.setter
     def observation_space(self, space: spaces.Space[WrapperObsType]):
         self._observation_space = space
-
-    @property
-    def reward_range(self) -> tuple[SupportsFloat, SupportsFloat]:
-        """Return the :attr:`Env` :attr:`reward_range` unless overwritten then the wrapper :attr:`reward_range` is used."""
-        if self._reward_range is None:
-            return self.env.reward_range
-        logger.warn("The `reward_range` is deprecated and will be removed in v1.0")
-        return self._reward_range
-
-    @reward_range.setter
-    def reward_range(self, value: tuple[SupportsFloat, SupportsFloat]):
-        self._reward_range = value
 
     @property
     def metadata(self) -> dict[str, Any]:
@@ -440,54 +461,15 @@ class Wrapper(
             "Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."
         )
 
-    def step(
-        self, action: WrapperActType
-    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
-        """Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.step(action)
-
-    def reset(
-        self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[WrapperObsType, dict[str, Any]]:
-        """Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.reset(seed=seed, options=options)
-
-    def render(self) -> RenderFrame | list[RenderFrame] | None:
-        """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
-        return self.env.render()
-
-    def close(self):
-        """Closes the wrapper and :attr:`env`."""
-        return self.env.close()
-
-    def __str__(self):
-        """Returns the wrapper name and the :attr:`env` representation string."""
-        return f"<{type(self).__name__}{self.env}>"
-
-    def __repr__(self):
-        """Returns the string representation of the wrapper."""
-        return str(self)
-
-    @property
-    def unwrapped(self) -> Env[ObsType, ActType]:
-        """Returns the base environment of the wrapper.
-
-        This will be the bare :class:`gymnasium.Env` environment, underneath all layers of wrappers.
-        """
-        return self.env.unwrapped
-
 
 class ObservationWrapper(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
-    """Superclass of wrappers that can modify observations using :meth:`observation` for :meth:`reset` and :meth:`step`.
+    """Modify observations from :meth:`Env.reset` and :meth:`Env.step` using :meth:`observation` function.
 
     If you would like to apply a function to only the observation before
     passing it to the learning code, you can simply inherit from :class:`ObservationWrapper` and overwrite the method
     :meth:`observation` to implement that transformation. The transformation defined in that method must be
     reflected by the :attr:`env` observation space. Otherwise, you need to specify the new observation space of the
     wrapper by setting :attr:`self.observation_space` in the :meth:`__init__` method of your wrapper.
-
-    Among others, Gymnasium provides the observation wrapper :class:`TimeAwareObservation`, which adds information about the
-    index of the timestep to the observation.
     """
 
     def __init__(self, env: Env[ObsType, ActType]):

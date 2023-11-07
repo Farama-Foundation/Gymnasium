@@ -32,4 +32,4 @@ jobs:
              --tag gymnasium-necessary-docker .
       - name: Run tests
         run: |
-           docker run gymnasium-necessary-docker pytest tests/test_core.py tests/envs/test_compatibility.py tests/envs/test_envs.py tests/spaces
+           docker run gymnasium-necessary-docker pytest tests/test_core.py tests/envs/test_envs.py tests/spaces

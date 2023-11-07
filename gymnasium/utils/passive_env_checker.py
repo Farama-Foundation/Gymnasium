@@ -12,6 +12,8 @@ __all__ = [
     "env_render_passive_checker",
     "env_reset_passive_checker",
     "env_step_passive_checker",
+    "check_action_space",
+    "check_observation_space",
 ]
 
 

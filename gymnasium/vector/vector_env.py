@@ -1,30 +1,46 @@
 """Base class for vectorized environments."""
-from typing import Any, List, Optional, Tuple, Union
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import numpy as np
-from numpy.typing import NDArray
 
 import gymnasium as gym
-from gymnasium.vector.utils.spaces import batch_space
+from gymnasium.core import ActType, ObsType, RenderFrame
+from gymnasium.utils import seeding
 
 
-__all__ = ["VectorEnv"]
+if TYPE_CHECKING:
+    from gymnasium.envs.registration import EnvSpec
+
+ArrayType = TypeVar("ArrayType")
 
 
-class VectorEnv(gym.Env):
+__all__ = [
+    "VectorEnv",
+    "VectorWrapper",
+    "VectorObservationWrapper",
+    "VectorActionWrapper",
+    "VectorRewardWrapper",
+    "ArrayType",
+]
+
+
+class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     """Base class for vectorized environments to run multiple independent copies of the same environment in parallel.
 
     Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
     sub-environments at the same time. To prevent terminated environments waiting until all sub-environments have
-    terminated or truncated, the vector environments autoreset sub-environments after they terminate or truncated.
-    As a result, the final step's observation and info are overwritten by the reset's observation and info.
-    Therefore, the observation and info for the final step of a sub-environment is stored in the info parameter,
+    terminated or truncated, the vector environments automatically reset sub-environments after they terminate or truncated (within the same step call).
+    As a result, the step's observation and info are overwritten by the reset's observation and info.
+    To preserve this data, the observation and info for the final step of a sub-environment is stored in the info parameter,
     using `"final_observation"` and `"final_info"` respectively. See :meth:`step` for more information.
 
-    The vector environments batch `observations`, `rewards`, `terminations`, `truncations` and `info` for each
-    parallel environment. In addition, :meth:`step` expects to receive a batch of actions for each parallel environment.
+    The vector environments batches `observations`, `rewards`, `terminations`, `truncations` and `info` for each
+    sub-environment. In addition, :meth:`step` expects to receive a batch of actions for each parallel environment.
 
-    Gymnasium contains two types of Vector environments: :class:`AsyncVectorEnv` and :class:`SyncVectorEnv`.
+    Gymnasium contains two generalised Vector environments: :class:`AsyncVectorEnv` and :class:`SyncVectorEnv` along with
+    several custom vector environment implementations.
 
     The Vector Environments have the additional attributes for users to understand the implementation
 
@@ -34,89 +50,67 @@ class VectorEnv(gym.Env):
     - :attr:`action_space` - The batched action space of the vector environment
     - :attr:`single_action_space` - The action space of a single sub-environment
 
-    Note:
-        The info parameter of :meth:`reset` and :meth:`step` was originally implemented before OpenAI Gym v25 was a list
-        of dictionary for each sub-environment. However, this was modified in OpenAI Gym v25+ and in Gymnasium to a
-        dictionary with a NumPy array for each key. To use the old info style using the :class:`VectorListInfo`.
+    Examples:
+        >>> import gymnasium as gym
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync", wrappers=(gym.wrappers.TimeAwareObservation,))
+        >>> envs = gym.wrappers.vector.ClipReward(envs, min_reward=0.2, max_reward=0.8)
+        >>> envs
+        <ClipReward, SyncVectorEnv(CartPole-v1, num_envs=3)>
+        >>> observations, infos = envs.reset(seed=123)
+        >>> observations
+        array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282,  0.        ],
+               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598,  0.        ],
+               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924,  0.        ]])
+        >>> infos
+        {}
+        >>> _ = envs.action_space.seed(123)
+        >>> observations, rewards, terminations, truncations, infos = envs.step(envs.action_space.sample())
+        >>> observations
+        array([[ 0.01734283,  0.15089367, -0.02859527, -0.33293587,  1.        ],
+               [ 0.02909703, -0.16717631,  0.04740972,  0.3319138 ,  1.        ],
+               [ 0.03516225, -0.19559774, -0.01162461,  0.25715804,  1.        ]])
+        >>> rewards
+        array([0.8, 0.8, 0.8])
+        >>> terminations
+        array([False, False, False])
+        >>> truncations
+        array([False, False, False])
+        >>> infos
+        {}
+        >>> envs.close()
 
     Note:
-        To render the sub-environments, use :meth:`call` with "render" arguments. Remember to set the `render_modes`
-        for all the sub-environments during initialization.
+        The info parameter of :meth:`reset` and :meth:`step` was originally implemented before v0.25 as a list
+        of dictionary for each sub-environment. However, this was modified in v0.25+ to be a
+        dictionary with a NumPy array for each key. To use the old info style, utilise the :class:`DictInfoToList` wrapper.
 
     Note:
         All parallel environments should share the identical observation and action spaces.
         In other words, a vector of multiple different environments is not supported.
+
+    Note:
+        :func:`make_vec` is the equivalent function to :func:`make` for vector environments.
     """
 
-    def __init__(
-        self,
-        num_envs: int,
-        observation_space: gym.Space,
-        action_space: gym.Space,
-    ):
-        """Base class for vectorized environments.
+    spec: EnvSpec | None = None
+    render_mode: str | None = None
+    closed: bool = False
 
-        Args:
-            num_envs: Number of environments in the vectorized environment.
-            observation_space: Observation space of a single environment.
-            action_space: Action space of a single environment.
-        """
-        self.num_envs = num_envs
-        self.is_vector_env = True
-        self.observation_space = batch_space(observation_space, n=num_envs)
-        self.action_space = batch_space(action_space, n=num_envs)
+    observation_space: gym.Space
+    action_space: gym.Space
+    single_observation_space: gym.Space
+    single_action_space: gym.Space
 
-        self.closed = False
-        self.viewer = None
+    num_envs: int
 
-        # The observation and action spaces of a single environment are
-        # kept in separate properties
-        self.single_observation_space = observation_space
-        self.single_action_space = action_space
-
-    def reset_async(
-        self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
-        """Reset the sub-environments asynchronously.
-
-        This method will return ``None``. A call to :meth:`reset_async` should be followed
-        by a call to :meth:`reset_wait` to retrieve the results.
-
-        Args:
-            seed: The reset seed
-            options: Reset options
-        """
-        pass
-
-    def reset_wait(
-        self,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
-        """Retrieves the results of a :meth:`reset_async` call.
-
-        A call to this method must always be preceded by a call to :meth:`reset_async`.
-
-        Args:
-            seed: The reset seed
-            options: Reset options
-
-        Returns:
-            The results from :meth:`reset_async`
-
-        Raises:
-            NotImplementedError: VectorEnv does not implement function
-        """
-        raise NotImplementedError("VectorEnv does not implement function")
+    _np_random: np.random.Generator | None = None
 
     def reset(
         self,
         *,
-        seed: Optional[Union[int, List[int]]] = None,
-        options: Optional[dict] = None,
-    ):
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
@@ -128,47 +122,26 @@ class VectorEnv(gym.Env):
 
         Example:
             >>> import gymnasium as gym
-            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
-            >>> envs.reset(seed=42)
-            (array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
+            >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+            >>> observations, infos = envs.reset(seed=42)
+            >>> observations
+            array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],
                    [ 0.01522993, -0.04562247, -0.04799704,  0.03392126],
                    [-0.03774345, -0.02418869, -0.00942293,  0.0469184 ]],
-                  dtype=float32), {})
+                  dtype=float32)
+            >>> infos
+            {}
         """
-        self.reset_async(seed=seed, options=options)
-        return self.reset_wait(seed=seed, options=options)
-
-    def step_async(self, actions):
-        """Asynchronously performs steps in the sub-environments.
-
-        The results can be retrieved via a call to :meth:`step_wait`.
-
-        Args:
-            actions: The actions to take asynchronously
-        """
-
-    def step_wait(
-        self, **kwargs
-    ) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
-        """Retrieves the results of a :meth:`step_async` call.
-
-        A call to this method must always be preceded by a call to :meth:`step_async`.
-
-        Args:
-            **kwargs: Additional keywords for vector implementation
-
-        Returns:
-            The results from the :meth:`step_async` call
-        """
-        raise NotImplementedError()
+        if seed is not None:
+            self._np_random, seed = seeding.np_random(seed)
 
     def step(
-        self, actions
-    ) -> Tuple[Any, NDArray[Any], NDArray[Any], NDArray[Any], dict]:
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Take an action for each parallel environment.
 
         Args:
-            actions: element of :attr:`action_space` Batch of actions.
+            actions: Batch of actions with the :attr:`action_space` shape.
 
         Returns:
             Batch of (observations, rewards, terminations, truncations, infos)
@@ -181,10 +154,10 @@ class VectorEnv(gym.Env):
         Example:
             >>> import gymnasium as gym
             >>> import numpy as np
-            >>> envs = gym.vector.make("CartPole-v1", num_envs=3)
+            >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
             >>> _ = envs.reset(seed=42)
-            >>> actions = np.array([1, 0, 1])
-            >>> observations, rewards, termination, truncation, infos = envs.step(actions)
+            >>> actions = np.array([1, 0, 1], dtype=np.int32)
+            >>> observations, rewards, terminations, truncations, infos = envs.step(actions)
             >>> observations
             array([[ 0.02727336,  0.18847767,  0.03625453, -0.26141977],
                    [ 0.01431748, -0.24002443, -0.04731862,  0.3110827 ],
@@ -192,62 +165,25 @@ class VectorEnv(gym.Env):
                   dtype=float32)
             >>> rewards
             array([1., 1., 1.])
-            >>> termination
+            >>> terminations
             array([False, False, False])
-            >>> truncation
+            >>> terminations
             array([False, False, False])
             >>> infos
             {}
         """
-        self.step_async(actions)
-        return self.step_wait()
 
-    def call_async(self, name, *args, **kwargs):
-        """Calls a method name for each parallel environment asynchronously."""
-
-    def call_wait(self, **kwargs) -> List[Any]:  # type: ignore
-        """After calling a method in :meth:`call_async`, this function collects the results."""
-
-    def call(self, name: str, *args, **kwargs) -> List[Any]:
-        """Call a method, or get a property, from each parallel environment.
-
-        Args:
-            name (str): Name of the method or property to call.
-            *args: Arguments to apply to the method call.
-            **kwargs: Keyword arguments to apply to the method call.
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the rendered frames from the parallel environments.
 
         Returns:
-            List of the results of the individual calls to the method or property for each environment.
+            A tuple of rendered frames from the parallel environments
         """
-        self.call_async(name, *args, **kwargs)
-        return self.call_wait()
+        raise NotImplementedError(
+            f"{self.__str__()} render function is not implemented."
+        )
 
-    def get_attr(self, name: str):
-        """Get a property from each parallel environment.
-
-        Args:
-            name (str): Name of the property to be get from each individual environment.
-
-        Returns:
-            The property with name
-        """
-        return self.call(name)
-
-    def set_attr(self, name: str, values: Union[list, tuple, object]):
-        """Set a property in each sub-environment.
-
-        Args:
-            name (str): Name of the property to be set in each individual environment.
-            values (list, tuple, or object): Values of the property to be set to. If `values` is a list or
-                tuple, then it corresponds to the values for each individual environment, otherwise a single value
-                is set for all environments.
-        """
-
-    def close_extras(self, **kwargs):
-        """Clean up the extra resources e.g. beyond what's in this base class."""
-        pass
-
-    def close(self, **kwargs):
+    def close(self, **kwargs: Any):
         """Close all parallel environments and release resources.
 
         It also closes all the existing image viewers, then calls :meth:`close_extras` and set
@@ -266,12 +202,37 @@ class VectorEnv(gym.Env):
         """
         if self.closed:
             return
-        if self.viewer is not None:
-            self.viewer.close()
+
         self.close_extras(**kwargs)
         self.closed = True
 
-    def _add_info(self, infos: dict, info: dict, env_num: int) -> dict:
+    def close_extras(self, **kwargs: Any):
+        """Clean up the extra resources e.g. beyond what's in this base class."""
+        pass
+
+    @property
+    def np_random(self) -> np.random.Generator:
+        """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
+
+        Returns:
+            Instances of `np.random.Generator`
+        """
+        if self._np_random is None:
+            self._np_random, seed = seeding.np_random()
+        return self._np_random
+
+    @np_random.setter
+    def np_random(self, value: np.random.Generator):
+        self._np_random = value
+
+    @property
+    def unwrapped(self):
+        """Return the base environment."""
+        return self
+
+    def _add_info(
+        self, infos: dict[str, Any], info: dict[str, Any], env_num: int
+    ) -> dict[str, Any]:
         """Add env info to the info dictionary of the vectorized environment.
 
         Given the `info` of a single environment add it to the `infos` dictionary
@@ -298,7 +259,7 @@ class VectorEnv(gym.Env):
             infos[k], infos[f"_{k}"] = info_array, array_mask
         return infos
 
-    def _init_info_arrays(self, dtype: type) -> Tuple[np.ndarray, np.ndarray]:
+    def _init_info_arrays(self, dtype: type) -> tuple[np.ndarray, np.ndarray]:
         """Initialize the info array.
 
         Initialize the info array. If the dtype is numeric
@@ -335,12 +296,14 @@ class VectorEnv(gym.Env):
             A string containing the class name, number of environments and environment spec id
         """
         if self.spec is None:
-            return f"{self.__class__.__name__}({self.num_envs})"
+            return f"{self.__class__.__name__}(num_envs={self.num_envs})"
         else:
-            return f"{self.__class__.__name__}({self.spec.id}, {self.num_envs})"
+            return (
+                f"{self.__class__.__name__}({self.spec.id}, num_envs={self.num_envs})"
+            )
 
 
-class VectorEnvWrapper(VectorEnv):
+class VectorWrapper(VectorEnv):
     """Wraps the vectorized environment to allow a modular transformation.
 
     This class is the base class for all wrappers for vectorized environments. The subclass
@@ -352,47 +315,223 @@ class VectorEnvWrapper(VectorEnv):
     """
 
     def __init__(self, env: VectorEnv):
-        assert isinstance(env, VectorEnv)
+        """Initialize the vectorized environment wrapper.
+
+        Args:
+            env: The environment to wrap
+        """
         self.env = env
+        assert isinstance(env, VectorEnv)
 
-    # explicitly forward the methods defined in VectorEnv
-    # to self.env (instead of the base class)
-    def reset_async(self, **kwargs):
-        return self.env.reset_async(**kwargs)
+        self._observation_space: gym.Space | None = None
+        self._action_space: gym.Space | None = None
+        self._single_observation_space: gym.Space | None = None
+        self._single_action_space: gym.Space | None = None
 
-    def reset_wait(self, **kwargs):
-        return self.env.reset_wait(**kwargs)
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Reset all environment using seed and options."""
+        return self.env.reset(seed=seed, options=options)
 
-    def step_async(self, actions):
-        return self.env.step_async(actions)
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        """Step through all environments using the actions returning the batched data."""
+        return self.env.step(actions)
 
-    def step_wait(self):
-        return self.env.step_wait()
+    def render(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the render mode from the base vector environment."""
+        return self.env.render()
 
-    def close(self, **kwargs):
+    def close(self, **kwargs: Any):
+        """Close all environments."""
         return self.env.close(**kwargs)
 
-    def close_extras(self, **kwargs):
+    def close_extras(self, **kwargs: Any):
+        """Close all extra resources."""
         return self.env.close_extras(**kwargs)
-
-    def call(self, name, *args, **kwargs):
-        return self.env.call(name, *args, **kwargs)
-
-    def set_attr(self, name, values):
-        return self.env.set_attr(name, values)
-
-    # implicitly forward all other methods and attributes to self.env
-    def __getattr__(self, name):
-        if name.startswith("_"):
-            raise AttributeError(f"attempted to get missing private attribute '{name}'")
-        return getattr(self.env, name)
 
     @property
     def unwrapped(self):
+        """Return the base non-wrapped environment."""
         return self.env.unwrapped
 
     def __repr__(self):
+        """Return the string representation of the vectorized environment."""
         return f"<{self.__class__.__name__}, {self.env}>"
 
-    def __del__(self):
-        self.env.__del__()
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Gets the specification of the wrapped environment."""
+        return self.env.spec
+
+    @property
+    def observation_space(self) -> gym.Space:
+        """Gets the observation space of the vector environment."""
+        if self._observation_space is None:
+            return self.env.observation_space
+        return self._observation_space
+
+    @observation_space.setter
+    def observation_space(self, space: gym.Space):
+        """Sets the observation space of the vector environment."""
+        self._observation_space = space
+
+    @property
+    def action_space(self) -> gym.Space:
+        """Gets the action space of the vector environment."""
+        if self._action_space is None:
+            return self.env.action_space
+        return self._action_space
+
+    @action_space.setter
+    def action_space(self, space: gym.Space):
+        """Sets the action space of the vector environment."""
+        self._action_space = space
+
+    @property
+    def single_observation_space(self) -> gym.Space:
+        """Gets the single observation space of the vector environment."""
+        if self._single_observation_space is None:
+            return self.env.single_observation_space
+        return self._single_observation_space
+
+    @single_observation_space.setter
+    def single_observation_space(self, space: gym.Space):
+        """Sets the single observation space of the vector environment."""
+        self._single_observation_space = space
+
+    @property
+    def single_action_space(self) -> gym.Space:
+        """Gets the single action space of the vector environment."""
+        if self._single_action_space is None:
+            return self.env.single_action_space
+        return self._single_action_space
+
+    @single_action_space.setter
+    def single_action_space(self, space):
+        """Sets the single action space of the vector environment."""
+        self._single_action_space = space
+
+    @property
+    def num_envs(self) -> int:
+        """Gets the wrapped vector environment's num of the sub-environments."""
+        return self.env.num_envs
+
+    @property
+    def render_mode(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the `render_mode` from the base environment."""
+        return self.env.render_mode
+
+
+class VectorObservationWrapper(VectorWrapper):
+    """Wraps the vectorized environment to allow a modular transformation of the observation.
+
+    Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.
+    """
+
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
+        obs, info = self.env.reset(seed=seed, options=options)
+        return self.vector_observation(obs), info
+
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        """Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""
+        observation, reward, termination, truncation, info = self.env.step(actions)
+        return (
+            self.vector_observation(observation),
+            reward,
+            termination,
+            truncation,
+            self.update_final_obs(info),
+        )
+
+    def vector_observation(self, observation: ObsType) -> ObsType:
+        """Defines the vector observation transformation.
+
+        Args:
+            observation: A vector observation from the environment
+
+        Returns:
+            the transformed observation
+        """
+        raise NotImplementedError
+
+    def single_observation(self, observation: ObsType) -> ObsType:
+        """Defines the single observation transformation.
+
+        Args:
+            observation: A single observation from the environment
+
+        Returns:
+            The transformed observation
+        """
+        raise NotImplementedError
+
+    def update_final_obs(self, info: dict[str, Any]) -> dict[str, Any]:
+        """Updates the `final_obs` in the info using `single_observation`."""
+        if "final_observation" in info:
+            for i, obs in enumerate(info["final_observation"]):
+                if obs is not None:
+                    info["final_observation"][i] = self.single_observation(obs)
+        return info
+
+
+class VectorActionWrapper(VectorWrapper):
+    """Wraps the vectorized environment to allow a modular transformation of the actions.
+
+    Equivalent of :class:`gymnasium.ActionWrapper` for vectorized environments.
+    """
+
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        """Steps through the environment using a modified action by :meth:`action`."""
+        return self.env.step(self.actions(actions))
+
+    def actions(self, actions: ActType) -> ActType:
+        """Transform the actions before sending them to the environment.
+
+        Args:
+            actions (ActType): the actions to transform
+
+        Returns:
+            ActType: the transformed actions
+        """
+        raise NotImplementedError
+
+
+class VectorRewardWrapper(VectorWrapper):
+    """Wraps the vectorized environment to allow a modular transformation of the reward.
+
+    Equivalent of :class:`gymnasium.RewardWrapper` for vectorized environments.
+    """
+
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        """Steps through the environment returning a reward modified by :meth:`reward`."""
+        observation, reward, termination, truncation, info = self.env.step(actions)
+        return observation, self.rewards(reward), termination, truncation, info
+
+    def rewards(self, reward: ArrayType) -> ArrayType:
+        """Transform the reward before returning it.
+
+        Args:
+            reward (array): the reward to transform
+
+        Returns:
+            array: the transformed reward
+        """
+        raise NotImplementedError

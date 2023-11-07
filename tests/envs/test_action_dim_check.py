@@ -124,7 +124,7 @@ def test_box_actions_out_of_bound(env: gym.Env):
             assert oob_action[i] > upper_bounds[i]
             oob_obs, _, _, _, _ = oob_env.step(oob_action)
 
-            assert np.alltrue(obs == oob_obs)
+            assert np.all(obs == oob_obs)
 
         if is_lower_bound:
             obs, _, _, _, _ = env.step(
@@ -136,6 +136,6 @@ def test_box_actions_out_of_bound(env: gym.Env):
             assert oob_action[i] < lower_bounds[i]
             oob_obs, _, _, _, _ = oob_env.step(oob_action)
 
-            assert np.alltrue(obs == oob_obs)
+            assert np.all(obs == oob_obs)
 
     env.close()

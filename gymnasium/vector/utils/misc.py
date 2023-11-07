@@ -39,7 +39,7 @@ class CloudpickleWrapper:
 def clear_mpi_env_vars():
     """Clears the MPI of environment variables.
 
-    `from mpi4py import MPI` will call `MPI_Init` by default.
+    ``from mpi4py import MPI`` will call ``MPI_Init`` by default.
     If the child process has MPI environment variables, MPI will think that the child process
     is an MPI process just like the parent and do bad things such as hang.
 

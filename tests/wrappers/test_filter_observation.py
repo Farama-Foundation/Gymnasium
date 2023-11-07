@@ -1,87 +1,81 @@
-from typing import Optional, Tuple
-
-import numpy as np
+"""Test suite for FilterObservation wrapper."""
 import pytest
 
-import gymnasium as gym
-from gymnasium import spaces
-from gymnasium.wrappers.filter_observation import FilterObservation
-
-
-class FakeEnvironment(gym.Env):
-    def __init__(
-        self, render_mode=None, observation_keys: Tuple[str, ...] = ("state",)
-    ):
-        self.observation_space = spaces.Dict(
-            {
-                name: spaces.Box(shape=(2,), low=-1, high=1, dtype=np.float32)
-                for name in observation_keys
-            }
-        )
-        self.action_space = spaces.Box(shape=(1,), low=-1, high=1, dtype=np.float32)
-        self.render_mode = render_mode
-
-    def render(self, mode="human"):
-        image_shape = (32, 32, 3)
-        return np.zeros(image_shape, dtype=np.uint8)
-
-    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
-        super().reset(seed=seed)
-        observation = self.observation_space.sample()
-        return observation, {}
-
-    def step(self, action):
-        del action
-        observation = self.observation_space.sample()
-        reward, terminal, info = 0.0, False, {}
-        return observation, reward, terminal, info
-
-
-FILTER_OBSERVATION_TEST_CASES = (
-    (("key1", "key2"), ("key1",)),
-    (("key1", "key2"), ("key1", "key2")),
-    (("key1",), None),
-    (("key1",), ("key1",)),
-)
-
-ERROR_TEST_CASES = (
-    ("key", ValueError, "All the filter_keys must be included..*"),
-    (False, TypeError, "'bool' object is not iterable"),
-    (1, TypeError, "'int' object is not iterable"),
+from gymnasium.spaces import Box, Dict, Tuple
+from gymnasium.wrappers import FilterObservation
+from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import (
+    check_obs,
+    record_random_obs_reset,
+    record_random_obs_step,
 )
 
 
-class TestFilterObservation:
-    @pytest.mark.parametrize(
-        "observation_keys,filter_keys", FILTER_OBSERVATION_TEST_CASES
+def test_filter_observation_wrapper():
+    """Tests ``FilterObservation`` that the right keys are filtered."""
+    dict_env = GenericTestEnv(
+        observation_space=Dict(arm_1=Box(0, 1), arm_2=Box(2, 3), arm_3=Box(-1, 1)),
+        reset_func=record_random_obs_reset,
+        step_func=record_random_obs_step,
     )
-    def test_filter_observation(self, observation_keys, filter_keys):
-        env = FakeEnvironment(observation_keys=observation_keys)
 
-        # Make sure we are testing the right environment for the test.
-        observation_space = env.observation_space
-        assert isinstance(observation_space, spaces.Dict)
+    wrapped_env = FilterObservation(dict_env, ("arm_1", "arm_3"))
+    obs, info = wrapped_env.reset()
+    assert list(obs.keys()) == ["arm_1", "arm_3"]
+    assert list(info["obs"].keys()) == ["arm_1", "arm_2", "arm_3"]
+    check_obs(dict_env, wrapped_env, obs, info["obs"])
 
-        wrapped_env = FilterObservation(env, filter_keys=filter_keys)
+    obs, _, _, _, info = wrapped_env.step(None)
+    assert list(obs.keys()) == ["arm_1", "arm_3"]
+    assert list(info["obs"].keys()) == ["arm_1", "arm_2", "arm_3"]
+    check_obs(dict_env, wrapped_env, obs, info["obs"])
 
-        assert isinstance(wrapped_env.observation_space, spaces.Dict)
+    # Test tuple environments
+    tuple_env = GenericTestEnv(
+        observation_space=Tuple((Box(0, 1), Box(2, 3), Box(-1, 1))),
+        reset_func=record_random_obs_reset,
+        step_func=record_random_obs_step,
+    )
+    wrapped_env = FilterObservation(tuple_env, (2,))
 
-        if filter_keys is None:
-            filter_keys = tuple(observation_keys)
+    obs, info = wrapped_env.reset()
+    assert len(obs) == 1 and len(info["obs"]) == 3
+    check_obs(tuple_env, wrapped_env, obs, info["obs"])
 
-        assert len(wrapped_env.observation_space.spaces) == len(filter_keys)
-        assert tuple(wrapped_env.observation_space.spaces.keys()) == tuple(filter_keys)
+    obs, _, _, _, info = wrapped_env.step(None)
+    assert len(obs) == 1 and len(info["obs"]) == 3
+    check_obs(tuple_env, wrapped_env, obs, info["obs"])
 
-        # Check that the added space item is consistent with the added observation.
-        observation, info = wrapped_env.reset()
-        assert len(observation) == len(filter_keys)
-        assert isinstance(info, dict)
 
-    @pytest.mark.parametrize("filter_keys,error_type,error_match", ERROR_TEST_CASES)
-    def test_raises_with_incorrect_arguments(
-        self, filter_keys, error_type, error_match
-    ):
-        env = FakeEnvironment(observation_keys=("key1", "key2"))
+@pytest.mark.parametrize(
+    "filter_keys, error_type, error_match",
+    (
+        (
+            "key",
+            ValueError,
+            "All the `filter_keys` must be included in the observation space.",
+        ),
+        (
+            False,
+            TypeError,
+            "Expects `filter_keys` to be a Sequence, actual type: <class 'bool'>",
+        ),
+        (
+            1,
+            TypeError,
+            "Expects `filter_keys` to be a Sequence, actual type: <class 'int'>",
+        ),
+        (
+            (),
+            ValueError,
+            "The observation space is empty due to filtering all of the keys",
+        ),
+    ),
+)
+def test_incorrect_arguments(filter_keys, error_type, error_match):
+    env = GenericTestEnv(
+        observation_space=Dict(key_1=Box(0, 1), key_2=Box(2, 3)),
+    )
 
-        with pytest.raises(error_type, match=error_match):
-            FilterObservation(env, filter_keys=filter_keys)
+    with pytest.raises(error_type, match=error_match):
+        FilterObservation(env, filter_keys=filter_keys)
