@@ -36,11 +36,13 @@ env.close()
 
 ```{toctree}
 :hidden:
+:glob:
 :caption: Introduction
 
 content/basic_usage
 content/gym_compatibility
 content/migration-guide
+introduction/*
 ```
 
 ```{toctree}
