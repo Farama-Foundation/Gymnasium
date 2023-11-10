@@ -42,6 +42,10 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     For more information see section "Version History".
 
     ## Action Space
+    ```{figure} action_space_figures/hopper.png
+    :name: hopper
+    ```
+
     The action space is a `Box(-1, 1, (3,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |

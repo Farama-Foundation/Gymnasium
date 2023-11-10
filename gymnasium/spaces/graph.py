@@ -27,7 +27,7 @@ class GraphInstance(NamedTuple):
 
 
 class Graph(Space[GraphInstance]):
-    r"""A space representing graph information as a series of `nodes` connected with `edges` according to an adjacency matrix represented as a series of `edge_links`.
+    r"""A space representing graph information as a series of ``nodes`` connected with ``edges`` according to an adjacency matrix represented as a series of ``edge_links``.
 
     Example:
         >>> from gymnasium.spaces import Graph, Box, Discrete
@@ -122,14 +122,14 @@ class Graph(Space[GraphInstance]):
         num_nodes: int = 10,
         num_edges: int | None = None,
     ) -> GraphInstance:
-        """Generates a single sample graph with num_nodes between 1 and 10 sampled from the Graph.
+        """Generates a single sample graph with num_nodes between ``1`` and ``10`` sampled from the Graph.
 
         Args:
             mask: An optional tuple of optional node and edge mask that is only possible with Discrete spaces
                 (Box spaces don't support sample masks).
-                If no `num_edges` is provided then the `edge_mask` is multiplied by the number of edges
-            num_nodes: The number of nodes that will be sampled, the default is 10 nodes
-            num_edges: An optional number of edges, otherwise, a random number between 0 and `num_nodes` ^ 2
+                If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
+            num_nodes: The number of nodes that will be sampled, the default is `10` nodes
+            num_edges: An optional number of edges, otherwise, a random number between `0` and :math:`num_nodes^2`
 
         Returns:
             A :class:`GraphInstance` with attributes `.nodes`, `.edges`, and `.edge_links`.
@@ -212,7 +212,7 @@ class Graph(Space[GraphInstance]):
     def __repr__(self) -> str:
         """A string representation of this space.
 
-        The representation will include node_space and edge_space
+        The representation will include ``node_space`` and ``edge_space``
 
         Returns:
             A representation of the space

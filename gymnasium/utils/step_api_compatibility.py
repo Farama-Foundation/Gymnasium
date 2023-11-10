@@ -1,4 +1,6 @@
 """Contains methods for step compatibility, from old-to-new and new-to-old API."""
+from __future__ import annotations
+
 from typing import SupportsFloat, Tuple, Union
 
 import numpy as np
@@ -23,13 +25,15 @@ TerminatedTruncatedStepType = Tuple[
 
 
 def convert_to_terminated_truncated_step_api(
-    step_returns: Union[DoneStepType, TerminatedTruncatedStepType], is_vector_env=False
+    step_returns: DoneStepType | TerminatedTruncatedStepType, is_vector_env=False
 ) -> TerminatedTruncatedStepType:
     """Function to transform step returns to new step API irrespective of input API.
 
+    .. py:currentmodule:: gymnasium.Env
+
     Args:
-        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)
-        is_vector_env (bool): Whether the step_returns are from a vector environment
+        step_returns (tuple): Items returned by :meth:`step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``
+        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment
     """
     if len(step_returns) == 5:
         return step_returns
@@ -75,14 +79,16 @@ def convert_to_terminated_truncated_step_api(
 
 
 def convert_to_done_step_api(
-    step_returns: Union[TerminatedTruncatedStepType, DoneStepType],
+    step_returns: TerminatedTruncatedStepType | DoneStepType,
     is_vector_env: bool = False,
 ) -> DoneStepType:
     """Function to transform step returns to old step API irrespective of input API.
 
+    .. py:currentmodule:: gymnasium.Env
+
     Args:
-        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)
-        is_vector_env (bool): Whether the step_returns are from a vector environment
+        step_returns (tuple): Items returned by :meth:`step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``
+        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment
     """
     if len(step_returns) == 4:
         return step_returns
@@ -130,38 +136,41 @@ def convert_to_done_step_api(
 
 
 def step_api_compatibility(
-    step_returns: Union[TerminatedTruncatedStepType, DoneStepType],
+    step_returns: TerminatedTruncatedStepType | DoneStepType,
     output_truncation_bool: bool = True,
     is_vector_env: bool = False,
-) -> Union[TerminatedTruncatedStepType, DoneStepType]:
-    """Function to transform step returns to the API specified by `output_truncation_bool` bool.
+) -> TerminatedTruncatedStepType | DoneStepType:
+    """Function to transform step returns to the API specified by ``output_truncation_bool``.
 
-    Done (old) step API refers to step() method returning (observation, reward, done, info)
-    Terminated Truncated (new) step API refers to step() method returning (observation, reward, terminated, truncated, info)
+    .. py:currentmodule:: gymnasium.Env
+
+    Done (old) step API refers to :meth:`step` method returning ``(observation, reward, done, info)``
+    Terminated Truncated (new) step API refers to :meth:`step` method returning ``(observation, reward, terminated, truncated, info)``
     (Refer to docs for details on the API change)
 
     Args:
-        step_returns (tuple): Items returned by step(). Can be (obs, rew, done, info) or (obs, rew, terminated, truncated, info)
-        output_truncation_bool (bool): Whether the output should return two booleans (new API) or one (old) (True by default)
-        is_vector_env (bool): Whether the step_returns are from a vector environment
+        step_returns (tuple): Items returned by :meth:`step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``
+        output_truncation_bool (bool): Whether the output should return two booleans (new API) or one (old) (``True`` by default)
+        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment
 
     Returns:
-        step_returns (tuple): Depending on `output_truncation_bool` bool, it can return `(obs, rew, done, info)` or `(obs, rew, terminated, truncated, info)`
+        step_returns (tuple): Depending on ``output_truncation_bool``, it can return ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``
 
     Example:
-        This function can be used to ensure compatibility in step interfaces with conflicting API. Eg. if env is written in old API,
-         wrapper is written in new API, and the final step output is desired to be in old API.
+        This function can be used to ensure compatibility in step interfaces with conflicting API. E.g. if env is written in old API,
+        wrapper is written in new API, and the final step output is desired to be in old API.
 
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v0")
-        >>> _ = env.reset()
-        >>> obs, rewards, done, info = step_api_compatibility(env.step(0), output_truncation_bool=False)
-        >>> obs, rewards, terminated, truncated, info = step_api_compatibility(env.step(0), output_truncation_bool=True)
+        >>> _, _ = env.reset()
+        >>> obs, reward, done, info = step_api_compatibility(env.step(0), output_truncation_bool=False)
+        >>> obs, reward, terminated, truncated, info = step_api_compatibility(env.step(0), output_truncation_bool=True)
 
-        >>> vec_env = gym.vector.make("CartPole-v0")
-        >>> _ = vec_env.reset()
+        >>> vec_env = gym.make_vec("CartPole-v0", vectorization_mode="sync")
+        >>> _, _ = vec_env.reset()
         >>> obs, rewards, dones, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=False)
-        >>> obs, rewards, terminated, truncated, info = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)
+        >>> obs, rewards, terminations, truncations, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)
+
     """
     if output_truncation_bool:
         return convert_to_terminated_truncated_step_api(step_returns, is_vector_env)
