@@ -1,28 +1,25 @@
+"""Test suite for ClipAction wrapper."""
+
 import numpy as np
 
-import gymnasium as gym
+from gymnasium.spaces import Box
 from gymnasium.wrappers import ClipAction
+from tests.testing_env import GenericTestEnv
+from tests.wrappers.utils import record_action_step
 
 
-def test_clip_action():
-    # mountaincar: action-based rewards
-    env = gym.make("MountainCarContinuous-v0", disable_env_checker=True)
-    wrapped_env = ClipAction(
-        gym.make("MountainCarContinuous-v0", disable_env_checker=True)
+def test_clip_action_wrapper():
+    """Test that the action is correctly clipped to the base environment action space."""
+    env = GenericTestEnv(
+        action_space=Box(np.array([0, 0, 3]), np.array([1, 2, 4])),
+        step_func=record_action_step,
     )
+    wrapped_env = ClipAction(env)
 
-    seed = 0
+    sampled_action = np.array([-1, 5, 3.5], dtype=np.float32)
+    assert sampled_action not in env.action_space
+    assert sampled_action in wrapped_env.action_space
 
-    env.reset(seed=seed)
-    wrapped_env.reset(seed=seed)
-
-    actions = [[0.4], [1.2], [-0.3], [0.0], [-2.5]]
-    for action in actions:
-        obs1, r1, ter1, trunc1, _ = env.step(
-            np.clip(action, env.action_space.low, env.action_space.high)
-        )
-        obs2, r2, ter2, trunc2, _ = wrapped_env.step(action)
-        assert np.allclose(r1, r2)
-        assert np.allclose(obs1, obs2)
-        assert ter1 == ter2
-        assert trunc1 == trunc2
+    _, _, _, _, info = wrapped_env.step(sampled_action)
+    assert np.all(info["action"] in env.action_space)
+    assert np.all(info["action"] == np.array([0, 2, 3.5]))

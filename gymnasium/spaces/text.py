@@ -78,13 +78,13 @@ class Text(Space[str]):
         self,
         mask: None | (tuple[int | None, NDArray[np.int8] | None]) = None,
     ) -> str:
-        """Generates a single random sample from this space with by default a random length between `min_length` and `max_length` and sampled from the `charset`.
+        """Generates a single random sample from this space with by default a random length between ``min_length`` and ``max_length`` and sampled from the ``charset``.
 
         Args:
             mask: An optional tuples of length and mask for the text.
-                The length is expected to be between the `min_length` and `max_length` otherwise a random integer between `min_length` and `max_length` is selected.
-                For the mask, we expect a numpy array of length of the charset passed with `dtype == np.int8`.
-                If the charlist mask is all zero then an empty string is returned no matter the `min_length`
+                The length is expected to be between the ``min_length`` and ``max_length`` otherwise a random integer between ``min_length`` and ``max_length`` is selected.
+                For the mask, we expect a numpy array of length of the charset passed with ``dtype == np.int8``.
+                If the charlist mask is all zero then an empty string is returned no matter the ``min_length``
 
         Returns:
             A sampled string from the space

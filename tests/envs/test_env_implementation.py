@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.box2d import BipedalWalker
+from gymnasium.envs.box2d import BipedalWalker, CarRacing
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
 from gymnasium.envs.toy_text import TaxiEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
@@ -23,7 +23,7 @@ def test_carracing_domain_randomize():
     CarRacing DomainRandomize should have different colours at every reset.
     However, it should have same colours when `options={"randomize": False}` is given to reset.
     """
-    env = gym.make("CarRacing-v2", domain_randomize=True)
+    env: CarRacing = gym.make("CarRacing-v2", domain_randomize=True).unwrapped
 
     road_color = env.road_color
     bg_color = env.bg_color
@@ -173,7 +173,7 @@ def test_customizable_resets(env_name: str, low_high: Optional[list]):
     else:
         low, high = low_high
         env.reset(options={"low": low, "high": high})
-        assert np.all((env.state >= low) & (env.state <= high))
+        assert np.all((env.unwrapped.state >= low) & (env.unwrapped.state <= high))
     # Make sure we can take a step.
     env.step(env.action_space.sample())
 

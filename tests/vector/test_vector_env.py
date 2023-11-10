@@ -1,18 +1,19 @@
+"""Test vector environment implementations."""
+
 from functools import partial
 
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Discrete, Tuple
-from gymnasium.vector.async_vector_env import AsyncVectorEnv
-from gymnasium.vector.sync_vector_env import SyncVectorEnv
-from gymnasium.vector.vector_env import VectorEnv
+from gymnasium.spaces import Discrete
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
-from tests.vector.utils import CustomSpace, make_env
+from tests.vector.testing_utils import make_env
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])
 def test_vector_env_equal(shared_memory):
+    """Test that vector environment are equal for both async and sync variants."""
     env_fns = [make_env("CartPole-v1", i) for i in range(4)]
     num_steps = 100
 
@@ -33,12 +34,22 @@ def test_vector_env_equal(shared_memory):
         actions = async_env.action_space.sample()
         assert actions in sync_env.action_space
 
-        # fmt: off
-        async_observations, async_rewards, async_terminateds, async_truncateds, async_infos = async_env.step(actions)
-        sync_observations, sync_rewards, sync_terminateds, sync_truncateds, sync_infos = sync_env.step(actions)
-        # fmt: on
+        (
+            async_observations,
+            async_rewards,
+            async_terminations,
+            async_truncations,
+            async_infos,
+        ) = async_env.step(actions)
+        (
+            sync_observations,
+            sync_rewards,
+            sync_terminations,
+            sync_truncations,
+            sync_infos,
+        ) = sync_env.step(actions)
 
-        if any(sync_terminateds) or any(sync_truncateds):
+        if any(sync_terminations) or any(sync_truncations):
             assert "final_observation" in async_infos
             assert "_final_observation" in async_infos
             assert "final_observation" in sync_infos
@@ -46,21 +57,11 @@ def test_vector_env_equal(shared_memory):
 
         assert np.all(async_observations == sync_observations)
         assert np.all(async_rewards == sync_rewards)
-        assert np.all(async_terminateds == sync_terminateds)
-        assert np.all(async_truncateds == sync_truncateds)
+        assert np.all(async_terminations == sync_terminations)
+        assert np.all(async_truncations == sync_truncations)
 
     async_env.close()
     sync_env.close()
-
-
-def test_custom_space_vector_env():
-    env = VectorEnv(4, CustomSpace(), CustomSpace())
-
-    assert isinstance(env.single_observation_space, CustomSpace)
-    assert isinstance(env.observation_space, Tuple)
-
-    assert isinstance(env.single_action_space, CustomSpace)
-    assert isinstance(env.action_space, Tuple)
 
 
 @pytest.mark.parametrize(
@@ -123,3 +124,5 @@ def test_final_obs_info(vectoriser):
     assert info["final_observation"] == np.array([0]) and info["final_info"] == {
         "action": 3
     }
+
+    env.close()

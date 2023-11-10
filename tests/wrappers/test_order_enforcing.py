@@ -1,21 +1,10 @@
+"""Test suite for OrderEnforcing wrapper."""
 import pytest
 
-import gymnasium as gym
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.error import ResetNeeded
 from gymnasium.wrappers import OrderEnforcing
-from tests.envs.utils import all_testing_env_specs
 from tests.wrappers.utils import has_wrapper
-
-
-@pytest.mark.parametrize(
-    "spec", all_testing_env_specs, ids=[spec.id for spec in all_testing_env_specs]
-)
-def test_gym_make_order_enforcing(spec):
-    """Checks that gym.make wrappers the environment with the OrderEnforcing wrapper."""
-    env = gym.make(spec.id, disable_env_checker=True)
-
-    assert has_wrapper(env, OrderEnforcing)
 
 
 def test_order_enforcing():

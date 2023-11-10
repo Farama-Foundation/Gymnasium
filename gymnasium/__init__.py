@@ -21,8 +21,7 @@ from gymnasium.envs.registration import (
 
 # necessary for `envs.__init__` which registers all gymnasium environments and loads plugins
 from gymnasium import envs
-from gymnasium import spaces, utils, vector, wrappers, error, logger
-from gymnasium import experimental
+from gymnasium import spaces, utils, vector, wrappers, error, logger, functional
 
 
 __all__ = [
@@ -43,15 +42,15 @@ __all__ = [
     "register_envs",
     # module folders
     "envs",
-    "experimental",
     "spaces",
     "utils",
     "vector",
     "wrappers",
     "error",
     "logger",
+    "functional",
 ]
-__version__ = "0.29.0"
+__version__ = "1.0.0rc1"
 
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
