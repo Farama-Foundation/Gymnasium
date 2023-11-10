@@ -329,6 +329,7 @@ class MuJocoPyEnv(BaseMujocoEnv):
 
     def close(self):
         if self.viewer is not None:
+            self.viewer.free()
             self.viewer = None
             self._viewers = {}
 
