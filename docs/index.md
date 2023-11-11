@@ -94,4 +94,3 @@ gymnasium_release_notes/index
 gym_release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```
-
