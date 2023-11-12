@@ -221,8 +221,7 @@ def test_infinite_space(space):
         np.sign(space.low) <= np.sign(sample)
     ), f"Sign of sample ({sample}) is more than space lower bound ({space.low})"
 
-    # check that int bounds are bounded for everything
-    # but floats are unbounded for infinite
+    # check that int and float bounds are unbounded for infinite
     if np.any(space.high != 0):
         assert (
             space.is_bounded("above") is False
@@ -280,6 +279,46 @@ def test_legacy_state_pickling():
     b.__setstate__(legacy_state)
     assert b.low_repr == "0.0"
     assert b.high_repr == "1.0"
+
+
+@pytest.mark.parametrize(
+    "space",
+    [
+        # exponential
+        Box(low=np.iinfo(np.uint8).max, high=np.inf, shape=(20,), dtype=np.uint8),
+        Box(low=np.iinfo(np.int8).max - 2, high=np.inf, shape=(20,), dtype=np.int8),
+        Box(low=np.iinfo(np.uint16).max, high=np.inf, shape=(20,), dtype=np.uint16),
+        Box(low=np.iinfo(np.int16).max - 2, high=np.inf, shape=(20,), dtype=np.int16),
+        Box(low=np.finfo(np.float16).max, high=np.inf, shape=(20,), dtype=np.float16),
+        Box(low=np.iinfo(np.uint32).max, high=np.inf, shape=(20,), dtype=np.uint32),
+        Box(low=np.iinfo(np.int32).max - 2, high=np.inf, shape=(20,), dtype=np.int32),
+        Box(low=np.finfo(np.float32).max, high=np.inf, shape=(20,), dtype=np.float32),
+        Box(low=np.iinfo(np.uint64).max, high=np.inf, shape=(20,), dtype=np.uint64),
+        Box(low=np.iinfo(np.int64).max - 2, high=np.inf, shape=(20,), dtype=np.int64),
+        Box(low=np.finfo(np.float64).max, high=np.inf, shape=(20,), dtype=np.float64),
+        # negative exponential
+        Box(low=-np.inf, high=np.iinfo(np.uint8).min, shape=(20,), dtype=np.uint8),
+        Box(low=-np.inf, high=np.iinfo(np.int8).min + 2, shape=(20,), dtype=np.int8),
+        Box(low=-np.inf, high=np.iinfo(np.uint16).min, shape=(20,), dtype=np.uint16),
+        Box(low=-np.inf, high=np.iinfo(np.int16).min + 2, shape=(20,), dtype=np.int16),
+        Box(low=-np.inf, high=np.finfo(np.float16).min, shape=(20,), dtype=np.float16),
+        Box(low=-np.inf, high=np.iinfo(np.uint32).min, shape=(20,), dtype=np.uint32),
+        Box(low=-np.inf, high=np.iinfo(np.int32).min + 2, shape=(20,), dtype=np.int32),
+        Box(low=-np.inf, high=np.finfo(np.float32).min, shape=(20,), dtype=np.float32),
+        Box(low=-np.inf, high=np.iinfo(np.uint64).min, shape=(20,), dtype=np.uint64),
+        Box(low=-np.inf, high=np.iinfo(np.int64).min + 2, shape=(20,), dtype=np.int64),
+        Box(low=-np.inf, high=np.finfo(np.float64).min, shape=(20,), dtype=np.float64),
+    ],
+)
+def test_sample_valid(space):
+    space.seed(0)
+    sample = space.sample()
+    print(sample)
+
+    # check if space contains sample
+    assert (
+        sample in space
+    ), f"Sample ({sample}) not inside space according to `space.contains()`"
 
 
 def test_sample_mask():

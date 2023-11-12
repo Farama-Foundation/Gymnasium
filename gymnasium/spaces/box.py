@@ -257,7 +257,24 @@ class Box(Space[NDArray[Any]]):
         if self.dtype.kind in ["i", "u", "b"]:
             sample = np.floor(sample)
 
-        return sample.astype(self.dtype)
+        # clip values that would underflow/overflow
+        if np.issubdtype(self.dtype, np.signedinteger):
+            dtype_min = np.iinfo(self.dtype).min + 2
+            dtype_max = np.iinfo(self.dtype).max - 2
+            sample = sample.clip(min=dtype_min, max=dtype_max)
+        elif np.issubdtype(self.dtype, np.unsignedinteger):
+            dtype_min = np.iinfo(self.dtype).min
+            dtype_max = np.iinfo(self.dtype).max
+            sample = sample.clip(min=dtype_min, max=dtype_max)
+
+        sample = sample.astype(self.dtype)
+
+        # float64 values have lower than integer precision near int64 min/max, so clip
+        # again in case something has been cast to an out-of-bounds value
+        if self.dtype == np.int64:
+            sample = sample.clip(min=self.low, max=self.high)
+
+        return sample
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
