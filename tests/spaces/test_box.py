@@ -337,6 +337,41 @@ def test_sample_mask():
             np.float32,
             "No high value can be equal to `-np.inf`, high=[  0. -inf]",
         ),
+        (
+            -200,
+            0,
+            (),
+            np.int8,
+            "Some low values are less than the min limit for dtype 'int8', low=-200, dtype.min=-128",
+        ),
+        (
+            0,
+            200,
+            (),
+            np.int8,
+            "Some high values are greater than the max limit for dtype 'int8', high=200, dtype.max=127",
+        ),
+        (
+            -70000.0,
+            0.0,
+            (),
+            np.float16,
+            "Some low values are less than the min limit for dtype 'float16', low=-70000.0, dtype.min=-65504.0",
+        ),
+        (
+            0.0,
+            70000.0,
+            (),
+            np.float16,
+            "Some high values are greater than the max limit for dtype 'float16', high=70000.0, dtype.max=65504.0",
+        ),
+        (
+            np.array([0, -200]),
+            np.array([1, 0]),
+            (2,),
+            np.int8,
+            "Some low values are less than the min limit for dtype 'int8', low=[   0 -200], dtype.min=-128",
+        ),
     ],
 )
 def test_invalid_low_high(low, high, dtype, shape, reason):

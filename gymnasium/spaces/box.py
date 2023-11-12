@@ -102,6 +102,31 @@ class Box(Space[NDArray[Any]]):
                 f"Box shape is inferred from low and high, expected their types to be np.ndarray, an integer or a float, actual type low: {type(low)}, high: {type(high)}"
             )
 
+        # Check that all values are within dtype limits
+        if np.issubdtype(self.dtype, np.floating):
+            dtype_min = np.finfo(self.dtype).min
+            dtype_max = np.finfo(self.dtype).max
+        elif np.issubdtype(self.dtype, np.integer):
+            dtype_min = np.iinfo(self.dtype).min
+            dtype_max = np.iinfo(self.dtype).max
+        else:  # don't check casts to bool
+            dtype_min = -np.inf
+            dtype_max = np.inf
+
+        # don't check nan or inf values
+        clean_low = np.nan_to_num(low, nan=np.nan, posinf=np.nan, neginf=np.nan)
+        clean_high = np.nan_to_num(high, nan=np.nan, posinf=np.nan, neginf=np.nan)
+
+        if np.any(clean_low < dtype_min):
+            raise ValueError(
+                f"Some low values are less than the min limit for dtype '{self.dtype}', low={low}, dtype.min={dtype_min}"
+            )
+
+        if np.any(clean_high > dtype_max):
+            raise ValueError(
+                f"Some high values are greater than the max limit for dtype '{self.dtype}', high={high}, dtype.max={dtype_max}"
+            )
+
         # Capture the boundedness information before replacing np.inf with get_inf
         _low = np.full(shape, low, dtype=float) if is_float_integer(low) else low
         self.bounded_below: NDArray[np.bool_] = -np.inf < _low
