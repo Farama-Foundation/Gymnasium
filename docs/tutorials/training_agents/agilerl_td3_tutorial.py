@@ -1,11 +1,11 @@
 """
-AgileRL PPO Implementation
+AgileRL TD3 Implementation
 ==========================
 
 """
 
 # %%
-# In this tutorial, we will be training and optimising the hyperparameters of a population of PPO agents
+# In this tutorial, we will be training and optimising the hyperparameters of a population of TD3 agents
 # to beat the Gymnasium continuous lunar lander environment. AgileRL is a deep reinforcement learning
 # library, focussed on improving the RL training process through evolutionary hyperparameter
 # optimisation (HPO), which has resulted in upto 10x faster HPO compared to other popular deep RL
@@ -13,12 +13,20 @@ AgileRL PPO Implementation
 # more information about the library.
 
 # %%
-# PPO Overview
+# TD3 Overview
 # ------------
-# PPO (proximal policy optimisation) is an on-policy algorithm that uses policy gradient methods
-# to directly optimise the policy function, which determines the agent's actions based on the
-# environment's state. PPO strikes an effective balance between exploration and exploitation, making
-# it robust in learning diverse tasks.
+# TD3 (twin-delayed deep deterministic policy gradient) is an off-policy actor-critic algorithm used
+# to estimate the optimal policy function, which determines what actions an agent should take given the
+# observed state of the environment. The agent does this by using a policy network (actor) to determine actions
+# given a particular state and then a value network (critic) to estimate the Q-value of the state-action pairs
+# determined by the policy network (actor). TD3 improves upon DDPG (deep deterministic policy gradient) to reduce
+# overestimation bias by doing the following:
+#
+# * Using two Q networks (critics) and selecting the minimum Q-value
+# * Updating the policy network less frequently than the Q network
+# * Adding noise to actions used to estimate the target Q value
+#
+
 
 # %%
 # Dependencies
@@ -33,11 +41,16 @@ import numpy as np
 # Author: Michael Pratt
 # License: MIT License
 import torch
-from agilerl.algorithms.ppo import PPO
+from agilerl.algorithms.td3 import TD3
+from agilerl.components.replay_buffer import ReplayBuffer
 from agilerl.hpo.mutation import Mutations
 from agilerl.hpo.tournament import TournamentSelection
-from agilerl.training.train_on_policy import train_on_policy
-from agilerl.utils.utils import initialPopulation, makeVectEnvs
+from agilerl.training.train import train
+from agilerl.utils.utils import (
+    calculate_vectorized_scores,
+    initialPopulation,
+    makeVectEnvs,
+)
 from PIL import Image, ImageDraw
 from tqdm import trange
 
@@ -46,7 +59,7 @@ from tqdm import trange
 # Defining Hyperparameters
 # ------------------------
 # Before we commence training, it's easiest to define all of our hyperparameters in one dictionary. Below is an example of
-# such for the PPO algorithm. Additionally, we also define a mutations parameters dictionary, in which we determine what
+# such for the TD3 algorithm. Additionally, we also define a mutations parameters dictionary, in which we determine what
 # mutations we want to happen, to what extent we want these mutations to occur, and what RL hyperparameters we want to tune.
 # Additionally, we also define our upper and lower limits for these hyperparameters to define search spaces.
 
@@ -55,27 +68,21 @@ INIT_HP = {
     "POPULATION_SIZE": 6,  # Population size
     "DISCRETE_ACTIONS": False,  # Discrete action space
     "BATCH_SIZE": 128,  # Batch size
-    "LR": 1e-3,  # Learning rate
+    "LR": 0.001,  # Learning rate
     "GAMMA": 0.99,  # Discount factor
-    "GAE_LAMBDA": 0.95,  # Lambda for general advantage estimation
-    "ACTION_STD_INIT": 0.6,  # Initial action standard deviation
-    "CLIP_COEF": 0.2,  # Surrogate clipping coefficient
-    "ENT_COEF": 0.01,  # Entropy coefficient
-    "VF_COEF": 0.5,  # Value function coefficient
-    "MAX_GRAD_NORM": 0.5,  # Maximum norm for gradient clipping
-    "TARGET_KL": None,  # Target KL divergence threshold
-    "UPDATE_EPOCHS": 4,  # Number of policy update epochs
+    "MEMORY_SIZE": 100_000,  # Max memory buffer size
+    "POLICY_FREQ": 2,  # Policy network update frequency
+    "LEARN_STEP": 1,  # Learning frequency
+    "TAU": 0.005,  # For soft update of target parameters
     # Swap image channels dimension from last to first [H, W, C] -> [C, H, W]
     "CHANNELS_LAST": False,  # Use with RGB states
     "EPISODES": 1000,  # Number of episodes to train for
     "EVO_EPOCHS": 20,  # Evolution frequency, i.e. evolve after every 20 episodes
     "TARGET_SCORE": 200.0,  # Target score that will beat the environment
     "EVO_LOOP": 3,  # Number of evaluation episodes
-    "MAX_STEPS": 5,  # Maximum number of steps an agent takes in an environment
+    "MAX_STEPS": 500,  # Maximum number of steps an agent takes in an environment
     "TOURN_SIZE": 2,  # Tournament size
     "ELITISM": True,  # Elitism in tournament selection
-    "TOURN_SIZE": 2,  # Tournament selection size
-    "ELITISM": True,  # Preserve the elite through in the next generation
 }
 
 # Mutation parameters
@@ -96,16 +103,15 @@ MUT_P = {
     "MIN_BATCH_SIZE": 8,
     "MAX_BATCH_SIZE": 1024,
 }
-
 # %%
 # Create the Environment
 # ----------------------
-# In this particular tutorial, we will be focussing on the Continuous Lunar Lander environment as you can use PPO with
-# either discrete or continuous action spaces. The snippet below creates a vectorised environment and then assigns the
+# In this particular tutorial, we will be focussing on the Continuous Bipedal Walker environment as TD3 can only be
+# used with continuous action environments. The snippet below creates a vectorised environment and then assigns the
 # correct values for ``state_dim`` and ``one_hot``, depending on whether the observation or action spaces are discrete
 # or continuous.
 
-env = makeVectEnvs("LunarLanderContinuous-v2", num_envs=8)  # Create environment
+env = makeVectEnvs("BipedalWalker-v3", num_envs=8)  # Create environment
 try:
     state_dim = env.single_observation_space.n  # Discrete observation space
     one_hot = True  # Requires one-hot encoding
@@ -138,16 +144,35 @@ net_config = {"arch": "mlp", "h_size": [64, 64]}
 
 # Define a population
 pop = initialPopulation(
-    algo="PPO",  # Algorithm
+    algo="TD3",  # Algorithm
     state_dim=state_dim,  # State dimension
     action_dim=action_dim,  # Action dimension
     one_hot=one_hot,  # One-hot encoding
     net_config=net_config,  # Network configuration
-    INIT_HP=INIT_HP,  # Initial hyperparameter
+    INIT_HP=INIT_HP,  # Initial hyperparameters
     population_size=INIT_HP["POPULATION_SIZE"],  # Population size
     device=device,
 )
 
+# %%
+# Experience Replay
+# -----------------
+# In order to efficiently train a population of RL agents, off-policy algorithms must be used to share memory within populations.
+# This reduces the exploration needed by an individual agent because it allows faster learning from the behaviour of other agents.
+#  For example, if you were able to watch a bunch of people attempt to solve a maze, you could learn from their mistakes and successes
+# without necessarily having to explore the entire maze yourself.
+
+# The object used to store experiences collected by agents in the environment is called the Experience Replay Buffer, and is defined
+# by the class ReplayBuffer(). During training it can be added to using the ReplayBuffer.save2memory() function, or
+# ReplayBuffer.save2memoryVectEnvs() for vectorized environments (recommended). To sample from the replay buffer, call ReplayBuffer.sample().
+
+field_names = ["state", "action", "reward", "next_state", "terminated"]
+memory = ReplayBuffer(
+    action_dim=action_dim,  # Number of agent actions
+    memory_size=10_000,  # Max replay buffer size
+    field_names=field_names,  # Field names to store in memory
+    device=device,
+)
 
 # %%
 # Creating Mutations and Tournament objects
@@ -183,7 +208,7 @@ tournament = TournamentSelection(
 # Tournament selection and mutation should be applied sequentially to fully evolve a population between evaluation and learning cycles.
 
 mutations = Mutations(
-    algo="PPO",
+    algo=INIT_HP["ALGO"],
     no_mutation=MUT_P["NO_MUT"],
     architecture=MUT_P["ARCH_MUT"],
     new_layer_prob=MUT_P["NEW_LAYER"],
@@ -204,16 +229,17 @@ mutations = Mutations(
 # Using AgileRL ``train`` function
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # The simplest way to train an AgileRL agent is to use one of the implemented AgileRL train functions.
-# Given that PPO is an on-policy algorithm, we can make use of the ``train_on_policy`` function. This
+# Given that TD3 is an off-policy algorithm, we can make use of the ``train`` function. This
 # training function will orchestrate the training and hyperparameter optimisation process, removing the
 # the need to implement a training loop. It will return a trained population, as well as the associated
 # fitnesses (fitness is each agents test scores on the environment).
 
-trained_pop, pop_fitnesses = train_on_policy(
+trained_pop, pop_fitnesses = train(
     env=env,
-    env_name="LunarLanderContinuous-v2",
-    algo="PPO",
+    env_name="BipedalWalker-v3",
+    algo="TD3",
     pop=pop,
+    memory=memory,
     INIT_HP=INIT_HP,
     MUT_P=MUT_P,
     swap_channels=INIT_HP["CHANNELS_LAST"],
@@ -224,71 +250,76 @@ trained_pop, pop_fitnesses = train_on_policy(
     tournament=tournament,
     mutation=mutations,
     wb=False,  # Boolean flag to record run with Weights & Biases
-    # save_elite=True     # Boolean flag to save the elite agent in the population
+    save_elite=True,  # Boolean flag to save the elite agent in the population
 )
 
-# %%
 # Using a custom training loop
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # If you would like to have more control over the training process, it is also possible to write your own custom
 # training loops to train your agents. The training loop below is to be used alternatively to the above ``train_on_policy``
 # function and is an example of how you might choose to make use of an AgileRL agent in your own training loop.
 
+eps_end = 0.1
+epsilon = 1.0
+eps_decay = 0.995
 total_steps = 0
-elite = pop[0]  # elite variable placeholder
-step = 0  # step variable placeholder
-next_state = None  # next_step variable placeholder
+elite = pop[0]  # Elite member placeholder
 
 for episode in trange(INIT_HP["EPISODES"]):
     for agent in pop:  # Loop through population
         state = env.reset()[0]  # Reset environment at start of episode
+        rewards, terminations, truncs = [], [], []
         score = 0
-
-        states = []
-        actions = []
-        log_probs = []
-        rewards = []
-        dones = []
-        values = []
-
-        for step in range(INIT_HP["MAX_STEPS"]):
+        for idx_step in range(INIT_HP["MAX_STEPS"]):
             if INIT_HP["CHANNELS_LAST"]:
                 state = np.moveaxis(state, [-1], [-3])
-
             # Get next action from agent
-            action, log_prob, _, value = agent.getAction(state)
+            action = agent.getAction(state)
             next_state, reward, done, trunc, _ = env.step(action)  # Act in environment
 
-            states.append(state)
-            actions.append(action)
-            log_probs.append(log_prob)
+            if INIT_HP["CHANNELS_LAST"]:
+                memory.save2memoryVectEnvs(
+                    state,
+                    action,
+                    reward,
+                    np.moveaxis(next_state, [-1], [-3]),
+                    done,
+                )
+            else:
+                memory.save2memoryVectEnvs(
+                    state,
+                    action,
+                    reward,
+                    next_state,
+                    done,
+                )
+
+            # Learn according to learning frequency
+            if (
+                memory.counter % agent.learn_step == 0
+                and len(memory) >= agent.batch_size
+            ):
+                # Sample replay buffer
+                # Learn according to agent's RL algorithm
+
+                experiences = memory.sample(agent.batch_size)
+                agent.learn(experiences)
+
+            terminations.append(done)
             rewards.append(reward)
-            dones.append(done)
-            values.append(value)
-
+            truncs.append(trunc)
             state = next_state
-            score += reward
 
-        if INIT_HP["CHANNELS_LAST"]:
-            next_state = np.moveaxis(next_state, [-1], [-3])
+        scores = calculate_vectorized_scores(np.array(rewards), np.array(terminations))
+        score = np.mean(scores)
 
         agent.scores.append(score)
 
-        experiences = (
-            states,
-            actions,
-            log_probs,
-            rewards,
-            dones,
-            values,
-            next_state,
-        )
-        # Learn according to agent's RL algorithm
-        agent.learn(experiences)
+        agent.steps[-1] += INIT_HP["MAX_STEPS"]
+        total_steps += INIT_HP["MAX_STEPS"]
 
-        agent.steps[-1] += step + 1
-        total_steps += step + 1
-
+    # Update epsilon for exploration
+    epsilon = max(eps_end, epsilon * eps_decay)
     # Now evolve population if necessary
     if (episode + 1) % INIT_HP["EVO_EPOCHS"] == 0:
         # Evaluate population
@@ -311,14 +342,14 @@ for episode in trange(INIT_HP["EPISODES"]):
 
         print(
             f"""
-            --- Epoch {episode + 1} ---
-            Fitness:\t\t{fitness}
-            100 fitness avgs:\t{avg_fitness}
-            100 score avgs:\t{avg_score}
-            Agents:\t\t{agents}
-            Steps:\t\t{num_steps}
-            Mutations:\t\t{muts}
-            """,
+                --- Epoch {episode + 1} ---
+                Fitness:\t\t{fitness}
+                100 fitness avgs:\t{avg_fitness}
+                100 score avgs:\t{avg_score}
+                Agents:\t\t{agents}
+                Steps:\t\t{num_steps}
+                Mutations:\t\t{muts}
+                """,
             end="\r",
         )
 
@@ -327,8 +358,8 @@ for episode in trange(INIT_HP["EPISODES"]):
         pop = mutations.mutation(pop)
 
 # Save the trained algorithm
-path = "/models/PPO_elite"
-filename = "PPO_trained_agent.pt"
+path = "./models/TD3_elite"
+filename = "TD3_trained_agent.pt"
 os.makedirs(path, exist_ok=True)
 save_path = os.path.join(path, filename)
 elite.saveCheckpoint(save_path)
@@ -344,8 +375,8 @@ elite.saveCheckpoint(save_path)
 # Load agent
 # ~~~~~~~~~~
 
-# Instantiate a PPO object
-ppo = PPO(
+# Instantiate a TD3 object
+td3 = TD3(
     state_dim=state_dim,
     action_dim=action_dim,
     one_hot=one_hot,
@@ -353,7 +384,7 @@ ppo = PPO(
 )
 
 # Load in the saved model
-ppo.loadCheckpoint(path)
+td3.loadCheckpoint(path)
 
 # %%
 # Define function to label image with episode number
@@ -395,20 +426,22 @@ with torch.no_grad():
                 state = np.moveaxis(state, [-1], [-3])
 
             # Get next action from agent
-            action, *_ = ppo.getAction(state)
+            action, *_ = td3.getAction(state)
 
             # Save the frame for this step and append to frames list
             frame = env.render()
             frames.append(label_frame(frame, episode_num=ep))
 
             # Take the action in the environment
-            state, reward, done, trunc, _ = env.step(action)  # Act in environment
+            state, reward, terminated, truncated, _ = env.step(
+                action
+            )  # Act in environment
 
             # Collect the score
             score += reward
 
             # Break if environment 0 is done or truncated
-            if done[0] or trunc[0]:
+            if terminated[0] or truncated[0]:
                 break
 
         # Collect and print episodic reward
@@ -423,5 +456,5 @@ with torch.no_grad():
 # ~~~~~~~~~~~~
 gif_path = "./videos/"
 os.makedirs(gif_path, exist_ok=True)
-imageio.mimwrite(os.path.join("./videos/", "ppo_lunar_lander.gif"), frames, duration=10)
+imageio.mimwrite(os.path.join("./videos/", "td3_lunar_lander.gif"), frames, duration=10)
 mean_fitness = np.mean(rewards)
