@@ -54,6 +54,8 @@ from agilerl.utils.utils import (
 from PIL import Image, ImageDraw
 from tqdm import trange
 
+import gymnasium as gym
+
 
 # %%
 # Defining Hyperparameters
@@ -65,8 +67,8 @@ from tqdm import trange
 
 # Initial hyperparameters
 INIT_HP = {
-    "POPULATION_SIZE": 6,  # Population size
-    "DISCRETE_ACTIONS": False,  # Discrete action space
+    "ALGO": "TD3",
+    "POP_SIZE": 2,  # Population size
     "BATCH_SIZE": 128,  # Batch size
     "LR": 0.001,  # Learning rate
     "GAMMA": 0.99,  # Discount factor
@@ -106,12 +108,11 @@ MUT_P = {
 # %%
 # Create the Environment
 # ----------------------
-# In this particular tutorial, we will be focussing on the Continuous Bipedal Walker environment as TD3 can only be
+# In this particular tutorial, we will be focussing on the continuous lunar lander environment as TD3 can only be
 # used with continuous action environments. The snippet below creates a vectorised environment and then assigns the
-# correct values for ``state_dim`` and ``one_hot``, depending on whether the observation or action spaces are discrete
-# or continuous.
+# correct values for ``state_dim`` and ``one_hot``, depending on whether the observation space is discrete or continuous.
 
-env = makeVectEnvs("BipedalWalker-v3", num_envs=8)  # Create environment
+env = makeVectEnvs("LunarLanderContinuous-v2", num_envs=8)  # Create environment
 try:
     state_dim = env.single_observation_space.n  # Discrete observation space
     one_hot = True  # Requires one-hot encoding
@@ -122,6 +123,9 @@ try:
     action_dim = env.single_action_space.n  # Discrete action space
 except Exception:
     action_dim = env.single_action_space.shape[0]  # Continuous action space
+
+INIT_HP["MAX_ACTION"] = float(env.single_action_space.high[0])
+INIT_HP["MIN_ACTION"] = float(env.single_action_space.low[0])
 
 if INIT_HP[
     "CHANNELS_LAST"
@@ -150,21 +154,21 @@ pop = initialPopulation(
     one_hot=one_hot,  # One-hot encoding
     net_config=net_config,  # Network configuration
     INIT_HP=INIT_HP,  # Initial hyperparameters
-    population_size=INIT_HP["POPULATION_SIZE"],  # Population size
+    population_size=INIT_HP["POP_SIZE"],  # Population size
     device=device,
 )
 
 # %%
 # Experience Replay
 # -----------------
-# In order to efficiently train a population of RL agents, off-policy algorithms must be used to share memory within populations.
+# In order to efficiently train a population of RL agents, off-policy algorithms are able to share memory within populations.
 # This reduces the exploration needed by an individual agent because it allows faster learning from the behaviour of other agents.
-#  For example, if you were able to watch a bunch of people attempt to solve a maze, you could learn from their mistakes and successes
+# For example, if you were able to watch a bunch of people attempt to solve a maze, you could learn from their mistakes and successes
 # without necessarily having to explore the entire maze yourself.
 
 # The object used to store experiences collected by agents in the environment is called the Experience Replay Buffer, and is defined
-# by the class ReplayBuffer(). During training it can be added to using the ReplayBuffer.save2memory() function, or
-# ReplayBuffer.save2memoryVectEnvs() for vectorized environments (recommended). To sample from the replay buffer, call ReplayBuffer.sample().
+# by the class ``ReplayBuffer()``. During training it can be added to using the ``ReplayBuffer.save2memory()`` function, or
+# ``ReplayBuffer.save2memoryVectEnvs()`` for vectorized environments (recommended). To sample from the replay buffer, call ``ReplayBuffer.sample()``.
 
 field_names = ["state", "action", "reward", "next_state", "terminated"]
 memory = ReplayBuffer(
@@ -182,13 +186,13 @@ memory = ReplayBuffer(
 # Then, for each tournament, k individuals are randomly chosen, and the agent with the best evaluation fitness is preserved.
 # This is repeated until the population for the next generation is full.
 
-# The class ``TournamentSelection()`` defines the functions required for tournament selection. TournamentSelection.select()
+# The class ``TournamentSelection()`` defines the functions required for tournament selection. ``TournamentSelection.select()``
 # returns the best agent, and the new generation of agents.
 
 tournament = TournamentSelection(
     INIT_HP["TOURN_SIZE"],
     INIT_HP["ELITISM"],
-    INIT_HP["POPULATION_SIZE"],
+    INIT_HP["POP_SIZE"],
     INIT_HP["EVO_EPOCHS"],
 )
 
@@ -231,12 +235,12 @@ mutations = Mutations(
 # The simplest way to train an AgileRL agent is to use one of the implemented AgileRL train functions.
 # Given that TD3 is an off-policy algorithm, we can make use of the ``train`` function. This
 # training function will orchestrate the training and hyperparameter optimisation process, removing the
-# the need to implement a training loop. It will return a trained population, as well as the associated
+# the need to implement a custom training loop. It will return a trained population, as well as the associated
 # fitnesses (fitness is each agents test scores on the environment).
 
 trained_pop, pop_fitnesses = train(
     env=env,
-    env_name="BipedalWalker-v3",
+    env_name="LunarLanderContinuous-v2",
     algo="TD3",
     pop=pop,
     memory=memory,
@@ -251,13 +255,15 @@ trained_pop, pop_fitnesses = train(
     mutation=mutations,
     wb=False,  # Boolean flag to record run with Weights & Biases
     save_elite=True,  # Boolean flag to save the elite agent in the population
+    elite_path="TD3_trained_agent.pt",
 )
 
+# %%
 # Using a custom training loop
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# If you would like to have more control over the training process, it is also possible to write your own custom
-# training loops to train your agents. The training loop below is to be used alternatively to the above ``train_on_policy``
-# function and is an example of how you might choose to make use of an AgileRL agent in your own training loop.
+# If we wanted to have more control over the training process, it is also possible to write our own custom
+# training loops to train our agents. The training loop below can be used alternatively to the above ``train``
+# function and is an example of how we might choose to make use of a population of AgileRL agents in our own training loop.
 
 eps_end = 0.1
 epsilon = 1.0
@@ -358,33 +364,24 @@ for episode in trange(INIT_HP["EPISODES"]):
         pop = mutations.mutation(pop)
 
 # Save the trained algorithm
-path = "./models/TD3_elite"
-filename = "TD3_trained_agent.pt"
-os.makedirs(path, exist_ok=True)
-save_path = os.path.join(path, filename)
+save_path = "TD3_trained_agent.pt"
 elite.saveCheckpoint(save_path)
-
 
 # %%
 # Loading an Agent for Inference and Rendering your Solved Environment
 # --------------------------------------------------------------------
-# Once you have trained and saved an agent, you may want to then use your trained agent for inference. Below outlines
-# how you would load a saved agent and how it can then be used in a testing loop.
+# Once we have trained and saved an agent, we may want to then use our trained agent for inference. Below outlines
+# how we would load a saved agent and how it can then be used in a testing loop.
 
 # %%
 # Load agent
 # ~~~~~~~~~~
 
 # Instantiate a TD3 object
-td3 = TD3(
-    state_dim=state_dim,
-    action_dim=action_dim,
-    one_hot=one_hot,
-    discrete_actions=INIT_HP["DISCRETE_ACTIONS"],
-)
+td3 = TD3(state_dim=state_dim, action_dim=action_dim, one_hot=one_hot, device=device)
 
 # Load in the saved model
-td3.loadCheckpoint(path)
+td3.loadCheckpoint(save_path)
 
 # %%
 # Define function to label image with episode number
@@ -412,12 +409,13 @@ def label_frame(frame, episode_num):
 # %%
 # Test loop for inference
 # ~~~~~~~~~~~~~~~~~~~~~~~
+test_env = gym.make("LunarLanderContinuous-v2", render_mode="rgb_array")
 rewards = []
 frames = []
 testing_eps = 5
 with torch.no_grad():
     for ep in range(testing_eps):
-        state = env.reset()[0]  # Reset environment at start of episode
+        state = test_env.reset()[0]  # Reset environment at start of episode
         score = 0
 
         for step in range(INIT_HP["MAX_STEPS"]):
@@ -429,11 +427,11 @@ with torch.no_grad():
             action, *_ = td3.getAction(state)
 
             # Save the frame for this step and append to frames list
-            frame = env.render()
+            frame = test_env.render()
             frames.append(label_frame(frame, episode_num=ep))
 
             # Take the action in the environment
-            state, reward, terminated, truncated, _ = env.step(
+            state, reward, terminated, truncated, _ = test_env.step(
                 action
             )  # Act in environment
 
@@ -441,7 +439,7 @@ with torch.no_grad():
             score += reward
 
             # Break if environment 0 is done or truncated
-            if terminated[0] or truncated[0]:
+            if terminated or truncated:
                 break
 
         # Collect and print episodic reward
@@ -449,12 +447,14 @@ with torch.no_grad():
         print("-" * 15, f"Episode: {ep}", "-" * 15)
         print("Episodic Reward: ", rewards[-1])
 
-    env.close()
+    test_env.close()
 
 # %%
-# Save the gif
+# Save test episosdes as a gif
 # ~~~~~~~~~~~~
 gif_path = "./videos/"
 os.makedirs(gif_path, exist_ok=True)
-imageio.mimwrite(os.path.join("./videos/", "td3_lunar_lander.gif"), frames, duration=10)
+imageio.mimwrite(
+    os.path.join("./videos/", "td3_bipedal_walker.gif"), frames, duration=10
+)
 mean_fitness = np.mean(rewards)

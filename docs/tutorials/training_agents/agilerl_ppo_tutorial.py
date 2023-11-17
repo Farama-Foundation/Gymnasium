@@ -3,10 +3,9 @@ AgileRL PPO Implementation
 ==========================
 
 """
-
 # %%
 # In this tutorial, we will be training and optimising the hyperparameters of a population of PPO agents
-# to beat the Gymnasium continuous lunar lander environment. AgileRL is a deep reinforcement learning
+# to beat the Gymnasium acrobot environment. AgileRL is a deep reinforcement learning
 # library, focussed on improving the RL training process through evolutionary hyperparameter
 # optimisation (HPO), which has resulted in upto 10x faster HPO compared to other popular deep RL
 # libraries. Check out the AgileRL github [repository](https://github.com/AgileRL/AgileRL) for
@@ -41,6 +40,8 @@ from agilerl.utils.utils import initialPopulation, makeVectEnvs
 from PIL import Image, ImageDraw
 from tqdm import trange
 
+import gymnasium as gym
+
 
 # %%
 # Defining Hyperparameters
@@ -52,8 +53,8 @@ from tqdm import trange
 
 # Initial hyperparameters
 INIT_HP = {
-    "POPULATION_SIZE": 6,  # Population size
-    "DISCRETE_ACTIONS": False,  # Discrete action space
+    "POP_SIZE": 6,  # Population size
+    "DISCRETE_ACTIONS": True,  # Discrete action space
     "BATCH_SIZE": 128,  # Batch size
     "LR": 1e-3,  # Learning rate
     "GAMMA": 0.99,  # Discount factor
@@ -67,15 +68,13 @@ INIT_HP = {
     "UPDATE_EPOCHS": 4,  # Number of policy update epochs
     # Swap image channels dimension from last to first [H, W, C] -> [C, H, W]
     "CHANNELS_LAST": False,  # Use with RGB states
-    "EPISODES": 1000,  # Number of episodes to train for
+    "EPISODES": 100,  # Number of episodes to train for
     "EVO_EPOCHS": 20,  # Evolution frequency, i.e. evolve after every 20 episodes
     "TARGET_SCORE": 200.0,  # Target score that will beat the environment
     "EVO_LOOP": 3,  # Number of evaluation episodes
-    "MAX_STEPS": 5,  # Maximum number of steps an agent takes in an environment
+    "MAX_STEPS": 500,  # Maximum number of steps an agent takes in an environment
     "TOURN_SIZE": 2,  # Tournament size
     "ELITISM": True,  # Elitism in tournament selection
-    "TOURN_SIZE": 2,  # Tournament selection size
-    "ELITISM": True,  # Preserve the elite through in the next generation
 }
 
 # Mutation parameters
@@ -100,12 +99,12 @@ MUT_P = {
 # %%
 # Create the Environment
 # ----------------------
-# In this particular tutorial, we will be focussing on the Continuous Lunar Lander environment as you can use PPO with
+# In this particular tutorial, we will be focussing on the acrobot environment as you can use PPO with
 # either discrete or continuous action spaces. The snippet below creates a vectorised environment and then assigns the
 # correct values for ``state_dim`` and ``one_hot``, depending on whether the observation or action spaces are discrete
 # or continuous.
 
-env = makeVectEnvs("LunarLanderContinuous-v2", num_envs=8)  # Create environment
+env = makeVectEnvs("Acrobot-v1", num_envs=8)  # Create environment
 try:
     state_dim = env.single_observation_space.n  # Discrete observation space
     one_hot = True  # Requires one-hot encoding
@@ -144,7 +143,7 @@ pop = initialPopulation(
     one_hot=one_hot,  # One-hot encoding
     net_config=net_config,  # Network configuration
     INIT_HP=INIT_HP,  # Initial hyperparameter
-    population_size=INIT_HP["POPULATION_SIZE"],  # Population size
+    population_size=INIT_HP["POP_SIZE"],  # Population size
     device=device,
 )
 
@@ -163,7 +162,7 @@ pop = initialPopulation(
 tournament = TournamentSelection(
     INIT_HP["TOURN_SIZE"],
     INIT_HP["ELITISM"],
-    INIT_HP["POPULATION_SIZE"],
+    INIT_HP["POP_SIZE"],
     INIT_HP["EVO_EPOCHS"],
 )
 
@@ -197,11 +196,14 @@ mutations = Mutations(
     device=device,
 )
 
+# Define a save path for our trained agent
+save_path = "PPO_trained_agent.pt"
+
 # %%
 # Training and Saving an Agent
 # ----------------------------
 #
-# Using AgileRL ``train`` function
+# Using AgileRL ``train_on_policy`` function
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # The simplest way to train an AgileRL agent is to use one of the implemented AgileRL train functions.
 # Given that PPO is an on-policy algorithm, we can make use of the ``train_on_policy`` function. This
@@ -211,7 +213,7 @@ mutations = Mutations(
 
 trained_pop, pop_fitnesses = train_on_policy(
     env=env,
-    env_name="LunarLanderContinuous-v2",
+    env_name="Acrobot-v1",
     algo="PPO",
     pop=pop,
     INIT_HP=INIT_HP,
@@ -223,16 +225,17 @@ trained_pop, pop_fitnesses = train_on_policy(
     target=INIT_HP["TARGET_SCORE"],
     tournament=tournament,
     mutation=mutations,
-    wb=False,  # Boolean flag to record run with Weights & Biases
-    # save_elite=True     # Boolean flag to save the elite agent in the population
+    wb=True,  # Boolean flag to record run with Weights & Biases
+    save_elite=True,  # Boolean flag to save the elite agent in the population
+    elite_path=save_path,
 )
 
 # %%
 # Using a custom training loop
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# If you would like to have more control over the training process, it is also possible to write your own custom
-# training loops to train your agents. The training loop below is to be used alternatively to the above ``train_on_policy``
-# function and is an example of how you might choose to make use of an AgileRL agent in your own training loop.
+# If we wanted to have more control over the training process, it is also possible to write our own custom
+# training loops to train our agents. The training loop below can be used alternatively to the above ``train_on_policy``
+# function and is an example of how we might choose to make use of a population of AgileRL agents in our own training loop.
 
 total_steps = 0
 elite = pop[0]  # elite variable placeholder
@@ -327,18 +330,14 @@ for episode in trange(INIT_HP["EPISODES"]):
         pop = mutations.mutation(pop)
 
 # Save the trained algorithm
-path = "/models/PPO_elite"
-filename = "PPO_trained_agent.pt"
-os.makedirs(path, exist_ok=True)
-save_path = os.path.join(path, filename)
 elite.saveCheckpoint(save_path)
 
 
 # %%
 # Loading an Agent for Inference and Rendering your Solved Environment
 # --------------------------------------------------------------------
-# Once you have trained and saved an agent, you may want to then use your trained agent for inference. Below outlines
-# how you would load a saved agent and how it can then be used in a testing loop.
+# Once we have trained and saved an agent, we may want to then use our trained agent for inference. Below outlines
+# how we would load a saved agent and how it can then be used in a testing loop.
 
 # %%
 # Load agent
@@ -350,10 +349,11 @@ ppo = PPO(
     action_dim=action_dim,
     one_hot=one_hot,
     discrete_actions=INIT_HP["DISCRETE_ACTIONS"],
+    device=device,
 )
 
 # Load in the saved model
-ppo.loadCheckpoint(path)
+ppo.loadCheckpoint(save_path)
 
 # %%
 # Define function to label image with episode number
@@ -381,12 +381,13 @@ def label_frame(frame, episode_num):
 # %%
 # Test loop for inference
 # ~~~~~~~~~~~~~~~~~~~~~~~
+test_env = gym.make("Acrobot-v1", render_mode="rgb_array")
 rewards = []
 frames = []
 testing_eps = 5
 with torch.no_grad():
     for ep in range(testing_eps):
-        state = env.reset()[0]  # Reset environment at start of episode
+        state = test_env.reset()[0]  # Reset environment at start of episode
         score = 0
 
         for step in range(INIT_HP["MAX_STEPS"]):
@@ -396,19 +397,21 @@ with torch.no_grad():
 
             # Get next action from agent
             action, *_ = ppo.getAction(state)
+            action = action.squeeze()
 
             # Save the frame for this step and append to frames list
-            frame = env.render()
+            frame = test_env.render()
             frames.append(label_frame(frame, episode_num=ep))
 
             # Take the action in the environment
-            state, reward, done, trunc, _ = env.step(action)  # Act in environment
-
+            state, reward, terminated, truncated, _ = test_env.step(
+                action
+            )  # Act in environment
             # Collect the score
             score += reward
 
             # Break if environment 0 is done or truncated
-            if done[0] or trunc[0]:
+            if terminated or truncated:
                 break
 
         # Collect and print episodic reward
@@ -416,12 +419,12 @@ with torch.no_grad():
         print("-" * 15, f"Episode: {ep}", "-" * 15)
         print("Episodic Reward: ", rewards[-1])
 
-    env.close()
+    test_env.close()
 
 # %%
-# Save the gif
+# Save test episosdes as a gif
 # ~~~~~~~~~~~~
 gif_path = "./videos/"
 os.makedirs(gif_path, exist_ok=True)
-imageio.mimwrite(os.path.join("./videos/", "ppo_lunar_lander.gif"), frames, duration=10)
+imageio.mimwrite(os.path.join("./videos/", "ppo_acrobot.gif"), frames, duration=5)
 mean_fitness = np.mean(rewards)
