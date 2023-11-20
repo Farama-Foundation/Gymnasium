@@ -8,8 +8,9 @@ AgileRL PPO Implementation
 # to beat the Gymnasium acrobot environment. AgileRL is a deep reinforcement learning
 # library, focussed on improving the RL training process through evolutionary hyperparameter
 # optimisation (HPO), which has resulted in upto 10x faster HPO compared to other popular deep RL
-# libraries. Check out the AgileRL github [repository](https://github.com/AgileRL/AgileRL) for
-# more information about the library.
+# libraries. Check out the AgileRL github
+# `repository <https://github.com/AgileRL/AgileRL/>`__
+# for more information about the library.
 
 # %%
 # PPO Overview
@@ -24,13 +25,12 @@ AgileRL PPO Implementation
 # ------------
 #
 
+# Author: Michael Pratt
+# License: MIT License
 import os
 
 import imageio
 import numpy as np
-
-# Author: Michael Pratt
-# License: MIT License
 import torch
 from agilerl.algorithms.ppo import PPO
 from agilerl.hpo.mutation import Mutations
@@ -155,7 +155,7 @@ pop = initialPopulation(
 # elitism is used, the best agent from a population is automatically preserved and becomes a member of the next generation.
 # Then, for each tournament, k individuals are randomly chosen, and the agent with the best evaluation fitness is preserved.
 # This is repeated until the population for the next generation is full.
-
+#
 # The class ``TournamentSelection()`` defines the functions required for tournament selection. TournamentSelection.select()
 # returns the best agent, and the new generation of agents.
 
@@ -170,14 +170,15 @@ tournament = TournamentSelection(
 # Mutation is periodically used to explore the hyperparameter space, allowing different hyperparameter combinations to be
 # trialled during training. If certain hyperparameters prove relatively beneficial to training, then that agent is more
 # likely to be preserved in the next generation, and so those characteristics are more likely to remain in the population.
-
+#
 # The ``Mutations()`` class is used to mutate agents with pre-set probabilities. The available mutations currently implemented are:
+#
 # * No mutation
 # * Network architecture mutation - adding layers or nodes. Trained weights are reused and new weights are initialized randomly.
 # * Network parameters mutation - mutating weights with Gaussian noise.
 # * Network activation layer mutation - change of activation layer.
 # * RL algorithm mutation - mutation of learning hyperparameter, such as learning rate or batch size.
-
+#
 # ``Mutations.mutation()`` returns a mutated population.
 # Tournament selection and mutation should be applied sequentially to fully evolve a population between evaluation and learning cycles.
 
@@ -204,7 +205,7 @@ save_path = "PPO_trained_agent.pt"
 # ----------------------------
 #
 # Using AgileRL ``train_on_policy`` function
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # The simplest way to train an AgileRL agent is to use one of the implemented AgileRL train functions.
 # Given that PPO is an on-policy algorithm, we can make use of the ``train_on_policy`` function. This
 # training function will orchestrate the training and hyperparameter optimisation process, removing the
@@ -423,7 +424,7 @@ with torch.no_grad():
 
 # %%
 # Save test episosdes as a gif
-# ~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 gif_path = "./videos/"
 os.makedirs(gif_path, exist_ok=True)
 imageio.mimwrite(os.path.join("./videos/", "ppo_acrobot.gif"), frames, duration=5)
