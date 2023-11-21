@@ -444,7 +444,7 @@ class BipedalWalker(gym.Env, EzPickle):
         self._generate_clouds()
 
         init_x = TERRAIN_STEP * TERRAIN_STARTPAD / 2
-        init_y = TERRAIN_HEIGHT + 2 * LEG_H
+        init_y = TERRAIN_HEIGHT + 2 * LEG_H - LEG_DOWN
         self.hull = self.world.CreateDynamicBody(
             position=(init_x, init_y), fixtures=HULL_FD
         )
@@ -458,7 +458,7 @@ class BipedalWalker(gym.Env, EzPickle):
         self.joints: List[Box2D.b2RevoluteJoint] = []
         for i in [-1, +1]:
             leg = self.world.CreateDynamicBody(
-                position=(init_x, init_y - LEG_H / 2 - LEG_DOWN),
+                position=(init_x, init_y - LEG_H / 2 + LEG_DOWN),
                 angle=(i * 0.05),
                 fixtures=LEG_FD,
             )
@@ -480,7 +480,7 @@ class BipedalWalker(gym.Env, EzPickle):
             self.joints.append(self.world.CreateJoint(rjd))
 
             lower = self.world.CreateDynamicBody(
-                position=(init_x, init_y - LEG_H * 3 / 2 - LEG_DOWN),
+                position=(init_x, init_y - LEG_H * 3 / 2 + LEG_DOWN),
                 angle=(i * 0.05),
                 fixtures=LOWER_FD,
             )
