@@ -25,7 +25,7 @@ def test_normalization(convergence_steps: int = 1000, testing_steps: int = 100):
     for _ in range(testing_steps):
         obs, *_ = env.step(env.action_space.sample())
         observations.append(obs)
-    observations = np.array(observations)  # (25, 3)
+    observations = np.array(observations)  # (100, 3)
 
     mean_obs = np.mean(observations, axis=0)
     var_obs = np.var(observations, axis=0)

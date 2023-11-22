@@ -16,7 +16,7 @@ def create_env():
 
 
 def test_normalization(
-    n_envs: int = 2, convergence_steps: int = 250, testing_steps: int = 25
+    n_envs: int = 2, convergence_steps: int = 250, testing_steps: int = 100
 ):
     vec_env = SyncVectorEnv([create_env for _ in range(n_envs)])
     vec_env = wrappers.vector.NormalizeObservation(vec_env)
@@ -31,7 +31,7 @@ def test_normalization(
     for _ in range(testing_steps):
         obs, *_ = vec_env.step(vec_env.action_space.sample())
         observations.append(obs)
-    observations = np.array(observations)  # (25, 2, 3)
+    observations = np.array(observations)  # (100, 2, 3)
 
     mean_obs = np.mean(observations, axis=(0, 1))
     var_obs = np.var(observations, axis=(0, 1))
