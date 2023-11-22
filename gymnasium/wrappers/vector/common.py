@@ -110,7 +110,7 @@ class RecordEpisodeStatistics(VectorWrapper):
 
         assert isinstance(
             infos, dict
-        ), f"`info` dtype is {type(infos)} while supported dtype is `dict`. This may be due to usage of other wrappers in the wrong order."
+        ), f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
 
         self.episode_returns += rewards
         self.episode_lengths += 1
