@@ -1,16 +1,19 @@
 """Test the vector environment information."""
+from __future__ import annotations
+
+from typing import Any, SupportsFloat
+
 import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.spaces import Discrete
+from gymnasium.core import ActType, ObsType
+from gymnasium.spaces import Box, Discrete
 from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.vector import VectorEnv
-from gymnasium.vector.sync_vector_env import SyncVectorEnv
-from tests.vector.testing_utils import make_env
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv, VectorEnv
 
 
-def test_examples():
+def test_vector_add_info():
     env = VectorEnv()
 
     # Test num-envs==1 then expand_dims(sub-env-info) == vector-infos
@@ -114,62 +117,48 @@ def test_examples():
     assert data_equivalence(vector_infos, expected_vector_infos)
 
 
-@pytest.mark.parametrize("vectorization_mode", ["async", "sync"])
-def test_vector_env_info(
-    vectorization_mode: str,
-    env_id: str = "CartPole-v1",
-    num_envs: int = 3,
-    env_steps: int = 50,
-    seed: int = 123,
-):
-    """Test vector environment info for different vectorization modes."""
-    env = gym.make_vec(
-        env_id,
-        num_envs=num_envs,
-        vectorization_mode=vectorization_mode,
+class ReturnInfoEnv(gym.Env):
+    def __init__(self, infos):
+        self.observation_space = Box(0, 1)
+        self.action_space = Box(0, 1)
+
+        self.infos = infos
+
+    def reset(
+        self,
+        *,
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        return self.observation_space.sample(), self.infos[0]
+
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        return self.observation_space.sample(), 0, True, False, self.infos[1]
+
+
+@pytest.mark.parametrize("vectorizer", [AsyncVectorEnv, SyncVectorEnv])
+def test_vectorizers(vectorizer):
+    vec_env = vectorizer(
+        [
+            lambda: ReturnInfoEnv([{"a": 1}, {"c": np.array([1, 2])}]),
+            lambda: ReturnInfoEnv([{"a": 2, "b": 3}, {"c": np.array([3, 4])}]),
+        ]
     )
-    env.reset(seed=seed)
-    for _ in range(env_steps):
-        env.action_space.seed(seed)
-        action = env.action_space.sample()
-        _, _, terminations, truncations, infos = env.step(action)
-        if any(terminations) or any(truncations):
-            assert len(infos["final_observation"]) == num_envs
-            assert len(infos["_final_observation"]) == num_envs
 
-            assert isinstance(infos["final_observation"], np.ndarray)
-            assert isinstance(infos["_final_observation"], np.ndarray)
+    reset_expected_infos = {
+        "a": np.array([1, 2]),
+        "b": np.array([0, 3]),
+        "_a": np.array([True, True]),
+        "_b": np.array([False, True]),
+    }
+    step_expected_infos = {
+        "c": np.array([[1, 2], [3, 4]]),
+        "_c": np.array([True, True]),
+    }
 
-            for i, (terminated, truncated) in enumerate(zip(terminations, truncations)):
-                if terminated or truncated:
-                    assert infos["_final_observation"][i]
-                else:
-                    assert not infos["_final_observation"][i]
-                    assert infos["final_observation"][i] is None
-
-
-@pytest.mark.parametrize("concurrent_ends", [1, 2, 3])
-def test_vector_env_info_concurrent_termination(
-    concurrent_ends: int,
-    env_id: str = "CartPole-v1",
-    num_envs: int = 3,
-    env_steps: int = 50,
-    seed: int = 123,
-):
-    """Test the vector environment information works with concurrent termination."""
-    # envs that need to terminate together will have the same action
-    actions = [0] * concurrent_ends + [1] * (num_envs - concurrent_ends)
-    envs = [make_env(env_id, seed) for _ in range(num_envs)]
-    envs = SyncVectorEnv(envs)
-
-    for _ in range(env_steps):
-        _, _, terminations, truncations, infos = envs.step(actions)
-        if any(terminations) or any(truncations):
-            for i, (terminated, truncated) in enumerate(zip(terminations, truncations)):
-                if i < concurrent_ends:
-                    assert terminated or truncated
-                    assert infos["_final_observation"][i]
-                else:
-                    assert not infos["_final_observation"][i]
-                    assert infos["final_observation"][i] is None
-            return
+    _, reset_info = vec_env.reset()
+    assert data_equivalence(reset_info, reset_expected_infos)
+    _, _, _, _, step_info = vec_env.step(vec_env.action_space.sample())
+    assert data_equivalence(step_info, step_expected_infos)

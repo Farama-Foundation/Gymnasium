@@ -11,7 +11,7 @@ from gymnasium.core import ObsType
 from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import VectorEnv
-from gymnasium.wrappers.vector import DictInfoToList, RecordEpisodeStatistics
+from gymnasium.wrappers.vector import DictInfoToList
 
 
 def test_usage_in_vector_env(env_id: str = "CartPole-v1", num_envs: int = 3):
@@ -24,55 +24,14 @@ def test_usage_in_vector_env(env_id: str = "CartPole-v1", num_envs: int = 3):
         DictInfoToList(env)
 
 
-def test_info_to_list(
-    env_id: str = "CartPole-v1", num_envs: int = 3, seed: int = 123, env_steps: int = 50
-):
-    env_to_wrap = gym.make_vec(env_id, num_envs=num_envs)
-    wrapped_env = DictInfoToList(env_to_wrap)
-    wrapped_env.action_space.seed(seed)
-    _, info = wrapped_env.reset(seed=seed)
-    assert isinstance(info, list)
-    assert len(info) == num_envs
-
-    for _ in range(env_steps):
-        action = wrapped_env.action_space.sample()
-        _, _, terminations, truncations, list_info = wrapped_env.step(action)
-        for i, (terminated, truncated) in enumerate(zip(terminations, truncations)):
-            if terminated or truncated:
-                assert "final_observation" in list_info[i]
-            else:
-                assert "final_observation" not in list_info[i]
-
-
-def test_info_to_list_statistics(
-    env_id: str = "CartPole-v1", num_envs: int = 3, seed: int = 123, env_steps: int = 50
-):
-    env_to_wrap = gym.make_vec(env_id, num_envs=num_envs)
-    wrapped_env = DictInfoToList(RecordEpisodeStatistics(env_to_wrap))
-    _, info = wrapped_env.reset(seed=seed)
-    wrapped_env.action_space.seed(seed)
-    assert isinstance(info, list)
-    assert len(info) == num_envs
-
-    for _ in range(env_steps):
-        action = wrapped_env.action_space.sample()
-        _, _, terminations, truncations, list_info = wrapped_env.step(action)
-        for i, (terminated, truncated) in enumerate(zip(terminations, truncations)):
-            if terminated or truncated:
-                assert "episode" in list_info[i]
-                for stats in ["r", "l", "t"]:
-                    assert stats in list_info[i]["episode"]
-                    assert np.isscalar(list_info[i]["episode"][stats])
-            else:
-                assert "episode" not in list_info[i]
-
-
 class ResetOptionAsInfo(VectorEnv):
+    """Minimal implementation to test the conversion of vector dict info to list info."""
+
     def reset(
         self,
         *,
         seed: int | list[int] | None = None,
-        options: dict[str, Any] | None = None,  # options are passed as the output info
+        options: dict[str, Any] | None = None,  # options are passed are the info output
     ) -> tuple[ObsType, dict[str, Any]]:
         return None, options
 
@@ -163,14 +122,14 @@ def test_update_info():
 
     vector_infos = {
         "a": np.array([1, 0, 0]),
-        "b": np.array([1.0, 0.0, 0.0]),
-        "c": np.array([None, None, None], dtype=object),
-        "d": np.zeros((3, 2)),
-        "e": np.array([None, None, Discrete(3)], dtype=object),
         "_a": np.array([True, False, False]),
+        "b": np.array([1.0, 0.0, 0.0]),
         "_b": np.array([True, False, False]),
+        "c": np.array([None, None, None], dtype=object),
         "_c": np.array([False, True, False]),
         "_d": np.array([False, True, False]),
+        "d": np.zeros((3, 2)),
+        "e": np.array([None, None, Discrete(3)], dtype=object),
         "_e": np.array([False, False, True]),
     }
     _, list_info = env.reset(options=vector_infos)
