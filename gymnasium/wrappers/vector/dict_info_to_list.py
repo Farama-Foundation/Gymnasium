@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
+
 from gymnasium.core import ActType, ObsType
 from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 
@@ -94,7 +96,7 @@ class DictInfoToList(VectorWrapper):
 
         return obs, list_info
 
-    def _convert_info_to_list(self, infos: dict) -> list[dict[str, Any]]:
+    def _convert_info_to_list(self, vector_infos: dict) -> list[dict[str, Any]]:
         """Convert the dict info to list.
 
         Convert the dict info of the vectorized environment
@@ -102,52 +104,28 @@ class DictInfoToList(VectorWrapper):
         has the info of the i-th environment.
 
         Args:
-            infos (dict): info dict coming from the env.
+            vector_infos (dict): info dict coming from the env.
 
         Returns:
             list_info (list): converted info.
-
         """
         list_info = [{} for _ in range(self.num_envs)]
-        list_info = self._process_episode_statistics(infos, list_info)
-        for k in infos:
-            if k.startswith("_"):
+
+        for key, value in vector_infos.items():
+            if key.startswith("_"):
                 continue
-            for i, has_info in enumerate(infos[f"_{k}"]):
-                if has_info:
-                    list_info[i][k] = infos[k][i]
-        return list_info
 
-    # todo - I think this function should be more general for any information
-    def _process_episode_statistics(self, infos: dict, list_info: list) -> list[dict]:
-        """Process episode statistics.
-
-        `RecordEpisodeStatistics` wrapper add extra
-        information to the info. This information are in
-        the form of a dict of dict. This method process these
-        information and add them to the info.
-        `RecordEpisodeStatistics` info contains the keys
-        "r", "l", "t" which represents "cumulative reward",
-        "episode length", "elapsed time since instantiation of wrapper".
-
-        Args:
-            infos (dict): infos coming from `RecordEpisodeStatistics`.
-            list_info (list): info of the current vectorized environment.
-
-        Returns:
-            list_info (list): updated info.
-
-        """
-        episode_statistics = infos.pop("episode", False)
-        if not episode_statistics:
-            return list_info
-
-        episode_statistics_mask = infos.pop("_episode")
-        for i, has_info in enumerate(episode_statistics_mask):
-            if has_info:
-                list_info[i]["episode"] = {}
-                list_info[i]["episode"]["r"] = episode_statistics["r"][i]
-                list_info[i]["episode"]["l"] = episode_statistics["l"][i]
-                list_info[i]["episode"]["t"] = episode_statistics["t"][i]
+            if isinstance(value, dict):
+                value_list_info = self._convert_info_to_list(value)
+                for env_num, (env_info, has_info) in enumerate(
+                    zip(value_list_info, vector_infos[f"_{key}"])
+                ):
+                    if has_info:
+                        list_info[env_num][key] = env_info
+            else:
+                assert isinstance(value, np.ndarray)
+                for env_num, has_info in enumerate(vector_infos[f"_{key}"]):
+                    if has_info:
+                        list_info[env_num][key] = value[env_num]
 
         return list_info
