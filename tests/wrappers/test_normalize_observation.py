@@ -1,7 +1,37 @@
 """Test suite for NormalizeObservation wrapper."""
+import numpy as np
 
+from gymnasium import spaces, wrappers
 from gymnasium.wrappers import NormalizeObservation
 from tests.testing_env import GenericTestEnv
+
+
+def test_normalization(convergence_steps: int = 750, testing_steps: int = 25):
+    env = GenericTestEnv(
+        observation_space=spaces.Box(
+            low=np.array([0, -10, -5], dtype=np.float32),
+            high=np.array([10, -5, 10], dtype=np.float32),
+        )
+    )
+    env = wrappers.NormalizeObservation(env)
+
+    env.reset(seed=123)
+    env.action_space.seed(123)
+    for _ in range(convergence_steps):
+        env.step(env.action_space.sample())
+
+    observations = []
+    for _ in range(testing_steps):
+        obs, *_ = env.step(env.action_space.sample())
+        observations.append(obs)
+    observations = np.array(observations)  # (25, 3)
+
+    mean_obs = np.mean(observations, axis=0)
+    var_obs = np.var(observations, axis=0)
+    assert mean_obs.shape == (3,) and var_obs.shape == (3,)
+
+    assert np.allclose(mean_obs, np.zeros(3), atol=0.15)
+    assert np.allclose(var_obs, np.ones(3), atol=0.2)
 
 
 def test_update_running_mean_property():
