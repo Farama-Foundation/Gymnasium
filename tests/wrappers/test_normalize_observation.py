@@ -6,7 +6,7 @@ from gymnasium.wrappers import NormalizeObservation
 from tests.testing_env import GenericTestEnv
 
 
-def test_normalization(convergence_steps: int = 750, testing_steps: int = 25):
+def test_normalization(convergence_steps: int = 1000, testing_steps: int = 100):
     env = GenericTestEnv(
         observation_space=spaces.Box(
             low=np.array([0, -10, -5], dtype=np.float32),
@@ -16,6 +16,7 @@ def test_normalization(convergence_steps: int = 750, testing_steps: int = 25):
     env = wrappers.NormalizeObservation(env)
 
     env.reset(seed=123)
+    env.observation_space.seed(123)
     env.action_space.seed(123)
     for _ in range(convergence_steps):
         env.step(env.action_space.sample())
@@ -31,7 +32,7 @@ def test_normalization(convergence_steps: int = 750, testing_steps: int = 25):
     assert mean_obs.shape == (3,) and var_obs.shape == (3,)
 
     assert np.allclose(mean_obs, np.zeros(3), atol=0.15)
-    assert np.allclose(var_obs, np.ones(3), atol=0.2)
+    assert np.allclose(var_obs, np.ones(3), atol=0.15)
 
 
 def test_update_running_mean_property():

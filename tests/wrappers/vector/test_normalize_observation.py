@@ -23,6 +23,7 @@ def test_normalization(
     vec_env = wrappers.vector.NormalizeObservation(vec_env)
 
     vec_env.reset(seed=123)
+    vec_env.observation_space.seed(123)
     vec_env.action_space.seed(123)
     for _ in range(convergence_steps):
         vec_env.step(vec_env.action_space.sample())
@@ -51,6 +52,7 @@ def test_wrapper_equivalence(
     vec_env = wrappers.vector.NormalizeObservation(vec_env)
 
     vec_env.reset(seed=123)
+    vec_env.observation_space.seed(123)
     vec_env.action_space.seed(123)
     for _ in range(n_steps):
         vec_env.step(vec_env.action_space.sample())
@@ -73,8 +75,7 @@ def test_update_running_mean():
     # Default value is True
     assert env.update_running_mean
 
-    obs, _ = env.reset(seed=123)
-    env.action_space.seed(123)
+    env.reset()
     for _ in range(100):
         env.step(env.action_space.sample())
 
