@@ -45,19 +45,15 @@ def test_autoreset_wrapper_autoreset():
     assert info == {"count": 2}
 
     obs, reward, terminated, truncated, info = env.step(action)
-    assert obs == np.array([0])
+    assert obs == np.array([3])
     assert (terminated or truncated) is True
     assert reward == 1
-    assert info == {
-        "count": 0,
-        "final_observation": np.array([3]),
-        "final_info": {"count": 3},
-    }
+    assert info == {"count": 3}
 
     obs, reward, terminated, truncated, info = env.step(action)
-    assert obs == np.array([1])
+    assert obs == np.array([0])
     assert reward == 0
     assert (terminated or truncated) is False
-    assert info == {"count": 1}
+    assert info == {"count": 0}
 
     env.close()
