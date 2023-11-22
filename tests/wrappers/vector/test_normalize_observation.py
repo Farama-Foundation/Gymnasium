@@ -3,7 +3,6 @@ import numpy as np
 
 from gymnasium import spaces, wrappers
 from gymnasium.vector import SyncVectorEnv
-from gymnasium.vector.utils import create_empty_array
 from tests.testing_env import GenericTestEnv
 
 
