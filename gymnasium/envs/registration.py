@@ -567,7 +567,7 @@ def register(
     disable_env_checker: bool = False,
     additional_wrappers: tuple[WrapperSpec, ...] = (),
     vector_entry_point: VectorEnvCreator | str | None = None,
-    **kwargs: Any,
+    kwargs: dict = {},
 ):
     """Registers an environment in gymnasium with an ``id`` to use with :meth:`gymnasium.make` with the ``entry_point`` being a string or callable for creating the environment.
 
@@ -587,7 +587,7 @@ def register(
         disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.
         additional_wrappers: Additional wrappers to apply the environment.
         vector_entry_point: The entry point for creating the vector environment
-        **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.
+        kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.
 
     Changelogs:
         v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed

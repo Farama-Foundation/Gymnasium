@@ -19,16 +19,20 @@ def register_registration_testing_envs():
         gym.register(
             id=env_id,
             entry_point="tests.envs.registration.utils_envs:ArgumentEnv",
-            arg1="arg1",
-            arg2="arg2",
-            arg3="arg3",
+            kwargs={
+                "arg1": "arg1",
+                "arg2": "arg2",
+                "arg3": "arg3",
+            },
         )
     gym.register(
         id=f"{namespace}/{unversioned_name}",
         entry_point="tests.env.utils_envs:ArgumentEnv",
-        arg1="arg1",
-        arg2="arg2",
-        arg3="arg3",
+        kwargs={
+            "arg1": "arg1",
+            "arg2": "arg2",
+            "arg3": "arg3",
+        },
     )
 
     yield
