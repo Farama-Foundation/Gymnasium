@@ -133,7 +133,7 @@ MUT_P = {
 # correct values for ``state_dim`` and ``one_hot``, depending on whether the observation or action spaces are discrete
 # or continuous.
 
-env = makeVectEnvs("CartPole-v1", num_envs=8)  # Create environment
+env = makeVectEnvs("LunarLander-v2", num_envs=8)  # Create environment
 try:
     state_dim = env.single_observation_space.n  # Discrete observation space
     one_hot = True  # Requires one-hot encoding
@@ -261,7 +261,7 @@ per = INIT_HP["PER"]
 
 trained_pop, pop_fitnesses = train(
     env=env,
-    env_name="CartPole-v1",
+    env_name="LunarLander-v2",
     algo="RainbowDQN",
     pop=pop,
     memory=memory,
@@ -414,28 +414,6 @@ trained_pop, pop_fitnesses = train(
 
 # # Load in the saved model
 # rainbow_dqn.loadCheckpoint(save_path)
-
-# %%
-# Define function to label image with episode number
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# The below function adds the episode number to associated image frames and will allow us to see how the agent performed in
-# each episode.
-
-
-def label_frame(frame, episode_num):
-    im = Image.fromarray(frame)
-
-    drawer = ImageDraw.Draw(im)
-
-    if np.mean(frame) < 128:
-        text_color = (255, 255, 255)
-    else:
-        text_color = (0, 0, 0)
-    drawer.text(
-        (im.size[0] / 20, im.size[1] / 18), f"Episode: {episode_num+1}", fill=text_color
-    )
-
-    return im
 
 
 # %%

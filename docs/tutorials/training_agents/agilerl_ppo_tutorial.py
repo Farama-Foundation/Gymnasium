@@ -2,15 +2,26 @@
 AgileRL PPO Implementation
 ==========================
 
+In this tutorial, we will be training and optimising the hyperparameters of a population of PPO agents
+to beat the Gymnasium acrobot environment. AgileRL is a deep reinforcement learning
+library, focussed on improving the RL training process through evolutionary hyperparameter
+optimisation (HPO), which has resulted in upto 10x faster HPO compared to other popular deep RL
+libraries. Check out the AgileRL github
+`repository <https://github.com/AgileRL/AgileRL/>`__
+for more information about the library.
+
+To complete the acrobot environment, the agent must learn to apply torques on the joint to swing the free end
+of the linear chain above the black line from an initial state of hanging stationary.
+
+.. figure:: /_static/img/tutorials/agilerl_ppo_acrobot.gif
+  :width: 400
+  :alt: agent-environment-diagram
+  :align: center
+
+  Figure 1: Completed Acrobot environment using an AgileRL PPO agent
+
 """
-# %%
-# In this tutorial, we will be training and optimising the hyperparameters of a population of PPO agents
-# to beat the Gymnasium acrobot environment. AgileRL is a deep reinforcement learning
-# library, focussed on improving the RL training process through evolutionary hyperparameter
-# optimisation (HPO), which has resulted in upto 10x faster HPO compared to other popular deep RL
-# libraries. Check out the AgileRL github
-# `repository <https://github.com/AgileRL/AgileRL/>`__
-# for more information about the library.
+
 
 # %%
 # PPO Overview
@@ -53,7 +64,7 @@ import gymnasium as gym
 
 # Initial hyperparameters
 INIT_HP = {
-    "POP_SIZE": 6,  # Population size
+    "POP_SIZE": 3,  # Population size
     "DISCRETE_ACTIONS": True,  # Discrete action space
     "BATCH_SIZE": 128,  # Batch size
     "LR": 1e-3,  # Learning rate
@@ -68,7 +79,7 @@ INIT_HP = {
     "UPDATE_EPOCHS": 4,  # Number of policy update epochs
     # Swap image channels dimension from last to first [H, W, C] -> [C, H, W]
     "CHANNELS_LAST": False,  # Use with RGB states
-    "EPISODES": 100,  # Number of episodes to train for
+    "EPISODES": 300,  # Number of episodes to train for
     "EVO_EPOCHS": 20,  # Evolution frequency, i.e. evolve after every 20 episodes
     "TARGET_SCORE": 200.0,  # Target score that will beat the environment
     "EVO_LOOP": 3,  # Number of evaluation episodes
@@ -226,7 +237,7 @@ trained_pop, pop_fitnesses = train_on_policy(
     target=INIT_HP["TARGET_SCORE"],
     tournament=tournament,
     mutation=mutations,
-    wb=True,  # Boolean flag to record run with Weights & Biases
+    wb=False,  # Boolean flag to record run with Weights & Biases
     save_elite=True,  # Boolean flag to save the elite agent in the population
     elite_path=save_path,
 )
@@ -356,28 +367,6 @@ ppo = PPO(
 # Load in the saved model
 ppo.loadCheckpoint(save_path)
 
-# %%
-# Define function to label image with episode number
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# The below function adds the episode number to associated image frames and will allow us to see how the agent performed in
-# each episode.
-
-
-def label_frame(frame, episode_num):
-    im = Image.fromarray(frame)
-
-    drawer = ImageDraw.Draw(im)
-
-    if np.mean(frame) < 128:
-        text_color = (255, 255, 255)
-    else:
-        text_color = (0, 0, 0)
-    drawer.text(
-        (im.size[0] / 20, im.size[1] / 18), f"Episode: {episode_num+1}", fill=text_color
-    )
-
-    return im
-
 
 # %%
 # Test loop for inference
@@ -385,7 +374,7 @@ def label_frame(frame, episode_num):
 test_env = gym.make("Acrobot-v1", render_mode="rgb_array")
 rewards = []
 frames = []
-testing_eps = 5
+testing_eps = 7
 with torch.no_grad():
     for ep in range(testing_eps):
         state = test_env.reset()[0]  # Reset environment at start of episode
@@ -402,7 +391,7 @@ with torch.no_grad():
 
             # Save the frame for this step and append to frames list
             frame = test_env.render()
-            frames.append(label_frame(frame, episode_num=ep))
+            frames.append(frame)
 
             # Take the action in the environment
             state, reward, terminated, truncated, _ = test_env.step(
@@ -427,5 +416,7 @@ with torch.no_grad():
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 gif_path = "./videos/"
 os.makedirs(gif_path, exist_ok=True)
-imageio.mimwrite(os.path.join("./videos/", "ppo_acrobot.gif"), frames, duration=5)
+imageio.mimwrite(os.path.join("./videos/", "ppo_acrobot.gif"), frames, loop=0)
 mean_fitness = np.mean(rewards)
+
+# %%

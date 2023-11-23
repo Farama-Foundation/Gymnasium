@@ -2,15 +2,25 @@
 AgileRL TD3 Implementation
 ==========================
 
+In this tutorial, we will be training and optimising the hyperparameters of a population of TD3 agents
+to beat the Gymnasium continuous lunar lander environment. AgileRL is a deep reinforcement learning
+library, focussed on improving the RL training process through evolutionary hyperparameter
+optimisation (HPO), which has resulted in upto 10x faster HPO compared to other popular deep RL
+libraries. Check out the AgileRL github `repository <https://github.com/AgileRL/AgileRL/>`__ for
+more information about the library.
+
+To complete the lunar lander environment, the agent must learn to fire the engine left, right, up,
+or not at all to safely navigate the lander to the landing pad without crashing.
+
+.. figure:: /_static/img/tutorials/agilerl_td3_lunar_lander.gif
+  :width: 400
+  :alt: agent-environment-diagram
+  :align: center
+
+  Figure 1: Completed Lunar Lander environment using an AgileRL TD3 agent
+
 """
 
-# %%
-# In this tutorial, we will be training and optimising the hyperparameters of a population of TD3 agents
-# to beat the Gymnasium continuous lunar lander environment. AgileRL is a deep reinforcement learning
-# library, focussed on improving the RL training process through evolutionary hyperparameter
-# optimisation (HPO), which has resulted in upto 10x faster HPO compared to other popular deep RL
-# libraries. Check out the AgileRL github `repository <https://github.com/AgileRL/AgileRL/>`__ for
-# more information about the library.
 
 # %%
 # TD3 Overview
@@ -376,34 +386,12 @@ elite.saveCheckpoint(save_path)
 # %%
 # Load agent
 # ~~~~~~~~~~
-
 # Instantiate a TD3 object
+save_path = "TD3_trained_agent.pt"
 td3 = TD3(state_dim=state_dim, action_dim=action_dim, one_hot=one_hot, device=device)
 
 # Load in the saved model
 td3.loadCheckpoint(save_path)
-
-# %%
-# Define function to label image with episode number
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# The below function adds the episode number to associated image frames and will allow us to see how the agent performed in
-# each episode.
-
-
-def label_frame(frame, episode_num):
-    im = Image.fromarray(frame)
-
-    drawer = ImageDraw.Draw(im)
-
-    if np.mean(frame) < 128:
-        text_color = (255, 255, 255)
-    else:
-        text_color = (0, 0, 0)
-    drawer.text(
-        (im.size[0] / 20, im.size[1] / 18), f"Episode: {episode_num+1}", fill=text_color
-    )
-
-    return im
 
 
 # %%
@@ -412,7 +400,7 @@ def label_frame(frame, episode_num):
 test_env = gym.make("LunarLanderContinuous-v2", render_mode="rgb_array")
 rewards = []
 frames = []
-testing_eps = 5
+testing_eps = 7
 with torch.no_grad():
     for ep in range(testing_eps):
         state = test_env.reset()[0]  # Reset environment at start of episode
@@ -428,7 +416,7 @@ with torch.no_grad():
 
             # Save the frame for this step and append to frames list
             frame = test_env.render()
-            frames.append(label_frame(frame, episode_num=ep))
+            frames.append(frame)
 
             # Take the action in the environment
             state, reward, terminated, truncated, _ = test_env.step(
@@ -440,6 +428,7 @@ with torch.no_grad():
 
             # Break if environment 0 is done or truncated
             if terminated or truncated:
+                print("terminated")
                 break
 
         # Collect and print episodic reward
@@ -447,14 +436,20 @@ with torch.no_grad():
         print("-" * 15, f"Episode: {ep}", "-" * 15)
         print("Episodic Reward: ", rewards[-1])
 
+    print(rewards)
+
     test_env.close()
+
 
 # %%
 # Save test episosdes as a gif
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+frames = frames[::3]
 gif_path = "./videos/"
 os.makedirs(gif_path, exist_ok=True)
 imageio.mimwrite(
-    os.path.join("./videos/", "td3_bipedal_walker.gif"), frames, duration=10
+    os.path.join("./videos/", "td3_lunar_lander.gif"), frames, duration=50, loop=0
 )
 mean_fitness = np.mean(rewards)
+
+# %%
