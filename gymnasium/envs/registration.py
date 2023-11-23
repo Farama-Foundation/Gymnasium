@@ -621,7 +621,7 @@ def register(
         max_episode_steps=max_episode_steps,
         order_enforce=order_enforce,
         disable_env_checker=disable_env_checker,
-        **kwargs,
+        kwargs=kwargs,
         additional_wrappers=additional_wrappers,
         vector_entry_point=vector_entry_point,
     )
