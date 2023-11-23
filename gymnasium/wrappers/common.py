@@ -468,14 +468,14 @@ class RecordEpisodeStatistics(
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
-        buffer_length: int | None = 100,
+        buffer_length: int = 100,
         stats_key: str = "episode",
     ):
         """This wrapper will keep track of cumulative rewards and episode lengths.
 
         Args:
             env (Env): The environment to apply the wrapper
-            buffer_length: The size of the buffers :attr:`return_queue` and :attr:`length_queue`
+            buffer_length: The size of the buffers :attr:`return_queue`, :attr:`length_queue` and :attr:`time_queue`
             stats_key: The info key for the episode statistics
         """
         gym.utils.RecordConstructorArgs.__init__(self)
@@ -518,6 +518,7 @@ class RecordEpisodeStatistics(
             self.length_queue.append(self.episode_lengths)
 
             self.episode_count += 1
+            self.episode_start_time = time.perf_counter()
 
         return obs, reward, terminated, truncated, info
 

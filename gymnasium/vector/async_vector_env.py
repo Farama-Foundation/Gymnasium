@@ -668,7 +668,7 @@ def _async_worker(
                         truncated,
                         info,
                     ) = env.step(data)
-                    autoreset = terminated or truncated
+                autoreset = terminated or truncated
 
                 if shared_memory:
                     write_to_shared_memory(
