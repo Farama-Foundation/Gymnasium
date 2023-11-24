@@ -4,7 +4,7 @@ from __future__ import annotations
 import functools
 import numbers
 from collections import abc
-from typing import Any, Iterable, Mapping, NamedTuple, SupportsFloat, Type
+from typing import Any, Iterable, Mapping, NamedTuple, SupportsFloat
 
 import numpy as np
 
@@ -71,6 +71,7 @@ def _namedtuple_numpy_to_jax(
 ) -> NamedTuple:
     """Converts an NamedTuple from Numpy to Jax."""
     # "To prevent conflicts with field names, the method and attribute names start with an underscore."
+    # noinspection PyProtectedMember
     return type(value)._make(numpy_to_jax(v) for v in value)
 
 
@@ -113,16 +114,17 @@ def _namedtuple_jax_to_numpy(
 ) -> NamedTuple:
     """Converts an NamedTuple from JAX NamedTuple to a NamedTuple of Numpy Array."""
     # "To prevent conflicts with field names, the method and attribute names start with an underscore."
+    # noinspection PyProtectedMember
     return type(value)._make(jax_to_numpy(v) for v in value)
 
 
-def register_namedtuple(cls: Type[NamedTuple]):
+def register_namedtuple(cls: type[NamedTuple]):
     """Register conversion methods for namedtuple.
 
-    Note: can be registered by specific type, not NamedTuple, like this
+    Note: can be registered by specific type, not generic NamedTuple, like this
 
-    1. declaration of NamedTuple, using Name = namedtuple() or class Name(NamedTuple)
-    2. register_namedtuple(NewName)
+    1. declaration of NewNamedTuple, using NewNamedTuple = namedtuple() or class NewNamedTuple(NamedTuple)
+    2. register_namedtuple(NewNamedTuple)
     """
     numpy_to_jax.register(cls, _namedtuple_numpy_to_jax)
     jax_to_numpy.register(cls, _namedtuple_jax_to_numpy)

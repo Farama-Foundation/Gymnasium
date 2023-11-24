@@ -20,6 +20,7 @@ from tests.testing_env import GenericTestEnv  # noqa: E402
 
 class UnregNamedTuple(NamedTuple):
     """Do not register this named tuple"""
+
     a: jax.Array
     b: jax.Array
 
