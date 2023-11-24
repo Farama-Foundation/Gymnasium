@@ -412,7 +412,7 @@ class NormalizeObservation(
 ):
     """Normalizes observations to be centered at the mean with unit variance.
 
-    The property :prop:`_update_running_mean` allows to freeze/continue the running mean calculation of the observation
+    The property :attr:`update_running_mean` allows to freeze/continue the running mean calculation of the observation
     statistics. If ``True`` (default), the ``RunningMeanStd`` will get updated every time ``step`` or ``reset`` is called.
     If ``False``, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 

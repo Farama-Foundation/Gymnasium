@@ -9,9 +9,9 @@ firstpage:
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-Gymnasium is a project that provides an API (application programming interface) for all single agent reinforcement learning environments with implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more. This page will outline the basics of how to use Gymnasium including its four key functions: :meth:`make`, :meth:`Env.reset`, :meth:`Env.step` and :meth:`Env.render`. 
+Gymnasium is a project that provides an API (application programming interface) for all single agent reinforcement learning environments with implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more. This page will outline the basics of how to use Gymnasium including its four key functions: :meth:`make`, :meth:`Env.reset`, :meth:`Env.step` and :meth:`Env.render`.
 
-At the core of Gymnasium is :class:`Env`, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (note: this is not a perfect reconstruction, missing several components of MDPs). The class provides users the ability generate an initial state, transition (update) the state with actions and the visualise the environment. Alongside :class:`Env`, :class:`Wrapper` are provided to help augment / modify the environment, in particular, the agent observations, rewards and actions taken. 
+At the core of Gymnasium is :class:`Env`, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (note: this is not a perfect reconstruction, missing several components of MDPs). The class provides users the ability generate an initial state, transition (update) the state with actions and the visualise the environment. Alongside :class:`Env`, :class:`Wrapper` are provided to help augment / modify the environment, in particular, the agent observations, rewards and actions taken.
 ```
 
 ## Initializing Environments
@@ -30,12 +30,12 @@ env = gym.make('CartPole-v1')
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-This function will return an :class:`Env` for users to interact with. To see all environments you can create, use :meth:`pprint_registry`. Furthermore, :meth:`make` provides a number of additional arguments for specifying keywords to the environment, adding more or less wrappers, etc. See :meth:`make` for more information. 
+This function will return an :class:`Env` for users to interact with. To see all environments you can create, use :meth:`pprint_registry`. Furthermore, :meth:`make` provides a number of additional arguments for specifying keywords to the environment, adding more or less wrappers, etc. See :meth:`make` for more information.
 ```
 
 ## Interacting with the Environment
 
-Within reinforcement learning, the classic "agent-environment loop" pictured below is simplified representation of how agents and environment interact with each other. The agent receives an observation about the environment, the agent selects an action that the environment uses to determine the reward and the next observation, and the cycle repeating itself until the environment ends (terminates).  
+Within reinforcement learning, the classic "agent-environment loop" pictured below is simplified representation of how agents and environment interact with each other. The agent receives an observation about the environment, the agent selects an action that the environment uses to determine the reward and the next observation, and the cycle repeating itself until the environment ends (terminates).
 
 ```{image} /_static/diagrams/AE_loop.png
 :width: 50%
@@ -83,7 +83,7 @@ First, an environment is created using :meth:`make` with an additional keyword `
 
 After initializing the environment, we :meth:`Env.reset` the environment to get the first observation of the environment along with an additional information. For initializing the environment with a particular random seed or options (see environment documentation for possible values) use the ``seed`` or ``options`` parameters with :meth:`reset`.
 
-As we wish to continue the agent-environment loop until the environment ends, which is in an unknown number of timesteps, we define ``episode_over`` as a variable to know when to stop interacting with the environment along with a while loop that uses it. 
+As we wish to continue the agent-environment loop until the environment ends, which is in an unknown number of timesteps, we define ``episode_over`` as a variable to know when to stop interacting with the environment along with a while loop that uses it.
 
 Next, the agent performs an action in the environment, :meth:`Env.step` that takes a select actions (in this case random with ``env.action_space.sample()``) to update the environment. This action can be imagined as moving a robot or pressing a button on a games' controller that causes a change within the environment. As a result, the agent receives a new observation from the updated environment along with a reward for taking the action. This reward could be for instance positive for destroying an enemy or a negative reward for moving into lava. One such action-observation exchange is referred to as a **timestep**.
 
@@ -95,14 +95,14 @@ However, after some timesteps, the environment may end, this is called the termi
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env
 
-Every environment specifies the format of valid actions and observations with the :attr:`action_space` and :attr:`observation_space` attributes. This is helpful for both knowing the expected input and output of the environment as all valid actions and observation should be contained with their respective space. In the example above, we sampled random actions via ``env.action_space.sample()`` instead of using an agent policy, mapping observations to actions which users will want to make. 
+Every environment specifies the format of valid actions and observations with the :attr:`action_space` and :attr:`observation_space` attributes. This is helpful for both knowing the expected input and output of the environment as all valid actions and observation should be contained with their respective space. In the example above, we sampled random actions via ``env.action_space.sample()`` instead of using an agent policy, mapping observations to actions which users will want to make.
 
 Importantly, :attr:`Env.action_space` and :attr:`Env.observation_space` are instances of :class:`Space`, a high-level python class that provides the key functions: :meth:`Space.contains` and :meth:`Space.sample`. Gymnasium has support a wide range of spaces that users might need:
 
 .. py:currentmodule:: gymnasium.spaces
 
 - :class:`Box`: describes bounded space with upper and lower limits of any shape.
-- :class:`Discrete`: describes a discrete space where ``{0, 1, ..., n-1}`` are the possible values our observation or action can take. 
+- :class:`Discrete`: describes a discrete space where ``{0, 1, ..., n-1}`` are the possible values our observation or action can take.
 - :class:`MultiBinary`: describes a binary space of any shape.
 - :class:`MultiDiscrete`: consists of a series of :class:`Discrete` action spaces with a different number of actions in each element.
 - :class:`Text`: describes a string space with a minimum and maximum length
@@ -111,7 +111,7 @@ Importantly, :attr:`Env.action_space` and :attr:`Env.observation_space` are inst
 - :class:`Graph`: describes a mathematical graph (network) with interlinking nodes and edges
 - :class:`Sequence`: describes a variable length of simpler space elements.
 
-For example usage of spaces, see their `documentation </api/spaces>`_ along with `utility functions </api/spaces/utils>`_. There are a couple of more niche spaces :class:`Graph`, :class:`Sequence` and :class:`Text`.
+For example usage of spaces, see their `documentation <../api/spaces>`_ along with `utility functions <../api/spaces/utils>`_. There are a couple of more niche spaces :class:`Graph`, :class:`Sequence` and :class:`Text`.
 ```
 
 ## Modifying the environment
@@ -163,9 +163,9 @@ If you have a wrapped environment, and you want to get the unwrapped environment
 
 ## More information
 
-* [Training an agent](introduction/train_agent)
-* [Making a Custom Environment](introduction/create_custom_env)
-* [Recording an agent's behaviour](introduction/recording_agents)
-* [Speeding up an Environment](introduction/speeding_up_env)
-* [Compatibility with OpenAI Gym](/introduction/gym_compatibility)
-* [Migration Guide for Gym v0.21 to v0.26 and for v1.0.0](introduction/migration_guide)
+* [Training an agent](train_agent)
+* [Making a Custom Environment](create_custom_env)
+* [Recording an agent's behaviour](record_agent)
+* [Speeding up an Environment](speed_up_env)
+* [Compatibility with OpenAI Gym](gym_compatibility)
+* [Migration Guide for Gym v0.21 to v0.26 and for v1.0.0](migration_guide)

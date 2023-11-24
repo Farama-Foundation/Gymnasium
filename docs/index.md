@@ -47,10 +47,10 @@ env.close()
 :caption: Introduction
 
 introduction/basic_usage
-introduction/training_agents
-introduction/creating_custom_env
-introduction/recording_agents
-introduction/speeding_up_env
+introduction/train_agent
+introduction/create_custom_env
+introduction/record_agent
+introduction/speed_up_env
 introduction/gym_compatibility
 introduction/migration_guide
 ```
