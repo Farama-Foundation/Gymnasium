@@ -79,6 +79,11 @@ authors:
     email: omar.younis98@gmail.com
     affiliation: University of Bologna
     orcid: 'https://orcid.org/0009-0004-2783-7932'
+  - given-names: Roger
+    family-names: Larsson
+    email: roger.larsson@slentelit.se
+    affiliation: Slentelit AB
+    orcid: 'https://orcid.org/0009-0004-7872-3142'
 identifiers:
   - type: doi
     value: 10.5281/zenodo.8127025

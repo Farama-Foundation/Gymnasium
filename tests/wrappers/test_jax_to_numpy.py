@@ -1,4 +1,5 @@
 """Test suite for JaxToNumpy wrapper."""
+from typing import NamedTuple
 
 import numpy as np
 import pytest
@@ -12,8 +13,32 @@ from gymnasium.wrappers.jax_to_numpy import (  # noqa: E402
     JaxToNumpy,
     jax_to_numpy,
     numpy_to_jax,
+    register_namedtuple,
 )
 from tests.testing_env import GenericTestEnv  # noqa: E402
+
+
+class UnregNamedTuple(NamedTuple):
+    """Do not register this named tuple"""
+    a: jax.Array
+    b: jax.Array
+
+
+@pytest.mark.xfail
+def test_fail_on_namedtuple():
+    """Expect Bug (#780) to still exist"""
+    test_roundtripping(
+        UnregNamedTuple(a=3, b=2),
+        UnregNamedTuple(a=np.array(3, dtype=np.int32), b=np.array(2, dtype=np.int32)),
+    )
+
+
+class RegisteredNamedTuple(NamedTuple):
+    a: jax.Array
+    b: jax.Array
+
+
+register_namedtuple(RegisteredNamedTuple)  # Bug (#780) work around
 
 
 @pytest.mark.parametrize(
@@ -54,6 +79,12 @@ from tests.testing_env import GenericTestEnv  # noqa: E402
                 ),
                 "b": {"c": np.array(5, dtype=np.int32)},
             },
+        ),
+        (
+            RegisteredNamedTuple(a=3, b=2),
+            RegisteredNamedTuple(
+                a=np.array(3, dtype=np.int32), b=np.array(2, dtype=np.int32)
+            ),
         ),
     ],
 )
