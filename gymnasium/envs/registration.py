@@ -567,7 +567,7 @@ def register(
     disable_env_checker: bool = False,
     additional_wrappers: tuple[WrapperSpec, ...] = (),
     vector_entry_point: VectorEnvCreator | str | None = None,
-    kwargs: dict = {},
+    kwargs: dict | None = None,
 ):
     """Registers an environment in gymnasium with an ``id`` to use with :meth:`gymnasium.make` with the ``entry_point`` being a string or callable for creating the environment.
 
@@ -598,6 +598,8 @@ def register(
     global registry, current_namespace
     ns, name, version = parse_env_id(id)
 
+    if kwargs is None:
+        kwargs = dict()
     if current_namespace is not None:
         if (
             kwargs.get("namespace") is not None
