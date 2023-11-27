@@ -1058,7 +1058,7 @@
     <span class="n">disable_env_checker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">additional_wrappers</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperSpec</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
     <span class="n">vector_entry_point</span><span class="p">:</span> <span class="n">VectorEnvCreator</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Registers an environment in gymnasium with an ``id`` to use with :meth:`gymnasium.make` with the ``entry_point`` being a string or callable for creating the environment.</span>
 
@@ -1078,7 +1078,7 @@
 <span class="sd">        disable_env_checker: If to disable the :class:`gymnasium.wrappers.PassiveEnvChecker` to the environment.</span>
 <span class="sd">        additional_wrappers: Additional wrappers to apply the environment.</span>
 <span class="sd">        vector_entry_point: The entry point for creating the vector environment</span>
-<span class="sd">        **kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.</span>
+<span class="sd">        kwargs: arbitrary keyword arguments which are passed to the environment constructor on initialisation.</span>
 
 <span class="sd">    Changelogs:</span>
 <span class="sd">        v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed</span>
@@ -1089,6 +1089,8 @@
     <span class="k">global</span> <span class="n">registry</span><span class="p">,</span> <span class="n">current_namespace</span>
     <span class="n">ns</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_env_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">current_namespace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;namespace&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -1112,7 +1114,7 @@
         <span class="n">max_episode_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span>
         <span class="n">order_enforce</span><span class="o">=</span><span class="n">order_enforce</span><span class="p">,</span>
         <span class="n">disable_env_checker</span><span class="o">=</span><span class="n">disable_env_checker</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="n">additional_wrappers</span><span class="o">=</span><span class="n">additional_wrappers</span><span class="p">,</span>
         <span class="n">vector_entry_point</span><span class="o">=</span><span class="n">vector_entry_point</span><span class="p">,</span>
     <span class="p">)</span>
