@@ -142,7 +142,7 @@ class BipedalWalker(gym.Env, EzPickle):
     if the walker exceeds the right end of the terrain length.
 
     ## Arguments
-    To use to the _hardcore_ environment, you need to specify the
+    To use the _hardcore_ environment, you need to specify the
     `hardcore=True` argument like below:
     ```python
     import gymnasium as gym

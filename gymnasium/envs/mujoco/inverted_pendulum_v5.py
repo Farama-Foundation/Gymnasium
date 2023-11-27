@@ -108,7 +108,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
     | Parameter               | Type       | Default      |Description                    |
     |-------------------------|------------|--------------|-------------------------------|
-    | `xml_file`              | **str**    | `"inverted_double_pendulum.xml"`  | Path to a MuJoCo model |
+    | `xml_file`              | **str**    | `"inverted_pendulum.xml"`  | Path to a MuJoCo model |
     | `reset_noise_scale`     | **float**  | `0.01`        | Scale of random perturbations of initial position and velocity (see section on Starting State) |
 
     ## Version History
