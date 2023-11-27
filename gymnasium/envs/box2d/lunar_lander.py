@@ -145,7 +145,7 @@ class LunarLander(gym.Env, EzPickle):
     > them is destroyed.
 
     ## Arguments
-    To use to the _continuous_ environment, you need to specify the
+    To use the _continuous_ environment, you need to specify the
     `continuous=True` argument like below:
     ```python
     import gymnasium as gym
