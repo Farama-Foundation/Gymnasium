@@ -1,4 +1,5 @@
 """Test suite for JaxToNumpy wrapper."""
+from typing import NamedTuple
 
 import numpy as np
 import pytest
@@ -14,6 +15,11 @@ from gymnasium.wrappers.jax_to_numpy import (  # noqa: E402
     numpy_to_jax,
 )
 from tests.testing_env import GenericTestEnv  # noqa: E402
+
+
+class TestingNamedTuple(NamedTuple):
+    a: jax.Array
+    b: jax.Array
 
 
 @pytest.mark.parametrize(
@@ -54,6 +60,16 @@ from tests.testing_env import GenericTestEnv  # noqa: E402
                 ),
                 "b": {"c": np.array(5, dtype=np.int32)},
             },
+        ),
+        (
+            TestingNamedTuple(
+                a=np.array([1, 2], dtype=np.int32),
+                b=np.array([1.0, 2.0], dtype=np.float32),
+            ),
+            TestingNamedTuple(
+                a=np.array([1, 2], dtype=np.int32),
+                b=np.array([1.0, 2.0], dtype=np.float32),
+            ),
         ),
     ],
 )
