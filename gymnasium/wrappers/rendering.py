@@ -235,7 +235,7 @@ class RecordVideo(
         video_length: int = 0,
         name_prefix: str = "rl-video",
         fps: int | None = None,
-        disable_logger: bool = False,
+        disable_logger: bool = True,
     ):
         """Wrapper records videos of rollouts.
 
@@ -247,9 +247,9 @@ class RecordVideo(
             video_length (int): The length of recorded episodes. If 0, entire episodes are recorded.
                 Otherwise, snippets of the specified length are captured
             name_prefix (str): Will be prepended to the filename of the recordings
-            fps (int): The frame per second in the video. The default value is the one specified in the environment metadata.
-                If the environment metadata doesn't specify ``render_fps``, the value 30 is used.
-            disable_logger (bool): Whether to disable moviepy logger or not
+            fps (int): The frame per second in the video. Provides a custom video fps for environment, if ``None`` then
+                the environment metadata ``render_fps`` key is used if it exists, otherwise a default value of 30 is used.
+            disable_logger (bool): Whether to disable moviepy logger or not, default it is disabled
         """
         gym.utils.RecordConstructorArgs.__init__(
             self,
@@ -320,8 +320,7 @@ class RecordVideo(
         else:
             self.stop_recording()
             logger.warn(
-                "Recording stopped: expected type of frame returned by render ",
-                f"to be a numpy array, got instead {type(frame)}.",
+                f"Recording stopped: expected type of frame returned by render to be a numpy array, got instead {type(frame)}."
             )
 
     def reset(
