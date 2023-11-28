@@ -62,12 +62,12 @@ class RecordEpisodeStatistics(VectorWrapper):
                None, None], dtype=object)}
     """
 
-    def __init__(self, env: VectorEnv, deque_size: int = 100):
+    def __init__(self, env: VectorEnv, buffer_length: int = 100):
         """This wrapper will keep track of cumulative rewards and episode lengths.
 
         Args:
             env (Env): The environment to apply the wrapper
-            deque_size: The size of the buffers :attr:`return_queue` and :attr:`length_queue`
+            buffer_length: The size of the buffers :attr:`return_queue` and :attr:`length_queue`
         """
         super().__init__(env)
 
@@ -77,8 +77,8 @@ class RecordEpisodeStatistics(VectorWrapper):
         self.episode_returns: np.ndarray = np.zeros(())
         self.episode_lengths: np.ndarray = np.zeros(())
 
-        self.return_queue = deque(maxlen=deque_size)
-        self.length_queue = deque(maxlen=deque_size)
+        self.return_queue = deque(maxlen=buffer_length)
+        self.length_queue = deque(maxlen=buffer_length)
 
     def reset(
         self,
