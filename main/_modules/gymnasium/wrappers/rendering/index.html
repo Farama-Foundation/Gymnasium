@@ -708,7 +708,7 @@
         <span class="n">video_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rl-video&quot;</span><span class="p">,</span>
         <span class="n">fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">disable_logger</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">disable_logger</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper records videos of rollouts.</span>
 
@@ -720,9 +720,9 @@
 <span class="sd">            video_length (int): The length of recorded episodes. If 0, entire episodes are recorded.</span>
 <span class="sd">                Otherwise, snippets of the specified length are captured</span>
 <span class="sd">            name_prefix (str): Will be prepended to the filename of the recordings</span>
-<span class="sd">            fps (int): The frame per second in the video. The default value is the one specified in the environment metadata.</span>
-<span class="sd">                If the environment metadata doesn&#39;t specify ``render_fps``, the value 30 is used.</span>
-<span class="sd">            disable_logger (bool): Whether to disable moviepy logger or not</span>
+<span class="sd">            fps (int): The frame per second in the video. Provides a custom video fps for environment, if ``None`` then</span>
+<span class="sd">                the environment metadata ``render_fps`` key is used if it exists, otherwise a default value of 30 is used.</span>
+<span class="sd">            disable_logger (bool): Whether to disable moviepy logger or not, default it is disabled</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -793,8 +793,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stop_recording</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Recording stopped: expected type of frame returned by render &quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;to be a numpy array, got instead </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Recording stopped: expected type of frame returned by render to be a numpy array, got instead </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
