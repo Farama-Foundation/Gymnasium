@@ -5,7 +5,7 @@ title: Create custom env
 
 # Create a Custom Environment
 
-This page provides a short outlines of how to create custom environment with Gymnasium, for a more [complete tutorial](../tutorials/gymnasium_basics/environment_creation) with rendering. Please read [basic usage](basic_usage) before reading this page.
+This page provides a short outline of how to create custom environment with Gymnasium, for a more [complete tutorial](../tutorials/gymnasium_basics/environment_creation) with rendering and please read [basic usage](basic_usage) before reading this page.
 
 We will implement a very simplistic game, called ``GridWorldEnv``, consisting of a 2-dimensional square grid of fixed size. The agent can move vertically or horizontally between grid cells in each timestep and the goal of the agent is to navigate to a target on the grid that has been placed randomly at the beginning of the episode.
 
@@ -13,7 +13,7 @@ Basic information about the game
 -  Observations provide the location of the target and agent.
 -  There are 4 discrete actions in our environment, corresponding to the movements "right", "up", "left", and "down".
 -  The environment ends (terminates) when the agent has navigated to the grid cell where the target is located.
--  The agent is only rewarded when it reaches the target, i.e., the reward is always zero then one when the agent reaches the target.
+-  The agent is only rewarded when it reaches the target, i.e., the reward is one when the agent reaches the target and zero otherwise.
 
 ## Environment `__init__`
 
@@ -26,7 +26,7 @@ Like all environments, our custom environment will inherit from :class:`gymnasiu
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.spaces
 
-For our observation, there are a couple options, for this tutorial we will imagine our observation look like ``{"agent": array([1, 0]), "target": array([0, 3])}`` where the array elements represent the x and y positions of the agent or target. Alternative options for representing the observation is as a 2d grid  with values representing the agent and target on the grid or a 3d grid with each "layer" containing only the agent or target information. Therefore, we will declare the observation space as :class:`Dict` with the agent and target spaces being a :class:`Box` allowing an array output of an int type.
+For our observation, there are a couple options, for this tutorial we will imagine our observation looks like ``{"agent": array([1, 0]), "target": array([0, 3])}`` where the array elements represent the x and y positions of the agent or target. Alternative options for representing the observation is as a 2d grid  with values representing the agent and target on the grid or a 3d grid with each "layer" containing only the agent or target information. Therefore, we will declare the observation space as :class:`Dict` with the agent and target spaces being a :class:`Box` allowing an array output of an int type.
 ```
 
 For a full list of possible spaces to use with an environment, see [spaces](../api/spaces)
@@ -106,9 +106,9 @@ Oftentimes, info will also contain some data that is only available inside the :
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env
 
-As purpose :meth:`reset` is to initiate a new episode for an environment and has two parameters: ``seed`` and ``options``. The seed can be used to initialize the random number generator to a deterministic state and options can be used to specify values used within reset. On the first line of the reset, you need to call ``super().reset(seed=seed)`` which will initialize the random number generate (:attr:`np_random`) to use through the rest of the :meth:`reset`.
+As the purpose of :meth:`reset` is to initiate a new episode for an environment and has two parameters: ``seed`` and ``options``. The seed can be used to initialize the random number generator to a deterministic state and options can be used to specify values used within reset. On the first line of the reset, you need to call ``super().reset(seed=seed)`` which will initialize the random number generate (:attr:`np_random`) to use through the rest of the :meth:`reset`.
 
-Within our custom environment, the :meth:`reset` needs to randomly choose the agent's and target positions (we repeat this if they have the same position). The return type of :meth:`reset` is a tuple of the initial observation and any auxiliary information. Therefore, we can use the methods ``_get_obs`` and ``_get_info`` that we implemented earlier for that:
+Within our custom environment, the :meth:`reset` needs to randomly choose the agent and target's positions (we repeat this if they have the same position). The return type of :meth:`reset` is a tuple of the initial observation and any auxiliary information. Therefore, we can use the methods ``_get_obs`` and ``_get_info`` that we implemented earlier for that:
 ```
 
 ```python
@@ -137,12 +137,17 @@ Within our custom environment, the :meth:`reset` needs to randomly choose the ag
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env
 
-The :meth:`step` method usually contains most of the logic for your environment, it accepts an ``action`` and computes the state of the environment after the applying the action, returning a tuple of the next observation, the action's reward, if the environment has terminated, if the environment has truncated and auxiliary information.
+The :meth:`step` method usually contains most of the logic for your environment, it accepts an ``action`` and computes the state of the environment after the applying the action, returning a tuple of the next observation, the resulting reward, if the environment has terminated, if the environment has truncated and auxiliary information.
 ```
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-For our environment, we can use the ``self._action_to_direction`` to convert the discrete action (e.g., 2) to the grid direction with our agent location. However, to prevent our agent moving ourside the grid's bounds then we clip the agent's location to within the bounds. With the updated environment state from the action, we can compute the agent's reward and if the environment has terminated (the agent's location is equal to the target's location). As the environment doesn't truncate internally (we can apply a time limit wrapper to the environment during :meth:`make`) then this is permantently ``False``. To gather ``observation`` and ``info``, we can again make  use of ``_get_obs`` and ``_get_info``:
+For our environment, several things need to happen during the step function:
+
+ - We use the self._action_to_direction to convert the discrete action (e.g., 2) to a grid direction with our agent location. To prevent the agent from going out of bounds of the grd, we clip the agen't location to stay within bounds.
+ - We compute the agent's reward by checking if the agent's current position is equal to the target's location.
+ - Since the environment doesn't truncate internally (we can apply a time limit wrapper to the environment during :meth:make), we permanently set truncated to False.
+ - We once again use _get_obs and _get_info to obtain the agent's observation and auxiliary information.
 ```
 
 ```python
@@ -171,9 +176,9 @@ While it is possible to use your new custom environment now immediately, it is m
 
 The environment ID consists of three components, two of which are  optional: an optional namespace (here: ``gymnasium_env``), a mandatory  name (here: ``GridWorld``) and an optional but recommended version (here: v0). It might have also been registered as ``GridWorld-v0`` (the  recommended approach), ``GridWorld`` or ``gymnasium_env/GridWorld``, and  the appropriate ID should then be used during environment creation.
 
-The entry point can be a string or function, as this tutorial isn't part of a python project, we cannot use a string but for most environment this is the normal way of specifying the entry point.
+The entry point can be a string or function, as this tutorial isn't part of a python project, we cannot use a string but for most environments, this is the normal way of specifying the entry point.
 
-Register has additionally parameters that can be used to specify keyword arguments to the environment, if to apply a time limit wrapper, etc. See :meth:`gymnasium.register` for more information.
+Register has additionally parameters that can be used to specify keyword arguments to the environment, e.g., if to apply a time limit wrapper, etc. See :meth:`gymnasium.register` for more information.
 ```
 
 ```python
@@ -183,10 +188,10 @@ gym.register(
 )
 ```
 
-For a more complete discussion on registering a custom environment (including with a string entry point), please read the full [create environment](../tutorials/gymnasium_basics/environment_creation) tutorial.
+For a more complete guide on registering a custom environment (including with a string entry point), please read the full [create environment](../tutorials/gymnasium_basics/environment_creation) tutorial.
 
 ```{eval-rst}
-Until the environment is registered, you can check with :meth:`gymnasium.pprint_registry`, then the environment can be initialized with :meth:`gymnasium.make` and even vectorized version with multiple instances of the same environment running in parallel with :meth:`gymnasium.make_vec`.
+Once the environment is registered, you can check via :meth:`gymnasium.pprint_registry` which will output all registered environment, and the environment can then be initialized using :meth:`gymnasium.make`. A vectorized version of the environment with multiple instances of the same environment running in parallel can be instantiated with :meth:`gymnasium.make_vec`.
 ```
 
 ```python

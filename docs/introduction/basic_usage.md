@@ -11,7 +11,7 @@ firstpage:
 
 Gymnasium is a project that provides an API (application programming interface) for all single agent reinforcement learning environments with implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more. This page will outline the basics of how to use Gymnasium including its four key functions: :meth:`make`, :meth:`Env.reset`, :meth:`Env.step` and :meth:`Env.render`.
 
-At the core of Gymnasium is :class:`Env`, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (note: this is not a perfect reconstruction, missing several components of MDPs). The class provides users the ability generate an initial state, transition (update) the state with actions and the visualise the environment. Alongside :class:`Env`, :class:`Wrapper` are provided to help augment / modify the environment, in particular, the agent observations, rewards and actions taken.
+At the core of Gymnasium is :class:`Env`, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (note: this is not a perfect reconstruction, missing several components of MDPs). The class provides users the ability generate an initial state, transition / move to new states given an action and the visualise the environment. Alongside :class:`Env`, :class:`Wrapper` are provided to help augment / modify the environment, in particular, the agent observations, rewards and actions taken.
 ```
 
 ## Initializing Environments
@@ -35,7 +35,7 @@ This function will return an :class:`Env` for users to interact with. To see all
 
 ## Interacting with the Environment
 
-Within reinforcement learning, the classic "agent-environment loop" pictured below is simplified representation of how agents and environment interact with each other. The agent receives an observation about the environment, the agent selects an action that the environment uses to determine the reward and the next observation, and the cycle repeating itself until the environment ends (terminates).
+Within reinforcement learning, the classic "agent-environment loop" pictured below is simplified representation of how an agent and environment interact with each other. The agent receives an observation about the environment, the agent then selects an action that the environment uses to determine the reward and the next observation. The cycle then repeating itself until the environment ends (terminates).
 
 ```{image} /_static/diagrams/AE_loop.png
 :width: 50%
@@ -49,7 +49,7 @@ Within reinforcement learning, the classic "agent-environment loop" pictured bel
 :class: only-dark
 ```
 
-For gymnasium, the "agent-environment-loop" is implemented below for a single episode (until the environment ends). See the next section for a line-by-line explanation. Beware to run this code requires install swig (`pip install swig` or [download](https://www.swig.org/download.html)) along with `pip install gymnasium[box2d]`.
+For gymnasium, the "agent-environment-loop" is implemented below for a single episode (until the environment ends). See the next section for a line-by-line explanation. Note that running this code requires install swig (`pip install swig` or [download](https://www.swig.org/download.html)) along with `pip install gymnasium[box2d]`.
 
 ```python
 import gymnasium as gym
@@ -81,13 +81,13 @@ The output should look something like this:
 
 First, an environment is created using :meth:`make` with an additional keyword ``"render_mode"`` that specifies how the environment should be visualised. See :meth:`Env.render` for details on the default meaning of different render modes. In this example, we use the ``"LunarLander"`` environment where the agent controls a spaceship that needs to land safely.
 
-After initializing the environment, we :meth:`Env.reset` the environment to get the first observation of the environment along with an additional information. For initializing the environment with a particular random seed or options (see environment documentation for possible values) use the ``seed`` or ``options`` parameters with :meth:`reset`.
+After initializing the environment, we :meth:`Env.reset` the environment to get the first observation of the environment along with an additional information. For initializing the environment with a particular random seed or options (see the environment documentation for possible values) use the ``seed`` or ``options`` parameters with :meth:`reset`.
 
 As we wish to continue the agent-environment loop until the environment ends, which is in an unknown number of timesteps, we define ``episode_over`` as a variable to know when to stop interacting with the environment along with a while loop that uses it.
 
-Next, the agent performs an action in the environment, :meth:`Env.step` that takes a select actions (in this case random with ``env.action_space.sample()``) to update the environment. This action can be imagined as moving a robot or pressing a button on a games' controller that causes a change within the environment. As a result, the agent receives a new observation from the updated environment along with a reward for taking the action. This reward could be for instance positive for destroying an enemy or a negative reward for moving into lava. One such action-observation exchange is referred to as a **timestep**.
+Next, the agent performs an action in the environment, :meth:`Env.step` executes the select actions (in this case random with ``env.action_space.sample()``) to update the environment. This action can be imagined as moving a robot or pressing a button on a games' controller that causes a change within the environment. As a result, the agent receives a new observation from the updated environment along with a reward for taking the action. This reward could be for instance positive for destroying an enemy or a negative reward for moving into lava. One such action-observation exchange is referred to as a **timestep**.
 
-However, after some timesteps, the environment may end, this is called the terminal state. For instance, the robot may have crashed, or the agent have succeeded in completing a task, the environment will need to stop as the agent cannot continue. In gymnasium, if the environment has terminated, this is returned by :meth:`step` as the third variable, ``terminated``. Similarly, we may also want the environment to end after a fixed number of timesteps, in this case, the environment issues a truncated signal. If either of ``terminated`` or ``truncated`` are ``True`` then we end the episode but in most cases users might wish to restart the environment, this can be done with `env.reset()`.
+However, after some timesteps, the environment may end, this is called the terminal state. For instance, the robot may have crashed, or may have succeeded in completing a task, the environment will need to stop as the agent cannot continue. In gymnasium, if the environment has terminated, this is returned by :meth:`step` as the third variable, ``terminated``. Similarly, we may also want the environment to end after a fixed number of timesteps, in this case, the environment issues a truncated signal. If either of ``terminated`` or ``truncated`` are ``True`` then we end the episode but in most cases users might wish to restart the environment, this can be done with `env.reset()`.
 ```
 
 ## Action and observation spaces
@@ -97,13 +97,13 @@ However, after some timesteps, the environment may end, this is called the termi
 
 Every environment specifies the format of valid actions and observations with the :attr:`action_space` and :attr:`observation_space` attributes. This is helpful for both knowing the expected input and output of the environment as all valid actions and observation should be contained with their respective space. In the example above, we sampled random actions via ``env.action_space.sample()`` instead of using an agent policy, mapping observations to actions which users will want to make.
 
-Importantly, :attr:`Env.action_space` and :attr:`Env.observation_space` are instances of :class:`Space`, a high-level python class that provides the key functions: :meth:`Space.contains` and :meth:`Space.sample`. Gymnasium has support a wide range of spaces that users might need:
+Importantly, :attr:`Env.action_space` and :attr:`Env.observation_space` are instances of :class:`Space`, a high-level python class that provides the key functions: :meth:`Space.contains` and :meth:`Space.sample`. Gymnasium has support for a wide range of spaces that users might need:
 
 .. py:currentmodule:: gymnasium.spaces
 
-- :class:`Box`: describes bounded space with upper and lower limits of any shape.
+- :class:`Box`: describes bounded space with upper and lower limits of any n-dimensional shape.
 - :class:`Discrete`: describes a discrete space where ``{0, 1, ..., n-1}`` are the possible values our observation or action can take.
-- :class:`MultiBinary`: describes a binary space of any shape.
+- :class:`MultiBinary`: describes a binary space of any n-dimensional shape.
 - :class:`MultiDiscrete`: consists of a series of :class:`Discrete` action spaces with a different number of actions in each element.
 - :class:`Text`: describes a string space with a minimum and maximum length
 - :class:`Dict`: describes a dictionary of simpler spaces.
@@ -140,7 +140,7 @@ In order to wrap an environment, you must first initialize a base environment. T
 
 Gymnasium already provides many commonly used wrappers for you. Some examples:
 
-- :class:`TimeLimit`: Issue a truncated signal if a maximum number of timesteps has been exceeded (or the base environment has issued a truncated signal).
+- :class:`TimeLimit`: Issues a truncated signal if a maximum number of timesteps has been exceeded (or the base environment has issued a truncated signal).
 - :class:`ClipAction`: Clips any action passed to ``step`` such that it lies in the base environment's action space.
 - :class:`RescaleAction`: Applies an affine transformation to the action to linearly scale for a new low and high bound on the environment.
 - :class:`TimeAwareObservation`: Add information about the index of timestep to observation. In some cases helpful to ensure that transitions are Markov.
