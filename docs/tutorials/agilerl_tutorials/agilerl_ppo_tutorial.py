@@ -47,7 +47,11 @@ from agilerl.algorithms.ppo import PPO
 from agilerl.hpo.mutation import Mutations
 from agilerl.hpo.tournament import TournamentSelection
 from agilerl.training.train_on_policy import train_on_policy
-from agilerl.utils.utils import initialPopulation, makeVectEnvs, calculate_vectorized_scores
+from agilerl.utils.utils import (
+    calculate_vectorized_scores,
+    initialPopulation,
+    makeVectEnvs,
+)
 from tqdm import trange
 
 import gymnasium as gym
@@ -134,10 +138,12 @@ if INIT_HP[
 # %%
 # Create a Population of Agents
 # -----------------------------
-# To perform evolutionary HPO, we require a population of agents. Individuals in this population will share experiences but
-# learn individually, allowing us to determine the efficacy of certain hyperparameters. Individuals that learn best
-# are more likely to survive until the next generation, and so their hyperparameters are more likely to remain present in the
-# population. The sequence of evolution (tournament selection followed by mutation) is detailed further below.
+# To perform evolutionary HPO, we require a population of agents. Since PPO is an on-policy algorithm, there is no
+# experience replay and so members in the population will not share experiences like they do with off-policy algorithms.
+# That being said, tournament selection and mutation still prove to be highly effective in determining the effacacy of
+# certain hyperparameters. Individuals that learn best are more likely to survive until the next generation, and so their
+# hyperparameters are more likely to remain present in the population. The sequence of evolution (tournament selection
+# followed by mutations) is detailed further below.
 
 # Set-up the device
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -286,7 +292,7 @@ for episode in trange(INIT_HP["EPISODES"]):
             next_state = np.moveaxis(next_state, [-1], [-3])
 
         scores = calculate_vectorized_scores(
-            np.array(rewards).transpose((1,0)), np.array(dones).transpose((1,0))
+            np.array(rewards).transpose((1, 0)), np.array(dones).transpose((1, 0))
         )
         score = np.mean(scores)
 

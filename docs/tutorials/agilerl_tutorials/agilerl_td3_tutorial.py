@@ -325,7 +325,10 @@ for episode in trange(INIT_HP["EPISODES"]):
             truncs.append(trunc)
             state = next_state
 
-        scores = calculate_vectorized_scores(np.array(rewards).transpose((1,0)), np.array(terminations).transpose((1, 0)))
+        scores = calculate_vectorized_scores(
+            np.array(rewards).transpose((1, 0)),
+            np.array(terminations).transpose((1, 0)),
+        )
         score = np.mean(scores)
 
         agent.scores.append(score)

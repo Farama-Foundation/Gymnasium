@@ -52,11 +52,7 @@ from agilerl.components.replay_buffer import (
     PrioritizedReplayBuffer,
 )
 from agilerl.training.train import train
-from agilerl.utils.utils import (
-    calculate_vectorized_scores,
-    initialPopulation,
-    makeVectEnvs,
-)
+from agilerl.utils.utils import calculate_vectorized_scores, makeVectEnvs
 from tqdm import trange
 
 # Author: Michael Pratt
@@ -233,7 +229,7 @@ trained_pop, pop_fitnesses = train(
 total_steps = 0
 n_step = True if INIT_HP["N_STEP"] > 1 else False
 per = INIT_HP["PER"]
-save_path = f"RainbowDQN.pt"
+save_path = "RainbowDQN.pt"
 
 for episode in trange(INIT_HP["EPISODES"]):
     state = env.reset()[0]  # Reset environment at start of episode
@@ -295,7 +291,9 @@ for episode in trange(INIT_HP["EPISODES"]):
         rainbow_dqn.steps[-1] += step
         total_steps += step
 
-    scores = calculate_vectorized_scores(np.array(rewards).transpose((1,0)), np.array(terminations).transpose((1,0)))
+    scores = calculate_vectorized_scores(
+        np.array(rewards).transpose((1, 0)), np.array(terminations).transpose((1, 0))
+    )
     score = np.mean(scores)
 
     rainbow_dqn.scores.append(score)
