@@ -58,31 +58,6 @@ For the :class:`RecordEpisodicStatistics`, we only need to specify the buffer le
 For speed ups evaluating environments, it is possible to implement this with vector environments to in order to evaluate ``N`` episodes at the same time in parallel rather than series.
 ```
 
-```python
-import numpy as np
-import gymnasium as gym
-from gymnasium.wrappers.vector import RecordEpisodeStatistics
-
-num_eval_episodes = 4
-
-vec_env = gym.make_vec("CartPole-v1", num_envs=num_eval_episodes,
-                       vectorization_mode="sync", vector_kwargs={"autoreset": False})
-# add support for RecordVideo
-vec_env = RecordEpisodeStatistics(vec_env, buffer_length=num_eval_episodes)
-
-obs, info = vec_env.reset()
-done = False
-while not np.all(done):
-    actions = vec_env.action_space.sample()
-    obs, rewards, terminated, truncated, infos = vec_env.step(actions)
-
-    done = np.logical_or(terminated, truncated)
-
-print(f'Episode time taken: {vec_env.time_queue}')
-print(f'Episode total rewards: {vec_env.return_queue}')
-print(f'Episode lengths: {vec_env.length_queue}')
-```
-
 ## Recording the Agent during Training
 
 During training, an agent will act in hundreds or thousands of episodes, therefore, we can't record a video for each episode, but developers still might want to know how the agent acts at different points in the training, recording episodes periodically during training. While for the episode statistics, it is more helpful to know this data for every episode. The following script provides an example of how to periodically record episodes of an agent while recording every episode's statistics (we use the python's logger but [tensorboard](https://www.tensorflow.org/tensorboard), [wandb](https://docs.wandb.ai/guides/track) and other modules are available).
