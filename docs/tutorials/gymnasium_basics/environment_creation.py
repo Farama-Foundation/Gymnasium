@@ -22,7 +22,7 @@ Recommended solution
     pipx install copier
 
 Alternative solutions
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 Install Copier with Pip or Conda:
 
