@@ -47,9 +47,7 @@ If you'd like to implement your own custom wrapper, check out `the corresponding
 """
 # pyright: reportUnsupportedDunderAll=false
 import importlib
-import re
 
-from gymnasium.error import DeprecatedWrapper
 from gymnasium.wrappers import vector
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.common import (
