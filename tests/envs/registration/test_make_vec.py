@@ -153,9 +153,12 @@ def test_make_vec_with_spec(env_id: str, kwargs: dict):
     recreated_envs.close()
 
 
-def test_async_with_dynamically_registered_env():
+@pytest.mark.parametrize("ctx", [None, "spawn", "fork", "forkserver"])
+def test_async_with_dynamically_registered_env(ctx):
     gym.register("TestEnv-v0", CartPoleEnv)
 
-    gym.make_vec("TestEnv-v0", vectorization_mode="async")
+    gym.make_vec(
+        "TestEnv-v0", vectorization_mode="async", vector_kwargs=dict(context=ctx)
+    )
 
     del gym.registry["TestEnv-v0"]
