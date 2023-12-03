@@ -151,6 +151,8 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
 
+        self.autoreset_envs = jnp.zeros(self.num_envs, dtype=jnp.bool_)
+
         self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
         if self.render_mode == "rgb_array":
@@ -214,10 +216,9 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         info = self.func_env.transition_info(self.state, action, next_state)
 
         done = jnp.logical_or(terminated, truncated)
-        if jnp.any(done):
-            final_obs = self.func_env.observation(next_state)
 
-            to_reset = jnp.where(done)[0]
+        if jnp.any(self.autoreset_envs):
+            to_reset = jnp.where(self.autoreset_envs)[0]
             reset_count = to_reset.shape[0]
 
             rng, self.rng = jrng.split(self.rng)
@@ -228,30 +229,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
             next_state = self.state.at[to_reset].set(new_initials)
             self.steps = self.steps.at[to_reset].set(0)
 
-            # Get the final observations and infos
-            info["final_observation"] = np.array([None for _ in range(self.num_envs)])
-            info["final_info"] = np.array([None for _ in range(self.num_envs)])
-
-            info["_final_observation"] = np.array([False for _ in range(self.num_envs)])
-            info["_final_info"] = np.array([False for _ in range(self.num_envs)])
-
-            # TODO: this can maybe be optimized, but right now I don't know how
-            for i in to_reset:
-                info["final_observation"][i] = final_obs[i]
-                info["final_info"][i] = {
-                    k: v[i]
-                    for k, v in info.items()
-                    if k
-                    not in {
-                        "final_observation",
-                        "final_info",
-                        "_final_observation",
-                        "_final_info",
-                    }
-                }
-
-                info["_final_observation"][i] = True
-                info["_final_info"][i] = True
+        self.autoreset_envs = done
 
         observation = self.func_env.observation(next_state)
         observation = jax_to_numpy(observation)
