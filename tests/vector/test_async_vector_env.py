@@ -33,7 +33,7 @@ def test_create_async_vector_env(shared_memory):
 
 @pytest.mark.parametrize("shared_memory", [True, False])
 def test_reset_async_vector_env(shared_memory):
-    """Test the reset of an sync vector environment with or without shared memory."""
+    """Test the reset of async vector environment with or without shared memory."""
     env_fns = [make_env("CartPole-v1", i) for i in range(8)]
 
     env = AsyncVectorEnv(env_fns, shared_memory=shared_memory)

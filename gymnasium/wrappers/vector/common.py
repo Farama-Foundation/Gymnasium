@@ -62,14 +62,21 @@ class RecordEpisodeStatistics(VectorWrapper):
                None, None], dtype=object)}
     """
 
-    def __init__(self, env: VectorEnv, deque_size: int = 100):
+    def __init__(
+        self,
+        env: VectorEnv,
+        deque_size: int = 100,
+        stats_key: str = "episode",
+    ):
         """This wrapper will keep track of cumulative rewards and episode lengths.
 
         Args:
             env (Env): The environment to apply the wrapper
             deque_size: The size of the buffers :attr:`return_queue` and :attr:`length_queue`
+            stats_key: The info key to save the data
         """
         super().__init__(env)
+        self._stats_key = stats_key
 
         self.episode_count = 0
 
@@ -77,6 +84,7 @@ class RecordEpisodeStatistics(VectorWrapper):
         self.episode_returns: np.ndarray = np.zeros(())
         self.episode_lengths: np.ndarray = np.zeros(())
 
+        self.time_queue = deque(maxlen=deque_size)
         self.return_queue = deque(maxlen=deque_size)
         self.length_queue = deque(maxlen=deque_size)
 
@@ -88,11 +96,9 @@ class RecordEpisodeStatistics(VectorWrapper):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
         obs, info = super().reset(seed=seed, options=options)
 
-        self.episode_start_times = np.full(
-            self.num_envs, time.perf_counter(), dtype=np.float32
-        )
-        self.episode_returns = np.zeros(self.num_envs, dtype=np.float32)
-        self.episode_lengths = np.zeros(self.num_envs, dtype=np.int32)
+        self.episode_start_times = np.full(self.num_envs, time.perf_counter())
+        self.episode_returns = np.zeros(self.num_envs)
+        self.episode_lengths = np.zeros(self.num_envs)
 
         return obs, info
 
@@ -110,7 +116,7 @@ class RecordEpisodeStatistics(VectorWrapper):
 
         assert isinstance(
             infos, dict
-        ), f"`info` dtype is {type(infos)} while supported dtype is `dict`. This may be due to usage of other wrappers in the wrong order."
+        ), f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
 
         self.episode_returns += rewards
         self.episode_lengths += 1
@@ -119,25 +125,25 @@ class RecordEpisodeStatistics(VectorWrapper):
         num_dones = np.sum(dones)
 
         if num_dones:
-            if "episode" in infos or "_episode" in infos:
+            if self._stats_key in infos or f"_{self._stats_key}" in infos:
                 raise ValueError(
-                    "Attempted to add episode stats when they already exist"
+                    f"Attempted to add episode stats when they already exist, info keys: {list(infos.keys())}"
                 )
             else:
-                infos["episode"] = {
+                episode_time_length = np.round(
+                    time.perf_counter() - self.episode_start_times, 6
+                )
+                infos[self._stats_key] = {
                     "r": np.where(dones, self.episode_returns, 0.0),
                     "l": np.where(dones, self.episode_lengths, 0),
-                    "t": np.where(
-                        dones,
-                        np.round(time.perf_counter() - self.episode_start_times, 6),
-                        0.0,
-                    ),
+                    "t": np.where(dones, episode_time_length, 0.0),
                 }
-                infos["_episode"] = dones
+                infos[f"_{self._stats_key}"] = dones
 
             self.episode_count += num_dones
 
             for i in np.where(dones):
+                self.time_queue.extend(episode_time_length[i])
                 self.return_queue.extend(self.episode_returns[i])
                 self.length_queue.extend(self.episode_lengths[i])
 
