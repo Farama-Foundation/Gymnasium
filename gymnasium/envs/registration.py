@@ -841,39 +841,40 @@ def make_vec(
         wrappers = []
 
     if isinstance(id, EnvSpec):
-        id_env_spec = id
-        env_spec_kwargs = id_env_spec.kwargs.copy()
-
-        num_envs = env_spec_kwargs.pop("num_envs", num_envs)
-        vectorization_mode = env_spec_kwargs.pop(
-            "vectorization_mode", vectorization_mode
-        )
-        vector_kwargs = env_spec_kwargs.pop("vector_kwargs", vector_kwargs)
-        wrappers = env_spec_kwargs.pop("wrappers", wrappers)
+        # id_env_spec = id
+        env_spec = id
+    elif isinstance(id, str):
+        env_spec = _find_spec(id)
     else:
-        id_env_spec = _find_spec(id)
-        env_spec_kwargs = id_env_spec.kwargs.copy()
+        raise error.Error(f"Invalid id type: {type(id)}. Expected `str` or `EnvSpec`")
+
+    env_spec_kwargs = env_spec.kwargs.copy()
+
+    num_envs = env_spec_kwargs.pop("num_envs", num_envs)
+    vectorization_mode = env_spec_kwargs.pop("vectorization_mode", vectorization_mode)
+    vector_kwargs = env_spec_kwargs.pop("vector_kwargs", vector_kwargs)
+    wrappers = env_spec_kwargs.pop("wrappers", wrappers)
 
     env_spec_kwargs.update(kwargs)
 
     # Update the vectorization_mode if None
     if vectorization_mode is None:
-        if id_env_spec.vector_entry_point is not None:
+        if env_spec.vector_entry_point is not None:
             vectorization_mode = "vector_entry_point"
         else:
             vectorization_mode = "sync"
 
     def create_single_env() -> Env:
-        single_env = make(id_env_spec.id, **env_spec_kwargs.copy())
+        single_env = make(env_spec, **env_spec_kwargs.copy())
 
         for wrapper in wrappers:
             single_env = wrapper(single_env)
         return single_env
 
     if vectorization_mode == "sync":
-        if id_env_spec.entry_point is None:
+        if env_spec.entry_point is None:
             raise error.Error(
-                f"Cannot create vectorized environment for {id_env_spec.id} because it doesn't have an entry point defined."
+                f"Cannot create vectorized environment for {env_spec.id} because it doesn't have an entry point defined."
             )
 
         env = gym.vector.SyncVectorEnv(
@@ -881,9 +882,9 @@ def make_vec(
             **vector_kwargs,
         )
     elif vectorization_mode == "async":
-        if id_env_spec.entry_point is None:
+        if env_spec.entry_point is None:
             raise error.Error(
-                f"Cannot create vectorized environment for {id_env_spec.id} because it doesn't have an entry point defined."
+                f"Cannot create vectorized environment for {env_spec.id} because it doesn't have an entry point defined."
             )
 
         env = gym.vector.AsyncVectorEnv(
@@ -891,7 +892,7 @@ def make_vec(
             **vector_kwargs,
         )
     elif vectorization_mode == "vector_entry_point":
-        entry_point = id_env_spec.vector_entry_point
+        entry_point = env_spec.vector_entry_point
         if entry_point is None:
             raise error.Error(
                 f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
@@ -906,14 +907,14 @@ def make_vec(
                 "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
             )
         if "max_episode_steps" not in vector_kwargs:
-            vector_kwargs["max_episode_steps"] = id_env_spec.max_episode_steps
+            vector_kwargs["max_episode_steps"] = env_spec.max_episode_steps
 
         env = env_creator(num_envs=num_envs, **vector_kwargs)
     else:
         raise error.Error(f"Invalid vectorization mode: {vectorization_mode}")
 
     # Copies the environment creation specification and kwargs to add to the environment specification details
-    copied_id_spec = copy.deepcopy(id_env_spec)
+    copied_id_spec = copy.deepcopy(env_spec)
     copied_id_spec.kwargs = env_spec_kwargs
     if num_envs != 1:
         copied_id_spec.kwargs["num_envs"] = num_envs
