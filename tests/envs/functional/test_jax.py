@@ -6,8 +6,14 @@ import jax.numpy as jnp  # noqa: E402
 import jax.random as jrng  # noqa: E402
 import numpy as np  # noqa: E402
 
-from gymnasium.envs.phys2d.cartpole import CartPoleFunctional, CartPoleJaxVectorEnv  # noqa: E402
-from gymnasium.envs.phys2d.pendulum import PendulumFunctional, PendulumJaxVectorEnv  # noqa: E402
+from gymnasium.envs.phys2d.cartpole import (  # noqa: E402
+    CartPoleFunctional,
+    CartPoleJaxVectorEnv,
+)
+from gymnasium.envs.phys2d.pendulum import (  # noqa: E402
+    PendulumFunctional,
+    PendulumJaxVectorEnv,
+)
 
 
 @pytest.mark.parametrize("env_class", [CartPoleFunctional, PendulumFunctional])
@@ -116,7 +122,6 @@ def test_vectorized(env_class):
     assert obs.shape == (10,) + env.single_observation_space.shape
     assert isinstance(obs, np.ndarray)
     assert isinstance(info, dict)
-
 
     for t in range(100):
         action = env.action_space.sample()
