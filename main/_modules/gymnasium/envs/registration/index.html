@@ -480,6 +480,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">ModuleType</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
 
@@ -505,6 +506,7 @@
     <span class="s2">&quot;current_namespace&quot;</span><span class="p">,</span>
     <span class="s2">&quot;EnvSpec&quot;</span><span class="p">,</span>
     <span class="s2">&quot;WrapperSpec&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;VectorizeMode&quot;</span><span class="p">,</span>
     <span class="c1"># Functions</span>
     <span class="s2">&quot;register&quot;</span><span class="p">,</span>
     <span class="s2">&quot;make&quot;</span><span class="p">,</span>
@@ -525,7 +527,7 @@
 <span class="k">class</span> <span class="nc">VectorEnvCreator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function type expected for an environment.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">:</span>
         <span class="o">...</span>
 
 
@@ -721,6 +723,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
 
+
+
+<span class="k">class</span> <span class="nc">VectorizeMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;All possible vectorization modes used in `make_vec`.&quot;&quot;&quot;</span>
+
+    <span class="n">ASYNC</span> <span class="o">=</span> <span class="s2">&quot;async&quot;</span>
+    <span class="n">SYNC</span> <span class="o">=</span> <span class="s2">&quot;sync&quot;</span>
+    <span class="n">VECTOR_ENTRY_POINT</span> <span class="o">=</span> <span class="s2">&quot;vector_entry_point&quot;</span>
 
 
 <span class="c1"># Global registry of environments. Meant to be accessed through `register` and `make`</span>
@@ -1306,7 +1316,7 @@
 <span class="k">def</span> <span class="nf">make_vec</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">num_envs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">vectorization_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">vectorization_mode</span><span class="p">:</span> <span class="n">VectorizeMode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">vector_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">wrappers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Env</span><span class="p">],</span> <span class="n">Wrapper</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -1319,9 +1329,9 @@
 <span class="sd">    Args:</span>
 <span class="sd">        id: Name of the environment. Optionally, a module to import can be included, eg. &#39;module:Env-v0&#39;</span>
 <span class="sd">        num_envs: Number of environments to create</span>
-<span class="sd">        vectorization_mode: The vectorization method used, defaults to ``None`` such that if a ``vector_entry_point`` exists,</span>
+<span class="sd">        vectorization_mode: The vectorization method used, defaults to ``None`` such that if env id&#39; spec has a ``vector_entry_point`` (not ``None``),</span>
 <span class="sd">            this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.</span>
-<span class="sd">            Valid modes are ``&quot;async&quot;``, ``&quot;sync&quot;`` or ``&quot;vector_entry_point&quot;``.</span>
+<span class="sd">            Valid modes are ``&quot;async&quot;``, ``&quot;sync&quot;`` or ``&quot;vector_entry_point&quot;``. Recommended to use the :class:`VectorizeMode` enum rather than strings.</span>
 <span class="sd">        vector_kwargs: Additional arguments to pass to the vectorizor environment constructor, i.e., ``SyncVectorEnv(..., **vector_kwargs)``.</span>
 <span class="sd">        wrappers: A sequence of wrapper functions to apply to the base environment. Can only be used in ``&quot;sync&quot;`` or ``&quot;async&quot;`` mode.</span>
 <span class="sd">        **kwargs: Additional arguments passed to the base environment constructor.</span>
@@ -1353,12 +1363,21 @@
 
     <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="c1"># Update the vectorization_mode if None</span>
+    <span class="c1"># Specify the vectorization mode if None or update to a `VectorizeMode`</span>
     <span class="k">if</span> <span class="n">vectorization_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">vector_entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="s2">&quot;vector_entry_point&quot;</span>
+            <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="n">VectorizeMode</span><span class="o">.</span><span class="n">VECTOR_ENTRY_POINT</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="s2">&quot;sync&quot;</span>
+            <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="n">VectorizeMode</span><span class="o">.</span><span class="n">SYNC</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="n">VectorizeMode</span><span class="p">(</span><span class="n">vectorization_mode</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid vectorization mode: </span><span class="si">{</span><span class="n">vectorization_mode</span><span class="si">!r}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;valid modes: </span><span class="si">{</span><span class="p">[</span><span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">VectorizeMode</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vectorization_mode</span><span class="p">,</span> <span class="n">VectorizeMode</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_single_env</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
         <span class="n">single_env</span> <span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">id_env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="o">**</span><span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
@@ -1367,7 +1386,7 @@
             <span class="n">single_env</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">single_env</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">single_env</span>
 
-    <span class="k">if</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="s2">&quot;sync&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="n">VectorizeMode</span><span class="o">.</span><span class="n">SYNC</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Cannot create vectorized environment for </span><span class="si">{</span><span class="n">id_env_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> because it doesn&#39;t have an entry point defined.&quot;</span>
@@ -1377,7 +1396,7 @@
             <span class="n">env_fns</span><span class="o">=</span><span class="p">(</span><span class="n">create_single_env</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)),</span>
             <span class="o">**</span><span class="n">vector_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="s2">&quot;async&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="n">VectorizeMode</span><span class="o">.</span><span class="n">ASYNC</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Cannot create vectorized environment for </span><span class="si">{</span><span class="n">id_env_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> because it doesn&#39;t have an entry point defined.&quot;</span>
@@ -1387,7 +1406,7 @@
             <span class="n">env_fns</span><span class="o">=</span><span class="p">[</span><span class="n">create_single_env</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)],</span>
             <span class="o">**</span><span class="n">vector_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="s2">&quot;vector_entry_point&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="n">VectorizeMode</span><span class="o">.</span><span class="n">VECTOR_ENTRY_POINT</span><span class="p">:</span>
         <span class="n">entry_point</span> <span class="o">=</span> <span class="n">id_env_spec</span><span class="o">.</span><span class="n">vector_entry_point</span>
         <span class="k">if</span> <span class="n">entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
@@ -1407,15 +1426,14 @@
 
         <span class="n">env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="n">num_envs</span><span class="o">=</span><span class="n">num_envs</span><span class="p">,</span> <span class="o">**</span><span class="n">vector_kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid vectorization mode: </span><span class="si">{</span><span class="n">vectorization_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown vectorization mode: </span><span class="si">{</span><span class="n">vectorization_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Copies the environment creation specification and kwargs to add to the environment specification details</span>
     <span class="n">copied_id_spec</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">id_env_spec</span><span class="p">)</span>
     <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span>
     <span class="k">if</span> <span class="n">num_envs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_envs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_envs</span>
-    <span class="k">if</span> <span class="n">vectorization_mode</span> <span class="o">!=</span> <span class="s2">&quot;async&quot;</span><span class="p">:</span>
-        <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vectorization_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vectorization_mode</span>
+    <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vectorization_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vectorization_mode</span><span class="o">.</span><span class="n">value</span>
     <span class="k">if</span> <span class="n">vector_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vector_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector_kwargs</span>
     <span class="k">if</span> <span class="n">wrappers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
