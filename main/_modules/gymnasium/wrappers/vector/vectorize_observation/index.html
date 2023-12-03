@@ -505,13 +505,10 @@
 <span class="sd">        &gt;&gt;&gt; def scale_and_shift(obs):</span>
 <span class="sd">        ...     return (obs - 1.0) * 2.0</span>
 <span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; def vector_scale_and_shift(obs):</span>
-<span class="sd">        ...     return (obs - 1.0) * 2.0</span>
-<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; new_obs_space = Box(low=envs.observation_space.low, high=envs.observation_space.high)</span>
-<span class="sd">        &gt;&gt;&gt; envs = TransformObservation(envs, single_func=scale_and_shift, vector_func=vector_scale_and_shift)</span>
+<span class="sd">        &gt;&gt;&gt; envs = TransformObservation(envs, func=scale_and_shift, observation_space=new_obs_space)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([[-1.9635296, -2.0892358, -2.055928 , -2.0631256],</span>
@@ -523,16 +520,14 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
-        <span class="n">vector_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
-        <span class="n">single_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the transform observation wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
-<span class="sd">            vector_func: A function that will transform the vector observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.</span>
-<span class="sd">            single_func: A function that will transform an individual observation, this function will be used for the final observation from the environment and is returned under ``info`` and not the normal observation.</span>
+<span class="sd">            func: A function that will transform the vector observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.</span>
 <span class="sd">            observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as ``env.observation_space``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -540,16 +535,11 @@
         <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">observation_space</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">vector_func</span> <span class="o">=</span> <span class="n">vector_func</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">single_func</span> <span class="o">=</span> <span class="n">single_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
-    <span class="k">def</span> <span class="nf">vector_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to the vector observation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_func</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">single_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to the single observation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_func</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="VectorizeTransformObservation">
@@ -628,16 +618,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">same_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">create_empty_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">vector_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">same_out</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">concatenate</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span>
                 <span class="nb">tuple</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">observation</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">observations</span><span class="p">)</span>
                 <span class="p">),</span>
-                <span class="n">observation</span><span class="p">,</span>
+                <span class="n">observations</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span>
@@ -645,15 +635,11 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span>
                     <span class="nb">tuple</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">observation</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">observations</span><span class="p">)</span>
                     <span class="p">),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">single_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms a single observation using the wrapper transformation function.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span></div>
+            <span class="p">)</span></div>
 
 
 

@@ -710,7 +710,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">_add_info</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">env_num</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">vector_infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">env_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">env_num</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add env info to the info dictionary of the vectorized environment.</span>
 
@@ -720,48 +720,51 @@
 <span class="sd">        whether or not the i-indexed environment has this `info`.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            infos (dict): the infos of the vectorized environment</span>
-<span class="sd">            info (dict): the info coming from the single environment</span>
+<span class="sd">            vector_infos (dict): the infos of the vectorized environment</span>
+<span class="sd">            env_info (dict): the info coming from the single environment</span>
 <span class="sd">            env_num (int): the index of the single environment</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            infos (dict): the (updated) infos of the vectorized environment</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
-                <span class="n">info_array</span><span class="p">,</span> <span class="n">array_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_info_arrays</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">env_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># If value is a dictionary, then we apply the `_add_info` recursively.</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">vector_infos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{}),</span> <span class="n">value</span><span class="p">,</span> <span class="n">env_num</span><span class="p">)</span>
+            <span class="c1"># Otherwise, we are a base case to group the data</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">info_array</span><span class="p">,</span> <span class="n">array_mask</span> <span class="o">=</span> <span class="n">infos</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+                <span class="c1"># If the key doesn&#39;t exist in the vector infos, then we can create an array of that batch type</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span>
+                        <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span>
+                    <span class="p">):</span>
+                        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="c1"># We assume that all instances of the np.array info are of the same shape</span>
+                        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># For unknown objects, we use a Numpy object array</span>
+                        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+                <span class="c1"># Otherwise, just use the array that already exists</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">array</span> <span class="o">=</span> <span class="n">vector_infos</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-            <span class="n">info_array</span><span class="p">[</span><span class="n">env_num</span><span class="p">],</span> <span class="n">array_mask</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="kc">True</span>
-            <span class="n">infos</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info_array</span><span class="p">,</span> <span class="n">array_mask</span>
-        <span class="k">return</span> <span class="n">infos</span>
+                <span class="c1"># Assign the data in the `env_num` position</span>
+                <span class="c1">#   We only want to run this for the base-case data (not recursive data forcing the ugly function structure)</span>
+                <span class="n">array</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">_init_info_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the info array.</span>
+            <span class="c1"># Get the array mask and if it doesn&#39;t already exist then create a zero bool array</span>
+            <span class="n">array_mask</span> <span class="o">=</span> <span class="n">vector_infos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">array_mask</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-<span class="sd">        Initialize the info array. If the dtype is numeric</span>
-<span class="sd">        the info array will have the same dtype, otherwise</span>
-<span class="sd">        will be an array of `None`. Also, a boolean array</span>
-<span class="sd">        of the same length is returned. It will be used for</span>
-<span class="sd">        assessing which environment has info data.</span>
+            <span class="c1"># Update the vector info with the updated data and mask information</span>
+            <span class="n">vector_infos</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">vector_infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">,</span> <span class="n">array_mask</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            dtype (type): data type of the info coming from the env.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            array (np.ndarray): the initialized info array.</span>
-<span class="sd">            array_mask (np.ndarray): the initialized boolean array.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
-            <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
-            <span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">array_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">array</span><span class="p">,</span> <span class="n">array_mask</span>
+        <span class="k">return</span> <span class="n">vector_infos</span>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the vector environment.&quot;&quot;&quot;</span>
@@ -935,25 +938,23 @@
         <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the observation returned from the environment ``reset`` using the :meth:`observation`.&quot;&quot;&quot;</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_observation</span><span class="p">(</span><span class="n">obs</span><span class="p">),</span> <span class="n">info</span>
+        <span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="n">infos</span>
 
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the observation returned from the environment ``step`` using the :meth:`observation`.&quot;&quot;&quot;</span>
-        <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">vector_observation</span><span class="p">(</span><span class="n">observation</span><span class="p">),</span>
-            <span class="n">reward</span><span class="p">,</span>
-            <span class="n">termination</span><span class="p">,</span>
-            <span class="n">truncation</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update_final_obs</span><span class="p">(</span><span class="n">info</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span>
+            <span class="n">rewards</span><span class="p">,</span>
+            <span class="n">terminations</span><span class="p">,</span>
+            <span class="n">truncations</span><span class="p">,</span>
+            <span class="n">infos</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="VectorObservationWrapper.vector_observation">
-<a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper.vector_observation">[docs]</a>
-    <span class="k">def</span> <span class="nf">vector_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines the vector observation transformation.</span>
 
 <span class="sd">        Args:</span>
@@ -963,29 +964,6 @@
 <span class="sd">            the transformed observation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
-
-
-<div class="viewcode-block" id="VectorObservationWrapper.single_observation">
-<a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper.single_observation">[docs]</a>
-    <span class="k">def</span> <span class="nf">single_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines the single observation transformation.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            observation: A single observation from the environment</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The transformed observation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
-
-
-    <span class="k">def</span> <span class="nf">update_final_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the `final_obs` in the info using `single_observation`.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;final_observation&quot;</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_observation&quot;</span><span class="p">]):</span>
-                <span class="k">if</span> <span class="n">obs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_observation&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_observation</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">info</span></div>
 
 
 
@@ -1031,16 +1009,16 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment returning a reward modified by :meth:`reward`.&quot;&quot;&quot;</span>
-        <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">(</span><span class="n">reward</span><span class="p">),</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">info</span>
+        <span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">observations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">(</span><span class="n">rewards</span><span class="p">),</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span>
 
 <div class="viewcode-block" id="VectorRewardWrapper.rewards">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorRewardWrapper.rewards">[docs]</a>
-    <span class="k">def</span> <span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewards</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform the reward before returning it.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            reward (array): the reward to transform</span>
+<span class="sd">            rewards (array): the reward to transform</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            array: the transformed reward</span>
