@@ -639,6 +639,7 @@ def _async_worker(
     env = env_fn()
     observation_space = env.observation_space
     action_space = env.action_space
+    autoreset = False
 
     parent_pipe.close()
 
@@ -653,20 +654,21 @@ def _async_worker(
                         observation_space, index, observation, shared_memory
                     )
                     observation = None
+                    autoreset = False
                 pipe.send(((observation, info), True))
             elif command == "step":
-                (
-                    observation,
-                    reward,
-                    terminated,
-                    truncated,
-                    info,
-                ) = env.step(data)
-                if terminated or truncated:
-                    old_observation, old_info = observation, info
+                if autoreset:
                     observation, info = env.reset()
-                    info["final_observation"] = old_observation
-                    info["final_info"] = old_info
+                    reward, terminated, truncated = 0, False, False
+                else:
+                    (
+                        observation,
+                        reward,
+                        terminated,
+                        truncated,
+                        info,
+                    ) = env.step(data)
+                autoreset = terminated or truncated
 
                 if shared_memory:
                     write_to_shared_memory(
