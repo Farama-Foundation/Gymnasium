@@ -471,6 +471,8 @@
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span> <span class="nn">gymnasium.vector.vector_env</span> <span class="kn">import</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorWrapper</span>
 
@@ -548,6 +550,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, convert dict info to list.&quot;&quot;&quot;</span>
         <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">list_info</span>
@@ -560,11 +563,12 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using kwargs.&quot;&quot;&quot;</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">list_info</span>
 
-    <span class="k">def</span> <span class="nf">_convert_info_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">_convert_info_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the dict info to list.</span>
 
 <span class="sd">        Convert the dict info of the vectorized environment</span>
@@ -572,53 +576,29 @@
 <span class="sd">        has the info of the i-th environment.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            infos (dict): info dict coming from the env.</span>
+<span class="sd">            vector_infos (dict): info dict coming from the env.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list_info (list): converted info.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">list_info</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
-        <span class="n">list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_episode_statistics</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">list_info</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
                 <span class="k">continue</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">has_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]):</span>
-                <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
-                    <span class="n">list_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">infos</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">list_info</span>
 
-    <span class="c1"># todo - I think this function should be more general for any information</span>
-    <span class="k">def</span> <span class="nf">_process_episode_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">list_info</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process episode statistics.</span>
-
-<span class="sd">        `RecordEpisodeStatistics` wrapper add extra</span>
-<span class="sd">        information to the info. This information are in</span>
-<span class="sd">        the form of a dict of dict. This method process these</span>
-<span class="sd">        information and add them to the info.</span>
-<span class="sd">        `RecordEpisodeStatistics` info contains the keys</span>
-<span class="sd">        &quot;r&quot;, &quot;l&quot;, &quot;t&quot; which represents &quot;cumulative reward&quot;,</span>
-<span class="sd">        &quot;episode length&quot;, &quot;elapsed time since instantiation of wrapper&quot;.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            infos (dict): infos coming from `RecordEpisodeStatistics`.</span>
-<span class="sd">            list_info (list): info of the current vectorized environment.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            list_info (list): updated info.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">episode_statistics</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;episode&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">episode_statistics</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">list_info</span>
-
-        <span class="n">episode_statistics_mask</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_episode&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">has_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">episode_statistics_mask</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
-                <span class="n">list_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="n">list_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;episode&quot;</span><span class="p">][</span><span class="s2">&quot;r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">episode_statistics</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">list_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;episode&quot;</span><span class="p">][</span><span class="s2">&quot;l&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">episode_statistics</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">list_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;episode&quot;</span><span class="p">][</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">episode_statistics</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">value_list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="p">(</span><span class="n">env_info</span><span class="p">,</span> <span class="n">has_info</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">,</span> <span class="n">vector_infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+                <span class="p">):</span>
+                    <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
+                        <span class="n">list_info</span><span class="p">[</span><span class="n">env_num</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_info</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="n">has_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
+                        <span class="n">list_info</span><span class="p">[</span><span class="n">env_num</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">list_info</span></div>
 

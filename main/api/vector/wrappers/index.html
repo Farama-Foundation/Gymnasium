@@ -523,34 +523,6 @@ without touching the original code.</p>
 <dd class="field-odd"><p><strong>env</strong> – The environment to wrap</p>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorObservationWrapper.vector_observation">
-<span class="sig-name descname"><span class="pre">vector_observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ObsType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ObsType</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/vector_env/#VectorObservationWrapper.vector_observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorObservationWrapper.vector_observation" title="Link to this definition">#</a></dt>
-<dd><p>Defines the vector observation transformation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>observation</strong> – A vector observation from the environment</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>the transformed observation</strong></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorObservationWrapper.single_observation">
-<span class="sig-name descname"><span class="pre">single_observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ObsType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ObsType</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/vector_env/#VectorObservationWrapper.single_observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorObservationWrapper.single_observation" title="Link to this definition">#</a></dt>
-<dd><p>Defines the single observation transformation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>observation</strong> – A single observation from the environment</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>The transformed observation</strong></p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -591,11 +563,11 @@ without touching the original code.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.vector.VectorRewardWrapper.rewards">
-<span class="sig-name descname"><span class="pre">rewards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArrayType</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/vector_env/#VectorRewardWrapper.rewards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorRewardWrapper.rewards" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">rewards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rewards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArrayType</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/vector_env/#VectorRewardWrapper.rewards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorRewardWrapper.rewards" title="Link to this definition">#</a></dt>
 <dd><p>Transform the reward before returning it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>reward</strong> (<em>array</em>) – the reward to transform</p>
+<dd class="field-odd"><p><strong>rewards</strong> (<em>array</em>) – the reward to transform</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>array</strong> – the transformed reward</p>
@@ -683,11 +655,7 @@ without touching the original code.</p>
 <li><a class="reference internal" href="#gymnasium.vector.VectorWrapper.close"><code class="docutils literal notranslate"><span class="pre">VectorWrapper.close()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#gymnasium.vector.VectorObservationWrapper"><code class="docutils literal notranslate"><span class="pre">VectorObservationWrapper</span></code></a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.VectorObservationWrapper.vector_observation"><code class="docutils literal notranslate"><span class="pre">VectorObservationWrapper.vector_observation()</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.vector.VectorObservationWrapper.single_observation"><code class="docutils literal notranslate"><span class="pre">VectorObservationWrapper.single_observation()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorObservationWrapper"><code class="docutils literal notranslate"><span class="pre">VectorObservationWrapper</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.vector.VectorActionWrapper"><code class="docutils literal notranslate"><span class="pre">VectorActionWrapper</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.vector.VectorActionWrapper.actions"><code class="docutils literal notranslate"><span class="pre">VectorActionWrapper.actions()</span></code></a></li>
 </ul>

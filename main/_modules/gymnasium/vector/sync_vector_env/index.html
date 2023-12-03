@@ -568,6 +568,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_envs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+
 <div class="viewcode-block" id="SyncVectorEnv.reset">
 <a class="viewcode-back" href="../../../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv.reset">[docs]</a>
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
@@ -625,22 +627,21 @@
         <span class="n">actions</span> <span class="o">=</span> <span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
 
         <span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">,</span> <span class="n">actions</span><span class="p">)):</span>
-            <span class="p">(</span>
-                <span class="n">env_obs</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_rewards</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                <span class="n">env_info</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">actions</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_envs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">env_obs</span><span class="p">,</span> <span class="n">env_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-            <span class="c1"># If sub-environments terminates or truncates then save the obs and info to the batched info</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">old_observation</span><span class="p">,</span> <span class="n">old_info</span> <span class="o">=</span> <span class="n">env_obs</span><span class="p">,</span> <span class="n">env_info</span>
-                <span class="n">env_obs</span><span class="p">,</span> <span class="n">env_info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-
-                <span class="n">env_info</span><span class="p">[</span><span class="s2">&quot;final_observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_observation</span>
-                <span class="n">env_info</span><span class="p">[</span><span class="s2">&quot;final_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_info</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_rewards</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="p">(</span>
+                    <span class="n">env_obs</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_rewards</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">env_info</span><span class="p">,</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
             <span class="n">observations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_obs</span><span class="p">)</span>
             <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">env_info</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
@@ -649,6 +650,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_envs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terminations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncations</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="p">,</span>

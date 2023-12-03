@@ -1125,6 +1125,7 @@
     <span class="n">env</span> <span class="o">=</span> <span class="n">env_fn</span><span class="p">()</span>
     <span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
     <span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+    <span class="n">autoreset</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="n">parent_pipe</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
@@ -1139,20 +1140,21 @@
                         <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
                     <span class="p">)</span>
                     <span class="n">observation</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">autoreset</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="n">observation</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span>
-                <span class="p">(</span>
-                    <span class="n">observation</span><span class="p">,</span>
-                    <span class="n">reward</span><span class="p">,</span>
-                    <span class="n">terminated</span><span class="p">,</span>
-                    <span class="n">truncated</span><span class="p">,</span>
-                    <span class="n">info</span><span class="p">,</span>
-                <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
-                    <span class="n">old_observation</span><span class="p">,</span> <span class="n">old_info</span> <span class="o">=</span> <span class="n">observation</span><span class="p">,</span> <span class="n">info</span>
+                <span class="k">if</span> <span class="n">autoreset</span><span class="p">:</span>
                     <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_observation</span>
-                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_info</span>
+                    <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="p">(</span>
+                        <span class="n">observation</span><span class="p">,</span>
+                        <span class="n">reward</span><span class="p">,</span>
+                        <span class="n">terminated</span><span class="p">,</span>
+                        <span class="n">truncated</span><span class="p">,</span>
+                        <span class="n">info</span><span class="p">,</span>
+                    <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="n">autoreset</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
 
                 <span class="k">if</span> <span class="n">shared_memory</span><span class="p">:</span>
                     <span class="n">write_to_shared_memory</span><span class="p">(</span>
