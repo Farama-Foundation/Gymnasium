@@ -59,6 +59,7 @@ class Box(Space[NDArray[Any]]):
         shape: Sequence[int] | None = None,
         dtype: type[np.floating[Any]] | type[np.integer[Any]] = np.float32,
         seed: int | np.random.Generator | None = None,
+        nullable: bool = False,
     ):
         r"""Constructor of :class:`Box`.
 
@@ -143,6 +144,8 @@ class Box(Space[NDArray[Any]]):
 
         self.low_repr = _short_repr(self.low)
         self.high_repr = _short_repr(self.high)
+
+        self.nullable = nullable
 
         super().__init__(self.shape, self.dtype, seed)
 
@@ -289,6 +292,9 @@ class Box(Space[NDArray[Any]]):
 
         if not hasattr(self, "high_repr"):
             self.high_repr = _short_repr(self.high)
+
+        if not hasattr(self, "nullable"):
+            self.nullable = False
 
 
 def get_precision(dtype: np.dtype) -> SupportsFloat:
