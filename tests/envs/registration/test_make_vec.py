@@ -172,15 +172,15 @@ def test_make_vec_wrappers():
         (gym.spec("CartPole-v1"), {"vectorization_mode": "sync"}),
         (gym.spec("CartPole-v1"), {"vectorization_mode": "vector_entry_point"}),
         (
-                gym.spec("CartPole-v1"),
-                {"vectorization_mode": "sync", "vector_kwargs": {"copy": False}},
+            gym.spec("CartPole-v1"),
+            {"vectorization_mode": "sync", "vector_kwargs": {"copy": False}},
         ),
         (
-                gym.spec("CartPole-v1"),
-                {
-                    "vectorization_mode": "sync",
-                    "wrappers": (gym.wrappers.TimeAwareObservation,),
-                },
+            gym.spec("CartPole-v1"),
+            {
+                "vectorization_mode": "sync",
+                "wrappers": (gym.wrappers.TimeAwareObservation,),
+            },
         ),
         (gym.spec("CartPole-v1"), {"render_mode": "rgb_array"}),
     ),
