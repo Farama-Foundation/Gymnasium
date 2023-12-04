@@ -869,7 +869,7 @@ def make_vec(
 
     # Specify the vectorization mode if None or update to a `VectorizeMode`
     if vectorization_mode is None:
-        if id_env_spec.vector_entry_point is not None:
+        if env_spec.vector_entry_point is not None:
             vectorization_mode = VectorizeMode.VECTOR_ENTRY_POINT
         else:
             vectorization_mode = VectorizeMode.SYNC
@@ -891,7 +891,7 @@ def make_vec(
         return single_env
 
     if vectorization_mode == VectorizeMode.SYNC:
-        if id_env_spec.entry_point is None:
+        if env_spec.entry_point is None:
             raise error.Error(
                 f"Cannot create vectorized environment for {env_spec.id} because it doesn't have an entry point defined."
             )
@@ -901,7 +901,7 @@ def make_vec(
             **vector_kwargs,
         )
     elif vectorization_mode == VectorizeMode.ASYNC:
-        if id_env_spec.entry_point is None:
+        if env_spec.entry_point is None:
             raise error.Error(
                 f"Cannot create vectorized environment for {env_spec.id} because it doesn't have an entry point defined."
             )
@@ -912,7 +912,7 @@ def make_vec(
         )
 
     elif vectorization_mode == VectorizeMode.VECTOR_ENTRY_POINT:
-        entry_point = id_env_spec.vector_entry_point
+        entry_point = env_spec.vector_entry_point
         if entry_point is None:
             raise error.Error(
                 f"Cannot create vectorized environment for {id} because it doesn't have a vector entry point defined."
