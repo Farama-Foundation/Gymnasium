@@ -157,16 +157,32 @@ def test_make_vec_wrappers():
         ("CartPole-v1", {"vectorization_mode": "vector_entry_point"}),
         (
             "CartPole-v1",
-            {"vector_kwargs": {"copy": False}, "vectorization_mode": "sync"},
+            {"vectorization_mode": "sync", "vector_kwargs": {"copy": False}},
         ),
         (
             "CartPole-v1",
             {
-                "wrappers": (gym.wrappers.TimeAwareObservation,),
                 "vectorization_mode": "sync",
+                "wrappers": (gym.wrappers.TimeAwareObservation,),
             },
         ),
         ("CartPole-v1", {"render_mode": "rgb_array"}),
+        (gym.spec("CartPole-v1"), {}),
+        (gym.spec("CartPole-v1"), {"num_envs": 3}),
+        (gym.spec("CartPole-v1"), {"vectorization_mode": "sync"}),
+        (gym.spec("CartPole-v1"), {"vectorization_mode": "vector_entry_point"}),
+        (
+            gym.spec("CartPole-v1"),
+            {"vectorization_mode": "sync", "vector_kwargs": {"copy": False}},
+        ),
+        (
+            gym.spec("CartPole-v1"),
+            {
+                "vectorization_mode": "sync",
+                "wrappers": (gym.wrappers.TimeAwareObservation,),
+            },
+        ),
+        (gym.spec("CartPole-v1"), {"render_mode": "rgb_array"}),
     ),
 )
 def test_make_vec_with_spec(env_id: str, kwargs: dict):
@@ -178,20 +194,25 @@ def test_make_vec_with_spec(env_id: str, kwargs: dict):
     assert envs.spec == recreated_envs.spec
     assert envs.num_envs == recreated_envs.num_envs
 
+    assert type(envs) == type(recreated_envs)
+
     assert envs.observation_space == recreated_envs.observation_space
     assert envs.single_observation_space == recreated_envs.single_observation_space
     assert envs.action_space == recreated_envs.action_space
     assert envs.single_action_space == recreated_envs.single_action_space
 
-    assert type(envs) == type(recreated_envs)
+    assert envs.render_mode == recreated_envs.render_mode
 
     envs.close()
     recreated_envs.close()
 
 
-def test_async_with_dynamically_registered_env():
+@pytest.mark.parametrize("ctx", [None, "spawn", "fork", "forkserver"])
+def test_async_with_dynamically_registered_env(ctx):
     gym.register("TestEnv-v0", CartPoleEnv)
 
-    gym.make_vec("TestEnv-v0", vectorization_mode="async")
+    gym.make_vec(
+        "TestEnv-v0", vectorization_mode="async", vector_kwargs=dict(context=ctx)
+    )
 
     del gym.registry["TestEnv-v0"]
