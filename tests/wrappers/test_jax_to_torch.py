@@ -1,4 +1,5 @@
 """Test suite for TorchToJax wrapper."""
+from typing import NamedTuple
 
 import numpy as np
 import pytest
@@ -37,6 +38,11 @@ def torch_data_equivalence(data_1, data_2) -> bool:
         return False
 
 
+class ExampleNamedTuple(NamedTuple):
+    a: torch.Tensor
+    b: torch.Tensor
+
+
 @pytest.mark.parametrize(
     "value, expected_value",
     [
@@ -52,19 +58,47 @@ def torch_data_equivalence(data_1, data_2) -> bool:
             {"a": torch.tensor(6.0), "b": torch.tensor(7)},
         ),
         (torch.tensor(1.0), torch.tensor(1.0)),
+        (torch.tensor(1.0), torch.tensor(1.0)),
         (torch.tensor([1, 2]), torch.tensor([1, 2])),
-        (torch.tensor([[1.0], [2.0]]), torch.tensor([[1.0], [2.0]])),
         (
-            {"a": (1, torch.tensor(2.0), torch.tensor([3, 4])), "b": {"c": 5}},
+            torch.tensor([[1.0], [2.0]]),
+            torch.tensor([[1.0], [2.0]]),
+        ),
+        (
             {
-                "a": (torch.tensor(1), torch.tensor(2.0), torch.tensor([3, 4])),
+                "a": (
+                    1,
+                    torch.tensor(2.0),
+                    torch.tensor([3, 4]),
+                ),
+                "b": {"c": 5},
+            },
+            {
+                "a": (
+                    torch.tensor(1),
+                    torch.tensor(2.0),
+                    torch.tensor([3, 4]),
+                ),
                 "b": {"c": torch.tensor(5)},
             },
+        ),
+        (
+            ExampleNamedTuple(
+                a=torch.tensor([1, 2]),
+                b=torch.tensor([1.0, 2.0]),
+            ),
+            ExampleNamedTuple(
+                a=torch.tensor([1, 2]),
+                b=torch.tensor([1.0, 2.0]),
+            ),
         ),
     ],
 )
 def test_roundtripping(value, expected_value):
     """We test numpy -> jax -> numpy as this is direction in the NumpyToJax wrapper."""
+    print(f"{value=}")
+    print(f"{torch_to_jax(value)=}")
+    print(f"{jax_to_torch(torch_to_jax(value))=}")
     roundtripped_value = jax_to_torch(torch_to_jax(value))
     assert torch_data_equivalence(roundtripped_value, expected_value)
 
