@@ -42,21 +42,21 @@ def custom_environments():
         ("CustomDictEnv-v0", "FilterObservation", {"filter_keys": ["a"]}),
         ("CartPole-v1", "FlattenObservation", {}),
         ("CarRacing-v2", "GrayscaleObservation", {}),
-        # ("CarRacing-v2", "ResizeObservation", {"shape": (35, 45)}),
+        ("CarRacing-v2", "ResizeObservation", {"shape": (35, 45)}),
         ("CarRacing-v2", "ReshapeObservation", {"shape": (96, 48, 6)}),
         ("CartPole-v1", "RescaleObservation", {"min_obs": 0, "max_obs": 1}),
         ("CartPole-v1", "DtypeObservation", {"dtype": np.int32}),
-        # ("CartPole-v1", "RenderObservation", {}),
-        # ("CartPole-v1", "TimeAwareObservation", {}),
-        # ("CartPole-v1", "FrameStackObservation", {}),
-        # ("CartPole-v1", "DelayObservation", {}),
+        # ("CartPole-v1", "RenderObservation", {}),  # not implemented
+        # ("CartPole-v1", "TimeAwareObservation", {}),  # not implemented
+        # ("CartPole-v1", "FrameStackObservation", {}),  # not implemented
+        # ("CartPole-v1", "DelayObservation", {}),  # not implemented
         ("MountainCarContinuous-v0", "ClipAction", {}),
         (
             "MountainCarContinuous-v0",
             "RescaleAction",
             {"min_action": 1, "max_action": 2},
         ),
-        ("CartPole-v1", "ClipReward", {"min_reward": 0.25, "max_reward": 0.75}),
+        ("CartPole-v1", "ClipReward", {"min_reward": -0.25, "max_reward": 0.75}),
     ),
 )
 def test_vector_wrapper_equivalence(
