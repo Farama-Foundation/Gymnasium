@@ -575,4 +575,4 @@ def _flatten_space_oneof(space: OneOf) -> Box:
     high = np.concatenate([[num_subspaces - 1], np.full(max_flatdim - 1, overall_high)])
 
     dtype = np.result_type(*[s.dtype for s in space.spaces if hasattr(s, "dtype")])
-    return Box(low=low, high=high, shape=(max_flatdim,), dtype=dtype)
+    return Box(low=low, high=high, shape=(max_flatdim,), dtype=dtype, nullable=True)
