@@ -851,14 +851,14 @@ def make_vec(
         wrappers = []
 
     if isinstance(id, EnvSpec):
-        # id_env_spec = id
         env_spec = id
     elif isinstance(id, str):
         env_spec = _find_spec(id)
     else:
         raise error.Error(f"Invalid id type: {type(id)}. Expected `str` or `EnvSpec`")
 
-    env_spec_kwargs = env_spec.kwargs.copy()
+    env_spec = copy.deepcopy(env_spec)
+    env_spec_kwargs = env_spec.kwargs
 
     num_envs = env_spec_kwargs.pop("num_envs", num_envs)
     vectorization_mode = env_spec_kwargs.pop("vectorization_mode", vectorization_mode)
@@ -939,9 +939,9 @@ def make_vec(
     if num_envs != 1:
         copied_id_spec.kwargs["num_envs"] = num_envs
     copied_id_spec.kwargs["vectorization_mode"] = vectorization_mode.value
-    if vector_kwargs is not None:
+    if len(vector_kwargs) > 0:
         copied_id_spec.kwargs["vector_kwargs"] = vector_kwargs
-    if wrappers is not None:
+    if len(wrappers) > 0:
         copied_id_spec.kwargs["wrappers"] = wrappers
     env.unwrapped.spec = copied_id_spec
 
