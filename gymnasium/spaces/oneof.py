@@ -96,7 +96,7 @@ class OneOf(Space[Any]):
         Returns:
             Tuple of the subspace's samples
         """
-        subspace_idx = self.np_random.integers(0, len(self.spaces))
+        subspace_idx = int(self.np_random.integers(0, len(self.spaces)))
         subspace = self.spaces[subspace_idx]
         if mask is not None:
             assert isinstance(
@@ -124,18 +124,16 @@ class OneOf(Space[Any]):
         self, sample_n: typing.Sequence[tuple[int, Any]]
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
-        # serialize as list-repr of tuple of vectors
         return [
-            [i, space.to_jsonable([sample[i] for sample in sample_n])]
-            for i, space in enumerate(self.spaces)
+            [int(i), self.spaces[i].to_jsonable([subsample])[0]]
+            for (i, subsample) in sample_n
         ]
 
     def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [
-            (space_idx, sample)
-            for space_idx, jsonable_samples in sample_n
-            for sample in self.spaces[space_idx].from_jsonable(jsonable_samples)
+            (space_idx, self.spaces[space_idx].from_jsonable([jsonable_sample])[0])
+            for space_idx, jsonable_sample in sample_n
         ]
 
     def __getitem__(self, index: int) -> Space[Any]:
