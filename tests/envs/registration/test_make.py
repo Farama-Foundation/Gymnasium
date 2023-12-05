@@ -241,7 +241,7 @@ def test_make_human_rendering(register_rendering_testing_envs):
         TypeError,
         match=re.escape("got an unexpected keyword argument 'render'"),
     ):
-        gym.make("CarRacing-v2", render="human")
+        gym.make("CarRacing-v3", render="human")
 
     # This test checks that a user can create an environment without the metadata including the render mode
     with pytest.warns(

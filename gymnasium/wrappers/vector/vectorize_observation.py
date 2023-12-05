@@ -212,7 +212,7 @@ class FlattenObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.shape
         (3, 96, 96, 3)
@@ -237,7 +237,7 @@ class GrayscaleObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.shape
         (3, 96, 96, 3)
@@ -265,7 +265,7 @@ class ResizeObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.shape
         (3, 96, 96, 3)
@@ -291,7 +291,7 @@ class ReshapeObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.shape
         (3, 96, 96, 3)

@@ -23,7 +23,7 @@ def test_carracing_domain_randomize():
     CarRacing DomainRandomize should have different colours at every reset.
     However, it should have same colours when `options={"randomize": False}` is given to reset.
     """
-    env: CarRacing = gym.make("CarRacing-v2", domain_randomize=True).unwrapped
+    env: CarRacing = gym.make("CarRacing-v3", domain_randomize=True).unwrapped
 
     road_color = env.road_color
     bg_color = env.bg_color

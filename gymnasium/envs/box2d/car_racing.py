@@ -182,6 +182,7 @@ class CarRacing(gym.Env, EzPickle):
     ```
 
     ## Version History
+    - v2: Change truncation to termination when finishing the lap (1.0.0)
     - v1: Change track completion logic and add domain randomization (0.24.0)
     - v0: Original version
 
@@ -563,10 +564,8 @@ class CarRacing(gym.Env, EzPickle):
             step_reward = self.reward - self.prev_reward
             self.prev_reward = self.reward
             if self.tile_visited_count == len(self.track) or self.new_lap:
-                # Truncation due to finishing lap
-                # This should not be treated as a failure
-                # but like a timeout
-                truncated = True
+                # Termination due to finishing lap
+                terminated = True
             x, y = self.car.hull.position
             if abs(x) > PLAYFIELD or abs(y) > PLAYFIELD:
                 terminated = True

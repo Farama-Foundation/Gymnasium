@@ -46,7 +46,7 @@ def test_resize_observation_wrapper(env):
 
 @pytest.mark.parametrize("shape", ((10, 10), (20, 20), (60, 60), (100, 100)))
 def test_resize_shapes(shape: tuple[int, int]):
-    env = ResizeObservation(gym.make("CarRacing-v2"), shape)
+    env = ResizeObservation(gym.make("CarRacing-v3"), shape)
     assert env.observation_space == Box(
         low=0, high=255, shape=shape + (3,), dtype=np.uint8
     )
@@ -58,7 +58,7 @@ def test_resize_shapes(shape: tuple[int, int]):
 
 
 def test_invalid_input():
-    env = gym.make("CarRacing-v2")
+    env = gym.make("CarRacing-v3")
 
     with pytest.raises(AssertionError):
         ResizeObservation(env, ())

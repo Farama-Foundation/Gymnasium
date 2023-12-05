@@ -222,7 +222,7 @@ class FlattenObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FlattenObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> env = FlattenObservation(env)
@@ -264,7 +264,7 @@ class GrayscaleObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import GrayscaleObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> grayscale_env = GrayscaleObservation(env)
@@ -342,7 +342,7 @@ class ResizeObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ResizeObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> resized_env = ResizeObservation(env, (32, 32))
@@ -413,7 +413,7 @@ class ReshapeObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ReshapeObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> reshape_env = ReshapeObservation(env, (24, 4, 96, 1, 3))
