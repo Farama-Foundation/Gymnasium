@@ -16,6 +16,7 @@ from gymnasium.envs.registration import (
     registry,
     pprint_registry,
     make_vec,
+    VectorizeMode,
     register_envs,
 )
 
@@ -38,6 +39,7 @@ __all__ = [
     "spec",
     "register",
     "registry",
+    "VectorizeMode",
     "pprint_registry",
     "register_envs",
     # module folders
