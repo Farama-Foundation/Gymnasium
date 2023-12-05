@@ -567,11 +567,11 @@ class CarRacing(gym.Env, EzPickle):
             if self.tile_visited_count == len(self.track) or self.new_lap:
                 # Termination due to finishing lap
                 terminated = True
-                info["finished"] = True
+                info["lap_finished"] = True
             x, y = self.car.hull.position
             if abs(x) > PLAYFIELD or abs(y) > PLAYFIELD:
                 terminated = True
-                info["finished"] = False
+                info["lap_finished"] = False
                 step_reward = -100
 
         if self.render_mode == "human":
