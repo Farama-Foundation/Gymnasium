@@ -259,7 +259,7 @@ class Box(Space[NDArray[Any]]):
         if self.nullable:
             bounded |= np.isnan(x)
 
-        return np.all(bounded)
+        return bool(np.all(bounded))
 
     def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[list]:
         """Convert a batch of samples from this space to a JSONable data type."""
