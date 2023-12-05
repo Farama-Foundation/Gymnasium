@@ -308,6 +308,7 @@ def _concatenate_dict(
 @concatenate.register(Text)
 @concatenate.register(Sequence)
 @concatenate.register(Space)
+@concatenate.register(OneOf)
 def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
     return tuple(items)
 
@@ -411,6 +412,11 @@ def _create_empty_array_sequence(
         )
     else:
         return tuple(tuple() for _ in range(n))
+
+
+@create_empty_array.register(OneOf)
+def _create_empty_array_oneof(space: OneOf, n: int = 1, fn=np.zeros):
+    return tuple(tuple() for _ in range(n))
 
 
 @create_empty_array.register(Space)
