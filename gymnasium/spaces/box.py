@@ -246,6 +246,12 @@ class Box(Space[NDArray[Any]]):
             except (ValueError, TypeError):
                 return False
 
+        if not np.can_cast(x.dtype, self.dtype):
+            return False
+
+        if x.shape != self.shape:
+            return False
+
         bounded_below = x >= self.low
         bounded_above = x <= self.high
 
@@ -253,11 +259,7 @@ class Box(Space[NDArray[Any]]):
         if self.nullable:
             bounded |= np.isnan(x)
 
-        return bool(
-            np.can_cast(x.dtype, self.dtype)
-            and x.shape == self.shape
-            and np.all(bounded)
-        )
+        return np.all(bounded)
 
     def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[list]:
         """Convert a batch of samples from this space to a JSONable data type."""
