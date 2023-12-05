@@ -263,8 +263,8 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         return observation, reward, False, False, info
 
     def _get_obs(self):
-        position = self.data.qpos.flat.copy()
-        velocity = self.data.qvel.flat.copy()
+        position = self.data.qpos.flatten()
+        velocity = self.data.qvel.flatten()
 
         if self._exclude_current_positions_from_observation:
             position = position[1:]

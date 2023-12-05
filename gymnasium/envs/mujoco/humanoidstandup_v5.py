@@ -405,24 +405,24 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         }
 
     def _get_obs(self):
-        position = self.data.qpos.flat.copy()
-        velocity = self.data.qvel.flat.copy()
+        position = self.data.qpos.flatten()
+        velocity = self.data.qvel.flatten()
 
         if self._include_cinert_in_observation is True:
-            com_inertia = self.data.cinert[1:].flat.copy()
+            com_inertia = self.data.cinert[1:].flatten()
         else:
             com_inertia = np.array([])
         if self._include_cvel_in_observation is True:
-            com_velocity = self.data.cvel[1:].flat.copy()
+            com_velocity = self.data.cvel[1:].flatten()
         else:
             com_velocity = np.array([])
 
         if self._include_qfrc_actuator_in_observation is True:
-            actuator_forces = self.data.qfrc_actuator[6:].flat.copy()
+            actuator_forces = self.data.qfrc_actuator[6:].flatten()
         else:
             actuator_forces = np.array([])
         if self._include_cfrc_ext_in_observation is True:
-            external_contact_forces = self.data.cfrc_ext[1:].flat.copy()
+            external_contact_forces = self.data.cfrc_ext[1:].flatten()
         else:
             external_contact_forces = np.array([])
 

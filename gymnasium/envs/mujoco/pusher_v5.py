@@ -266,8 +266,8 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     def _get_obs(self):
         return np.concatenate(
             [
-                self.data.qpos.flat[:7],
-                self.data.qvel.flat[:7],
+                self.data.qpos.flatten()[:7],
+                self.data.qvel.flatten()[:7],
                 self.get_body_com("tips_arm"),
                 self.get_body_com("object"),
                 self.get_body_com("goal"),
