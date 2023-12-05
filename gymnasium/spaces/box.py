@@ -59,6 +59,7 @@ class Box(Space[NDArray[Any]]):
         shape: Sequence[int] | None = None,
         dtype: type[np.floating[Any]] | type[np.integer[Any]] = np.float32,
         seed: int | np.random.Generator | None = None,
+        require_numpy: bool = False,
     ):
         r"""Constructor of :class:`Box`.
 
@@ -143,6 +144,8 @@ class Box(Space[NDArray[Any]]):
 
         self.low_repr = _short_repr(self.low)
         self.high_repr = _short_repr(self.high)
+
+        self.require_numpy = require_numpy
 
         super().__init__(self.shape, self.dtype, seed)
 
@@ -237,7 +240,8 @@ class Box(Space[NDArray[Any]]):
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if not isinstance(x, np.ndarray):
-            gym.logger.warn("Casting input x to numpy array.")
+            if self.require_numpy:
+                gym.logger.warn("Casting input x to numpy array.")
             try:
                 x = np.asarray(x, dtype=self.dtype)
             except (ValueError, TypeError):

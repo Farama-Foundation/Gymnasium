@@ -129,7 +129,7 @@ def check_obs(obs, observation_space: spaces.Space, method_name: str):
             logger.warn(f"{pre} should be an int or np.int64, actual type: {type(obs)}")
     elif isinstance(observation_space, spaces.Box):
         if observation_space.shape != ():
-            if not isinstance(obs, np.ndarray):
+            if not isinstance(obs, np.ndarray) and observation_space.require_numpy:
                 logger.warn(
                     f"{pre} was expecting a numpy array, actual type: {type(obs)}"
                 )

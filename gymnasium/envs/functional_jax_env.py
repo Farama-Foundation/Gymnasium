@@ -13,7 +13,6 @@ from gymnasium.envs.registration import EnvSpec
 from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
 from gymnasium.vector.utils import batch_space
-from gymnasium.wrappers.jax_to_numpy import jax_to_numpy
 
 
 class FunctionalJaxEnv(gym.Env):
@@ -69,8 +68,6 @@ class FunctionalJaxEnv(gym.Env):
         obs = self.func_env.observation(self.state)
         info = self.func_env.state_info(self.state)
 
-        obs = jax_to_numpy(obs)
-
         return obs, info
 
     def step(self, action: ActType):
@@ -91,8 +88,6 @@ class FunctionalJaxEnv(gym.Env):
         terminated = self.func_env.terminal(next_state)
         info = self.func_env.transition_info(self.state, action, next_state)
         self.state = next_state
-
-        observation = jax_to_numpy(observation)
 
         return observation, float(reward), bool(terminated), False, info
 
@@ -183,20 +178,10 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
 
-        obs = jax_to_numpy(obs)
-
         return obs, info
 
     def step(self, action: ActType):
         """Steps through the environment using the action."""
-        if self._is_box_action_space:
-            assert isinstance(self.action_space, gym.spaces.Box)  # For typing
-            action = np.clip(action, self.action_space.low, self.action_space.high)
-        else:  # Discrete
-            # For now we assume jax envs don't use complex spaces
-            assert self.action_space.contains(
-                action
-            ), f"{action!r} ({type(action)}) invalid"
         self.steps += 1
 
         rng, self.rng = jrng.split(self.rng)
@@ -232,12 +217,6 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         self.autoreset_envs = done
 
         observation = self.func_env.observation(next_state)
-        observation = jax_to_numpy(observation)
-
-        reward = jax_to_numpy(reward)
-
-        terminated = jax_to_numpy(terminated)
-        truncated = jax_to_numpy(truncated)
 
         self.state = next_state
 
