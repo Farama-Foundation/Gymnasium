@@ -23,6 +23,7 @@ from gymnasium.spaces import (
     GraphInstance,
     MultiBinary,
     MultiDiscrete,
+    OneOf,
     Sequence,
     Space,
     Text,
@@ -119,6 +120,11 @@ def _batch_space_dict(space: Dict, n: int = 1):
         {key: batch_space(subspace, n=n) for key, subspace in space.items()},
         seed=deepcopy(space.np_random),
     )
+
+
+@batch_space.register(OneOf)
+def _batch_space_oneof(space: OneOf, n: int = 1):
+    return Sequence(space)
 
 
 @batch_space.register(Graph)
@@ -225,6 +231,11 @@ def _iterate_dict(space: Dict, items: dict[str, Any]):
     )
     for item in zip(*values):
         yield OrderedDict({key: value for key, value in zip(keys, item)})
+
+
+@iterate.register(Sequence)
+def _iterate_sequence(space: Sequence, items: list[Any]):
+    yield from items
 
 
 @singledispatch
