@@ -627,6 +627,26 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
 
+# note: fails with `mujoco-mjx==3.0.1`
+@pytest.mark.parametrize("version", ["v5", "v4", "v3", "v2"])
+def test_model_sensors(version: str):
+    """Verify that all the sensors of the model are loaded."""
+    env = gym.make(f"Ant-{version}").unwrapped
+    assert env.data.cfrc_ext.shape == (14, 6)
+
+    env = gym.make(f"Humanoid-{version}").unwrapped
+    assert env.data.cinert.shape == (14, 10)
+    assert env.data.cvel.shape == (14, 6)
+    assert env.data.qfrc_actuator.shape == (23,)
+    assert env.data.cfrc_ext.shape == (14, 6)
+
+    env = gym.make(f"HumanoidStandup-{version}").unwrapped
+    assert env.data.cinert.shape == (14, 10)
+    assert env.data.cvel.shape == (14, 6)
+    assert env.data.qfrc_actuator.shape == (23,)
+    assert env.data.cfrc_ext.shape == (14, 6)
+
+
 def test_dt():
     """Assert that env.dt gets assigned correctly."""
     env_a = gym.make("Ant-v5", include_cfrc_ext_in_observation=False).unwrapped
