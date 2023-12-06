@@ -1,4 +1,5 @@
 """Finds all the specs that we can test with"""
+from collections.abc import Iterable
 from typing import List, Optional
 
 import numpy as np
@@ -76,6 +77,10 @@ def assert_equals(a, b, prefix=None):
     elif isinstance(a, np.ndarray):
         np.testing.assert_array_equal(a, b)
     elif isinstance(a, tuple):
+        for elem_from_a, elem_from_b in zip(a, b):
+            assert_equals(elem_from_a, elem_from_b)
+    elif isinstance(a, Iterable):
+        assert len(a) == len(b), f"{prefix}Differing lengths: {a} and {b}"
         for elem_from_a, elem_from_b in zip(a, b):
             assert_equals(elem_from_a, elem_from_b)
     else:
