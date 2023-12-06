@@ -45,7 +45,7 @@ class CartPoleFunctional(
     """Cartpole but in jax and functional.
 
     Example:
-        >>> import jax  # doctest: +SKIP
+        >>> import jax
         >>> import jax.numpy as jnp
         >>> from gymnasium.envs.phys2d.cartpole import CartPoleFunctional, CartPoleParams
         >>> key = jax.random.PRNGKey(0)
