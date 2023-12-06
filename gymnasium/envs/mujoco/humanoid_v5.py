@@ -508,7 +508,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
             "x_velocity": x_velocity,
             "y_velocity": y_velocity,
-        } | reward_info
+        }.update(reward_info)
 
         if self.render_mode == "human":
             self.render()

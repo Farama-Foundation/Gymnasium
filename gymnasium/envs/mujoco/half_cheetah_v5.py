@@ -250,7 +250,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         info = {
             "x_position": x_position_after,
             "x_velocity": x_velocity,
-        } | reward_info
+        }.update(reward_info)
 
         if self.render_mode == "human":
             self.render()

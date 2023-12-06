@@ -201,7 +201,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         self.do_simulation(action, self.frame_skip)
 
         observation = self._get_obs()
-        info = {} | reward_info
+        info = reward_info
         if self.render_mode == "human":
             self.render()
         return observation, reward, False, False, info

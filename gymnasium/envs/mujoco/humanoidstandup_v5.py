@@ -451,7 +451,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             "z_distance_from_origin": self.data.qpos[2] - self.init_qpos[2],
             "tendon_lenght": self.data.ten_length,
             "tendon_velocity": self.data.ten_velocity,
-        } | reward_info
+        }.update(reward_info)
 
         if self.render_mode == "human":
             self.render()

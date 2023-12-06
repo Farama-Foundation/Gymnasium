@@ -199,7 +199,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         terminated = bool(y <= 1)
         reward, reward_info = self._get_rew(x, y, terminated)
 
-        info = {} | reward_info
+        info = reward_info
 
         if self.render_mode == "human":
             self.render()
