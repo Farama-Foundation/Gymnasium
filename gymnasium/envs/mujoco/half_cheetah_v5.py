@@ -247,11 +247,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(x_velocity, action)
-        info = {
-            "x_position": x_position_after,
-            "x_velocity": x_velocity,
-            **reward_info
-        }
+        info = {"x_position": x_position_after, "x_velocity": x_velocity, **reward_info}
 
         if self.render_mode == "human":
             self.render()
