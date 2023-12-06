@@ -234,26 +234,34 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         xy_velocity = (xy_position_after - xy_position_before) / self.dt
         x_velocity, y_velocity = xy_velocity
 
-        forward_reward = self._forward_reward_weight * x_velocity
-
-        ctrl_cost = self.control_cost(action)
-
         observation = self._get_obs()
-        reward = forward_reward - ctrl_cost
+        reward, reward_info = self._get_rew(x_velocity, action)
         info = {
-            "reward_forward": forward_reward,
-            "reward_ctrl": -ctrl_cost,
             "x_position": xy_position_after[0],
             "y_position": xy_position_after[1],
             "distance_from_origin": np.linalg.norm(xy_position_after, ord=2),
             "x_velocity": x_velocity,
             "y_velocity": y_velocity,
+            **reward_info,
         }
 
         if self.render_mode == "human":
             self.render()
 
         return observation, reward, False, False, info
+
+    def _get_rew(self, x_velocity: float, action):
+        forward_reward = self._forward_reward_weight * x_velocity
+        ctrl_cost = self.control_cost(action)
+
+        reward = forward_reward - ctrl_cost
+
+        reward_info = {
+            "reward_forward": forward_reward,
+            "reward_ctrl": -ctrl_cost,
+        }
+
+        return reward, reward_info
 
     def _get_obs(self):
         position = self.data.qpos.flatten()
