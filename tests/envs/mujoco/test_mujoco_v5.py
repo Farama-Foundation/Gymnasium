@@ -640,11 +640,12 @@ def test_model_sensors(version: str):
     assert env.data.qfrc_actuator.shape == (23,)
     assert env.data.cfrc_ext.shape == (14, 6)
 
-    env = gym.make(f"HumanoidStandup-{version}").unwrapped
-    assert env.data.cinert.shape == (14, 10)
-    assert env.data.cvel.shape == (14, 6)
-    assert env.data.qfrc_actuator.shape == (23,)
-    assert env.data.cfrc_ext.shape == (14, 6)
+    if version != "v3":  # HumanoidStandup v3 does not exist
+        env = gym.make(f"HumanoidStandup-{version}").unwrapped
+        assert env.data.cinert.shape == (14, 10)
+        assert env.data.cvel.shape == (14, 6)
+        assert env.data.qfrc_actuator.shape == (23,)
+        assert env.data.cfrc_ext.shape == (14, 6)
 
 
 def test_dt():
