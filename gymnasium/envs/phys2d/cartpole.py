@@ -45,25 +45,26 @@ class CartPoleFunctional(
     """Cartpole but in jax and functional.
 
     Example:
-        >>> import jax
+        >>> import jax  # doctest: +SKIP
         >>> import jax.numpy as jnp
-        >>> from gymnasium.envs.phys2d.cartpole import CartPoleFunctional
+        >>> from gymnasium.envs.phys2d.cartpole import CartPoleFunctional, CartPoleParams
         >>> key = jax.random.PRNGKey(0)
-        >>> env = CartPoleFunctional({"x_init": 0.5})
-        >>> state = env.initial(key)
+        >>> params = CartPoleParams(x_init=0.5)
+        >>> env = CartPoleFunctional()
+        >>> state = env.initial(key, params=params)
         >>> print(state)
         [ 0.46532142 -0.27484107  0.13302994 -0.20361817]
-        >>> print(env.transition(state, 0))
+        >>> print(env.transition(state, 0, params=params))
         [ 0.4598246  -0.6357784   0.12895757  0.1278053 ]
         >>> env.transform(jax.jit)
-        >>> state = env.initial(key)
+        >>> state = env.initial(key, params=params)
         >>> print(state)
         [ 0.46532142 -0.27484107  0.13302994 -0.20361817]
-        >>> print(env.transition(state, 0))
+        >>> print(env.transition(state, 0, params=params))
         [ 0.4598246  -0.6357784   0.12895757  0.12780523]
         >>> vkey = jax.random.split(key, 10)
         >>> env.transform(jax.vmap)
-        >>> vstate = env.initial(vkey)
+        >>> vstate = env.initial(vkey, params=params)
         >>> print(vstate)
         [[ 0.25117755 -0.03159595  0.09428263  0.12404168]
          [ 0.231457    0.41420317 -0.13484478  0.29151905]
@@ -75,7 +76,7 @@ class CartPoleFunctional(
          [-0.20234215  0.39775252 -0.2556088   0.32877135]
          [-0.2572986  -0.29943776 -0.45600426 -0.35740316]
          [ 0.05436695  0.35021234 -0.36484408  0.2805779 ]]
-        >>> print(env.transition(vstate, jnp.array([0 for _ in range(10)])))
+        >>> print(env.transition(vstate, jnp.array([0 for _ in range(10)]), params=params))
         [[ 0.25054562 -0.38763174  0.09676346  0.4448946 ]
          [ 0.23974106  0.09849604 -0.1290144   0.5390002 ]
          [-0.12449364 -0.7323911   0.14250359  0.6634313 ]
@@ -87,21 +88,6 @@ class CartPoleFunctional(
          [-0.26328734 -0.5420943  -0.46315232 -0.2344252 ]
          [ 0.06137119  0.08665388 -0.35923252  0.4403924 ]]
     """
-
-    gravity = 9.8
-    masscart = 1.0
-    masspole = 0.1
-    total_mass = masspole + masscart
-    length = 0.5
-    polemass_length = masspole + length
-    force_mag = 10.0
-    tau = 0.02
-    theta_threshold_radians = 12 * 2 * np.pi / 360
-    x_threshold = 2.4
-    x_init = 0.05
-
-    screen_width = 600
-    screen_height = 400
 
     observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(4,), dtype=np.float32)
     action_space = gym.spaces.Discrete(2)
