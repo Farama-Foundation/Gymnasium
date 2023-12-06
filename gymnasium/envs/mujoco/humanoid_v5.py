@@ -517,12 +517,12 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     def _get_rew(self, x_velocity: float, action):
         forward_reward = self._forward_reward_weight * x_velocity
         healthy_reward = self.healthy_reward
+        rewards = forward_reward + healthy_reward
 
         ctrl_cost = self.control_cost(action)
         contact_cost = self.contact_cost
-
         costs = ctrl_cost + contact_cost
-        rewards = forward_reward + healthy_reward
+
         reward = rewards - costs
 
         reward_info = {

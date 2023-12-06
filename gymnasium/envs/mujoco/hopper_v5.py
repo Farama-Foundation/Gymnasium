@@ -332,11 +332,11 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     def _get_rew(self, x_velocity: float, action):
         forward_reward = self._forward_reward_weight * x_velocity
         healthy_reward = self.healthy_reward
+        rewards = forward_reward + healthy_reward
 
         ctrl_cost = self.control_cost(action)
-
-        rewards = forward_reward + healthy_reward
         costs = ctrl_cost
+
         reward = rewards - costs
 
         reward_info = {

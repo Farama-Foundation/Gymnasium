@@ -210,6 +210,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         dist_penalty = 0.01 * x**2 + (y - 2) ** 2
         vel_penalty = 1e-3 * v1**2 + 5e-3 * v2**2
         alive_bonus = self._healthy_reward * int(not terminated)
+
         reward = alive_bonus - dist_penalty - vel_penalty
 
         reward_info = {

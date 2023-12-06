@@ -254,6 +254,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         ctrl_cost = self.control_cost(action)
 
         reward = forward_reward - ctrl_cost
+
         reward_info = {
             "reward_forward": forward_reward,
             "reward_ctrl": -ctrl_cost,
