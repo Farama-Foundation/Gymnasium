@@ -62,7 +62,7 @@ def fell_off(player_position):
 
 
 class CliffWalkingFunctional(
-    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType]
+    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType, None]
 ):
     """Cliff walking involves crossing a gridworld from start to goal while avoiding falling off a cliff.
 
@@ -139,7 +139,13 @@ class CliffWalkingFunctional(
         "render_fps": 4,
     }
 
-    def transition(self, state: EnvState, action: int | jax.Array, key: PRNGKey):
+    def transition(
+        self,
+        state: EnvState,
+        action: int | jax.Array,
+        key: PRNGKey,
+        params: None = None,
+    ):
         """The Cliffwalking environment's state transition function."""
         new_position = state.player_position
 
@@ -175,32 +181,36 @@ class CliffWalkingFunctional(
 
         return new_state
 
-    def initial(self, rng: PRNGKey) -> EnvState:
+    def initial(self, rng: PRNGKey, params: None = None) -> EnvState:
         """Cliffwalking initial observation function."""
         player_position = jnp.array([3, 0])
 
         state = EnvState(player_position=player_position, last_action=-1, fallen=False)
         return state
 
-    def observation(self, state: EnvState) -> int:
+    def observation(self, state: EnvState, params: None = None) -> int:
         """Cliffwalking observation."""
         return jnp.array(
             state.player_position[0] * 12 + state.player_position[1]
         ).reshape((1,))
 
-    def terminal(self, state: EnvState) -> jax.Array:
+    def terminal(self, state: EnvState, params: None = None) -> jax.Array:
         """Determines if a particular Cliffwalking observation is terminal."""
         return jnp.array_equal(state.player_position, jnp.array([3, 11]))
 
     def reward(
-        self, state: EnvState, action: ActType, next_state: StateType
+        self,
+        state: EnvState,
+        action: ActType,
+        next_state: StateType,
+        params: None = None,
     ) -> jax.Array:
         """Calculates reward from a state."""
         state = next_state
         reward = -1 + (-99 * state.fallen[0])
         return jax.lax.convert_element_type(reward, jnp.float32)
 
-    def render_init(
+    def render_initialise(
         self, screen_width: int = 600, screen_height: int = 500
     ) -> RenderStateType:
         """Returns an initial render state."""
@@ -285,9 +295,7 @@ class CliffWalkingFunctional(
         )
 
     def render_image(
-        self,
-        state: StateType,
-        render_state: RenderStateType,
+        self, state: StateType, render_state: RenderStateType, params: None = None
     ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:

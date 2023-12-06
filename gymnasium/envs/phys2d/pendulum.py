@@ -215,6 +215,10 @@ class PendulumFunctional(
         pygame.display.quit()
         pygame.quit()
 
+    def get_default_params(self, **kwargs) -> PendulumParams:
+        """Returns the default parameters for the environment."""
+        return PendulumParams(**kwargs)
+
 
 class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based pendulum environment using the functional version as base."""
