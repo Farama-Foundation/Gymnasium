@@ -6,6 +6,7 @@ from typing import Any, Tuple
 import jax
 import jax.numpy as jnp
 import numpy as np
+from flax import struct
 from jax.random import PRNGKey
 
 import gymnasium as gym
@@ -18,8 +19,28 @@ from gymnasium.utils import EzPickle
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
 
+@struct.dataclass
+class CartPoleParams:
+    """Parameters for the jax CartPole environment."""
+
+    gravity: float = 9.8
+    masscart: float = 1.0
+    masspole: float = 0.1
+    total_mass: float = masspole + masscart
+    length: float = 0.5
+    polemass_length: float = masspole + length
+    force_mag: float = 10.0
+    tau: float = 0.02
+    theta_threshold_radians: float = 12 * 2 * np.pi / 360
+    x_threshold: float = 2.4
+    x_init: float = 0.05
+
+    screen_width: int = 600
+    screen_height: int = 400
+
+
 class CartPoleFunctional(
-    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType]
+    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType, CartPoleParams]
 ):
     """Cartpole but in jax and functional.
 
@@ -85,68 +106,81 @@ class CartPoleFunctional(
     observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(4,), dtype=np.float32)
     action_space = gym.spaces.Discrete(2)
 
-    def initial(self, rng: PRNGKey):
+    def initial(self, rng: PRNGKey, params: CartPoleParams = CartPoleParams):
         """Initial state generation."""
         return jax.random.uniform(
-            key=rng, minval=-self.x_init, maxval=self.x_init, shape=(4,)
+            key=rng, minval=-params.x_init, maxval=params.x_init, shape=(4,)
         )
 
     def transition(
-        self, state: jax.Array, action: int | jax.Array, rng: None = None
+        self,
+        state: jax.Array,
+        action: int | jax.Array,
+        rng: None = None,
+        params: CartPoleParams = CartPoleParams,
     ) -> StateType:
         """Cartpole transition."""
         x, x_dot, theta, theta_dot = state
-        force = jnp.sign(action - 0.5) * self.force_mag
+        force = jnp.sign(action - 0.5) * params.force_mag
         costheta = jnp.cos(theta)
         sintheta = jnp.sin(theta)
 
         # For the interested reader:
         # https://coneural.org/florian/papers/05_cart_pole.pdf
         temp = (
-            force + self.polemass_length * theta_dot**2 * sintheta
-        ) / self.total_mass
-        thetaacc = (self.gravity * sintheta - costheta * temp) / (
-            self.length * (4.0 / 3.0 - self.masspole * costheta**2 / self.total_mass)
+            force + params.polemass_length * theta_dot**2 * sintheta
+        ) / params.total_mass
+        thetaacc = (params.gravity * sintheta - costheta * temp) / (
+            params.length
+            * (4.0 / 3.0 - params.masspole * costheta**2 / params.total_mass)
         )
-        xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
+        xacc = temp - params.polemass_length * thetaacc * costheta / params.total_mass
 
-        x = x + self.tau * x_dot
-        x_dot = x_dot + self.tau * xacc
-        theta = theta + self.tau * theta_dot
-        theta_dot = theta_dot + self.tau * thetaacc
+        x = x + params.tau * x_dot
+        x_dot = x_dot + params.tau * xacc
+        theta = theta + params.tau * theta_dot
+        theta_dot = theta_dot + params.tau * thetaacc
 
         state = jnp.array((x, x_dot, theta, theta_dot), dtype=jnp.float32)
 
         return state
 
-    def observation(self, state: jax.Array) -> jax.Array:
+    def observation(
+        self, state: jax.Array, params: CartPoleParams = CartPoleParams
+    ) -> jax.Array:
         """Cartpole observation."""
         return state
 
-    def terminal(self, state: jax.Array) -> jax.Array:
+    def terminal(
+        self, state: jax.Array, params: CartPoleParams = CartPoleParams
+    ) -> jax.Array:
         """Checks if the state is terminal."""
         x, _, theta, _ = state
 
         terminated = (
-            (x < -self.x_threshold)
-            | (x > self.x_threshold)
-            | (theta < -self.theta_threshold_radians)
-            | (theta > self.theta_threshold_radians)
+            (x < -params.x_threshold)
+            | (x > params.x_threshold)
+            | (theta < -params.theta_threshold_radians)
+            | (theta > params.theta_threshold_radians)
         )
 
         return terminated
 
     def reward(
-        self, state: StateType, action: ActType, next_state: StateType
+        self,
+        state: StateType,
+        action: ActType,
+        next_state: StateType,
+        params: CartPoleParams = CartPoleParams,
     ) -> jax.Array:
         """Computes the reward for the state transition using the action."""
         x, _, theta, _ = state
 
         terminated = (
-            (x < -self.x_threshold)
-            | (x > self.x_threshold)
-            | (theta < -self.theta_threshold_radians)
-            | (theta > self.theta_threshold_radians)
+            (x < -params.x_threshold)
+            | (x > params.x_threshold)
+            | (theta < -params.theta_threshold_radians)
+            | (theta > params.theta_threshold_radians)
         )
 
         reward = jax.lax.cond(terminated, lambda: 0.0, lambda: 1.0)
@@ -156,6 +190,7 @@ class CartPoleFunctional(
         self,
         state: StateType,
         render_state: RenderStateType,
+        params: CartPoleParams = CartPoleParams,
     ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image of the state using the render state."""
         try:
@@ -167,21 +202,21 @@ class CartPoleFunctional(
             ) from e
         screen, clock = render_state
 
-        world_width = self.x_threshold * 2
-        scale = self.screen_width / world_width
+        world_width = params.x_threshold * 2
+        scale = params.screen_width / world_width
         polewidth = 10.0
-        polelen = scale * (2 * self.length)
+        polelen = scale * (2 * params.length)
         cartwidth = 50.0
         cartheight = 30.0
 
         x = state
 
-        surf = pygame.Surface((self.screen_width, self.screen_height))
+        surf = pygame.Surface((params.screen_width, params.screen_height))
         surf.fill((255, 255, 255))
 
         l, r, t, b = -cartwidth / 2, cartwidth / 2, cartheight / 2, -cartheight / 2
         axleoffset = cartheight / 4.0
-        cartx = x[0] * scale + self.screen_width / 2.0  # MIDDLE OF CART
+        cartx = x[0] * scale + params.screen_width / 2.0  # MIDDLE OF CART
         carty = 100  # TOP OF CART
         cart_coords = [(l, b), (l, t), (r, t), (r, b)]
         cart_coords = [(c[0] + cartx, c[1] + carty) for c in cart_coords]
@@ -218,7 +253,7 @@ class CartPoleFunctional(
             (129, 132, 203),
         )
 
-        gfxdraw.hline(surf, 0, self.screen_width, carty, (0, 0, 0))
+        gfxdraw.hline(surf, 0, params.screen_width, carty, (0, 0, 0))
 
         surf = pygame.transform.flip(surf, False, True)
         screen.blit(surf, (0, 0))
@@ -227,7 +262,7 @@ class CartPoleFunctional(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
         )
 
-    def render_init(
+    def render_initialise(
         self, screen_width: int = 600, screen_height: int = 400
     ) -> RenderStateType:
         """Initialises the render state for a screen width and height."""
@@ -254,6 +289,10 @@ class CartPoleFunctional(
             ) from e
         pygame.display.quit()
         pygame.quit()
+
+    def get_default_params(self, **kwargs) -> CartPoleParams:
+        """Returns the default parameters for the environment."""
+        return CartPoleParams(**kwargs)
 
 
 class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):

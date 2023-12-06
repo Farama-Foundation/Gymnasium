@@ -14,10 +14,13 @@ ObsType = TypeVar("ObsType")
 RewardType = TypeVar("RewardType")
 TerminalType = TypeVar("TerminalType")
 RenderStateType = TypeVar("RenderStateType")
+Params = TypeVar("Params")
 
 
 class FuncEnv(
-    Generic[StateType, ObsType, ActType, RewardType, TerminalType, RenderStateType]
+    Generic[
+        StateType, ObsType, ActType, RewardType, TerminalType, RenderStateType, Params
+    ]
 ):
     """Base class (template) for functional envs.
 
@@ -46,35 +49,46 @@ class FuncEnv(
     def __init__(self, options: dict[str, Any] | None = None):
         """Initialize the environment constants."""
         self.__dict__.update(options or {})
+        self.default_params = self.get_default_params()
 
-    def initial(self, rng: Any) -> StateType:
+    def initial(self, rng: Any, params: Params | None = None) -> StateType:
         """Generates the initial state of the environment with a random number generator."""
         raise NotImplementedError
 
-    def transition(self, state: StateType, action: ActType, rng: Any) -> StateType:
+    def transition(
+        self, state: StateType, action: ActType, rng: Any, params: Params | None = None
+    ) -> StateType:
         """Updates (transitions) the state with an action and random number generator."""
         raise NotImplementedError
 
-    def observation(self, state: StateType) -> ObsType:
+    def observation(self, state: StateType, params: Params | None = None) -> ObsType:
         """Generates an observation for a given state of an environment."""
         raise NotImplementedError
 
     def reward(
-        self, state: StateType, action: ActType, next_state: StateType
+        self,
+        state: StateType,
+        action: ActType,
+        next_state: StateType,
+        params: Params | None = None,
     ) -> RewardType:
         """Computes the reward for a given transition between `state`, `action` to `next_state`."""
         raise NotImplementedError
 
-    def terminal(self, state: StateType) -> TerminalType:
+    def terminal(self, state: StateType, params: Params | None = None) -> TerminalType:
         """Returns if the state is a final terminal state."""
         raise NotImplementedError
 
-    def state_info(self, state: StateType) -> dict:
+    def initial_info(self, state: StateType, params: Params | None = None) -> dict:
         """Info dict about a single state."""
         return {}
 
     def transition_info(
-        self, state: StateType, action: ActType, next_state: StateType
+        self,
+        state: StateType,
+        action: ActType,
+        next_state: StateType,
+        params: Params | None = None,
     ) -> dict:
         """Info dict about a full transition."""
         return {}
@@ -83,24 +97,29 @@ class FuncEnv(
         """Functional transformations."""
         self.initial = func(self.initial)
         self.transition = func(self.transition)
-
         self.observation = func(self.observation)
         self.reward = func(self.reward)
         self.terminal = func(self.terminal)
-
-        self.state_info = func(self.state_info)
-        self.transition_info = func(self.transition_info)
+        self.state_info = func(self.initial_info)
+        self.step_info = func(self.transition_info)
 
     def render_image(
-        self, state: StateType, render_state: RenderStateType
+        self,
+        state: StateType,
+        render_state: RenderStateType,
+        params: Params | None = None,
     ) -> tuple[RenderStateType, np.ndarray]:
         """Show the state."""
         raise NotImplementedError
 
-    def render_init(self, **kwargs) -> RenderStateType:
+    def render_initialise(self, **kwargs) -> RenderStateType:
         """Initialize the render state."""
         raise NotImplementedError
 
     def render_close(self, render_state: RenderStateType):
         """Close the render state."""
         raise NotImplementedError
+
+    def get_default_params(self, **kwargs) -> Params | None:
+        """Get the default params."""
+        return None
