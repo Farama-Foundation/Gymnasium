@@ -245,22 +245,25 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         x_position_after = self.data.qpos[0]
         x_velocity = (x_position_after - x_position_before) / self.dt
 
-        ctrl_cost = self.control_cost(action)
-
-        forward_reward = self._forward_reward_weight * x_velocity
-
         observation = self._get_obs()
-        reward = forward_reward - ctrl_cost
-        info = {
-            "x_position": x_position_after,
-            "x_velocity": x_velocity,
-            "reward_forward": forward_reward,
-            "reward_ctrl": -ctrl_cost,
-        }
+        reward, reward_info = self._get_rew(x_velocity, action)
+        info = {"x_position": x_position_after, "x_velocity": x_velocity, **reward_info}
 
         if self.render_mode == "human":
             self.render()
         return observation, reward, False, False, info
+
+    def _get_rew(self, x_velocity: float, action):
+        forward_reward = self._forward_reward_weight * x_velocity
+        ctrl_cost = self.control_cost(action)
+
+        reward = forward_reward - ctrl_cost
+
+        reward_info = {
+            "reward_forward": forward_reward,
+            "reward_ctrl": -ctrl_cost,
+        }
+        return reward, reward_info
 
     def _get_obs(self):
         position = self.data.qpos.flatten()

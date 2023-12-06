@@ -444,6 +444,21 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         self.do_simulation(action, self.frame_skip)
         pos_after = self.data.qpos[2]
 
+        reward, reward_info = self._get_rew(pos_after, action)
+        info = {
+            "x_position": self.data.qpos[0],
+            "y_position": self.data.qpos[1],
+            "z_distance_from_origin": self.data.qpos[2] - self.init_qpos[2],
+            "tendon_lenght": self.data.ten_length,
+            "tendon_velocity": self.data.ten_velocity,
+            **reward_info,
+        }
+
+        if self.render_mode == "human":
+            self.render()
+        return self._get_obs(), reward, False, False, info
+
+    def _get_rew(self, pos_after: float, action):
         uph_cost = (pos_after - 0) / self.model.opt.timestep
 
         quad_ctrl_cost = self._ctrl_cost_weight * np.square(self.data.ctrl).sum()
@@ -455,20 +470,14 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         quad_impact_cost = np.clip(quad_impact_cost, min_impact_cost, max_impact_cost)
 
         reward = uph_cost - quad_ctrl_cost - quad_impact_cost + 1
-        info = {
+
+        reward_info = {
             "reward_linup": uph_cost,
             "reward_quadctrl": -quad_ctrl_cost,
             "reward_impact": -quad_impact_cost,
-            "x_position": self.data.qpos[0],
-            "y_position": self.data.qpos[1],
-            "z_distance_from_origin": self.data.qpos[2] - self.init_qpos[2],
-            "tendon_lenght": self.data.ten_length,
-            "tendon_velocity": self.data.ten_velocity,
         }
 
-        if self.render_mode == "human":
-            self.render()
-        return self._get_obs(), reward, False, False, info
+        return reward, reward_info
 
     def reset_model(self):
         noise_low = -self._reset_noise_scale

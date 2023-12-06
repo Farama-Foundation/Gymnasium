@@ -316,29 +316,37 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         x_position_after = self.data.qpos[0]
         x_velocity = (x_position_after - x_position_before) / self.dt
 
-        ctrl_cost = self.control_cost(action)
-
-        forward_reward = self._forward_reward_weight * x_velocity
-        healthy_reward = self.healthy_reward
-
-        rewards = forward_reward + healthy_reward
-        costs = ctrl_cost
-
         observation = self._get_obs()
-        reward = rewards - costs
+        reward, reward_info = self._get_rew(x_velocity, action)
         terminated = self.terminated
         info = {
-            "reward_forward": forward_reward,
-            "reward_ctrl": -ctrl_cost,
-            "reward_survive": healthy_reward,
             "x_position": x_position_after,
             "z_distance_from_origin": self.data.qpos[1] - self.init_qpos[1],
             "x_velocity": x_velocity,
+            **reward_info,
         }
 
         if self.render_mode == "human":
             self.render()
         return observation, reward, terminated, False, info
+
+    def _get_rew(self, x_velocity: float, action):
+        forward_reward = self._forward_reward_weight * x_velocity
+        healthy_reward = self.healthy_reward
+        rewards = forward_reward + healthy_reward
+
+        ctrl_cost = self.control_cost(action)
+        costs = ctrl_cost
+
+        reward = rewards - costs
+
+        reward_info = {
+            "reward_forward": forward_reward,
+            "reward_ctrl": -ctrl_cost,
+            "reward_survive": healthy_reward,
+        }
+
+        return reward, reward_info
 
     def reset_model(self):
         noise_low = -self._reset_noise_scale
