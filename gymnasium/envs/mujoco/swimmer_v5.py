@@ -242,7 +242,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
             "distance_from_origin": np.linalg.norm(xy_position_after, ord=2),
             "x_velocity": x_velocity,
             "y_velocity": y_velocity,
-        }.update(reward_info)
+            **reward_info
+        }
 
         if self.render_mode == "human":
             self.render()

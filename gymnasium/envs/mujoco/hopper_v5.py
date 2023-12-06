@@ -323,7 +323,8 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
             "x_position": x_position_after,
             "z_distance_from_origin": self.data.qpos[1] - self.init_qpos[1],
             "x_velocity": x_velocity,
-        }.update(reward_info)
+            **reward_info
+        }
 
         if self.render_mode == "human":
             self.render()
