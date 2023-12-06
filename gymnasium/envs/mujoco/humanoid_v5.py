@@ -497,23 +497,10 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         xy_velocity = (xy_position_after - xy_position_before) / self.dt
         x_velocity, y_velocity = xy_velocity
 
-        ctrl_cost = self.control_cost(action)
-        contact_cost = self.contact_cost
-        costs = ctrl_cost + contact_cost
-
-        forward_reward = self._forward_reward_weight * x_velocity
-        healthy_reward = self.healthy_reward
-
-        rewards = forward_reward + healthy_reward
-
         observation = self._get_obs()
-        reward = rewards - costs
+        reward, reward_info = self._get_rew(x_velocity, action)
         terminated = self.terminated
         info = {
-            "reward_survive": healthy_reward,
-            "reward_forward": forward_reward,
-            "reward_ctrl": -ctrl_cost,
-            "reward_contact": -contact_cost,
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
             "tendon_lenght": self.data.ten_length,
@@ -521,11 +508,31 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
             "x_velocity": x_velocity,
             "y_velocity": y_velocity,
-        }
+        } | reward_info
 
         if self.render_mode == "human":
             self.render()
         return observation, reward, terminated, False, info
+
+    def _get_rew(self, x_velocity: float, action):
+        forward_reward = self._forward_reward_weight * x_velocity
+        healthy_reward = self.healthy_reward
+
+        ctrl_cost = self.control_cost(action)
+        contact_cost = self.contact_cost
+
+        costs = ctrl_cost + contact_cost
+        rewards = forward_reward + healthy_reward
+        reward = rewards - costs
+
+        reward_info = {
+            "reward_survive": healthy_reward,
+            "reward_forward": forward_reward,
+            "reward_ctrl": -ctrl_cost,
+            "reward_contact": -contact_cost,
+        }
+
+        return reward, reward_info
 
     def reset_model(self):
         noise_low = -self._reset_noise_scale

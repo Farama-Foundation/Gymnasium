@@ -197,21 +197,28 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         }
 
     def step(self, action):
+        reward, reward_info = self._get_rew(action)
+        self.do_simulation(action, self.frame_skip)
+
+        observation = self._get_obs()
+        info = {} | reward_info
+        if self.render_mode == "human":
+            self.render()
+        return observation, reward, False, False, info
+
+    def _get_rew(self, action):
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
         reward_dist = -np.linalg.norm(vec) * self._reward_dist_weight
         reward_ctrl = -np.square(action).sum() * self._reward_control_weight
 
-        self.do_simulation(action, self.frame_skip)
-
-        observation = self._get_obs()
         reward = reward_dist + reward_ctrl
-        info = {
+
+        reward_info = {
             "reward_dist": reward_dist,
             "reward_ctrl": reward_ctrl,
         }
-        if self.render_mode == "human":
-            self.render()
-        return observation, reward, False, False, info
+
+        return reward, reward_info
 
     def reset_model(self):
         qpos = (
