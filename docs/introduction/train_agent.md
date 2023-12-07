@@ -9,7 +9,7 @@ This page provides a short outline of how to train an agent for a gymnasium envi
 
 Blackjack is one of the most popular casino card games that is also infamous for being beatable under certain conditions. This version of the game uses an infinite deck (we draw the cards with replacement), so counting cards won't be a viable strategy in our simulated game. The observation is a tuple of the player's current sum, the value of the dealers face-up card and a boolean value on whether the player holds a usable case. The agent can pick between two actions: stand (0) such that the player takes no more cards and hit (1) such that the player will take another player. To win, your card sum should be greater than the dealers without exceeding 21. The game ends if the player selects stand or if the card sum is greater than 21. Full documentation can be found at [https://gymnasium.farama.org/environments/toy_text/blackjack](https://gymnasium.farama.org/environments/toy_text/blackjack).
 
-Q-learning is a model-free off-policy training algorithm by Watkins, 1989 for environments with discrete action spaces and was famous for being the first reinforcement learning algorithm to prove convergence to the optimal policy under certain conditions.
+Q-learning is a model-free off-policy learning algorithm by Watkins, 1989 for environments with discrete action spaces and was famous for being the first reinforcement learning algorithm to prove convergence to an optimal policy under certain conditions.
 
 ## Executing an action
 
@@ -162,4 +162,4 @@ Hopefully this Tutorial helped you get a grip of how to interact with Gymnasium 
 
 It is recommended that you solve this environment by yourself (project based learning is really effective!). You can apply your favorite discrete RL algorithm or give Monte Carlo ES a try (covered in `Sutton & Barto <http://incompleteideas.net/book/the-book-2nd.html>`_, section 5.3) - this way you can compare your results directly to the book.
 
-Best of fun!
+Best of luck!

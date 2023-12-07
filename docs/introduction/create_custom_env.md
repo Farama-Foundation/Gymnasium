@@ -174,7 +174,7 @@ For our environment, several things need to happen during the step function:
 ```{eval-rst}
 While it is possible to use your new custom environment now immediately, it is more common for environments to be initialized using :meth:`gymnasium.make`. In this section, we explain how to register a custom environment then initialize it.
 
-The environment ID consists of three components, two of which are  optional: an optional namespace (here: ``gymnasium_env``), a mandatory  name (here: ``GridWorld``) and an optional but recommended version (here: v0). It might have also been registered as ``GridWorld-v0`` (the  recommended approach), ``GridWorld`` or ``gymnasium_env/GridWorld``, and  the appropriate ID should then be used during environment creation.
+The environment ID consists of three components, two of which are  optional: an optional namespace (here: ``gymnasium_env``), a mandatory  name (here: ``GridWorld``) and an optional but recommended version (here: v0). It may have also be registered as ``GridWorld-v0`` (the  recommended approach), ``GridWorld`` or ``gymnasium_env/GridWorld``, and  the appropriate ID should then be used during environment creation.
 
 The entry point can be a string or function, as this tutorial isn't part of a python project, we cannot use a string but for most environments, this is the normal way of specifying the entry point.
 
