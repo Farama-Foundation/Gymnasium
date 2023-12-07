@@ -5,7 +5,7 @@ title: Create custom env
 
 # Create a Custom Environment
 
-This page provides a short outline of how to create custom environment with Gymnasium, for a more [complete tutorial](../tutorials/gymnasium_basics/environment_creation) with rendering and please read [basic usage](basic_usage) before reading this page.
+This page provides a short outline of how to create custom environments with Gymnasium, for a more [complete tutorial](../tutorials/gymnasium_basics/environment_creation) with rendering, please read [basic usage](basic_usage)  before reading this page.
 
 We will implement a very simplistic game, called ``GridWorldEnv``, consisting of a 2-dimensional square grid of fixed size. The agent can move vertically or horizontally between grid cells in each timestep and the goal of the agent is to navigate to a target on the grid that has been placed randomly at the beginning of the episode.
 

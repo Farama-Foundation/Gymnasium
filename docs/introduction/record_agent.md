@@ -55,7 +55,7 @@ In the script above, for the :class:`RecordVideo` wrapper, we specify three diff
 
 For the :class:`RecordEpisodicStatistics`, we only need to specify the buffer lengths, this is the max length of the internal ``time_queue``, ``return_queue`` and ``length_queue``. Rather than collect the data for each episode individually, we can use the data queues to print the information at the end of the evaluation.
 
-For speed ups evaluating environments, it is possible to implement this with vector environments to in order to evaluate ``N`` episodes at the same time in parallel rather than series.
+For speed ups in evaluating environments, it is possible to implement this with vector environments to in order to evaluate ``N`` episodes at the same time in parallel rather than series.
 ```
 
 ## Recording the Agent during Training
