@@ -217,8 +217,12 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/speed_up_env/">Speeding Up Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration_guide/">Migration Guide - v0.21 to v1.0.0</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -537,9 +541,21 @@ we intend to flesh it out and officially expose it to end users.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.functional.FuncEnv.state_info">
+<span class="sig-name descname"><span class="pre">state_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/gymnasium/functional/#FuncEnv.state_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.functional.FuncEnv.state_info" title="Link to this definition">#</a></dt>
+<dd><p>Info dict about a single state.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.functional.FuncEnv.transition_info">
 <span class="sig-name descname"><span class="pre">transition_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/gymnasium/functional/#FuncEnv.transition_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.functional.FuncEnv.transition_info" title="Link to this definition">#</a></dt>
 <dd><p>Info dict about a full transition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.functional.FuncEnv.render_init">
+<span class="sig-name descname"><span class="pre">render_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RenderStateType</span></span></span><a class="reference internal" href="../../_modules/gymnasium/functional/#FuncEnv.render_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.functional.FuncEnv.render_init" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the render state.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -558,6 +574,31 @@ we intend to flesh it out and officially expose it to end users.</p>
 
 <section id="converting-jax-based-functional-environments-to-standard-env">
 <h2>Converting Jax-based Functional environments to standard Env<a class="headerlink" href="#converting-jax-based-functional-environments-to-standard-env" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.envs.functional_jax_env.FunctionalJaxEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.envs.functional_jax_env.</span></span><span class="sig-name descname"><span class="pre">FunctionalJaxEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gymnasium.functional.FuncEnv" title="gymnasium.functional.FuncEnv"><span class="pre">FuncEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(-float('inf'),</span> <span class="pre">float('inf'))</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../registry/#gymnasium.envs.registration.EnvSpec" title="gymnasium.envs.registration.EnvSpec"><span class="pre">EnvSpec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/envs/functional_jax_env/#FunctionalJaxEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.envs.functional_jax_env.FunctionalJaxEnv" title="Link to this definition">#</a></dt>
+<dd><p>A conversion layer for jax-based environments.</p>
+<p>Initialize the environment from a FuncEnv.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.envs.functional_jax_env.FunctionalJaxEnv.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/envs/functional_jax_env/#FunctionalJaxEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.reset" title="Link to this definition">#</a></dt>
+<dd><p>Resets the environment using the seed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.envs.functional_jax_env.FunctionalJaxEnv.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/envs/functional_jax_env/#FunctionalJaxEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.step" title="Link to this definition">#</a></dt>
+<dd><p>Steps through the environment using the action.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.envs.functional_jax_env.FunctionalJaxEnv.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/envs/functional_jax_env/#FunctionalJaxEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.render" title="Link to this definition">#</a></dt>
+<dd><p>Returns the render state if <cite>render_mode</cite> is “rgb_array”.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -638,12 +679,22 @@ we intend to flesh it out and officially expose it to end users.</p>
 <li><a class="reference internal" href="#gymnasium.functional.FuncEnv.observation"><code class="docutils literal notranslate"><span class="pre">FuncEnv.observation()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.functional.FuncEnv.reward"><code class="docutils literal notranslate"><span class="pre">FuncEnv.reward()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.functional.FuncEnv.terminal"><code class="docutils literal notranslate"><span class="pre">FuncEnv.terminal()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.functional.FuncEnv.state_info"><code class="docutils literal notranslate"><span class="pre">FuncEnv.state_info()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.functional.FuncEnv.transition_info"><code class="docutils literal notranslate"><span class="pre">FuncEnv.transition_info()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.functional.FuncEnv.render_init"><code class="docutils literal notranslate"><span class="pre">FuncEnv.render_init()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.functional.FuncEnv.render_image"><code class="docutils literal notranslate"><span class="pre">FuncEnv.render_image()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.functional.FuncEnv.render_close"><code class="docutils literal notranslate"><span class="pre">FuncEnv.render_close()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#converting-jax-based-functional-environments-to-standard-env">Converting Jax-based Functional environments to standard Env</a></li>
+<li><a class="reference internal" href="#converting-jax-based-functional-environments-to-standard-env">Converting Jax-based Functional environments to standard Env</a><ul>
+<li><a class="reference internal" href="#gymnasium.envs.functional_jax_env.FunctionalJaxEnv"><code class="docutils literal notranslate"><span class="pre">FunctionalJaxEnv</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.reset"><code class="docutils literal notranslate"><span class="pre">FunctionalJaxEnv.reset()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.step"><code class="docutils literal notranslate"><span class="pre">FunctionalJaxEnv.step()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.render"><code class="docutils literal notranslate"><span class="pre">FunctionalJaxEnv.render()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

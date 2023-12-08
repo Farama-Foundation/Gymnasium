@@ -217,8 +217,12 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/speed_up_env/">Speeding Up Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration_guide/">Migration Guide - v0.21 to v1.0.0</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -813,7 +817,7 @@ I.e. the observation returned by <code class="xref py py-meth docutils literal n
 <dt class="sig sig-object py" id="gymnasium.wrappers.NormalizeObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_observation/#NormalizeObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.NormalizeObservation" title="Link to this definition">#</a></dt>
 <dd><p>Normalizes observations to be centered at the mean with unit variance.</p>
-<p>The property <a href="#id1"><span class="problematic" id="id2">:prop:`_update_running_mean`</span></a> allows to freeze/continue the running mean calculation of the observation
+<p>The property <code class="xref py py-attr docutils literal notranslate"><span class="pre">update_running_mean</span></code> allows to freeze/continue the running mean calculation of the observation
 statistics. If <code class="docutils literal notranslate"><span class="pre">True</span></code> (default), the <code class="docutils literal notranslate"><span class="pre">RunningMeanStd</span></code> will get updated every time <code class="docutils literal notranslate"><span class="pre">step</span></code> or <code class="docutils literal notranslate"><span class="pre">reset</span></code> is called.
 If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the calculated statistics are used but not updated anymore; this may be used during evaluation.</p>
 <p>A vector version of the wrapper exists <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.NormalizeObservation</span></code>.</p>

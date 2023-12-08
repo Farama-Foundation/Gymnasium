@@ -217,8 +217,12 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/speed_up_env/">Speeding Up Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration_guide/">Migration Guide - v0.21 to v1.0.0</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -485,127 +489,130 @@ robotics (<a class="reference external" href="https://robotics.farama.org/">Gymn
 multi-objective RL (<a class="reference external" href="https://mo-gymnasium.farama.org/">MO-Gymnasium</a>)
 many-agent RL (<a class="reference external" href="https://magent2.farama.org/">MAgent2</a>),
 3D navigation (<a class="reference external" href="https://miniworld.farama.org/">Miniworld</a>), and many more.</p>
+<section id="third-party-environments-with-gymnasium">
+<h2>Third-party environments with Gymnasium<a class="headerlink" href="#third-party-environments-with-gymnasium" title="Link to this heading">#</a></h2>
 <p><em>This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.</em></p>
 <p><em>If you’d like to contribute an environment, please reach out on <a class="reference external" href="https://discord.gg/bnJ6kubTg6">Discord</a>.</em></p>
 <section id="carl-context-adaptive-rl">
-<h2><a class="reference external" href="https://github.com/automl/CARL">CARL: context adaptive RL</a><a class="headerlink" href="#carl-context-adaptive-rl" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/automl/CARL">CARL: context adaptive RL</a><a class="headerlink" href="#carl-context-adaptive-rl" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/automl/carl" /></p>
 <p>Contextual extensions of popular reinforcement learning environments that enable training and test distributions for generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.</p>
 </section>
 <section id="dacbench-a-benchmark-for-dynamic-algorithm-configuration">
-<h2><a class="reference external" href="https://github.com/automl/DACBench">DACBench: a benchmark for Dynamic Algorithm Configuration</a><a class="headerlink" href="#dacbench-a-benchmark-for-dynamic-algorithm-configuration" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/automl/DACBench">DACBench: a benchmark for Dynamic Algorithm Configuration</a><a class="headerlink" href="#dacbench-a-benchmark-for-dynamic-algorithm-configuration" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/automl/DACBench" /></p>
 <p>A benchmark library for <a class="reference external" href="https://www.automl.org/dynamic-algorithm-configuration/">Dynamic Algorithm Configuration</a>. Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.</p>
 </section>
 <section id="flappy-bird-env">
-<h2><a class="reference external" href="https://github.com/robertoschiavone/flappy-bird-env">flappy-bird-env</a><a class="headerlink" href="#flappy-bird-env" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/robertoschiavone/flappy-bird-env">flappy-bird-env</a><a class="headerlink" href="#flappy-bird-env" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/robertoschiavone/flappy-bird-env" /></p>
 <p>Flappy Bird as a Farama Gymnasium environment.</p>
 </section>
 <section id="flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium">
-<h2><a class="reference external" href="https://github.com/markub3327/flappy-bird-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a><a class="headerlink" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/markub3327/flappy-bird-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a><a class="headerlink" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium" /></p>
 <p>A simple environment for single-agent reinforcement learning algorithms on a clone of <a class="reference external" href="https://en.wikipedia.org/wiki/Flappy_Bird">Flappy Bird</a>, the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.</p>
 </section>
 <section id="gym-cellular-automata-cellular-automata-environments">
-<h2><a class="reference external" href="https://github.com/elbecerrasoto/gym-cellular-automata">gym-cellular-automata: Cellular Automata environments</a><a class="headerlink" href="#gym-cellular-automata-cellular-automata-environments" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/elbecerrasoto/gym-cellular-automata">gym-cellular-automata: Cellular Automata environments</a><a class="headerlink" href="#gym-cellular-automata-cellular-automata-environments" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata" /></p>
 <p>Environments where the agent interacts with <em>Cellular Automata</em> by changing its cell states.</p>
 </section>
 <section id="gym-jiminy-training-robots-in-jiminy">
-<h2><a class="reference external" href="https://github.com/duburcqa/jiminy">gym-jiminy: Training Robots in Jiminy</a><a class="headerlink" href="#gym-jiminy-training-robots-in-jiminy" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/duburcqa/jiminy">gym-jiminy: Training Robots in Jiminy</a><a class="headerlink" href="#gym-jiminy-training-robots-in-jiminy" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.0-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/duburcqa/jiminy" /></p>
 <p>gym-jiminy presents an extension of the initial Gym for robotics using <a class="reference external" href="https://github.com/duburcqa/jiminy">Jiminy</a>, an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.</p>
 </section>
 <section id="gym-saturation-environments-used-to-prove-theorems">
-<h2><a class="reference external" href="https://github.com/inpefess/gym-saturation">gym-saturation: Environments used to prove theorems</a><a class="headerlink" href="#gym-saturation-environments-used-to-prove-theorems" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/inpefess/gym-saturation">gym-saturation: Environments used to prove theorems</a><a class="headerlink" href="#gym-saturation-environments-used-to-prove-theorems" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/inpefess/gym-saturation" /></p>
 <p>An environment for guiding automated theorem provers based on saturation algorithms (e.g. <a class="reference external" href="https://github.com/vprover/vampire">Vampire</a>).</p>
 </section>
 <section id="gym-trading-env-trading-environment">
-<h2><a class="reference external" href="https://gym-trading-env.readthedocs.io/">gym-trading-env: Trading Environment</a><a class="headerlink" href="#gym-trading-env-trading-environment" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://gym-trading-env.readthedocs.io/">gym-trading-env: Trading Environment</a><a class="headerlink" href="#gym-trading-env-trading-environment" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
 <img alt="Github stars" src="https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env" /></p>
 <p>Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.</p>
 </section>
 <section id="highway-env-autonomous-driving-and-tactical-decision-making-tasks">
-<h2><a class="reference external" href="https://github.com/eleurent/highway-env">highway-env: Autonomous driving and tactical decision-making tasks</a><a class="headerlink" href="#highway-env-autonomous-driving-and-tactical-decision-making-tasks" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/eleurent/highway-env">highway-env: Autonomous driving and tactical decision-making tasks</a><a class="headerlink" href="#highway-env-autonomous-driving-and-tactical-decision-making-tasks" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/eleurent/highway-env" /></p>
 <p>An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control.</p>
 </section>
 <section id="matrix-mdp-easily-create-discrete-mdps">
-<h2><a class="reference external" href="https://github.com/Paul-543NA/matrix-mdp-gym">matrix-mdp: Easily create discrete MDPs</a><a class="headerlink" href="#matrix-mdp-easily-create-discrete-mdps" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/Paul-543NA/matrix-mdp-gym">matrix-mdp: Easily create discrete MDPs</a><a class="headerlink" href="#matrix-mdp-easily-create-discrete-mdps" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.2-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/Paul-543NA/matrix-mdp-gym" /></p>
 <p>An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (<code class="docutils literal notranslate"><span class="pre">P_0(s)</span></code>, <code class="docutils literal notranslate"><span class="pre">P(s'|</span> <span class="pre">s,</span> <span class="pre">a)</span></code> and <code class="docutils literal notranslate"><span class="pre">R(s',</span> <span class="pre">s,</span> <span class="pre">a)</span></code>) into a gym environment that represents the discrete MDP ruled by these dynamics.</p>
 </section>
 <section id="mobile-env-environments-for-coordination-of-wireless-mobile-networks">
-<h2><a class="reference external" href="https://github.com/stefanbschneider/mobile-env">mobile-env: Environments for coordination of wireless mobile networks</a><a class="headerlink" href="#mobile-env-environments-for-coordination-of-wireless-mobile-networks" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/stefanbschneider/mobile-env">mobile-env: Environments for coordination of wireless mobile networks</a><a class="headerlink" href="#mobile-env-environments-for-coordination-of-wireless-mobile-networks" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/stefanbschneider/mobile-env" /></p>
 <p>An open, minimalist Gymnasium environment for autonomous coordination in wireless mobile networks.</p>
 </section>
 <section id="panda-gym-robotics-environments-using-the-pybullet-physics-engine">
-<h2><a class="reference external" href="https://github.com/qgallouedec/panda-gym/">panda-gym: Robotics environments using the PyBullet physics engine</a><a class="headerlink" href="#panda-gym-robotics-environments-using-the-pybullet-physics-engine" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/qgallouedec/panda-gym/">panda-gym: Robotics environments using the PyBullet physics engine</a><a class="headerlink" href="#panda-gym-robotics-environments-using-the-pybullet-physics-engine" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/qgallouedec/panda-gym" /></p>
 <p>PyBullet based simulations of a robotic arm moving objects.</p>
 </section>
 <section id="pystk2-gymnasium-supertuxkart-races-gymnasium-wrapper">
-<h2><a class="reference external" href="https://github.com/bpiwowar/pystk2-gymnasium">pystk2-gymnasium: SuperTuxKart races gymnasium wrapper</a><a class="headerlink" href="#pystk2-gymnasium-supertuxkart-races-gymnasium-wrapper" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/bpiwowar/pystk2-gymnasium">pystk2-gymnasium: SuperTuxKart races gymnasium wrapper</a><a class="headerlink" href="#pystk2-gymnasium-supertuxkart-races-gymnasium-wrapper" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/bpiwowar/pystk2-gymnasium" /></p>
 <p>Uses a <a class="reference external" href="https://github.com/bpiwowar/pystk2">python wrapper</a> around <a class="reference external" href="https://supertuxkart.net/fr/Main_Page">SuperTuxKart</a> that allows to access the world state and to control a race.</p>
 </section>
 <section id="qwop-an-environment-for-bennet-foddy-s-game-qwop">
-<h2><a class="reference external" href="https://github.com/smanolloff/qwop-gym">QWOP: An environment for Bennet Foddy’s game QWOP</a><a class="headerlink" href="#qwop-an-environment-for-bennet-foddy-s-game-qwop" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/smanolloff/qwop-gym">QWOP: An environment for Bennet Foddy’s game QWOP</a><a class="headerlink" href="#qwop-an-environment-for-bennet-foddy-s-game-qwop" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/smanolloff/qwop-gym" /></p>
 <p>QWOP is a game about running extremely fast down a 100 meter track. With this Gymnasium environment you can train your own agents and try to beat the current world record (5.0 in-game seconds for humans and 4.7 for AI).</p>
 </section>
 <section id="safety-gymnasium-ensuring-safety-in-real-world-rl-scenarios">
-<h2><a class="reference external" href="https://github.com/PKU-MARL/safety-gymnasium">Safety-Gymnasium: Ensuring safety in real-world RL scenarios</a><a class="headerlink" href="#safety-gymnasium-ensuring-safety-in-real-world-rl-scenarios" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/PKU-MARL/safety-gymnasium">Safety-Gymnasium: Ensuring safety in real-world RL scenarios</a><a class="headerlink" href="#safety-gymnasium-ensuring-safety-in-real-world-rl-scenarios" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium" /></p>
 <p>Highly scalable and customizable Safe Reinforcement Learning library.</p>
 </section>
 <section id="simplegrid-a-simple-grid-environment-for-gymnasium">
-<h2><a class="reference external" href="https://github.com/damat-le/gym-simplegrid">SimpleGrid: a simple grid environment for Gymnasium</a><a class="headerlink" href="#simplegrid-a-simple-grid-environment-for-gymnasium" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/damat-le/gym-simplegrid">SimpleGrid: a simple grid environment for Gymnasium</a><a class="headerlink" href="#simplegrid-a-simple-grid-environment-for-gymnasium" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/damat-le/gym-simplegrid" /></p>
 <p>SimpleGrid is a super simple and minimal grid environment for Gymnasium. It is easy to use and customise and it is intended to offer an environment for rapidly testing and prototyping different RL algorithms.</p>
 </section>
 <section id="spark-sched-sim-environments-for-scheduling-dag-jobs-in-apache-spark">
-<h2><a class="reference external" href="https://github.com/ArchieGertsman/spark-sched-sim">spark-sched-sim: Environments for scheduling DAG jobs in Apache Spark</a><a class="headerlink" href="#spark-sched-sim-environments-for-scheduling-dag-jobs-in-apache-spark" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/ArchieGertsman/spark-sched-sim">spark-sched-sim: Environments for scheduling DAG jobs in Apache Spark</a><a class="headerlink" href="#spark-sched-sim-environments-for-scheduling-dag-jobs-in-apache-spark" title="Link to this heading">#</a></h3>
 <p>spark-sched-sim simulates Spark clusters for RL-based job scheduling algorithms. Spark jobs are encoded as directed acyclic graphs (DAGs), providing opportunities to experiment with graph neural networks (GNN’s) in the RL context.</p>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/ArchieGertsman/spark-sched-sim" /></p>
 </section>
 <section id="stable-retro-classic-retro-games-a-maintained-version-of-openai-retro">
-<h2><a class="reference external" href="https://github.com/Farama-Foundation/stable-retro">stable-retro: Classic retro games, a maintained version of OpenAI Retro</a><a class="headerlink" href="#stable-retro-classic-retro-games-a-maintained-version-of-openai-retro" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/Farama-Foundation/stable-retro">stable-retro: Classic retro games, a maintained version of OpenAI Retro</a><a class="headerlink" href="#stable-retro-classic-retro-games-a-maintained-version-of-openai-retro" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/Farama-Foundation/stable-retro" /></p>
 <p>Supported fork of <a class="reference external" href="https://openai.com/research/gym-retro">gym-retro</a>: turn classic video games into Gymnasium environments.</p>
 </section>
 <section id="sumo-rl-reinforcement-learning-using-sumo-traffic-simulator">
-<h2><a class="reference external" href="https://github.com/LucasAlegre/sumo-rl">sumo-rl: Reinforcement Learning using SUMO traffic simulator</a><a class="headerlink" href="#sumo-rl-reinforcement-learning-using-sumo-traffic-simulator" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/LucasAlegre/sumo-rl">sumo-rl: Reinforcement Learning using SUMO traffic simulator</a><a class="headerlink" href="#sumo-rl-reinforcement-learning-using-sumo-traffic-simulator" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/LucasAlegre/sumo-rl" /></p>
 <p>Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using <a class="reference external" href="https://pettingzoo.farama.org/">pettingzoo</a>).</p>
 </section>
 <section id="tmrl-trackmania-2020-through-rl">
-<h2><a class="reference external" href="https://github.com/trackmania-rl/tmrl/">tmrl: TrackMania 2020 through RL</a><a class="headerlink" href="#tmrl-trackmania-2020-through-rl" title="Link to this heading">#</a></h2>
+<h3><a class="reference external" href="https://github.com/trackmania-rl/tmrl/">tmrl: TrackMania 2020 through RL</a><a class="headerlink" href="#tmrl-trackmania-2020-through-rl" title="Link to this heading">#</a></h3>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/trackmania-rl/tmrl" /></p>
 <p>tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.</p>
+</section>
 </section>
 <section id="third-party-environments-using-gym">
 <h2>Third-Party Environments using Gym<a class="headerlink" href="#third-party-environments-using-gym" title="Link to this heading">#</a></h2>
@@ -817,26 +824,7 @@ It is built on the <a class="reference external" href="https://github.com/bullet
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Third-Party Environments</a><ul>
-<li><a class="reference internal" href="#carl-context-adaptive-rl">CARL: context adaptive RL</a></li>
-<li><a class="reference internal" href="#dacbench-a-benchmark-for-dynamic-algorithm-configuration">DACBench: a benchmark for Dynamic Algorithm Configuration</a></li>
-<li><a class="reference internal" href="#flappy-bird-env">flappy-bird-env</a></li>
-<li><a class="reference internal" href="#flappy-bird-gymnasium-a-flappy-bird-environment-for-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a></li>
-<li><a class="reference internal" href="#gym-cellular-automata-cellular-automata-environments">gym-cellular-automata: Cellular Automata environments</a></li>
-<li><a class="reference internal" href="#gym-jiminy-training-robots-in-jiminy">gym-jiminy: Training Robots in Jiminy</a></li>
-<li><a class="reference internal" href="#gym-saturation-environments-used-to-prove-theorems">gym-saturation: Environments used to prove theorems</a></li>
-<li><a class="reference internal" href="#gym-trading-env-trading-environment">gym-trading-env: Trading Environment</a></li>
-<li><a class="reference internal" href="#highway-env-autonomous-driving-and-tactical-decision-making-tasks">highway-env: Autonomous driving and tactical decision-making tasks</a></li>
-<li><a class="reference internal" href="#matrix-mdp-easily-create-discrete-mdps">matrix-mdp: Easily create discrete MDPs</a></li>
-<li><a class="reference internal" href="#mobile-env-environments-for-coordination-of-wireless-mobile-networks">mobile-env: Environments for coordination of wireless mobile networks</a></li>
-<li><a class="reference internal" href="#panda-gym-robotics-environments-using-the-pybullet-physics-engine">panda-gym: Robotics environments using the PyBullet physics engine</a></li>
-<li><a class="reference internal" href="#pystk2-gymnasium-supertuxkart-races-gymnasium-wrapper">pystk2-gymnasium: SuperTuxKart races gymnasium wrapper</a></li>
-<li><a class="reference internal" href="#qwop-an-environment-for-bennet-foddy-s-game-qwop">QWOP: An environment for Bennet Foddy’s game QWOP</a></li>
-<li><a class="reference internal" href="#safety-gymnasium-ensuring-safety-in-real-world-rl-scenarios">Safety-Gymnasium: Ensuring safety in real-world RL scenarios</a></li>
-<li><a class="reference internal" href="#simplegrid-a-simple-grid-environment-for-gymnasium">SimpleGrid: a simple grid environment for Gymnasium</a></li>
-<li><a class="reference internal" href="#spark-sched-sim-environments-for-scheduling-dag-jobs-in-apache-spark">spark-sched-sim: Environments for scheduling DAG jobs in Apache Spark</a></li>
-<li><a class="reference internal" href="#stable-retro-classic-retro-games-a-maintained-version-of-openai-retro">stable-retro: Classic retro games, a maintained version of OpenAI Retro</a></li>
-<li><a class="reference internal" href="#sumo-rl-reinforcement-learning-using-sumo-traffic-simulator">sumo-rl: Reinforcement Learning using SUMO traffic simulator</a></li>
-<li><a class="reference internal" href="#tmrl-trackmania-2020-through-rl">tmrl: TrackMania 2020 through RL</a></li>
+<li><a class="reference internal" href="#third-party-environments-with-gymnasium">Third-party environments with Gymnasium</a></li>
 <li><a class="reference internal" href="#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
 <li><a class="reference internal" href="#video-game-environments">Video Game environments</a></li>
 <li><a class="reference internal" href="#robotics-environments">Robotics environments</a></li>
