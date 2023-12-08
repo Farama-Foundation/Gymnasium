@@ -216,8 +216,12 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/speed_up_env/">Speeding Up Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration_guide/">Migration Guide - v0.21 to v1.0.0</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -554,9 +558,12 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
+<div class="viewcode-block" id="FuncEnv.state_info">
+<a class="viewcode-back" href="../../../api/functional/#gymnasium.functional.FuncEnv.state_info">[docs]</a>
     <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Info dict about a single state.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
+
 
 <div class="viewcode-block" id="FuncEnv.transition_info">
 <a class="viewcode-back" href="../../../api/functional/#gymnasium.functional.FuncEnv.transition_info">[docs]</a>
@@ -591,9 +598,12 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
+<div class="viewcode-block" id="FuncEnv.render_init">
+<a class="viewcode-back" href="../../../api/functional/#gymnasium.functional.FuncEnv.render_init">[docs]</a>
     <span class="k">def</span> <span class="nf">render_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderStateType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the render state.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
 
 <div class="viewcode-block" id="FuncEnv.render_close">
 <a class="viewcode-back" href="../../../api/functional/#gymnasium.functional.FuncEnv.render_close">[docs]</a>

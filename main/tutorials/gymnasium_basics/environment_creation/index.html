@@ -217,8 +217,12 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/speed_up_env/">Speeding Up Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration-guide/">v0.21 to v0.26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration_guide/">Migration Guide - v0.21 to v1.0.0</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -557,6 +561,9 @@ grid cell where the target is located.</p></li>
 always zero, unless the agent has reached the target, then it is 1.</p></li>
 </ul>
 <p>An episode in this environment (with <code class="docutils literal notranslate"><span class="pre">size=5</span></code>) might look like this:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../../../_images/environment-creation-example-episode.gif"><img alt="Example episode of the custom environment" src="../../../_images/environment-creation-example-episode.gif" style="width: 400px;" /></a>
+</div></blockquote>
 <p>where the blue dot is the agent and the red square represents the
 target.</p>
 <p>Let us look at the source code of <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code> piece by piece:</p>
@@ -565,7 +572,7 @@ target.</p>
 <p>Our custom environment will inherit from the abstract class
 <code class="docutils literal notranslate"><span class="pre">gymnasium.Env</span></code>. You shouldn’t forget to add the <code class="docutils literal notranslate"><span class="pre">metadata</span></code>
 attribute to your class. There, you should specify the render-modes that
-are supported by your environment (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;human&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rgb_array&quot;</span></code>,
+are supported by your environment (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;human&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rgb_array&quot;</span></code>,
 <code class="docutils literal notranslate"><span class="pre">&quot;ansi&quot;</span></code>) and the framerate at which your environment should be
 rendered. Every environment should support <code class="docutils literal notranslate"><span class="pre">None</span></code> as render-mode; you
 don’t need to add it in the metadata. In <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>, we will
@@ -592,10 +599,10 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
 
 
 <span class="k">class</span> <span class="nc">Actions</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">up</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">left</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">down</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">UP</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">LEFT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">DOWN</span> <span class="o">=</span> <span class="mi">3</span>
 
 
 <span class="k">class</span> <span class="nc">GridWorldEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
@@ -613,6 +620,8 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
                 <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
             <span class="p">}</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="c1"># We have 4 actions, corresponding to &quot;right&quot;, &quot;up&quot;, &quot;left&quot;, &quot;down&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
@@ -623,10 +632,10 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
 <span class="sd">        i.e. 0 corresponds to &quot;right&quot;, 1 to &quot;up&quot; etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">Actions</span><span class="o">.</span><span class="n">right</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
-            <span class="n">Actions</span><span class="o">.</span><span class="n">up</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
-            <span class="n">Actions</span><span class="o">.</span><span class="n">left</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
-            <span class="n">Actions</span><span class="o">.</span><span class="n">down</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">RIGHT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">UP</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">LEFT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">DOWN</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
         <span class="p">}</span>
 
         <span class="k">assert</span> <span class="n">render_mode</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">render_mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]</span>
@@ -667,7 +676,7 @@ to provide the manhattan distance between the agent and the target:</p>
 </pre></div>
 </div>
 <p>Oftentimes, info will also contain some data that is only available
-inside the <code class="docutils literal notranslate"><span class="pre">step</span></code> method (e.g. individual reward terms). In that case,
+inside the <code class="docutils literal notranslate"><span class="pre">step</span></code> method (e.g., individual reward terms). In that case,
 we would have to update the dictionary that is returned by <code class="docutils literal notranslate"><span class="pre">_get_info</span></code>
 in <code class="docutils literal notranslate"><span class="pre">step</span></code>.</p>
 </section>
@@ -896,12 +905,7 @@ additional keyword arguments to <code class="docutils literal notranslate"><span
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
 <td><p>Whether to wrap the environment in an  <code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code> wrapper</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">autoreset</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-<td><p>Whether to wrap the environment in an <code class="docutils literal notranslate"><span class="pre">AutoResetWrapper</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
 <td><p>The default kwargs to pass to the environment class</p></td>
