@@ -3,13 +3,12 @@ layout: "contents"
 title: Migration Guide
 ---
 
-# v0.21 to v0.26 Migration Guide
+# Migration Guide - v0.21 to v1.0.0
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
 
-Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced a large breaking change from `Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_. In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26. For environments still stuck in the v0.21 API, users can use the :class:`EnvCompatibility` wrapper to convert them to v0.26 compliant.
-For more information, see the `guide </content/gym_compatibility>`_
+Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced a large breaking change from `Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_. In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26. For environments still stuck in the v0.21 API, see the `guide </content/gym_compatibility>`_
 ```
 
 ## Example code for v0.21
