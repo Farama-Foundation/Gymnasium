@@ -4,11 +4,17 @@ from typing import Dict
 
 import numpy as np
 import math
+import time
+import random
+
 
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 # from gymnasium.spaces import Box
 from gymnasium import spaces
+
+from scipy.spatial.transform import Rotation as R
+
 
 DEFAULT_CAMERA_CONFIG = {
     "distance": 4.0,
@@ -101,9 +107,7 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
 
         self._forward_reward_weight = forward_reward_weight
         self._ctrl_cost_weight = ctrl_cost_weight
-
         self._reset_noise_scale = reset_noise_scale
-
         self._exclude_current_positions_from_observation = (
             exclude_current_positions_from_observation)
 
@@ -171,6 +175,38 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
         # self.action_space = spaces.Dict({
         #     "bezier_parameters": spaces.Box(low=-1, high=1, shape=(3, 5))})
 
+    #     ###################################################################################################
+
+
+        #running the step at 30Hz
+        #0.002 is the time step of the mujoco simulation
+        self.step_dt = 30
+        self.frame_skip = int(((1 / self.step_dt) / 0.002))
+
+        #1. motion selector, delta
+        self.motion_phase_selector = 0
+        #2. bezier parameters, alpha
+        self.bezier_parameters = np.zeros((3, 5))
+
+        #3. duration of current motion phase, T_d
+        self.motion_phase_time_span = 0
+        #4. current motion phase progress, t
+        self.motion_phase_progress = 0
+
+        #5.
+        #robot current state
+        self.robot_joint_positions_current = np.zeros((1, 12))
+        self.robot_orientation_current = np.zeros((1, 3))
+
+        #robot current and last 6 states
+        self.robot_joint_positions_history = np.zeros((7, 12))
+        self.robot_orientation_history = np.zeros((7, 3))
+
+        #6. last 6 actions history
+        self.action_history = np.zeros((6, 12))
+
+
+
     def calculate_reward(self, ball_position_before, ball_position_after, ctrl_cost):
         # Upright reward
         upright_vector = np.array([0, 0, 1])  # Assuming z-axis is up
@@ -224,6 +260,9 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
         return control_cost
 
     def step(self, action):
+        # current_timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        # print(f"Hi from step! timestamp is {current_timestamp}")
+
         x_position_before = self.data.qpos[0]
         self.do_simulation(action, self.frame_skip)
         x_position_after = self.data.qpos[0]
@@ -254,8 +293,10 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
         obs = np.concatenate([
             qpos[:7],      # ball qpos
             qvel[:6],      # ball qvel
+
             qpos[7:14],    # robot root qpos
             qvel[6:12],    # robot root qvel
+
             qpos[14:26],   # robot joints qpos
             qvel[12:24]    # robot joints qvel
         ])
@@ -268,8 +309,10 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
         obs_dict = {
             "ball_qpos": obs_array[:7],
             "ball_qvel": obs_array[7:13],
+
             "robot_root_qpos": obs_array[13:20],
             "robot_root_qvel": obs_array[20:26],
+            
             "robot_joints_qpos": obs_array[26:38],
             "robot_joints_qvel": obs_array[38:50]
         }
@@ -335,4 +378,66 @@ class A1SoccerEnv(MujocoEnv, utils.EzPickle):
 
             "robot_joint_positions": self.data.qpos[14:26],
             "robot_joint_velocities": self.data.qvel[12:24]}
+    
 
+    ###################################################################################################
+    #imported from ipynb ground
+    def get_robot_orientation(self):
+        qpos = self.data.qpos
+        # Extract the robot's root orientation quaternion
+        robot_orientation_quat = qpos[10:14]
+
+        # Convert quaternion to Euler angles
+        # The 'xyz' sequence implies intrinsic rotations around X, Y, Z axes respectively
+        robot_orientation_euler = R.from_quat(robot_orientation_quat).as_euler('xyz', degrees=False)
+
+        # robot_orientation_euler is an array [roll, pitch, yaw]
+        roll_angle = robot_orientation_euler[0]  # Roll angle about X axis (qψ)
+        pitch_angle = robot_orientation_euler[1] # Pitch angle about Y axis (qθ)
+        yaw_angle = robot_orientation_euler[2]   # Yaw angle about Z axis (qφ)
+
+        return robot_orientation_euler
+
+
+    def update_robot_state(self):
+        qpos = self.data.qpos
+
+        #joints state update
+        self.robot_joint_positions_current = qpos[14:26]
+        #moving the old current to the back
+        self.robot_joint_positions_history = np.roll(self.robot_joint_positions_history, -1, axis = 0)
+        #replacing the old current with the new current
+        self.robot_joint_positions_history[-1] = self.robot_joint_positions_current
+
+        #orientation state update
+        self.robot_orientation_current = self.get_robot_orientation()
+        self.robot_orientation_history = np.roll(self.robot_orientation_history, -1, axis = 0)
+        self.robot_orientation_history[-1] = self.robot_orientation_current
+
+        return self.robot_joint_positions_history, self.robot_orientation_history
+    
+    def update_action_history(self):
+        #this method should be called after the action is taken and before a new action is generated
+        self.action_history = np.roll(self.action_history, -1, axis = 0)
+        self.action_history[-1] = self.action_current
+
+        return self.action_history
+
+    def update_motion_phase_selector(self):
+        if self.motion_phase_progress == 1:
+            if self.motion_phase_selector == 3:
+                self.motion_phase_selector = 0
+            else:
+                self.motion_phase_selector += 1
+    
+    def update_motion_phase_progress(self):
+        self.motion_phase_progress += self.step_dt / self.motion_phase_time_span
+
+        if self.motion_phase_progress > 1:
+            print("Motion phase progress overflow")
+
+
+
+
+
+          

@@ -449,10 +449,18 @@ register(
 )
 
 
-# new A1 soccer env
+# v1
 register(
-    id = "A1Soccer",
+    id = "A1Soccer-v1",
     entry_point = "gymnasium.envs.mujoco.a1_soccer:A1SoccerEnv",
+    max_episode_steps = 1000,
+    reward_threshold = 4800.0,
+)
+
+# v2: custom
+register(
+    id = "A1Soccer-v2",
+    entry_point = "gymnasium.envs.mujoco.a1_soccer_v2:A1SoccerEnv_v2",
     max_episode_steps = 1000,
     reward_threshold = 4800.0,
 )
