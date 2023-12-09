@@ -7,6 +7,7 @@ import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import iterate
 from gymnasium.wrappers import FrameStackObservation
+from gymnasium.wrappers.utils import create_zero_array
 from tests.wrappers.utils import SEED, TESTING_OBS_ENVS, TESTING_OBS_ENVS_IDS
 
 
@@ -76,6 +77,32 @@ def test_stack_size(stack_size: int):
             else:
                 expected_obs = unstacked_obs[i - j]
             assert data_equivalence(expected_obs, frames[stack_size - 1 - j])
+
+
+@pytest.mark.parametrize("stack_size", [2, 3, 4])
+def test_stack_size_zero_padding(stack_size: int):
+    """Test different stack sizes for FrameStackObservation wrapper."""
+    env = gym.make("CartPole-v1")
+    env.action_space.seed(seed=SEED)
+    first_obs, _ = env.reset(seed=SEED)
+    second_obs, _, _, _, _ = env.step(env.action_space.sample())
+
+    zero_obs = create_zero_array(env.observation_space)
+
+    env = FrameStackObservation(env, stack_size=stack_size, padding="zero")
+
+    env.action_space.seed(seed=SEED)
+    obs, _ = env.reset(seed=SEED)
+    unstacked_obs = list(iterate(env.observation_space, obs))
+    assert len(unstacked_obs) == stack_size
+    assert data_equivalence(
+        [zero_obs for _ in range(stack_size - 1)], unstacked_obs[:-1]
+    )
+    assert data_equivalence(first_obs, unstacked_obs[-1])
+
+    obs, _, _, _, _ = env.step(env.action_space.sample())
+    unstacked_obs = list(iterate(env.observation_space, obs))
+    assert data_equivalence(second_obs, unstacked_obs[-1])
 
 
 def test_stack_size_failures():
