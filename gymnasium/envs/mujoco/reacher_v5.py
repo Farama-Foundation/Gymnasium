@@ -133,7 +133,8 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     ## Version History
     * v5:
         - Minimum `mujoco` version is now 2.3.3.
-        - Fixed bug: `reward_distance` was based on the state before the physics step, now it is based on the state after the physics step (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
+        - Fixed bug: `reward_distance` was based on the state before the physics step, now it is based on the state after the physics step (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
+        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Removed `"z - position_fingertip"` from the observation space since it is always 0, and therefore provides no useful information to the agent, this should result is slightly faster training (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
         - Added `xml_file` argument.
