@@ -7,7 +7,6 @@ import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import iterate
 from gymnasium.wrappers import FrameStackObservation
-from gymnasium.wrappers.utils import create_zero_array
 from tests.wrappers.utils import SEED, TESTING_OBS_ENVS, TESTING_OBS_ENVS_IDS
 
 
@@ -17,16 +16,13 @@ def test_env_obs(env, stack_size: int = 3):
     obs, _ = env.reset(seed=SEED)
     env.action_space.seed(SEED)
 
-    unstacked_obs = [
-        create_zero_array(env.observation_space) for _ in range(stack_size - 1)
-    ]
-    unstacked_obs.append(obs)
+    unstacked_obs = [obs for _ in range(stack_size)]
     for _ in range(stack_size * 2):
         obs, _, _, _, _ = env.step(env.action_space.sample())
         unstacked_obs.append(obs)
 
     env = FrameStackObservation(env, stack_size=stack_size)
-    env.action_space.seed(SEED)
+    env.action_space.seed(seed=SEED)
 
     obs, _ = env.reset(seed=SEED)
     stacked_obs = [obs]
@@ -50,25 +46,36 @@ def test_stack_size(stack_size: int):
     """Test different stack sizes for FrameStackObservation wrapper."""
     env = gym.make("CartPole-v1")
     env.action_space.seed(seed=SEED)
-    first_obs, _ = env.reset(seed=SEED)
-    second_obs, _, _, _, _ = env.step(env.action_space.sample())
 
-    zero_obs = create_zero_array(env.observation_space)
+    # Perform a series of actions and store the resulting observations
+    unstacked_obs = []
+    obs, _ = env.reset(seed=SEED)
+    unstacked_obs.append(obs)
+    first_obs = obs  # Store the first observation
+    for _ in range(5):
+        obs, _, _, _, _ = env.step(env.action_space.sample())
+        unstacked_obs.append(obs)
 
     env = FrameStackObservation(env, stack_size=stack_size)
-
     env.action_space.seed(seed=SEED)
-    obs, _ = env.reset(seed=SEED)
-    unstacked_obs = list(iterate(env.observation_space, obs))
-    assert len(unstacked_obs) == stack_size
-    assert data_equivalence(
-        [zero_obs for _ in range(stack_size - 1)], unstacked_obs[:-1]
-    )
-    assert data_equivalence(first_obs, unstacked_obs[-1])
 
-    obs, _, _, _, _ = env.step(env.action_space.sample())
-    unstacked_obs = list(iterate(env.observation_space, obs))
-    assert data_equivalence(second_obs, unstacked_obs[-1])
+    # Perform the same series of actions and store the resulting stacked observations
+    stacked_obs = []
+    obs, _ = env.reset(seed=SEED)
+    stacked_obs.append(obs)
+    for _ in range(5):
+        obs, _, _, _, _ = env.step(env.action_space.sample())
+        stacked_obs.append(obs)
+
+    # Check that the frames in each stacked observation match the corresponding observations
+    for i in range(len(stacked_obs)):
+        frames = list(iterate(env.observation_space, stacked_obs[i]))
+        for j in range(stack_size):
+            if i - j < 0:
+                expected_obs = first_obs  # Use the first observation instead of a zero observation
+            else:
+                expected_obs = unstacked_obs[i - j]
+            assert data_equivalence(expected_obs, frames[stack_size - 1 - j])
 
 
 def test_stack_size_failures():
@@ -81,7 +88,7 @@ def test_stack_size_failures():
             "The stack_size is expected to be an integer, actual type: <class 'float'>"
         ),
     ):
-        FrameStackObservation(env, stack_size=1.0)
+        FrameStackObservation(env, stack_size=1)
 
     with pytest.raises(
         ValueError,

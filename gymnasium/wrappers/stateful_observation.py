@@ -371,7 +371,7 @@ class FrameStackObservation(
         Returns:
             Stacked observations, reward, terminated, truncated, and info from the environment
         """
-        obs, reward, terminated, truncated, info = super().step(action)
+        obs, reward, terminated, truncated, info = self.env.step(action)
         self._stacked_obs.append(obs)
 
         updated_obs = deepcopy(
@@ -393,11 +393,10 @@ class FrameStackObservation(
         Returns:
             The stacked observations and info
         """
-        obs, info = super().reset(seed=seed, options=options)
-        for _ in range(self.stack_size - 1):
-            self._stacked_obs.append(self.zero_obs)
-        self._stacked_obs.append(obs)
-
+        obs, info = self.env.reset(seed=seed, options=options)
+        self._stacked_obs = deque(
+            [obs for _ in range(self.stack_size)], maxlen=self.stack_size
+        )
         updated_obs = deepcopy(
             concatenate(
                 self.env.observation_space, self._stacked_obs, self._stacked_array
