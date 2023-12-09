@@ -221,13 +221,14 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         }
 
     def step(self, action):
-        reward, reward_info = self._get_rew(action)
         self.do_simulation(action, self.frame_skip)
 
         observation = self._get_obs()
+        reward, reward_info = self._get_rew(action)
         info = reward_info
         if self.render_mode == "human":
             self.render()
+
         return observation, reward, False, False, info
 
     def _get_rew(self, action):
