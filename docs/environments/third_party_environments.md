@@ -13,6 +13,8 @@ multi-objective RL ([MO-Gymnasium](https://mo-gymnasium.farama.org/))
 many-agent RL ([MAgent2](https://magent2.farama.org/)),
 3D navigation ([Miniworld](https://miniworld.farama.org/)), and many more.
 
+## Third-party environments with Gymnasium
+
 *This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.*
 
 *If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/bnJ6kubTg6).*
