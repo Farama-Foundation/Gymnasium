@@ -27,7 +27,7 @@ class BasicTestEnv(FuncEnv):
 
 def test_api():
     env = BasicTestEnv()
-    state = env.initial(None)
+    state = env.initial({})
     obs = env.observation(state)
     assert state.shape == (2,)
     assert state.dtype == np.float32
