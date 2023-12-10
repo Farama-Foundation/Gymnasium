@@ -43,9 +43,9 @@ class FuncEnv(
     observation_space: Space
     action_space: Space
 
-    def __init__(self, options: dict[str, Any] | None = None):
+    def __init__(self, options: dict[str, Any] = {}):
         """Initialize the environment constants."""
-        self.__dict__.update(options or {})
+        self.__dict__.update(options)
 
     def initial(self, rng: Any) -> StateType:
         """Generates the initial state of the environment with a random number generator."""
