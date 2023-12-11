@@ -15,22 +15,10 @@ Let's start by importing necessary libraries:
 # TODO:
 # TODO: Final check on documentation and typing.
 
-# Good to know:
-#   - Use atari preprocessing wrapper
-#   - Use env.spec.max_episode_steps
-#   - Use framestack wrapper with compression. When storing to memory, use only last one
-#   - Use record episode statistics wrapper to store episode return and length.
-#   - Use gymnasium.utils.save_video.save_video
-#   - Check gradient clipping # In-place clipping: torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
-#   - for the agent, done = terminated, even though an episode can end due to timelimit or other things
-#   -
-#
-#   - Keep track of useful statistics for debugging, such as return, length, td-error, ..
-
 
 # %%
 __author__ = "Hardy Hasan"
-__date__ = "2023-10-08"
+__date__ = "2023-12-11"
 __license__ = "MIT License"
 
 # import copy
@@ -50,6 +38,12 @@ import torch
 
 # utilize gpu if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def set_seed(seed):
+    # TODO: implement this function to seed all random libraries such as random, numpy, torch.
+    pass
+
 
 # %%
 # Skeleton
@@ -72,7 +66,7 @@ class ReplayMemory:
     """
     Buffer for experience storage.
 
-    This implementation uses numpy arrays for storing experiences, thus allocating
+    This implementation uses numpy arrays for storing experiences, and allocating
     required RAM upfront instead of storing dynamically. This will enable us to know
     upfront whether enough memory is available on the machine, insteaf of the training
     being quit unexpectedly.
@@ -100,6 +94,7 @@ class ReplayMemory:
         """
         self._capacity = capacity
         self._batch_size = batch_size
+        self._image_obs = image_obs
         self._length: int = 0  # number of experiences stored so far
         self._index: int = 0  # current index to store data to
 
@@ -111,21 +106,15 @@ class ReplayMemory:
                 1,
                 *obs_shape,
             )  # storing one frame for next_state
-            self._dtype = (
-                np.uint8
-            )  # image data are integers, hence using this data type.
         else:
             self._state_shape = (self._capacity, *obs_shape)
             self._next_state_shape = (self._capacity, *obs_shape)
-            self._dtype = (
-                np.float16
-            )  # other obs can be non-integers, hence using this data type.
 
         # creating the buffers
-        self._states: np.ndarray = np.zeros(shape=self._state_shape, dtype=self._dtype)
+        self._states: np.ndarray = np.zeros(shape=self._state_shape, dtype=np.float16)
         self._actions: np.ndarray = np.zeros(self._capacity, dtype=np.uint8)
         self._next_states: np.ndarray = np.zeros(
-            shape=self._next_state_shape, dtype=self._dtype
+            shape=self._next_state_shape, dtype=np.float16
         )
         self._rewards: np.ndarray = np.zeros(self._capacity, dtype=np.float16)
         self._dones: np.ndarray = np.zeros(self._capacity, dtype=np.uint8)
@@ -154,18 +143,87 @@ class ReplayMemory:
 
         return
 
-    def sample(self):
+    def sample(
+        self,
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Samples a random batch of experiences and returns them as torch.Tensors.
-         -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
         """
-        # indices = np.random.choice(a=np.arange(self._length), size=self._batch_size, replace=False)
+        indices = np.random.choice(
+            a=np.arange(self._length), size=self._batch_size, replace=False
+        )
 
-        # states = self._states[indices]
-        # actions = self._actions[indices]
-        # next_states = np.concatenate(states[:, 1:, :, :], self._next_states[indices]), axis=1)
-        # rewards = self._rewards[indices]
-        # dones = self._dones[indices]
+        states = self._states[indices]
+        next_states = self._next_states[indices]
+        next_states = (
+            np.concatenate((states[:, 1:, :, :], next_states), axis=1)
+            if self._image_obs
+            else self._next_states[indices]
+        )
+
+        states = torch.tensor(states, dtype=torch.float, device=device)
+        next_states = torch.tensor(next_states, dtype=torch.float, device=device)
+        actions = torch.tensor(
+            self._actions[indices], dtype=torch.int64, device=device
+        ).view(-1, 1)
+        rewards = torch.tensor(
+            self._rewards[indices], dtype=torch.float, device=device
+        ).view(-1, 1)
+        dones = torch.tensor(self._dones[indices], dtype=torch.int, device=device).view(
+            -1, 1
+        )
+
+        if self._image_obs:
+            assert torch.equal(
+                states[:, 1:, :], next_states[:, :3, :]
+            ), "Incorrect concatenation."
+
+        return states, actions, next_states, rewards, dones
+
+
+# %%
+# Test ReplayMemory
+# This section can be removed later when everything is done. It is here for
+# debugging purposes only.
+
+# test 1: array obs
+test1_seed = 111
+np.random.seed(test1_seed)
+capacity = 5
+batch_size = 3
+obs_shape = (1, 3)
+image_obs = False
+mem = ReplayMemory(
+    capacity=capacity, batch_size=batch_size, obs_shape=obs_shape, image_obs=image_obs
+)
+states = [np.random.random((1, 3)) for _ in range(capacity + 1)]
+actions = [np.random.randint(10) for _ in range(capacity + 1)]
+next_states = [np.random.random((1, 3)) for _ in range(capacity + 1)]
+rewards = [np.random.random() for _ in range(capacity + 1)]
+dones = [[True, False][i % 2] for i in range(capacity + 1)]
+# make sure that each obs goes into right position, and length and index are correctly updated.
+for i in range(capacity + 1):
+    mem.push(states[i], actions[i], next_states[i], rewards[i], dones[i])
+# make sure that sapling a batch returns correct dimensions
+batch = mem.sample()
+
+# test 2: image obs
+test1_seed = 111
+np.random.seed(test1_seed)
+capacity = 5
+batch_size = 3
+obs_shape = (3, 3)
+image_obs = True
+mem = ReplayMemory(
+    capacity=capacity, batch_size=batch_size, obs_shape=obs_shape, image_obs=image_obs
+)
+states = [np.random.random((4, 3, 3)) for _ in range(capacity + 1)]
+next_states = [np.random.random((1, 3, 3)) for _ in range(capacity + 1)]
+
+for i in range(capacity + 1):
+    mem.push(states[i], actions[i], next_states[i], rewards[i], dones[i])
+# make sure that sapling a batch returns correct dimensions
+batch = mem.sample()
 
 
 class Agent:
