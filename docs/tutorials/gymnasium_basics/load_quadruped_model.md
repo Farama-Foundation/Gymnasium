@@ -68,7 +68,7 @@ env = gymnasium.make(
     healthy_z_range=(0, np.inf),
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
-    reset_noise_scale = 0,
+    reset_noise_scale=0,
     frame_skip=1,
     max_episode_steps=1000,
 )
@@ -108,7 +108,7 @@ env = gymnasium.make(
     healthy_z_range=(0, np.inf),
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
-    reset_noise_scale = 0.1,  # set to avoid policy overfitting
+    reset_noise_scale=0.1,  # set to avoid policy overfitting
     frame_skip=25,  # set dt=0.05
     max_episode_steps=1000,  # kept at 1000
 )
@@ -136,7 +136,7 @@ env = gymnasium.make(
     healthy_z_range=(0.295, np.inf),  # set to avoid sampling steps where the robot has fallen
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
-    reset_noise_scale = 0.1,
+    reset_noise_scale=0.1,
     frame_skip=25,
     max_episode_steps=1000,
 )
@@ -166,7 +166,7 @@ env = gymnasium.make(
     healthy_z_range=(0.295, np.inf),
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
-    reset_noise_scale = 0.1,
+    reset_noise_scale=0.1,
     frame_skip=25,
     max_episode_steps=1000,
 )
@@ -194,7 +194,7 @@ env = gymnasium.make(
     healthy_z_range=(0.295, np.inf),
     include_cfrc_ext_in_observation=True,  # kept the game as the 'Ant' environment
     exclude_current_positions_from_observation=False,  # kept the game as the 'Ant' environment
-    reset_noise_scale = 0.1,
+    reset_noise_scale=0.1,
     frame_skip=25,
     max_episode_steps=1000,
 )
@@ -224,7 +224,7 @@ env = gymnasium.make(
     healthy_z_range=(0.295, np.inf),
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
-    reset_noise_scale = 0.1,
+    reset_noise_scale=0.1,
     frame_skip=25,
     max_episode_steps=1000,
 )
