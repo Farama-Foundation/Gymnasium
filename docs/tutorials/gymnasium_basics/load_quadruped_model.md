@@ -33,8 +33,8 @@ https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/README
  .. image:: https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/go1.png?raw=true
     :width: 480
     :alt: Unitree Go1 robot in a flat terrain scene
-    
-`Go1` is a quadruped robot, controlling it to walk/run is a significant learning problem, much harder than the `Gymnasium/MuJoCo/Ant` environment. 
+
+`Go1` is a quadruped robot, controlling it to walk/run is a significant learning problem, much harder than the `Gymnasium/MuJoCo/Ant` environment.
 <!--
 Which can run up to `4.7 m/s` according to the manufacturer
 -->
@@ -59,8 +59,8 @@ Although this is enough to load the model, we will need to tweak some environmen
 
 ```py
 env = gymnasium.make(
-    'Ant-v5', 
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml', 
+    'Ant-v5',
+    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
     forward_reward_weight=0,
     ctrl_cost_weight=0,
     contact_cost_weight=0,
@@ -96,8 +96,8 @@ And `max_episode_steps` determines the number of steps per episode before `trunc
 
 ```py
 env = gymnasium.make(
-    'Ant-v5', 
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml', 
+    'Ant-v5',
+    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
     forward_reward_weight=0,
     ctrl_cost_weight=0,
     contact_cost_weight=0,
@@ -118,14 +118,14 @@ Termination is important for robot environments to avoid sampling "useless" time
 
 The arguments of interest are `terminate_when_unhealthy` & `healthy_z_range`.
 
-We could set `terminate_when_unhealthy=False` to disable termination altogether, 
+We could set `terminate_when_unhealthy=False` to disable termination altogether,
 or set `healthy_z_range` to terminate the environment when the robot falls over, here we have to choose a value that is logical for the height of the robot, for `Go1` we choose `(0.295, np.inf)`.
 
 Note:
 ```py
 env = gymnasium.make(
-    'Ant-v5', 
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml', 
+    'Ant-v5',
+    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
     forward_reward_weight=0,
     ctrl_cost_weight=0,
     contact_cost_weight=0,
@@ -153,8 +153,8 @@ For the argument `main_body` we have to choose which body part is the main body 
 
 ```py
 env = gymnasium.make(
-    'Ant-v5', 
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml', 
+    'Ant-v5',
+    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
     forward_reward_weight=1,  # kept the same as the 'Ant' environment
     ctrl_cost_weight=0.05,  # changed because of the stronger motors of `Go1`
     contact_cost_weight=5e-4,  # kept the same as the 'Ant' environment
@@ -180,8 +180,8 @@ Here for `Go1` we have no particular reason to change them.
 
 ```py
 env = gymnasium.make(
-    'Ant-v5', 
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml', 
+    'Ant-v5',
+    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
     forward_reward_weight=1,
     ctrl_cost_weight=0.05,
     contact_cost_weight=5e-4,
@@ -209,8 +209,8 @@ Note: If you have followed this guide with your own robot model, you may discove
 import gymnasium
 
 env = gymnasium.make(
-    'Ant-v5', 
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml', 
+    'Ant-v5',
+    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
     forward_reward_weight=1,
     ctrl_cost_weight=0.05,
     contact_cost_weight=5e-4,
@@ -227,7 +227,7 @@ env = gymnasium.make(
 
 Epilogue
 -------------------------
-You can follow this guide to create most quadruped environments, 
+You can follow this guide to create most quadruped environments,
 to create humanoid/biped robots, you can also follow this guide using the `Gymnasium/MuJoCo/Humnaoid-v5` framework.
 
 Author: [@kallinteris-andreas](https://github.com/Kallinteris-Andreas)
