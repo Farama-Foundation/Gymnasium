@@ -6,8 +6,8 @@ In this tutorial, we will see how to use the `MuJoCo/Ant-v5` framework to create
 Steps:
 
 0. Get your **MJCF** (or **URDF**) model file of your robot.
-	1. Create your own (see the [Guide](https://mujoco.readthedocs.io/en/stable/modeling.html)).
-	2. Find a ready-made model (in this tutorial, we will use a model from the [**MuJoCo Menagerie**](https://github.com/google-deepmind/mujoco_menagerie)) collection.
+	1. Create your own model (see the [Guide](https://mujoco.readthedocs.io/en/stable/modeling.html)).
+	2. Find a ready-made model (in this tutorial, we will use a model from the [**MuJoCo Menagerie**](https://github.com/google-deepmind/mujoco_menagerie) collection).
 1. Load the model with the `xml_file` argument.
 2. Tweak the environment parameters to get the desired behavior.
  	1. Tweak the environment simulation parameters.
@@ -23,25 +23,23 @@ Setup
 ------
 We will need `gymnasium>=1.0.0`.
 
-.. code:: console
-    pip install gymnasium>=1.0.0
-
+```sh
+pip install gymnasium>=1.0.0
+```
 Step 0.2 our robot model
 -------------------------
 In this tutorial, we will load the [Unitree Go1](
 https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/README.md) robot from the excellent [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) robot model collection.
- .. image:: https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/go1.png?raw=true
-    :width: 480
-    :alt: Unitree Go1 robot in a flat terrain scene
+![Unitree Go1 robot in a flat terrain scene](https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/go1.png?raw=true)
 
 `Go1` is a quadruped robot, controlling it to walk/run is a significant learning problem, much harder than the `Gymnasium/MuJoCo/Ant` environment.
 <!--
 Which can run up to `4.7 m/s` according to the manufacturer
 -->
 We can download the whole MuJoCo Menagerie collection (which includes `Go1`),
-.. code:: console
-	git clone https://github.com/google-deepmind/mujoco_menagerie.git
-
+```sh
+git clone https://github.com/google-deepmind/mujoco_menagerie.git
+```
 You can use any other quadruped robot with this tutorial, just adjust the environment parameter values for your robot.
 
 
@@ -78,7 +76,7 @@ env = gymnasium.make(
 Step 2 Tweaking the environment parameters
 -------------------------
 Tweaking the environment parameters is essential to get the desired behavior for learning.
-In the following sections, the reader is encouraged to check the [documentation of the arguments](https://gymnasium.farama.org/main/environments/mujoco/ant/#arguments) for more detailed information.
+In the following subsections, the reader is encouraged to check the [documentation of the arguments](https://gymnasium.farama.org/main/environments/mujoco/ant/#arguments) for more detailed information.
 
 
 
@@ -121,7 +119,6 @@ The arguments of interest are `terminate_when_unhealthy` & `healthy_z_range`.
 We could set `terminate_when_unhealthy=False` to disable termination altogether,
 or set `healthy_z_range` to terminate the environment when the robot falls over, here we have to choose a value that is logical for the height of the robot, for `Go1` we choose `(0.295, np.inf)`.
 
-Note:
 ```py
 env = gymnasium.make(
     'Ant-v5',
