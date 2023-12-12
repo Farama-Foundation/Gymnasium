@@ -36,7 +36,7 @@ of the linear chain above the black line from an initial state of hanging statio
 # ------------
 #
 
-# Author: Michael Pratt
+# Authors: Nicholas Ustaran-Anderegg, Michael Pratt
 # License: MIT License
 import os
 
@@ -363,7 +363,7 @@ elite.saveCheckpoint(save_path)
 # %%
 # Load agent
 # ~~~~~~~~~~
-ppo = PPO.load(save_path)
+ppo = PPO.load(save_path, device=device)
 
 # %%
 # Test loop for inference
@@ -409,11 +409,10 @@ with torch.no_grad():
     test_env.close()
 
 # %%
-# Save test episosdes as a gif
+# Save test episodes as a gif
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 gif_path = "./videos/"
 os.makedirs(gif_path, exist_ok=True)
 imageio.mimwrite(os.path.join("./videos/", "ppo_acrobot.gif"), frames, loop=0)
-mean_fitness = np.mean(rewards)
 
 # %%

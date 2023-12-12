@@ -1,16 +1,24 @@
 """
-AgileRL Rainbow-DQN Implementation
+AgileRL Rainbow DQN implementation
 ==================================
 
 In this tutorial, we will be training a single Rainbow-DQN agent (without HPO) to beat the
-Gymnasium classic control cart-pole environment. AgileRL is a deep reinforcement learning
+Gymnasium classic control cartpole environment. AgileRL is a deep reinforcement learning
 library, focussed on improving the RL training process through evolutionary hyperparameter
 optimisation (HPO), which has resulted in upto 10x faster HPO compared to other popular deep RL
 libraries. Check out the AgileRL github `repository <https://github.com/AgileRL/AgileRL/>`__ for
 more information about the library.
 
-"""
+To complete the cartpole environment, the agent must learn to move the cart left or right to prevent
+the pole from falling.
 
+.. figure:: /_static/img/tutorials/agilerl_rainbow_dqn_cartpole.gif
+  :width: 400
+  :alt: agent-environment-diagram
+  :align: center
+
+  Figure 1: Completed Cart-pole environment using an AgileRL Rainbow DQN agent
+"""
 
 # %%
 # Rainbow-DQN Overview
@@ -33,7 +41,6 @@ more information about the library.
 #   without the need for epsilon-greedy exploration.
 # * Categorical DQN (C51): A specific form of distributional RL where the continuous range of possible
 #   cumulative future rewards is discretized into a fixed set of categories.
-#
 
 
 # %%
@@ -41,6 +48,8 @@ more information about the library.
 # ------------
 #
 
+# Authors: Nicholas Ustaran-Anderegg, Michael Pratt
+# License: MIT License
 import os
 
 import imageio
@@ -51,12 +60,10 @@ from agilerl.components.replay_buffer import (
     MultiStepReplayBuffer,
     PrioritizedReplayBuffer,
 )
-from agilerl.training.train import train
+from agilerl.training.train_off_policy import train_off_policy
 from agilerl.utils.utils import calculate_vectorized_scores, makeVectEnvs
 from tqdm import trange
 
-# Author: Michael Pratt
-# License: MIT License
 import gymnasium as gym
 
 
@@ -66,13 +73,14 @@ import gymnasium as gym
 # Before we commence training, it's easiest to define all of our hyperparameters in one dictionary. Below is an example of
 # such for the Rainbow-DQN algorithm. For this example, we are training a single agent without hyperparameter optimisation,
 # so we will not be performing mutations or tournament selection like we have in our other tutorials where we have. As this
-# is the case, we do not need to define a mutatinos parameters dictionary.
+# is the case, we do not need to define a mutations parameters dictionary.
+
 
 # Initial hyperparameters
 INIT_HP = {
-    "BATCH_SIZE": 128,  # Batch size
+    "BATCH_SIZE": 64,  # Batch size
     "LR": 0.0001,  # Learning rate
-    "GAMMA": 0.999,  # Discount factor
+    "GAMMA": 0.99,  # Discount factor
     "MEMORY_SIZE": 100_000,  # Max memory buffer size
     "LEARN_STEP": 1,  # Learning frequency
     "N_STEP": 3,  # Step number to calculate td error
@@ -82,12 +90,12 @@ INIT_HP = {
     "TAU": 0.001,  # For soft update of target parameters
     "PRIOR_EPS": 0.000001,  # Minimum priority for sampling
     "NUM_ATOMS": 51,  # Unit number of support
-    "V_MIN": 0.0,  # Minimum value of support
+    "V_MIN": -200.0,  # Minimum value of support
     "V_MAX": 200.0,  # Maximum value of support
     "NOISY": True,  # Add noise directly to the weights of the network
     # Swap image channels dimension from last to first [H, W, C] -> [C, H, W]
     "CHANNELS_LAST": False,  # Use with RGB states
-    "EPISODES": 1000,  # Number of episodes to train for
+    "EPISODES": 200,  # Number of episodes to train for
     "EVAL_EPS": 20,  # Number of episodes after which to evaluate the agent after
     "TARGET_SCORE": 200.0,  # Target score that will beat the environment
     "EVO_LOOP": 3,  # Number of evaluation episodes
@@ -102,7 +110,8 @@ INIT_HP = {
 # correct values for ``state_dim`` and ``one_hot``, depending on whether the observation or action spaces are discrete
 # or continuous.
 
-env = makeVectEnvs("LunarLander-v2", num_envs=16)  # Create environment
+
+env = makeVectEnvs("CartPole-v1", num_envs=16)  # Create environment
 try:
     state_dim = env.single_observation_space.n  # Discrete observation space
     one_hot = True  # Requires one-hot encoding
@@ -155,9 +164,10 @@ rainbow_dqn = RainbowDQN(
 # standard replay buffer outweighs the benefits of not sharing experiences and using an n-step buffer and a
 # prioritised experience buffer.
 #
-# In this tutorial, we can make use of both the prioritised exerience replay and multi-step
+# In this tutorial, we can make use of both the prioritised experience replay and multi-step
 # learning since we are only training a single agent and not making use of tournaments or mutations. Below is how
 # you would define your memory and n_step_memory.
+
 
 field_names = ["state", "action", "reward", "next_state", "termination"]
 memory = PrioritizedReplayBuffer(
@@ -184,21 +194,22 @@ n_step_memory = MultiStepReplayBuffer(
 # Training and Saving an Agent
 # ----------------------------
 #
-# Using AgileRL ``train`` function
+# Using AgileRL ``train_off_policy`` function
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # To train a single agent without performing tournament selection, mutations, and hyperparameter optimisation
-# we can still use the AgileRL ``train`` function (Rainbow-DQN is an off-policy algorithm). We need to ensure
-# that our single agent is passed to the function in a list (essentially a population of 1) and that we pass None
+# we can still use the AgileRL ``train_off_policy`` function (Rainbow-DQN is an off-policy algorithm). We need to ensure
+# that our single agent is passed to the function in a list (essentially a population of 1) and that we pass ``None``
 # for both the tournament and mutation arguments.
+
 
 # Define parameters per and n_step
 n_step = True if INIT_HP["N_STEP"] > 1 else False
 per = INIT_HP["PER"]
 
 
-trained_pop, pop_fitnesses = train(
+trained_pop, pop_fitnesses = train_off_policy(
     env=env,
-    env_name="LunarLander-v2",
+    env_name="CartPole-v1",
     algo="RainbowDQN",
     pop=[rainbow_dqn],
     memory=memory,
@@ -223,8 +234,9 @@ trained_pop, pop_fitnesses = train(
 # Using a custom training loop
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # If we wanted to have more control over the training process, it is also possible to write our own custom
-# training loops to train our agents. The training loop below can be used alternatively to the above ``train``
+# training loops to train our agents. The training loop below can be used alternatively to the above ``train_off_policy``
 # function and is an example of how we might choose to train an AgileRL agent.
+
 
 total_steps = 0
 n_step = True if INIT_HP["N_STEP"] > 1 else False
@@ -242,7 +254,9 @@ for episode in trange(INIT_HP["EPISODES"]):
         action = rainbow_dqn.getAction(state)
         next_state, reward, done, trunc, _ = env.step(action)  # Act in environment
 
-        if INIT_HP["CHANNELS_LAST"]:
+        if INIT_HP[
+            "CHANNELS_LAST"  # Channels last for atari envs, set to False for this tutorial
+        ]:
             one_step_transition = n_step_memory.save2memoryVectEnvs(
                 state,
                 action,
@@ -275,9 +289,8 @@ for episode in trange(INIT_HP["EPISODES"]):
             # Learn according to agent's RL algorithm
 
             experiences = memory.sample(rainbow_dqn.batch_size, rainbow_dqn.beta)
-            if n_step_memory is not None:
-                n_step_experiences = n_step_memory.sample_from_indices(experiences[6])
-                experiences += n_step_experiences
+            n_step_experiences = n_step_memory.sample_from_indices(experiences[6])
+            experiences += n_step_experiences
             idxs, priorities = rainbow_dqn.learn(experiences, n_step=n_step, per=per)
             memory.update_priorities(idxs, priorities)
 
@@ -301,7 +314,6 @@ for episode in trange(INIT_HP["EPISODES"]):
     rainbow_dqn.steps[-1] += INIT_HP["MAX_STEPS"]
     total_steps += INIT_HP["MAX_STEPS"]
 
-    # Now evolve population if necessary
     if (episode + 1) % INIT_HP["EVAL_EPS"] == 0:
         # Evaluate population
         fitness = rainbow_dqn.test(
@@ -341,14 +353,15 @@ for episode in trange(INIT_HP["EPISODES"]):
 # %%
 # Load agent
 # ~~~~~~~~~~
-rainbow_dqn = RainbowDQN.load(save_path)
+rainbow_dqn = RainbowDQN.load(save_path, device=device)
+
 
 # %%
 # Test loop for inference
 # ~~~~~~~~~~~~~~~~~~~~~~~
 rewards = []
 frames = []
-testing_eps = 5
+testing_eps = 7
 test_env = gym.make("CartPole-v1", render_mode="rgb_array")
 with torch.no_grad():
     for ep in range(testing_eps):
@@ -392,6 +405,7 @@ with torch.no_grad():
 gif_path = "./videos/"
 os.makedirs(gif_path, exist_ok=True)
 imageio.mimwrite(
-    os.path.join("./videos/", "rainbow_dqn_cartpole.gif"), frames, duration=10
+    os.path.join("./videos/", "rainbow_dqn_cartpole.gif"), frames, duration=10, loop=0
 )
-mean_fitness = np.mean(rewards)
+
+# %%

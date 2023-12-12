@@ -43,7 +43,7 @@ or not at all to safely navigate the lander to the landing pad without crashing.
 # ------------
 #
 
-# Author: Michael Pratt
+# Authors: Nicholas Ustaran-Anderegg, Michael Pratt
 # License: MIT License
 import os
 
@@ -54,7 +54,7 @@ from agilerl.algorithms.td3 import TD3
 from agilerl.components.replay_buffer import ReplayBuffer
 from agilerl.hpo.mutation import Mutations
 from agilerl.hpo.tournament import TournamentSelection
-from agilerl.training.train import train
+from agilerl.training.train_off_policy import train_off_policy
 from agilerl.utils.utils import (
     calculate_vectorized_scores,
     initialPopulation,
@@ -239,15 +239,15 @@ mutations = Mutations(
 # Training and Saving an Agent
 # ----------------------------
 #
-# Using AgileRL ``train`` function
+# Using AgileRL ``train_off_policy`` function
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # The simplest way to train an AgileRL agent is to use one of the implemented AgileRL train functions.
-# Given that TD3 is an off-policy algorithm, we can make use of the ``train`` function. This
+# Given that TD3 is an off-policy algorithm, we can make use of the ``train_off_policy`` function. This
 # training function will orchestrate the training and hyperparameter optimisation process, removing the
 # the need to implement a custom training loop. It will return a trained population, as well as the associated
 # fitnesses (fitness is each agents test scores on the environment).
 
-trained_pop, pop_fitnesses = train(
+trained_pop, pop_fitnesses = train_off_policy(
     env=env,
     env_name="LunarLanderContinuous-v2",
     algo="TD3",
@@ -271,7 +271,7 @@ trained_pop, pop_fitnesses = train(
 # Using a custom training loop
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # If we wanted to have more control over the training process, it is also possible to write our own custom
-# training loops to train our agents. The training loop below can be used alternatively to the above ``train``
+# training loops to train our agents. The training loop below can be used alternatively to the above ``train_off_policy``
 # function and is an example of how we might choose to make use of a population of AgileRL agents in our own training loop.
 
 eps_end = 0.1
@@ -388,7 +388,7 @@ elite.saveCheckpoint(save_path)
 # %%
 # Load agent
 # ~~~~~~~~~~
-td3 = TD3.loadCheckpoint(save_path)
+td3 = TD3.loadCheckpoint(save_path, device=device)
 
 # %%
 # Test loop for inference
@@ -438,7 +438,7 @@ with torch.no_grad():
 
 
 # %%
-# Save test episosdes as a gif
+# Save test episodes as a gif
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 frames = frames[::3]
 gif_path = "./videos/"
@@ -446,6 +446,5 @@ os.makedirs(gif_path, exist_ok=True)
 imageio.mimwrite(
     os.path.join("./videos/", "td3_lunar_lander.gif"), frames, duration=50, loop=0
 )
-mean_fitness = np.mean(rewards)
 
 # %%
