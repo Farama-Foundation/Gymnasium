@@ -27,7 +27,7 @@ We will need `gymnasium>=1.0.0`.
 pip install "gymnasium>=1.0.0"
 ```
 
-Step 0.2 - Getting Our Robot Model
+Step 0.2 - Downloading Our Robot Model
 -------------------------
 In this tutorial, we will load the [Unitree Go1](
 https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/README.md) robot from the excellent [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) robot model collection.
@@ -68,28 +68,31 @@ env = gymnasium.make(
     healthy_z_range=(0, np.inf),
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
+    reset_noise_scale = 0,
     frame_skip=1,
     max_episode_steps=1000,
 )
 ```
 
 
-Step 2 - Tweaking the environment parameters
+Step 2 - Tweaking the Environment Parameters
 -------------------------
 Tweaking the environment parameters is essential to get the desired behavior for learning.
 In the following subsections, the reader is encouraged to check the [documentation of the arguments](https://gymnasium.farama.org/main/environments/mujoco/ant/#arguments) for more detailed information.
 
 
 
-Step 2.1 - Tweaking the environment simulation parameters
+Step 2.1 - Tweaking the Environment Simulation Parameters
 -------------------------
-The arguments of interest are `frame_skip` & `max_episode_steps`.
+The arguments of interest are `frame_skip` & `reset_noise_scale` & `max_episode_steps`.
 
 We want to tweak the `frame_skip` parameter to get `dt` to an acceptable value (typical values are `dt` $\in [0.01, 0.1]$ seconds),
 
 Reminder: $dt = frame\_skip \times model.opt.timestep$, where `model.opt.timestep` is the integrator time step selected in the MJCF model file.
 
 The `Go1` model we are using has an integrator timestep of `0.002`, so by selecting `frame_skip=25` we can set the value of `dt` to `0.05s`.
+
+To avoid overfitting the policy, `reset_noise_scale` should be set to a value appropriate for the size of the robot, for `Go1` we choose a value of `0.1`.
 
 And `max_episode_steps` determines the number of steps per episode before `truncation`, here we set it to 1000 to be consistent with the based `Gymnasium/MuJoCo` environments, but if you need something higher you can set it so.
 
@@ -105,13 +108,14 @@ env = gymnasium.make(
     healthy_z_range=(0, np.inf),
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
+    reset_noise_scale = 0.1,  # set to avoid policy overfitting
     frame_skip=25,  # set dt=0.05
     max_episode_steps=1000,  # kept at 1000
 )
 ```
 
 
-Step 2.2 - Tweaking the environment termination parameters
+Step 2.2 - Tweaking the Environment Termination Parameters
 -------------------------
 Termination is important for robot environments to avoid sampling "useless" time steps.
 
@@ -132,6 +136,7 @@ env = gymnasium.make(
     healthy_z_range=(0.295, np.inf),  # set to avoid sampling steps where the robot has fallen
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
+    reset_noise_scale = 0.1,
     frame_skip=25,
     max_episode_steps=1000,
 )
@@ -141,7 +146,7 @@ Note: If you need a different termination condition, you can write your own `Ter
 
 
 
-Step 2.3 - Tweaking the environment reward parameters
+Step 2.3 - Tweaking the Environment Reward Parameters
 -------------------------
 The arguments of interest are `forward_reward_weight` & `ctrl_cost_weight` & `contact_cost_weight` & `healthy_reward` & `main_body`.
 
@@ -161,6 +166,7 @@ env = gymnasium.make(
     healthy_z_range=(0.295, np.inf),
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
+    reset_noise_scale = 0.1,
     frame_skip=25,
     max_episode_steps=1000,
 )
@@ -170,7 +176,7 @@ Note: If you need a different reward function, you can write your own `RewardWra
 
 
 
-Step 2.4 - Tweaking the environment observation parameters
+Step 2.4 - Tweaking the Environment Observation Parameters
 -------------------------
 The arguments of interest are `include_cfrc_ext_in_observation` & `exclude_current_positions_from_observation`.
 
@@ -188,6 +194,7 @@ env = gymnasium.make(
     healthy_z_range=(0.295, np.inf),
     include_cfrc_ext_in_observation=True,  # kept the game as the 'Ant' environment
     exclude_current_positions_from_observation=False,  # kept the game as the 'Ant' environment
+    reset_noise_scale = 0.1,
     frame_skip=25,
     max_episode_steps=1000,
 )
@@ -198,7 +205,7 @@ Note: If you need additional observation elements (such as additional sensors), 
 
 
 
-Step 3 - Train your agent
+Step 3 - Train your Agent
 -------------------------
 Finally, we are done, we can use a RL algorithm to train an agent to walk/run the `Go1` robot.
 Note: If you have followed this guide with your own robot model, you may discover during training that some environment parameters were not as desired, feel free to go back to step 2 and change anything as needed.
@@ -217,6 +224,7 @@ env = gymnasium.make(
     healthy_z_range=(0.295, np.inf),
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
+    reset_noise_scale = 0.1,
     frame_skip=25,
     max_episode_steps=1000,
 )
