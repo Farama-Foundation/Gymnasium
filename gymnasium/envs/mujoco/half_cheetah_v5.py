@@ -98,25 +98,25 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
     - *forward_reward*:
     A reward for moving forward,
-    this reward would be positive if the Half Cheetah moves forward (in the positive $x$ direction / in the right direction).
-    $w_{forward} \times \frac{dx}{dt}$, where
-    $dx$ is the displacement of the "tip" ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions which is depends on the `frame_skip` parameter (default is 5),
-    and `frametime` which is 0.01 - so the default is $dt = 5 \times 0.01 = 0.05$,
-    $w_{forward}$ is the `forward_reward_weight` (default is $1$).
+    this reward would be positive if the Half Cheetah moves forward (in the positive {math} `x` direction / in the right direction).
+    {math} `w_{forward} \times \frac{dx}{dt}`, where
+    {math} `dx` is the displacement of the "tip" ({math} `x_{after-action} - x_{before-action}`),
+    {math} `dt` is the time between actions which is depends on the `frame_skip` parameter (default is 5),
+    and `frametime` which is 0.01 - so the default is {math} `dt = 5 \times 0.01 = 0.05`,
+    {math} `w_{forward}` is the `forward_reward_weight` (default is {math} `1`).
     - *ctrl_cost*:
     A negative reward to penalize the Half Cheetah for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
-    where $w_{control}$ is the `ctrl_cost_weight` (default is $0.1$).
+    {math} `w_{control} \times \\|action\\|_2^2`,
+    where {math} `w_{control}` is the `ctrl_cost_weight` (default is {math} `0.1`).
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{9}, reset\_noise\_scale \times 1_{9}]}$.
-    The initial velocity state is $\mathcal{N}(0_{9}, reset\_noise\_scale^2 \times I_{9})$.
+    The initial position state is {math} `\mathcal{U}_{[-reset\_noise\_scale \times 1_{9}, reset\_noise\_scale \times 1_{9}]}`.
+    The initial velocity state is {math} `\mathcal{N}(0_{9}, reset\_noise\_scale^2 \times I_{9})`.
 
-    where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where {math} `\mathcal{N}` is the multivariate normal distribution and {math} `\mathcal{U}` is the multivariate uniform continuous distribution.
 
 
     ## Episode End

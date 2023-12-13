@@ -87,22 +87,22 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     - *reward_distance*:
     This reward is a measure of how far the *fingertip* of the reacher (the unattached end) is from the target,
     with a more negative value assigned for if the reacher's *fingertip* is further away from the target.
-    It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
-    where $w_{near}$ is the `reward_near_weight`.
+    It is {math} `-w_{near} \|(P_{fingertip} - P_{target})\|_2`.
+    where {math} `w_{near}` is the `reward_near_weight`.
     - *reward_control*:
     A negative reward to penalize the walker for taking actions that are too large.
-    It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
-    where $w_{control}$ is the `reward_control_weight`.
+    It is measured as the negative squared Euclidean norm of the action, i.e. as {math} `-w_{control} \|action\|_2^2`.
+    where {math} `w_{control}` is the `reward_control_weight`.
 
     `info` contains the individual reward terms.
 
     ## Starting State
-    The initial position state of the reacher arm is $\mathcal{U}_{[-0.1 \times 1_{2}, 0.1 \times 1_{2}]}$.
-    The position state of the goal is (permanently) $\mathcal{S}(0.2)$.
-    The initial velocity state of the Reacher arm is $\mathcal{U}_{[-0.005 \times 1_{2}, 0.005 \times 1_{2}]}$.
-    The velocity state of the object is (permanently) $0_2$.
+    The initial position state of the reacher arm is {math} `\mathcal{U}_{[-0.1 \times 1_{2}, 0.1 \times 1_{2}]}`.
+    The position state of the goal is (permanently) {math} `\mathcal{S}(0.2)`.
+    The initial velocity state of the Reacher arm is {math} `\mathcal{U}_{[-0.005 \times 1_{2}, 0.005 \times 1_{2}]}`.
+    The velocity state of the object is (permanently) {math} `0_2`.
 
-    where $\mathcal{U}$ is the multivariate uniform continuous distribution and $\mathcal{S} is the uniform continuous spherical distribution.
+    where {math} `\mathcal{U}` is the multivariate uniform continuous distribution and {math} `\mathcal{S} is the uniform continuous spherical distribution.
 
     The default frame rate is 2, with each frame lasting for 0.01, so *dt = 2 * 0.01 = 0.02*.
 

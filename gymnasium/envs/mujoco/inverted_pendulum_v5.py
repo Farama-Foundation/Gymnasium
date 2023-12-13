@@ -69,16 +69,16 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     the pole is upright.
 
     The pole is considered upright if:
-    $|angle| < 0.2$.
+    {math} `|angle| < 0.2`.
 
     and `info` also contains the reward.
 
 
     ## Starting State
-    The initial position state is $\\mathcal{U}_{[-reset\\_noise\\_scale \times 1_{2}, reset\\_noise\\_scale \times 1_{2}]}$.
-    The initial velocity state is $\\mathcal{U}_{[-reset\\_noise\\_scale \times 1_{2}, reset\\_noise\\_scale \times 1_{2}]}$.
+    The initial position state is {math} `\\mathcal{U}_{[-reset\\_noise\\_scale \times 1_{2}, reset\\_noise\\_scale \times 1_{2}]}`.
+    The initial velocity state is {math} `\\mathcal{U}_{[-reset\\_noise\\_scale \times 1_{2}, reset\\_noise\\_scale \times 1_{2}]}`.
 
-    where $\\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where {math} `\\mathcal{U}` is the multivariate uniform continuous distribution.
 
     All observations start in state
     (0.0, 0.0, 0.0, 0.0) with a uniform noise in the range

@@ -101,25 +101,25 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     it gets a reward of fixed value `healthy_reward`.
     - *forward_reward*:
     A reward for moving forward,
-    this reward would be positive if the Hopper moves forward (in the positive $x$ direction / in the right direction).
-    $w_{forward} \times \frac{dx}{dt}$, where
-    $dx$ is the displacement of the "torso" ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is 4),
-    and `frametime` which is 0.002 - so the default is $dt = 4 \times 0.002 = 0.008$,
-    $w_{forward}$ is the `forward_reward_weight` (default is $1$).
+    this reward would be positive if the Hopper moves forward (in the positive {math} `x` direction / in the right direction).
+    {math} `w_{forward} \times \frac{dx}{dt}`, where
+    {math} `dx` is the displacement of the "torso" ({math} `x_{after-action} - x_{before-action}`),
+    {math} `dt` is the time between actions, which depends on the `frame_skip` parameter (default is 4),
+    and `frametime` which is 0.002 - so the default is {math} `dt = 4 \times 0.002 = 0.008`,
+    {math} `w_{forward}` is the `forward_reward_weight` (default is {math} `1`).
     - *ctrl_cost*:
     A negative reward to penalize the Hopper for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
-    where $w_{control}$ is `ctrl_cost_weight` (default is $10^{-3}$).
+    {math} `w_{control} \times \\|action\\|_2^2`,
+    where {math} `w_{control}` is `ctrl_cost_weight` (default is {math} `10^{-3}`).
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state is $[0, 1.25, 0, 0, 0, 0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{6}, reset\_noise\_scale \times 1_{6}]}$.
-    The initial velocity state is $0_6 + \mathcal{U}_{[-reset\_noise\_scale \times 1_{6}, reset\_noise\_scale \times 1_{6}]}$.
+    The initial position state is {math} `[0, 1.25, 0, 0, 0, 0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{6}, reset\_noise\_scale \times 1_{6}]}`.
+    The initial velocity state is {math} `0_6 + \mathcal{U}_{[-reset\_noise\_scale \times 1_{6}, reset\_noise\_scale \times 1_{6}]}`.
 
-    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where {math} `\mathcal{U}` is the multivariate uniform continuous distribution.
 
     Note that the z-coordinate is non-zero so that the hopper can stand up immediately.
 

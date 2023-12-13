@@ -143,21 +143,21 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     it gets a reward of fixed value `healthy_reward`.
     - *forward_reward*:
     A reward for moving forward,
-    this reward would be positive if the Ant moves forward (in the positive $x$ direction / in the right direction).
-    $w_{forward} \times \frac{dx}{dt}$, where
-    $dx$ is the displacement of the `main_body` ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions, which is depends on the `frame_skip` parameter (default is 5),
-    and `frametime`, which is 0.01 - so the default is $dt = 5 \times 0.01 = 0.05$,
-    $w_{forward}$ is the `forward_reward_weight` (default is $1$).
+    this reward would be positive if the Ant moves forward (in the positive {math} `x` direction / in the right direction).
+    {math} `w_{forward} \times \frac{dx}{dt}`, where
+    {math} `dx` is the displacement of the `main_body` ({math} `x_{after-action} - x_{before-action}`),
+    {math} `dt` is the time between actions, which is depends on the `frame_skip` parameter (default is 5),
+    and `frametime`, which is 0.01 - so the default is {math} `dt = 5 \times 0.01 = 0.05`,
+    {math} `w_{forward}` is the `forward_reward_weight` (default is {math} `1`).
     - *ctrl_cost*:
     A negative reward to penalize the Ant for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
-    where $w_{control}$ is `ctrl_cost_weight` (default is $0.5$).
+    {math} `w_{control} \times \\|action\\|_2^2`,
+    where {math} `w_{control}` is `ctrl_cost_weight` (default is {math} `0.5`).
     - *contact_cost*:
     A negative reward to penalize the Ant if the external contact forces are too large.
-    $w_{contact} \times \\|F_{contact}\\|_2^2$, where
-    $w_{contact}$ is `contact_cost_weight` (default is $5\times10^{-4}$),
-    $F_{contact}$ are the external contact forces clipped by `contact_force_range` (see `cfrc_ext` section on observation).
+    {math} `w_{contact} \times \\|F_{contact}\\|_2^2`, where
+    {math} `w_{contact}` is `contact_cost_weight` (default is {math} `5\times10^{-4}`),
+    {math} `F_{contact}` are the external contact forces clipped by `contact_force_range` (see `cfrc_ext` section on observation).
 
     `info` contains the individual reward terms.
 
@@ -166,10 +166,10 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Starting State
-    The initial position state is $[0.0, 0.0, 0.75, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{15}, reset\_noise\_scale \times 1_{15}]}$.
-    The initial velocity state is $\mathcal{N}(0_{14}, reset\_noise\_scale^2 \times I_{14})$.
+    The initial position state is {math} `[0.0, 0.0, 0.75, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{15}, reset\_noise\_scale \times 1_{15}]}`.
+    The initial velocity state is {math} `\mathcal{N}(0_{14}, reset\_noise\_scale^2 \times I_{14})`.
 
-    where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where {math} `\mathcal{N}` is the multivariate normal distribution and {math} `\mathcal{U}` is the multivariate uniform continuous distribution.
 
     Note that the z- and x-coordinates are non-zero so that the ant can immediately stand up and face forward (x-axis).
 

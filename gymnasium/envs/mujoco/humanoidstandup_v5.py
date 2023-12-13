@@ -212,30 +212,30 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     A reward for moving up (trying to stand up).
     This is not a relative reward, measuring how far up it has moved since the last timestep,
     but it is an absolute reward that measures how much upward the Humanoid has moved up in total.
-    It is measured as $weight_{uph} \times (z_{after action} - 0)/dt$,
-    where $z_{after action}$ is the z coordinate of the torso after taking an action,
+    It is measured as {math} `weight_{uph} \times (z_{after action} - 0)/dt`,
+    where {math} `z_{after action}` is the z coordinate of the torso after taking an action,
     and *dt* is the time between actions, and depends on the `frame_skip` parameter
     (default is 5), where the frametime is 0.003 - so the default is *dt = 5 * 0.003 = 0.015*.
-    and $weight_{uph}$ is `uph_cost_weight`.
+    and {math} `weight_{uph}` is `uph_cost_weight`.
     - *quad_ctrl_cost*:
     A negative reward to penalize the Humanoid for taking actions that are too large.
-    $w_{quad_control} \times \\|action\\|_2^2$,
-    where $w_{quad_control}$ is `ctrl_cost_weight` (default is $0.1$).
+    {math} `w_{quad_control} \times \\|action\\|_2^2`,
+    where {math} `w_{quad_control}` is `ctrl_cost_weight` (default is {math} `0.1`).
     If there are *nu* actuators/controls, then the control has shape  `nu x 1`.
     - *impact_cost*:
     A negative reward to penalize the Humanoid if the external contact forces are too large.
-    $w_{impact} \times clamp(impact\\_cost\\_range, \\|F_{contact}\\|_2^2)$, where
-    $w_{impact}$ is `impact_cost_weight` (default is $5\times10^{-7}$),
-    $F_{contact}$ are the external contact forces (see `cfrc_ext` section on observation).
+    {math} `w_{impact} \times clamp(impact\\_cost\\_range, \\|F_{contact}\\|_2^2)`, where
+    {math} `w_{impact}` is `impact_cost_weight` (default is {math} `5\times10^{-7}`),
+    {math} `F_{contact}` are the external contact forces (see `cfrc_ext` section on observation).
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}$.
-    The initial velocity state is $0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}$.
+    The initial position state is {math} `[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}`.
+    The initial velocity state is {math} `0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}`.
 
-    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where {math} `\mathcal{U}` is the multivariate uniform continuous distribution.
 
     Note that the z- and x-coordinates are non-zero so that the humanoid immediately lies down and faces forward (x-axis).
 

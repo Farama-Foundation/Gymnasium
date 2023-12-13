@@ -90,25 +90,25 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
 
     - *forward_reward*:
     A reward for moving forward,
-    this reward would be positive if the Swimmer moves forward (in the positive $x$ direction / in the right direction).
-    $w_{forward} \times \frac{dx}{dt}$, where
-    $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is 4),
-    and `frametime` which is 0.01 - so the default is $dt = 4 \times 0.01 = 0.04$,
-    $w_{forward}$ is the `forward_reward_weight` (default is $1$).
+    this reward would be positive if the Swimmer moves forward (in the positive {math} `x` direction / in the right direction).
+    {math} `w_{forward} \times \frac{dx}{dt}`, where
+    {math} `dx` is the displacement of the (front) "tip" ({math} `x_{after-action} - x_{before-action}`),
+    {math} `dt` is the time between actions, which depends on the `frame_skip` parameter (default is 4),
+    and `frametime` which is 0.01 - so the default is {math} `dt = 4 \times 0.01 = 0.04`,
+    {math} `w_{forward}` is the `forward_reward_weight` (default is {math} `1`).
     - *ctrl_cost*:
     A negative reward to penalize the Swimmer for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
-    where $w_{control}$ is `ctrl_cost_weight` (default is $10^{-4}$).
+    {math} `w_{control} \times \\|action\\|_2^2`,
+    where {math} `w_{control}` is `ctrl_cost_weight` (default is {math} `10^{-4}`).
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{5}, reset\_noise\_scale \times 1_{5}]}$.
-    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{5}, reset\_noise\_scale \times 1_{5}]}$.
+    The initial position state is {math} `\mathcal{U}_{[-reset\_noise\_scale \times 1_{5}, reset\_noise\_scale \times 1_{5}]}`.
+    The initial velocity state is {math} `\mathcal{U}_{[-reset\_noise\_scale \times 1_{5}, reset\_noise\_scale \times 1_{5}]}`.
 
-    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where {math} `\mathcal{U}` is the multivariate uniform continuous distribution.
 
 
     ## Episode End

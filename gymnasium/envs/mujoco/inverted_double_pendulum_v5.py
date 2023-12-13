@@ -88,21 +88,21 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     so for each timestep that the second pole is upright, a reward of `healthy_reward` is given.
     - *distance_penalty*:
     This reward is a measure of how far the *tip* of the second pendulum (the only free end) moves,
-    and it is calculated as $0.01 x_{pole2-tip}^2 + (y_{pole2-tip}-2)^2$,
-    where $x_{pole2-tip}, y_{pole2-tip}$ are the xy-coordinatesof the tip of the second pole.
+    and it is calculated as {math} `0.01 x_{pole2-tip}^2 + (y_{pole2-tip}-2)^2`,
+    where {math} `x_{pole2-tip}, y_{pole2-tip}` are the xy-coordinatesof the tip of the second pole.
     - *velocity_penalty*:
     A negative reward to penalize the agent for moving too fast.
-    $10^{-3} \omega_1 + 5 10^{-3} \omega_2$,
-    where $\omega_1, \omega_2$ are the angular velocities of the hinges.
+    {math} `10^{-3} \omega_1 + 5 10^{-3} \omega_2`,
+    where {math} `\omega_1, \omega_2` are the angular velocities of the hinges.
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{3}, reset\_noise\_scale \times 1_{3}]}$.
-    The initial velocity state is $\mathcal{N}(0_{3}, reset\_noise\_scale^2 \times I_{3})$.
+    The initial position state is {math} `\mathcal{U}_{[-reset\_noise\_scale \times 1_{3}, reset\_noise\_scale \times 1_{3}]}`.
+    The initial velocity state is {math} `\mathcal{N}(0_{3}, reset\_noise\_scale^2 \times I_{3})`.
 
-    where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where {math} `\mathcal{N}` is the multivariate normal distribution and {math} `\mathcal{U}` is the multivariate uniform continuous distribution.
 
 
     ## Episode End
@@ -110,7 +110,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     The environment terminates when the Inverted Double Pendulum is unhealthy.
     The Inverted Double Pendulum is unhealthy if any of the following happens:
 
-    1.Termination: The y_coordinate of the tip of the second pole $\leq 1$.
+    1.Termination: The y_coordinate of the tip of the second pole {math} `\leq 1`.
 
     Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.
 

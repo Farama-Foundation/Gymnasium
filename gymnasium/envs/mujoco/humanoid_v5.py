@@ -219,21 +219,21 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     it gets a reward of fixed value `healthy_reward`.
     - *forward_reward*:
     A reward for moving forward,
-    this reward would be positive if the Humanoid moves forward (in the positive $x$ direction / in the right direction).
-    $w_{forward} \times \frac{dx}{dt}$, where
-    $dx$ is the displacement of the center of mass ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is 5),
-    and `frametime` which is 0.001 - so the default is $dt = 5 \times 0.003 = 0.015$,
-    $w_{forward}$ is the `forward_reward_weight` (default is $1.25$).
+    this reward would be positive if the Humanoid moves forward (in the positive {math} `x` direction / in the right direction).
+    {math} `w_{forward} \times \frac{dx}{dt}`, where
+    {math} `dx` is the displacement of the center of mass ({math} `x_{after-action} - x_{before-action}`),
+    {math} `dt` is the time between actions, which depends on the `frame_skip` parameter (default is 5),
+    and `frametime` which is 0.001 - so the default is {math} `dt = 5 \times 0.003 = 0.015`,
+    {math} `w_{forward}` is the `forward_reward_weight` (default is {math} `1.25`).
     - *ctrl_cost*:
     A negative reward to penalize the Humanoid for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
-    where $w_{control}$ is `ctrl_cost_weight` (default is $0.1$).
+    {math} `w_{control} \times \\|action\\|_2^2`,
+    where {math} `w_{control}` is `ctrl_cost_weight` (default is {math} `0.1`).
     - *contact_cost*:
     A negative reward to penalize the Humanoid if the external contact forces are too large.
-    $w_{contact} \times clamp(contact\\_cost\\_range, \\|F_{contact}\\|_2^2)$, where
-    $w_{contact}$ is `contact_cost_weight` (default is $5\times10^{-7}$),
-    $F_{contact}$ are the external contact forces (see `cfrc_ext` section on observation).
+    {math} `w_{contact} \times clamp(contact\\_cost\\_range, \\|F_{contact}\\|_2^2)`, where
+    {math} `w_{contact}` is `contact_cost_weight` (default is {math} `5\times10^{-7}`),
+    {math} `F_{contact}` are the external contact forces (see `cfrc_ext` section on observation).
 
     `info` contains the individual reward terms.
 
@@ -241,10 +241,10 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Starting State
-    The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}$.
-    The initial velocity state is $0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}$.
+    The initial position state is {math} `[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}`.
+    The initial velocity state is {math} `0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}`.
 
-    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where {math} `\mathcal{U}` is the multivariate uniform continuous distribution.
 
     Note that the z- and x-coordinates are non-zero so that the humanoid can immediately stand up and face forward (x-axis).
 
