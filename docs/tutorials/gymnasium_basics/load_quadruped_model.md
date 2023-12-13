@@ -121,8 +121,11 @@ Termination is important for robot environments to avoid sampling "useless" time
 
 The arguments of interest are `terminate_when_unhealthy` & `healthy_z_range`.
 
-We could set `terminate_when_unhealthy=False` to disable termination altogether,
-or set `healthy_z_range` to terminate the environment when the robot falls over, here we have to choose a value that is logical for the height of the robot, for `Go1` we choose `(0.295, np.inf)`.
+We want to set `healthy_z_range` to terminate the environment when the robot falls over, or jumps really high, here we have to choose a value that is logical for the height of the robot, for `Go1` we choose `(0.295, ???)`.
+Note: `healthy_z_range` checks the absolute value of the height of the robot, and therefore if your scene contains different levels of elevation it should be set to `(-np.inf, np.inf)`
+
+ could set `terminate_when_unhealthy=False` to disable termination altogether, something that is not desirable in case of`Go1`.
+
 
 ```py
 env = gymnasium.make(
