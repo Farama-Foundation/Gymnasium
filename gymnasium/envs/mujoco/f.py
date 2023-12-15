@@ -68,9 +68,8 @@ class MJXEnv(
         # observation_space: gymnasium.spaces.Box  # set by the sub-class
 
     def initial(self, rng: jax.random.PRNGKey) -> mjx._src.types.Data:
-        mjx_data = mjx.make_data(
-            self.model
-        )  # TODO? find a more performant alternative that does not allocate?
+        # TODO? find a more performant alternative that does not allocate?
+        mjx_data = mjx.make_data(self.model)
         qpos, qvel = self._gen_init_state(rng)
         mjx_data = mjx_data.replace(qpos=qpos, qvel=qvel)
         mjx_data = mjx.forward(self.mjx_model, mjx_data)
@@ -109,6 +108,7 @@ class MJXEnv(
     def render_image(
         self, state: mjx._src.types.Data, render_state: MujocoRenderer
     ) -> tuple[MujocoRenderer, np.ndarray | None]:
+        # NOTE function can not be jitted
         mjx_data = state
         mujoco_renderer = render_state
 
