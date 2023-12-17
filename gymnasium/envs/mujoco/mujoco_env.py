@@ -34,7 +34,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         self,
         model_path,
         frame_skip,
-        observation_space: Space,
+        observation_space: Optional[Space],
         render_mode: Optional[str] = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
@@ -85,8 +85,8 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
             assert (
                 int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
             ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
-
-        self.observation_space = observation_space
+        if observation_space is not None:
+            self.observation_space = observation_space
         self._set_action_space()
 
         self.render_mode = render_mode
@@ -347,7 +347,7 @@ class MujocoEnv(BaseMujocoEnv):
         self,
         model_path,
         frame_skip,
-        observation_space: Space,
+        observation_space: Optional[Space],
         render_mode: Optional[str] = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
