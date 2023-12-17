@@ -479,7 +479,7 @@
           </div>
           <article role="main">
             
-            <section id="recording-agents">
+            <section class="tex2jax_ignore mathjax_ignore" id="recording-agents">
 <h1>Recording Agents<a class="headerlink" href="#recording-agents" title="Link to this heading">#</a></h1>
 <p>During training or when evaluating an agent, it may be interesting to record agent behaviour over an episode and log the total reward accumulated. This can be achieved through two wrappers: <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code>, the first tracks episode data such as the total rewards, episode length and time taken and the second generates mp4 videos of the agents using the environment renderings.</p>
 <p>We show how to apply these wrappers for two types of problems; the first for recording data for every episode (normally evaluation) and second for recording data periodiclly (for normal training).</p>

@@ -470,7 +470,7 @@
           </div>
           <article role="main">
             
-            <section id="hopper">
+            <section class="tex2jax_ignore mathjax_ignore" id="hopper">
 <h1>Hopper<a class="headerlink" href="#hopper" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/hopper.gif"><img alt="../../../_images/hopper.gif" src="../../../_images/hopper.gif" style="width: 200px;" /></a>
@@ -727,24 +727,24 @@ Every timestep that the Hopper is healthy (see definition in section “Episode 
 it gets a reward of fixed value <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code>.</p></li>
 <li><p><em>forward_reward</em>:
 A reward for moving forward,
-this reward would be positive if the Hopper moves forward (in the positive $x$ direction / in the right direction).
-$w_{forward} \times \frac{dx}{dt}$, where
-$dx$ is the displacement of the “torso” ($x_{after-action} - x_{before-action}$),
-$dt$ is the time between actions, which depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is 4),
-and <code class="docutils literal notranslate"><span class="pre">frametime</span></code> which is 0.002 - so the default is $dt = 4 \times 0.002 = 0.008$,
-$w_{forward}$ is the <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code> (default is $1$).</p></li>
+this reward would be positive if the Hopper moves forward (in the positive <span class="math notranslate nohighlight">\(x\)</span> direction / in the right direction).
+<span class="math notranslate nohighlight">\(w_{forward} \times \frac{dx}{dt}\)</span>, where
+<span class="math notranslate nohighlight">\(dx\)</span> is the displacement of the “torso” (<span class="math notranslate nohighlight">\(x_{after-action} - x_{before-action}\)</span>),
+<span class="math notranslate nohighlight">\(dt\)</span> is the time between actions, which depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is 4),
+and <code class="docutils literal notranslate"><span class="pre">frametime</span></code> which is 0.002 - so the default is <span class="math notranslate nohighlight">\(dt = 4 \times 0.002 = 0.008\)</span>,
+<span class="math notranslate nohighlight">\(w_{forward}\)</span> is the <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code> (default is <span class="math notranslate nohighlight">\(1\)</span>).</p></li>
 <li><p><em>ctrl_cost</em>:
 A negative reward to penalize the Hopper for taking actions that are too large.
-$w_{control} \times \|action\|<em>2^2$,
-where $w</em>{control}$ is <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is $10^{-3}$).</p></li>
+<span class="math notranslate nohighlight">\(w_{control} \times \\|action\\|_2^2\)</span>,
+where <span class="math notranslate nohighlight">\(w_{control}\)</span> is <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(10^{-3}\)</span>).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
-<p>The initial position state is $[0, 1.25, 0, 0, 0, 0] + \mathcal{U}<em>{[-reset_noise_scale \times 1</em>{6}, reset_noise_scale \times 1_{6}]}$.
-The initial velocity state is $0_6 + \mathcal{U}<em>{[-reset_noise_scale \times 1</em>{6}, reset_noise_scale \times 1_{6}]}$.</p>
-<p>where $\mathcal{U}$ is the multivariate uniform continuous distribution.</p>
+<p>The initial position state is <span class="math notranslate nohighlight">\([0, 1.25, 0, 0, 0, 0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{6}, reset\_noise\_scale \times 1_{6}]}\)</span>.
+The initial velocity state is <span class="math notranslate nohighlight">\(0_6 + \mathcal{U}_{[-reset\_noise\_scale \times 1_{6}, reset\_noise\_scale \times 1_{6}]}\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 <p>Note that the z-coordinate is non-zero so that the hopper can stand up immediately.</p>
 </section>
 <section id="episode-end">
@@ -1034,6 +1034,8 @@ These parameters can be applied during <code class="docutils literal notranslate
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
 

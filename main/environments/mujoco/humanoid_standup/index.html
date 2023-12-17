@@ -470,7 +470,7 @@
           </div>
           <article role="main">
             
-            <section id="humanoid-standup">
+            <section class="tex2jax_ignore mathjax_ignore" id="humanoid-standup">
 <h1>Humanoid Standup<a class="headerlink" href="#humanoid-standup" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/humanoid_standup.gif"><img alt="../../../_images/humanoid_standup.gif" src="../../../_images/humanoid_standup.gif" style="width: 200px;" /></a>
@@ -1302,29 +1302,29 @@ version &gt; 2.0).</p>
 A reward for moving up (trying to stand up).
 This is not a relative reward, measuring how far up it has moved since the last timestep,
 but it is an absolute reward that measures how much upward the Humanoid has moved up in total.
-It is measured as $weight_{uph} \times (z_{after action} - 0)/dt$,
-where $z_{after action}$ is the z coordinate of the torso after taking an action,
+It is measured as <span class="math notranslate nohighlight">\(weight_{uph} \times (z_{after action} - 0)/dt\)</span>,
+where <span class="math notranslate nohighlight">\(z_{after action}\)</span> is the z coordinate of the torso after taking an action,
 and <em>dt</em> is the time between actions, and depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter
 (default is 5), where the frametime is 0.003 - so the default is <em>dt = 5 * 0.003 = 0.015</em>.
-and $weight_{uph}$ is <code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code>.</p></li>
+and <span class="math notranslate nohighlight">\(weight_{uph}\)</span> is <code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code>.</p></li>
 <li><p><em>quad_ctrl_cost</em>:
 A negative reward to penalize the Humanoid for taking actions that are too large.
-$w_{quad_control} \times \|action\|<em>2^2$,
-where $w</em>{quad_control}$ is <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is $0.1$).
+<span class="math notranslate nohighlight">\(w_{quad_control} \times \\|action\\|_2^2\)</span>,
+where <span class="math notranslate nohighlight">\(w_{quad_control}\)</span> is <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.1\)</span>).
 If there are <em>nu</em> actuators/controls, then the control has shape  <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">x</span> <span class="pre">1</span></code>.</p></li>
 <li><p><em>impact_cost</em>:
 A negative reward to penalize the Humanoid if the external contact forces are too large.
-$w_{impact} \times clamp(impact\<em>cost\<em>range, \|F</em>{contact}\|<em>2^2)$, where
-$w</em>{impact}$ is <code class="docutils literal notranslate"><span class="pre">impact_cost_weight</span></code> (default is $5\times10^{-7}$),
-$F</em>{contact}$ are the external contact forces (see <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> section on observation).</p></li>
+<span class="math notranslate nohighlight">\(w_{impact} \times clamp(impact\\_cost\\_range, \\|F_{contact}\\|_2^2)\)</span>, where
+<span class="math notranslate nohighlight">\(w_{impact}\)</span> is <code class="docutils literal notranslate"><span class="pre">impact_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(5\times10^{-7}\)</span>),
+<span class="math notranslate nohighlight">\(F_{contact}\)</span> are the external contact forces (see <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> section on observation).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
-<p>The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, … 0.0] + \mathcal{U}<em>{[-reset_noise_scale \times 1</em>{24}, reset_noise_scale \times 1_{24}]}$.
-The initial velocity state is $0_{23} + \mathcal{U}<em>{[-reset_noise_scale \times 1</em>{23}, reset_noise_scale \times 1_{23}]}$.</p>
-<p>where $\mathcal{U}$ is the multivariate uniform continuous distribution.</p>
+<p>The initial position state is <span class="math notranslate nohighlight">\([0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}\)</span>.
+The initial velocity state is <span class="math notranslate nohighlight">\(0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 <p>Note that the z- and x-coordinates are non-zero so that the humanoid immediately lies down and faces forward (x-axis).</p>
 </section>
 <section id="episode-end">
@@ -1618,6 +1618,8 @@ These parameters can be applied during <code class="docutils literal notranslate
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
 
