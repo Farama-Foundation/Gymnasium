@@ -8,6 +8,7 @@ from typing import NamedTuple, Optional, Tuple, Union
 import jax
 import jax.numpy as jnp
 import numpy as np
+from flax import struct
 from jax import random
 from jax.random import PRNGKey
 
@@ -158,8 +159,16 @@ def is_natural(hand):
     )
 
 
+@struct.dataclass
+class BlackJackParams:
+    """Parameters for the jax Blackjack environment."""
+
+    natural: bool = False
+    sutton_and_barto: bool = True
+
+
 class BlackjackFunctional(
-    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType]
+    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType, BlackJackParams]
 ):
     """Blackjack is a card game where the goal is to beat the dealer by obtaining cards that sum to closer to 21 (without going over 21) than the dealers cards.
 
@@ -233,15 +242,13 @@ class BlackjackFunctional(
         "render_fps": 4,
     }
 
-    def __init__(self, natural: bool = False, sutton_and_barto: bool = True):
-        """Initializes Blackjack functional env."""
-        # Flag to payout 1.5 on a "natural" blackjack win, like casino rules
-        # Ref: http://www.bicyclecards.com/how-to-play/blackjack/
-        self.natural = natural
-        # Flag for full agreement with the (Sutton and Barto, 2018) definition. Overrides self.natural
-        self.sutton_and_barto = sutton_and_barto
-
-    def transition(self, state: EnvState, action: Union[int, jax.Array], key: PRNGKey):
+    def transition(
+        self,
+        state: EnvState,
+        action: Union[int, jax.Array],
+        key: PRNGKey,
+        params: BlackJackParams = BlackJackParams,
+    ):
         """The blackjack environment's state transition function."""
         env_state = jax.lax.cond(action, take, notake, (state, key))
 
@@ -265,7 +272,7 @@ class BlackjackFunctional(
 
         return new_state
 
-    def initial(self, rng: PRNGKey):
+    def initial(self, rng: PRNGKey, params: BlackJackParams = BlackJackParams):
         """Blackjack initial observataion function."""
         player_hand = jnp.zeros(21)
         dealer_hand = jnp.zeros(21)
@@ -284,7 +291,9 @@ class BlackjackFunctional(
 
         return state
 
-    def observation(self, state: EnvState) -> jax.Array:
+    def observation(
+        self, state: EnvState, params: BlackJackParams = BlackJackParams
+    ) -> jax.Array:
         """Blackjack observation."""
         return jnp.array(
             [
@@ -295,12 +304,18 @@ class BlackjackFunctional(
             dtype=np.int32,
         )
 
-    def terminal(self, state: EnvState) -> jax.Array:
+    def terminal(
+        self, state: EnvState, params: BlackJackParams = BlackJackParams
+    ) -> jax.Array:
         """Determines if a particular Blackjack observation is terminal."""
         return (state.done) > 0
 
     def reward(
-        self, state: EnvState, action: ActType, next_state: StateType
+        self,
+        state: EnvState,
+        action: ActType,
+        next_state: StateType,
+        params: BlackJackParams = BlackJackParams,
     ) -> jax.Array:
         """Calculates reward from a state."""
         state = next_state
@@ -316,14 +331,14 @@ class BlackjackFunctional(
         )
 
         # in the natural setting, if the player wins with a natural blackjack, then reward is 1.5
-        if self.natural and not self.sutton_and_barto:
+        if params.natural and not params.sutton_and_barto:
             condition = jnp.logical_and(is_natural(player_hand), (reward == 1))
             reward = reward * jnp.logical_not(condition) + 1.5 * condition
 
         # in the sutton and barto setting, if the player gets a natural blackjack and the dealer gets
         # a non-natural blackjack, the player wins. A dealer natural blackjack and a player
         # non-natural blackjack should result in a tie.
-        if self.sutton_and_barto:
+        if params.sutton_and_barto:
             condition = jnp.logical_and(
                 is_natural(player_hand), jnp.logical_not(is_natural(dealer_hand))
             )
@@ -355,6 +370,7 @@ class BlackjackFunctional(
         self,
         state: StateType,
         render_state: RenderStateType,
+        params: BlackJackParams = BlackJackParams,
     ) -> Tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:
@@ -471,6 +487,10 @@ class BlackjackFunctional(
             ) from e
         pygame.display.quit()
         pygame.quit()
+
+    def get_default_params(self, **kwargs) -> BlackJackParams:
+        """Get the default params."""
+        return BlackJackParams(**kwargs)
 
 
 class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):

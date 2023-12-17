@@ -161,7 +161,6 @@ register(
 register(
     id="tabular/Blackjack-v0",
     entry_point="gymnasium.envs.tabular.blackjack:BlackJackJaxEnv",
-    kwargs={"sutton_and_barto": True, "natural": False},
 )
 
 register(
