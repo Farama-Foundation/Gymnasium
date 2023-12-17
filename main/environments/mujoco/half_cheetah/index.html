@@ -470,7 +470,7 @@
           </div>
           <article role="main">
             
-            <section id="half-cheetah">
+            <section class="tex2jax_ignore mathjax_ignore" id="half-cheetah">
 <h1>Half Cheetah<a class="headerlink" href="#half-cheetah" title="Link to this heading">#</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/half_cheetah.gif"><img alt="../../../_images/half_cheetah.gif" src="../../../_images/half_cheetah.gif" style="width: 200px;" /></a>
@@ -790,24 +790,24 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 <ul class="simple">
 <li><p><em>forward_reward</em>:
 A reward for moving forward,
-this reward would be positive if the Half Cheetah moves forward (in the positive $x$ direction / in the right direction).
-$w_{forward} \times \frac{dx}{dt}$, where
-$dx$ is the displacement of the “tip” ($x_{after-action} - x_{before-action}$),
-$dt$ is the time between actions which is depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is 5),
-and <code class="docutils literal notranslate"><span class="pre">frametime</span></code> which is 0.01 - so the default is $dt = 5 \times 0.01 = 0.05$,
-$w_{forward}$ is the <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code> (default is $1$).</p></li>
+this reward would be positive if the Half Cheetah moves forward (in the positive <span class="math notranslate nohighlight">\(x\)</span> direction / in the right direction).
+<span class="math notranslate nohighlight">\(w_{forward} \times \frac{dx}{dt}\)</span>, where
+<span class="math notranslate nohighlight">\(dx\)</span> is the displacement of the “tip” (<span class="math notranslate nohighlight">\(x_{after-action} - x_{before-action}\)</span>),
+<span class="math notranslate nohighlight">\(dt\)</span> is the time between actions which is depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is 5),
+and <code class="docutils literal notranslate"><span class="pre">frametime</span></code> which is 0.01 - so the default is <span class="math notranslate nohighlight">\(dt = 5 \times 0.01 = 0.05\)</span>,
+<span class="math notranslate nohighlight">\(w_{forward}\)</span> is the <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code> (default is <span class="math notranslate nohighlight">\(1\)</span>).</p></li>
 <li><p><em>ctrl_cost</em>:
 A negative reward to penalize the Half Cheetah for taking actions that are too large.
-$w_{control} \times \|action\|<em>2^2$,
-where $w</em>{control}$ is the <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is $0.1$).</p></li>
+<span class="math notranslate nohighlight">\(w_{control} \times \\|action\\|_2^2\)</span>,
+where <span class="math notranslate nohighlight">\(w_{control}\)</span> is the <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.1\)</span>).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
-<p>The initial position state is $\mathcal{U}<em>{[-reset_noise_scale \times 1</em>{9}, reset_noise_scale \times 1_{9}]}$.
-The initial velocity state is $\mathcal{N}(0_{9}, reset_noise_scale^2 \times I_{9})$.</p>
-<p>where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.</p>
+<p>The initial position state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale \times 1_{9}, reset\_noise\_scale \times 1_{9}]}\)</span>.
+The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{N}(0_{9}, reset\_noise\_scale^2 \times I_{9})\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> is the multivariate normal distribution and <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 </section>
 <section id="episode-end">
 <h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
@@ -1063,6 +1063,8 @@ These parameters can be applied during <code class="docutils literal notranslate
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
 
