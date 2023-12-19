@@ -291,7 +291,8 @@ class TaxiEnv(Env):
 
         if self.render_mode == "human":
             self.render()
-        return (int(s), r, t, False, {"prob": p, "action_mask": self.action_mask(s)})
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
+        return int(s), r, t, False, {"prob": p, "action_mask": self.action_mask(s)}
 
     def reset(
         self,
