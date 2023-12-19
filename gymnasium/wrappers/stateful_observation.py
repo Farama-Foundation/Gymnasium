@@ -299,26 +299,54 @@ class FrameStackObservation(
     is an array with shape [3], so if we stack 4 observations, the processed observation
     has shape [4, 3].
 
-    No vector version of the wrapper exists.
+    Users have options for the padded observation used:
 
-    Note:
-        - After :meth:`reset` is called, the frame buffer will be filled with the initial observation.
-          I.e. the observation returned by :meth:`reset` will consist of `num_stack` many identical frames.
+     * "reset" (default) - The reset value is repeated
+     * "zero" - A "zero"-like instance of the observation space
+     * custom - An instance of the observation space
+
+    No vector version of the wrapper exists.
 
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FrameStackObservation
         >>> env = gym.make("CarRacing-v2")
-        >>> env = FrameStackObservation(env, 4)
+        >>> env = FrameStackObservation(env, stack_size=4)
         >>> env.observation_space
         Box(0, 255, (4, 96, 96, 3), uint8)
         >>> obs, _ = env.reset()
         >>> obs.shape
         (4, 96, 96, 3)
 
+    Example with different padding observations:
+        >>> env = gym.make("CartPole-v1")
+        >>> env.reset(seed=123)
+        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
+        >>> stacked_env = FrameStackObservation(env, 3)   # the default is padding_type="reset"
+        >>> stacked_env.reset(seed=123)
+        (array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],
+              dtype=float32), {})
+
+
+        >>> stacked_env = FrameStackObservation(env, 3, padding_type="zero")
+        >>> stacked_env.reset(seed=123)
+        (array([[ 0.        ,  0.        ,  0.        ,  0.        ],
+               [ 0.        ,  0.        ,  0.        ,  0.        ],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],
+              dtype=float32), {})
+        >>> stacked_env = FrameStackObservation(env, 3, padding_type=np.array([1, -1, 0, 2], dtype=np.float32))
+        >>> stacked_env.reset(seed=123)
+        (array([[ 1.        , -1.        ,  0.        ,  2.        ],
+               [ 1.        , -1.        ,  0.        ,  2.        ],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],
+              dtype=float32), {})
+
     Change logs:
      * v0.15.0 - Initially add as ``FrameStack`` with support for lz4
      * v1.0.0 - Rename to ``FrameStackObservation`` and remove lz4 and ``LazyFrame`` support
+      along with adding the ``padding_type`` parameter
     """
 
     def __init__(
@@ -326,15 +354,20 @@ class FrameStackObservation(
         env: gym.Env[ObsType, ActType],
         stack_size: int,
         *,
-        zeros_obs: ObsType | None = None,
+        padding_type: str | ObsType = "reset",
     ):
         """Observation wrapper that stacks the observations in a rolling manner.
 
         Args:
             env: The environment to apply the wrapper
-            stack_size: The number of frames to stack with zero_obs being used originally.
-            zeros_obs: Keyword only parameter that allows a custom padding observation at :meth:`reset`
+            stack_size: The number of frames to stack.
+            padding_type: The padding type to use when stacking the observations, options: "reset", "zero", custom obs
         """
+        gym.utils.RecordConstructorArgs.__init__(
+            self, stack_size=stack_size, padding_type=padding_type
+        )
+        gym.Wrapper.__init__(self, env)
+
         if not np.issubdtype(type(stack_size), np.integer):
             raise TypeError(
                 f"The stack_size is expected to be an integer, actual type: {type(stack_size)}"
@@ -343,22 +376,31 @@ class FrameStackObservation(
             raise ValueError(
                 f"The stack_size needs to be greater than one, actual value: {stack_size}"
             )
-
-        gym.utils.RecordConstructorArgs.__init__(self, stack_size=stack_size)
-        gym.Wrapper.__init__(self, env)
+        if isinstance(padding_type, str) and (
+            padding_type == "reset" or padding_type == "zero"
+        ):
+            self.padding_value: ObsType = create_zero_array(env.observation_space)
+        elif padding_type in env.observation_space:
+            self.padding_value = padding_type
+            padding_type = "_custom"
+        else:
+            if isinstance(padding_type, str):
+                raise ValueError(  # we are guessing that the user just entered the "reset" or "zero" wrong
+                    f"Unexpected `padding_type`, expected 'reset', 'zero' or a custom observation space, actual value: {padding_type!r}"
+                )
+            else:
+                raise ValueError(
+                    f"Unexpected `padding_type`, expected 'reset', 'zero' or a custom observation space, actual value: {padding_type!r} not an instance of env observation ({env.observation_space})"
+                )
 
         self.observation_space = batch_space(env.observation_space, n=stack_size)
         self.stack_size: Final[int] = stack_size
+        self.padding_type: Final[str] = padding_type
 
-        self.zero_obs: Final[ObsType] = (
-            zeros_obs if zeros_obs else create_zero_array(env.observation_space)
+        self.obs_queue = deque(
+            [self.padding_value for _ in range(self.stack_size)], maxlen=self.stack_size
         )
-        self._stacked_obs = deque(
-            [self.zero_obs for _ in range(self.stack_size)], maxlen=self.stack_size
-        )
-        self._stacked_array = create_empty_array(
-            env.observation_space, n=self.stack_size
-        )
+        self.stacked_obs = create_empty_array(env.observation_space, n=self.stack_size)
 
     def step(
         self, action: WrapperActType
@@ -371,13 +413,11 @@ class FrameStackObservation(
         Returns:
             Stacked observations, reward, terminated, truncated, and info from the environment
         """
-        obs, reward, terminated, truncated, info = super().step(action)
-        self._stacked_obs.append(obs)
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        self.obs_queue.append(obs)
 
         updated_obs = deepcopy(
-            concatenate(
-                self.env.observation_space, self._stacked_obs, self._stacked_array
-            )
+            concatenate(self.env.observation_space, self.obs_queue, self.stacked_obs)
         )
         return updated_obs, reward, terminated, truncated, info
 
@@ -393,15 +433,16 @@ class FrameStackObservation(
         Returns:
             The stacked observations and info
         """
-        obs, info = super().reset(seed=seed, options=options)
+        obs, info = self.env.reset(seed=seed, options=options)
+
+        if self.padding_type == "reset":
+            self.padding_value = obs
         for _ in range(self.stack_size - 1):
-            self._stacked_obs.append(self.zero_obs)
-        self._stacked_obs.append(obs)
+            self.obs_queue.append(self.padding_value)
+        self.obs_queue.append(obs)
 
         updated_obs = deepcopy(
-            concatenate(
-                self.env.observation_space, self._stacked_obs, self._stacked_array
-            )
+            concatenate(self.env.observation_space, self.obs_queue, self.stacked_obs)
         )
         return updated_obs, info
 
