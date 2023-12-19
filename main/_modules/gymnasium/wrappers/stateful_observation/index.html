@@ -779,26 +779,54 @@
 <span class="sd">    is an array with shape [3], so if we stack 4 observations, the processed observation</span>
 <span class="sd">    has shape [4, 3].</span>
 
-<span class="sd">    No vector version of the wrapper exists.</span>
+<span class="sd">    Users have options for the padded observation used:</span>
 
-<span class="sd">    Note:</span>
-<span class="sd">        - After :meth:`reset` is called, the frame buffer will be filled with the initial observation.</span>
-<span class="sd">          I.e. the observation returned by :meth:`reset` will consist of `num_stack` many identical frames.</span>
+<span class="sd">     * &quot;reset&quot; (default) - The reset value is repeated</span>
+<span class="sd">     * &quot;zero&quot; - A &quot;zero&quot;-like instance of the observation space</span>
+<span class="sd">     * custom - An instance of the observation space</span>
+
+<span class="sd">    No vector version of the wrapper exists.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import FrameStackObservation</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; env = FrameStackObservation(env, 4)</span>
+<span class="sd">        &gt;&gt;&gt; env = FrameStackObservation(env, stack_size=4)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
 <span class="sd">        Box(0, 255, (4, 96, 96, 3), uint8)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset()</span>
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (4, 96, 96, 3)</span>
 
+<span class="sd">    Example with different padding observations:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.reset(seed=123)</span>
+<span class="sd">        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})</span>
+<span class="sd">        &gt;&gt;&gt; stacked_env = FrameStackObservation(env, 3)   # the default is padding_type=&quot;reset&quot;</span>
+<span class="sd">        &gt;&gt;&gt; stacked_env.reset(seed=123)</span>
+<span class="sd">        (array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
+<span class="sd">               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
+<span class="sd">               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="sd">              dtype=float32), {})</span>
+
+
+<span class="sd">        &gt;&gt;&gt; stacked_env = FrameStackObservation(env, 3, padding_type=&quot;zero&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; stacked_env.reset(seed=123)</span>
+<span class="sd">        (array([[ 0.        ,  0.        ,  0.        ,  0.        ],</span>
+<span class="sd">               [ 0.        ,  0.        ,  0.        ,  0.        ],</span>
+<span class="sd">               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="sd">              dtype=float32), {})</span>
+<span class="sd">        &gt;&gt;&gt; stacked_env = FrameStackObservation(env, 3, padding_type=np.array([1, -1, 0, 2], dtype=np.float32))</span>
+<span class="sd">        &gt;&gt;&gt; stacked_env.reset(seed=123)</span>
+<span class="sd">        (array([[ 1.        , -1.        ,  0.        ,  2.        ],</span>
+<span class="sd">               [ 1.        , -1.        ,  0.        ,  2.        ],</span>
+<span class="sd">               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="sd">              dtype=float32), {})</span>
+
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.15.0 - Initially add as ``FrameStack`` with support for lz4</span>
 <span class="sd">     * v1.0.0 - Rename to ``FrameStackObservation`` and remove lz4 and ``LazyFrame`` support</span>
+<span class="sd">      along with adding the ``padding_type`` parameter</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -806,15 +834,20 @@
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">stack_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">zeros_obs</span><span class="p">:</span> <span class="n">ObsType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">padding_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ObsType</span> <span class="o">=</span> <span class="s2">&quot;reset&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Observation wrapper that stacks the observations in a rolling manner.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to apply the wrapper</span>
-<span class="sd">            stack_size: The number of frames to stack with zero_obs being used originally.</span>
-<span class="sd">            zeros_obs: Keyword only parameter that allows a custom padding observation at :meth:`reset`</span>
+<span class="sd">            stack_size: The number of frames to stack.</span>
+<span class="sd">            padding_type: The padding type to use when stacking the observations, options: &quot;reset&quot;, &quot;zero&quot;, custom obs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">stack_size</span><span class="o">=</span><span class="n">stack_size</span><span class="p">,</span> <span class="n">padding_type</span><span class="o">=</span><span class="n">padding_type</span>
+        <span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">stack_size</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The stack_size is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stack_size</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -823,22 +856,31 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The stack_size needs to be greater than one, actual value: </span><span class="si">{</span><span class="n">stack_size</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack_size</span><span class="o">=</span><span class="n">stack_size</span><span class="p">)</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">padding_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">padding_type</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span> <span class="ow">or</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s2">&quot;zero&quot;</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span><span class="p">:</span> <span class="n">ObsType</span> <span class="o">=</span> <span class="n">create_zero_array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">padding_type</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span> <span class="o">=</span> <span class="n">padding_type</span>
+            <span class="n">padding_type</span> <span class="o">=</span> <span class="s2">&quot;_custom&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">padding_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>  <span class="c1"># we are guessing that the user just entered the &quot;reset&quot; or &quot;zero&quot; wrong</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unexpected `padding_type`, expected &#39;reset&#39;, &#39;zero&#39; or a custom observation space, actual value: </span><span class="si">{</span><span class="n">padding_type</span><span class="si">!r}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unexpected `padding_type`, expected &#39;reset&#39;, &#39;zero&#39; or a custom observation space, actual value: </span><span class="si">{</span><span class="n">padding_type</span><span class="si">!r}</span><span class="s2"> not an instance of env observation (</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">stack_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">stack_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">padding_type</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">padding_type</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">zero_obs</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">ObsType</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">zeros_obs</span> <span class="k">if</span> <span class="n">zeros_obs</span> <span class="k">else</span> <span class="n">create_zero_array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span><span class="p">)],</span> <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_obs</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_obs</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span><span class="p">)],</span> <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_array</span> <span class="o">=</span> <span class="n">create_empty_array</span><span class="p">(</span>
-            <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stacked_obs</span> <span class="o">=</span> <span class="n">create_empty_array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span>
@@ -851,13 +893,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Stacked observations, reward, terminated, truncated, and info from the environment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_obs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
 
         <span class="n">updated_obs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span>
-            <span class="n">concatenate</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_obs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_array</span>
-            <span class="p">)</span>
+            <span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked_obs</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">updated_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
@@ -873,15 +913,16 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            The stacked observations and info</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_type</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span> <span class="o">=</span> <span class="n">obs</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_obs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_obs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_obs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
 
         <span class="n">updated_obs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span>
-            <span class="n">concatenate</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_obs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_array</span>
-            <span class="p">)</span>
+            <span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked_obs</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">updated_obs</span><span class="p">,</span> <span class="n">info</span></div>
 

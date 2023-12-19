@@ -688,25 +688,26 @@ the same shape as the observation space.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.FrameStackObservation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">FrameStackObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gym.Env</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeros_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ObsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_observation/#FrameStackObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.FrameStackObservation" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">FrameStackObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gym.Env</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ObsType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'reset'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_observation/#FrameStackObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.FrameStackObservation" title="Link to this definition">#</a></dt>
 <dd><p>Stacks the observations from the last <code class="docutils literal notranslate"><span class="pre">N</span></code> time steps in a rolling manner.</p>
 <p>For example, if the number of stacks is 4, then the returned observation contains
 the most recent 4 observations. For environment ‘Pendulum-v1’, the original observation
 is an array with shape [3], so if we stack 4 observations, the processed observation
 has shape [4, 3].</p>
-<p>No vector version of the wrapper exists.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p>After <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> is called, the frame buffer will be filled with the initial observation.
-I.e. the observation returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> will consist of <cite>num_stack</cite> many identical frames.</p></li>
+<p>Users have options for the padded observation used:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“reset” (default) - The reset value is repeated</p></li>
+<li><p>“zero” - A “zero”-like instance of the observation space</p></li>
+<li><p>custom - An instance of the observation space</p></li>
 </ul>
-</div>
+</div></blockquote>
+<p>No vector version of the wrapper exists.</p>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">FrameStackObservation</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v2&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">stack_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
 <span class="go">Box(0, 255, (4, 96, 96, 3), uint8)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -714,19 +715,48 @@ I.e. the observation returned by <code class="xref py py-meth docutils literal n
 <span class="go">(4, 96, 96, 3)</span>
 </pre></div>
 </div>
-<dl class="simple">
+<dl>
+<dt>Example with different padding observations:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>   <span class="c1"># the default is padding_type=&quot;reset&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
+<span class="go">       [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
+<span class="go">       [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="go">      dtype=float32), {})</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding_type</span><span class="o">=</span><span class="s2">&quot;zero&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([[ 0.        ,  0.        ,  0.        ,  0.        ],</span>
+<span class="go">       [ 0.        ,  0.        ,  0.        ,  0.        ],</span>
+<span class="go">       [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="go">      dtype=float32), {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([[ 1.        , -1.        ,  0.        ,  2.        ],</span>
+<span class="go">       [ 1.        , -1.        ,  0.        ,  2.        ],</span>
+<span class="go">       [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="go">      dtype=float32), {})</span>
+</pre></div>
+</div>
+</dd>
 <dt>Change logs:</dt><dd><ul class="simple">
 <li><p>v0.15.0 - Initially add as <code class="docutils literal notranslate"><span class="pre">FrameStack</span></code> with support for lz4</p></li>
 <li><p>v1.0.0 - Rename to <code class="docutils literal notranslate"><span class="pre">FrameStackObservation</span></code> and remove lz4 and <code class="docutils literal notranslate"><span class="pre">LazyFrame</span></code> support</p></li>
 </ul>
+<blockquote>
+<div><p>along with adding the <code class="docutils literal notranslate"><span class="pre">padding_type</span></code> parameter</p>
+</div></blockquote>
 </dd>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – The environment to apply the wrapper</p></li>
-<li><p><strong>stack_size</strong> – The number of frames to stack with zero_obs being used originally.</p></li>
-<li><p><strong>zeros_obs</strong> – Keyword only parameter that allows a custom padding observation at <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></p></li>
+<li><p><strong>stack_size</strong> – The number of frames to stack.</p></li>
+<li><p><strong>padding_type</strong> – The padding type to use when stacking the observations, options: “reset”, “zero”, custom obs</p></li>
 </ul>
 </dd>
 </dl>
