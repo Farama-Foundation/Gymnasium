@@ -81,7 +81,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         """Sets the property to freeze/continue the running mean calculation of the observation statistics."""
         self._update_running_mean = setting
 
-    def observation(self, observations: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Defines the vector observation normalization function.
 
         Args:

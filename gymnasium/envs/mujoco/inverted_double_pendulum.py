@@ -40,6 +40,7 @@ class InvertedDoublePendulumEnv(MuJocoPyEnv, utils.EzPickle):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return ob, r, terminated, False, {}
 
     def _get_obs(self):

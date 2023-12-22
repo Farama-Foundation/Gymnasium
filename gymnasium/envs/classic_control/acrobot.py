@@ -225,7 +225,8 @@ class AcrobotEnv(Env):
 
         if self.render_mode == "human":
             self.render()
-        return (self._get_ob(), reward, terminated, False, {})
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
+        return self._get_ob(), reward, terminated, False, {}
 
     def _get_ob(self):
         s = self.state

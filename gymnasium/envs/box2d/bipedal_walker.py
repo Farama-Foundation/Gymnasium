@@ -606,6 +606,7 @@ class BipedalWalker(gym.Env, EzPickle):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return np.array(state, dtype=np.float32), reward, terminated, False, {}
 
     def render(self):

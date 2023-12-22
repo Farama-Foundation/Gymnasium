@@ -69,7 +69,7 @@ class TransformObservation(VectorObservationWrapper):
 
         self.func = func
 
-    def observation(self, observations: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Apply function to the vector observation."""
         return self.func(observations)
 
@@ -148,7 +148,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
         self.same_out = self.observation_space == self.env.observation_space
         self.out = create_empty_array(self.single_observation_space, self.num_envs)
 
-    def observation(self, observations: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""
         if self.same_out:
             return concatenate(

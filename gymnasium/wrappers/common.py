@@ -462,7 +462,7 @@ class RecordEpisodeStatistics(
 
     Change logs:
      * v0.15.4 - Initially added
-     * v1.0.0 - Removed vector environment support for `wrappers.vector.RecordEpisodeStatistics` and add attribute ``time_queue``
+     * v1.0.0 - Removed vector environment support (see :class:`gymnasium.wrappers.vector.RecordEpisodeStatistics`) and add attribute ``time_queue``
     """
 
     def __init__(

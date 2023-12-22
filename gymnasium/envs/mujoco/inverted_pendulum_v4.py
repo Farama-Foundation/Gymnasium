@@ -40,6 +40,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
         terminated = bool(not np.isfinite(ob).all() or (np.abs(ob[1]) > 0.2))
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return ob, reward, terminated, False, {}
 
     def reset_model(self):

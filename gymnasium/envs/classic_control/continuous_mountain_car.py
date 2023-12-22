@@ -175,6 +175,7 @@ class Continuous_MountainCarEnv(gym.Env):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return self.state, reward, terminated, False, {}
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):

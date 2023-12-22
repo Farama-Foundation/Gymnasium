@@ -226,9 +226,10 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         observation = self._get_obs()
         reward, reward_info = self._get_rew(action)
         info = reward_info
+
         if self.render_mode == "human":
             self.render()
-
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, False, False, info
 
     def _get_rew(self, action):
