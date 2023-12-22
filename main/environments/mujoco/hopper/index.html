@@ -598,10 +598,6 @@ In that case, the observation space will be <code class="docutils literal notran
 represents the x-coordinate of the hopper.
 Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> was set to true or false, the x-coordinate
 will be returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with key <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code>.</p>
-<p>By default, the observation does not include the robot’s x-coordinate (<code class="docutils literal notranslate"><span class="pre">rootx</span></code>).
-This can be be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
-In this case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(12,),</span> <span class="pre">float64)</span></code>, where the first observation element is the x–coordinate of the robot.
-Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to true or false, the x- and y-coordinates are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
 <p>However, by default, the observation is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(11,),</span> <span class="pre">float64)</span></code> where the elements
 correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
