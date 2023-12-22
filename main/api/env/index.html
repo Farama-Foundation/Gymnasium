@@ -241,11 +241,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../wrappers/reward_wrappers/">Reward Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../vector/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/utils/">Utility functions</a></li>
@@ -512,6 +511,13 @@ Returns the first agent observation for an episode and information, i.e. metrics
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To get reproducible sampling of actions, a seed can be set with <code class="docutils literal notranslate"><span class="pre">env.action_space.seed(123)</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For strict type checking (e.g., mypy or pyright), <a class="reference internal" href="#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">Env</span></code></a> is a generic class with two parameterized types: <code class="docutils literal notranslate"><span class="pre">ObsType</span></code> and <code class="docutils literal notranslate"><span class="pre">ActType</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">ObsType</span></code> and <code class="docutils literal notranslate"><span class="pre">ActType</span></code> are the expected types of the observations and actions used in <a class="reference internal" href="#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a>.
+The environment’s <a class="reference internal" href="#gymnasium.Env.observation_space" title="gymnasium.Env.observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> and <a class="reference internal" href="#gymnasium.Env.action_space" title="gymnasium.Env.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> should have type <code class="docutils literal notranslate"><span class="pre">Space[ObsType]</span></code> and <code class="docutils literal notranslate"><span class="pre">Space[ActType]</span></code>,
+see a space’s implementation to find its parameterized type.</p>
 </div>
 </dd></dl>
 

@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/api/wrappers/reward_wrappers.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Vector wrappers" href="../vector_wrappers/" /><link rel="prev" title="Observation Wrappers" href="../observation_wrappers/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Vectorize" href="../../vector/" /><link rel="prev" title="Observation Wrappers" href="../observation_wrappers/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/wrappers/reward_wrappers.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
@@ -241,11 +241,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Reward Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../vector/utils/">Utility functions</a></li>
@@ -490,7 +489,11 @@ passing it to learning code, you can simply inherit from <a class="reference int
 <a class="reference internal" href="#gymnasium.RewardWrapper.reward" title="gymnasium.RewardWrapper.reward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reward()</span></code></a> to implement that transformation.
 This transformation might change the <code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code>; to specify the <code class="xref py py-attr docutils literal notranslate"><span class="pre">reward_range</span></code> of your wrapper,
 you can simply define <code class="xref py py-attr docutils literal notranslate"><span class="pre">self.reward_range</span></code> in <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code>.</p>
-<p>Constructor for the Reward wrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – Environment to be wrapped.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.RewardWrapper.reward">
 <span class="sig-name descname"><span class="pre">reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SupportsFloat</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/core/#RewardWrapper.reward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.RewardWrapper.reward" title="Link to this definition">#</a></dt>
@@ -513,7 +516,7 @@ you can simply define <code class="xref py py-attr docutils literal notranslate"
 <dt class="sig sig-object py" id="gymnasium.wrappers.TransformReward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TransformReward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_reward/#TransformReward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.TransformReward" title="Link to this definition">#</a></dt>
 <dd><p>Applies a function to the <code class="docutils literal notranslate"><span class="pre">reward</span></code> received from the environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code>.</p>
-<p>A vector version of the wrapper exists <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.TransformReward</span></code>.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.TransformReward" title="gymnasium.wrappers.vector.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.TransformReward</span></code></a>.</p>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">TransformReward</span>
@@ -549,7 +552,7 @@ you can simply define <code class="xref py py-attr docutils literal notranslate"
 <p>The property <cite>_update_running_mean</cite> allows to freeze/continue the running mean calculation of the reward
 statistics. If <cite>True</cite> (default), the <cite>RunningMeanStd</cite> will get updated every time <cite>self.normalize()</cite> is called.
 If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.</p>
-<p>A vector version of the wrapper exists <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.NormalizeReward</span></code>.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.NormalizeReward" title="gymnasium.wrappers.vector.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.NormalizeReward</span></code></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrectly computed in Gym v0.25+.
@@ -618,7 +621,7 @@ instantiated or the policy was changed recently.</p>
 <dt class="sig sig-object py" id="gymnasium.wrappers.ClipReward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ClipReward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gym.Env</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_reward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_reward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_reward/#ClipReward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.ClipReward" title="Link to this definition">#</a></dt>
 <dd><p>Clips the rewards for an environment between an upper and lower bound.</p>
-<p>A vector version of the wrapper exists <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.ClipReward</span></code>.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.ClipReward" title="gymnasium.wrappers.vector.ClipReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.ClipReward</span></code></a>.</p>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">ClipReward</span>
@@ -655,12 +658,12 @@ instantiated or the policy was changed recently.</p>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../vector_wrappers/">
+            <a class="next-page" href="../../vector/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Vector wrappers</div>
+                <div class="title">Vectorize</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>

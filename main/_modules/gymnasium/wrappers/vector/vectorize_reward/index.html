@@ -240,11 +240,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/vector/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../api/vector/utils/">Utility functions</a></li>
@@ -483,6 +482,8 @@
 <span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">transform_reward</span>
 
 
+<div class="viewcode-block" id="TransformReward">
+<a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.TransformReward">[docs]</a>
 <span class="k">class</span> <span class="nc">TransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A reward wrapper that allows a custom function to modify the step reward.</span>
 
@@ -528,11 +529,12 @@
 
     <span class="k">def</span> <span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to reward.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="VectorizeTransformReward">
-<a class="viewcode-back" href="../../../../../api/wrappers/vector_wrappers/#gymnasium.wrappers.vector.VectorizeTransformReward">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.VectorizeTransformReward">[docs]</a>
 <span class="k">class</span> <span class="nc">VectorizeTransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorizes a single-agent transform reward wrapper for vector environments.</span>
 
@@ -585,6 +587,8 @@
 
 
 
+<div class="viewcode-block" id="ClipReward">
+<a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.ClipReward">[docs]</a>
 <span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">VectorizeTransformReward</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper that clips the rewards for an environment between an upper and lower bound.</span>
 
@@ -635,7 +639,8 @@
             <span class="n">transform_reward</span><span class="o">.</span><span class="n">ClipReward</span><span class="p">,</span>
             <span class="n">min_reward</span><span class="o">=</span><span class="n">min_reward</span><span class="p">,</span>
             <span class="n">max_reward</span><span class="o">=</span><span class="n">max_reward</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
+
 </pre></div>
           </article>
         </div>

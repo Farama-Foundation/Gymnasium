@@ -239,11 +239,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/vector/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/vector/utils/">Utility functions</a></li>
@@ -536,9 +535,17 @@
         <li><a href="../api/vector/utils/#gymnasium.vector.utils.clear_mpi_env_vars">clear_mpi_env_vars() (in module gymnasium.vector.utils)</a>
 </li>
         <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.ClipAction">ClipAction (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.ClipAction">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/reward_wrappers/#gymnasium.wrappers.ClipReward">ClipReward (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.ClipReward">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/env/#gymnasium.Env.close">close() (gymnasium.Env method)</a>
 
         <ul>
@@ -555,6 +562,8 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/vector/#gymnasium.vector.VectorEnv.closed">closed (gymnasium.vector.VectorEnv attribute)</a>
+</li>
         <li><a href="../api/vector/utils/#gymnasium.vector.utils.CloudpickleWrapper">CloudpickleWrapper() (in module gymnasium.vector.utils)</a>
 </li>
         <li><a href="../api/vector/utils/#gymnasium.vector.utils.concatenate">concatenate() (in module gymnasium.vector.utils)</a>
@@ -583,7 +592,7 @@
 </li>
         <li><a href="../api/spaces/composite/#gymnasium.spaces.Dict">Dict (class in gymnasium.spaces)</a>
 </li>
-        <li><a href="../api/wrappers/vector_wrappers/#gymnasium.wrappers.vector.DictInfoToList">DictInfoToList (class in gymnasium.wrappers.vector)</a>
+        <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.DictInfoToList">DictInfoToList (class in gymnasium.wrappers.vector)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -592,7 +601,11 @@
         <li><a href="../api/spaces/#gymnasium.spaces.Space.dtype">dtype (gymnasium.spaces.Space property)</a>
 </li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.DtypeObservation">DtypeObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.DtypeObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -620,7 +633,11 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.FilterObservation">FilterObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.FilterObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/registry/#gymnasium.envs.registration.find_highest_version">find_highest_version() (in module gymnasium.envs.registration)</a>
 </li>
         <li><a href="../api/spaces/utils/#gymnasium.spaces.utils.flatdim">flatdim() (in module gymnasium.spaces.utils)</a>
@@ -632,7 +649,11 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation">FlattenObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.FlattenObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.FrameStackObservation">FrameStackObservation (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/spaces/#gymnasium.spaces.Space.from_jsonable">from_jsonable() (gymnasium.spaces.Space method)</a>
@@ -664,7 +685,11 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.GrayscaleObservation">GrayscaleObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.GrayscaleObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li>
     gymnasium.spaces
 
@@ -716,11 +741,19 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.JaxToNumpy">JaxToNumpy (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.JaxToNumpy">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.JaxToTorch">JaxToTorch (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.JaxToTorch">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -777,9 +810,17 @@
         <li><a href="../api/registry/#gymnasium.envs.registration.namespace">namespace() (in module gymnasium.envs.registration)</a>
 </li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.NormalizeObservation">NormalizeObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.NormalizeObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/reward_wrappers/#gymnasium.wrappers.NormalizeReward">NormalizeReward (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.NormalizeReward">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/env/#gymnasium.Env.np_random">np_random (gymnasium.Env property)</a>
 
         <ul>
@@ -797,7 +838,11 @@
         <li><a href="../api/vector/#gymnasium.vector.VectorEnv.num_envs">num_envs (gymnasium.vector.VectorEnv attribute)</a>
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.NumpyToTorch">NumpyToTorch (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.NumpyToTorch">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -822,6 +867,8 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper.observations">observations() (gymnasium.vector.VectorObservationWrapper method)</a>
+</li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper">ObservationWrapper (class in gymnasium)</a>
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.OrderEnforcing">OrderEnforcing (class in gymnasium.wrappers)</a>
@@ -861,7 +908,11 @@
         <li><a href="../api/vector/utils/#gymnasium.vector.utils.read_from_shared_memory">read_from_shared_memory() (in module gymnasium.vector.utils)</a>
 </li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics">RecordEpisodeStatistics (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.RecordEpisodeStatistics">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo">RecordVideo (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/registry/#gymnasium.register">register() (in module gymnasium)</a>
@@ -873,6 +924,10 @@
         <ul>
           <li><a href="../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.render">(gymnasium.envs.functional_jax_env.FunctionalJaxEnv method)</a>
 </li>
+          <li><a href="../api/vector/#gymnasium.vector.VectorEnv.render">(gymnasium.vector.VectorEnv method)</a>
+</li>
+          <li><a href="../api/vector/wrappers/#gymnasium.vector.VectorWrapper.render">(gymnasium.vector.VectorWrapper method)</a>
+</li>
           <li><a href="../api/wrappers/#gymnasium.Wrapper.render">(gymnasium.Wrapper method)</a>
 </li>
         </ul></li>
@@ -883,7 +938,11 @@
         <li><a href="../api/functional/#gymnasium.functional.FuncEnv.render_init">render_init() (gymnasium.functional.FuncEnv method)</a>
 </li>
         <li><a href="../api/env/#gymnasium.Env.render_mode">render_mode (gymnasium.Env attribute)</a>
+
+        <ul>
+          <li><a href="../api/vector/#gymnasium.vector.VectorEnv.render_mode">(gymnasium.vector.VectorEnv attribute)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/misc_wrappers/#gymnasium.wrappers.RenderCollection">RenderCollection (class in gymnasium.wrappers)</a>
 </li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.RenderObservation">RenderObservation (class in gymnasium.wrappers)</a>
@@ -891,9 +950,17 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.RescaleAction">RescaleAction (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.RescaleAction">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.RescaleObservation">RescaleObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.RescaleObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/env/#gymnasium.Env.reset">reset() (gymnasium.Env method)</a>
 
         <ul>
@@ -911,9 +978,17 @@
 </li>
         </ul></li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.ReshapeObservation">ReshapeObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.ReshapeObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.ResizeObservation">ResizeObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.ResizeObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/functional/#gymnasium.functional.FuncEnv.reward">reward() (gymnasium.functional.FuncEnv method)</a>
 
         <ul>
@@ -1050,14 +1125,26 @@
 </li>
         <li><a href="../api/functional/#gymnasium.functional.FuncEnv.transform">transform() (gymnasium.functional.FuncEnv method)</a>
 </li>
+        <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.TransformAction">TransformAction (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.TransformAction">(class in gymnasium.wrappers.vector)</a>
+</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/wrappers/action_wrappers/#gymnasium.wrappers.TransformAction">TransformAction (class in gymnasium.wrappers)</a>
-</li>
         <li><a href="../api/wrappers/observation_wrappers/#gymnasium.wrappers.TransformObservation">TransformObservation (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.TransformObservation">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/wrappers/reward_wrappers/#gymnasium.wrappers.TransformReward">TransformReward (class in gymnasium.wrappers)</a>
+
+        <ul>
+          <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.TransformReward">(class in gymnasium.wrappers.vector)</a>
 </li>
+        </ul></li>
         <li><a href="../api/functional/#gymnasium.functional.FuncEnv.transition">transition() (gymnasium.functional.FuncEnv method)</a>
 </li>
         <li><a href="../api/functional/#gymnasium.functional.FuncEnv.transition_info">transition_info() (gymnasium.functional.FuncEnv method)</a>
@@ -1094,13 +1181,13 @@
 </li>
         <li><a href="../api/vector/#gymnasium.vector.VectorEnv">VectorEnv (class in gymnasium.vector)</a>
 </li>
-        <li><a href="../api/wrappers/vector_wrappers/#gymnasium.wrappers.vector.VectorizeTransformAction">VectorizeTransformAction (class in gymnasium.wrappers.vector)</a>
+        <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.VectorizeTransformAction">VectorizeTransformAction (class in gymnasium.wrappers.vector)</a>
 </li>
-        <li><a href="../api/wrappers/vector_wrappers/#gymnasium.wrappers.vector.VectorizeTransformObservation">VectorizeTransformObservation (class in gymnasium.wrappers.vector)</a>
+        <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.VectorizeTransformObservation">VectorizeTransformObservation (class in gymnasium.wrappers.vector)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/wrappers/vector_wrappers/#gymnasium.wrappers.vector.VectorizeTransformReward">VectorizeTransformReward (class in gymnasium.wrappers.vector)</a>
+        <li><a href="../api/vector/wrappers/#gymnasium.wrappers.vector.VectorizeTransformReward">VectorizeTransformReward (class in gymnasium.wrappers.vector)</a>
 </li>
         <li><a href="../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper">VectorObservationWrapper (class in gymnasium.vector)</a>
 </li>

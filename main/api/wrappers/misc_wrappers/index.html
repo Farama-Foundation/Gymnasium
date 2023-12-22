@@ -241,11 +241,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reward_wrappers/">Reward Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../vector/utils/">Utility functions</a></li>
@@ -642,7 +641,7 @@ the environment metadata <code class="docutils literal notranslate"><span class=
 using the key <code class="docutils literal notranslate"><span class="pre">episode</span></code>. If using a vectorized environment also the key
 <code class="docutils literal notranslate"><span class="pre">_episode</span></code> is used which indicates whether the env at the respective index has
 the episode statistics.
-A vector version of the wrapper exists, <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.RecordEpisodeStatistics</span></code>.</p>
+A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.RecordEpisodeStatistics" title="gymnasium.wrappers.vector.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.RecordEpisodeStatistics</span></code></a>.</p>
 <p>After the completion of an episode, <code class="docutils literal notranslate"><span class="pre">info</span></code> will look like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
 <span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -682,7 +681,7 @@ A vector version of the wrapper exists, <code class="xref py py-class docutils l
 <dl class="simple">
 <dt>Change logs:</dt><dd><ul class="simple">
 <li><p>v0.15.4 - Initially added</p></li>
-<li><p>v1.0.0 - Removed vector environment support for <cite>wrappers.vector.RecordEpisodeStatistics</cite> and add attribute <code class="docutils literal notranslate"><span class="pre">time_queue</span></code></p></li>
+<li><p>v1.0.0 - Removed vector environment support (see <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.RecordEpisodeStatistics" title="gymnasium.wrappers.vector.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.RecordEpisodeStatistics</span></code></a>) and add attribute <code class="docutils literal notranslate"><span class="pre">time_queue</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -1001,7 +1000,7 @@ will always return an empty list:</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToNumpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/jax_to_numpy/#JaxToNumpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.JaxToNumpy" title="Link to this definition">#</a></dt>
 <dd><p>Wraps a Jax-based environment such that it can be interacted with NumPy arrays.</p>
 <p>Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
-A vector version of the wrapper exists, <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.JaxToNumpy</span></code>.</p>
+A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.JaxToNumpy" title="gymnasium.wrappers.vector.JaxToNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.JaxToNumpy</span></code></a>.</p>
 <p class="rubric">Notes</p>
 <p>The Jax To Numpy and Numpy to Jax conversion does not guarantee a roundtrip (jax -&gt; numpy -&gt; jax) and vice versa.
 The reason for this is jax does not support non-array values, therefore numpy <code class="docutils literal notranslate"><span class="pre">int_32(5)</span> <span class="pre">-&gt;</span> <span class="pre">DeviceArray([5],</span> <span class="pre">dtype=jnp.int23)</span></code></p>
@@ -1042,7 +1041,7 @@ The reason for this is jax does not support non-array values, therefore numpy <c
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToTorch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gym.Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/jax_to_torch/#JaxToTorch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.JaxToTorch" title="Link to this definition">#</a></dt>
 <dd><p>Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.</p>
 <p>Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
-A vector version of the wrapper exists, <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.JaxToTorch</span></code>.</p>
+A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.JaxToTorch" title="gymnasium.wrappers.vector.JaxToTorch"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.JaxToTorch</span></code></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">rendered</span></code> this is returned as a NumPy array not a pytorch Tensor.</p>
@@ -1088,7 +1087,7 @@ A vector version of the wrapper exists, <code class="xref py py-class docutils l
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">NumpyToTorch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gym.Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/numpy_to_torch/#NumpyToTorch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.NumpyToTorch" title="Link to this definition">#</a></dt>
 <dd><p>Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.</p>
 <p>Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
-A vector version of the wrapper exists, <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.NumpyToTorch</span></code>.</p>
+A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.NumpyToTorch" title="gymnasium.wrappers.vector.NumpyToTorch"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.NumpyToTorch</span></code></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">rendered</span></code> this is returned as a NumPy array not a pytorch Tensor.</p>

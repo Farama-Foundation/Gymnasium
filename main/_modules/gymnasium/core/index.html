@@ -240,11 +240,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/wrappers/vector_wrappers/">Vector wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/vector/">Vector environments</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vector environments</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/vector/wrappers/">Vector Wrappers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/vector/wrappers/">Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/vector/utils/">Utility functions</a></li>
@@ -516,10 +515,16 @@
 <span class="sd">    - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during</span>
 <span class="sd">      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.</span>
 
-<span class="sd">    .. seealso:: For modifying or extending environments use the :py:class:`gymnasium.Wrapper` class</span>
+<span class="sd">    .. seealso:: For modifying or extending environments use the :class:`gymnasium.Wrapper` class</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        To get reproducible sampling of actions, a seed can be set with ``env.action_space.seed(123)``.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        For strict type checking (e.g., mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.</span>
+<span class="sd">        The ``ObsType`` and ``ActType`` are the expected types of the observations and actions used in :meth:`reset` and :meth:`step`.</span>
+<span class="sd">        The environment&#39;s :attr:`observation_space` and :attr:`action_space` should have type ``Space[ObsType]`` and ``Space[ActType]``,</span>
+<span class="sd">        see a space&#39;s implementation to find its parameterized type.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Set this in SOME subclasses</span>
@@ -986,7 +991,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the observation wrapper.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the observation wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: Environment to be wrapped.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
@@ -1032,7 +1041,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the Reward wrapper.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the Reward wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: Environment to be wrapped.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
@@ -1061,20 +1074,25 @@
 <div class="viewcode-block" id="ActionWrapper">
 <a class="viewcode-back" href="../../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">ActionWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Superclass of wrappers that can modify the action before :meth:`env.step`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Superclass of wrappers that can modify the action before :meth:`step`.</span>
 
 <span class="sd">    If you would like to apply a function to the action before passing it to the base environment,</span>
 <span class="sd">    you can simply inherit from :class:`ActionWrapper` and overwrite the method :meth:`action` to implement</span>
 <span class="sd">    that transformation. The transformation defined in that method must take values in the base environment’s</span>
 <span class="sd">    action space. However, its domain might differ from the original action space.</span>
-<span class="sd">    In that case, you need to specify the new action space of the wrapper by setting :attr:`self.action_space` in</span>
+<span class="sd">    In that case, you need to specify the new action space of the wrapper by setting :attr:`action_space` in</span>
 <span class="sd">    the :meth:`__init__` method of your wrapper.</span>
 
-<span class="sd">    Among others, Gymnasium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction` for clipping and rescaling actions.</span>
+<span class="sd">    Among others, Gymnasium provides the action wrappers :class:`gymnasium.wrappers.ClipAction` and</span>
+<span class="sd">    :class:`gymnasium.wrappers.RescaleAction` for clipping and rescaling actions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the action wrapper.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the action wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: Environment to be wrapped.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
@@ -1086,7 +1104,7 @@
 <div class="viewcode-block" id="ActionWrapper.action">
 <a class="viewcode-back" href="../../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper.action">[docs]</a>
     <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a modified action before :meth:`env.step` is called.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a modified action before :meth:`step` is called.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            action: The original :meth:`step` actions</span>
