@@ -1,6 +1,6 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
 import numpy as np
 
@@ -307,7 +307,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "humanoidstandup.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         uph_cost_weight: float = 1,
         ctrl_cost_weight: float = 0.1,
         impact_cost_weight: float = 0.5e-6,

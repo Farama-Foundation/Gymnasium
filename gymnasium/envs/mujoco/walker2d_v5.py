@@ -1,6 +1,6 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
 import numpy as np
 
@@ -192,7 +192,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "walker2d_v5.xml",
         frame_skip: int = 4,
-        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-3,
         healthy_reward: float = 1.0,
