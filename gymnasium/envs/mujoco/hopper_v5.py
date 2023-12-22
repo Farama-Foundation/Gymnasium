@@ -69,11 +69,6 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x-coordinate
     will be returned in `info` with key `"x_position"`.
 
-    By default, the observation does not include the robot's x-coordinate (`rootx`).
-    This can be be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In this case, the observation space will be a `Box(-Inf, Inf, (12,), float64)`, where the first observation element is the x--coordinate of the robot.
-    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
-
     However, by default, the observation is a `Box(-Inf, Inf, (11,), float64)` where the elements
     correspond to the following:
 
