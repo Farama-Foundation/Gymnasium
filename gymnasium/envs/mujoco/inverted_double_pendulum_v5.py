@@ -92,7 +92,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     where $x_{pole2-tip}, y_{pole2-tip}$ are the xy-coordinatesof the tip of the second pole.
     - *velocity_penalty*:
     A negative reward to penalize the agent for moving too fast.
-    $10^{-3} \omega_1 + 5 10^{-3} \omega_2$,
+    $10^{-3} \omega_1 + 5 \times 10^{-3} \omega_2$,
     where $\omega_1, \omega_2$ are the angular velocities of the hinges.
 
     `info` contains the individual reward terms.
