@@ -248,7 +248,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "ant.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1,
         ctrl_cost_weight: float = 0.5,
         contact_cost_weight: float = 5e-4,
