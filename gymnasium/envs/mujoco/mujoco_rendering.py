@@ -710,7 +710,7 @@ class MujocoRenderer:
         elif render_mode == "human":
             return viewer.render()
 
-    def _get_viewer(self, render_mode: str):
+    def _get_viewer(self, render_mode: Optional[str]):
         """Initializes and returns a viewer class depending on the render_mode
         - `WindowViewer` class for "human" render mode
         - `OffScreenViewer` class for "rgb_array" or "depth_array" render mode
