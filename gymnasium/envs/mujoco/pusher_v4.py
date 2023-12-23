@@ -47,6 +47,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
             self.render()
 
         ob = self._get_obs()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return (
             ob,
             reward,

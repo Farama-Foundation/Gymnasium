@@ -2,7 +2,7 @@
 title: Vector
 ---
 
-# Vector environments
+# Vectorize
 
 ```{toctree}
 :hidden:
@@ -19,10 +19,10 @@ vector/utils
 ```
 
 ### Methods
-
 ```{eval-rst}
-.. automethod:: gymnasium.vector.VectorEnv.reset
 .. automethod:: gymnasium.vector.VectorEnv.step
+.. automethod:: gymnasium.vector.VectorEnv.reset
+.. automethod:: gymnasium.vector.VectorEnv.render
 .. automethod:: gymnasium.vector.VectorEnv.close
 ```
 
@@ -47,11 +47,19 @@ vector/utils
 
 .. autoattribute:: gymnasium.vector.VectorEnv.single_observation_space
 
-    The observation space of an environment copy.
+    The observation space of a sub-environment.
 
 .. autoattribute:: gymnasium.vector.VectorEnv.spec
 
     The ``EnvSpec`` of the environment normally set during :py:meth:`gymnasium.make_vec`
+
+.. autoattribute:: gymnasium.vector.VectorEnv.render_mode
+
+    The render mode of the environment which should follow similar specifications to `Env.render_mode`.
+
+.. autoattribute:: gymnasium.vector.VectorEnv.closed
+
+    If the vector environment has been closed already.
 ```
 
 ### Additional Methods

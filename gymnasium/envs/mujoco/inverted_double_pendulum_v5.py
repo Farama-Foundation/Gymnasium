@@ -1,5 +1,7 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+from typing import Dict, Union
+
 import numpy as np
 
 from gymnasium import utils
@@ -92,7 +94,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     where $x_{pole2-tip}, y_{pole2-tip}$ are the xy-coordinatesof the tip of the second pole.
     - *velocity_penalty*:
     A negative reward to penalize the agent for moving too fast.
-    $10^{-3} \omega_1 + 5 10^{-3} \omega_2$,
+    $10^{-3} \omega_1 + 5 \times 10^{-3} \omega_2$,
     where $\omega_1, \omega_2$ are the angular velocities of the hinges.
 
     `info` contains the individual reward terms.
@@ -136,6 +138,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     ## Version History
     * v5:
         - Minimum `mujoco` version is now 2.3.3.
+        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Fixed bug: `healthy_reward` was given on every step (even if the Pendulum is unhealthy), now it is only given if the DoublePendulum is healthy (not terminated)(related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/500)).
         - Excluded the `qfrc_constraint` ("constraint force") of the hinges from the observation space (as it was always 0, thus providing no useful information to the agent, resulting is slightly faster training) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/228)).
@@ -162,6 +165,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "inverted_double_pendulum.xml",
         frame_skip: int = 5,
+        default_camera_config: Dict[str, Union[float, int]] = {},
         healthy_reward: float = 10.0,
         reset_noise_scale: float = 0.1,
         **kwargs,
@@ -178,7 +182,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
             xml_file,
             frame_skip,
             observation_space=observation_space,
-            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            default_camera_config=default_camera_config,
             **kwargs,
         )
 
@@ -203,6 +207,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, terminated, False, info
 
     def _get_rew(self, x, y, terminated):

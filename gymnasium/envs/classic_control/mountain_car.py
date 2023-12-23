@@ -146,6 +146,7 @@ class MountainCarEnv(gym.Env):
         self.state = (position, velocity)
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
 
     def reset(
