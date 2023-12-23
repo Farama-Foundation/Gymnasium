@@ -363,11 +363,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         is_healthy = np.isfinite(state).all() and min_z <= state[2] <= max_z
         return is_healthy
 
-    @property
-    def terminated(self):
-        terminated = (not self.is_healthy) and self._terminate_when_unhealthy
-        return terminated
-
     def step(self, action):
         xy_position_before = self.data.body(self._main_body).xpos[:2].copy()
         self.do_simulation(action, self.frame_skip)
@@ -378,7 +373,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(x_velocity, action)
-        terminated = self.terminated
+        terminated = (not self.is_healthy) and self._terminate_when_unhealthy
         info = {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
