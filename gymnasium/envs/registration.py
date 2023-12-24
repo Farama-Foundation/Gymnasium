@@ -886,6 +886,9 @@ def make_vec(
     def create_single_env() -> Env:
         single_env = make(env_spec, **env_spec_kwargs.copy())
 
+        if wrappers is None:
+            return single_env
+
         for wrapper in wrappers:
             single_env = wrapper(single_env)
         return single_env
