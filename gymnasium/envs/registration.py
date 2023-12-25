@@ -886,6 +886,9 @@ def make_vec(
     def create_single_env() -> Env:
         single_env = make(env_spec, **env_spec_kwargs.copy())
 
+        if wrappers is None:
+            return single_env
+
         for wrapper in wrappers:
             single_env = wrapper(single_env)
         return single_env
@@ -927,6 +930,7 @@ def make_vec(
                 "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
             )
         if "max_episode_steps" not in vector_kwargs:
+            assert vector_kwargs is not None
             vector_kwargs["max_episode_steps"] = env_spec.max_episode_steps
 
         env = env_creator(num_envs=num_envs, **vector_kwargs)
