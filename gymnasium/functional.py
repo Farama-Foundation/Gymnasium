@@ -79,7 +79,7 @@ class FuncEnv(
         """Returns if the state is a final terminal state."""
         raise NotImplementedError
 
-    def initial_info(self, state: StateType, params: Params | None = None) -> dict:
+    def state_info(self, state: StateType, params: Params | None = None) -> dict:
         """Info dict about a single state."""
         return {}
 
@@ -100,7 +100,7 @@ class FuncEnv(
         self.observation = func(self.observation)
         self.reward = func(self.reward)
         self.terminal = func(self.terminal)
-        self.state_info = func(self.initial_info)
+        self.state_info = func(self.state_info)
         self.step_info = func(self.transition_info)
 
     def render_image(
