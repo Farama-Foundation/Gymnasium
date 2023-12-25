@@ -289,11 +289,6 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
 
         return is_healthy
 
-    @property
-    def terminated(self):
-        terminated = (not self.is_healthy) and self._terminate_when_unhealthy
-        return terminated
-
     def _get_obs(self):
         position = self.data.qpos.flatten()
         velocity = np.clip(self.data.qvel.flatten(), -10, 10)
@@ -312,7 +307,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(x_velocity, action)
-        terminated = self.terminated
+        terminated = (not self.is_healthy) and self._terminate_when_unhealthy
         info = {
             "x_position": x_position_after,
             "z_distance_from_origin": self.data.qpos[1] - self.init_qpos[1],
