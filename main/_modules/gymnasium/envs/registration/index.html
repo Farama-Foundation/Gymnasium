@@ -1386,6 +1386,9 @@
     <span class="k">def</span> <span class="nf">create_single_env</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
         <span class="n">single_env</span> <span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="o">**</span><span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
+        <span class="k">if</span> <span class="n">wrappers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">single_env</span>
+
         <span class="k">for</span> <span class="n">wrapper</span> <span class="ow">in</span> <span class="n">wrappers</span><span class="p">:</span>
             <span class="n">single_env</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">single_env</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">single_env</span>
@@ -1427,6 +1430,7 @@
                 <span class="s2">&quot;Cannot use `vector_entry_point` vectorization mode with the wrappers argument.&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;max_episode_steps&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vector_kwargs</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">vector_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="n">vector_kwargs</span><span class="p">[</span><span class="s2">&quot;max_episode_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
 
         <span class="n">env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="n">num_envs</span><span class="o">=</span><span class="n">num_envs</span><span class="p">,</span> <span class="o">**</span><span class="n">vector_kwargs</span><span class="p">)</span>
