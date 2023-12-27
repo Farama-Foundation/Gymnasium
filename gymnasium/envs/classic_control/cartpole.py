@@ -131,7 +131,11 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             dtype=np.float32,
         )
 
-        self.action_space = spaces.Discrete(2)
+        self.action_space = spaces.Box(
+           np.array([0.0], dtype=np.float32),
+           np.array([1.0], dtype=np.float32),
+           dtype=np.float32)
+
         self.observation_space = spaces.Box(-high, high, dtype=np.float32)
 
         self.render_mode = render_mode
@@ -151,7 +155,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         ), f"{action!r} ({type(action)}) invalid"
         assert self.state is not None, "Call reset before using step method."
         x, x_dot, theta, theta_dot = self.state
-        force = self.force_mag if action == 1 else -self.force_mag
+        force = (action[0] - 0.5) * 2.0 * self.force_mag
         costheta = math.cos(theta)
         sintheta = math.sin(theta)
 
@@ -380,7 +384,11 @@ class CartPoleVectorEnv(VectorEnv):
         self.low = -0.05
         self.high = 0.05
 
-        self.single_action_space = spaces.Discrete(2)
+        self.single_action_space = spaces.Box(
+            np.array([0.0], dtype=np.float32),
+            np.array([1.0], dtype=np.float32),
+            dtype=np.float32)
+
         self.action_space = batch_space(self.single_action_space, num_envs)
         self.single_observation_space = spaces.Box(-high, high, dtype=np.float32)
         self.observation_space = batch_space(self.single_observation_space, num_envs)
@@ -403,7 +411,7 @@ class CartPoleVectorEnv(VectorEnv):
         assert self.state is not None, "Call reset before using step method."
 
         x, x_dot, theta, theta_dot = self.state
-        force = np.sign(action - 0.5) * self.force_mag
+        force = (action - 0.5) * 2.0 * self.force_mag
         costheta = np.cos(theta)
         sintheta = np.sin(theta)
 
