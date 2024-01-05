@@ -11,7 +11,7 @@ Let's start by importing necessary libraries:
 """
 
 # Global TODOs:
-# TODO: continue with replay memory
+# TODO: Finish agent class
 # TODO:
 # TODO: Final check on documentation and typing.
 
@@ -29,6 +29,7 @@ from typing import Tuple
 import numpy
 import numpy as np
 import torch
+import torch.nn as nn
 
 
 # import torch.nn as nn
@@ -60,6 +61,12 @@ def set_seed(seed):
 # sample experiences from, a mechanism to learn from experience.
 #
 # Let's start by implementing the memory and agent:
+
+# %%
+# Agent
+# -----
+# What is the agent, how is it defined, what can it do, why do we do it as we do?
+# Write a short description.
 
 
 class ReplayMemory:
@@ -226,8 +233,63 @@ for i in range(capacity + 1):
 batch = mem.sample()
 
 
-class Agent:
-    pass
+class Agent(nn.Module):
+    """Class for Categorical-DQN (C51). For each action, a value distribution is provided."""
+
+    def __init__(self, params):
+        """
+        Initializing the agent class.
+        Args:
+            params:
+        """
+        super().__init__(params)
+
+        self.image_obs = params["image_obs"]
+        self.n_atoms = params["n_atoms"]
+        self.v_min = params["v_min"]
+        self.v_max = params["v_max"]
+        self.gamma = params["gamma"]
+        self.n_actions = params["n_actions"]
+        self.epsilon_end = params["epsilon_end"]
+
+        self.delta = (self.v_max - self.v_min) / (self.n_atoms - 1)
+
+    def forward(self, state):
+        """
+        Forward pass through the agent network.
+        Args:
+            state:
+
+        Returns:
+
+        """
+        pass
+
+    def act(self, state, exploit):
+        """
+        Taking action in a given state.
+        Args:
+            state:
+            exploit:
+
+        Returns:
+
+        """
+        pass
+
+    def learn(self, state):
+        """
+        Learning steps, which includes updating the network parameters through backpropagation.
+        Args:
+            state:
+
+        Returns:
+
+        """
+        pass
+
+    def categorical_algorithm(self):
+        pass
 
 
 # %%
