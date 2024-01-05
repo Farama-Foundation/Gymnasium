@@ -1,5 +1,7 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+from typing import Dict, Union
+
 import numpy as np
 
 from gymnasium import utils
@@ -115,6 +117,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     * v5:
         - Minimum `mujoco` version is now 2.3.3.
         - Added support for fully custom/third party `mujoco` models using the `xml_file` argument (previously only a few changes could be made to the existing models).
+        - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Fixed bug: `healthy_reward` was given on every step (even if the Pendulum is unhealthy), now it is only given if the Pendulum is healthy (not terminated) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/500)).
@@ -140,6 +143,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "inverted_pendulum.xml",
         frame_skip: int = 2,
+        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         reset_noise_scale: float = 0.01,
         **kwargs,
     ):
@@ -153,7 +157,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
             xml_file,
             frame_skip,
             observation_space=observation_space,
-            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            default_camera_config=default_camera_config,
             **kwargs,
         )
 
@@ -186,6 +190,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, terminated, False, info
 
     def reset_model(self):

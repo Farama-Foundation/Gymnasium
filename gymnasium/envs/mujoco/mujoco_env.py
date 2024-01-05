@@ -27,6 +27,20 @@ else:
 DEFAULT_SIZE = 480
 
 
+def expand_model_path(model_path: str) -> str:
+    """Expands the `model_path` to a full path if it starts with '~' or '.' or '/'."""
+    if model_path.startswith(".") or model_path.startswith("/"):
+        fullpath = model_path
+    elif model_path.startswith("~"):
+        fullpath = path.expanduser(model_path)
+    else:
+        fullpath = path.join(path.dirname(__file__), "assets", model_path)
+    if not path.exists(fullpath):
+        raise OSError(f"File {fullpath} does not exist")
+
+    return fullpath
+
+
 class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
     """Superclass for all MuJoCo environments."""
 
@@ -34,7 +48,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         self,
         model_path,
         frame_skip,
-        observation_space: Space,
+        observation_space: Optional[Space],
         render_mode: Optional[str] = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
@@ -57,14 +71,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
             OSError: when the `model_path` does not exist.
             error.DependencyNotInstalled: When `mujoco` is not installed.
         """
-        if model_path.startswith(".") or model_path.startswith("/"):
-            self.fullpath = model_path
-        elif model_path.startswith("~"):
-            self.fullpath = path.expanduser(model_path)
-        else:
-            self.fullpath = path.join(path.dirname(__file__), "assets", model_path)
-        if not path.exists(self.fullpath):
-            raise OSError(f"File {self.fullpath} does not exist")
+        self.fullpath = expand_model_path(model_path)
 
         self.width = width
         self.height = height
@@ -85,8 +92,8 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
             assert (
                 int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
             ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
-
-        self.observation_space = observation_space
+        if observation_space is not None:
+            self.observation_space = observation_space
         self._set_action_space()
 
         self.render_mode = render_mode
@@ -347,7 +354,7 @@ class MujocoEnv(BaseMujocoEnv):
         self,
         model_path,
         frame_skip,
-        observation_space: Space,
+        observation_space: Optional[Space],
         render_mode: Optional[str] = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,

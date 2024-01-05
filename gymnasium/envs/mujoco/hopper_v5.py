@@ -1,6 +1,6 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
 import numpy as np
 
@@ -68,11 +68,6 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     represents the x-coordinate of the hopper.
     Regardless of whether `exclude_current_positions_from_observation` was set to true or false, the x-coordinate
     will be returned in `info` with key `"x_position"`.
-
-    By default, the observation does not include the robot's x-coordinate (`rootx`).
-    This can be be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In this case, the observation space will be a `Box(-Inf, Inf, (12,), float64)`, where the first observation element is the x--coordinate of the robot.
-    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
 
     However, by default, the observation is a `Box(-Inf, Inf, (11,), float64)` where the elements
     correspond to the following:
@@ -190,7 +185,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "hopper.xml",
         frame_skip: int = 4,
-        default_camera_config: Dict[str, float] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-3,
         healthy_reward: float = 1.0,
@@ -295,11 +290,6 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
         return is_healthy
 
-    @property
-    def terminated(self):
-        terminated = (not self.is_healthy) and self._terminate_when_unhealthy
-        return terminated
-
     def _get_obs(self):
         position = self.data.qpos.flatten()
         velocity = np.clip(self.data.qvel.flatten(), -10, 10)
@@ -318,7 +308,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(x_velocity, action)
-        terminated = self.terminated
+        terminated = (not self.is_healthy) and self._terminate_when_unhealthy
         info = {
             "x_position": x_position_after,
             "z_distance_from_origin": self.data.qpos[1] - self.init_qpos[1],
@@ -328,6 +318,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, terminated, False, info
 
     def _get_rew(self, x_velocity: float, action):
