@@ -645,7 +645,7 @@ class MujocoRenderer:
         height: Optional[int] = None,
         max_geom: int = 1000,
         camera_id: Optional[int] = None,
-        camera_name: Optional[int] = None,
+        camera_name: Optional[str] = None,
     ):
         """A wrapper for clipping continuous actions within the valid bound.
 
