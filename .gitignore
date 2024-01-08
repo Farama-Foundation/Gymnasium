@@ -23,7 +23,6 @@ __pycache__/
 *.sublime-workspace
 
 logs/
-docs/tutorials/training_agents/wandb/
 
 .ipynb_checkpoints
 ghostdriver.log
