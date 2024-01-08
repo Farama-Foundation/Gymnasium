@@ -644,6 +644,8 @@ class MujocoRenderer:
         width: Optional[int] = None,
         height: Optional[int] = None,
         max_geom: int = 1000,
+        camera_id: Optional[int] = None,
+        camera_name: Optional[int] = None,
     ):
         """A wrapper for clipping continuous actions within the valid bound.
 
@@ -664,11 +666,27 @@ class MujocoRenderer:
         self.height = height
         self.max_geom = max_geom
 
+        # set self.camera_id using `camera_id` or `camera_name`
+        if camera_id is not None and camera_name is not None:
+            raise ValueError(
+                "Both `camera_id` and `camera_name` cannot be"
+                " specified at the same time."
+            )
+
+        no_camera_specified = camera_name is None and camera_id is None
+        if no_camera_specified:
+            camera_name = "track"
+
+        if camera_id is None:
+            self.camera_id = mujoco.mj_name2id(
+                self.model,
+                mujoco.mjtObj.mjOBJ_CAMERA,
+                camera_name,
+            )
+
     def render(
         self,
         render_mode: Optional[str],
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
     ):
         """Renders a frame of the simulation in a specific format and camera view.
 
@@ -683,30 +701,8 @@ class MujocoRenderer:
 
         viewer = self._get_viewer(render_mode=render_mode)
 
-        if render_mode in {
-            "rgb_array",
-            "depth_array",
-        }:
-            if camera_id is not None and camera_name is not None:
-                raise ValueError(
-                    "Both `camera_id` and `camera_name` cannot be"
-                    " specified at the same time."
-                )
-
-            no_camera_specified = camera_name is None and camera_id is None
-            if no_camera_specified:
-                camera_name = "track"
-
-            if camera_id is None:
-                camera_id = mujoco.mj_name2id(
-                    self.model,
-                    mujoco.mjtObj.mjOBJ_CAMERA,
-                    camera_name,
-                )
-
-            img = viewer.render(render_mode=render_mode, camera_id=camera_id)
-            return img
-
+        if render_mode in ["rgb_array", "depth_array"]:
+            return viewer.render(render_mode=render_mode, camera_id=self.camera_id)
         elif render_mode == "human":
             return viewer.render()
 
