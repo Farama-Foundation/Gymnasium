@@ -656,6 +656,8 @@ class MujocoRenderer:
             width: width of the OpenGL rendering context
             height: height of the OpenGL rendering context
             max_geom: maximum number of geometries to render
+            camera_id: The integer camera id from which to render the frame in the MuJoCo simulation
+            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using cameara_id instead and vice versa
         """
         self.model = model
         self.data = data
@@ -692,8 +694,6 @@ class MujocoRenderer:
 
         Args:
             render_mode: The format to render the frame, it can be: "human", "rgb_array", or "depth_array"
-            camera_id: The integer camera id from which to render the frame in the MuJoCo simulation
-            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using cameara_id instead and vice versa
 
         Returns:
             If render_mode is "rgb_array" or "depth_arra" it returns a numpy array in the specified format. "human" render mode does not return anything.
