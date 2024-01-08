@@ -360,7 +360,7 @@ class MujocoEnv(BaseMujocoEnv):
         height: int = DEFAULT_SIZE,
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
-        default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
+        default_camera_config: Optional[Dict[str, Union[float, int]]] = {},
         max_geom: int = 1000,
     ):
         if MUJOCO_IMPORT_ERROR is not None:
@@ -389,6 +389,8 @@ class MujocoEnv(BaseMujocoEnv):
             self.width,
             self.height,
             max_geom,
+            camera_id,
+            camera_name,
         )
 
     def _initialize_simulation(
@@ -423,9 +425,7 @@ class MujocoEnv(BaseMujocoEnv):
         mujoco.mj_rnePostConstraint(self.model, self.data)
 
     def render(self):
-        return self.mujoco_renderer.render(
-            self.render_mode, self.camera_id, self.camera_name
-        )
+        return self.mujoco_renderer.render(self.render_mode)
 
     def close(self):
         if self.mujoco_renderer is not None:
