@@ -389,6 +389,8 @@ class MujocoEnv(BaseMujocoEnv):
             self.width,
             self.height,
             max_geom,
+            camera_id,
+            camera_name,
         )
 
     def _initialize_simulation(
@@ -423,9 +425,7 @@ class MujocoEnv(BaseMujocoEnv):
         mujoco.mj_rnePostConstraint(self.model, self.data)
 
     def render(self):
-        return self.mujoco_renderer.render(
-            self.render_mode, self.camera_id, self.camera_name
-        )
+        return self.mujoco_renderer.render(self.render_mode)
 
     def close(self):
         if self.mujoco_renderer is not None:
