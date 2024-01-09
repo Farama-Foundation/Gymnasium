@@ -8,14 +8,13 @@ from __future__ import annotations
 
 import os
 from copy import deepcopy
-from typing import Any, Callable, List, SupportsFloat
+from typing import Any, Callable, List, SupportsFloat, cast
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import error, logger
 from gymnasium.core import ActType, ObsType, RenderFrame
-from gymnasium.error import DependencyNotInstalled
 
 
 __all__ = [
@@ -23,6 +22,8 @@ __all__ = [
     "RecordVideo",
     "HumanRendering",
 ]
+
+from gymnasium.wrappers.base_.rendering import HumanRenderingBase, T_env
 
 
 class RenderCollection(
@@ -50,6 +51,7 @@ class RenderCollection(
         0
 
         Return the list of frames for the number of steps the episode was running.
+
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
         >>> env = RenderCollection(env, pop_frames=False)
@@ -416,7 +418,12 @@ class RecordVideo(
 
 
 class HumanRendering(
-    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+    gym.Wrapper[ObsType, ActType, ObsType, ActType],
+    HumanRenderingBase[
+        gym.Wrapper,
+        gym.vector.VectorEnv[ObsType, ActType, gym.vector.vector_env.ArrayType],
+    ],
+    gym.utils.RecordConstructorArgs,
 ):
     """Allows human like rendering for environments that support "rgb_array" rendering.
 
@@ -427,28 +434,34 @@ class HumanRendering(
 
     The ``render_mode`` of the wrapped environment must be either ``'rgb_array'`` or ``'rgb_array_list'``.
 
-    No vector version of the wrapper exists.
+    For a Vector version see :class:`gymnasium.wrappers.vector.HumanRendering`.
 
     Example:
-        >>> import gymnasium as gym
+        >>> from gymnasium import make
         >>> from gymnasium.wrappers import HumanRendering
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
-        >>> wrapped = HumanRendering(env)
+        >>> env = make("LunarLander-v2", render_mode="rgb_array")
+        >>> wrapped = HumanRendering(env)  # Will warn that LunarLander-v2 natively supports 'human' rendering
         >>> obs, _ = wrapped.reset()     # This will start rendering to the screen
+        >>> wrapped.render_mode, env.render_mode, env.unwrapped.render_mode  # Make an extra check
+        ('human', 'rgb_array', 'rgb_array')
 
         The wrapper can also be applied directly when the environment is instantiated, simply by passing
         ``render_mode="human"`` to ``make``. The wrapper will only be applied if the environment does not
         implement human-rendering natively (i.e. ``render_mode`` does not contain ``"human"``).
 
-        >>> env = gym.make("phys2d/CartPole-v1", render_mode="human")      # CartPoleJax-v1 doesn't implement human-rendering natively
+        >>> env = make("phys2d/CartPole-v1", render_mode="human")      # CartPoleJax-v1 doesn't implement human-rendering natively
         >>> obs, _ = env.reset()     # This will start rendering to the screen
+        >>> env.render_mode, env.unwrapped.render_mode  # Make an extra check
+        ('human', 'rgb_array')
 
         Warning: If the base environment uses ``render_mode="rgb_array_list"``, its (i.e. the *base environment's*) render method
         will always return an empty list:
 
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array_list")
+        >>> env = make("LunarLander-v2", render_mode="rgb_array_list")
         >>> wrapped = HumanRendering(env)
-        >>> obs, _ = wrapped.reset()
+        >>> obs, _ = wrapped.reset()  # Will warn that LunarLander-v2 natively supports 'human' rendering
+        >>> wrapped.render_mode, env.render_mode, env.unwrapped.render_mode  # Make an extra check
+        ('human', 'rgb_array_list', 'rgb_array')
         >>> env.render() # env.render() will always return an empty list!
         []
 
@@ -464,27 +477,17 @@ class HumanRendering(
         """
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
-
-        assert env.render_mode in [
-            "rgb_array",
-            "rgb_array_list",
-        ], f"Expected env.render_mode to be one of 'rgb_array' or 'rgb_array_list' but got '{env.render_mode}'"
-        assert (
-            "render_fps" in env.metadata
-        ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
-
-        self.screen_size = None
-        self.window = None
-        self.clock = None
-
-        if "human" not in self.metadata["render_modes"]:
-            self.metadata = deepcopy(self.env.metadata)
-            self.metadata["render_modes"].append("human")
+        HumanRenderingBase.__init__(self, env)
 
     @property
     def render_mode(self):
-        """Always returns ``'human'``."""
-        return "human"
+        """Returns ``'human'`` when env has a compatible mode."""
+        return self._get_render_mode(cast(T_env, self.env))
+
+    @render_mode.setter
+    def render_mode(self, mode: str):
+        """Forwards render mode other than 'human' to env."""
+        self._set_render_mode(cast(T_env, self.env), mode)
 
     def step(self, action: ActType) -> tuple[ObsType, SupportsFloat, bool, bool, dict]:
         """Perform a step in the base environment and render a frame to the screen."""
@@ -497,6 +500,7 @@ class HumanRendering(
     ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the base environment and render a frame to the screen."""
         result = super().reset(seed=seed, options=options)
+        self._check_config(cast(T_env, self.env))
         self._render_frame()
         return result
 
@@ -504,54 +508,7 @@ class HumanRendering(
         """This method doesn't do much, actual rendering is performed in :meth:`step` and :meth:`reset`."""
         return None
 
-    def _render_frame(self):
-        """Fetch the last frame from the base environment and render it to the screen."""
-        try:
-            import pygame
-        except ImportError:
-            raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[box2d]`"
-            )
-        if self.env.render_mode == "rgb_array_list":
-            last_rgb_array = self.env.render()
-            assert isinstance(last_rgb_array, list)
-            last_rgb_array = last_rgb_array[-1]
-        elif self.env.render_mode == "rgb_array":
-            last_rgb_array = self.env.render()
-        else:
-            raise Exception(
-                f"Wrapped environment must have mode 'rgb_array' or 'rgb_array_list', actual render mode: {self.env.render_mode}"
-            )
-        assert isinstance(last_rgb_array, np.ndarray)
-
-        rgb_array = np.transpose(last_rgb_array, axes=(1, 0, 2))
-
-        if self.screen_size is None:
-            self.screen_size = rgb_array.shape[:2]
-
-        assert (
-            self.screen_size == rgb_array.shape[:2]
-        ), f"The shape of the rgb array has changed from {self.screen_size} to {rgb_array.shape[:2]}"
-
-        if self.window is None:
-            pygame.init()
-            pygame.display.init()
-            self.window = pygame.display.set_mode(self.screen_size)
-
-        if self.clock is None:
-            self.clock = pygame.time.Clock()
-
-        surf = pygame.surfarray.make_surface(rgb_array)
-        self.window.blit(surf, (0, 0))
-        pygame.event.pump()
-        self.clock.tick(self.metadata["render_fps"])
-        pygame.display.flip()
-
     def close(self):
         """Close the rendering window."""
-        if self.window is not None:
-            import pygame
-
-            pygame.display.quit()
-            pygame.quit()
+        self._close()
         super().close()

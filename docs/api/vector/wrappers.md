@@ -33,6 +33,7 @@ title: Vector Wrappers
 .. autoclass:: gymnasium.wrappers.vector.VectorizeTransformObservation
 .. autoclass:: gymnasium.wrappers.vector.VectorizeTransformAction
 .. autoclass:: gymnasium.wrappers.vector.VectorizeTransformReward
+.. autoclass:: gymnasium.wrappers.vector.HumanRendering
 ```
 
 ## Vectorized Common wrappers
