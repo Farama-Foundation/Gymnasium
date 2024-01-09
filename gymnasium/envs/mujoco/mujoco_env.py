@@ -360,7 +360,7 @@ class MujocoEnv(BaseMujocoEnv):
         height: int = DEFAULT_SIZE,
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
-        default_camera_config: Optional[Dict[str, Union[float, int]]] = {},
+        default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
         max_geom: int = 1000,
     ):
         if MUJOCO_IMPORT_ERROR is not None:
