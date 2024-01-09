@@ -510,7 +510,7 @@ class CartPoleVectorEnv(VectorEnv):
                     for _ in range(self.num_envs)
                 ]
         if self.clocks is None:
-            self.clock = [pygame.time.Clock() for _ in range(self.num_envs)]
+            self.clocks = [pygame.time.Clock() for _ in range(self.num_envs)]
 
         world_width = self.x_threshold * 2
         scale = self.screen_width / world_width
@@ -522,9 +522,9 @@ class CartPoleVectorEnv(VectorEnv):
         if self.state is None:
             return None
 
-        for state, screen, clock in zip(self.state, self.screens, self.clocks):
-            x = self.state.T
-
+        for state, screen, clock, x in zip(
+            self.state, self.screens, self.clocks, self.state.T
+        ):
             self.surf = pygame.Surface((self.screen_width, self.screen_height))
             self.surf.fill((255, 255, 255))
 

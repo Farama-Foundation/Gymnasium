@@ -57,7 +57,12 @@ from gymnasium.wrappers.common import (
     RecordEpisodeStatistics,
     TimeLimit,
 )
-from gymnasium.wrappers.rendering import HumanRendering, RecordVideo, RenderCollection
+from gymnasium.wrappers.rendering import (
+    HumanRendering,
+    HumanVectorRendering,
+    RecordVideo,
+    RenderCollection,
+)
 from gymnasium.wrappers.stateful_action import StickyAction
 from gymnasium.wrappers.stateful_observation import (
     DelayObservation,
@@ -124,6 +129,7 @@ __all__ = [
     "RenderCollection",
     "RecordVideo",
     "HumanRendering",
+    "HumanVectorRendering",
     # --- Conversion ---
     "JaxToNumpy",
     "JaxToTorch",
