@@ -68,8 +68,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation space consists of the following parts (in order)
 
-    - qpos (22 elements by default):* The position values of the robot's body parts.
-    - qvel (23 elements):* The velocities of these individual body parts (their derivatives).
+    - *qpos (22 elements by default):* The position values of the robot's body parts.
+    - *qvel (23 elements):* The velocities of these individual body parts (their derivatives).
     - *cinert (130 elements):* Mass and inertia of the rigid body parts relative to the center of mass,
     (this is an intermediate result of the transition).
     It has shape 13*10 (*nbody * 10*).

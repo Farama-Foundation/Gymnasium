@@ -75,8 +75,8 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation space consists of the following parts (in order)
 
-    - qpos (22 elements by default):* The position values of the robot's body parts.
-    - qvel (23 elements):* The velocities of these individual body parts (their derivatives).
+    - *qpos (22 elements by default):* The position values of the robot's body parts.
+    - *qvel (23 elements):* The velocities of these individual body parts (their derivatives).
     - *cinert (130 elements):* Mass and inertia of the rigid body parts relative to the center of mass,
     (this is an intermediate result of the transition).
     It has shape 13*10 (*nbody * 10*).
@@ -271,7 +271,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | `contact_cost_weight`                        | **float** | `5e-7`           | Weight for _contact_cost_ term (see `Rewards` section)                                                                                                                                                      |
     | `contact_cost_range`                         | **float** | `(-np.inf, 10.0)`| Clamps the _contact_cost_ term (see `Rewards` section)                                                                                                                                                      |
     | `healthy_reward`                             | **float** | `5.0`            | Weight for _healthy_reward_ term (see `Rewards` section)                                                                                                                                                    |
-    | `terminate_when_unhealthy`                   | **bool**  | `True`           | If `True`, issue a terminate signal is unhealthy (see `Episode End` section)                                                                                                                                |
+    | `terminate_when_unhealthy`                   | **bool**  | `True`           | If `True`, issue a `terminated` signal is unhealthy (see `Episode End` section)                                                                                                                                |
     | `healthy_z_range`                            | **tuple** | `(1.0, 2.0)`     | The humanoid is considered healthy if the z-coordinate of the torso is in this range (see `Episode End` section)                                                                                            |
     | `reset_noise_scale`                          | **float** | `1e-2`           | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                               |
     | `exclude_current_positions_from_observation` | **bool**  | `True`           | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation State` section) |
