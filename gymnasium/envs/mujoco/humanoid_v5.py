@@ -28,8 +28,8 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     ## Description
     This environment is based on the environment introduced by Tassa, Erez and Todorov in ["Synthesis and stabilization of complex behaviors through online trajectory optimization"](https://ieeexplore.ieee.org/document/6386025).
     The 3D bipedal robot is designed to simulate a human.
-    It has a torso (abdomen) with a pair of legs and arms.
-    The legs consist of three body parts each, and the arms consist of two body parts (representing the knees and elbows, respectively).
+    It has a torso (abdomen) with a pair of legs and arms, and a pair of tendons connecting the hips to the knees.
+    The legs each consist of three body parts (thigh, shin, foot), and the arms consist of two body parts (upper arm, forearm).
     The goal of the environment is to walk forward as fast as possible without falling over.
 
     Gymnasium includes the following versions of the environment:
