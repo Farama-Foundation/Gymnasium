@@ -20,6 +20,7 @@ title: Misc Wrappers
 .. autoclass:: gymnasium.wrappers.Autoreset
 .. autoclass:: gymnasium.wrappers.PassiveEnvChecker
 .. autoclass:: gymnasium.wrappers.HumanRendering
+.. autoclass:: gymnasium.wrappers.HumanVectorRendering
 .. autoclass:: gymnasium.wrappers.OrderEnforcing
 .. autoclass:: gymnasium.wrappers.RenderCollection
 ```

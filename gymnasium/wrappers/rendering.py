@@ -669,7 +669,7 @@ class HumanVectorRendering(
          render method will always return an empty list:
 
     Change logs:
-     * v0.29.x - Initially added
+     * v1.0.0 - Initially added
     """
 
     def __init__(
