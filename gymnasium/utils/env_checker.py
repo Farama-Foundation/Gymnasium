@@ -40,7 +40,7 @@ def data_equivalence(data_1, data_2) -> bool:
     Returns:
         If observation 1 and 2 are equivalent
     """
-    if type(data_1) == type(data_2):
+    if type(data_1) is type(data_2):
         if isinstance(data_1, dict):
             return data_1.keys() == data_2.keys() and all(
                 data_equivalence(data_1[k], data_2[k]) for k in data_1.keys()
