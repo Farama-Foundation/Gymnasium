@@ -26,16 +26,6 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     The legs each consist of three body parts (thigh, shin, foot), and the arms consist of two body parts (upper arm, forearm).
     The environment starts with the humanoid laying on the ground, and then the goal of the environment is to make the humanoid stand up and then keep it standing by applying torques to the various hinges.
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | HumanoidStandup-v5        | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | HumanoidStandup-v4        | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | HumanoidStandup-v2        | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
-
 
     ## Action Space
     ```{figure} action_space_figures/humanoid.png

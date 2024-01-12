@@ -25,17 +25,6 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     The walker is a two-dimensional bipedal robot consisting of seven main body parts - a single torso at the top (with the two legs splitting after the torso), two thighs in the middle below the torso, two legs below the thighs, and two feet attached to the legs on which the entire body rests.
     The goal is to walk in the forward (right) direction by applying torque to the six hinges connecting the seven body parts.
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Walker2d-v5               | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Walker2d-v4               | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Walker2d-v3               | `mujoco-py`     | Maintained for reproducibility              |
-    | Walker2d-v2               | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
-
 
     ## Action Space
     ```{figure} action_space_figures/walker2d.png

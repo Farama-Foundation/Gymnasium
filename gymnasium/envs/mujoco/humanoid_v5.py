@@ -32,17 +32,6 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     The legs each consist of three body parts (thigh, shin, foot), and the arms consist of two body parts (upper arm, forearm).
     The goal of the environment is to walk forward as fast as possible without falling over.
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Humanoid-v5               | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Humanoid-v4               | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Humanoid-v3               | `mujoco-py`     | Maintained for reproducibility              |
-    | Humanoid-v2               | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
-
 
     ## Action Space
     ```{figure} action_space_figures/humanoid.png

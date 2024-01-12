@@ -24,15 +24,6 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     This environment involves a cart that can be moved linearly, with one pole attached to it and a second pole attached to the other end of the first pole (leaving the second pole as the only one with a free end).
     The cart can be pushed left or right, and the goal is to balance the second pole on top of the first pole, which is in turn on top of the cart, by applying continuous forces to the cart.
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | InvertedDoublePendulum-v5 | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | InvertedDoublePendulum-v4 | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | InvertedDoublePendulum-v2 | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
 
     ## Action Space
     The agent take a 1-element vector for actions.

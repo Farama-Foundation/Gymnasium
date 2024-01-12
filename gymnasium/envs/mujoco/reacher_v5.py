@@ -18,16 +18,6 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     "Reacher" is a two-jointed robot arm.
     The goal is to move the robot's end effector (called *fingertip*) close to a target that is spawned at a random position.
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Reacher-v5                | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Reacher-v4                | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Reacher-v2                | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
-
 
     ## Action Space
     ```{figure} action_space_figures/reacher.png

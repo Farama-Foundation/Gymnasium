@@ -22,17 +22,6 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     The goal is to apply torque to the joints to make the cheetah run forward (right) as fast as possible, with a positive reward based on the distance moved forward and a negative reward for moving backward.
     The cheetah's torso and head are fixed, and torque can only be applied to the other 6 joints over the front and back thighs (which connect to the torso), the shins (which connect to the thighs), and the feet (which connect to the shins).
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | HalfCheetah-v5            | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | HalfCheetah-v4            | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | HalfCheetah-v3            | `mujoco-py`     | Maintained for reproducibility              |
-    | HalfCheetah-v2            | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
-
 
     ## Action Space
     ```{figure} action_space_figures/half_cheetah.png
@@ -60,7 +49,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     By default, the observation does not include the robot's x-coordinate (`rootx`).
     This can be included by passing `exclude_current_positions_from_observation=False` during construction.
     In this case, the observation space will be a `Box(-Inf, Inf, (18,), float64)`, where the first observation element is the x-coordinate of the robot.
-    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False, the x- and y-coordinates are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
+    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x- and y-coordinates are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
 
     By default, however, the observation space is a `Box(-Inf, Inf, (17,), float64)` where the elements are as follows:
 

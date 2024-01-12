@@ -25,16 +25,6 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     The hopper is a two-dimensional one-legged figure consisting of four main body parts - the torso at the top, the thigh in the middle, the leg at the bottom, and a single foot on which the entire body rests.
     The goal is to make hops that move in the forward (right) direction by applying torque to the three hinges that connect the four body parts.
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Hopper-v5                 | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Hopper-v4                 | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Hopper-v3                 | `mujoco-py`     | Maintained for reproducibility              |
-    | Hopper-v2                 | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
 
     ## Action Space
     ```{figure} action_space_figures/hopper.png
@@ -138,7 +128,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     | `forward_reward_weight`                      | **float** | `1`                   | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                                    |
     | `ctrl_cost_weight`                           | **float** | `1e-3`                | Weight for _ctrl_cost_ reward (see `Rewards` section)                                                                                                                                                       |
     | `healthy_reward`                             | **float** | `1`                   | Weight for _healthy_reward_ reward (see `Rewards` section)                                                                                                                                                  |
-    | `terminate_when_unhealthy`                   | **bool**  | `True`                | If `True`, issue a terminate signal is unhealthy (see `Episode End` section)                                                                                                                                |
+    | `terminate_when_unhealthy`                   | **bool**  | `True`                | If `True`, issue a `terminated` signal is unhealthy (see `Episode End` section)                                                                                                                                |
     | `healthy_state_range`                        | **tuple** | `(-100, 100)`         | The elements of `observation[1:]` (if `exclude_current_positions_from_observation=True`, else `observation[2:]`) must be in this range for the hopper to be considered healthy (see `Episode End` section)  |
     | `healthy_z_range`                            | **tuple** | `(0.7, float("inf"))` | The z-coordinate must be in this range for the hopper to be considered healthy (see `Episode End` section)                                                                                                  |
     | `healthy_angle_range`                        | **tuple** | `(-0.2, 0.2)`         | The angle given by `observation[1]` (if `exclude_current_positions_from_observation=True`, else `observation[2]`) must be in this range for the hopper to be considered healthy (see `Episode End` section) |

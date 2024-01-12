@@ -22,16 +22,6 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     The goal is to move a target cylinder (called *object*) to a goal position using the robot's end effector (called *fingertip*).
     The robot consists of shoulder, elbow, forearm and wrist joints.
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Pusher-v5                 | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Pusher-v4                 | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Pusher-v2                 | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
-
 
     ## Action Space
     ```{figure} action_space_figures/pusher.png

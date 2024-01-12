@@ -21,16 +21,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     The ant is a 3D quadruped robot consisting of a torso (free rotational body) with four legs attached to it, where each leg has two body parts.
     The goal is to coordinate the four legs to move in the forward (right) direction by applying torque to the eight hinges connecting the two body parts of each leg and the torso (nine body parts and eight hinges).
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Ant-v5                    | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Ant-v4                    | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Ant-v3                    | `mujoco-py`     | Maintained for reproducibility              |
-    | Ant-v2                    | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
 
     ## Action Space
     ```{figure} action_space_figures/ant.png

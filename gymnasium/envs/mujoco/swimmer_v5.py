@@ -27,20 +27,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     * *l<sub>i</sub>*: length of part *i* (*i* ∈ {1...n})
     * *k*: viscous-friction coefficient
 
-    While the default environment has *n* = 3, *l<sub>i</sub>* = 0.1,
-    and *k* = 0.1. It is possible to pass a custom MuJoCo XML file during construction to increase the
-    number of links, or to tweak any of the parameters.
-
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Swimmer-v5                | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Swimmer-v4                | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Swimmer-v3                | `mujoco-py`     | Maintained for reproducibility              |
-    | Swimmer-v2                | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
+    While the default environment has *n* = 3, *l<sub>i</sub>* = 0.1, and *k* = 0.1.
+    It is possible to pass a custom MuJoCo XML file during construction to increase the number of links, or to tweak any of the parameters.
 
 
     ## Action Space
