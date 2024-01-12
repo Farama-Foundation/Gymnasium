@@ -730,7 +730,12 @@
 
 <div class="viewcode-block" id="check_env">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.env_checker.check_env">[docs]</a>
-<span class="k">def</span> <span class="nf">check_env</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">warn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">skip_render_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">check_env</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
+    <span class="n">warn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">skip_render_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">skip_close_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that an environment follows Gymnasium&#39;s API.</span>
 
 <span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
@@ -743,7 +748,8 @@
 <span class="sd">    Args:</span>
 <span class="sd">        env: The Gym environment that will be checked</span>
 <span class="sd">        warn: Ignored, previously silenced particular warnings</span>
-<span class="sd">        skip_render_check: Whether to skip the checks for the render method. True by default (useful for the CI)</span>
+<span class="sd">        skip_render_check: Whether to skip the checks for the render method. False by default (useful for the CI)</span>
+<span class="sd">        skip_close_check: Whether to skip the checks for the close method. False by default</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">warn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;`check_env(warn=...)` parameter is now ignored.&quot;</span><span class="p">)</span>
@@ -797,7 +803,7 @@
                 <span class="s2">&quot;Not able to test alternative render modes due to the environment not having a spec. Try instantialising the environment through gymnasium.make&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_close_check</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">new_env</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">make</span><span class="p">()</span>
         <span class="n">new_env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
