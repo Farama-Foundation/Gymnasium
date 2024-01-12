@@ -194,7 +194,7 @@ def test_make_vec_with_spec(env_id: str, kwargs: dict):
     assert envs.spec == recreated_envs.spec
     assert envs.num_envs == recreated_envs.num_envs
 
-    assert type(envs) == type(recreated_envs)
+    assert type(envs) is type(recreated_envs)
 
     assert envs.observation_space == recreated_envs.observation_space
     assert envs.single_observation_space == recreated_envs.single_observation_space

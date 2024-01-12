@@ -996,7 +996,7 @@ def pprint_registry(
             or to print the string to console.
     """
     # Defaultdict to store environment ids according to namespace.
-    namespace_envs: dict[str, list[str]] = defaultdict(lambda: [])
+    namespace_envs: dict[str, list[str]] = defaultdict(list)
     max_justify = float("-inf")
 
     # Find the namespace associated with each environment spec
