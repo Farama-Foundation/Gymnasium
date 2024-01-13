@@ -18,19 +18,9 @@ DEFAULT_CAMERA_CONFIG = {
 class PusherEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
-    "Pusher" is a multi-jointed robot arm which is very similar to that of a human.
+    "Pusher" is a multi-jointed robot arm that is very similar to a human arm.
     The goal is to move a target cylinder (called *object*) to a goal position using the robot's end effector (called *fingertip*).
-    The robot consists of shoulder, elbow, forearm, and wrist joints.
-
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Pusher-v5                 | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Pusher-v4                 | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Pusher-v2                 | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
+    The robot consists of shoulder, elbow, forearm and wrist joints.
 
 
     ## Action Space
@@ -52,17 +42,15 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-    Observations consist of
+    The observation space consists of the following parts (in order):
 
-    - Angle of rotational joints on the pusher
-    - Angular velocities of rotational joints on the pusher
-    - The coordinates of the fingertip of the pusher
-    - The coordinates of the object to be moved
-    - The coordinates of the goal position
+    - *qpos (7 elements):* Position values of the robot's body parts.
+    - *qvel (7 elements):* The velocities of these individual body parts (their derivatives).
+    - *xpos (3 elements):* The coordinates of the fingertip of the pusher.
+    - *xpos (3 elements):* The coordinates of the object to be moved.
+    - *xpos (3 elements):* The coordinates of the goal position.
 
-    The observation is a `Box(-Inf, Inf, (23,), float64)` where the elements correspond to the table below.
-    An analogy can be drawn to a human arm in order to help understand the state space, with the words flex and roll meaning the
-    same as human joints.
+    The observation space is a `Box(-Inf, Inf, (17,), float64)` where the elements are as follows:
 
     | Num | Observation                                              | Min  | Max | Name (in corresponding XML file) | Joint    | Type (Unit)              |
     | --- | -------------------------------------------------------- | ---- | --- | -------------------------------- | -------- | ------------------------ |
@@ -90,6 +78,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     | 21  | y-coordinate of the goal position of the object          | -Inf | Inf | goal (goal_slidey)               | slide    | position (m)             |
     | 22  | z-coordinate of the goal position of the object          | -Inf | Inf | goal                             | sphere   | position (m)             |
 
+    To understand the state space, an analogy can be drawn to a human arm, where the words "flex" and "roll" have the same meaning as in human joints.
 
     ## Rewards
     The total reward is: ***reward*** *=* *reward_dist + reward_ctrl + reward_near*.
@@ -98,16 +87,16 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     This reward is a measure of how far the *fingertip* of the pusher (the unattached end) is from the object,
     with a more negative value assigned for when the pusher's *fingertip* is further away from the target.
     It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
-    where $w_{near}$ is the `reward_near_weight`.
+    where $w_{near}$ is the `reward_near_weight` (default is $0.5$).
     - *reward_dist*:
     This reward is a measure of how far the object is from the target goal position,
-    with a more negative value assigned if the object that is further away from the target.
+    with a more negative value assigned if the object is further away from the target.
     It is $-w_{dist} \|(P_{object} - P_{target})\|_2$.
-    where $w_{dist}$ is the `reward_dist_weight`.
+    where $w_{dist}$ is the `reward_dist_weight` (default is $1$).
     - *reward_control*:
     A negative reward to penalize the pusher for taking actions that are too large.
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
-    where $w_{control}$ is the `reward_control_weight`.
+    where $w_{control}$ is the `reward_control_weight` (default is $0.1$).
 
     `info` contains the individual reward terms.
 
@@ -116,15 +105,15 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     The initial position state of the Pusher arm is $0_{6}$.
     The initial position state of the object is $\mathcal{U}_{[[-0.3, -0.2], [0, 0.2]]}$.
     The position state of the goal is (permanently) $[0.45, -0.05, -0.323]$.
-    The initial velocity state of the Pusher arm is $\mathcal{U}_{[-0.005 \times 1_{6}, 0.005 \times 1_{6}]}$.
+    The initial velocity state of the Pusher arm is $\mathcal{U}_{[-0.005 \times I_{6}, 0.005 \times I_{6}]}$.
     The initial velocity state of the object is $0_2$.
     The velocity state of the goal is (permanently) $0_3$.
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
-    Note that the initial position state of the object is sampled until it's distance to the goal is $ > 0.17 m$.
+    Note that the initial position state of the object is sampled until its distance to the goal is $ > 0.17 m$.
 
-    The default frame rate is 5, with each frame lasting for 0.01, so *dt = 5 * 0.01 = 0.05*.
+    The default frame rate is 5, with each frame lasting 0.01, so *dt = 5 * 0.01 = 0.05*.
 
 
     ## Episode End
@@ -132,7 +121,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     The Pusher never terminates.
 
     #### Truncation
-    The default duration of an episode is 100 timesteps
+    The default duration of an episode is 100 timesteps.
 
 
     ## Arguments
@@ -147,9 +136,9 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     | Parameter               | Type       | Default      |Description                                               |
     |-------------------------|------------|--------------|----------------------------------------------------------|
     | `xml_file`              | **str**    |`"pusher.xml"`| Path to a MuJoCo model                                   |
-    | `reward_near_weight`    | **float**  | `0.5`        | Weight for *reward_near* term (see section on reward)    |
-    | `reward_dist_weight`    | **float**  | `1`          | Weight for *reward_dist* term (see section on reward)    |
-    | `reward_control_weight` | **float**  | `0.1`        | Weight for *reward_control* term (see section on reward) |
+    | `reward_near_weight`    | **float**  | `0.5`        | Weight for _reward_near_ term (see `Rewards` section)    |
+    | `reward_dist_weight`    | **float**  | `1`          | Weight for _reward_dist_ term (see `Rewards` section)    |
+    | `reward_control_weight` | **float**  | `0.1`        | Weight for _reward_control_ term (see `Rewards` section) |
 
     ## Version History
     * v5:
@@ -157,9 +146,9 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Added `xml_file` argument.
-        - Fixed bug: `reward_distance` & `reward_near` was based on the state before the physics step, now it is based on the state after the physics step (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
-        - Added `reward_near_weight`, `reward_dist_weight`, `reward_control_weight` arguments, to configure the reward function (defaults are effectively the same as in `v4`).
-        - Fixed `info["reward_ctrl"]` being not being multiplied by the reward weight.
+        - Fixed bug: `reward_distance` & `reward_near` was based on the state before the physics step, now it is based on the state after the physics step (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
+        - Added `reward_near_weight`, `reward_dist_weight`, `reward_control_weight` arguments to configure the reward function (defaults are effectively the same as in `v4`).
+        - Fixed `info["reward_ctrl"]` not being multiplied by the reward weight.
         - Added `info["reward_near"]` which is equal to the reward term `reward_near`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: This environment does not have a v3 release.
