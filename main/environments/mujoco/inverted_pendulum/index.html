@@ -498,40 +498,10 @@
 </div>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>This environment is the cartpole environment based on the work done by
-Barto, Sutton, and Anderson in <a class="reference external" href="https://ieeexplore.ieee.org/document/6313077">“Neuronlike adaptive elements that can
-solve difficult learning control problems”</a>,
-just like in the classic environments but now powered by the Mujoco physics simulator -
-allowing for more complex experiments (such as varying the effects of gravity).
-This environment involves a cart that can moved linearly, with a pole fixed on it
-at one end and having another end free. The cart can be pushed left or right, and the
-goal is to balance the pole on the top of the cart by applying forces on the cart.</p>
-<p>Gymnasium includes the following versions of the environment:</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Environment</p></th>
-<th class="head"><p>Binding</p></th>
-<th class="head"><p>Notes</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>InvertedPendulum-v5</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.3.3</span></code></p></td>
-<td><p>Recommended (most features, the least bugs)</p></td>
-</tr>
-<tr class="row-odd"><td><p>InvertedPendulum-v4</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.1.3</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-<tr class="row-even"><td><p>InvertedPendulum-v2</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>For more information see section “Version History”.</p>
+<p>This environment is the Cartpole environment, based on the work of Barto, Sutton, and Anderson in <a class="reference external" href="https://ieeexplore.ieee.org/document/6313077">“Neuronlike adaptive elements that can solve difficult learning control problems”</a>,
+just like in the classic environments, but now powered by the Mujoco physics simulator - allowing for more complex experiments (such as varying the effects of gravity).
+This environment consists of a cart that can be moved linearly, with a pole attached to one end and having another end free.
+The cart can be pushed left or right, and the goal is to balance the pole on top of the cart by applying forces to the cart.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
@@ -566,10 +536,12 @@ force and sign representing the direction)</p>
 </section>
 <section id="observation-space">
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
-<p>The state space consists of positional values of different body parts of
-the pendulum system, followed by the velocities of those individual parts (their derivatives)
-with all the positions ordered before all the velocities.</p>
-<p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(4,)</span></code> where the elements correspond to the following:</p>
+<p>The observation space consists of the following parts (in order):</p>
+<ul class="simple">
+<li><p><em>qpos (2 element):</em> Position values of the robot’s cart and pole.</p></li>
+<li><p><em>qvel (2 elements):</em> The velocities of cart and pole (their derivatives).</p></li>
+</ul>
+<p>The observation space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(4,),</span> <span class="pre">float64)</span></code> where the elements are as follows:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -621,21 +593,16 @@ with all the positions ordered before all the velocities.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
-<p>The goal is to keep the inverted pendulum stand upright (within a certain angle limit)
-for as long as possible - as such a reward of +1 is awarded for each timestep that
-the pole is upright.</p>
+<p>The goal is to keep the inverted pendulum stand upright (within a certain angle limit) for as long as possible - as such, a reward of +1 is given for each timestep that the pole is upright.</p>
 <p>The pole is considered upright if:
 <span class="math notranslate nohighlight">\(|angle| &lt; 0.2\)</span>.</p>
 <p>and <code class="docutils literal notranslate"><span class="pre">info</span></code> also contains the reward.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
-<p>The initial position state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale   imes 1_{2}, reset\_noise\_scale         imes 1_{2}]}\)</span>.
-The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale   imes 1_{2}, reset\_noise\_scale         imes 1_{2}]}\)</span>.</p>
+<p>The initial position state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale   imes I_{2}, reset\_noise\_scale         imes I_{2}]}\)</span>.
+The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale   imes I_{2}, reset\_noise\_scale         imes I_{2}]}\)</span>.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
-<p>All observations start in state
-(0.0, 0.0, 0.0, 0.0) with a uniform noise in the range
-of <code class="docutils literal notranslate"><span class="pre">[-reset_noise_scale,</span> <span class="pre">reset_noise_scale]</span></code> added to the values for stochasticity.</p>
 </section>
 <section id="episode-end">
 <h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
@@ -645,12 +612,12 @@ of <code class="docutils literal notranslate"><span class="pre">[-reset_noise_sc
 The Inverted Pendulum is unhealthy if any of the following happens:</p>
 <ol class="arabic simple">
 <li><p>Any of the state space values is no longer finite.</p></li>
-<li><p>The absolute value of the vertical angle between the pole and the cart is greater than 0.2 radian.</p></li>
+<li><p>The absolute value of the vertical angle between the pole and the cart is greater than 0.2 radians.</p></li>
 </ol>
 </section>
 <section id="truncation">
 <h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
-<p>The default duration of an episode is 1000 timesteps</p>
+<p>The default duration of an episode is 1000 timesteps.</p>
 </section>
 </section>
 <section id="arguments">
@@ -679,7 +646,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.01</span></code></p></td>
-<td><p>Scale of random perturbations of initial position and velocity (see section on Starting State)</p></td>
+<td><p>Scale of random perturbations of initial position and velocity (see <code class="docutils literal notranslate"><span class="pre">Starting</span> <span class="pre">State</span></code> section)</p></td>
 </tr>
 </tbody>
 </table>
@@ -695,17 +662,17 @@ These parameters can be applied during <code class="docutils literal notranslate
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code> argument, a dictionary for setting the <code class="docutils literal notranslate"><span class="pre">mj_camera</span></code> properties, mainly useful for custom environments.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">env.observation_structure</span></code>, a dictionary for specifying the observation space compose (e.g. <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>), useful for building tooling and wrappers for the MuJoCo environments.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> argument, used to configure the <code class="docutils literal notranslate"><span class="pre">dt</span></code> (duration of <code class="docutils literal notranslate"><span class="pre">step()</span></code>), default varies by environment check environment documentation pages.</p></li>
-<li><p>Fixed bug: <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> was given on every step (even if the Pendulum is unhealthy), now it is only given if the Pendulum is healthy (not terminated) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/500">Github issue</a>).</p></li>
+<li><p>Fixed bug: <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> was given on every step (even if the Pendulum is unhealthy), now it is only given if the Pendulum is healthy (not terminated) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/500">GitHub issue</a>).</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code> argument to set the range of initial states.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_survive&quot;]</span></code> which contains the reward.</p></li>
 </ul>
 </li>
-<li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1..</p></li>
+<li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1.3.</p></li>
 <li><p>v3: This environment does not have a v3 release.</p></li>
 <li><p>v2: All continuous control environments now use mujoco-py &gt;= 1.5.</p></li>
 <li><p>v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum).</p></li>
-<li><p>v0: Initial versions release (1.0.0)</p></li>
+<li><p>v0: Initial versions release (1.0.0).</p></li>
 </ul>
 </section>
 </section>

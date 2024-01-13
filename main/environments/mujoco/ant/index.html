@@ -498,44 +498,9 @@
 </div>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>This environment is based on the environment introduced by Schulman,
-Moritz, Levine, Jordan and Abbeel in <a class="reference external" href="https://arxiv.org/abs/1506.02438">“High-Dimensional Continuous Control
-Using Generalized Advantage Estimation”</a>.
-The ant is a 3D robot consisting of one torso (free rotational body) with
-four legs attached to it with each leg having two body parts. The goal is to
-coordinate the four legs to move in the forward (right) direction by applying
-torques on the eight hinges connecting the two body parts of each leg and the torso
-(nine body parts and eight hinges).</p>
-<p>Gymnasium includes the following versions of the environment:</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Environment</p></th>
-<th class="head"><p>Binding</p></th>
-<th class="head"><p>Notes</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Ant-v5</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.3.3</span></code></p></td>
-<td><p>Recommended (most features, the least bugs)</p></td>
-</tr>
-<tr class="row-odd"><td><p>Ant-v4</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.1.3</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-<tr class="row-even"><td><p>Ant-v3</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-<tr class="row-odd"><td><p>Ant-v2</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>For more information see section “Version History”.</p>
+<p>This environment is based on the one introduced by Schulman, Moritz, Levine, Jordan, and Abbeel in <a class="reference external" href="https://arxiv.org/abs/1506.02438">“High-Dimensional Continuous Control Using Generalized Advantage Estimation”</a>.
+The ant is a 3D quadruped robot consisting of a torso (free rotational body) with four legs attached to it, where each leg has two body parts.
+The goal is to coordinate the four legs to move in the forward (right) direction by applying torque to the eight hinges connecting the two body parts of each leg and the torso (nine body parts and eight hinges).</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
@@ -626,19 +591,18 @@ torques on the eight hinges connecting the two body parts of each leg and the to
 </section>
 <section id="observation-space">
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
-<p>The observation Space consists of the following parts (in order):</p>
+<p>The observation space consists of the following parts (in order):</p>
 <ul class="simple">
-<li><p>qpos (13 elements by default):* Position values of the robots’s body parts.</p></li>
-<li><p>qvel (14 elements):* The velocities of these individual body parts,
-(their derivatives).</p></li>
+<li><p><em>qpos (13 elements by default):</em> Position values of the robot’s body parts.</p></li>
+<li><p><em>qvel (14 elements):</em> The velocities of these individual body parts (their derivatives).</p></li>
 <li><p><em>cfrc_ext (78 elements):</em> This is the center of mass based external forces on the body parts.
-It has shape 13 * 6 (<em>nbody * 6</em>) and hence adds to another 78 elements in the state space.
+It has shape 13 * 6 (<em>nbody * 6</em>) and hence adds another 78 elements to the state space.
 (external forces - force x, y, z and torque x, y, z)</p></li>
 </ul>
 <p>By default, the observation does not include the x- and y-coordinates of the torso.
-These can be be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
+These can be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
 In this case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(107,),</span> <span class="pre">float64)</span></code>, where the first two observations are the x- and y-coordinates of the torso.
-Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to true or false, the x- and y-coordinates are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
+Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>, the x- and y-coordinates are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with the keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
 <p>By default, however, the observation space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(105,),</span> <span class="pre">float64)</span></code>, where the position and velocity elements are as follows:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -957,46 +921,44 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 </tbody>
 </table>
 </div>
-<p>The (x,y,z) coordinates are translational DOFs while the orientations are rotational
-DOFs expressed as quaternions. One can read more about free joints in the <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/XMLreference.html">Mujoco Documentation</a>.</p>
+<p>The (x,y,z) coordinates are translational DOFs, while the orientations are rotational DOFs expressed as quaternions.
+One can read more about free joints in the <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/XMLreference.html">MuJoCo documentation</a>.</p>
 <p><strong>Note:</strong>
-When using Ant-v3 or earlier versions, problems have been reported when using a Mujoco-Py version &gt; 2.0 results
-in the contact forces always being 0. As such we recommend to use a Mujoco-Py version &lt; 2.0
-when using the Ant environment if you would like to report results with contact forces (if
-contact forces are not used in your experiments, you can use version &gt; 2.0).</p>
+When using Ant-v3 or earlier versions, problems have been reported when using a <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> version &gt; 2.0, resulting in  contact forces always being 0.
+Therefore, it is recommended to use a <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> version &lt; 2.0 when using the Ant environment if you want to report results with contact forces (if contact forces are not used in your experiments, you can use version &gt; 2.0).</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
 <p>The total reward is <em><strong>reward</strong></em> <em>=</em> <em>healthy_reward + forward_reward - ctrl_cost - contact_cost</em>.</p>
 <ul class="simple">
 <li><p><em>healthy_reward</em>:
-Every timestep that the Ant is healthy (see definition in section “Episode Termination”),
-it gets a reward of fixed value <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code>.</p></li>
+Every timestep that the Ant is healthy (see definition in section “Episode End”),
+it gets a reward of fixed value <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> (default is <span class="math notranslate nohighlight">\(1\)</span>).</p></li>
 <li><p><em>forward_reward</em>:
 A reward for moving forward,
 this reward would be positive if the Ant moves forward (in the positive <span class="math notranslate nohighlight">\(x\)</span> direction / in the right direction).
 <span class="math notranslate nohighlight">\(w_{forward} \times \frac{dx}{dt}\)</span>, where
 <span class="math notranslate nohighlight">\(dx\)</span> is the displacement of the <code class="docutils literal notranslate"><span class="pre">main_body</span></code> (<span class="math notranslate nohighlight">\(x_{after-action} - x_{before-action}\)</span>),
-<span class="math notranslate nohighlight">\(dt\)</span> is the time between actions, which is depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is 5),
-and <code class="docutils literal notranslate"><span class="pre">frametime</span></code>, which is 0.01 - so the default is <span class="math notranslate nohighlight">\(dt = 5 \times 0.01 = 0.05\)</span>,
+<span class="math notranslate nohighlight">\(dt\)</span> is the time between actions, which depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is <span class="math notranslate nohighlight">\(5\)</span>),
+and <code class="docutils literal notranslate"><span class="pre">frametime</span></code>, which is <span class="math notranslate nohighlight">\(0.01\)</span> - so the default is <span class="math notranslate nohighlight">\(dt = 5 \times 0.01 = 0.05\)</span>,
 <span class="math notranslate nohighlight">\(w_{forward}\)</span> is the <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code> (default is <span class="math notranslate nohighlight">\(1\)</span>).</p></li>
 <li><p><em>ctrl_cost</em>:
 A negative reward to penalize the Ant for taking actions that are too large.
-<span class="math notranslate nohighlight">\(w_{control} \times \\|action\\|_2^2\)</span>,
+<span class="math notranslate nohighlight">\(w_{control} \times \|action\|_2^2\)</span>,
 where <span class="math notranslate nohighlight">\(w_{control}\)</span> is <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.5\)</span>).</p></li>
 <li><p><em>contact_cost</em>:
 A negative reward to penalize the Ant if the external contact forces are too large.
-<span class="math notranslate nohighlight">\(w_{contact} \times \\|F_{contact}\\|_2^2\)</span>, where
+<span class="math notranslate nohighlight">\(w_{contact} \times \|F_{contact}\|_2^2\)</span>, where
 <span class="math notranslate nohighlight">\(w_{contact}\)</span> is <code class="docutils literal notranslate"><span class="pre">contact_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(5\times10^{-4}\)</span>),
-<span class="math notranslate nohighlight">\(F_{contact}\)</span> are the external contact forces clipped by <code class="docutils literal notranslate"><span class="pre">contact_force_range</span></code> (see <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> section on observation).</p></li>
+<span class="math notranslate nohighlight">\(F_{contact}\)</span> are the external contact forces clipped by <code class="docutils literal notranslate"><span class="pre">contact_force_range</span></code> (see <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> section on Observation Space).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
-<p>But if <code class="docutils literal notranslate"><span class="pre">use_contact_forces=false</span></code> on <code class="docutils literal notranslate"><span class="pre">v4</span></code>
+<p>But if <code class="docutils literal notranslate"><span class="pre">use_contact_forces=False</span></code> on <code class="docutils literal notranslate"><span class="pre">v4</span></code>
 The total reward returned is <em><strong>reward</strong></em> <em>=</em> <em>healthy_reward + forward_reward - ctrl_cost</em>.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
-<p>The initial position state is <span class="math notranslate nohighlight">\([0.0, 0.0, 0.75, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{15}, reset\_noise\_scale \times 1_{15}]}\)</span>.
+<p>The initial position state is <span class="math notranslate nohighlight">\([0.0, 0.0, 0.75, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{15}, reset\_noise\_scale \times I_{15}]}\)</span>.
 The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{N}(0_{14}, reset\_noise\_scale^2 \times I_{14})\)</span>.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> is the multivariate normal distribution and <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 <p>Note that the z- and x-coordinates are non-zero so that the ant can immediately stand up and face forward (x-axis).</p>
@@ -1008,13 +970,13 @@ The initial velocity state is <span class="math notranslate nohighlight">\(\math
 <p>If <code class="docutils literal notranslate"><span class="pre">terminate_when_unhealthy</span> <span class="pre">is</span> <span class="pre">True</span></code> (the default), the environment terminates when the Ant is unhealthy.
 the Ant is unhealthy if any of the following happens:</p>
 <ol class="arabic simple">
-<li><p>Any of the state space values is no longer finite</p></li>
-<li><p>The z-coordinate of the torso is <strong>not</strong> in the closed interval given by <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code> (defaults to [0.2, 1.0])</p></li>
+<li><p>Any of the state space values is no longer finite.</p></li>
+<li><p>The z-coordinate of the torso (the height) is <strong>not</strong> in the closed interval given by the <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code> argument (default is <span class="math notranslate nohighlight">\([0.2, 1.0]\)</span>).</p></li>
 </ol>
 </section>
 <section id="truncation">
 <h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
-<p>The default duration of an episode is 1000 timesteps</p>
+<p>The default duration of an episode is 1000 timesteps.</p>
 </section>
 </section>
 <section id="arguments">
@@ -1043,62 +1005,62 @@ These parameters can be applied during <code class="docutils literal notranslate
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
-<td><p>Weight for <em>forward_reward</em> term (see section on reward)</p></td>
+<td><p>Weight for <em>forward_reward</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
-<td><p>Weight for <em>ctrl_cost</em> term (see section on reward)</p></td>
+<td><p>Weight for <em>ctrl_cost</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">contact_cost_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">5e-4</span></code></p></td>
-<td><p>Weight for <em>contact_cost</em> term (see section on reward)</p></td>
+<td><p>Weight for <em>contact_cost</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
-<td><p>Weight for <em>healthy_reward</em> term (see section on reward)</p></td>
+<td><p>Weight for <em>healthy_reward</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">main_body</span></code></p></td>
 <td><p><strong>str|int</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code>(“torso”)</p></td>
-<td><p>Name or ID of the body, whose displacement is used to calculate the <em>dx</em>/<em>forward_reward</em> (useful for custom MuJoCo models)</p></td>
+<td><p>Name or ID of the body, whose displacement is used to calculate the <em>dx</em>/<em>forward_reward</em> (useful for custom MuJoCo models) (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">terminate_when_unhealthy</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>If true, issue a done signal if the z-coordinate of the torso is no longer in the <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code></p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, issue a <code class="docutils literal notranslate"><span class="pre">terminated</span></code> signal is unhealthy (see <code class="docutils literal notranslate"><span class="pre">Episode</span> <span class="pre">End</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code></p></td>
 <td><p><strong>tuple</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(0.2,</span> <span class="pre">1)</span></code></p></td>
-<td><p>The ant is considered healthy if the z-coordinate of the torso is in this range</p></td>
+<td><p>The ant is considered healthy if the z-coordinate of the torso is in this range (see <code class="docutils literal notranslate"><span class="pre">Episode</span> <span class="pre">End</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contact_force_range</span></code></p></td>
 <td><p><strong>tuple</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(-1,</span> <span class="pre">1)</span></code></p></td>
-<td><p>Contact forces are clipped to this range in the computation of <em>contact_cost</em></p></td>
+<td><p>Contact forces are clipped to this range in the computation of <em>contact_cost</em> (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
-<td><p>Scale of random perturbations of initial position and velocity (see section on Starting State)</p></td>
+<td><p>Scale of random perturbations of initial position and velocity (see <code class="docutils literal notranslate"><span class="pre">Starting</span> <span class="pre">State</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies</p></td>
+<td><p>Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">State</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">include_cfrc_ext_in_observation</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether to include <em>cfrc_ext</em> elements in the observations.</p></td>
+<td><p>Whether to include <em>cfrc_ext</em> elements in the observations (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">State</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code> (<code class="docutils literal notranslate"><span class="pre">v4</span></code> only)</p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-<td><p>If true, it extends the observation space by adding contact forces (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section) and includes contact_cost to the reward function (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, it extends the observation space by adding contact forces (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section) and includes contact_cost to the reward function (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 </tbody>
 </table>
@@ -1115,21 +1077,21 @@ These parameters can be applied during <code class="docutils literal notranslate
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">env.observation_structure</span></code>, a dictionary for specifying the observation space compose (e.g. <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>), useful for building tooling and wrappers for the MuJoCo environments.</p></li>
 <li><p>Return a non-empty <code class="docutils literal notranslate"><span class="pre">info</span></code> with <code class="docutils literal notranslate"><span class="pre">reset()</span></code>, previously an empty dictionary was returned, the new keys are the same state information as <code class="docutils literal notranslate"><span class="pre">step()</span></code>.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> argument, used to configure the <code class="docutils literal notranslate"><span class="pre">dt</span></code> (duration of <code class="docutils literal notranslate"><span class="pre">step()</span></code>), default varies by environment check environment documentation pages.</p></li>
-<li><p>Fixed bug: <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> was given on every step (even if the Ant is unhealthy), now it is only given when the Ant is healthy. The <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_survive&quot;]</span></code> is updated with this change (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/526">Github issue</a>).</p></li>
+<li><p>Fixed bug: <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> was given on every step (even if the Ant is unhealthy), now it is only given when the Ant is healthy. The <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_survive&quot;]</span></code> is updated with this change (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/526">GitHub issue</a>).</p></li>
 <li><p>The reward function now always includes <code class="docutils literal notranslate"><span class="pre">contact_cost</span></code>, before it was only included if <code class="docutils literal notranslate"><span class="pre">use_contact_forces=True</span></code> (can be set to <code class="docutils literal notranslate"><span class="pre">0</span></code> with <code class="docutils literal notranslate"><span class="pre">contact_cost_weight=0</span></code>).</p></li>
-<li><p>Excluded the <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> of <code class="docutils literal notranslate"><span class="pre">worldbody</span></code> from the observation space as it was always 0, and thus provided no useful information to the agent, resulting is slightly faster training (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/204">Github issue</a>).</p></li>
+<li><p>Excluded the <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> of <code class="docutils literal notranslate"><span class="pre">worldbody</span></code> from the observation space, as it was always 0 and thus provided no useful information to the agent, resulting in slightly faster training (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/204">GitHub issue</a>).</p></li>
 <li><p>Added the <code class="docutils literal notranslate"><span class="pre">main_body</span></code> argument, which specifies the body used to compute the forward reward (mainly useful for custom MuJoCo models).</p></li>
 <li><p>Added the <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code> argument, which defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code> (effectively the same behavior as in <code class="docutils literal notranslate"><span class="pre">v4</span></code>).</p></li>
 <li><p>Added the <code class="docutils literal notranslate"><span class="pre">include_cfrc_ext_in_observation</span></code> argument, previously in <code class="docutils literal notranslate"><span class="pre">v4</span></code> the inclusion of <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> observations was controlled by <code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code> which defaulted to <code class="docutils literal notranslate"><span class="pre">False</span></code>, while <code class="docutils literal notranslate"><span class="pre">include_cfrc_ext_in_observation</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p>Removed the <code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code> argument (note: its functionality has been replaced by <code class="docutils literal notranslate"><span class="pre">include_cfrc_ext_in_observation</span></code> and <code class="docutils literal notranslate"><span class="pre">contact_cost_weight</span></code>) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/214">Github issue</a>).</p></li>
+<li><p>Removed the <code class="docutils literal notranslate"><span class="pre">use_contact_forces</span></code> argument (note: its functionality has been replaced by <code class="docutils literal notranslate"><span class="pre">include_cfrc_ext_in_observation</span></code> and <code class="docutils literal notranslate"><span class="pre">contact_cost_weight</span></code>) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/214">GitHub issue</a>).</p></li>
 <li><p>Fixed <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_ctrl&quot;]</span></code> sometimes containing <code class="docutils literal notranslate"><span class="pre">contact_cost</span></code> instead of <code class="docutils literal notranslate"><span class="pre">ctrl_cost</span></code>.</p></li>
-<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">info[&quot;x_position&quot;]</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">info[&quot;y_position&quot;]</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">info[&quot;distance_from_origin&quot;]</span></code> giving <code class="docutils literal notranslate"><span class="pre">xpos</span></code> instead of <code class="docutils literal notranslate"><span class="pre">qpos</span></code> observations (<code class="docutils literal notranslate"><span class="pre">xpos</span></code> observations are behind 1 <code class="docutils literal notranslate"><span class="pre">mj_step()</span></code> more <a class="reference external" href="https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388">here</a>) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/521">Github issue #1</a> &amp; <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/539">Github issue #2</a>).</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">info[&quot;x_position&quot;]</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">info[&quot;y_position&quot;]</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">info[&quot;distance_from_origin&quot;]</span></code> giving <code class="docutils literal notranslate"><span class="pre">xpos</span></code> instead of <code class="docutils literal notranslate"><span class="pre">qpos</span></code> observations (<code class="docutils literal notranslate"><span class="pre">xpos</span></code> observations are behind 1 <code class="docutils literal notranslate"><span class="pre">mj_step()</span></code> more <a class="reference external" href="https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388">here</a>) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/521">GitHub issue #1</a> &amp; <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/539">GitHub issue #2</a>).</p></li>
 <li><p>Removed <code class="docutils literal notranslate"><span class="pre">info[&quot;forward_reward&quot;]</span></code> as it is equivalent to <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_forward&quot;]</span></code>.</p></li>
 </ul>
 </li>
-<li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1.3, also removed contact forces from the default observation space (new variable <code class="docutils literal notranslate"><span class="pre">use_contact_forces=True</span></code> can restore them)</p></li>
-<li><p>v3: Support for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> kwargs such as <code class="docutils literal notranslate"><span class="pre">xml_file</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code>, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)</p></li>
-<li><p>v2: All continuous control environments now use mujoco-py &gt;= 1.50</p></li>
+<li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1.3, also removed contact forces from the default observation space (new variable <code class="docutils literal notranslate"><span class="pre">use_contact_forces=True</span></code> can restore them).</p></li>
+<li><p>v3: Support for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> kwargs such as <code class="docutils literal notranslate"><span class="pre">xml_file</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code>, etc. rgb rendering comes from tracking camera (so agent does not run away from screen).</p></li>
+<li><p>v2: All continuous control environments now use mujoco-py &gt;= 1.50.</p></li>
 <li><p>v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.</p></li>
 <li><p>v0: Initial versions release (1.0.0)</p></li>
 </ul>

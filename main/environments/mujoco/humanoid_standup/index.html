@@ -498,39 +498,11 @@
 </div>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>This environment is based on the environment introduced by Tassa, Erez and Todorov
-in <a class="reference external" href="https://ieeexplore.ieee.org/document/6386025">“Synthesis and stabilization of complex behaviors through online trajectory optimization”</a>.
-The 3D bipedal robot is designed to simulate a human. It has a torso (abdomen) with a
-pair of legs and arms. The legs each consist of two links, and so the arms (representing the
-knees and elbows respectively). The environment starts with the humanoid laying on the ground,
-and then the goal of the environment is to make the humanoid standup and then keep it standing
-by applying torques on the various hinges.</p>
-<p>Gymnasium includes the following versions of the environment:</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Environment</p></th>
-<th class="head"><p>Binding</p></th>
-<th class="head"><p>Notes</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>HumanoidStandup-v5</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.3.3</span></code></p></td>
-<td><p>Recommended (most features, the least bugs)</p></td>
-</tr>
-<tr class="row-odd"><td><p>HumanoidStandup-v4</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.1.3</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-<tr class="row-even"><td><p>HumanoidStandup-v2</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>For more information see section “Version History”.</p>
+<p>This environment is based on the environment introduced by Tassa, Erez and Todorov in <a class="reference external" href="https://ieeexplore.ieee.org/document/6386025">“Synthesis and stabilization of complex behaviors through online trajectory optimization”</a>.
+The 3D bipedal robot is designed to simulate a human.
+It has a torso (abdomen) with a pair of legs and arms, and a pair of tendons connecting the hips to the knees.
+The legs each consist of three body parts (thigh, shin, foot), and the arms consist of two body parts (upper arm, forearm).
+The environment starts with the humanoid laying on the ground, and then the goal of the environment is to make the humanoid stand up and then keep it standing by applying torques to the various hinges.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
@@ -695,9 +667,8 @@ by applying torques on the various hinges.</p>
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
 <p>The observation space consists of the following parts (in order)</p>
 <ul class="simple">
-<li><p>qpos (22 elements by default):* The position values of the robot’s body parts.</p></li>
-<li><p>qvel (23 elements):* The velocities of these individual body parts,
-(their derivatives).</p></li>
+<li><p><em>qpos (22 elements by default):</em> The position values of the robot’s body parts.</p></li>
+<li><p><em>qvel (23 elements):</em> The velocities of these individual body parts (their derivatives).</p></li>
 <li><p><em>cinert (130 elements):</em> Mass and inertia of the rigid body parts relative to the center of mass,
 (this is an intermediate result of the transition).
 It has shape 13*10 (<em>nbody * 10</em>).
@@ -708,15 +679,15 @@ It has shape 13 * 6 (<em>nbody * 6</em>).
 <li><p><em>qfrc_actuator (17 elements):</em> Constraint force generated as the actuator force at each joint.
 This has shape <code class="docutils literal notranslate"><span class="pre">(17,)</span></code>  <em>(nv * 1)</em>.</p></li>
 <li><p><em>cfrc_ext (78 elements):</em> This is the center of mass based external force on the body parts.
-It has shape 13 * 6 (<em>nbody * 6</em>) and thus adds to another 78 elements in the observation space.
+It has shape 13 * 6 (<em>nbody * 6</em>) and thus adds another 78 elements to the observation space.
 (external forces - force x, y, z and torque x, y, z)</p></li>
 </ul>
-<p>where <em>nbody</em> is for the number of bodies in the robot
-and <em>nv</em> is for the number of degrees of freedom (<em>= dim(qvel)</em>).</p>
+<p>where <em>nbody</em> is the number of bodies in the robot,
+and <em>nv</em> is the number of degrees of freedom (<em>= dim(qvel)</em>).</p>
 <p>By default, the observation does not include the x- and y-coordinates of the torso.
-These can be be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
+These can be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
 In this case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(350,),</span> <span class="pre">float64)</span></code>, where the first two observations are the x- and y-coordinates of the torso.
-Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to true or false, the x- and y-coordinates are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
+Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>, the x- and y-coordinates are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with the keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
 <p>By default, however, the observation space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(348,),</span> <span class="pre">float64)</span></code>, where the position and velocity elements are as follows:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -1284,15 +1255,11 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 </tbody>
 </table>
 </div>
-<p>The (x,y,z) coordinates are translational DOFs while the orientations are rotational
-DOFs expressed as quaternions. One can read more about free joints on the
-<a class="reference external" href="https://mujoco.readthedocs.io/en/latest/XMLreference.html">Mujoco Documentation</a>.</p>
+<p>The (x,y,z) coordinates are translational DOFs, while the orientations are rotational DOFs expressed as quaternions.
+One can read more about free joints in the <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/XMLreference.html">MuJoCo documentation</a>.</p>
 <p><strong>Note:</strong>
-When using Humanoid-v3 or earlier versions, problems have been reported when using a Mujoco-Py version &gt; 2.0.
-results in the contact forces always being 0. As such we recommend to use a Mujoco-Py
-version &lt; 2.0 when using the Humanoid environment if you would like to report results
-with contact forces (if contact forces are not used in your experiments, you can use
-version &gt; 2.0).</p>
+When using HumanoidStandup-v3 or earlier versions, problems have been reported when using a <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> version &gt; 2.0, resulting in  contact forces always being 0.
+Therefore, it is recommended to use a <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> version &lt; 2.0 when using the HumanoidStandup environment if you want to report results with contact forces (if contact forces are not used in your experiments, you can use version &gt; 2.0).</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
@@ -1300,30 +1267,29 @@ version &gt; 2.0).</p>
 <ul class="simple">
 <li><p><em>uph_cost</em>:
 A reward for moving up (trying to stand up).
-This is not a relative reward, measuring how far up it has moved since the last timestep,
-but it is an absolute reward that measures how much upward the Humanoid has moved up in total.
-It is measured as <span class="math notranslate nohighlight">\(weight_{uph} \times (z_{after action} - 0)/dt\)</span>,
+This is not a relative reward, measuring how far up the robot has moved since the last timestep,
+but an absolute reward measuring how far up the Humanoid has moved up in total.
+It is measured as <span class="math notranslate nohighlight">\(w{uph} \times (z_{after action} - 0)/dt\)</span>,
 where <span class="math notranslate nohighlight">\(z_{after action}\)</span> is the z coordinate of the torso after taking an action,
-and <em>dt</em> is the time between actions, and depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter
-(default is 5), where the frametime is 0.003 - so the default is <em>dt = 5 * 0.003 = 0.015</em>.
-and <span class="math notranslate nohighlight">\(weight_{uph}\)</span> is <code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code>.</p></li>
+and <span class="math notranslate nohighlight">\(dt\)</span> is the time between actions, which depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is <span class="math notranslate nohighlight">\(5\)</span>),
+and <code class="docutils literal notranslate"><span class="pre">frametime</span></code>, which is <span class="math notranslate nohighlight">\(0.01\)</span> - so the default is <span class="math notranslate nohighlight">\(dt = 5 \times 0.01 = 0.05\)</span>,
+and <span class="math notranslate nohighlight">\(w_{uph}\)</span> is <code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code>.</p></li>
 <li><p><em>quad_ctrl_cost</em>:
 A negative reward to penalize the Humanoid for taking actions that are too large.
-<span class="math notranslate nohighlight">\(w_{quad_control} \times \\|action\\|_2^2\)</span>,
-where <span class="math notranslate nohighlight">\(w_{quad_control}\)</span> is <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.1\)</span>).
-If there are <em>nu</em> actuators/controls, then the control has shape  <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">x</span> <span class="pre">1</span></code>.</p></li>
+<span class="math notranslate nohighlight">\(w_{quad\_control} \times \|action\|_2^2\)</span>,
+where <span class="math notranslate nohighlight">\(w_{quad\_control}\)</span> is <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.1\)</span>).</p></li>
 <li><p><em>impact_cost</em>:
 A negative reward to penalize the Humanoid if the external contact forces are too large.
-<span class="math notranslate nohighlight">\(w_{impact} \times clamp(impact\\_cost\\_range, \\|F_{contact}\\|_2^2)\)</span>, where
+<span class="math notranslate nohighlight">\(w_{impact} \times clamp(impact\_cost\_range, \|F_{contact}\|_2^2)\)</span>, where
 <span class="math notranslate nohighlight">\(w_{impact}\)</span> is <code class="docutils literal notranslate"><span class="pre">impact_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(5\times10^{-7}\)</span>),
-<span class="math notranslate nohighlight">\(F_{contact}\)</span> are the external contact forces (see <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> section on observation).</p></li>
+<span class="math notranslate nohighlight">\(F_{contact}\)</span> are the external contact forces (see <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> section on Observation Space).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
-<p>The initial position state is <span class="math notranslate nohighlight">\([0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}\)</span>.
-The initial velocity state is <span class="math notranslate nohighlight">\(0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}\)</span>.</p>
+<p>The initial position state is <span class="math notranslate nohighlight">\([0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{24}, reset\_noise\_scale \times I_{24}]}\)</span>.
+The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale \times I_{23}, reset\_noise\_scale \times I_{23}]}\)</span>.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 <p>Note that the z- and x-coordinates are non-zero so that the humanoid immediately lies down and faces forward (x-axis).</p>
 </section>
@@ -1335,7 +1301,7 @@ The initial velocity state is <span class="math notranslate nohighlight">\(0_{23
 </section>
 <section id="truncation">
 <h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
-<p>The default duration of an episode is 1000 timesteps</p>
+<p>The default duration of an episode is 1000 timesteps.</p>
 </section>
 </section>
 <section id="arguments">
@@ -1364,52 +1330,52 @@ These parameters can be applied during <code class="docutils literal notranslate
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
-<td><p>Weight for <em>uph_cost</em> term (see section on reward)</p></td>
+<td><p>Weight for <em>uph_cost</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
-<td><p>Weight for <em>quad_ctrl_cost</em> term (see section on reward)</p></td>
+<td><p>Weight for <em>quad_ctrl_cost</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">impact_cost_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.5e-6</span></code></p></td>
-<td><p>Weight for <em>impact_cost</em> term (see section on reward)</p></td>
+<td><p>Weight for <em>impact_cost</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">impact_cost_range</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(-np.inf,</span> <span class="pre">10.0)</span></code></p></td>
-<td><p>Clamps the <em>impact_cost</em></p></td>
+<td><p>Clamps the <em>impact_cost</em> (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1e-2</span></code></p></td>
-<td><p>Scale of random perturbations of initial position and velocity (see section on Starting State)</p></td>
+<td><p>Scale of random perturbations of initial position and velocity (see <code class="docutils literal notranslate"><span class="pre">Starting</span> <span class="pre">State</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies</p></td>
+<td><p>Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">include_cinert_in_observation</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether to include <em>cinert</em> elements in the observations.</p></td>
+<td><p>Whether to include <em>cinert</em> elements in the observations (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">include_cvel_in_observation</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether to include <em>cvel</em> elements in the observations.</p></td>
+<td><p>Whether to include <em>cvel</em> elements in the observations (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">include_qfrc_actuator_in_observation</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether to include <em>qfrc_actuator</em> elements in the observations.</p></td>
+<td><p>Whether to include <em>qfrc_actuator</em> elements in the observations (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">include_cfrc_ext_in_observation</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether to include <em>cfrc_ext</em> elements in the observations.</p></td>
+<td><p>Whether to include <em>cfrc_ext</em> elements in the observations (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section)</p></td>
 </tr>
 </tbody>
 </table>
@@ -1426,15 +1392,15 @@ These parameters can be applied during <code class="docutils literal notranslate
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">env.observation_structure</span></code>, a dictionary for specifying the observation space compose (e.g. <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>), useful for building tooling and wrappers for the MuJoCo environments.</p></li>
 <li><p>Return a non-empty <code class="docutils literal notranslate"><span class="pre">info</span></code> with <code class="docutils literal notranslate"><span class="pre">reset()</span></code>, previously an empty dictionary was returned, the new keys are the same state information as <code class="docutils literal notranslate"><span class="pre">step()</span></code>.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> argument, used to configure the <code class="docutils literal notranslate"><span class="pre">dt</span></code> (duration of <code class="docutils literal notranslate"><span class="pre">step()</span></code>), default varies by environment check environment documentation pages.</p></li>
-<li><p>Excluded the <code class="docutils literal notranslate"><span class="pre">cinert</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">cvel</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> of <code class="docutils literal notranslate"><span class="pre">worldbody</span></code> and <code class="docutils literal notranslate"><span class="pre">root</span></code>/<code class="docutils literal notranslate"><span class="pre">freejoint</span></code> <code class="docutils literal notranslate"><span class="pre">qfrc_actuator</span></code> from the observation space, as it was always 0, and thus provided no useful information to the agent, resulting in slightly faster training) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/204">Github issue</a>).</p></li>
+<li><p>Excluded the <code class="docutils literal notranslate"><span class="pre">cinert</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">cvel</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">cfrc_ext</span></code> of <code class="docutils literal notranslate"><span class="pre">worldbody</span></code> and <code class="docutils literal notranslate"><span class="pre">root</span></code>/<code class="docutils literal notranslate"><span class="pre">freejoint</span></code> <code class="docutils literal notranslate"><span class="pre">qfrc_actuator</span></code> from the observation space, as it was always 0, and thus provided no useful information to the agent, resulting in slightly faster training (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/204">GitHub issue</a>).</p></li>
 <li><p>Restored the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument (was removed in <code class="docutils literal notranslate"><span class="pre">v4</span></code>).</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument.</p></li>
-<li><p>Added <code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_cost_range</span></code> arguments, to configure the reward function (defaults are effectively the same as in <code class="docutils literal notranslate"><span class="pre">v4</span></code>).</p></li>
-<li><p>Added <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code> argument, to set the range of initial states.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_cost_range</span></code> arguments to configure the reward function (defaults are effectively the same as in <code class="docutils literal notranslate"><span class="pre">v4</span></code>).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code> argument to set the range of initial states.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">include_cinert_in_observation</span></code>, <code class="docutils literal notranslate"><span class="pre">include_cvel_in_observation</span></code>, <code class="docutils literal notranslate"><span class="pre">include_qfrc_actuator_in_observation</span></code>, <code class="docutils literal notranslate"><span class="pre">include_cfrc_ext_in_observation</span></code> arguments to allow for the exclusion of observation elements from the observation space.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">info[&quot;tendon_length&quot;]</span></code> and <code class="docutils literal notranslate"><span class="pre">info[&quot;tendon_velocity&quot;]</span></code> containing observations of the Humanoid’s 2 tendons connecting the hips to the knees.</p></li>
-<li><p>Added <code class="docutils literal notranslate"><span class="pre">info[&quot;x_position&quot;]</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">info[&quot;y_position&quot;]</span></code> , which contain the observations excluded when <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span> <span class="pre">==</span> <span class="pre">True</span></code>.</p></li>
-<li><p>Added <code class="docutils literal notranslate"><span class="pre">info[&quot;z_distance_from_origin&quot;]</span></code> which is equal to the vertical distance of the “torso” body from its initial position.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">info[&quot;x_position&quot;]</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">info[&quot;y_position&quot;]</span></code> which contain the observations excluded when <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span> <span class="pre">==</span> <span class="pre">True</span></code>.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">info[&quot;z_distance_from_origin&quot;]</span></code> which is the vertical distance of the “torso” body from its initial position.</p></li>
 </ul>
 </li>
 <li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1.3.</p></li>

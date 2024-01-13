@@ -498,41 +498,10 @@
 </div>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>This environment originates from control theory and builds on the cartpole
-environment based on the work done by Barto, Sutton, and Anderson in
-<a class="reference external" href="https://ieeexplore.ieee.org/document/6313077">“Neuronlike adaptive elements that can solve difficult learning control problems”</a>,
-powered by the Mujoco physics simulator - allowing for more complex experiments
-(such as varying the effects of gravity or constraints). This environment involves a cart that can
-moved linearly, with a pole fixed on it and a second pole fixed on the other end of the first one
-(leaving the second pole as the only one with one free end). The cart can be pushed left or right,
-and the goal is to balance the second pole on top of the first pole, which is in turn on top of the
-cart, by applying continuous forces on the cart.</p>
-<p>Gymnasium includes the following versions of the environment:</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Environment</p></th>
-<th class="head"><p>Binding</p></th>
-<th class="head"><p>Notes</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>InvertedDoublePendulum-v5</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.3.3</span></code></p></td>
-<td><p>Recommended (most features, the least bugs)</p></td>
-</tr>
-<tr class="row-odd"><td><p>InvertedDoublePendulum-v4</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.1.3</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-<tr class="row-even"><td><p>InvertedDoublePendulum-v2</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Maintained for reproducibility</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>For more information see section “Version History”.</p>
+<p>This environment originates from control theory and builds on the cartpole environment based on the work of Barto, Sutton, and Anderson in <a class="reference external" href="https://ieeexplore.ieee.org/document/6313077">“Neuronlike adaptive elements that can solve difficult learning control problems”</a>,
+powered by the Mujoco physics simulator - allowing for more complex experiments (such as varying the effects of gravity or constraints).
+This environment involves a cart that can be moved linearly, with one pole attached to it and a second pole attached to the other end of the first pole (leaving the second pole as the only one with a free end).
+The cart can be pushed left or right, and the goal is to balance the second pole on top of the first pole, which is in turn on top of the cart, by applying continuous forces to the cart.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
@@ -567,10 +536,18 @@ sign representing the direction)</p>
 </section>
 <section id="observation-space">
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
-<p>The state space consists of positional values of different body parts of the pendulum system,
-followed by the velocities of those individual parts (their derivatives) with all the
-positions ordered before all the velocities.</p>
-<p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(9,)</span></code> where the elements correspond to the following:</p>
+<p>The observation space consists of the following parts (in order):</p>
+<ul class="simple">
+<li><p><em>qpos (1 element):</em> Position values of the robot’s cart.</p></li>
+<li><p><em>sin(qpos) (2 elements):</em> The sine of the angles of poles.</p></li>
+<li><p><em>cos(qpos) (2 elements):</em> The cosine of the angles of poles.</p></li>
+<li><p><em>qvel (3 elements):</em> The velocities of these individual body parts (their derivatives).</p></li>
+<li><p><em>qfrc_constraint (1 element):</em> Constraint force of the cart.
+There is one constraint force for contacts for each degree of freedom (3).
+The approach and handling of constraints by MuJoCo is unique to the simulator and is based on their research.
+More information can be found  in their <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/computation.html"><em>documentation</em></a> or in their paper <a class="reference external" href="https://homes.cs.washington.edu/~todorov/papers/TodorovICRA14.pdf">“Analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo”</a>.</p></li>
+</ul>
+<p>The observation space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(9,),</span> <span class="pre">float64)</span></code> where the elements are as follows:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -660,7 +637,7 @@ positions ordered before all the velocities.</p>
 <td><p>constraint force - y</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
-<td><p>hinge</p></td>
+<td><p>slider</p></td>
 <td><p>slide</p></td>
 <td><p>Force (N)</p></td>
 </tr>
@@ -668,28 +645,21 @@ positions ordered before all the velocities.</p>
 <td><p>constraint force - z</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
-<td><p>hinge2</p></td>
+<td><p>slider</p></td>
 <td><p>slide</p></td>
 <td><p>Force (N)</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>There is physical contact between the robots and their environment - and Mujoco
-attempts at getting realistic physics simulations for the possible physical contact
-dynamics by aiming for physical accuracy and computational efficiency.</p>
-<p>There is one constraint force for contacts for each degree of freedom (3).
-The approach and handling of constraints by Mujoco is unique to the simulator and is based on their research.
-Once can find more information in their <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/computation.html"><em>documentation</em></a>
-or in their paper <a class="reference external" href="https://homes.cs.washington.edu/~todorov/papers/TodorovICRA14.pdf">“Analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo”</a>.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
 <p>The total reward is: <em><strong>reward</strong></em> <em>=</em> <em>alive_bonus - distance_penalty - velocity_penalty</em>.</p>
 <ul class="simple">
 <li><p><em>alive_bonus</em>:
-The goal is to keep the second inverted pendulum upright (within a certain angle limit) as long as possible -
-so for each timestep that the second pole is upright, a reward of <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> is given.</p></li>
+Every timestep that the Inverted Pendulum is healthy (see definition in section “Episode End”),
+it gets a reward of fixed value <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> (default is <span class="math notranslate nohighlight">\(10\)</span>).</p></li>
 <li><p><em>distance_penalty</em>:
 This reward is a measure of how far the <em>tip</em> of the second pendulum (the only free end) moves,
 and it is calculated as <span class="math notranslate nohighlight">\(0.01 x_{pole2-tip}^2 + (y_{pole2-tip}-2)^2\)</span>,
@@ -703,7 +673,7 @@ where <span class="math notranslate nohighlight">\(\omega_1, \omega_2\)</span> a
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
-<p>The initial position state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale \times 1_{3}, reset\_noise\_scale \times 1_{3}]}\)</span>.
+<p>The initial position state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale \times I_{3}, reset\_noise\_scale \times I_{3}]}\)</span>.
 The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{N}(0_{3}, reset\_noise\_scale^2 \times I_{3})\)</span>.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> is the multivariate normal distribution and <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 </section>
@@ -718,7 +688,7 @@ The Inverted Double Pendulum is unhealthy if any of the following happens:</p>
 </section>
 <section id="truncation">
 <h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
-<p>The default duration of an episode is 1000 timesteps</p>
+<p>The default duration of an episode is 1000 timesteps.</p>
 </section>
 </section>
 <section id="arguments">
@@ -746,13 +716,13 @@ These parameters can be applied during <code class="docutils literal notranslate
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code></p></td>
 <td><p><strong>float</strong></p></td>
-<td><p>`10</p></td>
-<td><p>Constant reward given if the pendulum is “healthy” (upright)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p>Constant reward given if the pendulum is <code class="docutils literal notranslate"><span class="pre">healthy</span></code> (upright) (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
-<td><p>Scale of random perturbations of initial position and velocity (see section on Starting State)</p></td>
+<td><p>Scale of random perturbations of initial position and velocity (see <code class="docutils literal notranslate"><span class="pre">Starting</span> <span class="pre">State</span></code> section)</p></td>
 </tr>
 </tbody>
 </table>
@@ -766,19 +736,19 @@ These parameters can be applied during <code class="docutils literal notranslate
 <li><p>Minimum <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> version is now 2.3.3.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code> argument, a dictionary for setting the <code class="docutils literal notranslate"><span class="pre">mj_camera</span></code> properties, mainly useful for custom environments.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> argument, used to configure the <code class="docutils literal notranslate"><span class="pre">dt</span></code> (duration of <code class="docutils literal notranslate"><span class="pre">step()</span></code>), default varies by environment check environment documentation pages.</p></li>
-<li><p>Fixed bug: <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> was given on every step (even if the Pendulum is unhealthy), now it is only given if the DoublePendulum is healthy (not terminated)(related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/500">Github issue</a>).</p></li>
-<li><p>Excluded the <code class="docutils literal notranslate"><span class="pre">qfrc_constraint</span></code> (“constraint force”) of the hinges from the observation space (as it was always 0, thus providing no useful information to the agent, resulting is slightly faster training) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/228">Github issue</a>).</p></li>
+<li><p>Fixed bug: <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> was given on every step (even if the Pendulum is unhealthy), now it is only given if the DoublePendulum is healthy (not terminated)(related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/500">GitHub issue</a>).</p></li>
+<li><p>Excluded the <code class="docutils literal notranslate"><span class="pre">qfrc_constraint</span></code> (“constraint force”) of the hinges from the observation space (as it was always 0, thus providing no useful information to the agent, resulting in slightly faster training) (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/228">GitHub issue</a>).</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument.</p></li>
-<li><p>Added <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code> argument, to set the range of initial states.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code> argument to set the range of initial states.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> argument to configure the reward function (defaults are effectively the same as in <code class="docutils literal notranslate"><span class="pre">v4</span></code>).</p></li>
 <li><p>Added individual reward terms in <code class="docutils literal notranslate"><span class="pre">info</span></code> ( <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_survive&quot;]</span></code>, <code class="docutils literal notranslate"><span class="pre">info[&quot;distance_penalty&quot;]</span></code>, <code class="docutils literal notranslate"><span class="pre">info[&quot;velocity_penalty&quot;]</span></code>).</p></li>
 </ul>
 </li>
-<li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1.3</p></li>
+<li><p>v4: All MuJoCo environments now use the MuJoCo bindings in mujoco &gt;= 2.1.3.</p></li>
 <li><p>v3: This environment does not have a v3 release.</p></li>
-<li><p>v2: All continuous control environments now use mujoco-py &gt;= 1.50</p></li>
-<li><p>v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum)</p></li>
-<li><p>v0: Initial versions release (1.0.0)</p></li>
+<li><p>v2: All continuous control environments now use mujoco-py &gt;= 1.50.</p></li>
+<li><p>v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum).</p></li>
+<li><p>v0: Initial versions release (1.0.0).</p></li>
 </ul>
 </section>
 </section>
