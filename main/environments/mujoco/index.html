@@ -620,19 +620,124 @@
 </div>
 
     
-<p>MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for facilitating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.</p>
-<p>The unique dependencies for this set of environments can be installed via:</p>
+<p>MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for facilitating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.
+There is physical contact between the robots and their environment - and MuJoCo attempts at getting realistic physics simulations for the possible physical contact dynamics by aiming for physical accuracy and computational efficiency.</p>
+<p>The unique dependencies including the MuJoCo simlator for this set of environments can be installed via:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="o">[</span>mujoco<span class="o">]</span>
 </pre></div>
 </div>
-<p>These environments also require that the MuJoCo engine be installed. As of October 2021 DeepMind has acquired MuJoCo and is open-sourcing it in 2022, making it free for everyone. Instructions on installing the MuJoCo engine can be found on their <a class="reference external" href="https://mujoco.org">website</a> and <a class="reference external" href="https://github.com/deepmind/mujoco">GitHub repository</a>. Using MuJoCo with Gymnasium also requires that the framework <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> be installed (this dependency is installed with the above command).</p>
-<p>For MuJoCo V3 environments and older the <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework is required (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">mujoco-py</span></code>) which can be found in the <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub repository</a></p>
-<p>There are eleven Mujoco environments: Ant, HalfCheetah, Hopper, Humanoid, HumanoidStandup, InvertedDoublePendulum, InvertedPendulum, Pusher, Reacher, Swimmer, and Walker2d. All of these environments are stochastic in terms of their initial state, with a Gaussian noise added to a fixed initial state in order to add stochasticity. The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: a position of a body part (’<em>mujoco-py.mjsim.qpos</em>’) or joint and its corresponding velocity (’<em>mujoco-py.mjsim.qvel</em>’). Often, some of the first positional elements are omitted from the state space since the reward is calculated based on their values, leaving it up to the algorithm to infer those hidden values indirectly.</p>
-<p>Among Gymnasium environments, this set of environments can be considered as more difficult ones to solve by a policy.</p>
-<p>Environments can be configured by changing the XML files or by tweaking the parameters of their classes.</p>
+<p>As of October 2021, DeepMind has acquired MuJoCo and has open-sourced it in 2022, making it free for everyone.
+Using MuJoCo with Gymnasium requires the framework <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> be installed (this dependency is installed with the above command).
+Instructions for installing the MuJoCo engine can be found on their <a class="reference external" href="https://mujoco.org">website</a> and <a class="reference external" href="https://github.com/deepmind/mujoco">GitHub repository</a>.</p>
+<p>For MuJoCo <code class="docutils literal notranslate"><span class="pre">v3</span></code> environments and older the <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework is required (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[mujoco-py]</span></code>) which can be found in the <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub repository</a>.</p>
+<p>There are eleven MuJoCo environments (in roughly increasing complexity):</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Robot</p></th>
+<th class="head"><p>Short Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>CartPoles</strong></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>InvertedPendulum</p></td>
+<td><p>MuJuCo version of the CartPole Environment (with Continuous actions)</p></td>
+</tr>
+<tr class="row-even"><td><p>InvertedDoublePendulum</p></td>
+<td><p>2 Pole variation of the CartPole Environment</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Arms</strong></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Reacher</p></td>
+<td><p>2d arm with the goal of reaching an object</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pusher</p></td>
+<td><p>3d arm with the goal of pushing an object to a target location</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>2D Runners</strong></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>HalfCheetah</p></td>
+<td><p>2d quadruped with the goal of running</p></td>
+</tr>
+<tr class="row-even"><td><p>Hopper</p></td>
+<td><p>2d monoped with the goal of goal of hopping</p></td>
+</tr>
+<tr class="row-odd"><td><p>Walker2d</p></td>
+<td><p>2d bidped with the goal of walking</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Swimmers</strong></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Swimmer</p></td>
+<td><p>3d robot with the goal of swimming</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Quarduped</strong></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Ant</p></td>
+<td><p>3d quadurped with the goal of running</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Humanoid Bipeds</strong></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Humanoid</p></td>
+<td><p>3d humanoid with the goal of running</p></td>
+</tr>
+<tr class="row-even"><td><p>HumanoidStandup</p></td>
+<td><p>3d humanoid with the goal of standing up</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>All of these environments are stochastic in terms of their initial state, with a Gaussian noise added to a fixed initial state in order to add stochasticity.
+The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: the position of the body part and joints (<code class="docutils literal notranslate"><span class="pre">mujoco.MjData.qpos</span></code>) and their corresponding velocity (<code class="docutils literal notranslate"><span class="pre">mujoco.MjData.qvel</span></code>) (more information in the <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#physics-state">MuJoCo Physics State Documentation</a>).</p>
+<!--
+Often some of the first positional elements are omitted from the state space since the reward is calculated based on their values, leaving it up to the algorithm to infer these hidden values indirectly.
+-->
+<p>Among the Gymnasium environments, this set of environments can be considered as more difficult to solve by policy.</p>
+<p>Environments can be configured by changing the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument and/or by tweaking the parameters of their classes.</p>
+<section id="versions">
+<h2>Versions<a class="headerlink" href="#versions" title="Link to this heading">#</a></h2>
+<p>Gymnasium includes the following versions of the environments:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Version</p></th>
+<th class="head"><p>Simulator</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">v5</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.3.3</span></code></p></td>
+<td><p>Recommended (most features, the least bugs)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">v4</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.1.3</span></code></p></td>
+<td><p>Maintained for reproducibility</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">v3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
+<td><p>Maintained for reproducibility (limited support)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">v2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
+<td><p>Maintained for reproducibility (limited support)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For more information, see the section “Version History” for each environment.</p>
+<p><code class="docutils literal notranslate"><span class="pre">v1</span></code> and older are no longer included in Gymnasium.</p>
+<p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code>  versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>)</p>
+</section>
 <section id="rendering-arguments">
 <h2>Rendering Arguments<a class="headerlink" href="#rendering-arguments" title="Link to this heading">#</a></h2>
-<p>The all MuJoCo Environments besides the general Gymnasium arguments and environment specific arguments they also take the following arguments for configuring the renderer:</p>
+<p>The all MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1280</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -649,36 +754,40 @@
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">width</span></code></p></td>
 <td><p><strong>int</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">480</span></code></p></td>
-<td><p>The width of the render window.</p></td>
+<td><p>The width of the render window</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
 <td><p><strong>int</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">480</span></code></p></td>
-<td><p>The width of the render window.</p></td>
+<td><p>The height of the render window</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">camera_id</span></code></p></td>
 <td><p><strong>int | None</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>The camera ID used for the render window.</p></td>
+<td><p>The camera ID used for the render window</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">camera_name</span></code></p></td>
 <td><p><strong>str | None</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>The name of the camera used (mutally exclusive option with <code class="docutils literal notranslate"><span class="pre">camera_id</span></code>).</p></td>
+<td><p>The name of the camera used for the render window (mutally exclusive option with <code class="docutils literal notranslate"><span class="pre">camera_id</span></code>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code></p></td>
-<td><p><strong>Dict[str, Union[float, int]] | None</strong></p></td>
+<td><p><strong>dict[str, float | int] | None</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>The <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html?highlight=camera#mjvcamera">mjvcamera</a> properties.</p></td>
+<td><p>The <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjvcamera">mjvCamera</a> properties</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_geom</span></code></p></td>
 <td><p><strong>int</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
-<td><p>Max number of geometrical objects to render (useful for 3rd-party environments).</p></td>
+<td><p>Max number of geometrical objects to render (useful for 3rd-party environments)</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<!--
+## Custom Models
+For more complex locomotion robot environments you can use third party models with the environments.
+-->
 </section>
 </section>
 
@@ -730,6 +839,7 @@
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">MuJoCo</a><ul>
+<li><a class="reference internal" href="#versions">Versions</a></li>
 <li><a class="reference internal" href="#rendering-arguments">Rendering Arguments</a></li>
 </ul>
 </li>
