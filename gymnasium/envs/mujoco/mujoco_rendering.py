@@ -619,9 +619,6 @@ class WindowViewer(BaseRender):
                 bottomleft, "Solver iterations", str(self.data.solver_iter + 1)
             )
         self.add_overlay(
-            bottomleft, "Solver iterations", str(self.data.solver_niter[0] + 1)
-        )
-        self.add_overlay(
             bottomleft, "Step", str(round(self.data.time / self.model.opt.timestep))
         )
         self.add_overlay(bottomleft, "timestep", "%.5f" % self.model.opt.timestep)
