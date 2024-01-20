@@ -471,8 +471,10 @@
             
             <h1>Source code for gymnasium.utils.save_video</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility functions to save rendering videos.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">logger</span>
@@ -513,10 +515,11 @@
     <span class="n">video_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">episode_trigger</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_trigger</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">video_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">video_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rl-video&quot;</span><span class="p">,</span>
     <span class="n">episode_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">step_starting_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">save_logger</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Save videos from rendering frames.</span>
@@ -533,6 +536,7 @@
 <span class="sd">        name_prefix (str): Will be prepended to the filename of the recordings.</span>
 <span class="sd">        episode_index (int): The index of the current episode.</span>
 <span class="sd">        step_starting_index (int): The step index of the first frame.</span>
+<span class="sd">        save_logger: If to log the video saving progress, helpful for long videos that take a while, use &quot;bar&quot; to enable.</span>
 <span class="sd">        **kwargs: The kwargs that will be passed to moviepy&#39;s ImageSequenceClip.</span>
 <span class="sd">            You need to specify either fps or duration.</span>
 
@@ -549,8 +553,8 @@
 <span class="sd">        ...</span>
 <span class="sd">        ...    if terminated or truncated:</span>
 <span class="sd">        ...       save_video(</span>
-<span class="sd">        ...          env.render(),</span>
-<span class="sd">        ...          &quot;videos&quot;,</span>
+<span class="sd">        ...          frames=env.render(),</span>
+<span class="sd">        ...          video_folder=&quot;videos&quot;,</span>
 <span class="sd">        ...          fps=env.metadata[&quot;render_fps&quot;],</span>
 <span class="sd">        ...          step_starting_index=step_starting_index,</span>
 <span class="sd">        ...          episode_index=episode_index</span>
@@ -571,7 +575,9 @@
 
     <span class="k">if</span> <span class="n">episode_trigger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">episode_trigger</span><span class="p">(</span><span class="n">episode_index</span><span class="p">):</span>
         <span class="n">clip</span> <span class="o">=</span> <span class="n">ImageSequenceClip</span><span class="p">(</span><span class="n">frames</span><span class="p">[:</span><span class="n">video_length</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">clip</span><span class="o">.</span><span class="n">write_videofile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_prefix</span><span class="si">}</span><span class="s2">-episode-</span><span class="si">{</span><span class="n">episode_index</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">)</span>
+        <span class="n">clip</span><span class="o">.</span><span class="n">write_videofile</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_prefix</span><span class="si">}</span><span class="s2">-episode-</span><span class="si">{</span><span class="n">episode_index</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">save_logger</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">step_trigger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># skip the first frame since it comes from reset</span>
@@ -583,7 +589,9 @@
                     <span class="n">frame_index</span> <span class="o">+</span> <span class="n">video_length</span> <span class="k">if</span> <span class="n">video_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="p">)</span>
                 <span class="n">clip</span> <span class="o">=</span> <span class="n">ImageSequenceClip</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">frame_index</span><span class="p">:</span><span class="n">end_index</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">clip</span><span class="o">.</span><span class="n">write_videofile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_prefix</span><span class="si">}</span><span class="s2">-step-</span><span class="si">{</span><span class="n">step_index</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">)</span></div>
+                <span class="n">clip</span><span class="o">.</span><span class="n">write_videofile</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_prefix</span><span class="si">}</span><span class="s2">-step-</span><span class="si">{</span><span class="n">step_index</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">save_logger</span>
+                <span class="p">)</span></div>
 
 </pre></div>
           </article>
