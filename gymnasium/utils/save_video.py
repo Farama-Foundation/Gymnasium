@@ -1,6 +1,8 @@
 """Utility functions to save rendering videos."""
+from __future__ import annotations
+
 import os
-from typing import Callable, Optional
+from typing import Callable
 
 import gymnasium as gym
 from gymnasium import logger
@@ -36,10 +38,11 @@ def save_video(
     video_folder: str,
     episode_trigger: Callable[[int], bool] = None,
     step_trigger: Callable[[int], bool] = None,
-    video_length: Optional[int] = None,
+    video_length: int | None = None,
     name_prefix: str = "rl-video",
     episode_index: int = 0,
     step_starting_index: int = 0,
+    save_logger: str | None = None,
     **kwargs,
 ):
     """Save videos from rendering frames.
@@ -56,6 +59,7 @@ def save_video(
         name_prefix (str): Will be prepended to the filename of the recordings.
         episode_index (int): The index of the current episode.
         step_starting_index (int): The step index of the first frame.
+        save_logger: If to log the video saving progress, helpful for long videos that take a while, use "bar" to enable.
         **kwargs: The kwargs that will be passed to moviepy's ImageSequenceClip.
             You need to specify either fps or duration.
 
@@ -72,8 +76,8 @@ def save_video(
         ...
         ...    if terminated or truncated:
         ...       save_video(
-        ...          env.render(),
-        ...          "videos",
+        ...          frames=env.render(),
+        ...          video_folder="videos",
         ...          fps=env.metadata["render_fps"],
         ...          step_starting_index=step_starting_index,
         ...          episode_index=episode_index
@@ -94,7 +98,9 @@ def save_video(
 
     if episode_trigger is not None and episode_trigger(episode_index):
         clip = ImageSequenceClip(frames[:video_length], **kwargs)
-        clip.write_videofile(f"{path_prefix}-episode-{episode_index}.mp4")
+        clip.write_videofile(
+            f"{path_prefix}-episode-{episode_index}.mp4", logger=save_logger
+        )
 
     if step_trigger is not None:
         # skip the first frame since it comes from reset
@@ -106,4 +112,6 @@ def save_video(
                     frame_index + video_length if video_length is not None else None
                 )
                 clip = ImageSequenceClip(frames[frame_index:end_index], **kwargs)
-                clip.write_videofile(f"{path_prefix}-step-{step_index}.mp4")
+                clip.write_videofile(
+                    f"{path_prefix}-step-{step_index}.mp4", logger=save_logger
+                )
