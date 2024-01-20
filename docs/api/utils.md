@@ -20,7 +20,12 @@ title: Utility functions
 
 ```{eval-rst}
 .. autofunction:: gymnasium.utils.play.play
+.. autoclass:: gymnasium.utils.play.PlayPlot
+
+    .. automethod:: callback
+
 .. autoclass:: gymnasium.utils.play.PlayableGame
+
     .. automethod:: process_event
 ```
 
