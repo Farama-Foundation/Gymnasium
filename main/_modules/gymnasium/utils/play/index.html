@@ -482,7 +482,6 @@
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Env</span><span class="p">,</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span> <span class="nn">gymnasium.error</span> <span class="kn">import</span> <span class="n">DependencyNotInstalled</span>
-<span class="kn">from</span> <span class="nn">gymnasium.logger</span> <span class="kn">import</span> <span class="n">deprecation</span>
 
 
 <span class="k">try</span><span class="p">:</span>
@@ -823,9 +822,6 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            DependencyNotInstalled: If matplotlib is not installed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">deprecation</span><span class="p">(</span>
-            <span class="s2">&quot;`PlayPlot` is marked as deprecated and will be removed in the near future.&quot;</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span> <span class="o">=</span> <span class="n">callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">horizon_timesteps</span> <span class="o">=</span> <span class="n">horizon_timesteps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_names</span> <span class="o">=</span> <span class="n">plot_names</span>
