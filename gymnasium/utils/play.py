@@ -10,7 +10,6 @@ import gymnasium as gym
 from gymnasium import Env, logger
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.logger import deprecation
 
 
 try:
@@ -340,9 +339,6 @@ class PlayPlot:
         Raises:
             DependencyNotInstalled: If matplotlib is not installed
         """
-        deprecation(
-            "`PlayPlot` is marked as deprecated and will be removed in the near future."
-        )
         self.data_callback = callback
         self.horizon_timesteps = horizon_timesteps
         self.plot_names = plot_names
