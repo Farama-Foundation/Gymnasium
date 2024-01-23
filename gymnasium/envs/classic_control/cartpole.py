@@ -473,6 +473,7 @@ class CartPoleVectorEnv(VectorEnv):
             low=self.low, high=self.high, size=(4, self.num_envs)
         ).astype(np.float32)
         self.steps_beyond_terminated = None
+        self.steps = np.zeros(self.num_envs, dtype=np.int32)
 
         if self.render_mode == "human":
             self.render()
