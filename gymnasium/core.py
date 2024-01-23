@@ -310,6 +310,11 @@ class Wrapper(
         return self.env.close()
 
     @property
+    def seed(self) -> int | None:
+        """Returns the base enviroment's :attr:`seed`."""
+        return self.env.seed
+
+    @property
     def unwrapped(self) -> Env[ObsType, ActType]:
         """Returns the base environment of the wrapper.
 
