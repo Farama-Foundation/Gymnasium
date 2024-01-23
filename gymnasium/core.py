@@ -66,6 +66,7 @@ class Env(Generic[ObsType, ActType]):
 
     # Created
     _np_random: np.random.Generator | None = None
+    _seed: int | None = None
 
     def step(
         self, action: ActType
@@ -148,7 +149,7 @@ class Env(Generic[ObsType, ActType]):
         """
         # Initialize the RNG if the seed is manually passed
         if seed is not None:
-            self._np_random, seed = seeding.np_random(seed)
+            self._np_random, self._seed = seeding.np_random(seed)
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Compute the render frames as specified by :attr:`render_mode` during the initialization of the environment.
@@ -202,6 +203,11 @@ class Env(Generic[ObsType, ActType]):
         return self
 
     @property
+    def seed(self) -> int | None:
+        """Returns the environment's internal :attr:`_seed` that if not set will initialise with a random seed."""
+        return self._seed
+
+    @property
     def np_random(self) -> np.random.Generator:
         """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
 
@@ -209,7 +215,7 @@ class Env(Generic[ObsType, ActType]):
             Instances of `np.random.Generator`
         """
         if self._np_random is None:
-            self._np_random, _ = seeding.np_random()
+            self._np_random, self._seed = seeding.np_random()
         return self._np_random
 
     @np_random.setter
