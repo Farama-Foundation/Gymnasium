@@ -96,15 +96,17 @@ class AcrobotEnv(Env):
 
     ## Arguments
 
-    No additional arguments are currently supported during construction.
+    Acrobot only has ``render_mode`` as a keyword for ``gymnasium.make``.
+    On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
     ```python
-    import gymnasium as gym
-    env = gym.make('Acrobot-v1')
+    >>> import gymnasium as gym
+    >>> env = gym.make('Acrobot-v1', render_mode="rgb_array")
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<AcrobotEnv<Acrobot-v1>>>>>
+    >>> env.reset(seed=123, options={"low": -0.2, "high": 0.2})  # default low=-0.1, high=0.1
+    (array([ 0.997341  ,  0.07287608,  0.9841162 , -0.17752565, -0.11185605,
+       -0.12625128], dtype=float32), {})
     ```
-
-    On reset, the `options` parameter allows the user to change the bounds used to determine
-    the new random state.
 
     By default, the dynamics of the acrobot follow those described in Sutton and Barto's book
     [Reinforcement Learning: An Introduction](http://incompleteideas.net/book/11/node4.html).
@@ -124,7 +126,6 @@ class AcrobotEnv(Env):
             generated with the equations shown in the book.
             However, there is the option to run the domain with the paper equations
             by setting `book_or_nips = 'nips'`
-
 
     ## Version History
 

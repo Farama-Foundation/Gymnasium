@@ -80,16 +80,19 @@ class MountainCarEnv(gym.Env):
     1. Termination: The position of the car is greater than or equal to 0.5 (the goal position on top of the right hill)
     2. Truncation: The length of the episode is 200.
 
-
     ## Arguments
 
-    ```python
-    import gymnasium as gym
-    gym.make('MountainCar-v0')
-    ```
+    Mountain Car has two parameters for ``gymnasium.make`` with ``render_mode`` and ``goal_velocity``.
+    On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
-    On reset, the `options` parameter allows the user to change the bounds used to determine
-    the new random state.
+    ```python
+    >>> import gymnasium as gym
+    >>> env = gym.make("MountainCar-v0", render_mode="rgb_array", goal_velocity=0.1)  # default goal_velocity=0
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<PendulumEnv<Pendulum-v1>>>>>
+    >>> env.reset(seed=123, options={"x_init": np.pi/2, "y_init": 0.5})  # default x_init=np.pi, y_init=1.0
+    (array([ 0.8403459 ,  0.54205054, -0.44617897], dtype=float32), {})
+    ```
 
     ## Version History
 

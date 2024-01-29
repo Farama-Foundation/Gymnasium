@@ -91,13 +91,17 @@ class Continuous_MountainCarEnv(gym.Env):
 
     ## Arguments
 
-    ```python
-    import gymnasium as gym
-    gym.make('MountainCarContinuous-v0')
-    ```
+    Continuous Mountain Car has two parameters for ``gymnasium.make`` with ``render_mode`` and ``goal_velocity``.
+    On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
-    On reset, the `options` parameter allows the user to change the bounds used to determine
-    the new random state.
+    ```python
+    >>> import gymnasium as gym
+    >>> env = gym.make("MountainCarContinuous-v0", render_mode="rgb_array", goal_velocity=0.1)  # default goal_velocity=0
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<Continuous_MountainCarEnv<MountainCarContinuous-v0>>>>>
+    >>> env.reset(seed=123, options={"low": -0.7, "high": -0.5})  # default low=-0.6, high=-0.4
+    (array([-0.5635296,  0.       ], dtype=float32), {})
+    ```
 
     ## Version History
 
