@@ -152,7 +152,7 @@ class Env(Generic[ObsType, ActType]):
         """
         # Initialize the RNG if the seed is manually passed
         if seed is not None:
-            self.set_np_random_through_seed(seed)
+            self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Compute the render frames as specified by :attr:`render_mode` during the initialization of the environment.
@@ -211,6 +211,9 @@ class Env(Generic[ObsType, ActType]):
 
         If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
         the seed will take the value -1.
+
+        Returns:
+            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
         """
         if self._np_random_seed is None:
             self._np_random, self._np_random_seed = seeding.np_random()
@@ -250,15 +253,6 @@ class Env(Generic[ObsType, ActType]):
         else:
             return f"<{type(self).__name__}<{self.spec.id}>>"
 
-    def set_np_random_through_seed(self, seed: int):
-        """Sets the environment's properties :attr:`np_random` and :attr:`np_random_seed` through a seed.
-
-        This is the same mechanism for setting these properties as :meth:`reset`. However,
-        it is different from setting the np_random property directly, in which case the seed will be set
-        to `-1`, since it is generally not possible to extract a seed from an instance of a
-        random number generator.
-        """
-        self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def __enter__(self):
         """Support with-statement for the environment."""
@@ -338,7 +332,7 @@ class Wrapper(
 
     @property
     def np_random_seed(self) -> int | None:
-        """Returns the base enviroment's :attr:`seed`."""
+        """Returns the base enviroment's :attr:`np_random_seed`."""
         return self.env.np_random_seed
 
     @property

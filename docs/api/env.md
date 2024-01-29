@@ -54,6 +54,7 @@ title: Env
 
 .. autoproperty:: gymnasium.Env.unwrapped
 .. autoproperty:: gymnasium.Env.np_random
+.. autoproperty:: gymnasium.Env.np_random_seed
 ```
 
 ## Implementing environments

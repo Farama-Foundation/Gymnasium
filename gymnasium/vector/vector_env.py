@@ -104,6 +104,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     num_envs: int
 
     _np_random: np.random.Generator | None = None
+    _np_random_seed: int | None = None
 
     def reset(
         self,
@@ -133,7 +134,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             {}
         """
         if seed is not None:
-            self._np_random, seed = seeding.np_random(seed)
+            self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def step(
         self, actions: ActType
@@ -211,6 +212,20 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         pass
 
     @property
+    def np_random_seed(self) -> int | None:
+        """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
+
+        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
+        the seed will take the value -1.
+
+        Returns:
+            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
+        """
+        if self._np_random_seed is None:
+            self._np_random, self._np_random_seed = seeding.np_random()
+        return self._np_random_seed
+
+    @property
     def np_random(self) -> np.random.Generator:
         """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
 
@@ -218,7 +233,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             Instances of `np.random.Generator`
         """
         if self._np_random is None:
-            self._np_random, seed = seeding.np_random()
+            self._np_random, self._np_random_seed = seeding.np_random()
         return self._np_random
 
     @np_random.setter

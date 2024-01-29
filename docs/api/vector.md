@@ -67,6 +67,7 @@ vector/utils
 ```{eval-rst}
 .. autoproperty:: gymnasium.vector.VectorEnv.unwrapped
 .. autoproperty:: gymnasium.vector.VectorEnv.np_random
+.. autoproperty:: gymnasium.vector.VectorEnv.np_random_seed
 ```
 
 ## Making Vector Environments
