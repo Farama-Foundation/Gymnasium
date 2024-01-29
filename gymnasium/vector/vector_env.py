@@ -239,6 +239,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     @np_random.setter
     def np_random(self, value: np.random.Generator):
         self._np_random = value
+        self._np_random_seed = -1
 
     @property
     def unwrapped(self):
