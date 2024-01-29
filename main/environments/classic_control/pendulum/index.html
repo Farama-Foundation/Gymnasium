@@ -586,21 +586,27 @@ while the maximum reward is zero (pendulum is upright with zero velocity and no 
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">g</span></code>: acceleration of gravity measured in <em>(m s<sup>-2</sup>)</em> used to calculate the pendulum dynamics.
-The default value is g = 10.0 .</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">g</span></code>: .</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Pendulum-v1&#39;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">)</span>
+<p>Pendulum has two parameters for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> with <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> and <code class="docutils literal notranslate"><span class="pre">g</span></code> representing
+the acceleration of gravity measured in <em>(m s<sup>-2</sup>)</em> used to calculate the pendulum dynamics.
+The default value is <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span> <span class="pre">10.0</span></code>.
+On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">)</span>  <span class="c1"># default g=10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;PendulumEnv&lt;Pendulum-v1&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;low&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>  <span class="c1"># default low=-0.6, high=-0.5</span>
+<span class="go">(array([ 0.4123625 ,  0.91101986, -0.89235795], dtype=float32), {})</span>
+
 </pre></div>
 </div>
-<p>On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine
-the new random state.</p>
 </section>
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v1: Simplify the math equations, no difference in behavior.</p></li>
-<li><p>v0: Initial versions release (1.0.0)</p></li>
+<li><p>v0: Initial versions release</p></li>
 </ul>
 </section>
 </section>

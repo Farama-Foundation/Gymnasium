@@ -618,13 +618,18 @@ uniformly between -0.1 and 0.1. This means both links are pointing downwards wit
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
-<p>No additional arguments are currently supported during construction.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Acrobot-v1&#39;</span><span class="p">)</span>
+<p>Acrobot only has <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> as a keyword for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.
+On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Acrobot-v1&#39;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;AcrobotEnv&lt;Acrobot-v1&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;low&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>  <span class="c1"># default low=-0.1, high=0.1</span>
+<span class="go">(array([ 0.997341  ,  0.07287608,  0.9841162 , -0.17752565, -0.11185605,</span>
+<span class="go">       -0.12625128], dtype=float32), {})</span>
+
 </pre></div>
 </div>
-<p>On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine
-the new random state.</p>
 <p>By default, the dynamics of the acrobot follow those described in Sutton and Barto’s book
 <a class="reference external" href="http://incompleteideas.net/book/11/node4.html">Reinforcement Learning: An Introduction</a>.
 However, a <code class="docutils literal notranslate"><span class="pre">book_or_nips</span></code> parameter can be modified to change the pendulum dynamics to those described
@@ -635,11 +640,9 @@ in the original <a class="reference external" href="https://papers.nips.cc/paper
 </div>
 <p>See the following note for details:</p>
 <blockquote>
-<div><p>The dynamics equations were missing some terms in the NIPS paper which
-are present in the book. R. Sutton confirmed in personal correspondence
-that the experimental results shown in the paper and the book were
-generated with the equations shown in the book.
-However, there is the option to run the domain with the paper equations
+<div><p>The dynamics equations were missing some terms in the NIPS paper which are present in the book.
+R. Sutton confirmed in personal correspondence that the experimental results shown in the paper and the book were
+generated with the equations shown in the book. However, there is the option to run the domain with the paper equations
 by setting <code class="docutils literal notranslate"><span class="pre">book_or_nips</span> <span class="pre">=</span> <span class="pre">'nips'</span></code></p>
 </div></blockquote>
 </section>
@@ -649,7 +652,7 @@ by setting <code class="docutils literal notranslate"><span class="pre">book_or_
 <li><p>v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
 <code class="docutils literal notranslate"><span class="pre">theta1</span></code> and <code class="docutils literal notranslate"><span class="pre">theta2</span></code> in radians, having a range of <code class="docutils literal notranslate"><span class="pre">[-pi,</span> <span class="pre">pi]</span></code>. The v1 observation space as described here provides the
 sine and cosine of each angle instead.</p></li>
-<li><p>v0: Initial versions release (1.0.0) (removed from gymnasium for v1)</p></li>
+<li><p>v0: Initial versions release</p></li>
 </ul>
 </section>
 <section id="references">
