@@ -59,7 +59,6 @@ class Box(Space[NDArray[Any]]):
         shape: Sequence[int] | None = None,
         dtype: type[np.floating[Any]] | type[np.integer[Any]] = np.float32,
         seed: int | np.random.Generator | None = None,
-        nullable: bool = False,
     ):
         r"""Constructor of :class:`Box`.
 
@@ -144,8 +143,6 @@ class Box(Space[NDArray[Any]]):
 
         self.low_repr = _short_repr(self.low)
         self.high_repr = _short_repr(self.high)
-
-        self.nullable = nullable
 
         super().__init__(self.shape, self.dtype, seed)
 
@@ -246,20 +243,12 @@ class Box(Space[NDArray[Any]]):
             except (ValueError, TypeError):
                 return False
 
-        if not np.can_cast(x.dtype, self.dtype):
-            return False
-
-        if x.shape != self.shape:
-            return False
-
-        bounded_below = x >= self.low
-        bounded_above = x <= self.high
-
-        bounded = bounded_below & bounded_above
-        if self.nullable:
-            bounded |= np.isnan(x)
-
-        return bool(np.all(bounded))
+        return bool(
+            np.can_cast(x.dtype, self.dtype)
+            and x.shape == self.shape
+            and np.all(x >= self.low)
+            and np.all(x <= self.high)
+        )
 
     def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[list]:
         """Convert a batch of samples from this space to a JSONable data type."""
@@ -300,9 +289,6 @@ class Box(Space[NDArray[Any]]):
 
         if not hasattr(self, "high_repr"):
             self.high_repr = _short_repr(self.high)
-
-        if not hasattr(self, "nullable"):
-            self.nullable = False
 
 
 def get_precision(dtype: np.dtype) -> SupportsFloat:

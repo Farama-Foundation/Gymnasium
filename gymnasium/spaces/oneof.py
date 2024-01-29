@@ -84,7 +84,7 @@ class OneOf(Space[Any]):
 
         return seeds
 
-    def sample(self, mask: tuple[Any | None, ...] | None = None) -> tuple[Any, ...]:
+    def sample(self, mask: tuple[Any | None, ...] | None = None) -> tuple[int, Any]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -108,7 +108,7 @@ class OneOf(Space[Any]):
 
             mask = mask[subspace_idx]
 
-        return (subspace_idx, subspace.sample(mask=mask))
+        return subspace_idx, subspace.sample(mask=mask)
 
     def contains(self, x: tuple[int, Any]) -> bool:
         """Return boolean specifying if x is a valid member of this space."""

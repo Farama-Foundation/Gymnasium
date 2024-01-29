@@ -16,7 +16,7 @@ from gymnasium.spaces import (
     MultiDiscrete,
     Sequence,
     Text,
-    Tuple,
+    Tuple, OneOf,
 )
 from gymnasium.spaces.space import T_cov
 
@@ -145,3 +145,8 @@ def _create_graph_zero_array(space: Graph):
         edges = np.expand_dims(create_zero_array(space.edge_space), axis=0)
         edge_links = np.zeros((1, 2), dtype=np.int64)
         return GraphInstance(nodes=nodes, edges=edges, edge_links=edge_links)
+
+
+@create_zero_array.register(OneOf)
+def _create_one_of_zero_array(space: OneOf):
+    return 0, create_zero_array(space.spaces[0])

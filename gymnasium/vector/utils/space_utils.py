@@ -122,16 +122,12 @@ def _batch_space_dict(space: Dict, n: int = 1):
     )
 
 
-@batch_space.register(OneOf)
-def _batch_space_oneof(space: OneOf, n: int = 1):
-    return Sequence(space)
-
-
 @batch_space.register(Graph)
 @batch_space.register(Text)
 @batch_space.register(Sequence)
+@batch_space.register(OneOf)
 @batch_space.register(Space)
-def _batch_space_custom(space: Graph | Text | Sequence, n: int = 1):
+def _batch_space_custom(space: Graph | Text | Sequence | OneOf, n: int = 1):
     # Without deepcopy, then the space.np_random is batched_space.spaces[0].np_random
     # Which is an issue if you are sampling actions of both the original space and the batched space
     batched_space = Tuple(
@@ -231,11 +227,6 @@ def _iterate_dict(space: Dict, items: dict[str, Any]):
     )
     for item in zip(*values):
         yield OrderedDict({key: value for key, value in zip(keys, item)})
-
-
-@iterate.register(Sequence)
-def _iterate_sequence(space: Sequence, items: list[Any]):
-    yield from items
 
 
 @singledispatch
@@ -348,7 +339,7 @@ def create_empty_array(
     )
 
 
-# It is possible for the some of the Box low to be greater than 0, then array is not in space
+# It is possible for some of the Box low to be greater than 0, then array is not in space
 @create_empty_array.register(Box)
 # If the Discrete start > 0 or start + length < 0 then array is not in space
 @create_empty_array.register(Discrete)
@@ -417,7 +408,6 @@ def _create_empty_array_sequence(
 @create_empty_array.register(OneOf)
 def _create_empty_array_oneof(space: OneOf, n: int = 1, fn=np.zeros):
     return tuple(tuple() for _ in range(n))
-
 
 @create_empty_array.register(Space)
 def _create_empty_array_custom(space, n=1, fn=np.zeros):
