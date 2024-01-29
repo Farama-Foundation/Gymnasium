@@ -78,18 +78,21 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
     Examples:
+    ```python
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env
         <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
         >>> env.reset(seed=123, options={"low": 0, "high": 1})
         (array([0.6823519 , 0.05382102, 0.22035988, 0.18437181], dtype=float32), {})
+    ```
 
     ## Vectorized environment
 
     To increase steps per seconds, users can use a custom vector environment or with an environment vectorizor.
 
     Examples:
+    ```python
         >>> import gymnasium as gym
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="vector_entry_point")
         >>> envs
@@ -97,6 +100,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
         >>> envs
         SyncVectorEnv(CartPole-v1, num_envs=3)
+    ```
     """
 
     metadata = {
