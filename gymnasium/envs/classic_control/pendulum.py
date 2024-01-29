@@ -75,24 +75,25 @@ class PendulumEnv(gym.Env):
 
     - `g`: .
 
-    Pendulum has two parameters for ``gymnasium.make`` with ``render_mode`` and ``g`` representing
+    Pendulum has two parameters for `gymnasium.make` with `render_mode` and `g` representing
     the acceleration of gravity measured in *(m s<sup>-2</sup>)* used to calculate the pendulum dynamics.
-    The default value is ``g = 10.0``.
+    The default value is `g = 10.0`.
     On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
     ```python
     >>> import gymnasium as gym
     >>> env = gym.make("Pendulum-v1", render_mode="rgb_array", g=9.81)  # default g=10.0
     >>> env
-    <TimeLimit<OrderEnforcing<PassiveEnvChecker<MountainCarEnv<MountainCar-v0>>>>>
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<PendulumEnv<Pendulum-v1>>>>>
     >>> env.reset(seed=123, options={"low": -0.7, "high": 0.5})  # default low=-0.6, high=-0.5
-    (array([-0.5635296,  0.       ], dtype=float32), {})
+    (array([ 0.4123625 ,  0.91101986, -0.89235795], dtype=float32), {})
+
     ```
 
     ## Version History
 
     * v1: Simplify the math equations, no difference in behavior.
-    * v0: Initial versions release (1.0.0)
+    * v0: Initial versions release
     """
 
     metadata = {

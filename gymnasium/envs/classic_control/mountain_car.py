@@ -82,21 +82,22 @@ class MountainCarEnv(gym.Env):
 
     ## Arguments
 
-    Mountain Car has two parameters for ``gymnasium.make`` with ``render_mode`` and ``goal_velocity``.
+    Mountain Car has two parameters for `gymnasium.make` with `render_mode` and `goal_velocity`.
     On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
     ```python
     >>> import gymnasium as gym
     >>> env = gym.make("MountainCar-v0", render_mode="rgb_array", goal_velocity=0.1)  # default goal_velocity=0
     >>> env
-    <TimeLimit<OrderEnforcing<PassiveEnvChecker<PendulumEnv<Pendulum-v1>>>>>
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<MountainCarEnv<MountainCar-v0>>>>>
     >>> env.reset(seed=123, options={"x_init": np.pi/2, "y_init": 0.5})  # default x_init=np.pi, y_init=1.0
-    (array([ 0.8403459 ,  0.54205054, -0.44617897], dtype=float32), {})
+    (array([-0.46352962,  0.        ], dtype=float32), {})
+
     ```
 
     ## Version History
 
-    * v0: Initial versions release (1.0.0)
+    * v0: Initial versions release
     """
 
     metadata = {

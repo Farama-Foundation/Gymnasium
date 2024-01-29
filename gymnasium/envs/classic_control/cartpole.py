@@ -74,7 +74,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     ## Arguments
 
-    Cartpole only has ``render_mode`` as a keyword for ``gymnasium.make``.
+    Cartpole only has `render_mode` as a keyword for `gymnasium.make`.
     On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
     ```python
@@ -84,6 +84,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
     >>> env.reset(seed=123, options={"low": -0.1, "high": 0.1})  # default low=-0.05, high=0.05
     (array([ 0.03647037, -0.0892358 , -0.05592803, -0.06312564], dtype=float32), {})
+
     ```
 
     ## Vectorized environment
@@ -98,6 +99,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
     >>> envs
     SyncVectorEnv(CartPole-v1, num_envs=3)
+
     ```
     """
 
