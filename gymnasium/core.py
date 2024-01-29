@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic, Literal, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
@@ -66,7 +66,8 @@ class Env(Generic[ObsType, ActType]):
 
     # Created
     _np_random: np.random.Generator | None = None
-    _np_random_seed: int | None | Literal["unknown"] = None
+    # will be set to the "invalid" value -1 if the seed of the currently set rng is unknown
+    _np_random_seed: int | None = None
 
     def step(
         self, action: ActType
@@ -205,11 +206,11 @@ class Env(Generic[ObsType, ActType]):
         return self
 
     @property
-    def np_random_seed(self) -> int | Literal["unknown"]:
+    def np_random_seed(self) -> int:
         """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
 
         If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
-        the seed will take the value "unknown".
+        the seed will take the value -1.
         """
         if self._np_random_seed is None:
             self._np_random, self._np_random_seed = seeding.np_random()
@@ -231,10 +232,12 @@ class Env(Generic[ObsType, ActType]):
         """Sets the environment's internal :attr:`_np_random` with the user-provided Generator.
 
         Since it is generally not possible to extract a seed from an instance of a random number generator,
-        this will also set the :attr:`_np_random_seed` to "unknown".
+        this will also set the :attr:`_np_random_seed` to `-1`, which is not valid as input for the creation
+        of a numpy rng.
         """
         self._np_random = value
-        self._np_random_seed = "unknown"
+        # Setting a numpy rng with -1 will cause a ValueError
+        self._np_random_seed = -1
 
     def __str__(self):
         """Returns a string of the environment with :attr:`spec` id's if :attr:`spec.
@@ -252,7 +255,7 @@ class Env(Generic[ObsType, ActType]):
 
         This is the same mechanism for setting these properties as :meth:`reset`. However,
         it is different from setting the np_random property directly, in which case the seed will be set
-        to "unknown", since it is generally not possible to extract a seed from an instance of a
+        to `-1`, since it is generally not possible to extract a seed from an instance of a
         random number generator.
         """
         self._np_random, self._np_random_seed = seeding.np_random(seed)
