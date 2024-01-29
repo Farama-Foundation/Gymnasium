@@ -504,7 +504,7 @@ racing environment. The generated track is random every episode.</p>
 state RGB buffer. From left to right: true speed, four ABS sensors,
 steering wheel position, and gyroscope.
 To play yourself (it’s rather fast for humans), type:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">gymnasium</span><span class="o">/</span><span class="n">envs</span><span class="o">/</span><span class="n">box2d</span><span class="o">/</span><span class="n">car_racing</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>gymnasium/envs/box2d/car_racing.py
 </pre></div>
 </div>
 <p>Remember: it’s a powerful rear-wheel drive car - don’t press the accelerator
@@ -533,10 +533,8 @@ and turn at the same time.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
-<p>The reward is -0.1 every frame and +1000/N for every track tile visited,
-where N is the total number of tiles visited in the track. For example,
-if you have finished in 732 frames, your reward is
-1000 - 0.1*732 = 926.8 points.</p>
+<p>The reward is -0.1 every frame and +1000/N for every track tile visited, where N is the total number of tiles
+visited in the track. For example, if you have finished in 732 frames, your reward is 1000 - 0.1*732 = 926.8 points.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
@@ -544,36 +542,44 @@ if you have finished in 732 frames, your reward is
 </section>
 <section id="episode-termination">
 <h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">#</a></h2>
-<p>The episode finishes when all the tiles are visited. The car can also go
-outside the playfield - that is, far off the track, in which case it will
-receive -100 reward and die.</p>
+<p>The episode finishes when all the tiles are visited. The car can also go outside the playfield -
+that is, far off the track, in which case it will receive -100 reward and die.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">lap_complete_percent</span></code> dictates the percentage of tiles that must be visited by
-the agent before a lap is considered complete.</p>
-<p>Passing <code class="docutils literal notranslate"><span class="pre">domain_randomize=True</span></code> enables the domain randomized variant of the environment.
-In this scenario, the background and track colours are different on every reset.</p>
-<p>Passing <code class="docutils literal notranslate"><span class="pre">continuous=False</span></code> converts the environment to use discrete action space.
-The discrete action space has 5 actions: [do nothing, left, right, gas, brake].</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v2&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="n">lap_complete_percent</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">domain_randomize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CarRacing&lt;CarRacing-v2&gt;&gt;&gt;&gt;&gt;</span>
+
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lap_complete_percent=0.95</span></code> dictates the percentage of tiles that must be visited by
+the agent before a lap is considered complete.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">domain_randomize=False</span></code> enables the domain randomized variant of the environment.
+In this scenario, the background and track colours are different on every reset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">continuous=True</span></code> converts the environment to use discrete action space.
+The discrete action space has 5 actions: [do nothing, left, right, gas, brake].</p></li>
+</ul>
 </section>
 <section id="reset-arguments">
 <h2>Reset Arguments<a class="headerlink" href="#reset-arguments" title="Link to this heading">#</a></h2>
 <p>Passing the option <code class="docutils literal notranslate"><span class="pre">options[&quot;randomize&quot;]</span> <span class="pre">=</span> <span class="pre">True</span></code> will change the current colour of the environment on demand.
 Correspondingly, passing the option <code class="docutils literal notranslate"><span class="pre">options[&quot;randomize&quot;]</span> <span class="pre">=</span> <span class="pre">False</span></code> will not change the current colour of the environment.
-<code class="docutils literal notranslate"><span class="pre">domain_randomize</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code> on init for this argument to work.
-Example usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v1&quot;</span><span class="p">,</span> <span class="n">domain_randomize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<code class="docutils literal notranslate"><span class="pre">domain_randomize</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code> on init for this argument to work.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v2&quot;</span><span class="p">,</span> <span class="n">domain_randomize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># normal reset, this changes the colour scheme by default</span>
-<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="go"># normal reset, this changes the colour scheme by default</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-<span class="c1"># reset with colour scheme change</span>
-<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;randomize&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="go"># reset with colour scheme change</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">randomize_obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;randomize&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 
-<span class="c1"># reset with no colour scheme change</span>
-<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;randomize&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+<span class="go"># reset with no colour scheme change</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">non_random_obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;randomize&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+
 </pre></div>
 </div>
 </section>

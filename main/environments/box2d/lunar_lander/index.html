@@ -508,7 +508,7 @@ first two numbers in the state vector.
 Landing outside of the landing pad is possible. Fuel is infinite, so an agent
 can learn to fly and then land on its first attempt.</p>
 <p>To see a heuristic landing, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">gymnasium</span><span class="o">/</span><span class="n">envs</span><span class="o">/</span><span class="n">box2d</span><span class="o">/</span><span class="n">lunar_lander</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>gymnasium/envs/box2d/lunar_lander.py
 </pre></div>
 </div>
 <!-- To play yourself, run: -->
@@ -571,44 +571,40 @@ them is destroyed.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
-<p>To use the <em>continuous</em> environment, you need to specify the
-<code class="docutils literal notranslate"><span class="pre">continuous=True</span></code> argument like below:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-    <span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span>
-    <span class="n">continuous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">gravity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span>
-    <span class="n">enable_wind</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">wind_power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">15.0</span><span class="p">,</span>
-    <span class="n">turbulence_power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
-<span class="p">)</span>
+<p>Lunar Lander has a large number of arguments</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span>
+<span class="gp">... </span>               <span class="n">enable_wind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">wind_power</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">turbulence_power</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;LunarLander&lt;LunarLander-v2&gt;&gt;&gt;&gt;&gt;</span>
+
 </pre></div>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">continuous=True</span></code> is passed, continuous actions (corresponding to the throttle of the engines) will be used and the
-action space will be <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">+1,</span> <span class="pre">(2,),</span> <span class="pre">dtype=np.float32)</span></code>.
-The first coordinate of an action determines the throttle of the main engine, while the second
-coordinate specifies the throttle of the lateral boosters.
-Given an action <code class="docutils literal notranslate"><span class="pre">np.array([main,</span> <span class="pre">lateral])</span></code>, the main engine will be turned off completely if
-<code class="docutils literal notranslate"><span class="pre">main</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> and the throttle scales affinely from 50% to 100% for <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">main</span> <span class="pre">&lt;=</span> <span class="pre">1</span></code> (in particular, the
-main engine doesn’t work  with less than 50% power).
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">continuous</span></code> determines if discrete or continuous actions (corresponding to the throttle of the engines) will be used with the
+action space being <code class="docutils literal notranslate"><span class="pre">Discrete(4)</span></code> or <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">+1,</span> <span class="pre">(2,),</span> <span class="pre">dtype=np.float32)</span></code> respectively.
+For continuous actions, the first coordinate of an action determines the throttle of the main engine, while the second
+coordinate specifies the throttle of the lateral boosters. Given an action <code class="docutils literal notranslate"><span class="pre">np.array([main,</span> <span class="pre">lateral])</span></code>, the main
+engine will be turned off completely if <code class="docutils literal notranslate"><span class="pre">main</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> and the throttle scales affinely from 50% to 100% for
+<code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">main</span> <span class="pre">&lt;=</span> <span class="pre">1</span></code> (in particular, the main engine doesn’t work  with less than 50% power).
 Similarly, if <code class="docutils literal notranslate"><span class="pre">-0.5</span> <span class="pre">&lt;</span> <span class="pre">lateral</span> <span class="pre">&lt;</span> <span class="pre">0.5</span></code>, the lateral boosters will not fire at all. If <code class="docutils literal notranslate"><span class="pre">lateral</span> <span class="pre">&lt;</span> <span class="pre">-0.5</span></code>, the left
 booster will fire, and if <code class="docutils literal notranslate"><span class="pre">lateral</span> <span class="pre">&gt;</span> <span class="pre">0.5</span></code>, the right booster will fire. Again, the throttle scales affinely
-from 50% to 100% between -1 and -0.5 (and 0.5 and 1, respectively).</p>
-<p><code class="docutils literal notranslate"><span class="pre">gravity</span></code> dictates the gravitational constant, this is bounded to be within 0 and -12.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">enable_wind=True</span></code> is passed, there will be wind effects applied to the lander.
-The wind is generated using the function <code class="docutils literal notranslate"><span class="pre">tanh(sin(2</span> <span class="pre">k</span> <span class="pre">(t+C))</span> <span class="pre">+</span> <span class="pre">sin(pi</span> <span class="pre">k</span> <span class="pre">(t+C)))</span></code>.
-<code class="docutils literal notranslate"><span class="pre">k</span></code> is set to 0.01.
-<code class="docutils literal notranslate"><span class="pre">C</span></code> is sampled randomly between -9999 and 9999.</p>
-<p><code class="docutils literal notranslate"><span class="pre">wind_power</span></code> dictates the maximum magnitude of linear wind applied to the craft. The recommended value for <code class="docutils literal notranslate"><span class="pre">wind_power</span></code> is between 0.0 and 20.0.
-<code class="docutils literal notranslate"><span class="pre">turbulence_power</span></code> dictates the maximum magnitude of rotational wind applied to the craft. The recommended value for <code class="docutils literal notranslate"><span class="pre">turbulence_power</span></code> is between 0.0 and 2.0.</p>
+from 50% to 100% between -1 and -0.5 (and 0.5 and 1, respectively).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gravity</span></code> dictates the gravitational constant, this is bounded to be within 0 and -12. Default is -10.0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">enable_wind</span></code> determines if there will be wind effects applied to the lander. The wind is generated using
+the function <code class="docutils literal notranslate"><span class="pre">tanh(sin(2</span> <span class="pre">k</span> <span class="pre">(t+C))</span> <span class="pre">+</span> <span class="pre">sin(pi</span> <span class="pre">k</span> <span class="pre">(t+C)))</span></code> where <code class="docutils literal notranslate"><span class="pre">k</span></code> is set to 0.01 and <code class="docutils literal notranslate"><span class="pre">C</span></code> is sampled randomly between -9999 and 9999.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wind_power</span></code> dictates the maximum magnitude of linear wind applied to the craft. The recommended value for
+<code class="docutils literal notranslate"><span class="pre">wind_power</span></code> is between 0.0 and 20.0.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">turbulence_power</span></code> dictates the maximum magnitude of rotational wind applied to the craft.
+The recommended value for <code class="docutils literal notranslate"><span class="pre">turbulence_power</span></code> is between 0.0 and 2.0.</p></li>
+</ul>
 </section>
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters</p></li>
-<li><p>v1: Legs contact with ground added in state vector; contact with ground
-give +10 reward points, and -10 if then lose contact; reward
-renormalized to 200; harder initial random push.</p></li>
+<li><p>v1: Legs contact with ground added in state vector; contact with ground give +10 reward points,
+and -10 if then lose contact; reward renormalized to 200; harder initial random push.</p></li>
 <li><p>v0: Initial version</p></li>
 </ul>
 </section>
@@ -616,27 +612,17 @@ renormalized to 200; harder initial random push.</p></li>
 <h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
 <p>There are several unexpected bugs with the implementation of the environment.</p>
 <ol class="arabic simple">
-<li><p>The position of the side thursters on the body of the lander changes, depending on the orientation of the lander.
-This in turn results in an orientation depentant torque being applied to the lander.</p></li>
+<li><p>The position of the side thrusters on the body of the lander changes, depending on the orientation of the lander.
+This in turn results in an orientation dependent torque being applied to the lander.</p></li>
 <li><p>The units of the state are not consistent. I.e.</p></li>
 </ol>
 <ul class="simple">
 <li><p>The angular velocity is in units of 0.4 radians per second. In order to convert to radians per second, the value needs to be multiplied by a factor of 2.5.</p></li>
 </ul>
 <p>For the default values of VIEWPORT_W, VIEWPORT_H, SCALE, and FPS, the scale factors equal:
-‘x’: 10
-‘y’: 6.666
-‘vx’: 5
-‘vy’: 7.5
-‘angle’: 1
-‘angular velocity’: 2.5</p>
+‘x’: 10, ‘y’: 6.666, ‘vx’: 5, ‘vy’: 7.5, ‘angle’: 1, ‘angular velocity’: 2.5</p>
 <p>After the correction has been made, the units of the state are as follows:
-‘x’: (units)
-‘y’: (units)
-‘vx’: (units/second)
-‘vy’: (units/second)
-‘angle’: (radians)
-‘angular velocity’: (radians/second)</p>
+‘x’: (units), ‘y’: (units), ‘vx’: (units/second), ‘vy’: (units/second), ‘angle’: (radians), ‘angular velocity’: (radians/second)</p>
 <!-- ## References -->
 </section>
 <section id="credits">
