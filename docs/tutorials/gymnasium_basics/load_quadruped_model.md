@@ -1,13 +1,13 @@
-JLoad custom quadruped robot environments
+Load custom quadruped robot environments
 ================================
 
-In this tutorial we will see how to use the `MuJoCo/Ant-v5` framework to create a quadruped walking environment. Using a model file (ending in `.xml`) without having to create a new class.
+In this tutorial we will see how to use the `MuJoCo/Ant-v5` framework to create a quadruped walking environment, using a model file (ending in `.xml`) without having to create a new class.
 
 Steps:
 
 0. Get your **MJCF** (or **URDF**) model file of your robot.
-	1. Create your own model (see the [Guide](https://mujoco.readthedocs.io/en/stable/modeling.html)).
-	2. Find a ready-made model (in this tutorial we will use a model from the [**MuJoCo Menagerie**](https://github.com/google-deepmind/mujoco_menagerie) collection).
+	0.a. Create your own model (see the [Guide](https://mujoco.readthedocs.io/en/stable/m22odeling.html)).
+	0.b. Find a ready-made model (in this tutorial we will use a model from the [**MuJoCo Menagerie**](https://github.com/google-deepmind/mujoco_menagerie) collection).
 1. Load the model with the `xml_file` argument.
 2. Tweak the environment parameters to get the desired behavior.
  	1. Tweak the environment simulation parameters.
@@ -17,7 +17,7 @@ Steps:
 3. Train an agent to locomote your robot.
 
 
-The reader is expected to be familiar with the `Gymnasium` API & library, the basics of robotics, and the included `Gymnasium/MuJoCo` environments and the robot model they use, familiarity with the **MJCF** file model format and the `MuJoCo` simulator is not required but is recommended.
+The reader is expected to be familiar with the `Gymnasium` API & library, the basics of robotics, and the included `Gymnasium/MuJoCo` environments with the robot model they use. Familiarity with the **MJCF** file model format and the `MuJoCo` simulator is not required but is recommended.
 
 Setup
 ------
@@ -27,10 +27,10 @@ We will need `gymnasium>=1.0.0`.
 pip install "gymnasium>=1.0.0"
 ```
 
-Step 0.1 - Downloading Our Robot Model
+Step 0.1 - Download a Robot Model
 -------------------------
 In this tutorial we will load the [Unitree Go1](
-https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/README.md) robot from the excellent robot model collection [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie).
+https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/README.md) robot from the excellent [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) robot model collection.
 ![Unitree Go1 robot in a flat terrain scene](https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/go1.png?raw=true)
 
 `Go1` is a quadruped robot, controlling it to locomote is a significant learning problem, much harder than the `Gymnasium/MuJoCo/Ant` environment.
@@ -82,7 +82,7 @@ In the following subsections, the reader is encouraged to consult the [documenta
 
 Step 2.1 - Tweaking the Environment Simulation Parameters
 -------------------------
-The arguments of interest are `frame_skip` & `reset_noise_scale` & `max_episode_steps`.
+The arguments of interest are `frame_skip`, `reset_noise_scale` and `max_episode_steps`.
 
 We want to tweak the `frame_skip` parameter to get `dt` to an acceptable value (typical values are `dt` $\in [0.01, 0.1]$ seconds),
 
@@ -118,7 +118,7 @@ Step 2.2 - Tweaking the Environment Termination Parameters
 -------------------------
 Termination is important for robot environments to avoid sampling "useless" time steps.
 
-The arguments of interest are `terminate_when_unhealthy` & `healthy_z_range`.
+The arguments of interest are `terminate_when_unhealthy` and `healthy_z_range`.
 
 We want to set `healthy_z_range` to terminate the environment when the robot falls over, or jumps really high, here we have to choose a value that is logical for the height of the robot, for `Go1` we choose `(0.195, 0.75)`.
 Note: `healthy_z_range` checks the absolute value of the height of the robot, so if your scene contains different levels of elevation it should be set to `(-np.inf, np.inf)`
@@ -149,11 +149,11 @@ Note: If you need a different termination condition, you can write your own `Ter
 
 Step 2.3 - Tweaking the Environment Reward Parameters
 -------------------------
-The arguments of interest are `forward_reward_weight` & `ctrl_cost_weight` & `contact_cost_weight` & `healthy_reward` & `main_body`.
+The arguments of interest are `forward_reward_weight`, `ctrl_cost_weight`, `contact_cost_weight`, `healthy_reward`, and `main_body`.
 
-For the arguments `forward_reward_weight` & `ctrl_cost_weight` & `contact_cost_weight` & `healthy_reward` we have to pick values that make sense for our robot, you can use the default `MuJoCo/Ant` parameters for references and tweak them if a change is needed for your environment. In the case of `Go1` we only change the `ctrl_cost_weight` since it has a higher actuator force range.
+For the arguments `forward_reward_weight`, `ctrl_cost_weight`, `contact_cost_weight` and `healthy_reward` we have to pick values that make sense for our robot, you can use the default `MuJoCo/Ant` parameters for references and tweak them if a change is needed for your environment. In the case of `Go1` we only change the `ctrl_cost_weight` since it has a higher actuator force range.
 
-For the argument `main_body` we have to choose which body part is the main body (usually called something like "torso", "trunk" in the model file) for the calculation of the `forward_reward`, in the case of `Go1` it is the `"trunk"` (Note: in most cases including this one, it can be left at the default value).
+For the argument `main_body` we have to choose which body part is the main body (usually called something like "torso" or "trunk" in the model file) for the calculation of the `forward_reward`, in the case of `Go1` it is the `"trunk"` (Note: in most cases including this one, it can be left at the default value).
 
 ```py
 env = gymnasium.make(
@@ -179,7 +179,7 @@ Note: If you need a different reward function, you can write your own `RewardWra
 
 Step 2.4 - Tweaking the Environment Observation Parameters
 -------------------------
-The arguments of interest are `include_cfrc_ext_in_observation` & `exclude_current_positions_from_observation`.
+The arguments of interest are `include_cfrc_ext_in_observation` and `exclude_current_positions_from_observation`.
 
 Here for `Go1` we have no particular reason to change them.
 
@@ -239,7 +239,7 @@ Which can run up to `4.7 m/s` according to the manufacturer
 
 Epilogue
 -------------------------
-You can follow this guide to create most quadruped environments,
+You can follow this guide to create most quadruped environments.
 To create humanoid/bipedal robots, you can also follow this guide using the `Gymnasium/MuJoCo/Humnaoid-v5` framework.
 
 Author: [@kallinteris-andreas](https://github.com/Kallinteris-Andreas)
