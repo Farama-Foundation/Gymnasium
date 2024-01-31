@@ -14,7 +14,7 @@ Steps:
 	2. Tweak the environment termination parameters.
 	3. Tweak the environment reward parameters.
 	4. Tweak the environment observation parameters.
-3. Train an agent to locomote your robot.
+3. Train an agent to move your robot.
 
 
 The reader is expected to be familiar with the `Gymnasium` API & library, the basics of robotics, and the included `Gymnasium/MuJoCo` environments with the robot model they use. Familiarity with the **MJCF** file model format and the `MuJoCo` simulator is not required but is recommended.
@@ -33,7 +33,7 @@ In this tutorial we will load the [Unitree Go1](
 https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/README.md) robot from the excellent [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) robot model collection.
 ![Unitree Go1 robot in a flat terrain scene](https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/go1.png?raw=true)
 
-`Go1` is a quadruped robot, controlling it to locomote is a significant learning problem, much harder than the `Gymnasium/MuJoCo/Ant` environment.
+`Go1` is a quadruped robot, controlling it to move is a significant learning problem, much harder than the `Gymnasium/MuJoCo/Ant` environment.
 
 We can download the whole MuJoCo Menagerie collection (which includes `Go1`),
 ```sh
