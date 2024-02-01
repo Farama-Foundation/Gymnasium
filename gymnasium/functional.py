@@ -72,7 +72,7 @@ class FuncEnv(
         state: StateType,
         action: ActType,
         next_state: StateType,
-        reward: Any,
+        rng: Any,
         params: Params | None = None,
     ) -> RewardType:
         """Computes the reward for a given transition between `state`, `action` to `next_state`."""
