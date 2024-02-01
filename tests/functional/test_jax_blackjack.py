@@ -22,14 +22,14 @@ def test_normal_BlackjackFunctional():
     env.action_space.seed(0)
 
     for t in range(10):
-        obs = env.observation(state, rng)
+        obs = env.observation(state, split_rng)
         action = env.action_space.sample()
 
         split_rng, rng = jrng.split(rng)
 
         next_state = env.transition(state, action, split_rng)
         reward = env.reward(state, action, next_state, split_rng)
-        terminal = env.terminal(next_state)
+        terminal = env.terminal(next_state, split_rng)
 
         assert len(state) == len(next_state)
         try:

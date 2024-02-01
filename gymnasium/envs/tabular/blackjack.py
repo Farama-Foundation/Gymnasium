@@ -292,7 +292,7 @@ class BlackjackFunctional(
         return state
 
     def observation(
-        self, state: EnvState, params: BlackJackParams = BlackJackParams
+        self, state: EnvState, rng: PRNGKey, params: BlackJackParams = BlackJackParams
     ) -> jax.Array:
         """Blackjack observation."""
         return jnp.array(
@@ -305,7 +305,7 @@ class BlackjackFunctional(
         )
 
     def terminal(
-        self, state: EnvState, params: BlackJackParams = BlackJackParams
+        self, state: EnvState, rng: PRNGKey, params: BlackJackParams = BlackJackParams
     ) -> jax.Array:
         """Determines if a particular Blackjack observation is terminal."""
         return (state.done) > 0
@@ -315,6 +315,7 @@ class BlackjackFunctional(
         state: EnvState,
         action: ActType,
         next_state: StateType,
+        rng: PRNGKey,
         params: BlackJackParams = BlackJackParams,
     ) -> jax.Array:
         """Calculates reward from a state."""
@@ -477,7 +478,7 @@ class BlackjackFunctional(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
         )
 
-    def render_close(self, render_state: RenderStateType) -> None:
+    def render_close(self, render_state: RenderStateType, params: BlackJackParams = BlackJackParams) -> None:
         """Closes the render state."""
         try:
             import pygame

@@ -24,7 +24,7 @@ def test_without_transform(env_class):
         obs = env.observation(state, rng)
         action = env.action_space.sample()
         next_state = env.transition(state, action, rng)
-        reward = env.reward(state, action, next_state)
+        reward = env.reward(state, action, next_state, rng)
         terminal = env.terminal(next_state, rng)
 
         assert next_state.shape == state.shape
