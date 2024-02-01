@@ -231,6 +231,8 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         self.autoreset_envs = done
 
+        rng = jrng.split(self.rng, self.num_envs)
+
         observation = self.func_env.observation(next_state, rng)
         observation = jax_to_numpy(observation)
 
