@@ -478,7 +478,9 @@ class BlackjackFunctional(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
         )
 
-    def render_close(self, render_state: RenderStateType, params: BlackJackParams = BlackJackParams) -> None:
+    def render_close(
+        self, render_state: RenderStateType, params: BlackJackParams = BlackJackParams
+    ) -> None:
         """Closes the render state."""
         try:
             import pygame
