@@ -382,7 +382,7 @@ class BlackjackFunctional(
             )
         screen, dealer_top_card_value_str, dealer_top_card_suit = render_state
 
-        player_sum, dealer_card_value, usable_ace = self.observation(state)
+        player_sum, dealer_card_value, usable_ace = self.observation(state, None)
         screen_width, screen_height = 600, 500
         card_img_height = screen_height // 3
         card_img_width = int(card_img_height * 142 / 197)
