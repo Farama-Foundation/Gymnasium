@@ -105,7 +105,7 @@ def test_vmap_BlackJack():
     env.action_space.seed(0)
 
     for t in range(10):
-        obs = env.observation(state, rng)
+        obs = env.observation(state, jnp.array(split_rng))
         action = jnp.array([env.action_space.sample() for _ in range(num_envs)])
         # if isinstance(env.action_space, Discrete):
         #     action = action.reshape((num_envs, 1))
