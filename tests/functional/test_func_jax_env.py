@@ -21,11 +21,11 @@ def test_without_transform(env_class):
     env.action_space.seed(0)
 
     for t in range(10):
-        obs = env.observation(state)
+        obs = env.observation(state, rng)
         action = env.action_space.sample()
-        next_state = env.transition(state, action, None)
+        next_state = env.transition(state, action, rng)
         reward = env.reward(state, action, next_state)
-        terminal = env.terminal(next_state)
+        terminal = env.terminal(next_state, rng)
 
         assert next_state.shape == state.shape
         try:
@@ -55,11 +55,11 @@ def test_jit(env_class):
     env.action_space.seed(0)
 
     for t in range(10):
-        obs = env.observation(state)
+        obs = env.observation(state, rng)
         action = env.action_space.sample()
-        next_state = env.transition(state, action, None)
-        reward = env.reward(state, action, next_state)
-        terminal = env.terminal(next_state)
+        next_state = env.transition(state, action, rng)
+        reward = env.reward(state, action, next_state, rng)
+        terminal = env.terminal(next_state, rng)
 
         assert next_state.shape == state.shape
         try:
@@ -91,13 +91,13 @@ def test_vmap(env_class):
     env.action_space.seed(0)
 
     for t in range(10):
-        obs = env.observation(state)
+        obs = env.observation(state, rng)
         action = jnp.array([env.action_space.sample() for _ in range(num_envs)])
         # if isinstance(env.action_space, Discrete):
         #     action = action.reshape((num_envs, 1))
-        next_state = env.transition(state, action, None)
-        terminal = env.terminal(next_state)
-        reward = env.reward(state, action, next_state)
+        next_state = env.transition(state, action, rng)
+        terminal = env.terminal(next_state, rng)
+        reward = env.reward(state, action, next_state, rng)
 
         assert next_state.shape == state.shape
         assert next_state.dtype == jnp.float32

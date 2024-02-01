@@ -22,13 +22,13 @@ def test_normal_BlackjackFunctional():
     env.action_space.seed(0)
 
     for t in range(10):
-        obs = env.observation(state)
+        obs = env.observation(state, rng)
         action = env.action_space.sample()
 
         split_rng, rng = jrng.split(rng)
 
         next_state = env.transition(state, action, split_rng)
-        reward = env.reward(state, action, next_state)
+        reward = env.reward(state, action, next_state, split_rng)
         terminal = env.terminal(next_state)
 
         assert len(state) == len(next_state)
@@ -67,12 +67,12 @@ def test_jit_BlackjackFunctional():
     env.action_space.seed(0)
 
     for t in range(10):
-        obs = env.observation(state)
+        obs = env.observation(state, rng)
         action = env.action_space.sample()
         split_rng, rng = jrng.split(rng)
         next_state = env.transition(state, action, split_rng)
-        reward = env.reward(state, action, next_state)
-        terminal = env.terminal(next_state)
+        reward = env.reward(state, action, next_state, split_rng)
+        terminal = env.terminal(next_state, split_rng)
 
         assert len(state) == len(next_state)
         try:
@@ -113,14 +113,14 @@ def test_vmap_BlackJack():
     env.action_space.seed(0)
 
     for t in range(10):
-        obs = env.observation(state)
+        obs = env.observation(state, rng)
         action = jnp.array([env.action_space.sample() for _ in range(num_envs)])
         # if isinstance(env.action_space, Discrete):
         #     action = action.reshape((num_envs, 1))
         rng, *split_rng = jrng.split(rng, num_envs + 1)
         next_state = env.transition(state, action, jnp.array(split_rng))
-        terminal = env.terminal(next_state)
-        reward = env.reward(state, action, next_state)
+        terminal = env.terminal(next_state, jnp.array(split_rng))
+        reward = env.reward(state, action, next_state, jnp.array(split_rng))
 
         assert len(next_state) == len(state)
         # assert next_state.dtype == jnp.float32

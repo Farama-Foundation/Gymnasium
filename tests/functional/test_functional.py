@@ -19,7 +19,7 @@ class GenericTestFuncEnv(FuncEnv):
         """Testing initial function."""
         return np.array([0, 0], dtype=np.float32)
 
-    def observation(self, state: np.ndarray) -> np.ndarray:
+    def observation(self, state: np.ndarray, rng: Any) -> np.ndarray:
         """Testing observation function."""
         return state
 
@@ -27,11 +27,13 @@ class GenericTestFuncEnv(FuncEnv):
         """Testing transition function."""
         return state + np.array([0, action], dtype=np.float32)
 
-    def reward(self, state: np.ndarray, action: int, next_state: np.ndarray) -> float:
+    def reward(
+        self, state: np.ndarray, action: int, next_state: np.ndarray, rng: Any
+    ) -> float:
         """Testing reward function."""
         return 1.0 if next_state[1] > 0 else 0.0
 
-    def terminal(self, state: np.ndarray) -> bool:
+    def terminal(self, state: np.ndarray, rng: Any) -> bool:
         """Testing terminal function."""
         return state[1] > 0
 
@@ -57,15 +59,15 @@ def test_functional_api():
         assert next_state.dtype == np.float32
         assert np.allclose(next_state, state + np.array([0, action]))
 
-        observation = env.observation(next_state)
+        observation = env.observation(next_state, None)
         assert observation.shape == (2,)
         assert observation.dtype == np.float32
         assert np.allclose(observation, next_state)
 
-        reward = env.reward(state, action, next_state)
+        reward = env.reward(state, action, next_state, None)
         assert reward == (1.0 if next_state[1] > 0 else 0.0)
 
-        terminal = env.terminal(next_state)
+        terminal = env.terminal(next_state, None)
         assert terminal == (i == 5)  # terminal state is in the final action
 
         state = next_state
