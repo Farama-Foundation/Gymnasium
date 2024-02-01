@@ -109,13 +109,13 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
-            seed: The environment reset seeds
+            seed: The environment reset seed
             options: If to return the options
 
         Returns:
