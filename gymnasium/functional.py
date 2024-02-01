@@ -61,7 +61,7 @@ class FuncEnv(
         """Updates (transitions) the state with an action and random number generator."""
         raise NotImplementedError
 
-    def observation(self, state: StateType, params: Params | None = None) -> ObsType:
+    def observation(self, state: StateType, rng: Any, params: Params | None = None) -> ObsType:
         """Generates an observation for a given state of an environment."""
         raise NotImplementedError
 
@@ -70,12 +70,13 @@ class FuncEnv(
         state: StateType,
         action: ActType,
         next_state: StateType,
+        reward: Any,
         params: Params | None = None,
     ) -> RewardType:
         """Computes the reward for a given transition between `state`, `action` to `next_state`."""
         raise NotImplementedError
 
-    def terminal(self, state: StateType, params: Params | None = None) -> TerminalType:
+    def terminal(self, state: StateType, rng: Any, params: Params | None = None) -> TerminalType:
         """Returns if the state is a final terminal state."""
         raise NotImplementedError
 
@@ -112,11 +113,11 @@ class FuncEnv(
         """Show the state."""
         raise NotImplementedError
 
-    def render_init(self, **kwargs) -> RenderStateType:
+    def render_init(self, params: Params | None = None, **kwargs) -> RenderStateType:
         """Initialize the render state."""
         raise NotImplementedError
 
-    def render_close(self, render_state: RenderStateType):
+    def render_close(self, render_state: RenderStateType, params: Params | None = None):
         """Close the render state."""
         raise NotImplementedError
 
