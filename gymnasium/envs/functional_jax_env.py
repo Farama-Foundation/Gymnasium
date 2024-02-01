@@ -66,7 +66,7 @@ class FunctionalJaxEnv(gym.Env):
         rng, self.rng = jrng.split(self.rng)
 
         self.state = self.func_env.initial(rng=rng)
-        obs = self.func_env.observation(self.state)
+        obs = self.func_env.observation(self.state, rng)
         info = self.func_env.state_info(self.state)
 
         obs = jax_to_numpy(obs)
@@ -86,9 +86,9 @@ class FunctionalJaxEnv(gym.Env):
         rng, self.rng = jrng.split(self.rng)
 
         next_state = self.func_env.transition(self.state, action, rng)
-        observation = self.func_env.observation(next_state)
-        reward = self.func_env.reward(self.state, action, next_state)
-        terminated = self.func_env.terminal(next_state)
+        observation = self.func_env.observation(next_state, rng)
+        reward = self.func_env.reward(self.state, action, next_state, rng)
+        terminated = self.func_env.terminal(next_state, rng)
         info = self.func_env.transition_info(self.state, action, next_state)
         self.state = next_state
 
@@ -178,7 +178,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         rng = jrng.split(rng, self.num_envs)
 
         self.state = self.func_env.initial(rng=rng)
-        obs = self.func_env.observation(self.state)
+        obs = self.func_env.observation(self.state, rng)
         info = self.func_env.state_info(self.state)
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
@@ -204,9 +204,9 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         rng = jrng.split(rng, self.num_envs)
 
         next_state = self.func_env.transition(self.state, action, rng)
-        reward = self.func_env.reward(self.state, action, next_state)
+        reward = self.func_env.reward(self.state, action, next_state, rng)
 
-        terminated = self.func_env.terminal(next_state)
+        terminated = self.func_env.terminal(next_state, rng)
         truncated = (
             self.steps >= self.time_limit
             if self.time_limit > 0
@@ -231,7 +231,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         self.autoreset_envs = done
 
-        observation = self.func_env.observation(next_state)
+        observation = self.func_env.observation(next_state, rng)
         observation = jax_to_numpy(observation)
 
         reward = jax_to_numpy(reward)
