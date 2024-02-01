@@ -61,7 +61,9 @@ class FuncEnv(
         """Updates (transitions) the state with an action and random number generator."""
         raise NotImplementedError
 
-    def observation(self, state: StateType, rng: Any, params: Params | None = None) -> ObsType:
+    def observation(
+        self, state: StateType, rng: Any, params: Params | None = None
+    ) -> ObsType:
         """Generates an observation for a given state of an environment."""
         raise NotImplementedError
 
@@ -76,7 +78,9 @@ class FuncEnv(
         """Computes the reward for a given transition between `state`, `action` to `next_state`."""
         raise NotImplementedError
 
-    def terminal(self, state: StateType, rng: Any, params: Params | None = None) -> TerminalType:
+    def terminal(
+        self, state: StateType, rng: Any, params: Params | None = None
+    ) -> TerminalType:
         """Returns if the state is a final terminal state."""
         raise NotImplementedError
 
