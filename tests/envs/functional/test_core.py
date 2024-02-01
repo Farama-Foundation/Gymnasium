@@ -12,23 +12,25 @@ class BasicTestEnv(FuncEnv):
     def initial(self, rng: Any) -> np.ndarray:
         return np.array([0, 0], dtype=np.float32)
 
-    def observation(self, state: np.ndarray) -> np.ndarray:
+    def observation(self, state: np.ndarray, rng: Any) -> np.ndarray:
         return state
 
     def transition(self, state: np.ndarray, action: int, rng: None) -> np.ndarray:
         return state + np.array([0, action], dtype=np.float32)
 
-    def reward(self, state: np.ndarray, action: int, next_state: np.ndarray) -> float:
+    def reward(
+        self, state: np.ndarray, action: int, next_state: np.ndarray, rng: Any
+    ) -> float:
         return 1.0 if next_state[1] > 0 else 0.0
 
-    def terminal(self, state: np.ndarray) -> bool:
+    def terminal(self, state: np.ndarray, rng: Any) -> bool:
         return state[1] > 0
 
 
 def test_api():
     env = BasicTestEnv()
     state = env.initial(None)
-    obs = env.observation(state)
+    obs = env.observation(state, None)
     assert state.shape == (2,)
     assert state.dtype == np.float32
     assert obs.shape == (2,)
@@ -42,15 +44,15 @@ def test_api():
         assert next_state.dtype == np.float32
         assert np.allclose(next_state, state + np.array([0, action]))
 
-        observation = env.observation(next_state)
+        observation = env.observation(next_state, None)
         assert observation.shape == (2,)
         assert observation.dtype == np.float32
         assert np.allclose(observation, next_state)
 
-        reward = env.reward(state, action, next_state)
+        reward = env.reward(state, action, next_state, None)
         assert reward == (1.0 if next_state[1] > 0 else 0.0)
 
-        terminal = env.terminal(next_state)
+        terminal = env.terminal(next_state, None)
         assert terminal == (i == 5)  # terminal state is in the final action
 
         state = next_state
