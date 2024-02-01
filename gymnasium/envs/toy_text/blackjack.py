@@ -90,13 +90,13 @@ class BlackjackEnv(gym.Env):
     The observation is returned as `(int(), int(), int())`.
 
     ## Starting State
-    The starting state is initialised in the following range.
+    The starting state is initialised with the following values.
 
-    | Observation               | Min  | Max  |
-    |---------------------------|------|------|
-    | Player current sum        |  4   |  12  |
-    | Dealer showing card value |  2   |  11  |
-    | Usable Ace                |  0   |  1   |
+    | Observation               | Values         |
+    |---------------------------|----------------|
+    | Player current sum        |  4, 5, ..., 21 |
+    | Dealer showing card value |  1, 2, ..., 10 |
+    | Usable Ace                |  0, 1          |
 
     ## Rewards
     - win game: +1
@@ -193,6 +193,7 @@ class BlackjackEnv(gym.Env):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return self._get_obs(), reward, terminated, False, {}
 
     def _get_obs(self):

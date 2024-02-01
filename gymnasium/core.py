@@ -42,10 +42,16 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
       ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
 
-    .. seealso:: For modifying or extending environments use the :py:class:`gymnasium.Wrapper` class
+    .. seealso:: For modifying or extending environments use the :class:`gymnasium.Wrapper` class
 
     Note:
         To get reproducible sampling of actions, a seed can be set with ``env.action_space.seed(123)``.
+
+    Note:
+        For strict type checking (e.g., mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.
+        The ``ObsType`` and ``ActType`` are the expected types of the observations and actions used in :meth:`reset` and :meth:`step`.
+        The environment's :attr:`observation_space` and :attr:`action_space` should have type ``Space[ObsType]`` and ``Space[ActType]``,
+        see a space's implementation to find its parameterized type.
     """
 
     # Set this in SOME subclasses
@@ -473,7 +479,11 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
     """
 
     def __init__(self, env: Env[ObsType, ActType]):
-        """Constructor for the observation wrapper."""
+        """Constructor for the observation wrapper.
+
+        Args:
+            env: Environment to be wrapped.
+        """
         Wrapper.__init__(self, env)
 
     def reset(
@@ -513,7 +523,11 @@ class RewardWrapper(Wrapper[ObsType, ActType, ObsType, ActType]):
     """
 
     def __init__(self, env: Env[ObsType, ActType]):
-        """Constructor for the Reward wrapper."""
+        """Constructor for the Reward wrapper.
+
+        Args:
+            env: Environment to be wrapped.
+        """
         Wrapper.__init__(self, env)
 
     def step(
@@ -536,20 +550,25 @@ class RewardWrapper(Wrapper[ObsType, ActType, ObsType, ActType]):
 
 
 class ActionWrapper(Wrapper[ObsType, WrapperActType, ObsType, ActType]):
-    """Superclass of wrappers that can modify the action before :meth:`env.step`.
+    """Superclass of wrappers that can modify the action before :meth:`step`.
 
     If you would like to apply a function to the action before passing it to the base environment,
     you can simply inherit from :class:`ActionWrapper` and overwrite the method :meth:`action` to implement
     that transformation. The transformation defined in that method must take values in the base environment’s
     action space. However, its domain might differ from the original action space.
-    In that case, you need to specify the new action space of the wrapper by setting :attr:`self.action_space` in
+    In that case, you need to specify the new action space of the wrapper by setting :attr:`action_space` in
     the :meth:`__init__` method of your wrapper.
 
-    Among others, Gymnasium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction` for clipping and rescaling actions.
+    Among others, Gymnasium provides the action wrappers :class:`gymnasium.wrappers.ClipAction` and
+    :class:`gymnasium.wrappers.RescaleAction` for clipping and rescaling actions.
     """
 
     def __init__(self, env: Env[ObsType, ActType]):
-        """Constructor for the action wrapper."""
+        """Constructor for the action wrapper.
+
+        Args:
+            env: Environment to be wrapped.
+        """
         Wrapper.__init__(self, env)
 
     def step(
@@ -559,7 +578,7 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType, ObsType, ActType]):
         return self.env.step(self.action(action))
 
     def action(self, action: WrapperActType) -> ActType:
-        """Returns a modified action before :meth:`env.step` is called.
+        """Returns a modified action before :meth:`step` is called.
 
         Args:
             action: The original :meth:`step` actions

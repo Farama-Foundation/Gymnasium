@@ -78,7 +78,6 @@ wrapper in the page on the wrapper type
       - Applies a function to the ``observation`` received from the environment's ``reset`` and ``step`` that is passed back to the user.
     * - :class:`TransformReward`
       - Applies a function to the ``reward`` received from the environment's ``step``.
-
 ```
 
 ## Vector only Wrappers

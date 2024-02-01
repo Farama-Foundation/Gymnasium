@@ -40,7 +40,7 @@ def data_equivalence(data_1, data_2) -> bool:
     Returns:
         If observation 1 and 2 are equivalent
     """
-    if type(data_1) == type(data_2):
+    if type(data_1) is type(data_2):
         if isinstance(data_1, dict):
             return data_1.keys() == data_2.keys() and all(
                 data_equivalence(data_1[k], data_2[k]) for k in data_1.keys()
@@ -256,7 +256,12 @@ def check_space_limit(space, space_type: str):
             check_space_limit(subspace, space_type)
 
 
-def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
+def check_env(
+    env: gym.Env,
+    warn: bool = None,
+    skip_render_check: bool = False,
+    skip_close_check: bool = False,
+):
     """Check that an environment follows Gymnasium's API.
 
     .. py:currentmodule:: gymnasium.Env
@@ -269,7 +274,8 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
     Args:
         env: The Gym environment that will be checked
         warn: Ignored, previously silenced particular warnings
-        skip_render_check: Whether to skip the checks for the render method. True by default (useful for the CI)
+        skip_render_check: Whether to skip the checks for the render method. False by default (useful for the CI)
+        skip_close_check: Whether to skip the checks for the close method. False by default
     """
     if warn is not None:
         logger.warn("`check_env(warn=...)` parameter is now ignored.")
@@ -323,7 +329,7 @@ def check_env(env: gym.Env, warn: bool = None, skip_render_check: bool = False):
                 "Not able to test alternative render modes due to the environment not having a spec. Try instantialising the environment through gymnasium.make"
             )
 
-    if env.spec is not None:
+    if not skip_close_check and env.spec is not None:
         new_env = env.spec.make()
         new_env.close()
         try:
