@@ -446,6 +446,10 @@ class VectorWrapper(VectorEnv):
         """Returns the `render_mode` from the base environment."""
         return self.env.render_mode
 
+    @np_random.setter
+    def np_random(self, value: np.random.Generator):
+        self.env.np_random = value
+
 
 class VectorObservationWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the observation.
