@@ -44,7 +44,7 @@ def test_functional_api():
 
     state = env.initial(None)
 
-    obs = env.observation(state)
+    obs = env.observation(state, None)
 
     assert state.shape == (2,)
     assert state.dtype == np.float32
