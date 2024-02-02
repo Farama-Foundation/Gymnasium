@@ -73,11 +73,11 @@ from gymnasium.wrappers.transform_action import (
     TransformAction,
 )
 from gymnasium.wrappers.transform_observation import (
+    AddRenderObservation,
     DtypeObservation,
     FilterObservation,
     FlattenObservation,
     GrayscaleObservation,
-    RenderObservation,
     RescaleObservation,
     ReshapeObservation,
     ResizeObservation,
@@ -99,7 +99,7 @@ __all__ = [
     "TransformObservation",
     "MaxAndSkipObservation",
     "NormalizeObservation",
-    "RenderObservation",
+    "AddRenderObservation",
     "ResizeObservation",
     "ReshapeObservation",
     "RescaleObservation",
@@ -142,7 +142,7 @@ _wrapper_to_class = {
 _renamed_wrapper = {
     "AutoResetWrapper": "Autoreset",
     "FrameStack": "FrameStackObservation",
-    "PixelObservationWrapper": "RenderObservation",
+    "PixelObservationWrapper": "AddRenderObservation",
     "VectorListInfo": "vector.DictInfoToList",
 }
 

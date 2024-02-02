@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from gymnasium import spaces
-from gymnasium.wrappers import RenderObservation
+from gymnasium.wrappers import AddRenderObservation
 from tests.testing_env import GenericTestEnv
 
 
@@ -30,7 +30,7 @@ def test_dict_observation(pixels_only, pixel_key="rgb"):
     # width, height = (320, 240)
 
     # The wrapper should only add one observation.
-    wrapped_env = RenderObservation(
+    wrapped_env = AddRenderObservation(
         env,
         render_key=pixel_key,
         render_only=pixels_only,
@@ -69,7 +69,7 @@ def test_single_array_observation(pixels_only):
     assert isinstance(env.observation_space, spaces.Box)
 
     # The wrapper should only add one observation.
-    wrapped_env = RenderObservation(
+    wrapped_env = AddRenderObservation(
         env,
         render_key=pixel_key,
         render_only=pixels_only,
