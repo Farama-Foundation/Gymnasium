@@ -142,7 +142,7 @@ _wrapper_to_class = {
 _renamed_wrapper = {
     "AutoResetWrapper": "Autoreset",
     "FrameStack": "FrameStackObservation",
-    "PixelObservationWrapper": "RenderObservation",
+    "PixelObservationWrapper": "AddRenderObservation",
     "VectorListInfo": "vector.DictInfoToList",
 }
 
