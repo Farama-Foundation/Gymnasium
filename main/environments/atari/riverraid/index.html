@@ -508,7 +508,7 @@
 <p>For more Riverraid variants with different observation and action spaces, see the variants section.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>You control a jet that flies over a river: you can move it sideways and fire missiles to destroy enemy objects. Each time an enemy object is destroyed you score points (i.e. rewards).You lose a jet when you run out of fuel: fly over a fuel depot when you begin to run low.You lose a jet even when it collides with the river bank or one of the enemy objects (except fuel depots).The game begins with a squadron of three jets in reserve and you’re given an additional jet (up to 9) for each 10,000 points you score.</p>
+<p>You control a jet that flies over a river: you can move it sideways and fire missiles to destroy enemy objects. Each time an enemy object is destroyed you score points (i.e. rewards).You lose a jet when you run out of fuel: fly over a fuel depot when you begin to run low. You lose a jet even when it collides with the river bank or one of the enemy objects (except fuel depots).The game begins with a squadron of three jets in reserve and you’re given an additional jet (up to 9) for each 10,000 points you score.</p>
 <p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=409">the AtariAge page</a></p>
 </section>
 <section id="actions">
@@ -582,8 +582,9 @@ As Riverraid uses the full set of actions then specifying <code class="docutils 
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;grayscale&quot;</span> <span class="pre">-&gt;</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160),</span> <span class="pre">np.uint8)</span></code>, a grayscale version of the “rgb” type</p></li>
 </ul>
 <p>See variants section for the type of observation used by each environment id by default.</p>
+</section>
 <section id="rewards">
-<h3>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h3>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
 <p>Score points are your only reward. You get score points each time you destroy an enemy object:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -608,11 +609,12 @@ As Riverraid uses the full set of actions then specifying <code class="docutils 
 <tr class="row-even"><td><p>Bridge</p></td>
 <td><p>500</p></td>
 </tr>
+<tr class="row-odd"><td><p>For a more detailed documentation, see the <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=409">AtariAge page</a>.</p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
-<p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=409">the AtariAge page</a>.</p>
-</section>
 </section>
 <section id="variants">
 <h2>Variants<a class="headerlink" href="#variants" title="Link to this heading">#</a></h2>
@@ -809,10 +811,8 @@ along with the default values.</p>
 <li><a class="reference internal" href="#">Riverraid</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#actions">Actions</a></li>
-<li><a class="reference internal" href="#observations">Observations</a><ul>
+<li><a class="reference internal" href="#observations">Observations</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#variants">Variants</a></li>
 <li><a class="reference internal" href="#difficulty-and-modes">Difficulty and modes</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>

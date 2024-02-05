@@ -508,7 +508,7 @@
 <p>For more RoadRunner variants with different observation and action spaces, see the variants section.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>You control the Road Runner(TM) in a race; you can control the direction to run in and times to jumps.The goal is to outrun Wile E. Coyote(TM) while avoiding the hazards of the desert.The game begins with three lives.  You lose a life when the coyote catches you, picks you up in a rocket, or shoots you with a cannon.  You also lose a life when a truck hits you, you hit a land mine, you fall off a cliff,or you get hit by a falling rock.You score points (i.e. rewards) by eating seeds along the road, eating steel shot, and destroying the coyote.</p>
+<p>You control the Road Runner(TM) in a race; you can control the direction to run in and times to jumps. The goal is to outrun Wile E. Coyote(TM) while avoiding the hazards of the desert. The game begins with three lives.  You lose a life when the coyote catches you, picks you up in a rocket, or shoots you with a cannon.  You also lose a life when a truck hits you, you hit a land mine, you fall off a cliff,or you get hit by a falling rock. You score points (i.e. rewards) by eating seeds along the road, eating steel shot, and destroying the coyote.</p>
 <p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=412">the AtariAge page</a></p>
 </section>
 <section id="actions">
@@ -582,8 +582,9 @@ As RoadRunner uses the full set of actions then specifying <code class="docutils
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;grayscale&quot;</span> <span class="pre">-&gt;</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160),</span> <span class="pre">np.uint8)</span></code>, a grayscale version of the “rgb” type</p></li>
 </ul>
 <p>See variants section for the type of observation used by each environment id by default.</p>
+</section>
 <section id="rewards">
-<h3>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h3>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
 <p>Score points are your only reward. You get score points each time you:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -605,11 +606,12 @@ As RoadRunner uses the full set of actions then specifying <code class="docutils
 <tr class="row-odd"><td><p>get the coyote hit by a truck</p></td>
 <td><p>1000</p></td>
 </tr>
+<tr class="row-even"><td><p>For a more detailed documentation, see the <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=412">AtariAge page</a>.</p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
-<p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=412">the AtariAge page</a>.</p>
-</section>
 </section>
 <section id="variants">
 <h2>Variants<a class="headerlink" href="#variants" title="Link to this heading">#</a></h2>
@@ -806,10 +808,8 @@ along with the default values.</p>
 <li><a class="reference internal" href="#">RoadRunner</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#actions">Actions</a></li>
-<li><a class="reference internal" href="#observations">Observations</a><ul>
+<li><a class="reference internal" href="#observations">Observations</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#variants">Variants</a></li>
 <li><a class="reference internal" href="#difficulty-and-modes">Difficulty and modes</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>

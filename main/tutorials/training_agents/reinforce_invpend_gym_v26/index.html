@@ -505,13 +505,15 @@ where action represents the numerical force applied to the cart
 <p>An explanation of the Gymnasium v0.26+ <cite>Env.step()</cite> function</p>
 <p><code class="docutils literal notranslate"><span class="pre">env.step(A)</span></code> allows us to take an action ‘A’ in the current environment ‘env’. The environment then executes the action
 and returns five variables:</p>
-<ul class="simple">
+<blockquote>
+<div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">next_obs</span></code>: This is the observation that the agent will receive after taking the action.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">reward</span></code>: This is the reward that the agent will receive after taking the action.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">terminated</span></code>: This is a boolean variable that indicates whether or not the environment has terminated.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">truncated</span></code>: This is a boolean variable that also indicates whether the episode ended by early truncation, i.e., a time limit is reached.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">info</span></code>: This is a dictionary that might contain additional information about the environment.</p></li>
 </ul>
+</div></blockquote>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">random</span>
