@@ -26,7 +26,7 @@ from gymnasium.envs.mujoco.humanoidstandup_v5 import (
 
 class BaseHumanoid_MJXEnv(MJXEnv):
     # NOTE: MJX does not yet support many features therefore this class can not be instantiated
-    """Base environment class for humanoid environments such as Humanoid, & HumanoidStandup"""
+    """Base environment class for humanoid environments such as Humanoid, & HumanoidStandup."""
 
     def __init__(
         self,
@@ -146,6 +146,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
     """Class for Humanoid."""
 
     def mass_center(self, mjx_data):
+        """Calculates the xpos based center of mass."""
         mass = np.expand_dims(self.mjx_model.body_mass, axis=1)
         xpos = mjx_data.xipos
         return (jnp.sum(mass * xpos, axis=0) / jnp.sum(mass))[0:2]

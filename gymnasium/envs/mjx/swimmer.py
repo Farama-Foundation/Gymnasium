@@ -14,6 +14,7 @@ else:
 from typing import Dict, Tuple
 
 import numpy as np
+
 from gymnasium.envs.mjx.mjx_env import MJXEnv
 
 

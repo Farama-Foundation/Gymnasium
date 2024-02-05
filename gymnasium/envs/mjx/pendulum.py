@@ -14,8 +14,8 @@ else:
 from typing import Dict, Tuple
 
 import numpy as np
-from gymnasium.envs.mjx.mjx_env import MJXEnv
 
+from gymnasium.envs.mjx.mjx_env import MJXEnv
 from gymnasium.envs.mujoco.inverted_double_pendulum_v5 import (
     DEFAULT_CAMERA_CONFIG as INVERTED_DOUBLE_PENDULUM_DEFAULT_CAMERA_CONFIG,
 )
@@ -25,6 +25,8 @@ from gymnasium.envs.mujoco.inverted_pendulum_v5 import (
 
 
 class InvertedDoublePendulumMJXEnv(MJXEnv):
+    """Class for InvertedDoublePendulum."""
+
     def __init__(
         self,
         params: Dict[str, any],  # NOTE not API compliant (yet?)
@@ -81,7 +83,6 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         params: Dict[str, any],
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = alive_bonus - dist_penalty - vel_penalty."""
-
         mjx_data_new = next_state
 
         v = mjx_data_new.qvel[1:3]
@@ -116,7 +117,7 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         return jnp.logical_not(self._gen_is_healty(state))
 
     def get_default_params(**kwargs) -> Dict[str, any]:
-        """Get the parameters for the Walker2d environment"""
+        """Get the parameters for the InvertedDoublePendulum environment."""
         default = {
             "xml_file": "inverted_double_pendulum.xml",
             "frame_skip": 5,
@@ -128,6 +129,8 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
 
 
 class InvertedPendulumMJXEnv(MJXEnv):
+    """Class for InvertedPendulum."""
+
     def __init__(
         self,
         params: Dict[str, any],  # NOTE not API compliant (yet?)
@@ -200,7 +203,7 @@ class InvertedPendulumMJXEnv(MJXEnv):
         return jnp.logical_not(self._gen_is_healty(state))
 
     def get_default_params(**kwargs) -> Dict[str, any]:
-        """Get the parameters for the Walker2d environment"""
+        """Get the parameters for the InvertedPendulum environment."""
         default = {
             "xml_file": "inverted_pendulum.xml",
             "frame_skip": 2,

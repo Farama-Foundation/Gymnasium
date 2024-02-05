@@ -14,8 +14,8 @@ else:
 from typing import Dict, Tuple
 
 import numpy as np
-from gymnasium.envs.mjx.mjx_env import MJXEnv
 
+from gymnasium.envs.mjx.mjx_env import MJXEnv
 from gymnasium.envs.mujoco.ant_v5 import DEFAULT_CAMERA_CONFIG
 
 

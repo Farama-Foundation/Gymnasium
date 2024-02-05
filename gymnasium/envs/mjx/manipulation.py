@@ -14,8 +14,8 @@ else:
 from typing import Dict, Tuple
 
 import numpy as np
-from gymnasium.envs.mjx.mjx_env import MJXEnv
 
+from gymnasium.envs.mjx.mjx_env import MJXEnv
 from gymnasium.envs.mujoco.pusher_v5 import (
     DEFAULT_CAMERA_CONFIG as PUSHER_DEFAULT_CAMERA_CONFIG,
 )
@@ -72,7 +72,7 @@ class Reacher_MJXEnv(MJXEnv):
     def observation(
         self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
     ) -> jnp.ndarray:
-        """Observes the `sin(theta)` & `cos(theta)` & `qpos` &  `qvel` & 'fingertip - target' distance"""
+        """Observes the `sin(theta)` & `cos(theta)` & `qpos` &  `qvel` & 'fingertip - target' distance."""
         mjx_data = state
 
         position = mjx_data.qpos.flatten()

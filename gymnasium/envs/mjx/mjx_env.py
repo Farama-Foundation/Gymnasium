@@ -54,6 +54,7 @@ def mjx_set_physics_state(mjx_data: mjx.Data, mjx_physics_state) -> mjx.Data:
 # TODO add type hint to `params`
 # TODO add render `metadata`
 # TODO add init_qvel
+# TODO create pip install gymnasium[mjx]
 class MJXEnv(
     gymnasium.functional.FuncEnv[
         mjx.Data,
@@ -79,7 +80,7 @@ class MJXEnv(
         if MJX_IMPORT_ERROR is not None:
             raise gymnasium.error.DependencyNotInstalled(
                 f"{MJX_IMPORT_ERROR}. "
-                "(HINT: you need to install mujoco-mjx, run `pip install gymnasium[mjx]`.)"  # TODO actually create gymnasium[mjx]
+                "(HINT: you need to install mujoco-mjx, run `pip install gymnasium[mjx]`.)"
             )
 
         fullpath = expand_model_path(params["xml_file"])
