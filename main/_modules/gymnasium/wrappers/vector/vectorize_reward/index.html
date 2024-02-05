@@ -488,18 +488,7 @@
 <span class="k">class</span> <span class="nc">TransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A reward wrapper that allows a custom function to modify the step reward.</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">        Without reward transformation:</span>
-<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
-<span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
-<span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
-<span class="sd">        &gt;&gt;&gt; obs, rew, term, trunc, info = envs.step(envs.action_space.sample())</span>
-<span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">        &gt;&gt;&gt; rew</span>
-<span class="sd">        array([-0.01330088, -0.07963027, -0.03127944])</span>
-
-<span class="sd">        With reward transformation:</span>
+<span class="sd">    Example with reward transformation:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Box</span>
 <span class="sd">        &gt;&gt;&gt; def scale_and_shift(rew):</span>
@@ -539,18 +528,7 @@
 <span class="k">class</span> <span class="nc">VectorizeTransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorizes a single-agent transform reward wrapper for vector environments.</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">        Without reward transformation:</span>
-<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
-<span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
-<span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
-<span class="sd">        &gt;&gt;&gt; obs, rew, term, trunc, info = envs.step(envs.action_space.sample())</span>
-<span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">        &gt;&gt;&gt; rew</span>
-<span class="sd">        array([-0.01330088, -0.07963027, -0.03127944])</span>
-
-<span class="sd">        Adding a transform that applies a ReLU to the reward:</span>
+<span class="sd">    An example such that applies a ReLU to the reward:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import TransformReward</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
@@ -593,21 +571,7 @@
 <span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">VectorizeTransformReward</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper that clips the rewards for an environment between an upper and lower bound.</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">        Without clipping rewards:</span>
-<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
-<span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
-<span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
-<span class="sd">        &gt;&gt;&gt; for _ in range(10):</span>
-<span class="sd">        ...     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">        &gt;&gt;&gt; rew</span>
-<span class="sd">        array([-0.025, -0.025, -0.025])</span>
-
-<span class="sd">        With clipped rewards:</span>
+<span class="sd">    Example with clipped rewards:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>

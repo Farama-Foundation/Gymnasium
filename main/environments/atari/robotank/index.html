@@ -508,7 +508,7 @@
 <p>For more Robotank variants with different observation and action spaces, see the variants section.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>You control your Robot Tanks to destroy enemies and avoid enemy fire.Game ends when all of your Robot Tanks are destroyed or all 12 enemy squadrons are destroyed.The game begins with one active Robot Tank and three reserves.Your Robot Tank may get lost when it is hit by enemy    rocket fire - your video scrambles with static interference when this    happens - or just become damaged - sensors report the damage by flashing on your control panel (look at V/C/R/T squares).You earn one bonus Robot Tank for every enemy squadron destroyed. The maximum number of bonus Robot Tanks allowed at any one time is 12.</p>
+<p>You control your Robot Tanks to destroy enemies and avoid enemy fire. Game ends when all of your Robot Tanks are destroyed or all 12 enemy squadrons are destroyed. The game begins with one active Robot Tank and three reserves. Your Robot Tank may get lost when it is hit by enemy    rocket fire - your video scrambles with static interference when this    happens - or just become damaged - sensors report the damage by flashing on your control panel (look at V/C/R/T squares).You earn one bonus Robot Tank for every enemy squadron destroyed. The maximum number of bonus Robot Tanks allowed at any one time is 12.</p>
 <p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=416">the AtariAge page</a></p>
 </section>
 <section id="actions">
@@ -582,14 +582,10 @@ As Robotank uses the full set of actions then specifying <code class="docutils l
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;grayscale&quot;</span> <span class="pre">-&gt;</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160),</span> <span class="pre">np.uint8)</span></code>, a grayscale version of the “rgb” type</p></li>
 </ul>
 <p>See variants section for the type of observation used by each environment id by default.</p>
-<section id="rewards">
-<h3>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h3>
-<p>The number of enemies destroyed is the only reward.</p>
-<p>A small tank appears at the top of your screen for each enemy
-you destroy.  A square with the number 12 appears each time a squadron of twelve enemies are
-destroyed.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=416">the AtariAge page</a>.</p>
 </section>
+<section id="rewards">
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<p>The number of enemies destroyed is the only reward. A small tank appears at the top of your screen for each enemy you destroy. A square with the number 12 appears each time a squadron of twelve enemies are destroyed. For a more detailed documentation, see the <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=416">AtariAge page</a>.</p>
 </section>
 <section id="variants">
 <h2>Variants<a class="headerlink" href="#variants" title="Link to this heading">#</a></h2>
@@ -786,10 +782,8 @@ along with the default values.</p>
 <li><a class="reference internal" href="#">Robotank</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#actions">Actions</a></li>
-<li><a class="reference internal" href="#observations">Observations</a><ul>
+<li><a class="reference internal" href="#observations">Observations</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#variants">Variants</a></li>
 <li><a class="reference internal" href="#difficulty-and-modes">Difficulty and modes</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>

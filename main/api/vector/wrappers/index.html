@@ -773,27 +773,21 @@ The following example illustrate use-cases where a custom lambda observation wra
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.VectorizeTransformReward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">VectorizeTransformReward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../wrappers/reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.transform_reward.TransformReward"><span class="pre">TransformReward</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/vectorize_reward/#VectorizeTransformReward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.VectorizeTransformReward" title="Link to this definition">#</a></dt>
 <dd><p>Vectorizes a single-agent transform reward wrapper for vector environments.</p>
-<p class="rubric">Example</p>
-<p>Without reward transformation:
-&gt;&gt;&gt; import gymnasium as gym
-&gt;&gt;&gt; envs = gym.make_vec(“MountainCarContinuous-v0”, num_envs=3)
-&gt;&gt;&gt; _ = envs.action_space.seed(123)
-&gt;&gt;&gt; obs, info = envs.reset(seed=123)
-&gt;&gt;&gt; obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
-&gt;&gt;&gt; envs.close()
-&gt;&gt;&gt; rew
-array([-0.01330088, -0.07963027, -0.03127944])</p>
-<p>Adding a transform that applies a ReLU to the reward:
-&gt;&gt;&gt; import gymnasium as gym
-&gt;&gt;&gt; from gymnasium.wrappers import TransformReward
-&gt;&gt;&gt; envs = gym.make_vec(“MountainCarContinuous-v0”, num_envs=3)
-&gt;&gt;&gt; envs = VectorizeTransformReward(envs, wrapper=TransformReward, func=lambda x: (x &gt; 0.0) * x)
-&gt;&gt;&gt; _ = envs.action_space.seed(123)
-&gt;&gt;&gt; obs, info = envs.reset(seed=123)
-&gt;&gt;&gt; obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
-&gt;&gt;&gt; envs.close()
-&gt;&gt;&gt; rew
-array([-0., -0., -0.])</p>
+<dl>
+<dt>An example such that applies a ReLU to the reward:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">TransformReward</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;MountainCarContinuous-v0&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">VectorizeTransformReward</span><span class="p">(</span><span class="n">envs</span><span class="p">,</span> <span class="n">wrapper</span><span class="o">=</span><span class="n">TransformReward</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rew</span>
+<span class="go">array([-0., -0., -0.])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1323,34 +1317,26 @@ provide an <code class="xref py py-attr docutils literal notranslate"><span clas
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.TransformReward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">TransformReward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/vectorize_reward/#TransformReward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.TransformReward" title="Link to this definition">#</a></dt>
 <dd><p>A reward wrapper that allows a custom function to modify the step reward.</p>
-<p class="rubric">Example</p>
-<p>Without reward transformation:
-&gt;&gt;&gt; import gymnasium as gym
-&gt;&gt;&gt; envs = gym.make_vec(“MountainCarContinuous-v0”, num_envs=3)
-&gt;&gt;&gt; _ = envs.action_space.seed(123)
-&gt;&gt;&gt; obs, info = envs.reset(seed=123)
-&gt;&gt;&gt; obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
-&gt;&gt;&gt; envs.close()
-&gt;&gt;&gt; rew
-array([-0.01330088, -0.07963027, -0.03127944])</p>
-<p>With reward transformation:
-&gt;&gt;&gt; import gymnasium as gym
-&gt;&gt;&gt; from gymnasium.spaces import Box
-&gt;&gt;&gt; def scale_and_shift(rew):
-…     return (rew - 1.0) * 2.0
-…
-&gt;&gt;&gt; envs = gym.make_vec(“MountainCarContinuous-v0”, num_envs=3)
-&gt;&gt;&gt; envs = TransformReward(env=envs, func=scale_and_shift)
-&gt;&gt;&gt; _ = envs.action_space.seed(123)
-&gt;&gt;&gt; obs, info = envs.reset(seed=123)
-&gt;&gt;&gt; obs, rew, term, trunc, info = envs.step(envs.action_space.sample())
-&gt;&gt;&gt; envs.close()
-&gt;&gt;&gt; obs
-array([[-4.6343064e-01,  9.8971417e-05],</p>
-<blockquote>
-<div><p>[-4.4488689e-01, -1.9375233e-03],
-[-4.3118435e-01, -1.5342437e-03]], dtype=float32)</p>
-</div></blockquote>
+<dl>
+<dt>Example with reward transformation:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">scale_and_shift</span><span class="p">(</span><span class="n">rew</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">rew</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2.0</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;MountainCarContinuous-v0&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">TransformReward</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">envs</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">scale_and_shift</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([[-4.6343064e-01,  9.8971417e-05],</span>
+<span class="go">       [-4.4488689e-01, -1.9375233e-03],</span>
+<span class="go">       [-4.3118435e-01, -1.5342437e-03]], dtype=float32)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1365,32 +1351,23 @@ array([[-4.6343064e-01,  9.8971417e-05],</p>
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.ClipReward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">ClipReward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.VectorEnv"><span class="pre">VectorEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_reward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_reward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/vectorize_reward/#ClipReward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.ClipReward" title="Link to this definition">#</a></dt>
 <dd><p>A wrapper that clips the rewards for an environment between an upper and lower bound.</p>
-<p class="rubric">Example</p>
-<p>Without clipping rewards:
-&gt;&gt;&gt; import numpy as np
-&gt;&gt;&gt; import gymnasium as gym
-&gt;&gt;&gt; envs = gym.make_vec(“MountainCarContinuous-v0”, num_envs=3)
-&gt;&gt;&gt; _ = envs.action_space.seed(123)
-&gt;&gt;&gt; obs, info = envs.reset(seed=123)
-&gt;&gt;&gt; for _ in range(10):
-…     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))
-…
-&gt;&gt;&gt; envs.close()
-&gt;&gt;&gt; rew
-array([-0.025, -0.025, -0.025])</p>
-<p>With clipped rewards:
-&gt;&gt;&gt; import numpy as np
-&gt;&gt;&gt; import gymnasium as gym
-&gt;&gt;&gt; envs = gym.make_vec(“MountainCarContinuous-v0”, num_envs=3)
-&gt;&gt;&gt; envs = ClipReward(envs, 0.0, 2.0)
-&gt;&gt;&gt; _ = envs.action_space.seed(123)
-&gt;&gt;&gt; obs, info = envs.reset(seed=123)
-&gt;&gt;&gt; for _ in range(10):
-…     obs, rew, term, trunc, info = envs.step(0.5 * np.ones((3, 1)))
-…
-&gt;&gt;&gt; envs.close()
-&gt;&gt;&gt; rew
-array([0., 0., 0.])</p>
+<dl>
+<dt>Example with clipped rewards:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;MountainCarContinuous-v0&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">ClipReward</span><span class="p">(</span><span class="n">envs</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rew</span>
+<span class="go">array([0., 0., 0.])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

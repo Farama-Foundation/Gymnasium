@@ -508,7 +508,7 @@
 <p>For more Seaquest variants with different observation and action spaces, see the variants section.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>You control a sub able to move in all directions and fire torpedoes.The goal is to retrieve as many divers as you can, while dodging and blasting enemy subs and killer sharks; points will be awarded accordingly.The game begins with one sub and three waiting on the horizon. Each time you increase your score by 10,000 points, an extra sub will be delivered to yourbase.  You can only have six reserve subs on the screen at one time.Your sub will explode if it collides with anything except your own divers.The sub has a limited amount of oxygen that decreases at a constant rate during the game. When the oxygen tank is almost empty, you need to surface and if you don’t do it in time, your sub will blow up and you’ll lose one diver.  Each time you’re forced to surface, with less than six divers, you lose one diver as well.</p>
+<p>You control a sub able to move in all directions and fire torpedoes. The goal is to retrieve as many divers as you can, while dodging and blasting enemy subs and killer sharks; points will be awarded accordingly. The game begins with one sub and three waiting on the horizon. Each time you increase your score by 10,000 points, an extra sub will be delivered to yourbase.  You can only have six reserve subs on the screen at one time. Your sub will explode if it collides with anything except your own divers. The sub has a limited amount of oxygen that decreases at a constant rate during the game. When the oxygen tank is almost empty, you need to surface and if you don’t do it in time, your sub will blow up and you’ll lose one diver.  Each time you’re forced to surface, with less than six divers, you lose one diver as well.</p>
 <p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=424">the AtariAge page</a></p>
 </section>
 <section id="actions">
@@ -582,19 +582,10 @@ As Seaquest uses the full set of actions then specifying <code class="docutils l
 <li><p><code class="docutils literal notranslate"><span class="pre">obs_type=&quot;grayscale&quot;</span> <span class="pre">-&gt;</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(210,</span> <span class="pre">160),</span> <span class="pre">np.uint8)</span></code>, a grayscale version of the “rgb” type</p></li>
 </ul>
 <p>See variants section for the type of observation used by each environment id by default.</p>
-<section id="rewards">
-<h3>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h3>
-<p>Score points are your only reward.</p>
-<p>Blasting enemy sub and killer shark is worth
-20 points.  Every time you surface with six divers, the value of enemy subs
-and killer sharks increases by 10, up to a maximum of 90 points each.</p>
-<p>Rescued divers start at 50 points each.  Then, their point value increases by 50, every
-time you surface, up to a maximum of 1000 points each.</p>
-<p>You’ll be further rewarded with bonus points for all the oxygen you have remaining the
-moment you surface.  The more oxygen you have left, the more bonus points
-you’re given.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=424">the AtariAge page</a>.</p>
 </section>
+<section id="rewards">
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<p>Score points are your only reward. Blasting enemy sub and killer shark is worth 20 points.  Every time you surface with six divers, the value of enemy subs and killer sharks increases by 10, up to a maximum of 90 points each. Rescued divers start at 50 points each.  Then, their point value increases by 50, every time you surface, up to a maximum of 1000 points each. You’ll be further rewarded with bonus points for all the oxygen you have remaining the moment you surface.  The more oxygen you have left, the more bonus points you’re given. For a more detailed documentation, see the <a class="reference external" href="https://atariage.com/manual_html_page.php?SoftwareLabelID=424">AtariAge page</a>.</p>
 </section>
 <section id="variants">
 <h2>Variants<a class="headerlink" href="#variants" title="Link to this heading">#</a></h2>
@@ -791,10 +782,8 @@ along with the default values.</p>
 <li><a class="reference internal" href="#">Seaquest</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#actions">Actions</a></li>
-<li><a class="reference internal" href="#observations">Observations</a><ul>
+<li><a class="reference internal" href="#observations">Observations</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#variants">Variants</a></li>
 <li><a class="reference internal" href="#difficulty-and-modes">Difficulty and modes</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>
