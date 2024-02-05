@@ -21,6 +21,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     The ant is a 3D quadruped robot consisting of a torso (free rotational body) with four legs attached to it, where each leg has two body parts.
     The goal is to coordinate the four legs to move in the forward (right) direction by applying torque to the eight hinges connecting the two body parts of each leg and the torso (nine body parts and eight hinges).
 
+    Note: Although the robot is called "Ant", it is actually 75cm tall and weighs 910.88g.
 
     ## Action Space
     ```{figure} action_space_figures/ant.png
