@@ -233,13 +233,13 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     If `terminate_when_unhealthy is True` (the default), the environment terminates when the Humanoid is unhealthy.
     The Humanoid is said to be unhealthy if any of the following happens:
 
     1. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default is $[1.0, 2.0]$).
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 

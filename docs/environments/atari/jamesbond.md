@@ -21,7 +21,7 @@ For more Jamesbond variants with different observation and action spaces, see th
 
 ## Description
 
-Your mission is to control Mr. Bond's specially designed multipurpose craft to complete a variety of missions.The craft moves forward with a right motion and slightly back with a left motion.An up or down motion causes the craft to jump or dive.You can also fire by either lobbing a bomb to the bottom of the screen or firing a fixed angle shot to the top of the screen.
+Your mission is to control Mr. Bond's specially designed multipurpose craft to complete a variety of missions. The craft moves forward with a right motion and slightly back with a left motion. An up or down motion causes the craft to jump or dive. You can also fire by either lobbing a bomb to the bottom of the screen or firing a fixed angle shot to the top of the screen.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=250)
 
@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-The game ends when you complete the last mission or when you lose the last craft. In either case, you'll receive your final score.
-There will be a rating based on your score. The highest rating in NOVICE is 006. The highest rating in AGENT is 007.
-For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=250).
+## Rewards
+The game ends when you complete the last mission or when you lose the last craft. In either case, you'll receive your final score. There will be a rating based on your score. The highest rating in NOVICE is 006. The highest rating in AGENT is 007. For a more detailed documentation, consult the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=250).
 
 ## Variants
 

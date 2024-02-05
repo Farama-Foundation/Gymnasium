@@ -21,7 +21,7 @@ For more Skiing variants with different observation and action spaces, see the v
 
 ## Description
 
-You control a skier who can move sideways.The goal is to run through all gates (between the poles) in the fastest time.You are penalized five seconds for each gate you miss.If you hit a gate or a tree, your skier will jump back up and keep going.
+You control a skier who can move sideways.The goal is to run through all gates (between the poles) in the fastest time. You are penalized five seconds for each gate you miss. If you hit a gate or a tree, your skier will jump back up and keep going.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=434)
 
@@ -45,11 +45,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-Seconds are your only rewards - negative rewards and penalties (e.g. missing a gate) are assigned as additional seconds.
-
-For a more detailed documentation, see [the AtariAge page [SLALOM RACING section]](https://atariage.com/manual_html_page.php?SoftwareLabelID=434).
+## Rewards
+Seconds are your only rewards - negative rewards and penalties (e.g. missing a gate) are assigned as additional seconds. For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=434) in particular the Slalom racing section.
 
 ## Variants
 

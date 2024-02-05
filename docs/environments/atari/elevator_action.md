@@ -21,7 +21,7 @@ For more ElevatorAction variants with different observation and action spaces, s
 
 ## Description
 
-You are a secret agent that must retrieve some secret documents and reach the ground level of a building by going down an elevator/stairs. Once you reach the ground level, you are picked up and taken to the next level. You are equipped with a gun to defend yourself against enemy agents waiting for you in each floor. You gather points by shooting down enemy agents and visiting apartments marked with a red door, which contain the secret documents.This is an unreleased prototype based on the arcade game.
+You are a secret agent that must retrieve some secret documents and reach the ground level of a building by going down an elevator/stairs. Once you reach the ground level, you are picked up and taken to the next level. You are equipped with a gun to defend yourself against enemy agents waiting for you in each floor. You gather points by shooting down enemy agents and visiting apartments marked with a red door, which contain the secret documents. This is an unreleased prototype based on the arcade game.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=1131)
 
@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You start with 4 lives and are awarded 100 points for each enemy shot, and 500 points for each
-secret document collected (visiting a red door). Each time you get shot you lose one life and the
-game ends when losing all lives.
+## Rewards
+You start with 4 lives and are awarded 100 points for each enemy shot, and 500 points for each secret document collected (visiting a red door). Each time you get shot you lose one life and the game ends when losing all lives.
 
 ## Variants
 

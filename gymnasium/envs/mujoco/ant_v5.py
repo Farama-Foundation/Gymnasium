@@ -157,14 +157,14 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     If `terminate_when_unhealthy is True` (the default), the environment terminates when the Ant is unhealthy.
     the Ant is unhealthy if any of the following happens:
 
     1. Any of the state space values is no longer finite.
     2. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default is $[0.2, 1.0]$).
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 
