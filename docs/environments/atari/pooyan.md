@@ -46,10 +46,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-If you hit a balloon, wolf or stone with an arrow you score points.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=372).
+## Rewards
+If you hit a balloon, wolf or stone with an arrow you score points. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=372).
 
 ## Variants
 
