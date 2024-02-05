@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points by destroying eggs, killing aliens, using pulsars, and collecting special prizes. When you are caught
-by an alien, you will lose one of your lives. The number of lives you have depends on the game flavor. For a
-table of scores corresponding to the different achievements, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=815).
+## Rewards
+You score points by destroying eggs, killing aliens, using pulsars, and collecting special prizes. When you are caught by an alien, you will lose one of your lives. The number of lives you have depends on the game flavor. For a table of scores corresponding to the different achievements, consult the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=815).
 
 ## Variants
 

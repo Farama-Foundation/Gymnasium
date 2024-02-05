@@ -12,7 +12,6 @@ wrappers/misc_wrappers
 wrappers/action_wrappers
 wrappers/observation_wrappers
 wrappers/reward_wrappers
-wrappers/vector_wrappers
 ```
 
 ```{eval-rst}

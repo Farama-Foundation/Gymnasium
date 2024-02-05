@@ -49,12 +49,9 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
+## Rewards
+The exact reward dynamics depend on the environment and are usually documented in the game's manual. You can find these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=223).
 
-The exact reward dynamics depend on the environment and are usually documented in the game's manual. You can
-find these manuals on [AtariAge](https://atariage.com/manual_html_page.php?SoftwareLabelID=223).
-
-Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1).
 ## Variants
 
 Gravitar has the following variants of the environment id which have the following differences in observation,

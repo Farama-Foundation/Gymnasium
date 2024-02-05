@@ -46,11 +46,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-Each enemy you slay gives you points. The amount of points depends on the type of demon and which
-wave you are in. A detailed table of scores is provided on [the AtariAge
-page](https://atariage.com/manual_html_page.php?SoftwareLabelID=135).
+## Rewards
+Each enemy you slay gives you points. The amount of points depends on the type of demon and which wave you are in. A detailed table of scores is provided on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=135).
 
 ## Variants
 

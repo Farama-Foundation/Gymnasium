@@ -21,7 +21,7 @@ For more TicTacToe3D variants with different observation and action spaces, see 
 
 ## Description
 
-Players take turns placing their mark (an X or an O) on a 3-dimensional, 4 x 4 x 4 grid in an attempt to get 4 in a row before their opponent does.
+Players take turns placing their mark (an X or an O) on a 3-dimensional, 4x4x4 grid in an attempt to get 4 in a row before their opponent does.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=521)
 
@@ -47,6 +47,7 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 - `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
 See variants section for the type of observation used by each environment id by default.
+
 
 
 ## Variants

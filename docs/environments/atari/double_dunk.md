@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-Scores follow the rules of basketball. You can get either 3 points, 2 points foul line) depending
-from where you shoot. After a defensive foul, a successful shot from the foul line gives you 1
-point.
+## Rewards
+Scores follow the rules of basketball. You can get either 3 points, 2 points foul line) depending from where you shoot. After a defensive foul, a successful shot from the foul line gives you 1 point.
 
 ## Variants
 

@@ -9,6 +9,11 @@ from tqdm import tqdm
 import gymnasium
 
 
+# Necessary for v1.0.0 without ale-py gymnasium support
+# from shimmy import registration
+# registration._register_atari_envs()
+
+
 # # Generate the list of all atari games on atari.md
 for rom_id in sorted(ALL_ATARI_GAMES):
     print(f"atari/{rom_id}")
@@ -51,7 +56,7 @@ rows = []
 for rom_id in tqdm(ALL_ATARI_GAMES):
     env_name = rom_utils.rom_id_to_name(rom_id)
 
-    env = gymnasium.make(f"ALE/{env_name}-v5")
+    env = gymnasium.make(f"ALE/{env_name}-v5").unwrapped
 
     available_difficulties = env.ale.getAvailableDifficulties()
     default_difficulty = env.ale.cloneState().getDifficulty()
@@ -83,7 +88,7 @@ with open("atari-docs.json") as file:
 for rom_id in tqdm(ALL_ATARI_GAMES):
     env_name = rom_utils.rom_id_to_name(rom_id)
 
-    env = gymnasium.make(f"ALE/{env_name}-v5")
+    env = gymnasium.make(f"ALE/{env_name}-v5").unwrapped
     if rom_id in atari_data:
         env_data = atari_data[rom_id]
 
@@ -211,6 +216,7 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 See variants section for the type of observation used by each environment id by default.
 
 {reward_description}
+
 ## Variants
 
 {env_name} has the following variants of the environment id which have the following differences in observation,
@@ -230,7 +236,7 @@ along with the default values.
 
 A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frame-skipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
 * v0: Initial versions release
 """
