@@ -61,16 +61,22 @@ def check_environments_match(
         obs_a, obs_b
     ), f"resetting observation is not equivalent, observation_a = {obs_a}, observation_b = {obs_b}"
     if info_comparison == "equivalence":
-        assert data_equivalence(info_a, info_b), f"resetting info is not equivalent, info_a = {info_a}, info_b = {info_b}"
+        assert data_equivalence(
+            info_a, info_b
+        ), f"resetting info is not equivalent, info_a = {info_a}, info_b = {info_b}"
     elif info_comparison == "superset":
         for key in info_a:
             assert data_equivalence(
                 info_a[key], info_b[key]
             ), f"resetting info is not a superset, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
     elif info_comparison == "keys-equivalance":
-        assert info_a.keys() == info_b.keys(), f"resetting info keys are not equivalent, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
+        assert (
+            info_a.keys() == info_b.keys()
+        ), f"resetting info keys are not equivalent, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
     elif info_comparison == "keys-superset":
-        assert info_b.keys() >= info_a.keys(), f"resetting info keys are not a superset, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
+        assert (
+            info_b.keys() >= info_a.keys()
+        ), f"resetting info keys are not a superset, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
 
     if not skip_render:
         assert (
@@ -95,7 +101,9 @@ def check_environments_match(
             skip_truncated or truncated_a == truncated_b
         ), f"stepping truncated is not equivalent in step = {step}, truncated_a = {truncated_a}, truncated_b = {truncated_b}"
         if info_comparison == "equivalence":
-            assert data_equivalence(info_a, info_b), f"stepping info is not equivalent in step = {step}, info_a = {info_a}, info_b = {info_b}"
+            assert data_equivalence(
+                info_a, info_b
+            ), f"stepping info is not equivalent in step = {step}, info_a = {info_a}, info_b = {info_b}"
         elif info_comparison == "superset":
             for key in info_a:
                 assert data_equivalence(
