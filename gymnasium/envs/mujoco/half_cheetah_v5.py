@@ -53,26 +53,28 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
     By default, however, the observation space is a `Box(-Inf, Inf, (17,), float64)` where the elements are as follows:
 
-    | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
-    | --- | ------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
-    | 0   | z-coordinate of the front tip        | -Inf | Inf | rootz                            | slide | position (m)             |
-    | 1   | angle of the front tip               | -Inf | Inf | rooty                            | hinge | angle (rad)              |
-    | 2   | angle of the second rotor            | -Inf | Inf | bthigh                           | hinge | angle (rad)              |
-    | 3   | angle of the second rotor            | -Inf | Inf | bshin                            | hinge | angle (rad)              |
-    | 4   | velocity of the tip along the x-axis | -Inf | Inf | bfoot                            | hinge | angle (rad)              |
-    | 5   | velocity of the tip along the y-axis | -Inf | Inf | fthigh                           | hinge | angle (rad)              |
-    | 6   | angular velocity of front tip        | -Inf | Inf | fshin                            | hinge | angle (rad)              |
-    | 7   | angular velocity of second rotor     | -Inf | Inf | ffoot                            | hinge | angle (rad)              |
-    | 8   | x-coordinate of the front tip        | -Inf | Inf | rootx                            | slide | velocity (m/s)           |
-    | 9   | y-coordinate of the front tip        | -Inf | Inf | rootz                            | slide | velocity (m/s)           |
-    | 10  | angle of the front tip               | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
-    | 11  | angle of the second rotor            | -Inf | Inf | bthigh                           | hinge | angular velocity (rad/s) |
-    | 12  | angle of the second rotor            | -Inf | Inf | bshin                            | hinge | angular velocity (rad/s) |
-    | 13  | velocity of the tip along the x-axis | -Inf | Inf | bfoot                            | hinge | angular velocity (rad/s) |
-    | 14  | velocity of the tip along the y-axis | -Inf | Inf | fthigh                           | hinge | angular velocity (rad/s) |
-    | 15  | angular velocity of front tip        | -Inf | Inf | fshin                            | hinge | angular velocity (rad/s) |
-    | 16  | angular velocity of second rotor     | -Inf | Inf | ffoot                            | hinge | angular velocity (rad/s) |
-    | excluded |  x-coordinate of the front tip  | -Inf | Inf | rootx                            | slide | position (m)             |
+
+    | Num | Observation                                 | Min  | Max | Name (XML) | Joint | Type (Unit)                |
+    | --- | ------------------------------------------- | ---- | --- | ---------- | ----- | -------------------------- |
+    | excluded | x-coordinate of the front tip          | -Inf | Inf | rootx      | slide | position (m)               |
+    | 1   | z-coordinate angle of the front tip         | -Inf | Inf | rootz      | slide | position (m)               |
+    | 2   | angle of the root                           | -Inf | Inf | rooty      | hinge | angle (rad)                |
+    | 3   | angle of the back thigh                     | -Inf | Inf | bthigh     | hinge | angle (rad)                |
+    | 4   | angle of the back shin                      | -Inf | Inf | bshin      | hinge | angle (rad)                |
+    | 5   | angle of the back foot                      | -Inf | Inf | bfoot      | hinge | angle (rad)                |
+    | 6   | angle of the front thigh                    | -Inf | Inf | fthigh     | hinge | angle (rad)                |
+    | 7   | angle of the front shin                     | -Inf | Inf | fshin      | hinge | angle (rad)                |
+    | 8   | angle of the front foot                     | -Inf | Inf | ffoot      | hinge | angle (rad)                |
+    | 9   | x-coordinate velocity of the root           | -Inf | Inf | rootx      | slide | velocity (m/s)             |
+    | 10  | z-coordinate velocity of the root           | -Inf | Inf | rootz      | slide | velocity (m/s)             |
+    | 11  | angular velocity of the root                | -Inf | Inf | rooty      | hinge | angular velocity (rad/s)   |
+    | 12  | angular velocity of the back thigh          | -Inf | Inf | bthigh     | hinge | angular velocity (rad/s)   |
+    | 13  | angular velocity of the back shin           | -Inf | Inf | bshin      | hinge | angular velocity (rad/s)   |
+    | 14  | angular velocity of the back foot           | -Inf | Inf | bfoot      | hinge | angular velocity (rad/s)   |
+    | 15  | angular velocity of the front thigh         | -Inf | Inf | fthigh     | hinge | angular velocity (rad/s)   |
+    | 16  | angular velocity of the front shin          | -Inf | Inf | fshin      | hinge | angular velocity (rad/s)   |
+    | 17  | angular velocity of the front foot          | -Inf | Inf | ffoot      | hinge | angular velocity (rad/s)   |
+
 
 
     ## Rewards
@@ -136,6 +138,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Restored the `xml_file` argument (was removed in `v4`).
         - Renamed `info["reward_run"]` to `info["reward_forward"]` to be consistent with the other environments.
+        - Fixed the observation space in doc string to be consistent with the xml file.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen).
     * v2: All continuous control environments now use mujoco-py >= 1.50.
