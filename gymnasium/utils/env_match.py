@@ -90,7 +90,6 @@ def check_environments_match(
         assert skip_obs or data_equivalence(
             obs_a, obs_b
         ), f"stepping observation is not equivalent in step = {step}, observation_a = {obs_a}, observation_b = {obs_b}"
-        breakpoint()
         assert skip_rew or data_equivalence(
             rew_a, rew_b
         ), f"stepping reward is not equivalent in step = {step}, reward_a = {rew_a}, reward_b = {rew_b}"
