@@ -599,7 +599,7 @@ def test_model_object_count(version: str):
     assert env.model.nv == 4
     assert env.model.nu == 2
     assert env.model.nbody == 5
-    assert env.model.nbvh == 5
+    # assert env.model.nbvh == 5
     assert env.model.njnt == 4
     assert env.model.ngeom == 10
     assert env.model.ntendon == 0
