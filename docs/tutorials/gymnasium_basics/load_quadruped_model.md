@@ -6,8 +6,8 @@ In this tutorial we will see how to use the `MuJoCo/Ant-v5` framework to create 
 Steps:
 
 0. Get your **MJCF** (or **URDF**) model file of your robot.
-	0.a. Create your own model (see the [Guide](https://mujoco.readthedocs.io/en/stable/m22odeling.html)).
-	0.b. Find a ready-made model (in this tutorial we will use a model from the [**MuJoCo Menagerie**](https://github.com/google-deepmind/mujoco_menagerie) collection).
+	- Create your own model (see the [Guide](https://mujoco.readthedocs.io/en/stable/m22odeling.html)) or,
+	- Find a ready-made model (in this tutorial, we will use a model from the [**MuJoCo Menagerie**](https://github.com/google-deepmind/mujoco_menagerie) collection).
 1. Load the model with the `xml_file` argument.
 2. Tweak the environment parameters to get the desired behavior.
  	1. Tweak the environment simulation parameters.
