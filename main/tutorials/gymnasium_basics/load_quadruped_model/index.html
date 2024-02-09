@@ -485,9 +485,12 @@
 <p>In this tutorial we will see how to use the <code class="docutils literal notranslate"><span class="pre">MuJoCo/Ant-v5</span></code> framework to create a quadruped walking environment, using a model file (ending in <code class="docutils literal notranslate"><span class="pre">.xml</span></code>) without having to create a new class.</p>
 <p>Steps:</p>
 <ol class="arabic simple" start="0">
-<li><p>Get your <strong>MJCF</strong> (or <strong>URDF</strong>) model file of your robot.
-0.a. Create your own model (see the <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/m22odeling.html">Guide</a>).
-0.b. Find a ready-made model (in this tutorial we will use a model from the <a class="reference external" href="https://github.com/google-deepmind/mujoco_menagerie"><strong>MuJoCo Menagerie</strong></a> collection).</p></li>
+<li><p>Get your <strong>MJCF</strong> (or <strong>URDF</strong>) model file of your robot.</p>
+<ul class="simple">
+<li><p>Create your own model (see the <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/m22odeling.html">Guide</a>) or,</p></li>
+<li><p>Find a ready-made model (in this tutorial, we will use a model from the <a class="reference external" href="https://github.com/google-deepmind/mujoco_menagerie"><strong>MuJoCo Menagerie</strong></a> collection).</p></li>
+</ul>
+</li>
 <li><p>Load the model with the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument.</p></li>
 <li><p>Tweak the environment parameters to get the desired behavior.</p>
 <ol class="arabic simple">
