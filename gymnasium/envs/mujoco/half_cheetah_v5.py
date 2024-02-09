@@ -72,7 +72,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     | 14  | angular velocity of the front thigh       | -Inf | Inf | fthigh                           | hinge | angular velocity (rad/s) |
     | 15  | angular velocity of the front shin        | -Inf | Inf | fshin                            | hinge | angular velocity (rad/s) |
     | 16  | angular velocity of the front foot        | -Inf | Inf | ffoot                            | hinge | angular velocity (rad/s) |
-    | excluded | x-coordinate of the front tip         | -Inf | Inf | rootx                            | slide | position (m)             |
+    | excluded | x-coordinate of the front tip        | -Inf | Inf | rootx                            | slide | position (m)             |
 
 
     ## Rewards
