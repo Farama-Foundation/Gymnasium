@@ -53,7 +53,6 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
 
     By default, however, the observation space is a `Box(-Inf, Inf, (17,), float64)` where the elements are as follows:
 
-    I see, the issue is with the alignment of the table starting from the 8th row. The problem is due to the length of the text in the 'Observation' column. Here's how you can align it correctly:
 
     | Num | Observation                                 | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
@@ -67,7 +66,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     | 7   | angle of the front foot                     | -Inf | Inf | ffoot                            | hinge | angle (rad)              |
     | 8   | velocity of the x-coordinate of front tip   | -Inf | Inf | rootx                            | slide | velocity (m/s)           |
     | 9   | velocity of the z-coordinate of front tip   | -Inf | Inf | rootz                            | slide | velocity (m/s)           |
-    | 10  | angular velocity of the root                | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
+    | 10  | angular velocity of the front tip           | -Inf | Inf | rooty                            | hinge | angular velocity (rad/s) |
     | 11  | angular velocity of the back thigh          | -Inf | Inf | bthigh                           | hinge | angular velocity (rad/s) |
     | 12  | angular velocity of the back shin           | -Inf | Inf | bshin                            | hinge | angular velocity (rad/s) |
     | 13  | angular velocity of the back foot           | -Inf | Inf | bfoot                            | hinge | angular velocity (rad/s) |
