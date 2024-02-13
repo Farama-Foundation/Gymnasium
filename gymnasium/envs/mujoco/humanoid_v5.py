@@ -26,23 +26,11 @@ def mass_center(model, data):
 class HumanoidEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
-    This environment is based on the environment introduced by Tassa, Erez and Todorov
-    in ["Synthesis and stabilization of complex behaviors through online trajectory optimization"](https://ieeexplore.ieee.org/document/6386025).
-    The 3D bipedal robot is designed to simulate a human. It has a torso (abdomen) with a pair of
-    legs and arms. The legs each consist of three body parts, and the arms 2 body parts (representing the knees and
-    elbows respectively). The goal of the environment is to walk forward as fast as possible without falling over.
-
-
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Humanoid-v5               | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Humanoid-v4               | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Humanoid-v3               | `mujoco-py`     | Maintained for reproducibility              |
-    | Humanoid-v2               | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
+    This environment is based on the environment introduced by Tassa, Erez and Todorov in ["Synthesis and stabilization of complex behaviors through online trajectory optimization"](https://ieeexplore.ieee.org/document/6386025).
+    The 3D bipedal robot is designed to simulate a human.
+    It has a torso (abdomen) with a pair of legs and arms, and a pair of tendons connecting the hips to the knees.
+    The legs each consist of three body parts (thigh, shin, foot), and the arms consist of two body parts (upper arm, forearm).
+    The goal of the environment is to walk forward as fast as possible without falling over.
 
 
     ## Action Space
@@ -76,9 +64,8 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation space consists of the following parts (in order)
 
-    - qpos (22 elements by default):* The position values of the robot's body parts.
-    - qvel (23 elements):* The velocities of these individual body parts,
-    (their derivatives).
+    - *qpos (22 elements by default):* The position values of the robot's body parts.
+    - *qvel (23 elements):* The velocities of these individual body parts (their derivatives).
     - *cinert (130 elements):* Mass and inertia of the rigid body parts relative to the center of mass,
     (this is an intermediate result of the transition).
     It has shape 13*10 (*nbody * 10*).
@@ -89,16 +76,16 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     - *qfrc_actuator (17 elements):* Constraint force generated as the actuator force at each joint.
     This has shape `(17,)`  *(nv * 1)*.
     - *cfrc_ext (78 elements):* This is the center of mass based external force on the body parts.
-    It has shape 13 * 6 (*nbody * 6*) and thus adds to another 78 elements in the observation space.
+    It has shape 13 * 6 (*nbody * 6*) and thus adds another 78 elements to the observation space.
     (external forces - force x, y, z and torque x, y, z)
 
-    where *nbody* is for the number of bodies in the robot
-    and *nv* is for the number of degrees of freedom (*= dim(qvel)*).
+    where *nbody* is the number of bodies in the robot,
+    and *nv* is the number of degrees of freedom (*= dim(qvel)*).
 
     By default, the observation does not include the x- and y-coordinates of the torso.
-    These can be be included by passing `exclude_current_positions_from_observation=False` during construction.
+    These can be included by passing `exclude_current_positions_from_observation=False` during construction.
     In this case, the observation space will be a `Box(-Inf, Inf, (350,), float64)`, where the first two observations are the x- and y-coordinates of the torso.
-    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
+    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x- and y-coordinates are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
 
     By default, however, the observation space is a `Box(-Inf, Inf, (348,), float64)`, where the position and velocity elements are as follows:
 
@@ -199,39 +186,35 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | left_shoulder2  | 21 | 15     |
     | left_elfbow     | 22 | 16     |
 
-    The (x,y,z) coordinates are translational DOFs while the orientations are rotational
-    DOFs expressed as quaternions. One can read more about free joints on the
-    [Mujoco Documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
+    The (x,y,z) coordinates are translational DOFs, while the orientations are rotational DOFs expressed as quaternions.
+    One can read more about free joints in the [MuJoCo documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
 
     **Note:**
-    When using Humanoid-v3 or earlier versions, problems have been reported when using a Mujoco-Py version > 2.0.
-    results in the contact forces always being 0. As such we recommend to use a Mujoco-Py
-    version < 2.0 when using the Humanoid environment if you would like to report results
-    with contact forces (if contact forces are not used in your experiments, you can use
-    version > 2.0).
+    When using Humanoid-v3 or earlier versions, problems have been reported when using a `mujoco-py` version > 2.0, resulting in  contact forces always being 0.
+    Therefore, it is recommended to use a `mujoco-py` version < 2.0 when using the Humanoid environment if you want to report results with contact forces (if contact forces are not used in your experiments, you can use version > 2.0).
 
 
     ## Rewards
     The total reward is: ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost - contact_cost*.
 
     - *healthy_reward*:
-    Every timestep that the Humanoid is alive (see section Episode Termination for definition),
-    it gets a reward of fixed value `healthy_reward`.
+    Every timestep that the Humanoid is alive (see definition in section "Episode End"),
+    it gets a reward of fixed value `healthy_reward` (default is $5$).
     - *forward_reward*:
     A reward for moving forward,
     this reward would be positive if the Humanoid moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the center of mass ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is 5),
-    and `frametime` which is 0.001 - so the default is $dt = 5 \times 0.003 = 0.015$,
+    $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $5$),
+    and `frametime` which is $0.001$ - so the default is $dt = 5 \times 0.003 = 0.015$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1.25$).
     - *ctrl_cost*:
     A negative reward to penalize the Humanoid for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
+    $w_{control} \times \|action\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $0.1$).
     - *contact_cost*:
     A negative reward to penalize the Humanoid if the external contact forces are too large.
-    $w_{contact} \times clamp(contact\\_cost\\_range, \\|F_{contact}\\|_2^2)$, where
+    $w_{contact} \times clamp(contact\_cost\_range, \|F_{contact}\|_2^2)$, where
     $w_{contact}$ is `contact_cost_weight` (default is $5\times10^{-7}$),
     $F_{contact}$ are the external contact forces (see `cfrc_ext` section on observation).
 
@@ -241,8 +224,8 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Starting State
-    The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}$.
-    The initial velocity state is $0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}$.
+    The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{24}, reset\_noise\_scale \times I_{24}]}$.
+    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{23}, reset\_noise\_scale \times I_{23}]}$.
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
@@ -250,14 +233,14 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     If `terminate_when_unhealthy is True` (the default), the environment terminates when the Humanoid is unhealthy.
     The Humanoid is said to be unhealthy if any of the following happens:
 
-    1. The z-position of the torso (the height) is no longer contained in `healthy_z_range`.
+    1. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default is $[1.0, 2.0]$).
 
-    #### Truncation
-    The default duration of an episode is 1000 timesteps
+    ### Truncation
+    The default duration of an episode is 1000 timesteps.
 
 
     ## Arguments
@@ -269,22 +252,22 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('Humanoid-v5', ctrl_cost_weight=0.1, ....)
     ```
 
-    | Parameter                                    | Type      | Default          | Description                                                                                                                                                               |
-    | -------------------------------------------- | --------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `xml_file`                                   | **str**   | `"humanoid.xml"` | Path to a MuJoCo model                                                                                                                                                    |
-    | `forward_reward_weight`                      | **float** | `1.25`           | Weight for _forward_reward_ term (see section on reward)                                                                                                                  |
-    | `ctrl_cost_weight`                           | **float** | `0.1`            | Weight for _ctrl_cost_ term (see section on reward)                                                                                                                       |
-    | `contact_cost_weight`                        | **float** | `5e-7`           | Weight for _contact_cost_ term (see section on reward)                                                                                                                    |
-    | `contact_cost_range`                         | **float** | `(-np.inf, 10.0)`| Clamps the _contact_cost_ term (see section on reward)                                                                                                                    |
-    | `healthy_reward`                             | **float** | `5.0`            | Weight for _healthy_reward_ term (see section on reward)                                                                                                                  |
-    | `terminate_when_unhealthy`                   | **bool**  | `True`           | If true, issue a done signal if the z-coordinate of the torso is no longer in the `healthy_z_range`                                                                       |
-    | `healthy_z_range`                            | **tuple** | `(1.0, 2.0)`     | The humanoid is considered healthy if the z-coordinate of the torso is in this range                                                                                      |
-    | `reset_noise_scale`                          | **float** | `1e-2`           | Scale of random perturbations of initial position and velocity (see section on Starting State)                                                                            |
-    | `exclude_current_positions_from_observation` | **bool**  | `True`           | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
-    | `include_cinert_in_observation`              | **bool**  | `True`           | Whether to include *cinert* elements in the observations.                                                                                                                 |
-    | `include_cvel_in_observation`                | **bool**  | `True`           | Whether to include *cvel* elements in the observations.                                                                                                                   |
-    | `include_qfrc_actuator_in_observation`       | **bool**  | `True`           | Whether to include *qfrc_actuator* elements in the observations.                                                                                                          |
-    | `include_cfrc_ext_in_observation`            | **bool**  | `True`           | Whether to include *cfrc_ext* elements in the observations.                                                                                                               |
+    | Parameter                                    | Type      | Default          | Description                                                                                                                                                                                                 |
+    | -------------------------------------------- | --------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `xml_file`                                   | **str**   | `"humanoid.xml"` | Path to a MuJoCo model                                                                                                                                                                                      |
+    | `forward_reward_weight`                      | **float** | `1.25`           | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                                    |
+    | `ctrl_cost_weight`                           | **float** | `0.1`            | Weight for _ctrl_cost_ term (see `Rewards` section)                                                                                                                                                         |
+    | `contact_cost_weight`                        | **float** | `5e-7`           | Weight for _contact_cost_ term (see `Rewards` section)                                                                                                                                                      |
+    | `contact_cost_range`                         | **float** | `(-np.inf, 10.0)`| Clamps the _contact_cost_ term (see `Rewards` section)                                                                                                                                                      |
+    | `healthy_reward`                             | **float** | `5.0`            | Weight for _healthy_reward_ term (see `Rewards` section)                                                                                                                                                    |
+    | `terminate_when_unhealthy`                   | **bool**  | `True`           | If `True`, issue a `terminated` signal is unhealthy (see `Episode End` section)                                                                                                                                |
+    | `healthy_z_range`                            | **tuple** | `(1.0, 2.0)`     | The humanoid is considered healthy if the z-coordinate of the torso is in this range (see `Episode End` section)                                                                                            |
+    | `reset_noise_scale`                          | **float** | `1e-2`           | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                               |
+    | `exclude_current_positions_from_observation` | **bool**  | `True`           | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation State` section) |
+    | `include_cinert_in_observation`              | **bool**  | `True`           | Whether to include *cinert* elements in the observations (see `Observation State` section)                                                                                                                  |
+    | `include_cvel_in_observation`                | **bool**  | `True`           | Whether to include *cvel* elements in the observations (see `Observation State` section)                                                                                                                    |
+    | `include_qfrc_actuator_in_observation`       | **bool**  | `True`           | Whether to include *qfrc_actuator* elements in the observations (see `Observation State` section)                                                                                                           |
+    | `include_cfrc_ext_in_observation`            | **bool**  | `True`           | Whether to include *cfrc_ext* elements in the observations (see `Observation State` section)                                                                                                                |
 
     ## Version History
     * v5:
@@ -294,12 +277,12 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
         - Return a non-empty `info` with `reset()`, previously an empty dictionary was returned, the new keys are the same state information as `step()`.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
-        - Fixed bug: `healthy_reward` was given on every step (even if the Humanoid was unhealthy), now it is only given when the Humanoid is healthy. The `info["reward_survive"]` is updated with this change (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
-        - Restored `contact_cost` and the corresponding `contact_cost_weight` and `contact_cost_range` arguments, with the same defaults as in `Humanoid-v3` (was removed in `v4`) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/504)).
-        - Excluded the `cinert` & `cvel` & `cfrc_ext` of `worldbody` and `root`/`freejoint` `qfrc_actuator` from the observation space, as it was always 0, and thus provided no useful information to the agent, resulting in slightly faster training) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
+        - Fixed bug: `healthy_reward` was given on every step (even if the Humanoid was unhealthy), now it is only given when the Humanoid is healthy. The `info["reward_survive"]` is updated with this change (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
+        - Restored `contact_cost` and the corresponding `contact_cost_weight` and `contact_cost_range` arguments, with the same defaults as in `Humanoid-v3` (was removed in `v4`) (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/504)).
+        - Excluded the `cinert` & `cvel` & `cfrc_ext` of `worldbody` and `root`/`freejoint` `qfrc_actuator` from the observation space, as it was always 0 and thus provided no useful information to the agent, resulting in slightly faster training (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
         - Restored the `xml_file` argument (was removed in `v4`).
         - Added `include_cinert_in_observation`, `include_cvel_in_observation`, `include_qfrc_actuator_in_observation`, `include_cfrc_ext_in_observation` arguments to allow for the exclusion of observation elements from the observation space.
-        - Fixed `info["x_position"]` & `info["y_position"]` & `info["distance_from_origin"]` returning `xpos` instead of `qpos` based observations (`xpos` observations are behind 1 `mj_step()` more [here](https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388)) (related [Github issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/521) & [Github issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/539)).
+        - Fixed `info["x_position"]` & `info["y_position"]` & `info["distance_from_origin"]` returning `xpos` instead of `qpos` based observations (`xpos` observations are behind 1 `mj_step()` more [here](https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388)) (related [GitHub issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/521) & [GitHub issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/539)).
         - Added `info["tendon_length"]` and `info["tendon_velocity"]` containing observations of the Humanoid's 2 tendons connecting the hips to the knees.
         - Renamed `info["reward_alive"]` to `info["reward_survive"]` to be consistent with the other environments.
         - Renamed `info["reward_linvel"]` to `info["reward_forward"]` to be consistent with the other environments.
@@ -309,7 +292,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco-py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
-    * v0: Initial versions release (1.0.0)
+    * v0: Initial versions release
     """
 
     metadata = {

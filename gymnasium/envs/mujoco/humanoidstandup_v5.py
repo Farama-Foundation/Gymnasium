@@ -20,23 +20,11 @@ DEFAULT_CAMERA_CONFIG = {
 class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
-    This environment is based on the environment introduced by Tassa, Erez and Todorov
-    in ["Synthesis and stabilization of complex behaviors through online trajectory optimization"](https://ieeexplore.ieee.org/document/6386025).
-    The 3D bipedal robot is designed to simulate a human. It has a torso (abdomen) with a
-    pair of legs and arms. The legs each consist of two links, and so the arms (representing the
-    knees and elbows respectively). The environment starts with the humanoid laying on the ground,
-    and then the goal of the environment is to make the humanoid standup and then keep it standing
-    by applying torques on the various hinges.
-
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | HumanoidStandup-v5        | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | HumanoidStandup-v4        | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | HumanoidStandup-v2        | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
+    This environment is based on the environment introduced by Tassa, Erez and Todorov in ["Synthesis and stabilization of complex behaviors through online trajectory optimization"](https://ieeexplore.ieee.org/document/6386025).
+    The 3D bipedal robot is designed to simulate a human.
+    It has a torso (abdomen) with a pair of legs and arms, and a pair of tendons connecting the hips to the knees.
+    The legs each consist of three body parts (thigh, shin, foot), and the arms consist of two body parts (upper arm, forearm).
+    The environment starts with the humanoid laying on the ground, and then the goal of the environment is to make the humanoid stand up and then keep it standing by applying torques to the various hinges.
 
 
     ## Action Space
@@ -70,9 +58,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     ## Observation Space
     The observation space consists of the following parts (in order)
 
-    - qpos (22 elements by default):* The position values of the robot's body parts.
-    - qvel (23 elements):* The velocities of these individual body parts,
-    (their derivatives).
+    - *qpos (22 elements by default):* The position values of the robot's body parts.
+    - *qvel (23 elements):* The velocities of these individual body parts (their derivatives).
     - *cinert (130 elements):* Mass and inertia of the rigid body parts relative to the center of mass,
     (this is an intermediate result of the transition).
     It has shape 13*10 (*nbody * 10*).
@@ -83,16 +70,16 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     - *qfrc_actuator (17 elements):* Constraint force generated as the actuator force at each joint.
     This has shape `(17,)`  *(nv * 1)*.
     - *cfrc_ext (78 elements):* This is the center of mass based external force on the body parts.
-    It has shape 13 * 6 (*nbody * 6*) and thus adds to another 78 elements in the observation space.
+    It has shape 13 * 6 (*nbody * 6*) and thus adds another 78 elements to the observation space.
     (external forces - force x, y, z and torque x, y, z)
 
-    where *nbody* is for the number of bodies in the robot
-    and *nv* is for the number of degrees of freedom (*= dim(qvel)*).
+    where *nbody* is the number of bodies in the robot,
+    and *nv* is the number of degrees of freedom (*= dim(qvel)*).
 
     By default, the observation does not include the x- and y-coordinates of the torso.
-    These can be be included by passing `exclude_current_positions_from_observation=False` during construction.
+    These can be included by passing `exclude_current_positions_from_observation=False` during construction.
     In this case, the observation space will be a `Box(-Inf, Inf, (350,), float64)`, where the first two observations are the x- and y-coordinates of the torso.
-    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
+    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x- and y-coordinates are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
 
     By default, however, the observation space is a `Box(-Inf, Inf, (348,), float64)`, where the position and velocity elements are as follows:
 
@@ -193,16 +180,12 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     | left_shoulder2  | 21 | 15     |
     | left_elfbow     | 22 | 16     |
 
-    The (x,y,z) coordinates are translational DOFs while the orientations are rotational
-    DOFs expressed as quaternions. One can read more about free joints on the
-    [Mujoco Documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
+    The (x,y,z) coordinates are translational DOFs, while the orientations are rotational DOFs expressed as quaternions.
+    One can read more about free joints in the [MuJoCo documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
 
     **Note:**
-    When using Humanoid-v3 or earlier versions, problems have been reported when using a Mujoco-Py version > 2.0.
-    results in the contact forces always being 0. As such we recommend to use a Mujoco-Py
-    version < 2.0 when using the Humanoid environment if you would like to report results
-    with contact forces (if contact forces are not used in your experiments, you can use
-    version > 2.0).
+    When using HumanoidStandup-v3 or earlier versions, problems have been reported when using a `mujoco-py` version > 2.0, resulting in  contact forces always being 0.
+    Therefore, it is recommended to use a `mujoco-py` version < 2.0 when using the HumanoidStandup environment if you want to report results with contact forces (if contact forces are not used in your experiments, you can use version > 2.0).
 
 
     ## Rewards
@@ -210,30 +193,29 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
     - *uph_cost*:
     A reward for moving up (trying to stand up).
-    This is not a relative reward, measuring how far up it has moved since the last timestep,
-    but it is an absolute reward that measures how much upward the Humanoid has moved up in total.
-    It is measured as $weight_{uph} \times (z_{after action} - 0)/dt$,
+    This is not a relative reward, measuring how far up the robot has moved since the last timestep,
+    but an absolute reward measuring how far up the Humanoid has moved up in total.
+    It is measured as $w{uph} \times (z_{after action} - 0)/dt$,
     where $z_{after action}$ is the z coordinate of the torso after taking an action,
-    and *dt* is the time between actions, and depends on the `frame_skip` parameter
-    (default is 5), where the frametime is 0.003 - so the default is *dt = 5 * 0.003 = 0.015*.
-    and $weight_{uph}$ is `uph_cost_weight`.
+    and $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $5$),
+    and `frametime`, which is $0.01$ - so the default is $dt = 5 \times 0.01 = 0.05$,
+    and $w_{uph}$ is `uph_cost_weight`.
     - *quad_ctrl_cost*:
     A negative reward to penalize the Humanoid for taking actions that are too large.
-    $w_{quad_control} \times \\|action\\|_2^2$,
-    where $w_{quad_control}$ is `ctrl_cost_weight` (default is $0.1$).
-    If there are *nu* actuators/controls, then the control has shape  `nu x 1`.
+    $w_{quad\_control} \times \|action\|_2^2$,
+    where $w_{quad\_control}$ is `ctrl_cost_weight` (default is $0.1$).
     - *impact_cost*:
     A negative reward to penalize the Humanoid if the external contact forces are too large.
-    $w_{impact} \times clamp(impact\\_cost\\_range, \\|F_{contact}\\|_2^2)$, where
+    $w_{impact} \times clamp(impact\_cost\_range, \|F_{contact}\|_2^2)$, where
     $w_{impact}$ is `impact_cost_weight` (default is $5\times10^{-7}$),
-    $F_{contact}$ are the external contact forces (see `cfrc_ext` section on observation).
+    $F_{contact}$ are the external contact forces (see `cfrc_ext` section on Observation Space).
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{24}, reset\_noise\_scale \times 1_{24}]}$.
-    The initial velocity state is $0_{23} + \mathcal{U}_{[-reset\_noise\_scale \times 1_{23}, reset\_noise\_scale \times 1_{23}]}$.
+    The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{24}, reset\_noise\_scale \times I_{24}]}$.
+    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{23}, reset\_noise\_scale \times I_{23}]}$.
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
@@ -241,11 +223,11 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The Humanoid never terminates.
 
-    #### Truncation
-    The default duration of an episode is 1000 timesteps
+    ### Truncation
+    The default duration of an episode is 1000 timesteps.
 
 
     ## Arguments
@@ -257,19 +239,19 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('HumanoidStandup-v5', impact_cost_weight=0.5e-6, ....)
     ```
 
-    | Parameter                                    | Type      | Default          | Description                                                                                                                                                               |
-    | -------------------------------------------- | --------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `xml_file`                                   | **str**   | `"humanoidstandup.xml"` | Path to a MuJoCo model                                                                                                                                             |
-    | `uph_cost_weight`                            | **float** | `1`              | Weight for _uph_cost_ term (see section on reward)                                                                                                                        |
-    | `ctrl_cost_weight`                           | **float** | `0.1`            | Weight for _quad_ctrl_cost_ term (see section on reward)                                                                                                                  |
-    | `impact_cost_weight`                         | **float** | `0.5e-6`         | Weight for _impact_cost_ term (see section on reward)                                                                                                                     |
-    | `impact_cost_range`                          | **float** | `(-np.inf, 10.0)`| Clamps the _impact_cost_                                                                                                                                                  |
-    | `reset_noise_scale`                          | **float** | `1e-2`           | Scale of random perturbations of initial position and velocity (see section on Starting State)                                                                            |
-    | `exclude_current_positions_from_observation` | **bool**  | `True`           | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
-    | `include_cinert_in_observation`              | **bool**  | `True`           | Whether to include *cinert* elements in the observations.                                                                                                                 |
-    | `include_cvel_in_observation`                | **bool**  | `True`           | Whether to include *cvel* elements in the observations.                                                                                                                   |
-    | `include_qfrc_actuator_in_observation`       | **bool**  | `True`           | Whether to include *qfrc_actuator* elements in the observations.                                                                                                          |
-    | `include_cfrc_ext_in_observation`            | **bool**  | `True`           | Whether to include *cfrc_ext* elements in the observations.                                                                                                               |
+    | Parameter                                    | Type      | Default               | Description                                                                                                                                                                                                 |
+    | -------------------------------------------- | --------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `xml_file`                                   | **str**   |`"humanoidstandup.xml"`| Path to a MuJoCo model                                                                                                                                                                                      |
+    | `uph_cost_weight`                            | **float** | `1`                   | Weight for _uph_cost_ term (see `Rewards` section)                                                                                                                                                          |
+    | `ctrl_cost_weight`                           | **float** | `0.1`                 | Weight for _quad_ctrl_cost_ term (see `Rewards` section)                                                                                                                                                    |
+    | `impact_cost_weight`                         | **float** | `0.5e-6`              | Weight for _impact_cost_ term (see `Rewards` section)                                                                                                                                                       |
+    | `impact_cost_range`                          | **float** | `(-np.inf, 10.0)`     | Clamps the _impact_cost_ (see `Rewards` section)                                                                                                                                                            |
+    | `reset_noise_scale`                          | **float** | `1e-2`                | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                               |
+    | `exclude_current_positions_from_observation` | **bool**  | `True`                | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation Space` section) |
+    | `include_cinert_in_observation`              | **bool**  | `True`                | Whether to include *cinert* elements in the observations (see `Observation Space` section)                                                                                                                  |
+    | `include_cvel_in_observation`                | **bool**  | `True`                | Whether to include *cvel* elements in the observations (see `Observation Space` section)                                                                                                                    |
+    | `include_qfrc_actuator_in_observation`       | **bool**  | `True`                | Whether to include *qfrc_actuator* elements in the observations (see `Observation Space` section)                                                                                                           |
+    | `include_cfrc_ext_in_observation`            | **bool**  | `True`                | Whether to include *cfrc_ext* elements in the observations (see `Observation Space` section)                                                                                                                |
 
     ## Version History
     * v5:
@@ -279,20 +261,20 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
         - Return a non-empty `info` with `reset()`, previously an empty dictionary was returned, the new keys are the same state information as `step()`.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
-        - Excluded the `cinert` & `cvel` & `cfrc_ext` of `worldbody` and `root`/`freejoint` `qfrc_actuator` from the observation space, as it was always 0, and thus provided no useful information to the agent, resulting in slightly faster training) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
+        - Excluded the `cinert` & `cvel` & `cfrc_ext` of `worldbody` and `root`/`freejoint` `qfrc_actuator` from the observation space, as it was always 0, and thus provided no useful information to the agent, resulting in slightly faster training (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
         - Restored the `xml_file` argument (was removed in `v4`).
         - Added `xml_file` argument.
-        - Added `uph_cost_weight`, `ctrl_cost_weight`, `impact_cost_weight`, `impact_cost_range` arguments, to configure the reward function (defaults are effectively the same as in `v4`).
-        - Added `reset_noise_scale` argument, to set the range of initial states.
+        - Added `uph_cost_weight`, `ctrl_cost_weight`, `impact_cost_weight`, `impact_cost_range` arguments to configure the reward function (defaults are effectively the same as in `v4`).
+        - Added `reset_noise_scale` argument to set the range of initial states.
         - Added `include_cinert_in_observation`, `include_cvel_in_observation`, `include_qfrc_actuator_in_observation`, `include_cfrc_ext_in_observation` arguments to allow for the exclusion of observation elements from the observation space.
         - Added `info["tendon_length"]` and `info["tendon_velocity"]` containing observations of the Humanoid's 2 tendons connecting the hips to the knees.
-        - Added `info["x_position"]` & `info["y_position"]` , which contain the observations excluded when `exclude_current_positions_from_observation == True`.
-        - Added `info["z_distance_from_origin"]` which is equal to the vertical distance of the "torso" body from its initial position.
+        - Added `info["x_position"]` & `info["y_position"]` which contain the observations excluded when `exclude_current_positions_from_observation == True`.
+        - Added `info["z_distance_from_origin"]` which is the vertical distance of the "torso" body from its initial position.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50.
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
-    * v0: Initial versions release (1.0.0).
+    * v0: Initial versions release.
     """
 
     metadata = {

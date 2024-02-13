@@ -20,26 +20,10 @@ DEFAULT_CAMERA_CONFIG = {
 class Walker2dEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
-    This environment builds on the [hopper](https://gymnasium.farama.org/environments/mujoco/hopper/) environment
-    by adding another set of legs making it possible for the robot to walk forward instead of
-    hop. Like other Mujoco environments, this environment aims to increase the number of independent state
-    and control variables as compared to the classic control environments. The walker is a
-    two-dimensional two-legged figure that consist of seven main body parts - a single torso at the top
-    (with the two legs splitting after the torso), two thighs in the middle below the torso, two legs
-    in the bottom below the thighs, and two feet attached to the legs on which the entire body rests.
-    The goal is to walk in the in the forward (right)
-    direction by applying torques on the six hinges connecting the seven body parts.
-
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Walker2d-v5               | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Walker2d-v4               | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Walker2d-v3               | `mujoco-py`     | Maintained for reproducibility              |
-    | Walker2d-v2               | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
+    This environment builds on the [hopper](https://gymnasium.farama.org/environments/mujoco/hopper/) environment by adding another set of legs that allow the robot to walk forward instead of hop.
+    Like other MuJoCo environments, this environment aims to increase the number of independent state and control variables compared to classical control environments.
+    The walker is a two-dimensional bipedal robot consisting of seven main body parts - a single torso at the top (with the two legs splitting after the torso), two thighs in the middle below the torso, two legs below the thighs, and two feet attached to the legs on which the entire body rests.
+    The goal is to walk in the forward (right) direction by applying torque to the six hinges connecting the seven body parts.
 
 
     ## Action Space
@@ -60,22 +44,20 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-    The observation Space consists of the following parts (in order):
+    The observation space consists of the following parts (in order):
 
-    - qpos (8 elements by default):* Position values of the robots's body parts.
-    - qvel (9 elements):* The velocities of these individual body parts,
-    (their derivatives).
+    - *qpos (8 elements by default):* Position values of the robot's body parts.
+    - *qvel (9 elements):* The velocities of these individual body parts (their derivatives).
 
     By default, the observation does not include the robot's x-coordinate (`rootx`).
-    This can be be included by passing `exclude_current_positions_from_observation=False` during construction.
-    In this case, the observation space will be a `Box(-Inf, Inf, (18,), float64)`, where the first observation element is the x--coordinate of the robot.
-    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
+    This can be included by passing `exclude_current_positions_from_observation=False` during construction.
+    In this case, the observation space will be a `Box(-Inf, Inf, (18,), float64)`, where the first observation element is the x-coordinate of the robot.
+    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x-coordinate are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
 
-    By default, observation is a `Box(-Inf, Inf, (17,), float64)` where the elements correspond to the following:
+    By default, however, the observation space is a `Box(-Inf, Inf, (17,), float64)` where the elements are as follows:
 
     | Num | Observation                                        | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | -------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
-    | excluded | x-coordinate of the torso                     | -Inf | Inf | rootx                            | slide | position (m)             |
     | 0   | z-coordinate of the torso (height of Walker2d)     | -Inf | Inf | rootz                            | slide | position (m)             |
     | 1   | angle of the torso                                 | -Inf | Inf | rooty                            | hinge | angle (rad)              |
     | 2   | angle of the thigh joint                           | -Inf | Inf | thigh_joint                      | hinge | angle (rad)              |
@@ -93,49 +75,50 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     | 14  | angular velocity of the thigh hinge                | -Inf | Inf | thigh_left_joint                 | hinge | angular velocity (rad/s) |
     | 15  | angular velocity of the leg hinge                  | -Inf | Inf | leg_left_joint                   | hinge | angular velocity (rad/s) |
     | 16  | angular velocity of the foot hinge                 | -Inf | Inf | foot_left_joint                  | hinge | angular velocity (rad/s) |
+    | excluded | x-coordinate of the torso                     | -Inf | Inf | rootx                            | slide | position (m)             |
 
 
     ## Rewards
     The total reward is: ***reward*** *=* *healthy_reward bonus + forward_reward - ctrl_cost*.
 
     - *healthy_reward*:
-    Every timestep that the Walker2d is alive, it receives a fixed reward of value `healthy_reward`,
+    Every timestep that the Walker2d is alive, it receives a fixed reward of value `healthy_reward` (default is $1$),
     - *forward_reward*:
     A reward for moving forward,
     this reward would be positive if the Swimmer moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
-    $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is 4),
-    and `frametime` which is 0.002 - so the default is $dt = 4 \times 0.002 = 0.008$,
+    $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $4$),
+    and `frametime` which is $0.002$ - so the default is $dt = 4 \times 0.002 = 0.008$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
     - *ctrl_cost*:
     A negative reward to penalize the Walker2d for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
+    $w_{control} \times \|action\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $10^{-3}$).
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state is $[0, 1.25, 0, 0, 0, 0, 0, 0, 0] + \mathcal{U}_{[-reset\_noise\_scale \times 1_{9}, reset\_noise\_scale \times 1_{9}]}$.
-    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{9}, reset\_noise\_scale \times 1_{9}]}$.
+    The initial position state is $[0, 1.25, 0, 0, 0, 0, 0, 0, 0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{9}, reset\_noise\_scale \times I_{9}]}$.
+    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{9}, reset\_noise\_scale \times I_{9}]}$.
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
-    Note that the z-coordinate is non-zero so that the walker2d can stand up immediately.
+    Note that the z-coordinate is non-zero so that the Walker2d can stand up immediately.
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     If `terminate_when_unhealthy is True` (which is the default), the environment terminates when the Walker2d is unhealthy.
     The Walker2d is unhealthy if any of the following happens:
 
     1. Any of the state space values is no longer finite
-    2. The height of the walker is ***not*** in the closed interval specified by `healthy_z_range`
-    3. The absolute value of the angle (`observation[1]` if `exclude_current_positions_from_observation=False`, else `observation[2]`) is ***not*** in the closed interval specified by `healthy_angle_range`
+    2. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default to $[0.8, 1.0]$).
+    3. The absolute value of the angle (`observation[1]` if `exclude_current_positions_from_observation=False`, else `observation[2]`) is ***not*** in the closed interval specified by the `healthy_angle_range` argument (default is $[-1, 1]$).
 
-    #### Truncation
-    The default duration of an episode is 1000 timesteps
+    ### Truncation
+    The default duration of an episode is 1000 timesteps.
 
 
     ## Arguments
@@ -147,17 +130,17 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('Walker2d-v5', ctrl_cost_weight=1e-3, ...)
     ```
 
-    | Parameter                                    | Type      | Default           | Description                                                                                                                                                       |
-    | -------------------------------------------- | --------- | ----------------  | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `xml_file`                                   | **str**   |`"walker2d_v5.xml"`| Path to a MuJoCo model                                                                                                                                            |
-    | `forward_reward_weight`                      | **float** | `1`               | Weight for _forward_reward_ term (see section on reward)                                                                                                          |
-    | `ctrl_cost_weight`                           | **float** | `1e-3`            | Weight for _ctr_cost_ term (see section on reward)                                                                                                                |
-    | `healthy_reward`                             | **float** | `1`               | Weight for _healthy_reward_ reward (see section on reward)                                                                                                        |
-    | `terminate_when_unhealthy`                   | **bool**  | `True`            | If true, issue a done signal if the z-coordinate of the walker is no longer healthy                                                                               |
-    | `healthy_z_range`                            | **tuple** | `(0.8, 2)`        | The z-coordinate of the torso of the walker must be in this range to be considered healthy                                                                        |
-    | `healthy_angle_range`                        | **tuple** | `(-1, 1)`         | The angle must be in this range to be considered healthy                                                                                                          |
-    | `reset_noise_scale`                          | **float** | `5e-3`            | Scale of random perturbations of initial position and velocity (see section on Starting State)                                                                    |
-    | `exclude_current_positions_from_observation` | **bool**  | `True`            | Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
+    | Parameter                                    | Type      | Default           | Description                                                                                                                                                                                         |
+    | -------------------------------------------- | --------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `xml_file`                                   | **str**   |`"walker2d_v5.xml"`| Path to a MuJoCo model                                                                                                                                                                              |
+    | `forward_reward_weight`                      | **float** | `1`               | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                            |
+    | `ctrl_cost_weight`                           | **float** | `1e-3`            | Weight for _ctr_cost_ term (see `Rewards` section)                                                                                                                                                  |
+    | `healthy_reward`                             | **float** | `1`               | Weight for _healthy_reward_ reward (see `Rewards` section)                                                                                                                                          |
+    | `terminate_when_unhealthy`                   | **bool**  | `True`            | If True, issue a `terminated` signal is unhealthy (see `Episode End` section)                                                                                                                          |
+    | `healthy_z_range`                            | **tuple** | `(0.8, 2)`        | The z-coordinate of the torso of the walker must be in this range to be considered healthy (see `Episode End` section)                                                                              |
+    | `healthy_angle_range`                        | **tuple** | `(-1, 1)`         | The angle must be in this range to be considered healthy (see `Episode End` section)                                                                                                                |
+    | `reset_noise_scale`                          | **float** | `5e-3`            | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                       |
+    | `exclude_current_positions_from_observation` | **bool**  | `True`            | Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation Space` section) |
 
 
     ## Version History
@@ -168,8 +151,8 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
         - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
         - Return a non-empty `info` with `reset()`, previously an empty dictionary was returned, the new keys are the same state information as `step()`.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
-        - In v2, v3 and v4 the models have different friction values for the two feet (left foot friction == 1.9 and right foot friction == 0.9). The `Walker-v5` model is updated to have the same friction for both feet (set to 1.9). This causes the Walker2d's the right foot to slide less on the surface and therefore require more force to move (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
-        - Fixed bug: `healthy_reward` was given on every step (even if the Walker2D is unhealthy), now it is only given if the Walker2d is healthy. The `info` "reward_survive" is updated with this change (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
+        - In v2, v3 and v4 the models have different friction values for the two feet (left foot friction == 1.9 and right foot friction == 0.9). The `Walker-v5` model is updated to have the same friction for both feet (set to 1.9). This causes the Walker2d's the right foot to slide less on the surface and therefore require more force to move (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
+        - Fixed bug: `healthy_reward` was given on every step (even if the Walker2D is unhealthy), now it is only given if the Walker2d is healthy. The `info` "reward_survive" is updated with this change (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
         - Restored the `xml_file` argument (was removed in `v4`).
         - Added individual reward terms in `info` (`info["reward_forward"]`, info`["reward_ctrl"]`, `info["reward_survive"]`).
         - Added `info["z_distance_from_origin"]` which is equal to the vertical distance of the "torso" body from its initial position.
@@ -177,7 +160,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco-py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
-    * v0: Initial versions release (1.0.0)
+    * v0: Initial versions release
     """
 
     metadata = {

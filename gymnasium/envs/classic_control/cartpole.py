@@ -74,29 +74,33 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     ## Arguments
 
-    Cartpole only has ``render_mode`` as a keyword for ``gymnasium.make``.
+    Cartpole only has `render_mode` as a keyword for `gymnasium.make`.
     On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
-    Examples:
-        >>> import gymnasium as gym
-        >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
-        >>> env
-        <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
-        >>> env.reset(seed=123, options={"low": 0, "high": 1})
-        (array([0.6823519 , 0.05382102, 0.22035988, 0.18437181], dtype=float32), {})
+    ```python
+    >>> import gymnasium as gym
+    >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
+    >>> env.reset(seed=123, options={"low": -0.1, "high": 0.1})  # default low=-0.05, high=0.05
+    (array([ 0.03647037, -0.0892358 , -0.05592803, -0.06312564], dtype=float32), {})
+
+    ```
 
     ## Vectorized environment
 
     To increase steps per seconds, users can use a custom vector environment or with an environment vectorizor.
 
-    Examples:
-        >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="vector_entry_point")
-        >>> envs
-        CartPoleVectorEnv(CartPole-v1, num_envs=3)
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
-        >>> envs
-        SyncVectorEnv(CartPole-v1, num_envs=3)
+    ```python
+    >>> import gymnasium as gym
+    >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="vector_entry_point")
+    >>> envs
+    CartPoleVectorEnv(CartPole-v1, num_envs=3)
+    >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+    >>> envs
+    SyncVectorEnv(CartPole-v1, num_envs=3)
+
+    ```
     """
 
     metadata = {
@@ -473,6 +477,7 @@ class CartPoleVectorEnv(VectorEnv):
             low=self.low, high=self.high, size=(4, self.num_envs)
         ).astype(np.float32)
         self.steps_beyond_terminated = None
+        self.steps = np.zeros(self.num_envs, dtype=np.int32)
 
         if self.render_mode == "human":
             self.render()

@@ -19,25 +19,11 @@ DEFAULT_CAMERA_CONFIG = {
 class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
-    This environment originates from control theory and builds on the cartpole
-    environment based on the work done by Barto, Sutton, and Anderson in
-    ["Neuronlike adaptive elements that can solve difficult learning control problems"](https://ieeexplore.ieee.org/document/6313077),
-    powered by the Mujoco physics simulator - allowing for more complex experiments
-    (such as varying the effects of gravity or constraints). This environment involves a cart that can
-    moved linearly, with a pole fixed on it and a second pole fixed on the other end of the first one
-    (leaving the second pole as the only one with one free end). The cart can be pushed left or right,
-    and the goal is to balance the second pole on top of the first pole, which is in turn on top of the
-    cart, by applying continuous forces on the cart.
+    This environment originates from control theory and builds on the cartpole environment based on the work of Barto, Sutton, and Anderson in ["Neuronlike adaptive elements that can solve difficult learning control problems"](https://ieeexplore.ieee.org/document/6313077),
+    powered by the Mujoco physics simulator - allowing for more complex experiments (such as varying the effects of gravity or constraints).
+    This environment involves a cart that can be moved linearly, with one pole attached to it and a second pole attached to the other end of the first pole (leaving the second pole as the only one with a free end).
+    The cart can be pushed left or right, and the goal is to balance the second pole on top of the first pole, which is in turn on top of the cart, by applying continuous forces to the cart.
 
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | InvertedDoublePendulum-v5 | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | InvertedDoublePendulum-v4 | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | InvertedDoublePendulum-v2 | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
 
     ## Action Space
     The agent take a 1-element vector for actions.
@@ -51,11 +37,18 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-    The state space consists of positional values of different body parts of the pendulum system,
-    followed by the velocities of those individual parts (their derivatives) with all the
-    positions ordered before all the velocities.
+    The observation space consists of the following parts (in order):
 
-    The observation is a `ndarray` with shape `(9,)` where the elements correspond to the following:
+    - *qpos (1 element):* Position values of the robot's cart.
+    - *sin(qpos) (2 elements):* The sine of the angles of poles.
+    - *cos(qpos) (2 elements):* The cosine of the angles of poles.
+    - *qvel (3 elements):* The velocities of these individual body parts (their derivatives).
+    - *qfrc_constraint (1 element):* Constraint force of the cart.
+    There is one constraint force for contacts for each degree of freedom (3).
+    The approach and handling of constraints by MuJoCo is unique to the simulator and is based on their research.
+    More information can be found  in their [*documentation*](https://mujoco.readthedocs.io/en/latest/computation.html) or in their paper ["Analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo"](https://homes.cs.washington.edu/~todorov/papers/TodorovICRA14.pdf).
+
+    The observation space is a `Box(-Inf, Inf, (9,), float64)` where the elements are as follows:
 
     | Num | Observation                                                       | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ----------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
@@ -68,26 +61,16 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     | 6   | angular velocity of the angle between the cart and the first pole | -Inf | Inf | hinge                            | hinge | angular velocity (rad/s) |
     | 7   | angular velocity of the angle between the two poles               | -Inf | Inf | hinge2                           | hinge | angular velocity (rad/s) |
     | 8   | constraint force - x                                              | -Inf | Inf | slider                           | slide | Force (N)                |
-    | excluded | constraint force - y                                         | -Inf | Inf | hinge                            | slide | Force (N)                |
-    | excluded | constraint force - z                                         | -Inf | Inf | hinge2                           | slide | Force (N)                |
-
-
-    There is physical contact between the robots and their environment - and Mujoco
-    attempts at getting realistic physics simulations for the possible physical contact
-    dynamics by aiming for physical accuracy and computational efficiency.
-
-    There is one constraint force for contacts for each degree of freedom (3).
-    The approach and handling of constraints by Mujoco is unique to the simulator and is based on their research.
-    Once can find more information in their [*documentation*](https://mujoco.readthedocs.io/en/latest/computation.html)
-    or in their paper ["Analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo"](https://homes.cs.washington.edu/~todorov/papers/TodorovICRA14.pdf).
+    | excluded | constraint force - y                                         | -Inf | Inf | slider                           | slide | Force (N)                |
+    | excluded | constraint force - z                                         | -Inf | Inf | slider                           | slide | Force (N)                |
 
 
     ## Rewards
     The total reward is: ***reward*** *=* *alive_bonus - distance_penalty - velocity_penalty*.
 
     - *alive_bonus*:
-    The goal is to keep the second inverted pendulum upright (within a certain angle limit) as long as possible -
-    so for each timestep that the second pole is upright, a reward of `healthy_reward` is given.
+    Every timestep that the Inverted Pendulum is healthy (see definition in section "Episode End"),
+    it gets a reward of fixed value `healthy_reward` (default is $10$).
     - *distance_penalty*:
     This reward is a measure of how far the *tip* of the second pendulum (the only free end) moves,
     and it is calculated as $0.01 x_{pole2-tip}^2 + (y_{pole2-tip}-2)^2$,
@@ -101,14 +84,14 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Starting State
-    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{3}, reset\_noise\_scale \times 1_{3}]}$.
+    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{3}, reset\_noise\_scale \times I_{3}]}$.
     The initial velocity state is $\mathcal{N}(0_{3}, reset\_noise\_scale^2 \times I_{3})$.
 
     where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The environment terminates when the Inverted Double Pendulum is unhealthy.
     The Inverted Double Pendulum is unhealthy if any of the following happens:
 
@@ -116,8 +99,8 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
     Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.
 
-    #### Truncation
-    The default duration of an episode is 1000 timesteps
+    ### Truncation
+    The default duration of an episode is 1000 timesteps.
 
 
     ## Arguments
@@ -129,28 +112,28 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('InvertedDoublePendulum-v5', healthy_reward=10, ...)
     ```
 
-    | Parameter               | Type       | Default                        | Description                   |
-    |-------------------------|------------|--------------                  |-------------------------------|
-    | `xml_file`              | **str**    |`"inverted_double_pendulum.xml"`| Path to a MuJoCo model |
-    | `healthy_reward`        | **float**  | `10                            | Constant reward given if the pendulum is "healthy" (upright) |
-    | `reset_noise_scale`     | **float**  | `0.1`                          | Scale of random perturbations of initial position and velocity (see section on Starting State) |
+    | Parameter               | Type       | Default                        | Description                                                                                   |
+    |-------------------------|------------|--------------------------------|-----------------------------------------------------------------------------------------------|
+    | `xml_file`              | **str**    |`"inverted_double_pendulum.xml"`| Path to a MuJoCo model                                                                        |
+    | `healthy_reward`        | **float**  | `10`                           | Constant reward given if the pendulum is `healthy` (upright) (see `Rewards` section)          |
+    | `reset_noise_scale`     | **float**  | `0.1`                          | Scale of random perturbations of initial position and velocity (see `Starting State` section) |
 
     ## Version History
     * v5:
         - Minimum `mujoco` version is now 2.3.3.
         - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
-        - Fixed bug: `healthy_reward` was given on every step (even if the Pendulum is unhealthy), now it is only given if the DoublePendulum is healthy (not terminated)(related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/500)).
-        - Excluded the `qfrc_constraint` ("constraint force") of the hinges from the observation space (as it was always 0, thus providing no useful information to the agent, resulting is slightly faster training) (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/228)).
+        - Fixed bug: `healthy_reward` was given on every step (even if the Pendulum is unhealthy), now it is only given if the DoublePendulum is healthy (not terminated)(related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/500)).
+        - Excluded the `qfrc_constraint` ("constraint force") of the hinges from the observation space (as it was always 0, thus providing no useful information to the agent, resulting in slightly faster training) (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/228)).
         - Added `xml_file` argument.
-        - Added `reset_noise_scale` argument, to set the range of initial states.
+        - Added `reset_noise_scale` argument to set the range of initial states.
         - Added `healthy_reward` argument to configure the reward function (defaults are effectively the same as in `v4`).
         - Added individual reward terms in `info` ( `info["reward_survive"]`, `info["distance_penalty"]`, `info["velocity_penalty"]`).
-    * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
+    * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: This environment does not have a v3 release.
-    * v2: All continuous control environments now use mujoco-py >= 1.50
-    * v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum)
-    * v0: Initial versions release (1.0.0)
+    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum).
+    * v0: Initial versions release.
     """
 
     metadata = {

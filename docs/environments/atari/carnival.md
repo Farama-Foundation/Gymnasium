@@ -46,11 +46,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points by destroying targets. Points (or bullets) may be subtracted if you hit the target when it shows a minus sign.
-You will score extra points if it shows a plus sign!
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=908).
+## Rewards
+You score points by destroying targets. Points (or bullets) may be subtracted if you hit the target when it shows a minus sign. You will score extra points if it shows a plus sign! For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=908).
 
 ## Variants
 

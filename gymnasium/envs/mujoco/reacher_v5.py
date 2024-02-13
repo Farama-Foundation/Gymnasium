@@ -15,18 +15,8 @@ DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
 class ReacherEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
-    "Reacher" is a two-jointed robot arm. The goal is to move the robot's end effector (called *fingertip*) close to a
-    target that is spawned at a random position.
-
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Reacher-v5                | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Reacher-v4                | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Reacher-v2                | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
+    "Reacher" is a two-jointed robot arm.
+    The goal is to move the robot's end effector (called *fingertip*) close to a target that is spawned at a random position.
 
 
     ## Action Space
@@ -43,15 +33,15 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-    Observations consist of
+    The observation space consists of the following parts (in order):
 
-    - The cosine of the angles of the two arms
-    - The sine of the angles of the two arms
-    - The coordinates of the target
-    - The angular velocities of the arms
-    - The vector between the target and the reacher's fingertip (3 dimensional with the last element being 0)
+    - *cos(qpos) (2 elements):* The cosine of the angles of the two arms.
+    - *sin(qpos) (2 elements):* The sine of the angles of the two arms.
+    - *qpos (2 elements):* The coordinates of the target.
+    - *qvel (2 elements):* The angular velocities of the arms (their derivatives).
+    - *xpos (2 elements):* The vector between the target and the reacher's.
 
-    The observation is a `Box(-Inf, Inf, (10,), float64)` where the elements correspond to the following:
+    The observation space is a `Box(-Inf, Inf, (10,), float64)` where the elements are as follows:
 
     | Num | Observation                                                                                    | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ---------------------------------------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | ------------------------ |
@@ -67,11 +57,10 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     | 9   | y-value of position_fingertip - position_target                                                | -Inf | Inf | NA                               | slide | position (m)             |
     | excluded | z-value of position_fingertip - position_target (constantly 0 since reacher is 2d)        | -Inf | Inf | NA                               | slide | position (m)             |
 
-    Most Gym environments just return the positions and velocity of the
-    joints in the `.xml` file as the state of the environment. However, in
-    reacher the state is created by combining only certain elements of the
-    position and velocity, and performing some function transformations on them.
-    If one is to read the `reacher.xml` then they will find 4 joints:
+
+    Most Gymnasium environments just return the positions and velocities of the joints in the `.xml` file as the state of the environment.
+    In reacher, however, the state is created by combining only certain elements of the position and velocity and performing some function transformations on them.
+    The `reacher.xml` contains these 4 joints:
 
     | Num | Observation                 | Min      | Max      | Name (in corresponding XML file) | Joint | Unit               |
     |-----|-----------------------------|----------|----------|----------------------------------|-------|--------------------|
@@ -86,33 +75,33 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     - *reward_distance*:
     This reward is a measure of how far the *fingertip* of the reacher (the unattached end) is from the target,
-    with a more negative value assigned for if the reacher's *fingertip* is further away from the target.
+    with a more negative value assigned if the reacher's *fingertip* is further away from the target.
     It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
-    where $w_{near}$ is the `reward_near_weight`.
+    where $w_{near}$ is the `reward_near_weight` (default is $1$).
     - *reward_control*:
     A negative reward to penalize the walker for taking actions that are too large.
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
-    where $w_{control}$ is the `reward_control_weight`.
+    where $w_{control}$ is the `reward_control_weight`. (default is $0.1$)
 
     `info` contains the individual reward terms.
 
     ## Starting State
-    The initial position state of the reacher arm is $\mathcal{U}_{[-0.1 \times 1_{2}, 0.1 \times 1_{2}]}$.
+    The initial position state of the reacher arm is $\mathcal{U}_{[-0.1 \times I_{2}, 0.1 \times I_{2}]}$.
     The position state of the goal is (permanently) $\mathcal{S}(0.2)$.
     The initial velocity state of the Reacher arm is $\mathcal{U}_{[-0.005 \times 1_{2}, 0.005 \times 1_{2}]}$.
     The velocity state of the object is (permanently) $0_2$.
 
-    where $\mathcal{U}$ is the multivariate uniform continuous distribution and $\mathcal{S} is the uniform continuous spherical distribution.
+    where $\mathcal{U}$ is the multivariate uniform continuous distribution and $\mathcal{S}$ is the uniform continuous spherical distribution.
 
-    The default frame rate is 2, with each frame lasting for 0.01, so *dt = 2 * 0.01 = 0.02*.
+    The default frame rate is $2$, with each frame lasting $0.01$, so *dt = 5 * 0.01 = 0.02*.
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The Reacher never terminates.
 
-    #### Truncation
-    The default duration of an episode is 50 timesteps
+    ### Truncation
+    The default duration of an episode is 50 timesteps.
 
 
     ## Arguments
@@ -124,27 +113,27 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('Reacher-v5', xml_file=...)
     ```
 
-    | Parameter               | Type       | Default      |Description                                               |
-    |-------------------------|------------|--------------|----------------------------------------------------------|
-    | `xml_file`              | **str**    |`"reacher.xml"`| Path to a MuJoCo model                                  |
-    | `reward_dist_weight`    | **float**  | `1`          | Weight for *reward_dist* term (see section on reward)    |
-    | `reward_control_weight` | **float**  | `0.1`        | Weight for *reward_control* term (see section on reward) |
+    | Parameter               | Type       | Default       | Description                                              |
+    |-------------------------|------------|---------------|----------------------------------------------------------|
+    | `xml_file`              | **str**    |`"reacher.xml"`| Path to a MuJoCo model                                   |
+    | `reward_dist_weight`    | **float**  | `1`           | Weight for _reward_dist_ term (see `Rewards` section)    |
+    | `reward_control_weight` | **float**  | `0.1`         | Weight for _reward_control_ term (see `Rewards` section) |
 
     ## Version History
     * v5:
         - Minimum `mujoco` version is now 2.3.3.
         - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
-        - Fixed bug: `reward_distance` was based on the state before the physics step, now it is based on the state after the physics step (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
-        - Removed `"z - position_fingertip"` from the observation space since it is always 0, and therefore provides no useful information to the agent, this should result is slightly faster training (related [Github issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
+        - Fixed bug: `reward_distance` was based on the state before the physics step, now it is based on the state after the physics step (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
+        - Removed `"z - position_fingertip"` from the observation space since it is always 0 and therefore provides no useful information to the agent, this should result is slightly faster training (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
         - Added `xml_file` argument.
-        - Added `reward_dist_weight`, `reward_control_weight` arguments, to configure the reward function (defaults are effectively the same as in `v4`).
-        - Fixed `info["reward_ctrl"]` being not being multiplied by the reward weight.
+        - Added `reward_dist_weight`, `reward_control_weight` arguments to configure the reward function (defaults are effectively the same as in `v4`).
+        - Fixed `info["reward_ctrl"]`  not being multiplied by the reward weight.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks (not including reacher, which has a max_time_steps of 50). Added reward_threshold to environments.
-    * v0: Initial versions release (1.0.0)
+    * v0: Initial versions release
     """
 
     metadata = {

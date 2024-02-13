@@ -142,11 +142,15 @@ class BipedalWalker(gym.Env, EzPickle):
     if the walker exceeds the right end of the terrain length.
 
     ## Arguments
-    To use the _hardcore_ environment, you need to specify the
-    `hardcore=True` argument like below:
+
+    To use the _hardcore_ environment, you need to specify the `hardcore=True`:
+
     ```python
-    import gymnasium as gym
-    env = gym.make("BipedalWalker-v3", hardcore=True)
+    >>> import gymnasium as gym
+    >>> env = gym.make("BipedalWalker-v3", hardcore=True, render_mode="rgb_array")
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<BipedalWalker<BipedalWalker-v3>>>>>
+
     ```
 
     ## Version History

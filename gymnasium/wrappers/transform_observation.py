@@ -31,7 +31,7 @@ __all__ = [
     "ReshapeObservation",
     "RescaleObservation",
     "DtypeObservation",
-    "RenderObservation",
+    "AddRenderObservation",
 ]
 
 
@@ -607,7 +607,7 @@ class DtypeObservation(
         )
 
 
-class RenderObservation(
+class AddRenderObservation(
     TransformObservation[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
@@ -620,7 +620,7 @@ class RenderObservation(
 
     Example - Replace the observation with the rendered image:
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
-        >>> env = RenderObservation(env, render_only=True)
+        >>> env = AddRenderObservation(env, render_only=True)
         >>> env.observation_space
         Box(0, 255, (400, 600, 3), uint8)
         >>> obs, _ = env.reset(seed=123)
@@ -634,7 +634,7 @@ class RenderObservation(
 
     Example - Add the rendered image to the original observation as a dictionary item:
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
-        >>> env = RenderObservation(env, render_only=False)
+        >>> env = AddRenderObservation(env, render_only=False)
         >>> env.observation_space
         Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
         >>> obs, info = env.reset(seed=123)
@@ -651,7 +651,7 @@ class RenderObservation(
 
     Change logs:
      * v0.15.0 - Initially added as ``PixelObservationWrapper``
-     * v1.0.0 - Renamed to ``RenderObservation``
+     * v1.0.0 - Renamed to ``AddRenderObservation``
     """
 
     def __init__(
@@ -661,7 +661,7 @@ class RenderObservation(
         render_key: str = "pixels",
         obs_key: str = "state",
     ):
-        """Constructor of the pixel observation wrapper.
+        """Constructor of the add render observation wrapper.
 
         Args:
             env: The environment to wrap.

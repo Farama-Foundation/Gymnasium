@@ -12,16 +12,11 @@ from gymnasium.spaces import Box
 class SwimmerEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
-    This environment corresponds to the Swimmer environment described in Rémi Coulom's PhD thesis
-    ["Reinforcement Learning Using Neural Networks, with Applications to Motor Control"](https://tel.archives-ouvertes.fr/tel-00003985/document).
-    The environment aims to increase the number of independent state and control
-    variables as compared to the classic control environments. The swimmers
-    consist of three or more segments ('***links***') and one less articulation
-    joints ('***rotors***') - one rotor joint connecting exactly two links to
-    form a linear chain. The swimmer is suspended in a two dimensional pool and
-    always starts in the same position (subject to some deviation drawn from an
-    uniform distribution), and the goal is to move as fast as possible towards
-    the right by applying torque on the rotors and using the fluids friction.
+    This environment corresponds to the Swimmer environment described in Rémi Coulom's PhD thesis ["Reinforcement Learning Using Neural Networks, with Applications to Motor Control"](https://tel.archives-ouvertes.fr/tel-00003985/document).
+    The environment aims to increase the number of independent state and control variables compared to classical control environments.
+    The swimmers consist of three or more segments ('***links***') and one less articulation joints ('***rotors***') - one rotor joint connects exactly two links to form a linear chain.
+    The swimmer is suspended in a two-dimensional pool and always starts in the same position (subject to some deviation drawn from a uniform distribution),
+    and the goal is to move as fast as possible towards the right by applying torque to the rotors and using fluid friction.
 
     ## Notes
 
@@ -32,20 +27,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     * *l<sub>i</sub>*: length of part *i* (*i* ∈ {1...n})
     * *k*: viscous-friction coefficient
 
-    While the default environment has *n* = 3, *l<sub>i</sub>* = 0.1,
-    and *k* = 0.1. It is possible to pass a custom MuJoCo XML file during construction to increase the
-    number of links, or to tweak any of the parameters.
-
-    Gymnasium includes the following versions of the environment:
-
-    | Environment               | Binding         | Notes                                       |
-    | ------------------------- | --------------- | ------------------------------------------- |
-    | Swimmer-v5                | `mujoco=>2.3.3` | Recommended (most features, the least bugs) |
-    | Swimmer-v4                | `mujoco=>2.1.3` | Maintained for reproducibility              |
-    | Swimmer-v3                | `mujoco-py`     | Maintained for reproducibility              |
-    | Swimmer-v2                | `mujoco-py`     | Maintained for reproducibility              |
-
-    For more information see section "Version History".
+    While the default environment has *n* = 3, *l<sub>i</sub>* = 0.1, and *k* = 0.1.
+    It is possible to pass a custom MuJoCo XML file during construction to increase the number of links, or to tweak any of the parameters.
 
 
     ## Action Space
@@ -62,16 +45,17 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Observation Space
-    By default, observations consists of:
-    * θ<sub>i</sub>: angle of part *i* with respect to the *x* axis
-    * θ<sub>i</sub>': its derivative with respect to time (angular velocity)
+    The observation space consists of the following parts (in order):
+
+    - *qpos (3 elements by default):* Position values of the robot's body parts.
+    - *qvel (5 elements):* The velocities of these individual body parts (their derivatives).
 
     By default, the observation does not include the x- and y-coordinates of the front tip.
-    These can be be included by passing `exclude_current_positions_from_observation=False` during construction.
+    These can be included by passing `exclude_current_positions_from_observation=False` during construction.
     In this case, the observation space will be a `Box(-Inf, Inf, (10,), float64)`, where the first two observations are the x- and y-coordinates of the front tip.
-    Regardless of whether `exclude_current_positions_from_observation` is set to true or false, the x- and y-coordinates are returned in `info` with keys `"x_position"` and `"y_position"`, respectively.
+    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x- and y-coordinates are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
 
-    By default, the observation is a `Box(-Inf, Inf, (8,), float64)` where the elements correspond to the following:
+    By default, however, the observation space is a `Box(-Inf, Inf, (8,), float64)` where the elements are as follows:
 
     | Num | Observation                          | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)              |
     | --- | ------------------------------------ | ---- | --- | -------------------------------- | ----- | ------------------------ |
@@ -96,29 +80,29 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
     $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is 4),
-    and `frametime` which is 0.01 - so the default is $dt = 4 \times 0.01 = 0.04$,
+    and `frametime` which is $0.01$ - so the default is $dt = 4 \times 0.01 = 0.04$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
     - *ctrl_cost*:
     A negative reward to penalize the Swimmer for taking actions that are too large.
-    $w_{control} \times \\|action\\|_2^2$,
+    $w_{control} \times \|action\|_2^2$,
     where $w_{control}$ is `ctrl_cost_weight` (default is $10^{-4}$).
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{5}, reset\_noise\_scale \times 1_{5}]}$.
-    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times 1_{5}, reset\_noise\_scale \times 1_{5}]}$.
+    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{5}, reset\_noise\_scale \times I_{5}]}$.
+    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{5}, reset\_noise\_scale \times I_{5}]}$.
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The Swimmer never terminates.
 
-    #### Truncation
-    The default duration of an episode is 1000 timesteps
+    ### Truncation
+    The default duration of an episode is 1000 timesteps.
 
 
     ## Arguments
@@ -130,13 +114,13 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('Swimmer-v5', xml_file=...)
     ```
 
-    | Parameter                                  | Type      | Default       |Description                    |
-    |--------------------------------------------| --------- |-------------- |-------------------------------|
-    |`xml_file`                                  | **str**   |`"swimmer.xml"`| Path to a MuJoCo model        |
-    |`forward_reward_weight`                     | **float** | `1`           | Weight for _forward_reward_ term (see section on reward)|
-    |`ctrl_cost_weight`                          | **float** | `1e-4`        | Weight for _ctrl_cost_ term (see section on reward) |
-    |`reset_noise_scale`                         | **float** | `0.1`         | Scale of random perturbations of initial position and velocity (see section on Starting State) |
-    |`exclude_current_positions_from_observation`| **bool**  | `True`        | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies |
+    | Parameter                                  | Type      | Default       |Description                                                                                                                                                                                                  |
+    |--------------------------------------------| --------- |-------------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    |`xml_file`                                  | **str**   |`"swimmer.xml"`| Path to a MuJoCo model                                                                                                                                                                                      |
+    |`forward_reward_weight`                     | **float** | `1`           | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                                    |
+    |`ctrl_cost_weight`                          | **float** | `1e-4`        | Weight for _ctrl_cost_ term (see `Rewards` section)                                                                                                                                                         |
+    |`reset_noise_scale`                         | **float** | `0.1`         | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                               |
+    |`exclude_current_positions_from_observation`| **bool**  | `True`        | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation Space` section) |
 
 
     ## Version History
@@ -156,7 +140,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen).
     * v2: All continuous control environments now use mujoco-py >= 1.50.
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
-    * v0: Initial versions release (1.0.0)
+    * v0: Initial versions release.
     """
 
     metadata = {
