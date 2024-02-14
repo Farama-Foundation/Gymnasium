@@ -404,7 +404,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
             "qfrc_actuator": (self.data.qvel.size - 6)
             * include_qfrc_actuator_in_observation,
             "cfrc_ext": self.data.cfrc_ext[1:].size * include_cfrc_ext_in_observation,
-            "ten_lenght": 0,
+            "ten_length": 0,
             "ten_velocity": 0,
         }
 
@@ -481,7 +481,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         info = {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
-            "tendon_lenght": self.data.ten_length,
+            "tendon_length": self.data.ten_length,
             "tendon_velocity": self.data.ten_velocity,
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
             "x_velocity": x_velocity,
@@ -533,7 +533,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         return {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
-            "tendon_lenght": self.data.ten_length,
+            "tendon_length": self.data.ten_length,
             "tendon_velocity": self.data.ten_velocity,
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
         }
