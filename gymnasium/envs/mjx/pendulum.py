@@ -138,15 +138,18 @@ class InvertedPendulumMJXEnv(MJXEnv):
         """Sets the `obveration_space.shape`."""
         MJXEnv.__init__(self, params=params)
 
-        # TODO use jnp when and if `Box` supports jax natively
-        self.observation_space = gymnasium.spaces.Box(
-            low=-np.inf, high=np.inf, shape=(4,), dtype=np.float32
-        )
-
         self.observation_structure = {
             "qpos": self.mjx_model.nq,
             "qvel": self.mjx_model.nv,
         }
+
+        obs_size = self.observation_structure["qpos"]
+        obs_size += self.observation_structure["qvel"]
+
+        # TODO use jnp when and if `Box` supports jax natively
+        self.observation_space = gymnasium.spaces.Box(
+            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float32
+        )
 
     def _gen_init_physics_state(
         self, rng, params: Dict[str, any]
@@ -159,7 +162,7 @@ class InvertedPendulumMJXEnv(MJXEnv):
             key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
         )
         qvel = jax.random.uniform(
-            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
+            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nv,)
         )
         act = jnp.empty(self.mjx_model.na)
 

@@ -118,9 +118,19 @@ class MJXEnv(
         mjx_data = state
 
         mjx_data = mjx_data.replace(ctrl=action)
+        """
         mjx_data = jax.lax.fori_loop(
             0, params["frame_skip"], lambda _, x: mjx.step(self.mjx_model, x), mjx_data
         )
+        """
+        # """
+        d, _ = jax.lax.scan(
+            lambda x, _: (mjx.step(self.mjx_model, x), None),
+            init=mjx_data,
+            xs=None,
+            length=params["frame_skip"],
+        )
+        # """
 
         # TODO fix sensors with MJX>=3.2
         return mjx_data

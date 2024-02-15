@@ -35,20 +35,6 @@ class BaseHumanoid_MJXEnv(MJXEnv):
         """Sets the `obveration_space`."""
         MJXEnv.__init__(self, params=params)
 
-        obs_size = (
-            self.mjx_model.nq
-            + self.mjx_model.nv
-            - 2 * params["exclude_current_positions_from_observation"]
-            + (self.mjx_model.nbody - 1) * 10 * params["include_cinert_in_observation"]
-            + (self.mjx_model.nbody - 1) * 6 * params["include_cvel_in_observation"]
-            + (self.mjx_model.nv - 6) * params["include_qfrc_actuator_in_observation"]
-            + (self.mjx_model.nbody - 1) * 6 * params["include_cfrc_ext_in_observation"]
-        )
-
-        self.observation_space = gymnasium.spaces.Box(
-            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
-        )
-
         self.observation_structure = {
             "skipped_qpos": 2 * params["exclude_current_positions_from_observation"],
             "qpos": self.mjx_model.nq
@@ -68,6 +54,17 @@ class BaseHumanoid_MJXEnv(MJXEnv):
             "ten_lenght": 0,
             "ten_velocity": 0,
         }
+
+        obs_size = self.observation_structure["qpos"]
+        obs_size += self.observation_structure["qvel"]
+        obs_size += self.observation_structure["cinert"]
+        obs_size += self.observation_structure["cvel"]
+        obs_size += self.observation_structure["qfrc_actuator"]
+        obs_size += self.observation_space["cfrc_ext"]
+
+        self.observation_space = gymnasium.spaces.Box(
+            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
+        )
 
     def observation(
         self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
@@ -135,7 +132,7 @@ class BaseHumanoid_MJXEnv(MJXEnv):
             key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
         )
         qvel = jax.random.uniform(
-            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
+            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nv,)
         )
         act = jnp.empty(self.mjx_model.na)
 

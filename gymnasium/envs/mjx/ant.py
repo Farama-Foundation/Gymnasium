@@ -30,16 +30,6 @@ class Ant_MJXEnv(MJXEnv):
         """Sets the `obveration_space`."""
         MJXEnv.__init__(self, params=params)
 
-        obs_size = (
-            self.mjx_model.nq
-            + self.mjx_model.nv
-            - 2 * params["exclude_current_positions_from_observation"]
-            + (self.mjx_model.nbody - 1) * 6 * params["include_cfrc_ext_in_observation"]
-        )
-        self.observation_space = gymnasium.spaces.Box(
-            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
-        )
-
         self.observation_structure = {
             "skipped_qpos": 2 * params["exclude_current_positions_from_observation"],
             "qpos": self.mjx_model.nq
@@ -49,6 +39,14 @@ class Ant_MJXEnv(MJXEnv):
             * 6
             * params["include_cfrc_ext_in_observation"],
         }
+
+        obs_size = self.observation_structure["qpos"]
+        obs_size += self.observation_structure["qvel"]
+        obs_size += self.observation_space["cfrc_ext"]
+
+        self.observation_space = gymnasium.spaces.Box(
+            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
+        )
 
     def _gen_init_physics_state(
         self, rng, params: Dict[str, any]
@@ -79,11 +77,12 @@ class Ant_MJXEnv(MJXEnv):
         if params["exclude_current_positions_from_observation"]:
             position = position[2:]
 
-        if self._include_cfrc_ext_in_observation:
-            contact_force = self._get_contact_forces(mjx_data, params)
-            observation = jnp.concatenate((position, velocity, contact_force))
+        if params["include_cfrc_ext_in_observation"] is True:
+            external_contact_forces = self._get_contact_forces(mjx_data, params)
         else:
-            observation = jnp.concatenate((position, velocity))
+            external_contact_forces = jnp.array([])
+
+        observation = jnp.concatenate((position, velocity, external_contact_forces))
 
         return observation
 

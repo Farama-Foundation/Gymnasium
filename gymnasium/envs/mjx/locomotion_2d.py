@@ -37,16 +37,6 @@ class Locomotion_2d_MJXEnv(MJXEnv):
         """Sets the `obveration.shape`."""
         MJXEnv.__init__(self, params=params)
 
-        obs_size = (
-            self.mjx_model.nq
-            + self.mjx_model.nv
-            - params["exclude_current_positions_from_observation"]
-        )
-
-        self.observation_space = gymnasium.spaces.Box(  # TODO use jnp when and if `Box` supports jax natively
-            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float32
-        )
-
         self.observation_structure = {
             "skipped_qpos": 1 * params["exclude_current_positions_from_observation"],
             "qpos": self.mjx_model.nq
@@ -54,22 +44,12 @@ class Locomotion_2d_MJXEnv(MJXEnv):
             "qvel": self.mjx_model.nv,
         }
 
-    def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
-        """Sets `qpos` (positional elements) from a CUD and `qvel` (velocity elements) from a gaussian."""
-        noise_low = -params["reset_noise_scale"]
-        noise_high = params["reset_noise_scale"]
+        obs_size = self.observation_structure["qpos"]
+        obs_size += self.observation_structure["qvel"]
 
-        qpos = self.mjx_model.qpos0 + jax.random.uniform(
-            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
+        self.observation_space = gymnasium.spaces.Box(  # TODO use jnp when and if `Box` supports jax natively
+            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float32
         )
-        qvel = params["reset_noise_scale"] * jax.random.normal(
-            key=rng, shape=(self.mjx_model.nv,)
-        )
-        act = jnp.empty(self.mjx_model.na)
-
-        return qpos, qvel, act
 
     def observation(
         self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
@@ -134,6 +114,7 @@ class Locomotion_2d_MJXEnv(MJXEnv):
 
         info = {
             "x_position": mjx_data.qpos[0],
+            "z_distance_from_origin": mjx_data.qpos[1] - self.mjx_model.qpos0[1],
         }
         return info
 
@@ -168,6 +149,23 @@ class Locomotion_2d_MJXEnv(MJXEnv):
 class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
     """Class for HalfCheetah."""
 
+    def _gen_init_physics_state(
+        self, rng, params: Dict[str, any]
+    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+        """Sets `qpos` (positional elements) from a CUD and `qvel` (velocity elements) from a gaussian."""
+        noise_low = -params["reset_noise_scale"]
+        noise_high = params["reset_noise_scale"]
+
+        qpos = self.mjx_model.qpos0 + jax.random.uniform(
+            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
+        )
+        qvel = params["reset_noise_scale"] * jax.random.normal(
+            key=rng, shape=(self.mjx_model.nv,)
+        )
+        act = jnp.empty(self.mjx_model.na)
+
+        return qpos, qvel, act
+
     def get_default_params(**kwargs) -> Dict[str, any]:
         """Get the default parameter for the HalfCheetah environment."""
         default = {
@@ -191,6 +189,23 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
     # NOTE: MJX does not yet support condim=1 and therefore this class can not be instantiated
     """Class for Hopper."""
 
+    def _gen_init_physics_state(
+        self, rng, params: Dict[str, any]
+    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+        """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
+        noise_low = -params["reset_noise_scale"]
+        noise_high = params["reset_noise_scale"]
+
+        qpos = self.mjx_model.qpos0 + jax.random.uniform(
+            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
+        )
+        qvel = jax.random.uniform(
+            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nv,)
+        )
+        act = jnp.empty(self.mjx_model.na)
+
+        return qpos, qvel, act
+
     def get_default_params(**kwargs) -> Dict[str, any]:
         """Get the default parameter for the Hopper environment."""
         default = {
@@ -212,6 +227,23 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
 
 class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
     """Class for Walker2d."""
+
+    def _gen_init_physics_state(
+        self, rng, params: Dict[str, any]
+    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+        """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
+        noise_low = -params["reset_noise_scale"]
+        noise_high = params["reset_noise_scale"]
+
+        qpos = self.mjx_model.qpos0 + jax.random.uniform(
+            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
+        )
+        qvel = jax.random.uniform(
+            key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nv,)
+        )
+        act = jnp.empty(self.mjx_model.na)
+
+        return qpos, qvel, act
 
     def get_default_params(**kwargs) -> Dict[str, any]:
         """Get the default parameter for the Walker2d environment."""
