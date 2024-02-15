@@ -48,13 +48,13 @@ class Reacher_MJXEnv(MJXEnv):
 
         while True:
             goal = jax.random.uniform(key=rng, minval=-0.2, maxval=0.2, shape=(2,))
-            c_bool = jnp.less(jnp.linalg.norm(goal), jnp.array(0.2))
-            c_bool = jnp.less(jnp.linalg.norm(jnp.array([-0.15, 0.1])), 0.2)
-            #breakpoint()
-            #if c_bool:
-                #break
+            # c_bool = jnp.less(jnp.linalg.norm(goal), jnp.array(0.2))
+            # c_bool = jnp.less(jnp.linalg.norm(jnp.array([-0.15, 0.1])), 0.2)
+            # breakpoint()
+            # if c_bool:
+            # break
             # if jnp.less(jnp.linalg.norm(goal), jnp.array(0.2)):
-                # break
+            # break
             # TODO FIX THIS
             if True:
                 break
