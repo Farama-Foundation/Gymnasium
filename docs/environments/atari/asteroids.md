@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points for destroying asteroids, satellites and UFOs. The smaller the asteroid, the more points you score
-for destroying it.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=828&itemTypeID=HTMLMANUAL).
+## Rewards
+You score points for destroying asteroids, satellites and UFOs. The smaller the asteroid, the more points you score for destroying it. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=828&itemTypeID=HTMLMANUAL).
 
 ## Variants
 

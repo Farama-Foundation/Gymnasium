@@ -117,10 +117,10 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The Pusher never terminates.
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 100 timesteps.
 
 

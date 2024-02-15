@@ -21,7 +21,7 @@ For more Robotank variants with different observation and action spaces, see the
 
 ## Description
 
-You control your Robot Tanks to destroy enemies and avoid enemy fire.Game ends when all of your Robot Tanks are destroyed or all 12 enemy squadrons are destroyed.The game begins with one active Robot Tank and three reserves.Your Robot Tank may get lost when it is hit by enemy    rocket fire - your video scrambles with static interference when this    happens - or just become damaged - sensors report the damage by flashing on your control panel (look at V/C/R/T squares).You earn one bonus Robot Tank for every enemy squadron destroyed. The maximum number of bonus Robot Tanks allowed at any one time is 12.
+You control your Robot Tanks to destroy enemies and avoid enemy fire. Game ends when all of your Robot Tanks are destroyed or all 12 enemy squadrons are destroyed. The game begins with one active Robot Tank and three reserves. Your Robot Tank may get lost when it is hit by enemy    rocket fire - your video scrambles with static interference when this    happens - or just become damaged - sensors report the damage by flashing on your control panel (look at V/C/R/T squares).You earn one bonus Robot Tank for every enemy squadron destroyed. The maximum number of bonus Robot Tanks allowed at any one time is 12.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=416)
 
@@ -49,15 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-The number of enemies destroyed is the only reward.
-
-A small tank appears at the top of your screen for each enemy
-   you destroy.  A square with the number 12 appears each time a squadron of twelve enemies are
-   destroyed.
-
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=416).
+## Rewards
+The number of enemies destroyed is the only reward. A small tank appears at the top of your screen for each enemy you destroy. A square with the number 12 appears each time a squadron of twelve enemies are destroyed. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=416).
 
 ## Variants
 

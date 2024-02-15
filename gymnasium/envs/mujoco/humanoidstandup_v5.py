@@ -223,10 +223,10 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The Humanoid never terminates.
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 
@@ -382,7 +382,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             "qfrc_actuator": (self.data.qvel.size - 6)
             * include_qfrc_actuator_in_observation,
             "cfrc_ext": self.data.cfrc_ext[1:].size * include_cfrc_ext_in_observation,
-            "ten_lenght": 0,
+            "ten_length": 0,
             "ten_velocity": 0,
         }
 
@@ -431,7 +431,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
             "z_distance_from_origin": self.data.qpos[2] - self.init_qpos[2],
-            "tendon_lenght": self.data.ten_length,
+            "tendon_length": self.data.ten_length,
             "tendon_velocity": self.data.ten_velocity,
             **reward_info,
         }
@@ -482,6 +482,6 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
             "z_distance_from_origin": self.data.qpos[2] - self.init_qpos[2],
-            "tendon_lenght": self.data.ten_length,
+            "tendon_length": self.data.ten_length,
             "tendon_velocity": self.data.ten_velocity,
         }

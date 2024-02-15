@@ -21,7 +21,7 @@ For more Krull variants with different observation and action spaces, see the va
 
 ## Description
 
-Your mission is to find and enter the Beast's Black Fortress, rescue Princess Lyssa, and destroy the Beast.The task is not an easy one, for the location of the Black Fortress changes with each sunrise on Krull.
+Your mission is to find and enter the Beast's Black Fortress, rescue Princess Lyssa, and destroy the Beast. The task is not an easy one, for the location of the Black Fortress changes with each sunrise on Krull.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=267)
 
@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You will receive various scores for each monster you kill.
-You can play the game until you have lost all your lives.
-For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=267).
+## Rewards
+You will receive various scores for each monster you kill. You can play the game until you have lost all your lives. For a more detailed documentation, consult the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=267).
 
 ## Variants
 

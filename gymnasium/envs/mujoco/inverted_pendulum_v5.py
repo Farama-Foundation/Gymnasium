@@ -68,14 +68,14 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The environment terminates when the Inverted Pendulum is unhealthy.
     The Inverted Pendulum is unhealthy if any of the following happens:
 
     1. Any of the state space values is no longer finite.
     2. The absolute value of the vertical angle between the pole and the cart is greater than 0.2 radians.
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 

@@ -21,7 +21,7 @@ For more IceHockey variants with different observation and action spaces, see th
 
 ## Description
 
-Your goal is to score as many points as possible in a standard game of Ice Hockey over a 3-minute time period. The ball is usually called "the puck".There are 32 shot angles ranging from the extreme left to the extreme right. The angles can only aim towards the opponent's goal.Just as in real hockey, you can pass the puck by shooting it off the sides of the rink. This can be really key when you're in position to score a goal.
+Your goal is to score as many points as possible in a standard game of Ice Hockey over a 3-minute time period. The ball is usually called "the puck".There are 32 shot angles ranging from the extreme left to the extreme right. The angles can only aim towards the opponent's goal. Just as in real hockey, you can pass the puck by shooting it off the sides of the rink. This can be really key when you're in position to score a goal.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=241)
 
@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points by shooting the puck into your opponent's goal. Your opponent scores in the same manner.
-There are no limits to how many points you can get per game, other than the time limit of 3-minute games.
-For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=241).
+## Rewards
+You score points by shooting the puck into your opponent's goal. Your opponent scores in the same manner. There are no limits to how many points you can get per game, other than the time limit of 3-minute games.For a more detailed documentation, consult the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=241).
 
 ## Variants
 

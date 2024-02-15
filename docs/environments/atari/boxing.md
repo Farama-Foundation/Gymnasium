@@ -49,10 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points by landing punches.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=882).
+## Rewards
+You score points by landing punches. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=882).
 
 ## Variants
 
