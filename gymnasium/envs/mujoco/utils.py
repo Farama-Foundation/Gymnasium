@@ -7,10 +7,11 @@ import mujoco
 import numpy as np
 
 import gymnasium
+from gymnasium.envs.mujoco import MujocoEnv
 
 
 def get_state(
-    env: gymnasium.envs.mujoco.mujoco_env.MujocoEnv,
+    env: MujocoEnv,
     state_type: mujoco.mjtState = mujoco.mjtState.mjSTATE_PHYSICS,
 ):
     """Gets the state of `env`.
@@ -27,7 +28,7 @@ def get_state(
 
 
 def set_state(
-    env: gymnasium.envs.mujoco.mujoco_env.MujocoEnv,
+    env: MujocoEnv,
     state: np.ndarray,
     state_type: mujoco.mjtState = mujoco.mjtState.mjSTATE_PHYSICS,
 ):
@@ -49,7 +50,7 @@ def set_state(
     return state
 
 
-def check_mujoco_reset_state(env: gymnasium.envs.mujoco.mujoco_env.mujocoEnv, seed=1234):
+def check_mujoco_reset_state(env: MujocoEnv, seed=1234):
     """Asserts that `env.reset` properly resets the state (not affected by previous steps), assuming `check_reset_seed` has passed."""
     env.action_space.seed(seed)
     action = env.action_space.sample()
