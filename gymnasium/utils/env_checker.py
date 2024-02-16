@@ -165,7 +165,7 @@ def check_reset_options(env: gym.Env):
         )
 
 
-def check_step_return(env: gymnasium.Env, seed=123):
+def check_step_return(env: gym.Env, seed=123):
     """Check that the environment steps dermistically after reset.
 
     Note: This check assumes that seeded reset is derministic (it must have passed `check_reset_seed`).
@@ -343,7 +343,7 @@ def check_env(
     check_reset_return_type(env)
     check_reset_seed(env)
     check_reset_options(env)
-    
+
     # ==== Check the step method ====
     check_step_return(env)
 
