@@ -588,7 +588,7 @@ def test_model_object_count(version: str):
     assert env.model.nv == 11
     assert env.model.nu == 7
     assert env.model.nbody == 13
-    if mujoco.__version__ >= "3.1.2"
+    if mujoco.__version__ >= "3.1.2":
         assert env.model.nbvh == 8
     assert env.model.njnt == 11
     assert env.model.ngeom == 21
@@ -600,7 +600,7 @@ def test_model_object_count(version: str):
     assert env.model.nv == 4
     assert env.model.nu == 2
     assert env.model.nbody == 5
-    if mujoco.__version__ >= "3.1.2"
+    if mujoco.__version__ >= "3.1.2":
         assert env.model.nbvh == 3
     assert env.model.njnt == 4
     assert env.model.ngeom == 10
@@ -612,7 +612,7 @@ def test_model_object_count(version: str):
     assert env.model.nv == 5
     assert env.model.nu == 2
     assert env.model.nbody == 4
-    if mujoco.__version__ >= "3.1.2"
+    if mujoco.__version__ >= "3.1.2":
         assert env.model.nbvh == 0
     assert env.model.njnt == 5
     assert env.model.ngeom == 4
