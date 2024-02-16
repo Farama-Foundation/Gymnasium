@@ -55,10 +55,10 @@ def check_mujoco_reset_state(env: gymnasium.envs.mujoco.MujocoEnv, seed=1234):
     action = env.action_space.sample()
 
     env.reset(seed=seed)
-    first_reset_state = get_state(env, mujoco.mjtState.mjSTATE_PHYSICS)
+    first_reset_state = get_state(env, mujoco.mjtState.mjSTATE_INTEGRATION)
     env.step(action)
 
     env.reset(seed=seed)
-    second_reset_state = get_state(env, mujoco.mjtState.mjSTATE_PHYSICS)
+    second_reset_state = get_state(env, mujoco.mjtState.mjSTATE_INTEGRATION)
 
     assert np.all(first_reset_state == second_reset_state), "reset is not deterministic"
