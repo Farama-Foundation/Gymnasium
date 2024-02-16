@@ -703,7 +703,7 @@ def test_reset_noise_scale(env_id):
 
 @pytest.mark.parametrize("env_name", ALL_MUJOCO_ENVS)
 @pytest.mark.parametrize("version", ["v5", "v4"])
-def test_reset_state(env_name, version):
+def test_reset_state(env_name: str, version: str):
     """Asserst that `reset()` properly resets the internal state."""
     env = gym.make(f"{env_name}-{version}")
     check_mujoco_reset_state(env)
