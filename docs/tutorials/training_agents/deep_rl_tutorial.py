@@ -18,15 +18,13 @@ Let's start by importing necessary libraries:
 
 # %%
 __author__ = "Hardy Hasan"
-__date__ = "2023-12-11"
+__date__ = "2023-02-13"
 __license__ = "MIT License"
 
-# import copy
-# import random
-# import time
+import random
+from collections import namedtuple
 from typing import Tuple
 
-import numpy
 import numpy as np
 import torch
 import torch.nn as nn
@@ -99,54 +97,54 @@ class ReplayMemory:
         """
         Initialize a replay memory.
         """
-        self._capacity = capacity
-        self._batch_size = batch_size
-        self._image_obs = image_obs
-        self._length: int = 0  # number of experiences stored so far
-        self._index: int = 0  # current index to store data to
+        self.capacity = capacity
+        self.batch_size = batch_size
+        self.image_obs = image_obs
+        self.length: int = 0  # number of experiences stored so far
+        self.index: int = 0  # current index to store data to
 
         # shape of state buffers differ depending on whether an obs is image data.
         if image_obs:
-            self._state_shape = (self._capacity, frame_stacking, *obs_shape)
+            self._state_shape = (self.capacity, frame_stacking, *obs_shape)
             self._next_state_shape = (
-                self._capacity,
+                self.capacity,
                 1,
                 *obs_shape,
             )  # storing one frame for next_state
         else:
-            self._state_shape = (self._capacity, *obs_shape)
-            self._next_state_shape = (self._capacity, *obs_shape)
+            self._state_shape = (self.capacity, *obs_shape)
+            self._next_state_shape = (self.capacity, *obs_shape)
 
         # creating the buffers
         self._states: np.ndarray = np.zeros(shape=self._state_shape, dtype=np.float16)
-        self._actions: np.ndarray = np.zeros(self._capacity, dtype=np.uint8)
+        self._actions: np.ndarray = np.zeros(self.capacity, dtype=np.uint8)
         self._next_states: np.ndarray = np.zeros(
             shape=self._next_state_shape, dtype=np.float16
         )
-        self._rewards: np.ndarray = np.zeros(self._capacity, dtype=np.float16)
-        self._dones: np.ndarray = np.zeros(self._capacity, dtype=np.uint8)
+        self._rewards: np.ndarray = np.zeros(self.capacity, dtype=np.float16)
+        self._dones: np.ndarray = np.zeros(self.capacity, dtype=np.uint8)
 
     def __len__(self):
         """Returns the length of the memory."""
-        return self._length
+        return self.length
 
     def push(
         self,
-        state: numpy.ndarray,
+        state: np.ndarray,
         action: int,
-        next_state: numpy.ndarray,
+        next_state: np.ndarray,
         reward: float,
         done: bool,
     ) -> None:
         """Adds a new experience into the buffer"""
-        self._states[self._index] = state
-        self._actions[self._index] = action
-        self._next_states[self._index] = next_state
-        self._rewards[self._index] = reward
-        self._dones[self._index] = done
+        self._states[self.index] = state
+        self._actions[self.index] = action
+        self._next_states[self.index] = next_state
+        self._rewards[self.index] = reward
+        self._dones[self.index] = done
 
-        self._length = min(self._length + 1, self._capacity)
-        self._index = (self._index + 1) % self._capacity
+        self.length = min(self.length + 1, self.capacity)
+        self.index = (self.index + 1) % self.capacity
 
         return
 
@@ -157,14 +155,14 @@ class ReplayMemory:
         Samples a random batch of experiences and returns them as torch.Tensors.
         """
         indices = np.random.choice(
-            a=np.arange(self._length), size=self._batch_size, replace=False
+            a=np.arange(self.length), size=self.batch_size, replace=False
         )
 
         states = self._states[indices]
         next_states = self._next_states[indices]
         next_states = (
             np.concatenate((states[:, 1:, :, :], next_states), axis=1)
-            if self._image_obs
+            if self.image_obs
             else self._next_states[indices]
         )
 
@@ -180,7 +178,7 @@ class ReplayMemory:
             -1, 1
         )
 
-        if self._image_obs:
+        if self.image_obs:
             assert torch.equal(
                 states[:, 1:, :], next_states[:, :3, :]
             ), "Incorrect concatenation."
@@ -234,62 +232,240 @@ batch = mem.sample()
 
 
 class Agent(nn.Module):
-    """Class for Categorical-DQN (C51). For each action, a value distribution is provided."""
+    """
+    Class for agent running on Categorical-DQN (C51) algorithm.
+    In essence, for each action, a value distribution is returned,
+    from which a statistic such as the mean is computedto get the
+    action-value.
+    """
 
-    def __init__(self, params):
+    def __init__(self, params: namedtuple):
         """
         Initializing the agent class.
+
         Args:
-            params:
+            params: A namedtuple containing the hyperparameters.
         """
         super().__init__(params)
+        self.params = params
+        # TODO: Fix the epsilon reduction strategy
+        self.epsilon = 0
 
-        self.image_obs = params["image_obs"]
-        self.n_atoms = params["n_atoms"]
-        self.v_min = params["v_min"]
-        self.v_max = params["v_max"]
-        self.gamma = params["gamma"]
-        self.n_actions = params["n_actions"]
-        self.epsilon_end = params["epsilon_end"]
+        self.reduce_eps_steps = (
+            self.params.eps_start - self.params.eps_end
+        ) / self.params.anneal_length
+        self.delta = (self.params.v_max - self.params.v_min) / (self.params.n_atoms - 1)
 
-        self.delta = (self.v_max - self.v_min) / (self.n_atoms - 1)
+        self.replay_memory = ReplayMemory(
+            capacity=self.params.memory_capacity,
+            batch_size=self.params.batch_size,
+            obs_shape=self.params.obs_shape,
+            image_obs=self.params.image_obs,
+            frame_stacking=self.params.frame_stacking,
+        )
 
-    def forward(self, state):
+        self.optimizer = torch.optim.Adam(
+            params=self.parameters(), lr=self.params.learning_rate
+        )
+
+        # The support is the set of values over which a probability
+        # distribution is defined and has non-zero probability there.
+        self.support = torch.linspace(
+            start=self.params.v_min, end=self.params.v_max, steps=self.params.n_atoms
+        ).to(device)
+
+        # -- defining the neural network --
+        in_features = self.params.in_features
+        out_features = self.params.n_actions * self.params.n_atoms
+        n_hidden_units = self.params.n_hidden_units
+
+        # the convolutional part is created depending on whether the input is image observation.
+        # These convolutional layers is in accordance to the DQN network parameters.
+        if self.params.image_obs:
+            self.conv1 = nn.Conv2d(
+                in_channels=4,
+                out_channels=32,
+                kernel_size=(8, 8),
+                stride=(4, 4),
+                padding=0,
+            )
+            self.conv2 = nn.Conv2d(
+                in_channels=32,
+                out_channels=64,
+                kernel_size=(4, 4),
+                stride=(2, 2),
+                padding=(0, 0),
+            )
+            self.conv3 = nn.Conv2d(
+                in_channels=64,
+                out_channels=64,
+                kernel_size=(3, 3),
+                stride=(1, 1),
+                padding=(0, 0),
+            )
+        else:
+            self.conv1 = None
+            self.conv2 = None
+            self.conv3 = None
+
+        self.fc1 = nn.Linear(in_features=in_features, out_features=n_hidden_units)
+        self.fc2 = nn.Linear(in_features=n_hidden_units, out_features=out_features)
+
+    def forward(self, state: torch.Tensor) -> torch.Tensor:
         """
         Forward pass through the agent network.
         Args:
-            state:
+            state: Current state of the environment. Single or multiple states stacked.
 
         Returns:
+            value_dist: Tensor of action value-distribution for each action and state.
+                    Values are softmax probabilities for each action.
+                    shape=(n_states, n_actions, n_atoms)
 
         """
-        pass
+        if self.params.image_obs:
+            conv1_out = nn.ReLU(self.conv1(state))
+            conv2_out = nn.ReLU(self.conv2(conv1_out))
+            conv3_out = nn.Flatten(nn.ReLU(self.conv3(conv2_out)))
+            fc1_out = nn.ReLU(self.fc1(conv3_out))
+            value_dist = self.fc2(fc1_out)
+        else:
+            fc1_out = nn.ReLU(self.fc1(state))
+            value_dist = self.fc2(fc1_out)
 
-    def act(self, state, exploit):
+        value_dist = value_dist.view(state.shape[0], self.n_actions, self.N).softmax(
+            dim=2
+        )
+        return value_dist
+
+    def act(self, state: torch.Tensor, exploit: bool) -> int:
         """
-        Taking action in a given state.
+        Sampling action for a given state. Actions are sampled randomly during exploration.
+        The action-value is the expected value of the action value-distribution.
+
         Args:
-            state:
-            exploit:
+            state: Current state of agent.
+            exploit: True when not exploring.
+
+        Returns:
+            action: The sampled action.
+        """
+        random_value = random.random()
+
+        with torch.no_grad():
+            value_dist = self.forward(state)
+
+        expected_returns = torch.sum(self.support * value_dist, dim=2)
+
+        if exploit or random_value > self.epsilon:
+            action = torch.argmax(expected_returns, dim=1).item()
+        else:
+            action = torch.randint(
+                high=self.params.n_actions, size=(1,), device=device
+            ).item()
+
+        return action
+
+    def store_experience(
+        self,
+        state: torch.Tensor,
+        action: int,
+        next_state: torch.Tensor,
+        reward: float,
+        done: bool,
+    ):
+        """
+
+        Args:
+            state: Latest agent state.
+            action: Action taken at latest state
+            next_state: Resulting state after taking action.
+            reward: Received reward signal.
+            done: Whether the action terminated the episode.
 
         Returns:
 
         """
-        pass
+        self.replay_memory.push(
+            state=state, action=action, next_state=next_state, reward=reward, done=done
+        )
 
-    def learn(self, state):
+    def learn(self, target_agent: "Agent") -> float:
         """
         Learning steps, which includes updating the network parameters through backpropagation.
         Args:
-            state:
+            target_agent: The target agent used for storing previous learning step network parameters.
 
         Returns:
-
+            loss: The loss, which is defined as the expected difference between
+                  the agent itself and the `target_agent` predictions on a batch
+                  of states.
         """
-        pass
+        states, actions, next_states, rewards, dones = self.replay_memory.sample()
 
-    def categorical_algorithm(self):
-        pass
+        # agent predictions
+        value_dists = self.forward(states)
+        # gather probs for selected actions
+        probs = value_dists[torch.arange(self.params.batch_size), actions.view(-1), :]
+
+        # target agent predictions
+        with torch.no_grad():
+            target_value_dists = target_agent.forward(next_states)
+
+        # ------------------------------ Categorical algorithm ------------------------------
+        #
+        # Since we are dealing with value distributions and not value functions,
+        # we can't minimize the loss using MSE(reward+gamma*Q_i-1 - Q_i). Instead,
+        # we project the support of the target predictions T_hat*Z_i-1 onto the support
+        # of the agent predictions Z_i, and minimize the cross-entropy term of
+        # KL-divergence `KL(projected_T_hat*Z_i-1 || Z_i)`.
+        #
+
+        next_actions = ((self.forward(next_states) * self.support).sum(dim=2)).argmax(
+            dim=1
+        )
+        target_probs = target_value_dists[torch.arange(batch_size), next_actions, :]
+
+        m = torch.zeros(self.params.batch_size * self.params.n_atoms).to(
+            device
+        )  # distributing probabilities in-place.
+
+        Tz = (rewards + self.params.gamma * self.support).clip(
+            self.params.v_min, self.params.v_max
+        )
+        bj = (Tz - self.params.v_min) / self.delta
+
+        l, u = torch.floor(bj).long(), torch.ceil(bj).long()
+
+        offset = (
+            torch.linspace(
+                start=0,
+                end=(self.params.batch_size - 1) * self.params.n_atoms,
+                steps=self.params.batch_size,
+            )
+            .long()
+            .unsqueeze(1)
+            .expand(batch_size, self.N)
+            .to(device)
+        )
+        m.index_add_(0, (l + offset).view(-1), (target_probs * (u - bj)).view(-1))
+        m.index_add_(0, (u + offset).view(-1), (target_probs * (bj - l)).view(-1))
+
+        m = m.view(self.params.batch_size, self.params.n_atoms)
+        # -----------------------------------------------------------------------------------
+
+        loss = (-(m * torch.log(probs).sum(dim=1))).mean()
+
+        # set all gradients to zero
+        self.optimizer.zero_grad()
+
+        # backpropagate loss through the network
+        loss.backward()
+
+        # update weights
+        self.optimizer.step()
+
+        return loss.item()
 
 
 # %%
@@ -318,7 +494,38 @@ def evaluate():
 # ---------------
 # What hyperparameters are necessary, what are common good values etc.
 # Describe the importance of seeds.
-
+Hyperparameters = namedtuple(
+    "Hyperparameters",
+    [
+        # --- env related ---
+        "env_name",
+        "n_actions",
+        # --- training related ---
+        "training_steps",  # number of steps to train agent for
+        "obs_shape",  # a tuple representing shape of observations, ex. (1, 4), (4, 84)
+        "image_obs",  # boolean, indicating whether the env provides image observations
+        "batch_size",  # number of experiences to sample for updating agent network parameters
+        "training_frequency",  # how often to update agent network parameters
+        "target_update_frequency",  # how often to replace target agent network parameters
+        "gamma",  # discount factor
+        "frame_stacking",
+        # --- exploration-exploitation strategy related ---
+        "epsilon_start",
+        "epsilon_end",
+        "anneal_length_percentage",
+        # --- neural network related ---
+        "in_features",
+        "n_hidden_units",
+        # --- optimizer related ---
+        "learning_rate",
+        # --- replay memory related ---
+        "memory_capacity",
+        # --- agent algorithm related ---
+        "v_min",
+        "v_max",
+        "n_atoms",
+    ],
+)
 
 # %%
 # Env1
@@ -327,6 +534,7 @@ def evaluate():
 # train for different seeds.
 # evaluate all agents.
 # plot the progress and evaluation.
+# env1_hyperparameters = Hyperparameters()
 
 
 env = None
@@ -339,6 +547,7 @@ env = None
 # train for different seeds.
 # evaluate all agents.
 # plot the progress and evaluation.
+# env2_hyperparameters = Hyperparameters()
 
 
 env2 = None
