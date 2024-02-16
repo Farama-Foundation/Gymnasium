@@ -54,7 +54,9 @@ def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
     elif isinstance(data_1, np.ndarray):
         if data_1.shape == data_2.shape and data_1.dtype == data_2.dtype:
             if data_1.dtype == object:
-                return all(data_equivalence(a, b, exact) for a, b in zip(data_1, data_2))
+                return all(
+                    data_equivalence(a, b, exact) for a, b in zip(data_1, data_2)
+                )
             else:
                 if exact:
                     return np.all(data_1 == data_2)
