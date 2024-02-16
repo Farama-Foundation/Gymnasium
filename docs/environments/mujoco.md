@@ -79,8 +79,8 @@ Gymnasium includes the following versions of the environments:
 | ------- | --------------- | ------------------------------------------------ |
 | `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)      |
 | `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                   |
-| `v3`    | `mujoco-py`     | Maintained for reproducibility (limited support) |
-| `v2`    | `mujoco-py`     | Maintained for reproducibility (limited support) |
+| `v3`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
+| `v2`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
 
 For more information, see the section "Version History" for each environment.
 
