@@ -7,11 +7,10 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.envs.mujoco.mujoco_env import BaseMujocoEnv, MujocoEnv
+from gymnasium.envs.mujoco.utils import check_mujoco_reset_state
 from gymnasium.error import Error
 from gymnasium.utils.env_checker import check_env
 from gymnasium.utils.env_match import check_environments_match
-
-from gymnasium.envs.mujoco.utils import check_mujoco_reset_state
 
 
 ALL_MUJOCO_ENVS = [
@@ -706,5 +705,5 @@ def test_reset_noise_scale(env_id):
 @pytest.mark.parametrize("version", ["v5", "v4"])
 def test_reset_state(env_name, version):
     """Asserst that `reset()` properly resets the internal state."""
-    env = gymnasium.make(f"{env_name}-{version}")
+    env = gym.make(f"{env_name}-{version}")
     check_mujoco_reset_state(env)

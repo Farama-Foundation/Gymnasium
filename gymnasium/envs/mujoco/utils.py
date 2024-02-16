@@ -1,11 +1,13 @@
-"""A set of MujocoEnv related utilies, mainly for testing purposes.
+"""A set of MujocoEnv related utilities, mainly for testing purposes.
 
 Author: @Kallinteris-Andreas
 """
 
 import mujoco
 import numpy as np
+
 import gymnasium
+
 
 def get_state(
     env: gymnasium.MujocoEnv,
@@ -60,4 +62,3 @@ def check_mujoco_reset_state(env: gymnasium.mujocoEnv, seed=1234):
     second_reset_state = get_state(env, mujoco.mjtState.mjSTATE_PHYSICS)
 
     assert np.all(first_reset_state == second_reset_state), "reset is not deterministic"
-  
