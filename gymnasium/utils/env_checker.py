@@ -165,6 +165,36 @@ def check_reset_options(env: gym.Env):
         )
 
 
+def check_step_return(env: gymnasium.Env, seed=123):
+    """Check that the environment steps dermistically after reset.
+
+    Note: This check assumes that seeded reset is derministic (it must have passed `check_reset_seed`).
+    Note: A single step should be enough to assert that the state transition function is deterministic (at least for most environments).
+
+    Author: @Kallinteris-Andreas
+
+    Raises:
+        AssertionError: The environment cannot be step determistially after resetting with a random seed,
+            or it truncates after 1 step.
+    """
+    env.action_space.seed(seed)
+    action = env.action_space.sample()
+
+    env.reset(seed=123)
+    obs_0, rew_0, term_0, trunc_0, info_0 = env.step(action)
+
+    env.reset(seed=123)
+    obs_1, rew_1, term_1, trunc_1, info_1 = env.step(action)
+
+    assert data_equivalence(obs_0, obs_1), "step observation is not deterministic."
+    assert data_equivalence(rew_0, rew_1), "step reward is not deterministic."
+    assert data_equivalence(term_0, term_0), "step terminal is not deterministic."
+    assert (
+        trunc_0 is False and trunc_1 is False
+    ), "Environment truncates after 1 step, something has gone very wrong."
+    assert data_equivalence(info_0, info_1), "step info is not deterministic."
+
+
 def check_reset_return_info_deprecation(env: gym.Env):
     """Makes sure support for deprecated `return_info` argument is dropped.
 
@@ -313,6 +343,9 @@ def check_env(
     check_reset_return_type(env)
     check_reset_seed(env)
     check_reset_options(env)
+    
+    # ==== Check the step method ====
+    check_step_return(env)
 
     # ============ Check the returned values ===============
     env_reset_passive_checker(env)
