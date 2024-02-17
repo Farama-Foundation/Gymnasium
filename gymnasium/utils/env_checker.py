@@ -350,7 +350,7 @@ def check_env(
     # ============ Check the returned values ===============
     env_reset_passive_checker(env)
     env_step_passive_checker(env, env.action_space.sample())
-    
+
     # ==== Check the step method ====
     check_step_return(env)
 
