@@ -191,8 +191,8 @@ def check_step_determinism(env: gym.Env, seed=123):
     obs_1, rew_1, term_1, trunc_1, info_1 = env.step(action)
 
     assert (
-            env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportPrivateUsage]
-            != seeded_rng.bit_generator.state
+        env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportPrivateUsage]
+        != seeded_rng.bit_generator.state
     ), "The `.np_random` is not properly been updated after step."
     assert data_equivalence(obs_0, obs_1), "step observation is not deterministic."
     assert data_equivalence(rew_0, rew_1), "step reward is not deterministic."
@@ -201,8 +201,6 @@ def check_step_determinism(env: gym.Env, seed=123):
         trunc_0 is False and trunc_1 is False
     ), "Environment truncates after 1 step, something has gone very wrong."
     assert data_equivalence(info_0, info_1), "step info is not deterministic."
-
-
 
 
 def check_reset_return_info_deprecation(env: gym.Env):
