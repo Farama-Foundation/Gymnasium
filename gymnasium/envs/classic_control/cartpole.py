@@ -451,7 +451,7 @@ class CartPoleVectorEnv(VectorEnv):
         # Reset all environments which terminated or were truncated in the last step
         self.state[:, self.prev_done] = self.np_random.uniform(
             low=self.low, high=self.high, size=(4, self.prev_done.sum())
-        ).astype(np.float32)
+        )
         self.steps[self.prev_done] = 0
         reward[self.prev_done] = 0.0
         terminated[self.prev_done] = False
@@ -462,7 +462,7 @@ class CartPoleVectorEnv(VectorEnv):
         if self.render_mode == "human":
             self.render()
 
-        return self.state.T, reward, terminated, truncated, {}
+        return self.state.T.astype(np.float32), reward, terminated, truncated, {}
 
     def reset(
         self,
@@ -478,14 +478,14 @@ class CartPoleVectorEnv(VectorEnv):
         )  # default high
         self.state = self.np_random.uniform(
             low=self.low, high=self.high, size=(4, self.num_envs)
-        ).astype(np.float32)
+        )
         self.steps_beyond_terminated = None
         self.steps = np.zeros(self.num_envs, dtype=np.int32)
         self.prev_done = np.zeros(self.num_envs, dtype=np.bool_)
 
         if self.render_mode == "human":
             self.render()
-        return self.state.T, {}
+        return self.state.T.astype(np.float32), {}
 
     def render(self):
         if self.render_mode is None:
