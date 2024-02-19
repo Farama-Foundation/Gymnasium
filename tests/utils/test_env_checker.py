@@ -14,7 +14,7 @@ from gymnasium.utils.env_checker import (
     check_reset_options,
     check_reset_return_info_deprecation,
     check_reset_return_type,
-    check_reset_seed,
+    check_reset_seed_determinism,
     check_seed_deprecation,
 )
 from tests.testing_env import GenericTestEnv
@@ -106,16 +106,16 @@ def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
         ],
     ],
 )
-def test_check_reset_seed(test, func: Callable, message: str):
+def test_check_reset_seed_determinism(test, func: Callable, message: str):
     """Tests the check reset seed function works as expected."""
     if test is UserWarning:
         with pytest.warns(
             UserWarning, match=f"^\\x1b\\[33mWARN: {re.escape(message)}\\x1b\\[0m$"
         ):
-            check_reset_seed(GenericTestEnv(reset_func=func))
+            check_reset_seed_determinism(GenericTestEnv(reset_func=func))
     else:
         with pytest.raises(test, match=f"^{re.escape(message)}$"):
-            check_reset_seed(GenericTestEnv(reset_func=func))
+            check_reset_seed_determinism(GenericTestEnv(reset_func=func))
 
 
 def _deprecated_return_info(
