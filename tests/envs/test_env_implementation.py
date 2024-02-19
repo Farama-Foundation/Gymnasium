@@ -225,13 +225,9 @@ def test_invalid_customizable_resets(env_name: str, low_high: list):
         env.reset(options={"low": low, "high": high})
 
 
-@pytest.mark.parametrize(
-    "env_name",
-    ["CartPole-v1"],
-)
-def test_cartpole_vector_equiv(env_name: str):
-    env = gym.make(env_name)
-    envs = gym.make_vec(env_name, num_envs=1)
+def test_cartpole_vector_equiv():
+    env = gym.make("CartPole-v1")
+    envs = gym.make_vec("CartPole-v1", num_envs=1)
 
     assert env.action_space == envs.single_action_space
     assert env.observation_space == envs.single_observation_space
@@ -254,7 +250,9 @@ def test_cartpole_vector_equiv(env_name: str):
         assert np.array([action]) in envs.action_space
 
         obs, reward, term, trunc, info = env.step(action)
-        vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(np.array([action]))
+        vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+            np.array([action])
+        )
 
         assert obs in env.observation_space
         assert vec_obs in envs.observation_space
@@ -271,7 +269,9 @@ def test_cartpole_vector_equiv(env_name: str):
 
     obs, info = env.reset()
     # the vector action shouldn't matter as autoreset
-    vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(envs.action_space.sample())
+    vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+        envs.action_space.sample()
+    )
 
     assert obs in env.observation_space
     assert vec_obs in envs.observation_space
