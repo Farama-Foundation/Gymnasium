@@ -192,7 +192,7 @@ def check_step_determinism(env: gym.Env, seed=123):
 
     assert (
         env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportPrivateUsage]
-        != seeded_rng.bit_generator.state
+        == seeded_rng.bit_generator.state
     ), "The `.np_random` is not properly been updated after step."
     assert data_equivalence(obs_0, obs_1), "step observation is not deterministic."
     assert data_equivalence(rew_0, rew_1), "step reward is not deterministic."
