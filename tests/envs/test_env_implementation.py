@@ -223,3 +223,65 @@ def test_invalid_customizable_resets(env_name: str, low_high: list):
         # match=re.escape(f"Lower bound ({low}) must be lower than higher bound ({high}).")
         # match=f"An option ({x}) could not be converted to a float."
         env.reset(options={"low": low, "high": high})
+
+
+def test_cartpole_vector_equiv():
+    env = gym.make("CartPole-v1")
+    envs = gym.make_vec("CartPole-v1", num_envs=1)
+
+    assert env.action_space == envs.single_action_space
+    assert env.observation_space == envs.single_observation_space
+
+    # reset
+    seed = np.random.randint(0, 1000)
+    obs, info = env.reset(seed=seed)
+    vec_obs, vec_info = envs.reset(seed=seed)
+
+    assert obs in env.observation_space
+    assert vec_obs in envs.observation_space
+    assert np.all(obs == vec_obs[0])
+    assert info == vec_info
+
+    assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+    # step
+    for i in range(100):
+        action = env.action_space.sample()
+        assert np.array([action]) in envs.action_space
+
+        obs, reward, term, trunc, info = env.step(action)
+        vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+            np.array([action])
+        )
+
+        assert obs in env.observation_space
+        assert vec_obs in envs.observation_space
+        assert np.all(obs == vec_obs[0])
+        assert reward == vec_reward
+        assert term == vec_term
+        assert trunc == vec_trunc
+        assert info == vec_info
+
+        assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+        if term:
+            break
+
+    obs, info = env.reset()
+    # the vector action shouldn't matter as autoreset
+    vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+        envs.action_space.sample()
+    )
+
+    assert obs in env.observation_space
+    assert vec_obs in envs.observation_space
+    assert np.all(obs == vec_obs[0])
+    assert vec_reward == np.array([0])
+    assert vec_term == np.array([False])
+    assert vec_trunc == np.array([False])
+    assert info == vec_info
+
+    assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+    env.close()
+    envs.close()
