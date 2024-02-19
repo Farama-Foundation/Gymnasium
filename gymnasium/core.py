@@ -1,5 +1,4 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
-
 from __future__ import annotations
 
 from copy import deepcopy
