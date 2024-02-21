@@ -180,9 +180,7 @@ def check_step_determinism(env: gym.Env, seed=123):
 
     env.reset(seed=seed)
     obs_0, rew_0, term_0, trunc_0, info_0 = env.step(action)
-    seeded_rng: np.random.Generator = deepcopy(
-        env.unwrapped._np_random  # pyright: ignore [reportPrivateUsage]
-    )
+    seeded_rng: np.random.Generator = deepcopy(env.unwrapped._np_random)
 
     env.reset(seed=seed)
     obs_1, rew_1, term_1, trunc_1, info_1 = env.step(action)
