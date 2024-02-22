@@ -9,21 +9,6 @@ from gymnasium import error, logger, spaces
 from gymnasium.spaces import Space
 
 
-try:
-    import mujoco_py
-except ImportError as e:
-    MUJOCO_PY_IMPORT_ERROR = e
-else:
-    MUJOCO_PY_IMPORT_ERROR = None
-
-try:
-    import mujoco
-except ImportError as e:
-    MUJOCO_IMPORT_ERROR = e
-else:
-    MUJOCO_IMPORT_ERROR = None
-
-
 DEFAULT_SIZE = 480
 
 

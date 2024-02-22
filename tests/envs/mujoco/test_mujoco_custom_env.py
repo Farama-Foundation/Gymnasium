@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from gymnasium import utils
-from gymnasium.envs.mujoco import MujocoEnv
+from gymnasium.envs.mujoco.mujoco_env import MujocoEnv
 from gymnasium.error import Error
 from gymnasium.spaces import Box
 from gymnasium.utils.env_checker import check_env

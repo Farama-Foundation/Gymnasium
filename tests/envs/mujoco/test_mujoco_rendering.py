@@ -3,7 +3,7 @@ import os
 import mujoco
 import pytest
 
-from gymnasium.envs.mujoco.mujoco_env import DEFAULT_SIZE
+from gymnasium.envs.mujoco.mujoco_env_base import DEFAULT_SIZE
 from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer, OffScreenViewer
 
 

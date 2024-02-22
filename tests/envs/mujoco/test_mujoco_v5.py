@@ -6,7 +6,8 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.mujoco.mujoco_env import BaseMujocoEnv, MujocoEnv
+from gymnasium.envs.mujoco.mujoco_env import MujocoEnv
+from gymnasium.envs.mujoco.mujoco_env_base import BaseMujocoEnv
 from gymnasium.error import Error
 from gymnasium.utils.env_checker import check_env
 from gymnasium.utils.env_match import check_environments_match
