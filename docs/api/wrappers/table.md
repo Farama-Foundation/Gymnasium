@@ -56,7 +56,7 @@ wrapper in the page on the wrapper type
       - Records videos of environment episodes using the environment's render function.
     * - :class:`RenderCollection`
       - Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
-    * - :class:`RenderObservation`
+    * - :class:`AddRenderObservation`
       - Includes the rendered observations in the environment's observations.
     * - :class:`RescaleAction`
       - Affinely (linearly) rescales a ``Box`` action space of the environment to within the range of ``[min_action, max_action]``.

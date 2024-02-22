@@ -18,7 +18,7 @@
 .. autoclass:: gymnasium.wrappers.GrayscaleObservation
 .. autoclass:: gymnasium.wrappers.MaxAndSkipObservation
 .. autoclass:: gymnasium.wrappers.NormalizeObservation
-.. autoclass:: gymnasium.wrappers.RenderObservation
+.. autoclass:: gymnasium.wrappers.AddRenderObservation
 .. autoclass:: gymnasium.wrappers.ResizeObservation
 .. autoclass:: gymnasium.wrappers.ReshapeObservation
 .. autoclass:: gymnasium.wrappers.RescaleObservation

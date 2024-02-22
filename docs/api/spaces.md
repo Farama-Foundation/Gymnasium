@@ -9,7 +9,6 @@ title: Spaces
 spaces/fundamental
 spaces/composite
 spaces/utils
-vector/utils
 ```
 
 ```{eval-rst}

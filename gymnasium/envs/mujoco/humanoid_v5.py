@@ -233,13 +233,13 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     If `terminate_when_unhealthy is True` (the default), the environment terminates when the Humanoid is unhealthy.
     The Humanoid is said to be unhealthy if any of the following happens:
 
     1. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default is $[1.0, 2.0]$).
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 
@@ -292,7 +292,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
     * v2: All continuous control environments now use mujoco-py >= 1.50
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
-    * v0: Initial versions release (1.0.0)
+    * v0: Initial versions release
     """
 
     metadata = {
@@ -404,7 +404,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
             "qfrc_actuator": (self.data.qvel.size - 6)
             * include_qfrc_actuator_in_observation,
             "cfrc_ext": self.data.cfrc_ext[1:].size * include_cfrc_ext_in_observation,
-            "ten_lenght": 0,
+            "ten_length": 0,
             "ten_velocity": 0,
         }
 
@@ -481,7 +481,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         info = {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
-            "tendon_lenght": self.data.ten_length,
+            "tendon_length": self.data.ten_length,
             "tendon_velocity": self.data.ten_velocity,
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
             "x_velocity": x_velocity,
@@ -533,7 +533,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         return {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
-            "tendon_lenght": self.data.ten_length,
+            "tendon_length": self.data.ten_length,
             "tendon_velocity": self.data.ten_velocity,
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
         }

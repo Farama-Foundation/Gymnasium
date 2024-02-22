@@ -48,10 +48,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points by traversing new parts of the grid. Coloring an entire box in the maze or catching chickens gives extra points.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=817).
+## Rewards
+You score points by traversing new parts of the grid. Coloring an entire box in the maze or catching chickens gives extra points. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=817).
 
 ## Variants
 

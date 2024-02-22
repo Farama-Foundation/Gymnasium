@@ -346,7 +346,8 @@ class FrameStackObservation(
     Change logs:
      * v0.15.0 - Initially add as ``FrameStack`` with support for lz4
      * v1.0.0 - Rename to ``FrameStackObservation`` and remove lz4 and ``LazyFrame`` support
-      along with adding the ``padding_type`` parameter
+                along with adding the ``padding_type`` parameter
+
     """
 
     def __init__(
