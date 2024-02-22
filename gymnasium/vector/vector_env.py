@@ -446,6 +446,15 @@ class VectorWrapper(VectorEnv):
         """Returns the `render_mode` from the base environment."""
         return self.env.render_mode
 
+    @property
+    def np_random(self) -> np.random.Generator:
+        """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
+
+        Returns:
+            Instances of `np.random.Generator`
+        """
+        return self.env.np_random
+
     @np_random.setter
     def np_random(self, value: np.random.Generator):
         self.env.np_random = value
