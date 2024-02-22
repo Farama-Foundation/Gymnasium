@@ -7,6 +7,7 @@ import pytest
 
 from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
+from gymnasium.utils.seeding import np_random
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
 from tests.vector.testing_utils import make_env
@@ -122,3 +123,35 @@ def test_final_obs_info(vectoriser):
     )
 
     env.close()
+
+
+@pytest.fixture
+def example_env_list():
+    """Example vector environment."""
+    return [make_env("CartPole-v1", i) for i in range(4)]
+
+
+
+@pytest.mark.parametrize(
+    "venv_constructor",
+    [SyncVectorEnv, partial(AsyncVectorEnv, shared_memory=True), partial(AsyncVectorEnv, shared_memory=False)]
+)
+def test_random_seeding_basics(venv_constructor, example_env_list):
+    seed = 42
+    vector_env = venv_constructor(example_env_list)
+    vector_env.reset(seed=seed)
+    assert vector_env.np_random_seed == tuple(seed + i for i in range(vector_env.num_envs))
+    # resetting with seed=None means seed remains the same
+    vector_env.reset(seed=None)
+    assert vector_env.np_random_seed == tuple(seed + i for i in range(vector_env.num_envs))
+
+
+@pytest.mark.parametrize(
+    "venv_constructor",
+    [SyncVectorEnv, partial(AsyncVectorEnv, shared_memory=True), partial(AsyncVectorEnv, shared_memory=False)]
+)
+def test_random_seeds_set_at_retrieval(venv_constructor, example_env_list):
+    vector_env = venv_constructor(example_env_list)
+    assert len(set(vector_env.np_random_seed)) == vector_env.num_envs
+    # default seed starts at zero. Adjust or remove this test if the default seed changes
+    assert vector_env.np_random_seed == tuple(range(vector_env.num_envs))
