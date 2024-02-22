@@ -38,6 +38,14 @@ class Reacher_MJXEnv(MJXEnv):
             low=-np.inf, high=np.inf, shape=(10,), dtype=np.float32
         )
 
+    def _body_goal(self, goal, rng):
+        goal = jax.random.uniform(key=rng, minval=-0.2, maxval=0.2, shape=(2,))
+        return goal
+
+    def _validate_goal(self, goal):
+        """Check if the `goal` is within a circle of radius 0.2 meters."""
+        return jnp.less(jnp.linalg.norm(goal), jnp.array(0.2))
+
     def _gen_init_physics_state(
         self, rng, params: Dict[str, any]
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
@@ -46,18 +54,11 @@ class Reacher_MJXEnv(MJXEnv):
             key=rng, minval=-0.1, maxval=0.1, shape=(self.mjx_model.nq,)
         )
 
-        while True:
-            goal = jax.random.uniform(key=rng, minval=-0.2, maxval=0.2, shape=(2,))
-            # c_bool = jnp.less(jnp.linalg.norm(goal), jnp.array(0.2))
-            # c_bool = jnp.less(jnp.linalg.norm(jnp.array([-0.15, 0.1])), 0.2)
-            # breakpoint()
-            # if c_bool:
-            # break
-            # if jnp.less(jnp.linalg.norm(goal), jnp.array(0.2)):
-            # break
-            # TODO FIX THIS
-            if True:
-                break
+        goal = jax.lax.while_loop(
+            self._validate_goal,
+            lambda goal: self._body_goal(goal, rng),
+            init_val=jnp.array((10.0, 0.0)),
+        )
         qpos.at[-2:].set(goal)
 
         qvel = jax.random.uniform(

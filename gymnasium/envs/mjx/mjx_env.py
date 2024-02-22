@@ -22,12 +22,6 @@ else:
     MJX_IMPORT_ERROR = None
 
 
-# state = np.empty(mujoco.mj_stateSize(env.unwrapped.model, mujoco.mjtState.mjSTATE_PHYSICS))
-# mujoco.mj_getState(env.unwrapped.model, env.unwrapped.data, state, spec=mujoco.mjtState.mjSTATE_PHYSICS)
-
-# mujoco.mj_setState(env.unwrapped.model, env.unwrapped.data, state, spec=mujoco.mjtState.mjSTATE_PHYSICS)
-
-
 """
 # TODO unit test these
 def mjx_get_physics_state(mjx_data: mjx.Data) -> jnp.ndarray:
