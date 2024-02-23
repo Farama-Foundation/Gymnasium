@@ -1,10 +1,11 @@
 """Checks that the core Gymnasium API is implemented as expected."""
 from __future__ import annotations
 
-import numpy as np
-import pytest
 import re
 from typing import Any, SupportsFloat
+
+import numpy as np
+import pytest
 
 import gymnasium as gym
 from gymnasium import ActionWrapper, Env, ObservationWrapper, RewardWrapper, Wrapper
@@ -249,5 +250,3 @@ class TestRandomSeeding:
         rng, _ = np_random()
         wrapper_env.np_random = rng
         assert wrapper_env.np_random_seed == -1
-
-
