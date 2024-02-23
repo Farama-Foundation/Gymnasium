@@ -7,7 +7,6 @@ import pytest
 
 from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.utils.seeding import np_random
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
 from tests.vector.testing_utils import make_env
