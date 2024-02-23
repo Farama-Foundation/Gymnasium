@@ -10,7 +10,8 @@ try:
     import mujoco
 except ImportError as e:
     raise error.DependencyNotInstalled(
-        "Could not import mujoco, consider installing gymnasium[mujoco]."
+        "Could not import mujoco"
+        "(HINT: you need to install mujoco, run `pip install gymnasium[mujoco]`.)"
     ) from e
 
 
