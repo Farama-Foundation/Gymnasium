@@ -3,8 +3,9 @@ from typing import Dict, Optional, Tuple, Union
 import numpy as np
 
 from gymnasium import error
-from gymnasium.envs.mujoco.mujoco_env_base import BaseMujocoEnv, DEFAULT_SIZE
+from gymnasium.envs.mujoco.mujoco_env_base import DEFAULT_SIZE, BaseMujocoEnv
 from gymnasium.spaces import Space
+
 
 try:
     import mujoco
@@ -17,6 +18,7 @@ except ImportError as e:
 
 class MujocoEnv(BaseMujocoEnv):
     """Superclass for MuJoCo environments."""
+
     def __init__(
         self,
         model_path,

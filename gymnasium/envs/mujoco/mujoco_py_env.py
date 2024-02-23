@@ -2,7 +2,8 @@ from typing import Optional, Union
 
 import gymnasium as gym
 from gymnasium import Space, error, logger
-from gymnasium.envs.mujoco.mujoco_env_base import BaseMujocoEnv, DEFAULT_SIZE
+from gymnasium.envs.mujoco.mujoco_env_base import DEFAULT_SIZE, BaseMujocoEnv
+
 
 try:
     import mujoco_py
@@ -10,7 +11,7 @@ except ImportError as e:
     raise error.DependencyNotInstalled(
         "Could not import mujoco_py, which is needed for MuJoCo environments older than V4",
         "You could either use a newer version of the environments, or install the (deprecated) mujoco-py package"
-        "following the instructions on their GitHub page."
+        "following the instructions on their GitHub page.",
     ) from e
 
 
