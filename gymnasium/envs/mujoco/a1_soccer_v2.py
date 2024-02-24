@@ -5,6 +5,7 @@ import numpy as np
 import math
 import time
 import random
+import copy
 
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
@@ -15,8 +16,152 @@ from scipy.spatial.transform import Rotation as R
 
 DEFAULT_CAMERA_CONFIG = {"distance": 4.0,}
 
+
+#############################################################################################################################
+
+class SimState:
+    """
+        Takes in env.data.qpos and env.data.qvel and processes
+        them with labels into:
+            -trunk_qpos_dict
+            -joints_qpos_dict
+            -ball_qpos_dict
+
+            -trunk_qvel_dict
+            -joints_qvel_dict
+            -ball_qvel_dict
+    """
+    
+    def __init__(self, env_data):
+        self.qpos = env_data.qpos
+        self.qvel = env_data.qvel
+        self.sensordata = env_data.sensordata
+        self.sensor = env_data.sensor
+
+        self.joints = ["FR_hip", "FR_thigh", "FR_calf",
+                        "FL_hip", "FL_thigh", "FL_calf",
+                        "RR_hip", "RR_thigh", "RR_calf",
+                        "RL_hip", "RL_thigh", "RL_calf"]
+        
+        ###############################################################
+        #from qpos and qvel
+        self.ball_qpos = self.qpos[:7]
+        self.trunk_qpos = self.qpos[7:14]
+        self.joints_qpos = self.qpos[14:]
+        
+        self.ball_qvel = self.qvel[:6]
+        self.trunk_qvel = self.qvel[6:12]
+        self.joints_qvel = self.qvel[12:]
+
+        self.trunk_qpos_dict = self.create_trunk_qpos_dict()
+        self.joints_qpos_dict = self.create_joints_qpos_dict()
+        self.ball_qpos_dict = self.create_ball_qpos_dict()
+
+        self.trunk_qvel_dict = self.create_trunk_qvel_dict()
+        self.joints_qvel_dict = self.create_joints_qvel_dict()
+        self.ball_qvel_dict = self.create_ball_qvel_dict()
+
+        ###############################################################
+        #from sensor data
+        self.sensed_joints_qpos = self.sensordata[:12]
+        self.sensed_joints_qvel = self.sensordata[12: 24]
+
+        self.sensed_joints_qpos_dict = self.create_sensed_joints_qpos_dict()
+        self.sensed_joints_qvel_dict = self.create_sensed_joints_qvel_dict()
+
+    def create_trunk_qpos_dict(self):
+        trunk_qpos_dict = {
+            'trunk_pos_x': self.trunk_qpos[0],
+            'trunk_pos_y': self.trunk_qpos[1],
+            'trunk_pos_z': self.trunk_qpos[2],
+            'trunk_orient_qw': self.trunk_qpos[3],
+            'trunk_orient_qx': self.trunk_qpos[4],
+            'trunk_orient_qy': self.trunk_qpos[5],
+            'trunk_orient_qz': self.trunk_qpos[6]}
+        
+        return trunk_qpos_dict
+
+    def create_joints_qpos_dict(self):
+        leg_names = ['FR', 'FL', 'RR', 'RL']
+        joint_names = ['hip_pos', 'thigh_pos', 'calf_pos']
+        joints_qpos_dict = {}
+        for i, leg in enumerate(leg_names):
+            for j, joint in enumerate(joint_names):
+                key = f"{leg}_{joint}"
+                joints_qpos_dict[key] = self.joints_qpos[i * 3 + j]
+        return joints_qpos_dict
+
+    def create_ball_qpos_dict(self):
+        ball_qpos_dict =  {
+            'ball_pos_x': self.ball_qpos[0],
+            'ball_pos_y': self.ball_qpos[1],
+            'ball_pos_z': self.ball_qpos[2],
+            'ball_orient_qw': self.ball_qpos[3],
+            'ball_orient_qx': self.ball_qpos[4],
+            'ball_orient_qy': self.ball_qpos[5],
+            'ball_orient_qz': self.ball_qpos[6]}
+        
+        return ball_qpos_dict
+
+    def create_trunk_qvel_dict(self):
+        trunk_qvel_dict =  {
+            'trunk_vel_x': self.trunk_qvel[0],
+            'trunk_vel_y': self.trunk_qvel[1],
+            'trunk_vel_z': self.trunk_qvel[2],
+            'trunk_angvel_x': self.trunk_qvel[3],
+            'trunk_angvel_y': self.trunk_qvel[4],
+            'trunk_angvel_z': self.trunk_qvel[5]}
+        
+        return trunk_qvel_dict
+
+    def create_joints_qvel_dict(self):
+        leg_names = ['FR', 'FL', 'RR', 'RL']
+        joint_names = ['hip_vel', 'thigh_vel', 'calf_vel']
+        joints_qvel_dict = {}
+        for i, leg in enumerate(leg_names):
+            for j, joint in enumerate(joint_names):
+                key = f"{leg}_{joint}"
+                joints_qvel_dict[key] = self.joints_qvel[i * 3 + j]
+
+        return joints_qvel_dict
+
+    def create_ball_qvel_dict(self):
+        ball_qvel_dict =  {
+            'ball_vel_x': self.ball_qvel[0],
+            'ball_vel_y': self.ball_qvel[1],
+            'ball_vel_z': self.ball_qvel[2],
+            'ball_angvel_x': self.ball_qvel[3],
+            'ball_angvel_y': self.ball_qvel[4],
+            'ball_angvel_z': self.ball_qvel[5]}
+        
+        return ball_qvel_dict
+    
+    def create_sensed_joints_qpos_dict(self):
+        sensed_joints_qpos_dict = {}
+
+        position_appendix = "_pos"
+        for joint_name in self.joints:
+            combined_sensed_joint_pos_name = joint_name + position_appendix
+
+            qpos_sensor_data = self.sensor(combined_sensed_joint_pos_name).data
+            sensed_joints_qpos_dict[combined_sensed_joint_pos_name] = qpos_sensor_data[0]
+
+        return sensed_joints_qpos_dict
+
+    def create_sensed_joints_qvel_dict(self):
+        sensed_joints_qvel_dict = {}
+
+        velocity_appendix = "_vel"
+        for joint_name in self.joints:
+            combined_sensed_joint_vel_name = joint_name + velocity_appendix
+
+            qvel_sensor_data = self.sensor(combined_sensed_joint_vel_name).data
+            sensed_joints_qvel_dict[combined_sensed_joint_vel_name] = qvel_sensor_data[0]
+
+        return sensed_joints_qvel_dict
+
 ################################################################################################################################
-class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
+class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle, SimState):
     ############################################################################################################################
     #Old method
     metadata = {
@@ -70,10 +215,38 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }
+
+        ####################################################################################
         
-        self.robot_joint_count = 12  # This is based on your previous information
-        
-    
+        #Initialize and populate sim_state
+        self.current_sim_state = "Null"
+        self.populate_sim_state()
+
+        ############################################################################################################################
+        self.joint_ranges_dict = {
+            'FR_hip_joint': (-0.802851, 0.802851),
+            'FR_thigh_joint': (-1.0472, 4.18879),
+            'FR_calf_joint': (-2.69653, -0.916298),
+
+            'FL_hip_joint': (-0.802851, 0.802851),
+            'FL_thigh_joint': (-1.0472, 4.18879),
+            'FL_calf_joint': (-2.69653, -0.916298),
+
+            'RR_hip_joint': (-0.802851, 0.802851),
+            'RR_thigh_joint': (-1.0472, 4.18879),
+            'RR_calf_joint': (-2.69653, -0.916298),
+
+            'RL_hip_joint': (-0.802851, 0.802851),
+            'RL_thigh_joint': (-1.0472, 4.18879),
+            'RL_calf_joint': (-2.69653, -0.916298)}
+
+        self.robot_joint_count = len(self.joint_ranges_dict)
+
+        self.min_joint_value = min(min(value) for value in self.joint_ranges_dict.values())
+        self.max_joint_value = max(max(value) for value in self.joint_ranges_dict.values())
+
+        self.action_box_low = np.array([self.joint_ranges_dict[joint][0] for joint in self.joint_ranges_dict])
+        self.action_box_high = np.array([self.joint_ranges_dict[joint][1] for joint in self.joint_ranges_dict])
     ################################################################################################################################
     #New init method content
 
@@ -81,23 +254,21 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
         self.motion_phase_selector = 0
         #2. bezier parameters, alpha
         self.bezier_parameters = np.zeros((3, 5))
-
         #3. duration of current motion phase, T_d
         self.motion_phase_time_span = 0
         #4. current motion phase progress, t
         self.motion_phase_progress = 0
 
-        #5.
-        #robot current state
-        self.robot_joint_positions_current = np.zeros((1, 12))
-        self.robot_orientation_current = np.zeros((1, 3))
+        #5.robot current state
+        self.robot_joint_positions_current = np.zeros((12))
+        self.robot_orientation_current = np.zeros((3))
 
         #robot current and last 6 states
         self.robot_joint_positions_history = np.zeros((7, 12))
         self.robot_orientation_history = np.zeros((7, 3))
 
         #6. last 6 actions history
-        self.action_current = np.zeros((1, 12))        
+        self.action_current = np.zeros((12))        
         self.action_history = np.zeros((6, 12))
 
         ###################################################################################################
@@ -111,11 +282,11 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
         #observation size and structure for the control policy
         # Dimensions of the new state components
         motion_phase_selector_dim = 1
-        bezier_parameters_dim = 3 * 5  # 3 coordinates for each of the 5 Bézier points
+        bezier_parameters_dim = self.bezier_parameters.size  # 3 coordinates for each of the 5 Bézier points
         motion_phase_time_span_dim = 1
         motion_phase_progress_dim = 1
-        combined_history_dim = 7 * (self.robot_joint_count + 3)  # 7 timesteps, joint positions + orientation for each
-        action_history_dim = 6 * self.robot_joint_count  # 6 timesteps, self.robot_joint_count action values each
+        combined_history_dim = self.robot_joint_positions_history.size + self.robot_orientation_history.size  # 7 timesteps, joint positions + orientation for each
+        action_history_dim = self.action_history.size  # 6 timesteps, self.robot_joint_count action values each
 
         # Calculate the total size of the observation
         obs_size = (
@@ -127,6 +298,8 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
             + action_history_dim
         )
 
+        self.x = obs_size
+
         # Redefine the observation structure for the control policy
         self.observation_structure = {
             "motion_phase_selector": motion_phase_selector_dim,
@@ -137,7 +310,11 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
             "action_history": action_history_dim}
         
         self.observation_space = spaces.Box(
-            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64)
+            low = -np.inf, high = np.inf, shape = (obs_size, ), dtype = np.float64)
+
+        self.action_space = spaces.Box(low = -np.inf, high = np.inf, shape = (12, ), dtype = np.float32)
+        # self.action_space = spaces.Box(low = self.action_box_low, high = self.action_box_high, dtype = np.float32)
+        # self.action_space = spaces.Box(low = -5, high = 1, dtype = np.float32)
 
     ###################################################################################################
     #Old environment methods
@@ -165,32 +342,25 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
         control_cost = self._ctrl_cost_weight * np.sum(np.square(action))
         return control_cost
 
-    def step(self, action):
-        # current_timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        # print(f"Hi from step! timestamp is {current_timestamp}")
-
-        x_position_before = self.data.qpos[0]
-        self.do_simulation(action, self.frame_skip)
-        x_position_after = self.data.qpos[0]
-        x_velocity = (x_position_after - x_position_before) / self.dt
-
-        ctrl_cost = self.control_cost(action)
-
-        forward_reward = self._forward_reward_weight * x_velocity
-
-        observation = self._get_obs()
-        reward = forward_reward - ctrl_cost
-        info = {
-            "x_position": x_position_after,
-            "x_velocity": x_velocity,
-            "reward_forward": forward_reward,
-            "reward_ctrl": -ctrl_cost,
-        }
-
-        if self.render_mode == "human":
-            self.render()
-        return observation, reward, False, False, info
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     ###################################################################################################
     #New environment methods
     def get_robot_joint_positions(self):
@@ -252,7 +422,7 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
 
     def initialize_random_bezier(self):
         #size of each bezier parameter vector
-        size = (3, 1)
+        size = 3
 
         #an educated guess of bezier parameters range between -0.5m and 0.5m
         lower_bound = -0.5
@@ -282,37 +452,31 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
 
         return self.motion_phase_time_span   
 
+    def populate_sim_state(self):
+        self.current_sim_state = SimState(self.data)
+        
     def _get_obs(self):
-        qpos = self.data.qpos
-        qvel = self.data.qvel
+        # self.current_sim_state
 
-        # Standard observations from MuJoCo
-        # saved for later for planning policy
-        standard_obs = np.concatenate([
-            qpos[:7],      # ball qpos
-            qvel[:6],      # ball qvel
-            qpos[7:14],    # robot root qpos
-            qvel[6:12],    # robot root qvel
-            qpos[14:26],   # robot joints qpos
-            qvel[12:24]    # robot joints qvel
-        ])
-
-        # Combine joint positions and orientations history into one variable
         combined_robot_state_history = np.concatenate([self.robot_joint_positions_history,
                                                         self.robot_orientation_history], axis=1).flatten()
-
-        #Control policy state/observation space
+        
         control_policy_observation = np.concatenate([
-            np.array([self.motion_phase_selector]),                # motion selector
-                        self.bezier_parameters.flatten(),          # Bézier parameters
-                        np.array([self.motion_phase_time_span,     # duration of current motion phase
-                        self.motion_phase_progress]),              # current motion phase progress
-                        combined_robot_state_history,              # combined history of joint positions and orientations
-                        self.action_history.flatten()])            # last 6 actions history
+            np.array([self.motion_phase_selector]),  #1 motion selector
+            self.bezier_parameters.flatten(),        #2 Bézier parameters
+            np.array([
+                self.motion_phase_time_span,         #3 duration of current motion phase
+                self.motion_phase_progress]),        #4 current motion phase progress
+            combined_robot_state_history,            #5 combined history of joint positions and orientations
+            self.action_history.flatten()])          #6 last 6 actions history
 
         return control_policy_observation
-
+    
+    
     def print_obs(self):
+        """
+        Prints the observation space from _get_obs
+        """
         obs_array = self._get_obs()
         obs_index = 0
 
@@ -341,10 +505,16 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
         robot_root_orientation_indices = slice(10, 14)
 
         theta = math.radians(90)
-        qw = math.cos(theta / 2)
+
+        # qw = math.cos(theta / 2)
+        # qx = math.cos(theta)
+        # qy = 0
+        # qz = math.sin(theta / 2)
+
+        qw = 0
         qx = 0
-        qy = 0
-        qz = math.sin(theta / 2)
+        qy = 1
+        qz = 0
 
         robot_orientation = [qw, qx, qy, qz]
         qpos[robot_root_orientation_indices] = robot_orientation
@@ -353,16 +523,17 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
         ball_offset = np.random.uniform(-0.05, 0.05, size=(3,))
         qpos[:3] += ball_offset  # Assuming ball's qpos is first
 
-        # Optional: Introduce some randomness to the robot's root position and orientation for more variability
-        qpos[7:10] += self.np_random.uniform(low=noise_low, high=noise_high, size=3)  # Robot root position
-        qpos[robot_root_orientation_indices] += self.np_random.uniform(low=-0.05, high=0.05, size=4)  # Robot root orientation
+        # # Optional: Introduce some randomness to the robot's root position and orientation for more variability
+        # qpos[7:10] += self.np_random.uniform(low=noise_low, high=noise_high, size=3)  # Robot root position
+        # qpos[robot_root_orientation_indices] += self.np_random.uniform(low=-0.05, high=0.05, size=4)  # Robot root orientation
 
         # Optional: Introduce randomness to the robot's joint positions and velocities
-        joint_noise = self.np_random.uniform(low=noise_low, high=noise_high, size=12)  # Assuming 12 joints
-        qpos[14:26] += joint_noise
+        # joint_noise = self.np_random.uniform(low=noise_low, high=noise_high, size=12)  # Assuming 12 joints
+        # joint_noise = 0
+        # qpos[14:26] += joint_noise
 
-        # Adjusting this line to target the correct slice for robot's joint velocities:
-        qvel[12:24] += joint_noise * 0.1  # Smaller noise for velocities
+        # # Adjusting this line to target the correct slice for robot's joint velocities:
+        # qvel[12:24] += joint_noise * 0.1  # Smaller noise for velocities
 
 
         # Set the state
@@ -378,13 +549,129 @@ class A1SoccerEnv_v2(MujocoEnv, utils.EzPickle):
         self.motion_phase_time_span = self.initialize_random_time_span()
         self.motion_phase_progress = 0
 
-        self.robot_joint_positions_current = np.zeros((1, 12))
+        self.robot_joint_positions_current = np.zeros((12))
         self.robot_joint_positions_history = np.zeros((7, 12))
-        self.robot_orientation_current = np.zeros((1, 3))
+        self.robot_orientation_current = np.zeros((3))
         self.robot_orientation_history = np.zeros((7, 3))
 
-        self.action_current = np.zeros((1, 12))
+        self.action_current = np.zeros((12))
         self.action_history = np.zeros((6, 12))
 
         # Return the observation
         return self._get_obs()
+        
+
+        ###################################################################################################
+        #Old step method content
+    
+    # def step(self, action):
+    #     # current_timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    #     # print(f"Hi from step! timestamp is {current_timestamp}")
+
+    #     x_position_before = self.data.qpos[0]
+    #     self.do_simulation(action, self.frame_skip)
+    #     x_position_after = self.data.qpos[0]
+    #     x_velocity = (x_position_after - x_position_before) / self.dt
+
+    #     ctrl_cost = self.control_cost(action)
+
+    #     forward_reward = self._forward_reward_weight * x_velocity
+
+    #     observation = self._get_obs()
+    #     reward = forward_reward - ctrl_cost
+    #     info = {
+    #         "x_position": x_position_after,
+    #         "x_velocity": x_velocity,
+    #         "reward_forward": forward_reward,
+    #         "reward_ctrl": -ctrl_cost,
+    #     }
+
+    #     if self.render_mode == "human":
+    #         self.render()
+    #     return observation, reward, False, False, info
+
+    #step 2
+    # def step(self, action):
+    #     # Ensure action is within bounds
+    #     action = np.clip(action, self.action_box_low, self.action_box_high)
+
+    #     # Advance the simulation
+    #     self.do_simulation(action, self.frame_skip)
+
+    #     # # Update the robot's state and compute the reward
+    #     # self.update_state()
+    #     # reward = self.calculate_reward()
+
+    #     # # Determine if the episode has terminated or truncated
+    #     # terminated = self.check_if_terminated()
+    #     # truncated = self.check_if_truncated()
+
+    #     # # Compile additional information
+    #     # info = {
+    #     #     'terminated_info': terminated,
+    #     #     'truncated_info': truncated,
+    #     #     # Include any other relevant information
+    #     # }
+
+    #     # Optionally render the environment
+    #     if self.render_mode == "human":
+    #         self.render()
+
+    #     # Return the new observation, reward, terminated, truncated, and info
+    #     return self._get_obs(), reward, terminated, truncated, info
+    
+
+    def step(self, action):
+        # Ensure action is within bounds
+        # clipped_action = np.clip(action, self.action_box_low, self.action_box_high)
+
+        # Perform the simulation with the provided action
+        self.do_simulation(action, self.frame_skip)
+
+        # Update the robot's state
+        # self.update_state()
+
+        # # Calculate the control policy specific reward
+        # reward = self.calculate_reward()
+
+        # Check if the episode has terminated or truncated
+        # terminated = self.check_if_terminated()
+        # truncated = self.check_if_truncated()
+
+        # Gather additional information for diagnostics
+        # info = self.compile_info()
+
+        # Optionally render the environment
+        if self.render_mode == "human":
+            self.render()
+
+        ###################################################################################################
+        #old reward
+            
+        x_position_before = self.data.qpos[0]
+        x_position_after = self.data.qpos[0]
+        x_velocity = (x_position_after - x_position_before) / self.dt
+
+        ctrl_cost = self.control_cost(action)
+
+        forward_reward = self._forward_reward_weight * x_velocity
+
+        observation = self._get_obs()
+        reward = forward_reward - ctrl_cost
+        info = {
+            "x_position": x_position_after,
+            "x_velocity": x_velocity,
+            "reward_forward": forward_reward,
+            "reward_ctrl": -ctrl_cost,
+        }
+
+        terminated = False
+        truncated = False
+
+        self.populate_sim_state()
+
+        # Return the observation, reward, termination status, and additional info
+        return self._get_obs(), reward, terminated, truncated, info
+
+    def test(self):
+        print("Hi from test16!")
