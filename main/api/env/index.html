@@ -581,10 +581,12 @@ the seeding correctly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> (<em>optional int</em>) – The seed that is used to initialize the environment’s PRNG (<cite>np_random</cite>).
+<li><p><strong>seed</strong> (<em>optional int</em>) – The seed that is used to initialize the environment’s PRNG (<cite>np_random</cite>) and
+the read-only attribute <cite>np_random_seed</cite>.
 If the environment does not already have a PRNG and <code class="docutils literal notranslate"><span class="pre">seed=None</span></code> (the default option) is passed,
 a seed will be chosen from some source of entropy (e.g. timestamp or /dev/urandom).
-However, if the environment already has a PRNG and <code class="docutils literal notranslate"><span class="pre">seed=None</span></code> is passed, the PRNG will <em>not</em> be reset.
+However, if the environment already has a PRNG and <code class="docutils literal notranslate"><span class="pre">seed=None</span></code> is passed, the PRNG will <em>not</em> be reset
+and the env’s <a class="reference internal" href="#gymnasium.Env.np_random_seed" title="gymnasium.Env.np_random_seed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random_seed</span></code></a> will <em>not</em> be altered.
 If you pass an integer, the PRNG will be reset even if it already exists.
 Usually, you want to pass an integer <em>right after the environment has been initialized and then never again</em>.
 Please refer to the minimal example above to see this paradigm in action.</p></li>
@@ -713,6 +715,19 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="gymnasium.Env.np_random_seed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">np_random_seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gymnasium.Env.np_random_seed" title="Link to this definition">#</a></dt>
+<dd><p>Returns the environment’s internal <code class="xref py py-attr docutils literal notranslate"><span class="pre">_np_random_seed</span></code> that if not set will first initialise with a random int as seed.</p>
+<p>If <a class="reference internal" href="#gymnasium.Env.np_random_seed" title="gymnasium.Env.np_random_seed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random_seed</span></code></a> was set directly instead of through <a class="reference internal" href="#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_np_random_through_seed()</span></code>,
+the seed will take the value -1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>int</strong> – the seed of the current <cite>np_random</cite> or -1, if the seed of the rng is unknown</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="implementing-environments">
 <h2>Implementing environments<a class="headerlink" href="#implementing-environments" title="Link to this heading">#</a></h2>
@@ -810,6 +825,7 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 <li><a class="reference internal" href="#gymnasium.Env.spec"><code class="docutils literal notranslate"><span class="pre">Env.spec</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Env.unwrapped"><code class="docutils literal notranslate"><span class="pre">Env.unwrapped</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Env.np_random"><code class="docutils literal notranslate"><span class="pre">Env.np_random</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Env.np_random_seed"><code class="docutils literal notranslate"><span class="pre">Env.np_random_seed</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#implementing-environments">Implementing environments</a></li>
