@@ -539,6 +539,8 @@
 
     <span class="c1"># Created</span>
     <span class="n">_np_random</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># will be set to the &quot;invalid&quot; value -1 if the seed of the currently set rng is unknown</span>
+    <span class="n">_np_random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Env.step">
 <a class="viewcode-back" href="../../../api/env/#gymnasium.Env.step">[docs]</a>
@@ -608,10 +610,12 @@
 <span class="sd">            The ``return_info`` parameter was removed and now info is expected to be returned.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            seed (optional int): The seed that is used to initialize the environment&#39;s PRNG (`np_random`).</span>
+<span class="sd">            seed (optional int): The seed that is used to initialize the environment&#39;s PRNG (`np_random`) and</span>
+<span class="sd">                the read-only attribute `np_random_seed`.</span>
 <span class="sd">                If the environment does not already have a PRNG and ``seed=None`` (the default option) is passed,</span>
 <span class="sd">                a seed will be chosen from some source of entropy (e.g. timestamp or /dev/urandom).</span>
-<span class="sd">                However, if the environment already has a PRNG and ``seed=None`` is passed, the PRNG will *not* be reset.</span>
+<span class="sd">                However, if the environment already has a PRNG and ``seed=None`` is passed, the PRNG will *not* be reset</span>
+<span class="sd">                and the env&#39;s :attr:`np_random_seed` will *not* be altered.</span>
 <span class="sd">                If you pass an integer, the PRNG will be reset even if it already exists.</span>
 <span class="sd">                Usually, you want to pass an integer *right after the environment has been initialized and then never again*.</span>
 <span class="sd">                Please refer to the minimal example above to see this paradigm in action.</span>
@@ -626,7 +630,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Initialize the RNG if the seed is manually passed</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Env.render">
@@ -687,6 +691,20 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">np_random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the environment&#39;s internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.</span>
+
+<span class="sd">        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,</span>
+<span class="sd">        the seed will take the value -1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the environment&#39;s internal :attr:`_np_random` that if not set will initialise with a random seed.</span>
 
@@ -694,12 +712,20 @@
 <span class="sd">            Instances of `np.random.Generator`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span>
 
     <span class="nd">@np_random</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the environment&#39;s internal :attr:`_np_random` with the user-provided Generator.</span>
+
+<span class="sd">        Since it is generally not possible to extract a seed from an instance of a random number generator,</span>
+<span class="sd">        this will also set the :attr:`_np_random_seed` to `-1`, which is not valid as input for the creation</span>
+<span class="sd">        of a numpy rng.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="c1"># Setting a numpy rng with -1 will cause a ValueError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a string of the environment with :attr:`spec` id&#39;s if :attr:`spec.</span>
@@ -802,6 +828,11 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the wrapper and :attr:`env`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">np_random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the base enviroment&#39;s :attr:`np_random_seed`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">np_random_seed</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]:</span>
