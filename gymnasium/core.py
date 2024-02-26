@@ -66,6 +66,8 @@ class Env(Generic[ObsType, ActType]):
 
     # Created
     _np_random: np.random.Generator | None = None
+    # will be set to the "invalid" value -1 if the seed of the currently set rng is unknown
+    _np_random_seed: int | None = None
 
     def step(
         self, action: ActType
@@ -130,10 +132,12 @@ class Env(Generic[ObsType, ActType]):
             The ``return_info`` parameter was removed and now info is expected to be returned.
 
         Args:
-            seed (optional int): The seed that is used to initialize the environment's PRNG (`np_random`).
+            seed (optional int): The seed that is used to initialize the environment's PRNG (`np_random`) and
+                the read-only attribute `np_random_seed`.
                 If the environment does not already have a PRNG and ``seed=None`` (the default option) is passed,
                 a seed will be chosen from some source of entropy (e.g. timestamp or /dev/urandom).
-                However, if the environment already has a PRNG and ``seed=None`` is passed, the PRNG will *not* be reset.
+                However, if the environment already has a PRNG and ``seed=None`` is passed, the PRNG will *not* be reset
+                and the env's :attr:`np_random_seed` will *not* be altered.
                 If you pass an integer, the PRNG will be reset even if it already exists.
                 Usually, you want to pass an integer *right after the environment has been initialized and then never again*.
                 Please refer to the minimal example above to see this paradigm in action.
@@ -148,7 +152,7 @@ class Env(Generic[ObsType, ActType]):
         """
         # Initialize the RNG if the seed is manually passed
         if seed is not None:
-            self._np_random, seed = seeding.np_random(seed)
+            self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Compute the render frames as specified by :attr:`render_mode` during the initialization of the environment.
@@ -202,6 +206,20 @@ class Env(Generic[ObsType, ActType]):
         return self
 
     @property
+    def np_random_seed(self) -> int:
+        """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
+
+        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
+        the seed will take the value -1.
+
+        Returns:
+            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
+        """
+        if self._np_random_seed is None:
+            self._np_random, self._np_random_seed = seeding.np_random()
+        return self._np_random_seed
+
+    @property
     def np_random(self) -> np.random.Generator:
         """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
 
@@ -209,12 +227,20 @@ class Env(Generic[ObsType, ActType]):
             Instances of `np.random.Generator`
         """
         if self._np_random is None:
-            self._np_random, _ = seeding.np_random()
+            self._np_random, self._np_random_seed = seeding.np_random()
         return self._np_random
 
     @np_random.setter
     def np_random(self, value: np.random.Generator):
+        """Sets the environment's internal :attr:`_np_random` with the user-provided Generator.
+
+        Since it is generally not possible to extract a seed from an instance of a random number generator,
+        this will also set the :attr:`_np_random_seed` to `-1`, which is not valid as input for the creation
+        of a numpy rng.
+        """
         self._np_random = value
+        # Setting a numpy rng with -1 will cause a ValueError
+        self._np_random_seed = -1
 
     def __str__(self):
         """Returns a string of the environment with :attr:`spec` id's if :attr:`spec.
@@ -302,6 +328,11 @@ class Wrapper(
     def close(self):
         """Closes the wrapper and :attr:`env`."""
         return self.env.close()
+
+    @property
+    def np_random_seed(self) -> int | None:
+        """Returns the base enviroment's :attr:`np_random_seed`."""
+        return self.env.np_random_seed
 
     @property
     def unwrapped(self) -> Env[ObsType, ActType]:
