@@ -47,5 +47,6 @@ wrappers/reward_wrappers
 .. autoproperty:: gymnasium.Wrapper.spec
 .. autoproperty:: gymnasium.Wrapper.metadata
 .. autoproperty:: gymnasium.Wrapper.np_random
+.. autoproperty:: gymnasium.Wrapper.np_random_seed
 .. autoproperty:: gymnasium.Wrapper.unwrapped
 ```

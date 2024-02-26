@@ -100,6 +100,16 @@ class SyncVectorEnv(VectorEnv):
 
         self._autoreset_envs = np.zeros((self.num_envs,), dtype=np.bool_)
 
+    @property
+    def np_random_seed(self) -> tuple[int, ...]:
+        """Returns the seeds of the wrapped envs."""
+        return self.get_attr("np_random_seed")
+
+    @property
+    def np_random(self) -> tuple[np.random.Generator, ...]:
+        """Returns the numpy random number generators of the wrapped envs."""
+        return self.get_attr("np_random")
+
     def reset(
         self,
         *,
@@ -122,7 +132,9 @@ class SyncVectorEnv(VectorEnv):
             seed = [None for _ in range(self.num_envs)]
         elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert len(seed) == self.num_envs
+        assert (
+            len(seed) == self.num_envs
+        ), f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
 
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
@@ -211,7 +223,7 @@ class SyncVectorEnv(VectorEnv):
 
         return tuple(results)
 
-    def get_attr(self, name: str) -> Any:
+    def get_attr(self, name: str) -> tuple[Any, ...]:
         """Get a property from each parallel environment.
 
         Args:

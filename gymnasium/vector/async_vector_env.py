@@ -197,6 +197,16 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.DEFAULT
         self._check_spaces()
 
+    @property
+    def np_random_seed(self) -> tuple[int, ...]:
+        """Returns the seeds of the wrapped envs."""
+        return self.get_attr("np_random_seed")
+
+    @property
+    def np_random(self) -> tuple[np.random.Generator, ...]:
+        """Returns the numpy random number generators of the wrapped envs."""
+        return self.get_attr("np_random")
+
     def reset(
         self,
         *,
@@ -240,7 +250,9 @@ class AsyncVectorEnv(VectorEnv):
             seed = [None for _ in range(self.num_envs)]
         elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert len(seed) == self.num_envs
+        assert (
+            len(seed) == self.num_envs
+        ), f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
 
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
@@ -472,7 +484,7 @@ class AsyncVectorEnv(VectorEnv):
 
         return results
 
-    def get_attr(self, name: str):
+    def get_attr(self, name: str) -> tuple[Any, ...]:
         """Get a property from each parallel environment.
 
         Args:
