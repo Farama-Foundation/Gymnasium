@@ -409,6 +409,7 @@ def _create_empty_array_sequence(
 def _create_empty_array_oneof(space: OneOf, n: int = 1, fn=np.zeros):
     return tuple(tuple() for _ in range(n))
 
+
 @create_empty_array.register(Space)
 def _create_empty_array_custom(space, n=1, fn=np.zeros):
     return None

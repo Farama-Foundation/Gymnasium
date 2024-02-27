@@ -14,9 +14,10 @@ from gymnasium.spaces import (
     GraphInstance,
     MultiBinary,
     MultiDiscrete,
+    OneOf,
     Sequence,
     Text,
-    Tuple, OneOf,
+    Tuple,
 )
 from gymnasium.spaces.space import T_cov
 
