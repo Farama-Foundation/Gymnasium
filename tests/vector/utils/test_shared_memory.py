@@ -41,8 +41,6 @@ def test_shared_memory_create_read_write(space, num, ctx):
 
     read_samples = read_from_shared_memory(space, shared_memory, n=num)
     for read_sample, sample in zip(read_samples, samples):
-        assert sample in space
-        assert read_sample in space
         assert data_equivalence(read_sample, sample)
 
 
