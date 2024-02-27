@@ -79,10 +79,6 @@ def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
 @pytest.mark.parametrize(
     "test,func,message",
     [
-
-
-
-
         [
             gym.error.Error,
             lambda self: (self.observation_space.sample(), {}),
@@ -246,13 +242,11 @@ def test_check_reset_options():
 @pytest.mark.parametrize(
     "test,func,message",
     [
-
         [
             gym.error.Error,
             lambda self: (self.observation_space.sample(), {}),
             "The `reset` method does not provide a `seed` or `**kwargs` keyword argument.",
         ],
-
         [
             AssertionError,
             lambda self, seed, *_: (self.observation_space.sample(), {}),
