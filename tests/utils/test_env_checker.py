@@ -16,6 +16,7 @@ from gymnasium.utils.env_checker import (
     check_reset_return_type,
     check_reset_seed_determinism,
     check_seed_deprecation,
+    check_step_seed_determinism
 )
 from tests.testing_env import GenericTestEnv
 
