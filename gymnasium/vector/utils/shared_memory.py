@@ -21,7 +21,7 @@ from gymnasium.spaces import (
     Space,
     Text,
     Tuple,
-    flatten,
+    flatten, OneOf,
 )
 
 
@@ -72,6 +72,7 @@ def _create_base_shared_memory(
 
 
 @create_shared_memory.register(Tuple)
+@create_shared_memory.register(OneOf)
 def _create_tuple_shared_memory(space: Tuple, n: int = 1, ctx=mp):
     return tuple(
         create_shared_memory(subspace, n=n, ctx=ctx) for subspace in space.spaces
@@ -147,6 +148,7 @@ def _read_base_from_shared_memory(
 
 
 @read_from_shared_memory.register(Tuple)
+@read_from_shared_memory.register(OneOf)
 def _read_tuple_from_shared_memory(space: Tuple, shared_memory, n: int = 1):
     return tuple(
         read_from_shared_memory(subspace, memory, n=n)
@@ -165,7 +167,7 @@ def _read_dict_from_shared_memory(space: Dict, shared_memory, n: int = 1):
 
 
 @read_from_shared_memory.register(Text)
-def _read_text_from_shared_memory(space: Text, shared_memory, n: int = 1) -> tuple[str]:
+def _read_text_from_shared_memory(space: Text, shared_memory, n: int = 1) -> tuple[str, ...]:
     data = np.frombuffer(shared_memory.get_obj(), dtype=np.int32).reshape(
         (n, space.max_length)
     )
@@ -230,6 +232,7 @@ def _write_base_to_shared_memory(
 
 
 @write_to_shared_memory.register(Tuple)
+@write_to_shared_memory.register(OneOf)
 def _write_tuple_to_shared_memory(
     space: Tuple, index: int, values: tuple[Any, ...], shared_memory
 ):
