@@ -155,23 +155,18 @@ def _return_info_not_dict(self, seed=None, options=None):
     [
         [
             AssertionError,
-            _reset_return_info_type,
-            "The result returned by `env.reset()` was not a tuple of the form `(obs, info)`, where `obs` is a observation and `info` is a dictionary containing additional information. Actual type: `<class 'list'>`",
+            lambda action: (np.random.normal(), 0, False, False, {}),
+            "step observation is not deterministic.",
         ],
         [
             AssertionError,
-            _reset_return_info_length,
-            "Calling the reset method did not return a 2-tuple, actual length: 3",
+            lambda action: (0, np.random.normal(), False, False, {}),
+            "step reward is not deterministic.",
         ],
         [
             AssertionError,
-            _return_info_obs_outside,
-            "The first element returned by `env.reset()` is not within the observation space.",
-        ],
-        [
-            AssertionError,
-            _return_info_not_dict,
-            "The second element returned by `env.reset()` was not a dictionary, actual type: <class 'list'>",
+            lambda action: (0, 0, False, False, {"value": np.random.normal()}),
+            "step info is not deterministic.",
         ],
     ],
 )
@@ -238,10 +233,39 @@ def test_check_reset_options():
     ):
         check_reset_options(GenericTestEnv(reset_func=lambda self: (0, {})))
 
-
+@pytest.mark.parametrize(
+    "test,func,message",
+    [
+        [
+            gym.error.Error,
+            lambda self: (self.observation_space.sample(), {}),
+            "The `reset` method does not provide a `seed` or `**kwargs` keyword argument.",
+        ],
+        [
+            AssertionError,
+            lambda self, seed, *_: (self.observation_space.sample(), {}),
+            "Expects the random number generator to have been generated given a seed was passed to reset. Mostly likely the environment reset function does not call `super().reset(seed=seed)`.",
+        ],
+        [
+            AssertionError,
+            _no_super_reset,
+            "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.",
+        ],
+        [
+            AssertionError,
+            _super_reset_fixed,
+            "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.",
+        ],
+        [
+            UserWarning,
+            _reset_default_seed,
+            "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. Actual default: Error",
+        ],
+    ],
+)
 def test_check_step_determinism():
     """Tests the check_step_determinism function."""
-    None
+    check_reset_options(GenericTestEnv(reset_func=lambda self: (0, {})))
 
 
 @pytest.mark.parametrize(
