@@ -239,6 +239,11 @@ def test_check_reset_options():
         check_reset_options(GenericTestEnv(reset_func=lambda self: (0, {})))
 
 
+def test_check_step_determinism():
+    """Tests the check_step_determinism function."""
+    None
+
+
 @pytest.mark.parametrize(
     "env,message",
     [
