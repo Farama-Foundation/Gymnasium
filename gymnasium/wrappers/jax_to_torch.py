@@ -74,7 +74,12 @@ def _mapping_torch_to_jax(value: Mapping[str, Any]) -> Mapping[str, Any]:
 @torch_to_jax.register(abc.Iterable)
 def _iterable_torch_to_jax(value: Iterable[Any]) -> Iterable[Any]:
     """Converts an Iterable from PyTorch Tensors to an iterable of Jax Array."""
-    return type(value)(torch_to_jax(v) for v in value)
+    if hasattr(value, "_make"):
+        # namedtuple - underline used to prevent potential name conflicts
+        # noinspection PyProtectedMember
+        return type(value)._make(torch_to_jax(v) for v in value)
+    else:
+        return type(value)(torch_to_jax(v) for v in value)
 
 
 @functools.singledispatch
@@ -111,7 +116,12 @@ def _jax_iterable_to_torch(
     value: Iterable[Any], device: Device | None = None
 ) -> Iterable[Any]:
     """Converts an Iterable from Jax Array to an iterable of PyTorch Tensors."""
-    return type(value)(jax_to_torch(v, device) for v in value)
+    if hasattr(value, "_make"):
+        # namedtuple - underline used to prevent potential name conflicts
+        # noinspection PyProtectedMember
+        return type(value)._make(jax_to_torch(v) for v in value)
+    else:
+        return type(value)(jax_to_torch(v) for v in value)
 
 
 class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):

@@ -7,6 +7,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.envs.mujoco.mujoco_env import BaseMujocoEnv, MujocoEnv
+from gymnasium.envs.mujoco.utils import check_mujoco_reset_state
 from gymnasium.error import Error
 from gymnasium.utils.env_checker import check_env
 from gymnasium.utils.env_match import check_environments_match
@@ -318,7 +319,7 @@ def test_reward_sum(version: str):
 env_conf = collections.namedtuple("env_conf", "env_name, obs, rew, term, info")
 
 
-# Note: the environtments "HalfCheetah", "Pusher", "Swimmer", are identical between `v4` & `v5` (excluding `info`)
+# Note: the environments "HalfCheetah", "Pusher", "Swimmer", are identical between `v4` & `v5` (excluding `info`)
 @pytest.mark.parametrize(
     "env_conf",
     [
@@ -329,8 +330,8 @@ env_conf = collections.namedtuple("env_conf", "env_name, obs, rew, term, info")
         env_conf("HumanoidStandup", True, False, False, "superset"),
         env_conf("InvertedDoublePendulum", True, True, False, "superset"),
         env_conf("InvertedPendulum", False, True, False, "superset"),
-        env_conf("Pusher", False, False, False, "keys-superset"),
-        env_conf("Reacher", True, False, False, "keys-equivalence"),
+        env_conf("Pusher", False, True, False, "keys-superset"),
+        env_conf("Reacher", True, True, False, "keys-equivalence"),
         env_conf("Swimmer", False, False, False, "skip"),
         env_conf("Walker2d", True, True, True, "keys-superset"),
     ],
@@ -588,7 +589,8 @@ def test_model_object_count(version: str):
     assert env.model.nv == 11
     assert env.model.nu == 7
     assert env.model.nbody == 13
-    assert env.model.nbvh == 18
+    if mujoco.__version__ >= "3.1.2":
+        assert env.model.nbvh == 8
     assert env.model.njnt == 11
     assert env.model.ngeom == 21
     assert env.model.ntendon == 0
@@ -599,7 +601,8 @@ def test_model_object_count(version: str):
     assert env.model.nv == 4
     assert env.model.nu == 2
     assert env.model.nbody == 5
-    assert env.model.nbvh == 5
+    if mujoco.__version__ >= "3.1.2":
+        assert env.model.nbvh == 3
     assert env.model.njnt == 4
     assert env.model.ngeom == 10
     assert env.model.ntendon == 0
@@ -610,7 +613,8 @@ def test_model_object_count(version: str):
     assert env.model.nv == 5
     assert env.model.nu == 2
     assert env.model.nbody == 4
-    assert env.model.nbvh == 4
+    if mujoco.__version__ >= "3.1.2":
+        assert env.model.nbvh == 0
     assert env.model.njnt == 5
     assert env.model.ngeom == 4
     assert env.model.ntendon == 0
@@ -625,6 +629,27 @@ def test_model_object_count(version: str):
     assert env.model.njnt == 9
     assert env.model.ngeom == 8
     assert env.model.ntendon == 0
+
+
+# note: fails with `mujoco-mjx==3.0.1`
+@pytest.mark.parametrize("version", ["v5", "v4", "v3", "v2"])
+def test_model_sensors(version: str):
+    """Verify that all the sensors of the model are loaded."""
+    env = gym.make(f"Ant-{version}").unwrapped
+    assert env.data.cfrc_ext.shape == (14, 6)
+
+    env = gym.make(f"Humanoid-{version}").unwrapped
+    assert env.data.cinert.shape == (14, 10)
+    assert env.data.cvel.shape == (14, 6)
+    assert env.data.qfrc_actuator.shape == (23,)
+    assert env.data.cfrc_ext.shape == (14, 6)
+
+    if version != "v3":  # HumanoidStandup v3 does not exist
+        env = gym.make(f"HumanoidStandup-{version}").unwrapped
+        assert env.data.cinert.shape == (14, 10)
+        assert env.data.cvel.shape == (14, 6)
+        assert env.data.qfrc_actuator.shape == (23,)
+        assert env.data.cfrc_ext.shape == (14, 6)
 
 
 def test_dt():
@@ -674,3 +699,11 @@ def test_reset_noise_scale(env_id):
 
     assert np.all(env.data.qpos == env.init_qpos)
     assert np.all(env.data.qvel == env.init_qvel)
+
+
+@pytest.mark.parametrize("env_name", ALL_MUJOCO_ENVS)
+@pytest.mark.parametrize("version", ["v5", "v4"])
+def test_reset_state(env_name: str, version: str):
+    """Asserts that `reset()` properly resets the internal state."""
+    env = gym.make(f"{env_name}-{version}")
+    check_mujoco_reset_state(env)

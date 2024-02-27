@@ -21,7 +21,7 @@ For more Kangaroo variants with different observation and action spaces, see the
 
 ## Description
 
-The object of the game is to score as many points as you can while controlling Mother Kangaroo to rescue her precious baby. You start the game with three lives.During this rescue mission, Mother Kangaroo encounters many obstacles. You need to help her climb ladders, pick bonus fruit, and throw punches at monkeys.
+The object of the game is to score as many points as you can while controlling Mother Kangaroo to rescue her precious baby. You start the game with three lives. During this rescue mission, Mother Kangaroo encounters many obstacles. You need to help her climb ladders, pick bonus fruit, and throw punches at monkeys.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=923)
 
@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-Your score will be shown at the top right corner of the game.
-Your end game score with be dependent on how much time you have remaining and who you encounter along the way.
-For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=923).
+## Rewards
+Your score will be shown at the top right corner of the game. Your end game score with be dependent on how much time you have remaining and who you encounter along the way. For a more detailed documentation, consult the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=923).
 
 ## Variants
 

@@ -46,10 +46,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points for changing color of the cubes to their destination colors or by defeating enemies. You also gain points for completing a level.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=1224&itemTypeID=HTMLMANUAL).
+## Rewards
+You score points for changing color of the cubes to their destination colors or by defeating enemies. You also gain points for completing a level. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SystemID=2600&SoftwareID=1224&itemTypeID=HTMLMANUAL).
 
 ## Variants
 

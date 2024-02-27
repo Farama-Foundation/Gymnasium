@@ -179,7 +179,8 @@ class CliffWalkingEnv(Env):
 
         if self.render_mode == "human":
             self.render()
-        return (int(s), r, t, False, {"prob": p})
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
+        return int(s), r, t, False, {"prob": p}
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
