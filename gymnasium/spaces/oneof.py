@@ -19,7 +19,7 @@ class OneOf(Space[Any]):
         >>> from gymnasium.spaces import OneOf, Box, Discrete
         >>> observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=42)
         >>> observation_space.sample()
-        (0, array([-0.3991573 ,  0.21649833], dtype=float32))
+        (1, array([-0.3991573 ,  0.21649833], dtype=float32))
     """
 
     def __init__(

@@ -285,7 +285,7 @@ def _write_text_to_shared_memory(space: Text, index: int, values: str, shared_me
 
 @write_to_shared_memory.register(OneOf)
 def _write_oneof_to_shared_memory(
-    space: OneOf, index: int, values: tuple[int, Any, ...], shared_memory
+    space: OneOf, index: int, values: tuple[Any, ...], shared_memory
 ):
     destination = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int32)
     np.copyto(destination[index : index + 1], values[0])
