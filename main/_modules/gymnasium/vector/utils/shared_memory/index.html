@@ -625,19 +625,24 @@
 
 <span class="nd">@read_from_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_read_tuple_from_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+    <span class="n">subspace_samples</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
         <span class="n">read_from_shared_memory</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">memory</span><span class="p">,</span> <span class="n">subspace</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
     <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">subspace_samples</span><span class="p">))</span>
 
 
 <span class="nd">@read_from_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_read_dict_from_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span>
+    <span class="n">subspace_samples</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
         <span class="p">[</span>
             <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">read_from_shared_memory</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">))</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">subspace</span><span class="p">)</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="n">OrderedDict</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">subspace_samples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">keys</span><span class="p">()})</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
     <span class="p">)</span>
 
 
