@@ -16,7 +16,7 @@ from gymnasium.utils.env_checker import (
     check_reset_return_type,
     check_reset_seed_determinism,
     check_seed_deprecation,
-    check_step_seed_determinism
+    check_step_determinism,
 )
 from tests.testing_env import GenericTestEnv
 
@@ -272,7 +272,7 @@ def test_check_reset_options():
 )
 def test_check_step_determinism(test, func, message: str):
     """Tests the check_step_determinism function."""
-    check_step_seed_determinism(GenericTestEnv(step_func=func))
+    check_step_determinism(GenericTestEnv(step_func=func))
 
 
 @pytest.mark.parametrize(
