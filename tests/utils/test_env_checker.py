@@ -242,6 +242,7 @@ def test_check_reset_options():
     ):
         check_reset_options(GenericTestEnv(reset_func=lambda self: (0, {})))
 
+
 @pytest.mark.parametrize(
     "test,func,message",
     [
