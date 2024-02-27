@@ -22,7 +22,7 @@ from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
     "ctx", [None, "fork", "spawn"], ids=["default", "fork", "spawn"]
 )
 def test_shared_memory_create_read_write(space, num, ctx):
-    """Test the shared memory functions, create, read and write for all of the testing spaces."""
+    """Test the shared memory functions, create, read and write for all testing spaces."""
     if ctx not in mp.get_all_start_methods():
         pytest.skip(
             f"Multiprocessing start method {ctx} not available on this platform."
@@ -41,7 +41,7 @@ def test_shared_memory_create_read_write(space, num, ctx):
 
     read_samples = read_from_shared_memory(space, shared_memory, n=num)
     for read_sample, sample in zip(read_samples, samples):
-        data_equivalence(read_sample, sample)
+        assert data_equivalence(read_sample, sample)
 
 
 def test_custom_space():
