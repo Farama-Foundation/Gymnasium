@@ -271,7 +271,7 @@ def test_check_reset_options():
 )
 def test_check_step_determinism(test, func, message: str):
     """Tests the check_step_determinism function."""
-    check_reset_options(GenericTestEnv(step_func=func))
+    check_step_seed_determinism(GenericTestEnv(step_func=func))
 
 
 @pytest.mark.parametrize(
