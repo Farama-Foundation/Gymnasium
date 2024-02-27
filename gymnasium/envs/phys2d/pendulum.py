@@ -192,7 +192,7 @@ class PendulumFunctional(
 class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based pendulum environment using the functional version as base."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 30, "jax": True}
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor where the kwargs are passed to the base environment to modify the parameters."""
@@ -211,7 +211,7 @@ class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
 class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
     """Jax-based implementation of the vectorized CartPole environment."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(
         self,

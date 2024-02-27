@@ -42,13 +42,22 @@ def test_all_env_api(spec):
     """Check that all environments pass the environment checker with no warnings other than the expected."""
     with warnings.catch_warnings(record=True) as caught_warnings:
         env = spec.make().unwrapped
+
+        if env.metadata.get("jax", False):
+            env = gym.wrappers.JaxToNumpy(env)
+
         check_env(env, skip_render_check=True)
 
         env.close()
 
     for warning in caught_warnings:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
-            raise gym.error.Error(f"Unexpected warning: {warning.message}")
+            if not (
+                env.metadata.get("jax", False)
+                and "\x1b[33mWARN: The environment (<JaxToNumpy<"
+                in warning.message.args[0]
+            ):
+                raise gym.error.Error(f"Unexpected warning: {warning.message}")
 
 
 @pytest.mark.parametrize(

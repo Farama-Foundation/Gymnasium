@@ -350,7 +350,7 @@ class CliffWalkingFunctional(
 class CliffWalkingJaxEnv(FunctionalJaxEnv, EzPickle):
     """A Gymnasium Env wrapper for the functional cliffwalking env."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(self, render_mode: str | None = None, **kwargs):
         """Initializes Gym wrapper for cliffwalking functional env."""
