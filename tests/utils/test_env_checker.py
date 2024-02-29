@@ -18,7 +18,7 @@ from gymnasium.utils.env_checker import (
     check_seed_deprecation,
     check_step_determinism,
 )
-from tests.testing_env import GenericTestEnv, basic_reset_func
+from tests.testing_env import GenericTestEnv
 
 
 @pytest.mark.parametrize(
@@ -241,38 +241,29 @@ def test_check_reset_options():
 
 
 @pytest.mark.parametrize(
-    "test,func,message",
+    "test,step_func,message",
     [
         [
-            gym.error.Error,
-            lambda self: (self.observation_space.sample(), {}),
-            "The `reset` method does not provide a `seed` or `**kwargs` keyword argument.",
+            AssertionError,
+            lambda self, action: (np.random.normal(), 0, False, False, {}),
+            "step observation is not deterministic.",
         ],
         [
             AssertionError,
-            lambda self, seed, *_: (self.observation_space.sample(), {}),
-            "Expects the random number generator to have been generated given a seed was passed to reset. Mostly likely the environment reset function does not call `super().reset(seed=seed)`.",
+            lambda self, action: (0, np.random.normal(), False, False, {}),
+            "step reward is not deterministic.",
         ],
         [
             AssertionError,
-            _no_super_reset,
-            "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.",
-        ],
-        [
-            AssertionError,
-            _super_reset_fixed,
-            "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.",
-        ],
-        [
-            UserWarning,
-            _reset_default_seed,
-            "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. Actual default: Error",
+            lambda self, action: (0, 0, False, False, {"value": np.random.normal()}),
+            "step info is not deterministic.",
         ],
     ],
 )
-def test_check_step_determinism(test, func, message: str):
+def test_check_step_determinism(test, step_func, message: str):
     """Tests the check_step_determinism function."""
-    check_step_determinism(GenericTestEnv(reset_func=basic_reset_func, step_func=func))
+    with pytest.raises(test, match=f"^{re.escape(message)}$"):
+        check_step_determinism(GenericTestEnv(step_func=step_func))
 
 
 @pytest.mark.parametrize(
