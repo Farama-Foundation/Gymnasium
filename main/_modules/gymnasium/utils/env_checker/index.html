@@ -539,7 +539,7 @@
         <span class="k">return</span> <span class="n">data_1</span> <span class="o">==</span> <span class="n">data_2</span>
 
 
-<span class="k">def</span> <span class="nf">check_reset_seed</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">check_reset_seed_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment can be reset with a seed.</span>
 
 <span class="sd">    Args:</span>
@@ -560,12 +560,9 @@
                 <span class="n">obs_1</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
             <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span>  <span class="c1"># pyright: ignore [reportPrivateUsage]</span>
-                <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="p">),</span> <span class="s2">&quot;Expects the random number generator to have been generated given a seed was passed to reset. Mostly likely the environment reset function does not call `super().reset(seed=seed)`.&quot;</span>
-            <span class="n">seed_123_rng</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span>  <span class="c1"># pyright: ignore [reportPrivateUsage]</span>
-            <span class="p">)</span>
+            <span class="n">seed_123_rng</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
 
             <span class="n">obs_2</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
@@ -576,7 +573,7 @@
                     <span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_2</span>
                 <span class="p">),</span> <span class="s2">&quot;Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent.&quot;</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>  <span class="c1"># pyright: ignore [reportPrivateUsage]</span>
+                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
                 <span class="o">==</span> <span class="n">seed_123_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
             <span class="p">),</span> <span class="s2">&quot;Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.&quot;</span>
 
@@ -585,7 +582,7 @@
                 <span class="n">obs_3</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
             <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset(seed=456)` is not within the observation space.&quot;</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>  <span class="c1"># pyright: ignore [reportPrivateUsage]</span>
+                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
                 <span class="o">!=</span> <span class="n">seed_123_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
             <span class="p">),</span> <span class="s2">&quot;Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.&quot;</span>
 
@@ -634,6 +631,42 @@
         <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
             <span class="s2">&quot;The `reset` method does not provide an `options` or `**kwargs` keyword argument.&quot;</span>
         <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">check_step_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment steps deterministically after reset.</span>
+
+<span class="sd">    Note: This check assumes that seeded `reset()` is derministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).</span>
+<span class="sd">    Note: A single step should be enough to assert that the state transition function is deterministic (at least for most environments).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: The environment cannot be step determistially after resetting with a random seed,</span>
+<span class="sd">            or it truncates after 1 step.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">nondeterministic</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">obs_0</span><span class="p">,</span> <span class="n">rew_0</span><span class="p">,</span> <span class="n">term_0</span><span class="p">,</span> <span class="n">trunc_0</span><span class="p">,</span> <span class="n">info_0</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="n">seeded_rng</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
+
+    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">obs_1</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">,</span> <span class="n">term_1</span><span class="p">,</span> <span class="n">trunc_1</span><span class="p">,</span> <span class="n">info_1</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>  <span class="c1"># pyright: ignore [reportOptionalMemberAccess]</span>
+        <span class="o">==</span> <span class="n">seeded_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
+    <span class="p">),</span> <span class="s2">&quot;The `.np_random` is not properly been updated after step.&quot;</span>
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span><span class="p">),</span> <span class="s2">&quot;step observation is not deterministic.&quot;</span>
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">),</span> <span class="s2">&quot;step reward is not deterministic.&quot;</span>
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">term_0</span><span class="p">,</span> <span class="n">term_0</span><span class="p">),</span> <span class="s2">&quot;step terminal is not deterministic.&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">trunc_0</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">trunc_1</span> <span class="ow">is</span> <span class="kc">False</span>
+    <span class="p">),</span> <span class="s2">&quot;Environment truncates after 1 step, something has gone very wrong.&quot;</span>
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">info_0</span><span class="p">,</span> <span class="n">info_1</span><span class="p">),</span> <span class="s2">&quot;step info is not deterministic.&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">check_reset_return_info_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
@@ -784,12 +817,15 @@
     <span class="n">check_seed_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">check_reset_return_info_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">check_reset_return_type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="n">check_reset_seed</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">check_reset_seed_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">check_reset_options</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
     <span class="c1"># ============ Check the returned values ===============</span>
     <span class="n">env_reset_passive_checker</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">env_step_passive_checker</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+
+    <span class="c1"># ==== Check the step method ====</span>
+    <span class="n">check_step_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
     <span class="c1"># ==== Check the render method and the declared render modes ====</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_render_check</span><span class="p">:</span>
