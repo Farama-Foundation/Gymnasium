@@ -43,7 +43,7 @@ def expand_model_path(model_path: str) -> str:
 
 
 # noinspection DuplicatedCode
-class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
+class BaseMujocoPyEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
     """Superclass for all MuJoCo environments."""
 
     def __init__(
@@ -202,7 +202,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         return np.concatenate([self.data.qpos.flat, self.data.qvel.flat])
 
 
-class MuJocoPyEnv(BaseMujocoEnv):
+class MuJocoPyEnv(BaseMujocoPyEnv):
     def __init__(
         self,
         model_path: str,
