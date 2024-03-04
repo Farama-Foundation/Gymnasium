@@ -732,7 +732,16 @@ Often some of the first positional elements are omitted from the state space sin
 </div>
 <p>For more information, see the section “Version History” for each environment.</p>
 <p><code class="docutils literal notranslate"><span class="pre">v1</span></code> and older are no longer included in Gymnasium.</p>
-<p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code>  versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>)</p>
+<section id="comparing-training-performance-across-versions">
+<h3>Comparing training performance across versions<a class="headerlink" href="#comparing-training-performance-across-versions" title="Link to this heading">#</a></h3>
+<p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code> and <code class="docutils literal notranslate"><span class="pre">v3</span></code> is identical assuming the same/default arguments were used.</p>
+<p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code>/<code class="docutils literal notranslate"><span class="pre">v3</span></code> and <code class="docutils literal notranslate"><span class="pre">v4</span></code> is not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comperable (for more information see <a class="reference external" href="https://github.com/openai/gym/pull/2595#issuecomment-1099152505">GitHub Comment #1</a> and <a class="reference external" href="https://github.com/openai/gym/pull/2762#issuecomment-1135362092">GitHub Comment #2</a>).</p>
+<p>The Training performance of <code class="docutils literal notranslate"><span class="pre">v4</span></code> and <code class="docutils literal notranslate"><span class="pre">v5</span></code> is different because of the many changes in the environments, but the Half Cheetah and Swimmer exchibits identical behaviour, Pusher and Swimmer are close (for more information see <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/821">GitHub Issue</a>).</p>
+</section>
+<section id="exact-reproducibility">
+<h3>Exact reproducibility<a class="headerlink" href="#exact-reproducibility" title="Link to this heading">#</a></h3>
+<p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code>  versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>), if exact reproducibility is need besides using the <code class="docutils literal notranslate"><span class="pre">seed</span></code> for expirements the same simulator version should be used.</p>
+</section>
 </section>
 <section id="rendering-arguments">
 <h2>Rendering Arguments<a class="headerlink" href="#rendering-arguments" title="Link to this heading">#</a></h2>
@@ -838,7 +847,11 @@ For more complex locomotion robot environments you can use third party models wi
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">MuJoCo</a><ul>
-<li><a class="reference internal" href="#versions">Versions</a></li>
+<li><a class="reference internal" href="#versions">Versions</a><ul>
+<li><a class="reference internal" href="#comparing-training-performance-across-versions">Comparing training performance across versions</a></li>
+<li><a class="reference internal" href="#exact-reproducibility">Exact reproducibility</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#rendering-arguments">Rendering Arguments</a></li>
 </ul>
 </li>
