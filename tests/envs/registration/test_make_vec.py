@@ -114,6 +114,22 @@ def test_make_vec_vectorization_mode():
         gym.make_vec("CartPole-v1", vectorization_mode=123)
 
 
+def test_make_vec_render_mode():
+    envs = gym.make_vec(
+        "CartPole-v1", vectorization_mode=VectorizeMode.VECTOR_ENTRY_POINT
+    )
+    assert envs.render_mode is None
+    envs.close()
+
+    envs = gym.make_vec(
+        "CartPole-v1",
+        render_mode="rgb_array",
+        vectorization_mode=VectorizeMode.VECTOR_ENTRY_POINT,
+    )
+    assert envs.render_mode == "rgb_array"
+    envs.close()
+
+
 def test_make_vec_wrappers():
     """Tests that the `gym.make_vec` wrappers parameter works."""
     env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
