@@ -134,8 +134,7 @@ def display_arr(
         video_size: The video size of the screen
         transpose: If to transpose the array on the screen
     """
-    arr_min, arr_max = np.min(arr), np.max(arr)
-    arr = 255.0 * (arr - arr_min) / (arr_max - arr_min)
+    assert isinstance(arr, np.ndarray) and arr.dtype == np.uint8
     pyg_img = pygame.surfarray.make_surface(arr.swapaxes(0, 1) if transpose else arr)
     pyg_img = pygame.transform.scale(pyg_img, video_size)
     # We might have to add black bars if surface_size is larger than video_size
@@ -152,7 +151,7 @@ def play(
     fps: int | None = None,
     zoom: float | None = None,
     callback: Callable | None = None,
-    keys_to_action: dict[tuple[str | int] | str, ActType] | None = None,
+    keys_to_action: dict[tuple[str | int, ...] | str | int, ActType] | None = None,
     seed: int | None = None,
     noop: ActType = 0,
 ):
@@ -249,7 +248,19 @@ def play(
                 f"{env.spec.id} does not have explicit key to action mapping, "
                 "please specify one manually"
             )
+
     assert keys_to_action is not None
+
+    # validate the `keys_to_action` set provided
+    assert isinstance(keys_to_action, dict)
+    for key, action in keys_to_action.items():
+        if isinstance(key, tuple):
+            assert len(key) > 0
+            assert all(isinstance(k, (str, int)) for k in key)
+        else:
+            assert isinstance(key, (str, int))
+
+        assert action in env.action_space
 
     key_code_to_action = {}
     for key_combination, action in keys_to_action.items():
