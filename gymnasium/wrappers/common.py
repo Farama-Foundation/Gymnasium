@@ -266,13 +266,16 @@ class PassiveEnvChecker(
                     "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
                 )
 
-        assert hasattr(
-            env, "action_space"
-        ), "The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/"
+        if not hasattr(env, "action_space"):
+            raise AttributeError(
+                "The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/"
+            )
         check_action_space(env.action_space)
-        assert hasattr(
-            env, "observation_space"
-        ), "The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/"
+
+        if not hasattr(env, "observation_space"):
+            raise AttributeError(
+                "The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/"
+            )
         check_observation_space(env.observation_space)
 
         self.checked_reset: bool = False

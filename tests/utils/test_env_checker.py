@@ -240,23 +240,26 @@ def test_check_reset_options():
 
 
 @pytest.mark.parametrize(
-    "env,message",
+    "env, error_type, message",
     [
         [
             "Error",
-            "The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
+            TypeError,
+            "The environment must inherit from the gymnasium.Env class, actual class: <class 'str'>. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.",
         ],
         [
             GenericTestEnv(action_space=None),
-            "The environment must specify an action space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
+            AttributeError,
+            "The environment must specify an action space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.",
         ],
         [
             GenericTestEnv(observation_space=None),
-            "The environment must specify an observation space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
+            AttributeError,
+            "The environment must specify an observation space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.",
         ],
     ],
 )
-def test_check_env(env: gym.Env, message: str):
+def test_check_env(env: gym.Env, error_type, message: str):
     """Tests the check_env function works as expected."""
-    with pytest.raises(AssertionError, match=f"^{re.escape(message)}$"):
+    with pytest.raises(error_type, match=f"^{re.escape(message)}$"):
         check_env(env)

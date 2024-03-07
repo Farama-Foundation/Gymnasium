@@ -305,15 +305,17 @@ def check_env(
         )
 
     # ============= Check the spaces (observation and action) ================
-    assert hasattr(
-        env, "action_space"
-    ), "The environment must specify an action space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+    if not hasattr(env, "action_space"):
+        raise AttributeError(
+            "The environment must specify an action space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+        )
     check_action_space(env.action_space)
     check_space_limit(env.action_space, "action")
 
-    assert hasattr(
-        env, "observation_space"
-    ), "The environment must specify an observation space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+    if not hasattr(env, "observation_space"):
+        raise AttributeError(
+            "The environment must specify an observation space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+        )
     check_observation_space(env.observation_space)
     check_space_limit(env.observation_space, "observation")
 
