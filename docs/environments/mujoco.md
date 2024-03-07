@@ -79,15 +79,22 @@ Gymnasium includes the following versions of the environments:
 | ------- | --------------- | ------------------------------------------------ |
 | `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)      |
 | `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                   |
-| `v3`    | `mujoco-py`     | Maintained for reproducibility (limited support) |
-| `v2`    | `mujoco-py`     | Maintained for reproducibility (limited support) |
+| `v3`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
+| `v2`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
 
 For more information, see the section "Version History" for each environment.
 
 `v1` and older are no longer included in Gymnasium.
 
-Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco`  versions due to floating point operation ordering (more information of their [Documentation]( https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility))
+### Comparing training performance across versions
+The training performance of `v2` and `v3` is identical assuming the same/default arguments were used.
 
+The training performance of `v2`/`v3` and `v4` is not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comperable (for more information see [GitHub Comment #1](https://github.com/openai/gym/pull/2595#issuecomment-1099152505) and [GitHub Comment #2](https://github.com/openai/gym/pull/2762#issuecomment-1135362092)).
+
+The Training performance of `v4` and `v5` is different because of the many changes in the environments, but the Half Cheetah and Swimmer exchibits identical behaviour, Pusher and Swimmer are close (for more information see [GitHub Issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
+
+### Exact reproducibility
+Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco`  versions due to floating point operation ordering (more information of their [Documentation]( https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility)), if exact reproducibility is need besides using the `seed` for expirements the same simulator version should be used.
 
 ## Rendering Arguments
 The all MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:

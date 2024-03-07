@@ -21,7 +21,7 @@ For more Defender variants with different observation and action spaces, see the
 
 ## Description
 
-Aliens attack the earth. You control a spaceship and must defend humanity by destroying alien ships and rescuing humanoids.You have three lives and three smart bombs. You lose a live when you are shot down by an alien spaceship.Points are scored by destroying enemies and retrieving humans that are being abducted. You have an unlimited number of laser missiles.
+Aliens attack the earth. You control a spaceship and must defend humanity by destroying alien ships and rescuing humanoids. You have three lives and three smart bombs. You lose a live when you are shot down by an alien spaceship. Points are scored by destroying enemies and retrieving humans that are being abducted. You have an unlimited number of laser missiles.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=128)
 
@@ -49,10 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You receive points for destroying enemies, rescuing abducted humans and keeping humans alive.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=128).
+## Rewards
+You receive points for destroying enemies, rescuing abducted humans and keeping humans alive. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=128).
 
 ## Variants
 

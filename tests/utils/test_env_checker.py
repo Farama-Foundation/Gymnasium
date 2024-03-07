@@ -14,8 +14,9 @@ from gymnasium.utils.env_checker import (
     check_reset_options,
     check_reset_return_info_deprecation,
     check_reset_return_type,
-    check_reset_seed,
+    check_reset_seed_determinism,
     check_seed_deprecation,
+    check_step_determinism,
 )
 from tests.testing_env import GenericTestEnv
 
@@ -106,16 +107,16 @@ def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
         ],
     ],
 )
-def test_check_reset_seed(test, func: Callable, message: str):
+def test_check_reset_seed_determinism(test, func: Callable, message: str):
     """Tests the check reset seed function works as expected."""
     if test is UserWarning:
         with pytest.warns(
             UserWarning, match=f"^\\x1b\\[33mWARN: {re.escape(message)}\\x1b\\[0m$"
         ):
-            check_reset_seed(GenericTestEnv(reset_func=func))
+            check_reset_seed_determinism(GenericTestEnv(reset_func=func))
     else:
         with pytest.raises(test, match=f"^{re.escape(message)}$"):
-            check_reset_seed(GenericTestEnv(reset_func=func))
+            check_reset_seed_determinism(GenericTestEnv(reset_func=func))
 
 
 def _deprecated_return_info(
@@ -237,6 +238,32 @@ def test_check_reset_options():
         ),
     ):
         check_reset_options(GenericTestEnv(reset_func=lambda self: (0, {})))
+
+
+@pytest.mark.parametrize(
+    "test,step_func,message",
+    [
+        [
+            AssertionError,
+            lambda self, action: (np.random.normal(), 0, False, False, {}),
+            "step observation is not deterministic.",
+        ],
+        [
+            AssertionError,
+            lambda self, action: (0, np.random.normal(), False, False, {}),
+            "step reward is not deterministic.",
+        ],
+        [
+            AssertionError,
+            lambda self, action: (0, 0, False, False, {"value": np.random.normal()}),
+            "step info is not deterministic.",
+        ],
+    ],
+)
+def test_check_step_determinism(test, step_func, message: str):
+    """Tests the check_step_determinism function."""
+    with pytest.raises(test, match=f"^{re.escape(message)}$"):
+        check_step_determinism(GenericTestEnv(step_func=step_func))
 
 
 @pytest.mark.parametrize(

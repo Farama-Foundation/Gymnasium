@@ -91,7 +91,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The environment terminates when the Inverted Double Pendulum is unhealthy.
     The Inverted Double Pendulum is unhealthy if any of the following happens:
 
@@ -99,7 +99,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
     Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 
@@ -133,7 +133,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50.
     * v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum).
-    * v0: Initial versions release (1.0.0).
+    * v0: Initial versions release.
     """
 
     metadata = {

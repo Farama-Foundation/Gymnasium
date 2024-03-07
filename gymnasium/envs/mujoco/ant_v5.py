@@ -21,6 +21,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     The ant is a 3D quadruped robot consisting of a torso (free rotational body) with four legs attached to it, where each leg has two body parts.
     The goal is to coordinate the four legs to move in the forward (right) direction by applying torque to the eight hinges connecting the two body parts of each leg and the torso (nine body parts and eight hinges).
 
+    Note: Although the robot is called "Ant", it is actually 75cm tall and weighs 910.88g, with the torso being 327.25g and each leg being 145.91g.
 
     ## Action Space
     ```{figure} action_space_figures/ant.png
@@ -157,14 +158,14 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     If `terminate_when_unhealthy is True` (the default), the environment terminates when the Ant is unhealthy.
     the Ant is unhealthy if any of the following happens:
 
     1. Any of the state space values is no longer finite.
     2. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default is $[0.2, 1.0]$).
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 
@@ -215,7 +216,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen).
     * v2: All continuous control environments now use mujoco-py >= 1.50.
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
-    * v0: Initial versions release (1.0.0)
+    * v0: Initial versions release
     """
 
     metadata = {

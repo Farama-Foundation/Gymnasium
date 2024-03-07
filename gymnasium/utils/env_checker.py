@@ -30,40 +30,45 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-def data_equivalence(data_1, data_2) -> bool:
+def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
     """Assert equality between data 1 and 2, i.e observations, actions, info.
 
     Args:
         data_1: data structure 1
         data_2: data structure 2
+        exact: whether to compare array exactly or not if false compares with absolute and realive torrelance of 1e-5 (for more information check [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)).
 
     Returns:
         If observation 1 and 2 are equivalent
     """
-    if type(data_1) is type(data_2):
-        if isinstance(data_1, dict):
-            return data_1.keys() == data_2.keys() and all(
-                data_equivalence(data_1[k], data_2[k]) for k in data_1.keys()
-            )
-        elif isinstance(data_1, (tuple, list)):
-            return len(data_1) == len(data_2) and all(
-                data_equivalence(o_1, o_2) for o_1, o_2 in zip(data_1, data_2)
-            )
-        elif isinstance(data_1, np.ndarray):
-            if data_1.shape == data_2.shape and data_1.dtype == data_2.dtype:
-                if data_1.dtype == object:
-                    return all(data_equivalence(a, b) for a, b in zip(data_1, data_2))
-                else:
-                    return np.allclose(data_1, data_2, atol=0.00001)
-            else:
-                return False
-        else:
-            return data_1 == data_2
-    else:
+    if type(data_1) is not type(data_2):
         return False
+    if isinstance(data_1, dict):
+        return data_1.keys() == data_2.keys() and all(
+            data_equivalence(data_1[k], data_2[k], exact) for k in data_1.keys()
+        )
+    elif isinstance(data_1, (tuple, list)):
+        return len(data_1) == len(data_2) and all(
+            data_equivalence(o_1, o_2, exact) for o_1, o_2 in zip(data_1, data_2)
+        )
+    elif isinstance(data_1, np.ndarray):
+        if data_1.shape == data_2.shape and data_1.dtype == data_2.dtype:
+            if data_1.dtype == object:
+                return all(
+                    data_equivalence(a, b, exact) for a, b in zip(data_1, data_2)
+                )
+            else:
+                if exact:
+                    return np.all(data_1 == data_2)
+                else:
+                    return np.allclose(data_1, data_2, rtol=1e-5, atol=1e-5)
+        else:
+            return False
+    else:
+        return data_1 == data_2
 
 
-def check_reset_seed(env: gym.Env):
+def check_reset_seed_determinism(env: gym.Env):
     """Check that the environment can be reset with a seed.
 
     Args:
@@ -84,12 +89,9 @@ def check_reset_seed(env: gym.Env):
                 obs_1 in env.observation_space
             ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
             assert (
-                env.unwrapped._np_random  # pyright: ignore [reportPrivateUsage]
-                is not None
+                env.unwrapped._np_random is not None
             ), "Expects the random number generator to have been generated given a seed was passed to reset. Mostly likely the environment reset function does not call `super().reset(seed=seed)`."
-            seed_123_rng = deepcopy(
-                env.unwrapped._np_random  # pyright: ignore [reportPrivateUsage]
-            )
+            seed_123_rng = deepcopy(env.unwrapped._np_random)
 
             obs_2, info = env.reset(seed=123)
             assert (
@@ -100,7 +102,7 @@ def check_reset_seed(env: gym.Env):
                     obs_1, obs_2
                 ), "Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent."
             assert (
-                env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportPrivateUsage]
+                env.unwrapped._np_random.bit_generator.state
                 == seed_123_rng.bit_generator.state
             ), "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."
 
@@ -109,7 +111,7 @@ def check_reset_seed(env: gym.Env):
                 obs_3 in env.observation_space
             ), "The observation returned by `env.reset(seed=456)` is not within the observation space."
             assert (
-                env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportPrivateUsage]
+                env.unwrapped._np_random.bit_generator.state
                 != seed_123_rng.bit_generator.state
             ), "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
 
@@ -158,6 +160,42 @@ def check_reset_options(env: gym.Env):
         raise gym.error.Error(
             "The `reset` method does not provide an `options` or `**kwargs` keyword argument."
         )
+
+
+def check_step_determinism(env: gym.Env, seed=123):
+    """Check that the environment steps deterministically after reset.
+
+    Note: This check assumes that seeded `reset()` is derministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).
+    Note: A single step should be enough to assert that the state transition function is deterministic (at least for most environments).
+
+    Raises:
+        AssertionError: The environment cannot be step determistially after resetting with a random seed,
+            or it truncates after 1 step.
+    """
+    if env.spec is not None and env.spec.nondeterministic is True:
+        return
+
+    env.action_space.seed(seed)
+    action = env.action_space.sample()
+
+    env.reset(seed=seed)
+    obs_0, rew_0, term_0, trunc_0, info_0 = env.step(action)
+    seeded_rng: np.random.Generator = deepcopy(env.unwrapped._np_random)
+
+    env.reset(seed=seed)
+    obs_1, rew_1, term_1, trunc_1, info_1 = env.step(action)
+
+    assert (
+        env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportOptionalMemberAccess]
+        == seeded_rng.bit_generator.state
+    ), "The `.np_random` is not properly been updated after step."
+    assert data_equivalence(obs_0, obs_1), "step observation is not deterministic."
+    assert data_equivalence(rew_0, rew_1), "step reward is not deterministic."
+    assert data_equivalence(term_0, term_0), "step terminal is not deterministic."
+    assert (
+        trunc_0 is False and trunc_1 is False
+    ), "Environment truncates after 1 step, something has gone very wrong."
+    assert data_equivalence(info_0, info_1), "step info is not deterministic."
 
 
 def check_reset_return_info_deprecation(env: gym.Env):
@@ -306,12 +344,15 @@ def check_env(
     check_seed_deprecation(env)
     check_reset_return_info_deprecation(env)
     check_reset_return_type(env)
-    check_reset_seed(env)
+    check_reset_seed_determinism(env)
     check_reset_options(env)
 
     # ============ Check the returned values ===============
     env_reset_passive_checker(env)
     env_step_passive_checker(env, env.action_space.sample())
+
+    # ==== Check the step method ====
+    check_step_determinism(env)
 
     # ==== Check the render method and the declared render modes ====
     if not skip_render_check:

@@ -54,6 +54,7 @@ title: Env
 
 .. autoproperty:: gymnasium.Env.unwrapped
 .. autoproperty:: gymnasium.Env.np_random
+.. autoproperty:: gymnasium.Env.np_random_seed
 ```
 
 ## Implementing environments
@@ -61,7 +62,7 @@ title: Env
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-When implementing an environment, the :meth:`Env.reset` and :meth:`Env.step` functions much be created describing the dynamics of the environment. For more information see the environment creation tutorial.
+When implementing an environment, the :meth:`Env.reset` and :meth:`Env.step` functions must be created to describe the dynamics of the environment. For more information, see the environment creation tutorial.
 ```
 
 ## Creating environments

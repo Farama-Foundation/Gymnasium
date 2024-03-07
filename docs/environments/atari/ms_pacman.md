@@ -48,6 +48,7 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 See variants section for the type of observation used by each environment id by default.
 
 
+
 ## Variants
 
 MsPacman has the following variants of the environment id which have the following differences in observation,
