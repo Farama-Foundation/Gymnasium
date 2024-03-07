@@ -99,7 +99,7 @@ def check_reset_seed_determinism(env: gym.Env):
             ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
             if env.spec is not None and env.spec.nondeterministic is False:
                 assert data_equivalence(
-                    obs_1, obs_2
+                    obs_1, obs_2, exact=True
                 ), "Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent."
             assert (
                 env.unwrapped._np_random.bit_generator.state
@@ -189,13 +189,13 @@ def check_step_determinism(env: gym.Env, seed=123):
         env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportOptionalMemberAccess]
         == seeded_rng.bit_generator.state
     ), "The `.np_random` is not properly been updated after step."
-    assert data_equivalence(obs_0, obs_1), "step observation is not deterministic."
-    assert data_equivalence(rew_0, rew_1), "step reward is not deterministic."
-    assert data_equivalence(term_0, term_0), "step terminal is not deterministic."
+    assert data_equivalence(obs_0, obs_1, True), "step observation is not deterministic."
+    assert data_equivalence(rew_0, rew_1, True), "step reward is not deterministic."
+    assert data_equivalence(term_0, term_0, True), "step terminal is not deterministic."
     assert (
         trunc_0 is False and trunc_1 is False
     ), "Environment truncates after 1 step, something has gone very wrong."
-    assert data_equivalence(info_0, info_1), "step info is not deterministic."
+    assert data_equivalence(info_0, info_1, True), "step info is not deterministic."
 
 
 def check_reset_return_info_deprecation(env: gym.Env):
