@@ -28,6 +28,7 @@ from gymnasium.wrappers.vector.vectorize_reward import (
     TransformReward,
     VectorizeTransformReward,
 )
+from gymnasium.wrappers.vector.rendering import HumanRendering
 
 
 __all__ = [
@@ -63,7 +64,7 @@ __all__ = [
     # --- Rendering ---
     # "RenderCollection",
     # "RecordVideo",
-    # "HumanRendering",
+    "HumanRendering",
     # --- Conversion ---
     "JaxToNumpy",
     "JaxToTorch",
