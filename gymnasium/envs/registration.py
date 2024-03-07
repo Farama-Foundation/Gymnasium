@@ -930,6 +930,15 @@ def make_vec(
         )
 
     elif vectorization_mode == VectorizeMode.VECTOR_ENTRY_POINT:
+        if len(vector_kwargs) > 0:
+            raise error.Error(
+                f"Custom vector environment can be passed arguments only through kwargs and `vector_kwargs` is not empty ({vector_kwargs})"
+            )
+        if len(wrappers) > 0:
+            raise error.Error(
+                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
+            )
+
         entry_point = env_spec.vector_entry_point
         if entry_point is None:
             raise error.Error(
@@ -940,15 +949,13 @@ def make_vec(
         else:  # Assume it's a string
             env_creator = load_env_creator(entry_point)
 
-        if len(wrappers) > 0:
-            raise error.Error(
-                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
-            )
-        if "max_episode_steps" not in vector_kwargs:
-            assert vector_kwargs is not None
-            vector_kwargs["max_episode_steps"] = env_spec.max_episode_steps
+        if (
+            env_spec.max_episode_steps is not None
+            and "max_episode_steps" not in env_spec_kwargs
+        ):
+            env_spec_kwargs["max_episode_steps"] = env_spec.max_episode_steps
 
-        env = env_creator(num_envs=num_envs, **vector_kwargs)
+        env = env_creator(num_envs=num_envs, **env_spec_kwargs)
     else:
         raise error.Error(f"Unknown vectorization mode: {vectorization_mode}")
 
