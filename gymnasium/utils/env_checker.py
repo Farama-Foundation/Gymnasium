@@ -285,10 +285,20 @@ def check_env(
     if warn is not None:
         logger.warn("`check_env(warn=...)` parameter is now ignored.")
 
-    assert isinstance(
-        env, gym.Env
-    ), "The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info."
-
+    if not isinstance(env, gym.Env):
+        if (
+            str(env.__class__.__base__) == "<class 'gym.core.Env'>"
+            or str(env.__class__.__base__) == "<class 'gym.core.Wrapper'>"
+        ):
+            raise TypeError(
+                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
+                "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+            )
+        else:
+            raise TypeError(
+                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
+                "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+            )
     if env.unwrapped is not env:
         logger.warn(
             f"The environment ({env}) is different from the unwrapped version ({env.unwrapped}). This could effect the environment checker as the environment most likely has a wrapper applied to it. We recommend using the raw environment for `check_env` using `env.unwrapped`."
@@ -297,13 +307,13 @@ def check_env(
     # ============= Check the spaces (observation and action) ================
     assert hasattr(
         env, "action_space"
-    ), "The environment must specify an action space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info."
+    ), "The environment must specify an action space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
     check_action_space(env.action_space)
     check_space_limit(env.action_space, "action")
 
     assert hasattr(
         env, "observation_space"
-    ), "The environment must specify an observation space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info."
+    ), "The environment must specify an observation space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
     check_observation_space(env.observation_space)
     check_space_limit(env.observation_space, "observation")
 
@@ -331,7 +341,7 @@ def check_env(
                 new_env.close()
         else:
             logger.warn(
-                "Not able to test alternative render modes due to the environment not having a spec. Try instantialising the environment through gymnasium.make"
+                "Not able to test alternative render modes due to the environment not having a spec. Try instantiating the environment through `gymnasium.make`"
             )
 
     if not skip_close_check and env.spec is not None:

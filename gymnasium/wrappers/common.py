@@ -254,13 +254,25 @@ class PassiveEnvChecker(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
+        if not isinstance(env, gym.Env):
+            if str(env.__class__.__base__) == "<class 'gym.core.Env'>":
+                raise TypeError(
+                    "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
+                    "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+                )
+            else:
+                raise TypeError(
+                    f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
+                    "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+                )
+
         assert hasattr(
             env, "action_space"
-        ), "The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
+        ), "The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/"
         check_action_space(env.action_space)
         assert hasattr(
             env, "observation_space"
-        ), "The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
+        ), "The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/"
         check_observation_space(env.observation_space)
 
         self.checked_reset: bool = False
