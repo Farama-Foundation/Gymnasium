@@ -60,8 +60,8 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     In v1 and v0 the rewards is:
     Since the goal is to keep the pole upright for as long as possible, a reward of `+1` for every step taken,
-    including the termination step, is allotted. 
-    
+    including the termination step, is allotted.
+
     ## Reward Threshold
     The threshold for rewards is 0 for v2, 500 for v1 and 200 for v0.
 
@@ -106,9 +106,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     >>> envs
     SyncVectorEnv(CartPole-v1, num_envs=3)
     ```
-    
+
     ## Version History
-    * v2: Changed reward function to the original from Barto, Sutton paper.
+    * v2: Changed reward function to the original from Barto, Sutton paper (related [GitHub Issue](https://github.com/Farama-Foundation/Gymnasium/issues/790)).
     * v1: `max_time_steps` raised to 500.
     * v0: Initial versions release.
     """
@@ -118,7 +118,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         "render_fps": 50,
     }
 
-    def __init__(self,  sutton_barto_reward: bool = False, render_mode: Optional[str] = None):
+    def __init__(
+        self, sutton_barto_reward: bool = False, render_mode: Optional[str] = None
+    ):
         self._sutton_barto_reward = sutton_barto_reward
 
         self.gravity = 9.8

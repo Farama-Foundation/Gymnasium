@@ -11,7 +11,7 @@ register(
     id="CartPole-v0",
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
     vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
-    kwargs={"sutton_barto_reward": False}
+    kwargs={"sutton_barto_reward": False},
     max_episode_steps=200,
     reward_threshold=195.0,
 )
@@ -20,7 +20,7 @@ register(
     id="CartPole-v1",
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
     vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
-    kwargs={"sutton_barto_reward": False}
+    kwargs={"sutton_barto_reward": False},
     max_episode_steps=500,
     reward_threshold=475.0,
 )
@@ -32,7 +32,6 @@ register(
     max_episode_steps=500,
     reward_threshold=0.0,
 )
-
 
 
 register(
