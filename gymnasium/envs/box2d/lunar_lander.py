@@ -402,8 +402,8 @@ class LunarLander(gym.Env, EzPickle):
         )
 
         if self.enable_wind:  # Initialize wind pattern based on index
-            self.wind_idx = np.random.randint(-9999, 9999)
-            self.torque_idx = np.random.randint(-9999, 9999)
+            self.wind_idx = self.np_random.integers(-9999, 9999)
+            self.torque_idx = self.np_random.integers(-9999, 9999)
 
         # Create Lander Legs
         self.legs = []
