@@ -88,7 +88,7 @@ register(
 )
 
 register(
-    id="LunarLanderContinuous-v2",
+    id="LunarLanderContinuous-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     kwargs={"continuous": True},
     max_episode_steps=1000,
