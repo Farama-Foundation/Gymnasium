@@ -1,6 +1,7 @@
 """Root `__init__` of the gymnasium module setting the `__all__` of gymnasium modules."""
 # isort: skip_file
 
+from gymnasium.spaces.space import Space
 from gymnasium.core import (
     Env,
     Wrapper,
@@ -8,7 +9,6 @@ from gymnasium.core import (
     ActionWrapper,
     RewardWrapper,
 )
-from gymnasium.spaces.space import Space
 from gymnasium.envs.registration import (
     make,
     spec,

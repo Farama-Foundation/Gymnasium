@@ -92,6 +92,8 @@ wrapper in the page on the wrapper type
       - Description
     * - :class:`DictInfoToList`
       - Converts infos of vectorized environments from ``dict`` to ``List[dict]``.
+    * - :class:`HumanRendering`
+      - Allows human like rendering for vector environments that support "rgb_array" rendering.
     * - :class:`VectorizeTransformAction`
       - Vectorizes a single-agent transform action wrapper for vector environments.
     * - :class:`VectorizeTransformObservation`
