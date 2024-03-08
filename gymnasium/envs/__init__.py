@@ -81,7 +81,7 @@ register(
 # ----------------------------------------
 
 register(
-    id="LunarLander-v2",
+    id="LunarLander-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     max_episode_steps=1000,
     reward_threshold=200,
