@@ -97,7 +97,7 @@ class LunarLander(gym.Env, EzPickle):
     python gymnasium/envs/box2d/lunar_lander.py
     ```
     <!-- To play yourself, run: -->
-    <!-- python examples/agents/keyboard_agent.py LunarLander-v2 -->
+    <!-- python examples/agents/keyboard_agent.py LunarLander-v3 -->
 
     ## Action Space
     There are four discrete actions available:
@@ -150,10 +150,10 @@ class LunarLander(gym.Env, EzPickle):
 
     ```python
     >>> import gymnasium as gym
-    >>> env = gym.make("LunarLander-v2", continuous=False, gravity=-10.0,
+    >>> env = gym.make("LunarLander-v3", continuous=False, gravity=-10.0,
     ...                enable_wind=False, wind_power=15.0, turbulence_power=1.5)
     >>> env
-    <TimeLimit<OrderEnforcing<PassiveEnvChecker<LunarLander<LunarLander-v2>>>>>
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<LunarLander<LunarLander-v3>>>>>
 
     ```
 
@@ -875,10 +875,10 @@ class LunarLanderContinuous:
             "Error initializing LunarLanderContinuous Environment.\n"
             "Currently, we do not support initializing this mode of environment by calling the class directly.\n"
             "To use this environment, instead create it by specifying the continuous keyword in gym.make, i.e.\n"
-            'gym.make("LunarLander-v2", continuous=True)'
+            'gym.make("LunarLander-v3", continuous=True)'
         )
 
 
 if __name__ == "__main__":
-    env = gym.make("LunarLander-v2", render_mode="rgb_array")
+    env = gym.make("LunarLander-v3", render_mode="rgb_array")
     demo_heuristic_lander(env, render=True)
