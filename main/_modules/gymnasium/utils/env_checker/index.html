@@ -792,25 +792,37 @@
     <span class="k">if</span> <span class="n">warn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;`check_env(warn=...)` parameter is now ignored.&quot;</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-        <span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span>
-    <span class="p">),</span> <span class="s2">&quot;The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.&quot;</span>
-
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;gym.core.Env&#39;&gt;&quot;</span>
+            <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;gym.core.Wrapper&#39;&gt;&quot;</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. &quot;</span>
+                <span class="s2">&quot;See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The environment must inherit from the gymnasium.Env class, actual class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+            <span class="p">)</span>
     <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">env</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is different from the unwrapped version (</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="si">}</span><span class="s2">). This could effect the environment checker as the environment most likely has a wrapper applied to it. We recommend using the raw environment for `check_env` using `env.unwrapped`.&quot;</span>
         <span class="p">)</span>
 
     <span class="c1"># ============= Check the spaces (observation and action) ================</span>
-    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
-        <span class="n">env</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span>
-    <span class="p">),</span> <span class="s2">&quot;The environment must specify an action space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="s2">&quot;The environment must specify an action space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+        <span class="p">)</span>
     <span class="n">check_action_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
     <span class="n">check_space_limit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
-        <span class="n">env</span><span class="p">,</span> <span class="s2">&quot;observation_space&quot;</span>
-    <span class="p">),</span> <span class="s2">&quot;The environment must specify an observation space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;observation_space&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="s2">&quot;The environment must specify an observation space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+        <span class="p">)</span>
     <span class="n">check_observation_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
     <span class="n">check_space_limit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="s2">&quot;observation&quot;</span><span class="p">)</span>
 
@@ -841,7 +853,7 @@
                 <span class="n">new_env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Not able to test alternative render modes due to the environment not having a spec. Try instantialising the environment through gymnasium.make&quot;</span>
+                <span class="s2">&quot;Not able to test alternative render modes due to the environment not having a spec. Try instantiating the environment through `gymnasium.make`&quot;</span>
             <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_close_check</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

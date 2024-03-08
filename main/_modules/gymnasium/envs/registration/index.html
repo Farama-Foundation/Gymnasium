@@ -1252,6 +1252,21 @@
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> was raised from the environment creator for </span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> with kwargs (</span><span class="si">{</span><span class="n">env_spec_kwargs</span><span class="si">}</span><span class="s2">)&quot;</span>
             <span class="p">)</span>
 
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;gym.core.Env&#39;&gt;&quot;</span>
+            <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;gym.core.Wrapper&#39;&gt;&quot;</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. &quot;</span>
+                <span class="s2">&quot;See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The environment must inherit from the gymnasium.Env class, actual class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+            <span class="p">)</span>
+
     <span class="c1"># Set the minimal env spec for the environment.</span>
     <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
         <span class="nb">id</span><span class="o">=</span><span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
