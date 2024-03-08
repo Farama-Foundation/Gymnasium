@@ -56,16 +56,19 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
        if the pole angle is not in the range `(-.2095, .2095)` (or **±12°**)
 
     ## Rewards
+    In v2 the reward matches the original reward, `0` for every non-terminating step taken, and `-1` for terminating steps.
 
+    In v1 and v0 the rewards is:
     Since the goal is to keep the pole upright for as long as possible, a reward of `+1` for every step taken,
-    including the termination step, is allotted. The threshold for rewards is 500 for v1 and 200 for v0.
+    including the termination step, is allotted. 
+    
+    ## Reward Threshold
+    The threshold for rewards is 0 for v2, 500 for v1 and 200 for v0.
 
     ## Starting State
-
     All observations are assigned a uniformly random value in `(-0.05, 0.05)`
 
     ## Episode End
-
     The episode ends if any one of the following occurs:
 
     1. Termination: Pole Angle is greater than ±12°
@@ -84,8 +87,11 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
     >>> env.reset(seed=123, options={"low": -0.1, "high": 0.1})  # default low=-0.05, high=0.05
     (array([ 0.03647037, -0.0892358 , -0.05592803, -0.06312564], dtype=float32), {})
-
     ```
+
+    | Parameter               | Type       | Default                 | Description                                                                                   |
+    |-------------------------|------------|-------------------------|-----------------------------------------------------------------------------------------------|
+    | `sutton_barto_reward`   | **bool**   | `True`                  | If set to `False` the reward is constantly 1                                                  |
 
     ## Vectorized environment
 
@@ -99,8 +105,12 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
     >>> envs
     SyncVectorEnv(CartPole-v1, num_envs=3)
-
     ```
+    
+    ## Version History
+    * v2: Changed reward function to the original from Barto, Sutton paper.
+    * v1: `max_time_steps` raised to 500.
+    * v0: Initial versions release.
     """
 
     metadata = {
@@ -108,7 +118,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         "render_fps": 50,
     }
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(self,  sutton_barto_reward: bool = False, render_mode: Optional[str] = None):
+        self._sutton_barto_reward = sutton_barto_reward
+
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
@@ -190,11 +202,11 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         )
 
         if not terminated:
-            reward = 1.0
+            reward = float(not self._sutton_barto_reward)
         elif self.steps_beyond_terminated is None:
             # Pole just fell!
             self.steps_beyond_terminated = 0
-            reward = 1.0
+            reward = 1.0 - 2.0 * float(self._sutton_barto_reward)
         else:
             if self.steps_beyond_terminated == 0:
                 logger.warn(
@@ -204,7 +216,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
                     "True' -- any further steps are undefined behavior."
                 )
             self.steps_beyond_terminated += 1
-            reward = 0.0
+            reward = -float(self._sutton_barto_reward)
 
         if self.render_mode == "human":
             self.render()
