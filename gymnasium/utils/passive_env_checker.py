@@ -67,9 +67,14 @@ def check_space(
 ):
     """A passive check of the environment action space that should not affect the environment."""
     if not isinstance(space, spaces.Space):
-        raise AssertionError(
-            f"{space_type} space does not inherit from `gymnasium.spaces.Space`, actual type: {type(space)}"
-        )
+        if str(space.__class__.__base__) == "<class 'gym.spaces.space.Space'>":
+            raise TypeError(
+                f"Gym is incompatible with Gymnasium, please update the environment {space_type}_space to `{str(space.__class__.__base__).replace('gym', 'gymnasium')}`."
+            )
+        else:
+            raise TypeError(
+                f"{space_type} space does not inherit from `gymnasium.spaces.Space`, actual type: {type(space)}"
+            )
 
     elif isinstance(space, spaces.Box):
         check_box_space_fn(space)
