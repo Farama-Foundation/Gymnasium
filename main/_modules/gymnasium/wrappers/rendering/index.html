@@ -509,7 +509,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        Return the list of frames for the number of steps ``render`` wasn&#39;t called.</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v2&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; for _ in range(5):</span>
@@ -525,7 +525,7 @@
 
 <span class="sd">        Return the list of frames for the number of steps the episode was running.</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v2&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env, pop_frames=False)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; for _ in range(5):</span>
@@ -541,7 +541,7 @@
 
 <span class="sd">        Collect all frames for all episodes, without clearing them when render is called</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v2&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env, pop_frames=False, reset_clean=False)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; for _ in range(5):</span>
@@ -654,7 +654,7 @@
 <span class="sd">    Examples - Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v2&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; trigger = lambda t: t % 10 == 0</span>
 <span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder=&quot;./save_videos1&quot;, episode_trigger=trigger, disable_logger=True)</span>
 <span class="sd">        &gt;&gt;&gt; for i in range(50):</span>
@@ -670,7 +670,7 @@
 <span class="sd">    Examples - Run the environment for 5 episodes, start a recording every 200th step, making sure each video is 100 frames long:</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v2&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; trigger = lambda t: t % 200 == 0</span>
 <span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder=&quot;./save_videos2&quot;, step_trigger=trigger, video_length=100, disable_logger=True)</span>
 <span class="sd">        &gt;&gt;&gt; for i in range(5):</span>
@@ -687,7 +687,7 @@
 <span class="sd">    Examples - Run 3 episodes, record everything, but in chunks of 1000 frames:</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v2&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder=&quot;./save_videos3&quot;, video_length=1000, disable_logger=True)</span>
 <span class="sd">        &gt;&gt;&gt; for i in range(3):</span>
 <span class="sd">        ...     termination, truncation = False, False</span>
@@ -912,7 +912,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import HumanRendering</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v2&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; wrapped = HumanRendering(env)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = wrapped.reset()     # This will start rendering to the screen</span>
 
@@ -926,7 +926,7 @@
 <span class="sd">        Warning: If the base environment uses ``render_mode=&quot;rgb_array_list&quot;``, its (i.e. the *base environment&#39;s*) render method</span>
 <span class="sd">        will always return an empty list:</span>
 
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v2&quot;, render_mode=&quot;rgb_array_list&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array_list&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; wrapped = HumanRendering(env)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = wrapped.reset()</span>
 <span class="sd">        &gt;&gt;&gt; env.render() # env.render() will always return an empty list!</span>
