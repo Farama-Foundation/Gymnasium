@@ -709,7 +709,7 @@ it will have a lower variance and theirfore leads to quicker learning.</p>
 <p>A2C is a synchronous method, meaning that the parameter updates to Networks take place deterministically (after each sampling phase),
 but we can still make use of asynchronous vector envs to spawn multiple processes for parallel environment execution.</p>
 <p>The simplest way to create vector environments is by calling <cite>gym.vector.make</cite>, which creates multiple instances of the same environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -717,11 +717,11 @@ but we can still make use of asynchronous vector envs to spawn multiple processe
 <h2>Domain Randomization<a class="headerlink" href="#domain-randomization" title="Link to this heading">#</a></h2>
 <p>If we want to randomize the environment for training to get more robust agents (that can deal with different parameterizations of an environment
 and theirfore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.</p>
-<p>Manually setting up 3 parallel ‘LunarLander-v2’ envs with different parameters:</p>
+<p>Manually setting up 3 parallel ‘LunarLander-v3’ envs with different parameters:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-            <span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span>
             <span class="n">gravity</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span>
             <span class="n">enable_wind</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">wind_power</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
@@ -729,7 +729,7 @@ and theirfore might have a higher degree of generalization), we can set the desi
             <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-            <span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span>
             <span class="n">gravity</span><span class="o">=-</span><span class="mf">9.8</span><span class="p">,</span>
             <span class="n">enable_wind</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">wind_power</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
@@ -737,18 +737,18 @@ and theirfore might have a higher degree of generalization), we can set the desi
             <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-            <span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=-</span><span class="mf">7.0</span><span class="p">,</span> <span class="n">enable_wind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span>
+            <span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=-</span><span class="mf">7.0</span><span class="p">,</span> <span class="n">enable_wind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span>
         <span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <hr class="docutils" />
-<p>Randomly generating the parameters for 3 parallel ‘LunarLander-v2’ envs, using <cite>np.clip</cite> to stay in the recommended parameter space:</p>
+<p>Randomly generating the parameters for 3 parallel ‘LunarLander-v3’ envs, using <cite>np.clip</cite> to stay in the recommended parameter space:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-            <span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span>
             <span class="n">gravity</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">a_min</span><span class="o">=-</span><span class="mf">11.99</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=-</span><span class="mf">0.01</span>
             <span class="p">),</span>
@@ -797,7 +797,7 @@ to generate a new set of pseudo-random parameters.</p>
     <span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">(</span>
         <span class="p">[</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-                <span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span>
                 <span class="n">gravity</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">a_min</span><span class="o">=-</span><span class="mf">11.99</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=-</span><span class="mf">0.01</span>
                 <span class="p">),</span>
@@ -815,7 +815,7 @@ to generate a new set of pseudo-random parameters.</p>
     <span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="n">n_envs</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+    <span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="n">n_envs</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
 
 
 <span class="n">obs_shape</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">single_observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -916,7 +916,7 @@ use the rest of the timesteps to begin a new one).</p>
 <span class="n">rolling_length</span> <span class="o">=</span> <span class="mi">20</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;Training plots for </span><span class="si">{</span><span class="n">agent</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> in the LunarLander-v2 environment </span><span class="se">\n</span><span class="s2"> </span><span class="se">\</span>
+    <span class="sa">f</span><span class="s2">&quot;Training plots for </span><span class="si">{</span><span class="n">agent</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> in the LunarLander-v3 environment </span><span class="se">\n</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">             (n_envs=</span><span class="si">{</span><span class="n">n_envs</span><span class="si">}</span><span class="s2">, n_steps_per_update=</span><span class="si">{</span><span class="n">n_steps_per_update</span><span class="si">}</span><span class="s2">, randomize_domain=</span><span class="si">{</span><span class="n">randomize_domain</span><span class="si">}</span><span class="s2">)&quot;</span>
 <span class="p">)</span>
 
@@ -996,7 +996,7 @@ agent was trained until the mean training returns were above -120). The slower t
 because the gradients of the environments are good enough after a relatively low number of environments
 (especially if the environment is not very complex). In this case, increasing the number of environments
 does not increase the learning speed, and actually increases the runtime, possibly due to the additional time
-needed to calculate the gradients. For LunarLander-v2, the best performing configuration used a AsyncVectorEnv
+needed to calculate the gradients. For LunarLander-v3, the best performing configuration used a AsyncVectorEnv
 with 10 parallel environments, but environments with a higher complexity may require more
 parallel environments to achieve optimal performance.</p>
 <img alt="runtime_until_threshold_plot" src="../../../_images/vector_env_runtime_until_threshold.png" />
@@ -1041,7 +1041,7 @@ parallel environments to achieve optimal performance.</p>
     <span class="c1"># create a new sample environment to get new random parameters</span>
     <span class="k">if</span> <span class="n">randomize_domain</span><span class="p">:</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-            <span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span>
             <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">,</span>
             <span class="n">gravity</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">a_min</span><span class="o">=-</span><span class="mf">11.99</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=-</span><span class="mf">0.01</span>
@@ -1056,7 +1056,7 @@ parallel environments to achieve optimal performance.</p>
             <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 
     <span class="c1"># get an initial state</span>
     <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -1082,7 +1082,7 @@ parallel environments to achieve optimal performance.</p>
 <h2>Try playing the environment yourself<a class="headerlink" href="#try-playing-the-environment-yourself" title="Link to this heading">#</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># from gymnasium.utils.play import play</span>
 <span class="c1">#</span>
-<span class="c1"># play(gym.make(&#39;LunarLander-v2&#39;, render_mode=&#39;rgb_array&#39;),</span>
+<span class="c1"># play(gym.make(&#39;LunarLander-v3&#39;, render_mode=&#39;rgb_array&#39;),</span>
 <span class="c1">#     keys_to_action={&#39;w&#39;: 2, &#39;a&#39;: 1, &#39;d&#39;: 3}, noop=0)</span>
 </pre></div>
 </div>

@@ -491,7 +491,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">Box([-1.5</span> <span class="pre">-1.5</span> <span class="pre">-5.</span> <span class="pre">-5.</span> <span class="pre">-3.1415927</span> <span class="pre">-5.</span> <span class="pre">-0.</span> <span class="pre">-0.</span> <span class="pre">],</span> <span class="pre">[1.5</span> <span class="pre">1.5</span> <span class="pre">5.</span> <span class="pre">5.</span> <span class="pre">3.1415927</span> <span class="pre">5.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">],</span> <span class="pre">(8,),</span> <span class="pre">float32)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;LunarLander-v2&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;LunarLander-v3&quot;)</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -512,7 +512,7 @@ can learn to fly and then land on its first attempt.</p>
 </pre></div>
 </div>
 <!-- To play yourself, run: -->
-<!-- python examples/agents/keyboard_agent.py LunarLander-v2 -->
+<!-- python examples/agents/keyboard_agent.py LunarLander-v3 -->
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
@@ -573,10 +573,10 @@ them is destroyed.</p>
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
 <p>Lunar Lander has a large number of arguments</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span>
 <span class="gp">... </span>               <span class="n">enable_wind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">wind_power</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">turbulence_power</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
-<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;LunarLander&lt;LunarLander-v2&gt;&gt;&gt;&gt;&gt;</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;LunarLander&lt;LunarLander-v3&gt;&gt;&gt;&gt;&gt;</span>
 
 </pre></div>
 </div>
@@ -602,6 +602,7 @@ The recommended value for <code class="docutils literal notranslate"><span class
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
+<li><p>v3: Reset wind and turbulence offset (<code class="docutils literal notranslate"><span class="pre">C</span></code>) whenever the environment is reset to ensure statistical independence between consecutive episodes (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/954">GitHub issue</a>).</p></li>
 <li><p>v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters</p></li>
 <li><p>v1: Legs contact with ground added in state vector; contact with ground give +10 reward points,
 and -10 if then lose contact; reward renormalized to 200; harder initial random push.</p></li>
