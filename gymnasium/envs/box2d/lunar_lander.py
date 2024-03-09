@@ -97,7 +97,7 @@ class LunarLander(gym.Env, EzPickle):
     python gymnasium/envs/box2d/lunar_lander.py
     ```
     <!-- To play yourself, run: -->
-    <!-- python examples/agents/keyboard_agent.py LunarLander-v2 -->
+    <!-- python examples/agents/keyboard_agent.py LunarLander-v3 -->
 
     ## Action Space
     There are four discrete actions available:
@@ -150,10 +150,10 @@ class LunarLander(gym.Env, EzPickle):
 
     ```python
     >>> import gymnasium as gym
-    >>> env = gym.make("LunarLander-v2", continuous=False, gravity=-10.0,
+    >>> env = gym.make("LunarLander-v3", continuous=False, gravity=-10.0,
     ...                enable_wind=False, wind_power=15.0, turbulence_power=1.5)
     >>> env
-    <TimeLimit<OrderEnforcing<PassiveEnvChecker<LunarLander<LunarLander-v2>>>>>
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<LunarLander<LunarLander-v3>>>>>
 
     ```
 
@@ -179,6 +179,7 @@ class LunarLander(gym.Env, EzPickle):
      The recommended value for `turbulence_power` is between 0.0 and 2.0.
 
     ## Version History
+    - v3: Reset wind and turbulence offset (`C`) whenever the environment is reset to ensure statistical independence between consecutive episodes (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/954)).
     - v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters
     - v1: Legs contact with ground added in state vector; contact with ground give +10 reward points,
           and -10 if then lose contact; reward renormalized to 200; harder initial random push.
@@ -254,8 +255,6 @@ class LunarLander(gym.Env, EzPickle):
         self.turbulence_power = turbulence_power
 
         self.enable_wind = enable_wind
-        self.wind_idx = np.random.randint(-9999, 9999)
-        self.torque_idx = np.random.randint(-9999, 9999)
 
         self.screen: pygame.Surface = None
         self.clock = None
@@ -402,6 +401,10 @@ class LunarLander(gym.Env, EzPickle):
             ),
             True,
         )
+
+        if self.enable_wind:  # Initialize wind pattern based on index
+            self.wind_idx = self.np_random.integers(-9999, 9999)
+            self.torque_idx = self.np_random.integers(-9999, 9999)
 
         # Create Lander Legs
         self.legs = []
@@ -872,10 +875,10 @@ class LunarLanderContinuous:
             "Error initializing LunarLanderContinuous Environment.\n"
             "Currently, we do not support initializing this mode of environment by calling the class directly.\n"
             "To use this environment, instead create it by specifying the continuous keyword in gym.make, i.e.\n"
-            'gym.make("LunarLander-v2", continuous=True)'
+            'gym.make("LunarLander-v3", continuous=True)'
         )
 
 
 if __name__ == "__main__":
-    env = gym.make("LunarLander-v2", render_mode="rgb_array")
+    env = gym.make("LunarLander-v3", render_mode="rgb_array")
     demo_heuristic_lander(env, render=True)
