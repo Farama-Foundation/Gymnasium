@@ -15,7 +15,7 @@ Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases
 
 ```python
 import gym
-env = gym.make("LunarLander-v2", options={})
+env = gym.make("LunarLander-v3", options={})
 env.seed(123)
 observation = env.reset()
 
@@ -33,7 +33,7 @@ env.close()
 
 ```python
 import gym
-env = gym.make("LunarLander-v2", render_mode="human")
+env = gym.make("LunarLander-v3", render_mode="human")
 observation, info = env.reset(seed=123, options={})
 
 done = False

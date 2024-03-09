@@ -12,9 +12,40 @@ from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 def test_lunar_lander_heuristics():
     """Tests the LunarLander environment by checking if the heuristic lander works."""
-    lunar_lander = gym.make("LunarLander-v2", disable_env_checker=True)
+    lunar_lander = gym.make("LunarLander-v3", disable_env_checker=True)
     total_reward = demo_heuristic_lander(lunar_lander, seed=1)
     assert total_reward > 100
+
+
+@pytest.mark.parametrize("seed", [0, 10, 20, 30, 40])
+def test_lunar_lander_random_wind_seed(seed: int):
+    """Test that the wind_idx and torque are correctly drawn when setting a seed"""
+
+    lunar_lander = gym.make(
+        "LunarLander-v3", disable_env_checker=True, enable_wind=True
+    ).unwrapped
+    lunar_lander.reset(seed=seed)
+
+    # Test that same seed gives same wind
+    w1, t1 = lunar_lander.wind_idx, lunar_lander.torque_idx
+    lunar_lander.reset(seed=seed)
+    w2, t2 = lunar_lander.wind_idx, lunar_lander.torque_idx
+    assert (
+        w1 == w2 and t1 == t2
+    ), "Setting same seed caused different initial wind or torque index"
+
+    # Test that different seed gives different wind
+    # There is a small chance that different seeds causes same number so test
+    # 10 times (with different seeds) to make this chance incredibly tiny.
+    for i in range(1, 11):
+        lunar_lander.reset(seed=seed + i)
+        w3, t3 = lunar_lander.wind_idx, lunar_lander.torque_idx
+        if w2 != w3 and t1 != t3:  # Found different initial values
+            break
+    else:  # no break
+        raise AssertionError(
+            "Setting different seed caused same initial wind or torque index"
+        )
 
 
 def test_carracing_domain_randomize():
