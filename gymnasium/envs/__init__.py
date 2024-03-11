@@ -197,7 +197,7 @@ register(
 
 register(
     id="Pusher-v2",
-    entry_point="gymnasium.envs.mujoco.pucher:PusherEnv",
+    entry_point="gymnasium.envs.mujoco.pusher:PusherEnv",
     max_episode_steps=100,
     reward_threshold=0.0,
 )
