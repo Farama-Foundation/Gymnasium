@@ -495,6 +495,7 @@
     <span class="n">GraphInstance</span><span class="p">,</span>
     <span class="n">MultiBinary</span><span class="p">,</span>
     <span class="n">MultiDiscrete</span><span class="p">,</span>
+    <span class="n">OneOf</span><span class="p">,</span>
     <span class="n">Sequence</span><span class="p">,</span>
     <span class="n">Space</span><span class="p">,</span>
     <span class="n">Text</span><span class="p">,</span>
@@ -599,8 +600,9 @@
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
+<span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Space</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_batch_space_custom</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_batch_space_custom</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
     <span class="c1"># Without deepcopy, then the space.np_random is batched_space.spaces[0].np_random</span>
     <span class="c1"># Which is an issue if you are sampling actions of both the original space and the batched space</span>
     <span class="n">batched_space</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">(</span>
@@ -778,6 +780,7 @@
 <span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
 <span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
 <span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Space</span><span class="p">)</span>
+<span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_concatenate_custom</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
 
@@ -820,7 +823,7 @@
 
 
 
-<span class="c1"># It is possible for the some of the Box low to be greater than 0, then array is not in space</span>
+<span class="c1"># It is possible for some of the Box low to be greater than 0, then array is not in space</span>
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
 <span class="c1"># If the Discrete start &gt; 0 or start + length &lt; 0 then array is not in space</span>
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
@@ -884,6 +887,11 @@
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+
+<span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_create_empty_array_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Space</span><span class="p">)</span>

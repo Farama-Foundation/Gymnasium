@@ -736,6 +736,69 @@ If no <code class="docutils literal notranslate"><span class="pre">num_edges</sp
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.spaces.OneOf">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">OneOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/spaces/oneof/#OneOf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.OneOf" title="Link to this definition">#</a></dt>
+<dd><p>An exclusive tuple (more precisely: the direct sum) of <a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a> instances.</p>
+<p>Elements of this space are elements of one of the constituent spaces.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">OneOf</span><span class="p">((</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># the first element is the space index (Box in this case) and the second element is the sample from Box</span>
+<span class="go">(1, array([-0.3991573 ,  0.21649833], dtype=float32))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># this time the Discrete space was sampled as index=0</span>
+<span class="go">(0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">Discrete(2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">Box(-1.0, 1.0, (2,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">observation_space</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spaces</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><em>Space</em></a><em>]</em>) – The spaces that are involved in the cartesian product.</p></li>
+<li><p><strong>seed</strong> – Optionally, you can use this argument to seed the RNGs of the <code class="docutils literal notranslate"><span class="pre">spaces</span></code> to ensure reproducible sampling.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.spaces.OneOf.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/oneof/#OneOf.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.OneOf.sample" title="Link to this definition">#</a></dt>
+<dd><p>Generates a single random sample inside this space.</p>
+<p>This method draws independent samples from the subspaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mask</strong> – An optional tuple of optional masks for each of the subspace’s samples,
+expects the same number of masks as spaces</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Tuple of the subspace’s samples</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.spaces.OneOf.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/spaces/oneof/#OneOf.seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.OneOf.seed" title="Link to this definition">#</a></dt>
+<dd><p>Seed the PRNG of this space and all subspaces.</p>
+<p>Depending on the type of seed, the subspaces will be seeded differently</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> - All the subspaces will use a random initial seed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Int</span></code> - The integer is used to seed the <a class="reference internal" href="#gymnasium.spaces.Tuple" title="gymnasium.spaces.Tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code></a> space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all the subspaces.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">List</span></code> - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces <code class="docutils literal notranslate"><span class="pre">[42,</span> <span class="pre">54,</span> <span class="pre">...]</span></code>.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> – An optional list of ints or int to seed the (sub-)spaces.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
           </article>
@@ -826,6 +889,11 @@ If no <code class="docutils literal notranslate"><span class="pre">num_edges</sp
 <li><a class="reference internal" href="#gymnasium.spaces.Graph"><code class="docutils literal notranslate"><span class="pre">Graph</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.spaces.Graph.sample"><code class="docutils literal notranslate"><span class="pre">Graph.sample()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.spaces.Graph.seed"><code class="docutils literal notranslate"><span class="pre">Graph.seed()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gymnasium.spaces.OneOf"><code class="docutils literal notranslate"><span class="pre">OneOf</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.spaces.OneOf.sample"><code class="docutils literal notranslate"><span class="pre">OneOf.sample()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.spaces.OneOf.seed"><code class="docutils literal notranslate"><span class="pre">OneOf.seed()</span></code></a></li>
 </ul>
 </li>
 </ul>
