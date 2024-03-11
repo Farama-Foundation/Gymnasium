@@ -204,16 +204,16 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         if not terminated:
             if self._sutton_barto_reward:
-                reward = 0
+                reward = 0.0
             elif not self._sutton_barto_reward:
-                reward = 1
+                reward = 1.0
         elif self.steps_beyond_terminated is None:
             # Pole just fell!
             self.steps_beyond_terminated = 0
             if self._sutton_barto_reward:
-                reward = -1
+                reward = -1.0
             elif not self._sutton_barto_reward:
-                reward = 1
+                reward = 1.0
         else:
             if self.steps_beyond_terminated == 0:
                 logger.warn(
@@ -224,9 +224,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
                 )
             self.steps_beyond_terminated += 1
             if self._sutton_barto_reward:
-                reward = -1
+                reward = -1.0
             elif not self._sutton_barto_reward:
-                reward = 0
+                reward = 0.0
 
         if self.render_mode == "human":
             self.render()
