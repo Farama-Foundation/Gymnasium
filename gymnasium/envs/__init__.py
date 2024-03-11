@@ -11,7 +11,6 @@ register(
     id="CartPole-v0",
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
     vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
-    kwargs={"sutton_barto_reward": False},
     max_episode_steps=200,
     reward_threshold=195.0,
 )
@@ -20,19 +19,9 @@ register(
     id="CartPole-v1",
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
     vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
-    kwargs={"sutton_barto_reward": False},
     max_episode_steps=500,
     reward_threshold=475.0,
 )
-
-register(
-    id="CartPole-v2",
-    entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
-    vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
-    max_episode_steps=500,
-    reward_threshold=0.0,
-)
-
 
 register(
     id="MountainCar-v0",
@@ -92,14 +81,14 @@ register(
 # ----------------------------------------
 
 register(
-    id="LunarLander-v2",
+    id="LunarLander-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     max_episode_steps=1000,
     reward_threshold=200,
 )
 
 register(
-    id="LunarLanderContinuous-v2",
+    id="LunarLanderContinuous-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     kwargs={"continuous": True},
     max_episode_steps=1000,
