@@ -59,7 +59,12 @@ def _iterable_numpy_to_jax(
     value: Iterable[np.ndarray | Any],
 ) -> Iterable[jax.Array | Any]:
     """Converts an Iterable from Numpy Arrays to an iterable of Jax Array."""
-    return type(value)(numpy_to_jax(v) for v in value)
+    if hasattr(value, "_make"):
+        # namedtuple - underline used to prevent potential name conflicts
+        # noinspection PyProtectedMember
+        return type(value)._make(numpy_to_jax(v) for v in value)
+    else:
+        return type(value)(numpy_to_jax(v) for v in value)
 
 
 @functools.singledispatch
@@ -89,7 +94,12 @@ def _iterable_jax_to_numpy(
     value: Iterable[np.ndarray | Any],
 ) -> Iterable[jax.Array | Any]:
     """Converts an Iterable from Numpy arrays to an iterable of Jax Array."""
-    return type(value)(jax_to_numpy(v) for v in value)
+    if hasattr(value, "_make"):
+        # namedtuple - underline used to prevent potential name conflicts
+        # noinspection PyProtectedMember
+        return type(value)._make(jax_to_numpy(v) for v in value)
+    else:
+        return type(value)(jax_to_numpy(v) for v in value)
 
 
 class JaxToNumpy(

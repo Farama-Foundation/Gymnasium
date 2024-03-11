@@ -21,7 +21,7 @@ For more Assault variants with different observation and action spaces, see the 
 
 ## Description
 
-You control a vehicle that can move sideways. A big mother ship circles overhead and continually deploys smaller drones.You must destroy these enemies and dodge their attacks.
+You control a vehicle that can move sideways. A big mother ship circles overhead and continually deploys smaller drones. You must destroy these enemies and dodge their attacks.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=827)
 
@@ -46,6 +46,7 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 - `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
 See variants section for the type of observation used by each environment id by default.
+
 
 
 ## Variants

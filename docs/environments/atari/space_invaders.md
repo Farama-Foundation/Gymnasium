@@ -46,10 +46,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You gain points for destroying space invaders. The invaders in the back rows are worth more points.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=460).
+## Rewards
+You gain points for destroying space invaders. The invaders in the back rows are worth more points. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=460).
 
 ## Variants
 

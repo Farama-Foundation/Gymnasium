@@ -17,6 +17,7 @@ from gymnasium.spaces import (
     Graph,
     MultiBinary,
     MultiDiscrete,
+    OneOf,
     Sequence,
     Space,
     Text,
@@ -93,6 +94,11 @@ def _create_text_shared_memory(space: Text, n: int = 1, ctx=mp):
     return ctx.Array(np.dtype(np.int32).char, n * space.max_length)
 
 
+@create_shared_memory.register(OneOf)
+def _create_oneof_shared_memory(space: OneOf, n: int = 1, ctx=mp):
+    return (ctx.Array(np.int32, n),) + _create_tuple_shared_memory(space)
+
+
 @create_shared_memory.register(Graph)
 @create_shared_memory.register(Sequence)
 def _create_dynamic_shared_memory(space: Graph | Sequence, n: int = 1, ctx=mp):
@@ -148,24 +154,31 @@ def _read_base_from_shared_memory(
 
 @read_from_shared_memory.register(Tuple)
 def _read_tuple_from_shared_memory(space: Tuple, shared_memory, n: int = 1):
-    return tuple(
+    subspace_samples = tuple(
         read_from_shared_memory(subspace, memory, n=n)
         for (memory, subspace) in zip(shared_memory, space.spaces)
     )
+    return tuple(zip(*subspace_samples))
 
 
 @read_from_shared_memory.register(Dict)
 def _read_dict_from_shared_memory(space: Dict, shared_memory, n: int = 1):
-    return OrderedDict(
+    subspace_samples = OrderedDict(
         [
             (key, read_from_shared_memory(subspace, shared_memory[key], n=n))
             for (key, subspace) in space.spaces.items()
         ]
     )
+    return tuple(
+        OrderedDict({key: subspace_samples[key][i] for key in space.keys()})
+        for i in range(n)
+    )
 
 
 @read_from_shared_memory.register(Text)
-def _read_text_from_shared_memory(space: Text, shared_memory, n: int = 1) -> tuple[str]:
+def _read_text_from_shared_memory(
+    space: Text, shared_memory, n: int = 1
+) -> tuple[str, ...]:
     data = np.frombuffer(shared_memory.get_obj(), dtype=np.int32).reshape(
         (n, space.max_length)
     )
@@ -179,6 +192,21 @@ def _read_text_from_shared_memory(space: Text, shared_memory, n: int = 1) -> tup
             ]
         )
         for values in data
+    )
+
+
+@read_from_shared_memory.register(OneOf)
+def _read_one_of_from_shared_memory(
+    space: OneOf, shared_memory, n: int = 1
+) -> tuple[Any, ...]:
+    sample_indexes = np.frombuffer(shared_memory[0].get_obj(), dtype=space.dtype)
+    subspace_samples = tuple(
+        read_from_shared_memory(subspace, memory, n=n)
+        for (memory, subspace) in zip(shared_memory[1:], space.spaces)
+    )
+    return tuple(
+        (index, sample[index])
+        for index, sample in zip(sample_indexes, subspace_samples)
     )
 
 
@@ -253,3 +281,14 @@ def _write_text_to_shared_memory(space: Text, index: int, values: str, shared_me
         destination[index * size : (index + 1) * size],
         flatten(space, values),
     )
+
+
+@write_to_shared_memory.register(OneOf)
+def _write_oneof_to_shared_memory(
+    space: OneOf, index: int, values: tuple[Any, ...], shared_memory
+):
+    destination = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int32)
+    np.copyto(destination[index : index + 1], values[0])
+
+    for value, memory, subspace in zip(values[1], shared_memory[1:], space.spaces):
+        write_to_shared_memory(subspace, index, value, memory)

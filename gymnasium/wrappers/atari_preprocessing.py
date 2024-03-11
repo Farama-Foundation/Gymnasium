@@ -1,7 +1,12 @@
 """Implementation of Atari 2600 Preprocessing following the guidelines of Machado et al., 2018."""
+from __future__ import annotations
+
+from typing import Any, SupportsFloat
+
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.core import WrapperActType, WrapperObsType
 from gymnasium.spaces import Box
 
 
@@ -91,16 +96,10 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         assert frame_skip > 0
         assert screen_size > 0
         assert noop_max >= 0
-        if frame_skip > 1:
-            if (
-                env.spec is not None
-                and "NoFrameskip" not in env.spec.id
-                and getattr(env.unwrapped, "_frameskip", None) != 1
-            ):
-                raise ValueError(
-                    "Disable frame-skipping in the original env. Otherwise, more than one "
-                    "frame-skip will happen as through this wrapper"
-                )
+        if frame_skip > 1 and getattr(env.unwrapped, "_frameskip", None) != 1:
+            raise ValueError(
+                "Disable frame-skipping in the original env. Otherwise, more than one frame-skip will happen as through this wrapper"
+            )
         self.noop_max = noop_max
         assert env.unwrapped.get_action_meanings()[0] == "NOOP"
 
@@ -142,7 +141,9 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         """Make ale as a class property to avoid serialization error."""
         return self.env.unwrapped.ale
 
-    def step(self, action):
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Applies the preprocessing for an :meth:`env.step`."""
         total_reward, terminated, truncated, info = 0.0, False, False, {}
 
@@ -171,10 +172,12 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
                     self.ale.getScreenRGB(self.obs_buffer[0])
         return self._get_obs(), total_reward, terminated, truncated, info
 
-    def reset(self, **kwargs):
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Resets the environment using preprocessing."""
         # NoopReset
-        _, reset_info = self.env.reset(**kwargs)
+        _, reset_info = self.env.reset(seed=seed, options=options)
 
         noops = (
             self.env.unwrapped.np_random.integers(1, self.noop_max + 1)
@@ -185,7 +188,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
             _, _, terminated, truncated, step_info = self.env.step(0)
             reset_info.update(step_info)
             if terminated or truncated:
-                _, reset_info = self.env.reset(**kwargs)
+                _, reset_info = self.env.reset(seed=seed, options=options)
 
         self.lives = self.ale.lives()
         if self.grayscale_obs:

@@ -1,4 +1,5 @@
 """Test suite for NumPyToTorch wrapper."""
+from typing import NamedTuple
 
 import numpy as np
 import pytest
@@ -14,6 +15,11 @@ from gymnasium.wrappers.numpy_to_torch import (  # noqa: E402
     torch_to_numpy,
 )
 from tests.testing_env import GenericTestEnv  # noqa: E402
+
+
+class ExampleNamedTuple(NamedTuple):
+    a: np.ndarray
+    b: np.ndarray
 
 
 @pytest.mark.parametrize(
@@ -55,13 +61,21 @@ from tests.testing_env import GenericTestEnv  # noqa: E402
                 "b": {"c": np.array(5, dtype=np.int64)},
             },
         ),
+        (
+            ExampleNamedTuple(
+                a=np.array([1, 2], dtype=np.int32),
+                b=np.array([1.0, 2.0], dtype=np.float32),
+            ),
+            ExampleNamedTuple(
+                a=np.array([1, 2], dtype=np.int32),
+                b=np.array([1.0, 2.0], dtype=np.float32),
+            ),
+        ),
     ],
 )
 def test_roundtripping(value, expected_value):
     """We test numpy -> torch -> numpy as this is direction in the NumpyToTorch wrapper."""
-    torch_value = numpy_to_torch(value)
-    roundtripped_value = torch_to_numpy(torch_value)
-    # roundtripped_value = torch_to_numpy(numpy_to_torch(value))
+    roundtripped_value = torch_to_numpy(numpy_to_torch(value))
     assert data_equivalence(roundtripped_value, expected_value)
 
 

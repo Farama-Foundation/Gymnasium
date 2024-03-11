@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any, SupportsFloat
 
 import gymnasium as gym
 from gymnasium import logger
-from gymnasium.core import ActType, ObsType, RenderFrame
+from gymnasium.core import ActType, ObsType, RenderFrame, WrapperObsType
 from gymnasium.error import ResetNeeded
 from gymnasium.utils.passive_env_checker import (
     check_action_space,
@@ -196,6 +196,15 @@ class Autoreset(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
+        self.autoreset = False
+
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
+        """Resets the environment and sets autoreset to False preventing."""
+        self.autoreset = False
+        return super().reset(seed=seed, options=options)
+
     def step(
         self, action: ActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
@@ -207,24 +216,13 @@ class Autoreset(
         Returns:
             The autoreset environment :meth:`step`
         """
-        obs, reward, terminated, truncated, info = self.env.step(action)
+        if self.autoreset:
+            obs, info = self.env.reset()
+            reward, terminated, truncated = 0.0, False, False
+        else:
+            obs, reward, terminated, truncated, info = self.env.step(action)
 
-        if terminated or truncated:
-            new_obs, new_info = self.env.reset()
-
-            assert (
-                "final_observation" not in new_info
-            ), f'new info dict already contains "final_observation", info keys: {new_info.keys()}'
-            assert (
-                "final_info" not in new_info
-            ), f'new info dict already contains "final_observation", info keys: {new_info.keys()}'
-
-            new_info["final_observation"] = obs
-            new_info["final_info"] = info
-
-            obs = new_obs
-            info = new_info
-
+        self.autoreset = terminated or truncated
         return obs, reward, terminated, truncated, info
 
 
@@ -256,13 +254,28 @@ class PassiveEnvChecker(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
-        assert hasattr(
-            env, "action_space"
-        ), "The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
+        if not isinstance(env, gym.Env):
+            if str(env.__class__.__base__) == "<class 'gym.core.Env'>":
+                raise TypeError(
+                    "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
+                    "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+                )
+            else:
+                raise TypeError(
+                    f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
+                    "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+                )
+
+        if not hasattr(env, "action_space"):
+            raise AttributeError(
+                "The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/"
+            )
         check_action_space(env.action_space)
-        assert hasattr(
-            env, "observation_space"
-        ), "The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
+
+        if not hasattr(env, "observation_space"):
+            raise AttributeError(
+                "The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/"
+            )
         check_observation_space(env.observation_space)
 
         self.checked_reset: bool = False
@@ -464,20 +477,20 @@ class RecordEpisodeStatistics(
 
     Change logs:
      * v0.15.4 - Initially added
-     * v1.0.0 - Removed vector environment support for `wrappers.vector.RecordEpisodeStatistics` and add attribute ``time_queue``
+     * v1.0.0 - Removed vector environment support (see :class:`gymnasium.wrappers.vector.RecordEpisodeStatistics`) and add attribute ``time_queue``
     """
 
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
-        buffer_length: int | None = 100,
+        buffer_length: int = 100,
         stats_key: str = "episode",
     ):
         """This wrapper will keep track of cumulative rewards and episode lengths.
 
         Args:
             env (Env): The environment to apply the wrapper
-            buffer_length: The size of the buffers :attr:`return_queue` and :attr:`length_queue`
+            buffer_length: The size of the buffers :attr:`return_queue`, :attr:`length_queue` and :attr:`time_queue`
             stats_key: The info key for the episode statistics
         """
         gym.utils.RecordConstructorArgs.__init__(self)
@@ -520,6 +533,7 @@ class RecordEpisodeStatistics(
             self.length_queue.append(self.episode_lengths)
 
             self.episode_count += 1
+            self.episode_start_time = time.perf_counter()
 
         return obs, reward, terminated, truncated, info
 

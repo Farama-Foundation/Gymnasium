@@ -33,28 +33,32 @@ def test_passive_checker_wrapper_warnings(env):
 
 
 @pytest.mark.parametrize(
-    "env, message",
+    "env, error_type, message",
     [
         (
             GenericTestEnv(action_space=None),
-            "The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/",
+            AttributeError,
+            "The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/",
         ),
         (
             GenericTestEnv(action_space="error"),
+            TypeError,
             "action space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ),
         (
             GenericTestEnv(observation_space=None),
-            "The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/",
+            AttributeError,
+            "The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/",
         ),
         (
             GenericTestEnv(observation_space="error"),
+            TypeError,
             "observation space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ),
     ],
 )
-def test_initialise_failures(env, message):
-    with pytest.raises(AssertionError, match=f"^{re.escape(message)}$"):
+def test_initialise_failures(env, error_type, message):
+    with pytest.raises(error_type, match=f"^{re.escape(message)}$"):
         PassiveEnvChecker(env)
 
     env.close()

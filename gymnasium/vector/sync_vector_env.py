@@ -98,6 +98,18 @@ class SyncVectorEnv(VectorEnv):
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
 
+        self._autoreset_envs = np.zeros((self.num_envs,), dtype=np.bool_)
+
+    @property
+    def np_random_seed(self) -> tuple[int, ...]:
+        """Returns the seeds of the wrapped envs."""
+        return self.get_attr("np_random_seed")
+
+    @property
+    def np_random(self) -> tuple[np.random.Generator, ...]:
+        """Returns the numpy random number generators of the wrapped envs."""
+        return self.get_attr("np_random")
+
     def reset(
         self,
         *,
@@ -120,7 +132,9 @@ class SyncVectorEnv(VectorEnv):
             seed = [None for _ in range(self.num_envs)]
         elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert len(seed) == self.num_envs
+        assert (
+            len(seed) == self.num_envs
+        ), f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
 
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
@@ -150,22 +164,21 @@ class SyncVectorEnv(VectorEnv):
         actions = iterate(self.action_space, actions)
 
         observations, infos = [], {}
-        for i, (env, action) in enumerate(zip(self.envs, actions)):
-            (
-                env_obs,
-                self._rewards[i],
-                self._terminations[i],
-                self._truncations[i],
-                env_info,
-            ) = env.step(action)
+        for i, action in enumerate(actions):
+            if self._autoreset_envs[i]:
+                env_obs, env_info = self.envs[i].reset()
 
-            # If sub-environments terminates or truncates then save the obs and info to the batched info
-            if self._terminations[i] or self._truncations[i]:
-                old_observation, old_info = env_obs, env_info
-                env_obs, env_info = env.reset()
-
-                env_info["final_observation"] = old_observation
-                env_info["final_info"] = old_info
+                self._rewards[i] = 0.0
+                self._terminations[i] = False
+                self._truncations[i] = False
+            else:
+                (
+                    env_obs,
+                    self._rewards[i],
+                    self._terminations[i],
+                    self._truncations[i],
+                    env_info,
+                ) = self.envs[i].step(action)
 
             observations.append(env_obs)
             infos = self._add_info(infos, env_info, i)
@@ -174,6 +187,7 @@ class SyncVectorEnv(VectorEnv):
         self._observations = concatenate(
             self.single_observation_space, observations, self._observations
         )
+        self._autoreset_envs = np.logical_or(self._terminations, self._truncations)
 
         return (
             deepcopy(self._observations) if self.copy else self._observations,
@@ -209,7 +223,7 @@ class SyncVectorEnv(VectorEnv):
 
         return tuple(results)
 
-    def get_attr(self, name: str) -> Any:
+    def get_attr(self, name: str) -> tuple[Any, ...]:
         """Get a property from each parallel environment.
 
         Args:

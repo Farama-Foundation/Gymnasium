@@ -42,10 +42,16 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
       ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
 
-    .. seealso:: For modifying or extending environments use the :py:class:`gymnasium.Wrapper` class
+    .. seealso:: For modifying or extending environments use the :class:`gymnasium.Wrapper` class
 
     Note:
         To get reproducible sampling of actions, a seed can be set with ``env.action_space.seed(123)``.
+
+    Note:
+        For strict type checking (e.g., mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.
+        The ``ObsType`` and ``ActType`` are the expected types of the observations and actions used in :meth:`reset` and :meth:`step`.
+        The environment's :attr:`observation_space` and :attr:`action_space` should have type ``Space[ObsType]`` and ``Space[ActType]``,
+        see a space's implementation to find its parameterized type.
     """
 
     # Set this in SOME subclasses
@@ -60,6 +66,8 @@ class Env(Generic[ObsType, ActType]):
 
     # Created
     _np_random: np.random.Generator | None = None
+    # will be set to the "invalid" value -1 if the seed of the currently set rng is unknown
+    _np_random_seed: int | None = None
 
     def step(
         self, action: ActType
@@ -84,7 +92,7 @@ class Env(Generic[ObsType, ActType]):
             reward (SupportsFloat): The reward as a result of taking the action.
             terminated (bool): Whether the agent reaches the terminal state (as defined under the MDP of the task)
                 which can be positive or negative. An example is reaching the goal state or moving into the lava from
-                the Sutton and Barton, Gridworld. If true, the user needs to call :meth:`reset`.
+                the Sutton and Barto Gridworld. If true, the user needs to call :meth:`reset`.
             truncated (bool): Whether the truncation condition outside the scope of the MDP is satisfied.
                 Typically, this is a timelimit, but could also be used to indicate an agent physically going out of bounds.
                 Can be used to end the episode prematurely before a terminal state is reached.
@@ -124,10 +132,12 @@ class Env(Generic[ObsType, ActType]):
             The ``return_info`` parameter was removed and now info is expected to be returned.
 
         Args:
-            seed (optional int): The seed that is used to initialize the environment's PRNG (`np_random`).
+            seed (optional int): The seed that is used to initialize the environment's PRNG (`np_random`) and
+                the read-only attribute `np_random_seed`.
                 If the environment does not already have a PRNG and ``seed=None`` (the default option) is passed,
                 a seed will be chosen from some source of entropy (e.g. timestamp or /dev/urandom).
-                However, if the environment already has a PRNG and ``seed=None`` is passed, the PRNG will *not* be reset.
+                However, if the environment already has a PRNG and ``seed=None`` is passed, the PRNG will *not* be reset
+                and the env's :attr:`np_random_seed` will *not* be altered.
                 If you pass an integer, the PRNG will be reset even if it already exists.
                 Usually, you want to pass an integer *right after the environment has been initialized and then never again*.
                 Please refer to the minimal example above to see this paradigm in action.
@@ -142,7 +152,7 @@ class Env(Generic[ObsType, ActType]):
         """
         # Initialize the RNG if the seed is manually passed
         if seed is not None:
-            self._np_random, seed = seeding.np_random(seed)
+            self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Compute the render frames as specified by :attr:`render_mode` during the initialization of the environment.
@@ -196,6 +206,20 @@ class Env(Generic[ObsType, ActType]):
         return self
 
     @property
+    def np_random_seed(self) -> int:
+        """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
+
+        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
+        the seed will take the value -1.
+
+        Returns:
+            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
+        """
+        if self._np_random_seed is None:
+            self._np_random, self._np_random_seed = seeding.np_random()
+        return self._np_random_seed
+
+    @property
     def np_random(self) -> np.random.Generator:
         """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
 
@@ -203,12 +227,20 @@ class Env(Generic[ObsType, ActType]):
             Instances of `np.random.Generator`
         """
         if self._np_random is None:
-            self._np_random, _ = seeding.np_random()
+            self._np_random, self._np_random_seed = seeding.np_random()
         return self._np_random
 
     @np_random.setter
     def np_random(self, value: np.random.Generator):
+        """Sets the environment's internal :attr:`_np_random` with the user-provided Generator.
+
+        Since it is generally not possible to extract a seed from an instance of a random number generator,
+        this will also set the :attr:`_np_random_seed` to `-1`, which is not valid as input for the creation
+        of a numpy rng.
+        """
         self._np_random = value
+        # Setting a numpy rng with -1 will cause a ValueError
+        self._np_random_seed = -1
 
     def __str__(self):
         """Returns a string of the environment with :attr:`spec` id's if :attr:`spec.
@@ -296,6 +328,11 @@ class Wrapper(
     def close(self):
         """Closes the wrapper and :attr:`env`."""
         return self.env.close()
+
+    @property
+    def np_random_seed(self) -> int | None:
+        """Returns the base enviroment's :attr:`np_random_seed`."""
+        return self.env.np_random_seed
 
     @property
     def unwrapped(self) -> Env[ObsType, ActType]:
@@ -473,7 +510,11 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
     """
 
     def __init__(self, env: Env[ObsType, ActType]):
-        """Constructor for the observation wrapper."""
+        """Constructor for the observation wrapper.
+
+        Args:
+            env: Environment to be wrapped.
+        """
         Wrapper.__init__(self, env)
 
     def reset(
@@ -513,7 +554,11 @@ class RewardWrapper(Wrapper[ObsType, ActType, ObsType, ActType]):
     """
 
     def __init__(self, env: Env[ObsType, ActType]):
-        """Constructor for the Reward wrapper."""
+        """Constructor for the Reward wrapper.
+
+        Args:
+            env: Environment to be wrapped.
+        """
         Wrapper.__init__(self, env)
 
     def step(
@@ -536,20 +581,25 @@ class RewardWrapper(Wrapper[ObsType, ActType, ObsType, ActType]):
 
 
 class ActionWrapper(Wrapper[ObsType, WrapperActType, ObsType, ActType]):
-    """Superclass of wrappers that can modify the action before :meth:`env.step`.
+    """Superclass of wrappers that can modify the action before :meth:`step`.
 
     If you would like to apply a function to the action before passing it to the base environment,
     you can simply inherit from :class:`ActionWrapper` and overwrite the method :meth:`action` to implement
     that transformation. The transformation defined in that method must take values in the base environment’s
     action space. However, its domain might differ from the original action space.
-    In that case, you need to specify the new action space of the wrapper by setting :attr:`self.action_space` in
+    In that case, you need to specify the new action space of the wrapper by setting :attr:`action_space` in
     the :meth:`__init__` method of your wrapper.
 
-    Among others, Gymnasium provides the action wrappers :class:`ClipAction` and :class:`RescaleAction` for clipping and rescaling actions.
+    Among others, Gymnasium provides the action wrappers :class:`gymnasium.wrappers.ClipAction` and
+    :class:`gymnasium.wrappers.RescaleAction` for clipping and rescaling actions.
     """
 
     def __init__(self, env: Env[ObsType, ActType]):
-        """Constructor for the action wrapper."""
+        """Constructor for the action wrapper.
+
+        Args:
+            env: Environment to be wrapped.
+        """
         Wrapper.__init__(self, env)
 
     def step(
@@ -559,7 +609,7 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType, ObsType, ActType]):
         return self.env.step(self.action(action))
 
     def action(self, action: WrapperActType) -> ActType:
-        """Returns a modified action before :meth:`env.step` is called.
+        """Returns a modified action before :meth:`step` is called.
 
         Args:
             action: The original :meth:`step` actions

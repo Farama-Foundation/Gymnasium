@@ -16,6 +16,7 @@ import re
 import sys
 
 import sphinx_gallery.gen_rst
+from furo.gen_tutorials import generate_tutorials
 
 
 # Path setup for building from source tree
@@ -129,6 +130,7 @@ sphinx_gallery_conf = {
     "ignore_pattern": r"__init__\.py",
     "examples_dirs": "./tutorials",
     "gallery_dirs": "./tutorials",
+    "copyfile_regex": r"./tutorials/.*\.md",
     "show_signature": False,
     "show_memory": False,
     "min_reported_time": float("inf"),
@@ -137,6 +139,12 @@ sphinx_gallery_conf = {
         os.path.dirname(__file__), "_static/img/gymnasium-github.png"
     ),
 }
+
+# All tutorials in the tutorials directory will be generated automatically
+# by sphinx-gallery.
+# However, we also want to generate some tutorials without the gallery
+# and to a more specific location so we use this custom function.
+generate_tutorials("introduction/*.py", "./introduction")
 
 # -- Generate Changelog -------------------------------------------------
 

@@ -1,4 +1,5 @@
 """Test suite for TorchToJax wrapper."""
+from typing import NamedTuple
 
 import numpy as np
 import pytest
@@ -18,7 +19,7 @@ from tests.testing_env import GenericTestEnv  # noqa: E402
 
 def torch_data_equivalence(data_1, data_2) -> bool:
     """Return if two variables are equivalent that might contain ``torch.Tensor``."""
-    if type(data_1) == type(data_2):
+    if type(data_1) is type(data_2):
         if isinstance(data_1, dict):
             return data_1.keys() == data_2.keys() and all(
                 torch_data_equivalence(data_1[k], data_2[k]) for k in data_1.keys()
@@ -37,6 +38,11 @@ def torch_data_equivalence(data_1, data_2) -> bool:
         return False
 
 
+class ExampleNamedTuple(NamedTuple):
+    a: torch.Tensor
+    b: torch.Tensor
+
+
 @pytest.mark.parametrize(
     "value, expected_value",
     [
@@ -52,19 +58,47 @@ def torch_data_equivalence(data_1, data_2) -> bool:
             {"a": torch.tensor(6.0), "b": torch.tensor(7)},
         ),
         (torch.tensor(1.0), torch.tensor(1.0)),
+        (torch.tensor(1.0), torch.tensor(1.0)),
         (torch.tensor([1, 2]), torch.tensor([1, 2])),
-        (torch.tensor([[1.0], [2.0]]), torch.tensor([[1.0], [2.0]])),
         (
-            {"a": (1, torch.tensor(2.0), torch.tensor([3, 4])), "b": {"c": 5}},
+            torch.tensor([[1.0], [2.0]]),
+            torch.tensor([[1.0], [2.0]]),
+        ),
+        (
             {
-                "a": (torch.tensor(1), torch.tensor(2.0), torch.tensor([3, 4])),
+                "a": (
+                    1,
+                    torch.tensor(2.0),
+                    torch.tensor([3, 4]),
+                ),
+                "b": {"c": 5},
+            },
+            {
+                "a": (
+                    torch.tensor(1),
+                    torch.tensor(2.0),
+                    torch.tensor([3, 4]),
+                ),
                 "b": {"c": torch.tensor(5)},
             },
+        ),
+        (
+            ExampleNamedTuple(
+                a=torch.tensor([1, 2]),
+                b=torch.tensor([1.0, 2.0]),
+            ),
+            ExampleNamedTuple(
+                a=torch.tensor([1, 2]),
+                b=torch.tensor([1.0, 2.0]),
+            ),
         ),
     ],
 )
 def test_roundtripping(value, expected_value):
     """We test numpy -> jax -> numpy as this is direction in the NumpyToJax wrapper."""
+    print(f"{value=}")
+    print(f"{torch_to_jax(value)=}")
+    print(f"{jax_to_torch(torch_to_jax(value))=}")
     roundtripped_value = jax_to_torch(torch_to_jax(value))
     assert torch_data_equivalence(roundtripped_value, expected_value)
 

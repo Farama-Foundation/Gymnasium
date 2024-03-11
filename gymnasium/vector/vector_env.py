@@ -104,17 +104,18 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     num_envs: int
 
     _np_random: np.random.Generator | None = None
+    _np_random_seed: int | None = None
 
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
-            seed: The environment reset seeds
+            seed: The environment reset seed
             options: If to return the options
 
         Returns:
@@ -133,7 +134,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             {}
         """
         if seed is not None:
-            self._np_random, seed = seeding.np_random(seed)
+            self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def step(
         self, actions: ActType
@@ -211,6 +212,20 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         pass
 
     @property
+    def np_random_seed(self) -> int | None:
+        """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
+
+        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
+        the seed will take the value -1.
+
+        Returns:
+            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
+        """
+        if self._np_random_seed is None:
+            self._np_random, self._np_random_seed = seeding.np_random()
+        return self._np_random_seed
+
+    @property
     def np_random(self) -> np.random.Generator:
         """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
 
@@ -218,12 +233,13 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             Instances of `np.random.Generator`
         """
         if self._np_random is None:
-            self._np_random, seed = seeding.np_random()
+            self._np_random, self._np_random_seed = seeding.np_random()
         return self._np_random
 
     @np_random.setter
     def np_random(self, value: np.random.Generator):
         self._np_random = value
+        self._np_random_seed = -1
 
     @property
     def unwrapped(self):
@@ -231,7 +247,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         return self
 
     def _add_info(
-        self, infos: dict[str, Any], info: dict[str, Any], env_num: int
+        self, vector_infos: dict[str, Any], env_info: dict[str, Any], env_num: int
     ) -> dict[str, Any]:
         """Add env info to the info dictionary of the vectorized environment.
 
@@ -241,48 +257,51 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         whether or not the i-indexed environment has this `info`.
 
         Args:
-            infos (dict): the infos of the vectorized environment
-            info (dict): the info coming from the single environment
+            vector_infos (dict): the infos of the vectorized environment
+            env_info (dict): the info coming from the single environment
             env_num (int): the index of the single environment
 
         Returns:
             infos (dict): the (updated) infos of the vectorized environment
-
         """
-        for k in info.keys():
-            if k not in infos:
-                info_array, array_mask = self._init_info_arrays(type(info[k]))
+        for key, value in env_info.items():
+            # If value is a dictionary, then we apply the `_add_info` recursively.
+            if isinstance(value, dict):
+                array = self._add_info(vector_infos.get(key, {}), value, env_num)
+            # Otherwise, we are a base case to group the data
             else:
-                info_array, array_mask = infos[k], infos[f"_{k}"]
+                # If the key doesn't exist in the vector infos, then we can create an array of that batch type
+                if key not in vector_infos:
+                    if type(value) in [int, float, bool] or issubclass(
+                        type(value), np.number
+                    ):
+                        array = np.zeros(self.num_envs, dtype=type(value))
+                    elif isinstance(value, np.ndarray):
+                        # We assume that all instances of the np.array info are of the same shape
+                        array = np.zeros(
+                            (self.num_envs, *value.shape), dtype=value.dtype
+                        )
+                    else:
+                        # For unknown objects, we use a Numpy object array
+                        array = np.full(self.num_envs, fill_value=None, dtype=object)
+                # Otherwise, just use the array that already exists
+                else:
+                    array = vector_infos[key]
 
-            info_array[env_num], array_mask[env_num] = info[k], True
-            infos[k], infos[f"_{k}"] = info_array, array_mask
-        return infos
+                # Assign the data in the `env_num` position
+                #   We only want to run this for the base-case data (not recursive data forcing the ugly function structure)
+                array[env_num] = value
 
-    def _init_info_arrays(self, dtype: type) -> tuple[np.ndarray, np.ndarray]:
-        """Initialize the info array.
+            # Get the array mask and if it doesn't already exist then create a zero bool array
+            array_mask = vector_infos.get(
+                f"_{key}", np.zeros(self.num_envs, dtype=np.bool_)
+            )
+            array_mask[env_num] = True
 
-        Initialize the info array. If the dtype is numeric
-        the info array will have the same dtype, otherwise
-        will be an array of `None`. Also, a boolean array
-        of the same length is returned. It will be used for
-        assessing which environment has info data.
+            # Update the vector info with the updated data and mask information
+            vector_infos[key], vector_infos[f"_{key}"] = array, array_mask
 
-        Args:
-            dtype (type): data type of the info coming from the env.
-
-        Returns:
-            array (np.ndarray): the initialized info array.
-            array_mask (np.ndarray): the initialized boolean array.
-
-        """
-        if dtype in [int, float, bool] or issubclass(dtype, np.number):
-            array = np.zeros(self.num_envs, dtype=dtype)
-        else:
-            array = np.zeros(self.num_envs, dtype=object)
-            array[:] = None
-        array_mask = np.zeros(self.num_envs, dtype=bool)
-        return array, array_mask
+        return vector_infos
 
     def __del__(self):
         """Closes the vector environment."""
@@ -427,6 +446,19 @@ class VectorWrapper(VectorEnv):
         """Returns the `render_mode` from the base environment."""
         return self.env.render_mode
 
+    @property
+    def np_random(self) -> np.random.Generator:
+        """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
+
+        Returns:
+            Instances of `np.random.Generator`
+        """
+        return self.env.np_random
+
+    @np_random.setter
+    def np_random(self, value: np.random.Generator):
+        self.env.np_random = value
+
 
 class VectorObservationWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the observation.
@@ -441,51 +473,32 @@ class VectorObservationWrapper(VectorWrapper):
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
-        obs, info = self.env.reset(seed=seed, options=options)
-        return self.vector_observation(obs), info
+        observations, infos = self.env.reset(seed=seed, options=options)
+        return self.observations(observations), infos
 
     def step(
         self, actions: ActType
     ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""
-        observation, reward, termination, truncation, info = self.env.step(actions)
+        observations, rewards, terminations, truncations, infos = self.env.step(actions)
         return (
-            self.vector_observation(observation),
-            reward,
-            termination,
-            truncation,
-            self.update_final_obs(info),
+            self.observations(observations),
+            rewards,
+            terminations,
+            truncations,
+            infos,
         )
 
-    def vector_observation(self, observation: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Defines the vector observation transformation.
 
         Args:
-            observation: A vector observation from the environment
+            observations: A vector observation from the environment
 
         Returns:
             the transformed observation
         """
         raise NotImplementedError
-
-    def single_observation(self, observation: ObsType) -> ObsType:
-        """Defines the single observation transformation.
-
-        Args:
-            observation: A single observation from the environment
-
-        Returns:
-            The transformed observation
-        """
-        raise NotImplementedError
-
-    def update_final_obs(self, info: dict[str, Any]) -> dict[str, Any]:
-        """Updates the `final_obs` in the info using `single_observation`."""
-        if "final_observation" in info:
-            for i, obs in enumerate(info["final_observation"]):
-                if obs is not None:
-                    info["final_observation"][i] = self.single_observation(obs)
-        return info
 
 
 class VectorActionWrapper(VectorWrapper):
@@ -522,14 +535,14 @@ class VectorRewardWrapper(VectorWrapper):
         self, actions: ActType
     ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Steps through the environment returning a reward modified by :meth:`reward`."""
-        observation, reward, termination, truncation, info = self.env.step(actions)
-        return observation, self.rewards(reward), termination, truncation, info
+        observations, rewards, terminations, truncations, infos = self.env.step(actions)
+        return observations, self.rewards(rewards), terminations, truncations, infos
 
-    def rewards(self, reward: ArrayType) -> ArrayType:
+    def rewards(self, rewards: ArrayType) -> ArrayType:
         """Transform the reward before returning it.
 
         Args:
-            reward (array): the reward to transform
+            rewards (array): the reward to transform
 
         Returns:
             array: the transformed reward

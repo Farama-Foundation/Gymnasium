@@ -65,7 +65,7 @@ def assert_equals(a, b, prefix=None):
         b: second data structure
         prefix: prefix for failed assertion message for types and dicts
     """
-    assert type(a) == type(b), f"{prefix}Differing types: {a} and {b}"
+    assert type(a) is type(b), f"{prefix}Differing types: {a} and {b}"
     if isinstance(a, dict):
         assert list(a.keys()) == list(b.keys()), f"{prefix}Key sets differ: {a} and {b}"
 

@@ -47,9 +47,7 @@ If you'd like to implement your own custom wrapper, check out `the corresponding
 """
 # pyright: reportUnsupportedDunderAll=false
 import importlib
-import re
 
-from gymnasium.error import DeprecatedWrapper
 from gymnasium.wrappers import vector
 from gymnasium.wrappers.atari_preprocessing import AtariPreprocessing
 from gymnasium.wrappers.common import (
@@ -75,11 +73,11 @@ from gymnasium.wrappers.transform_action import (
     TransformAction,
 )
 from gymnasium.wrappers.transform_observation import (
+    AddRenderObservation,
     DtypeObservation,
     FilterObservation,
     FlattenObservation,
     GrayscaleObservation,
-    RenderObservation,
     RescaleObservation,
     ReshapeObservation,
     ResizeObservation,
@@ -101,7 +99,7 @@ __all__ = [
     "TransformObservation",
     "MaxAndSkipObservation",
     "NormalizeObservation",
-    "RenderObservation",
+    "AddRenderObservation",
     "ResizeObservation",
     "ReshapeObservation",
     "RescaleObservation",
@@ -144,7 +142,7 @@ _wrapper_to_class = {
 _renamed_wrapper = {
     "AutoResetWrapper": "Autoreset",
     "FrameStack": "FrameStackObservation",
-    "PixelObservationWrapper": "RenderObservation",
+    "PixelObservationWrapper": "AddRenderObservation",
     "VectorListInfo": "vector.DictInfoToList",
 }
 

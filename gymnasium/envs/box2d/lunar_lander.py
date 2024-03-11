@@ -93,11 +93,11 @@ class LunarLander(gym.Env, EzPickle):
     can learn to fly and then land on its first attempt.
 
     To see a heuristic landing, run:
-    ```
+    ```shell
     python gymnasium/envs/box2d/lunar_lander.py
     ```
     <!-- To play yourself, run: -->
-    <!-- python examples/agents/keyboard_agent.py LunarLander-v2 -->
+    <!-- python examples/agents/keyboard_agent.py LunarLander-v3 -->
 
     ## Action Space
     There are four discrete actions available:
@@ -145,74 +145,61 @@ class LunarLander(gym.Env, EzPickle):
     > them is destroyed.
 
     ## Arguments
-    To use to the _continuous_ environment, you need to specify the
-    `continuous=True` argument like below:
+
+    Lunar Lander has a large number of arguments
+
     ```python
-    import gymnasium as gym
-    env = gym.make(
-        "LunarLander-v2",
-        continuous: bool = False,
-        gravity: float = -10.0,
-        enable_wind: bool = False,
-        wind_power: float = 15.0,
-        turbulence_power: float = 1.5,
-    )
+    >>> import gymnasium as gym
+    >>> env = gym.make("LunarLander-v3", continuous=False, gravity=-10.0,
+    ...                enable_wind=False, wind_power=15.0, turbulence_power=1.5)
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<LunarLander<LunarLander-v3>>>>>
+
     ```
-    If `continuous=True` is passed, continuous actions (corresponding to the throttle of the engines) will be used and the
-    action space will be `Box(-1, +1, (2,), dtype=np.float32)`.
-    The first coordinate of an action determines the throttle of the main engine, while the second
-    coordinate specifies the throttle of the lateral boosters.
-    Given an action `np.array([main, lateral])`, the main engine will be turned off completely if
-    `main < 0` and the throttle scales affinely from 50% to 100% for `0 <= main <= 1` (in particular, the
-    main engine doesn't work  with less than 50% power).
-    Similarly, if `-0.5 < lateral < 0.5`, the lateral boosters will not fire at all. If `lateral < -0.5`, the left
-    booster will fire, and if `lateral > 0.5`, the right booster will fire. Again, the throttle scales affinely
-    from 50% to 100% between -1 and -0.5 (and 0.5 and 1, respectively).
 
-    `gravity` dictates the gravitational constant, this is bounded to be within 0 and -12.
+     * `continuous` determines if discrete or continuous actions (corresponding to the throttle of the engines) will be used with the
+     action space being `Discrete(4)` or `Box(-1, +1, (2,), dtype=np.float32)` respectively.
+     For continuous actions, the first coordinate of an action determines the throttle of the main engine, while the second
+     coordinate specifies the throttle of the lateral boosters. Given an action `np.array([main, lateral])`, the main
+     engine will be turned off completely if `main < 0` and the throttle scales affinely from 50% to 100% for
+     `0 <= main <= 1` (in particular, the main engine doesn't work  with less than 50% power).
+     Similarly, if `-0.5 < lateral < 0.5`, the lateral boosters will not fire at all. If `lateral < -0.5`, the left
+     booster will fire, and if `lateral > 0.5`, the right booster will fire. Again, the throttle scales affinely
+     from 50% to 100% between -1 and -0.5 (and 0.5 and 1, respectively).
 
-    If `enable_wind=True` is passed, there will be wind effects applied to the lander.
-    The wind is generated using the function `tanh(sin(2 k (t+C)) + sin(pi k (t+C)))`.
-    `k` is set to 0.01.
-    `C` is sampled randomly between -9999 and 9999.
+    * `gravity` dictates the gravitational constant, this is bounded to be within 0 and -12. Default is -10.0
 
-    `wind_power` dictates the maximum magnitude of linear wind applied to the craft. The recommended value for `wind_power` is between 0.0 and 20.0.
-    `turbulence_power` dictates the maximum magnitude of rotational wind applied to the craft. The recommended value for `turbulence_power` is between 0.0 and 2.0.
+    * `enable_wind` determines if there will be wind effects applied to the lander. The wind is generated using
+     the function `tanh(sin(2 k (t+C)) + sin(pi k (t+C)))` where `k` is set to 0.01 and `C` is sampled randomly between -9999 and 9999.
+
+    * `wind_power` dictates the maximum magnitude of linear wind applied to the craft. The recommended value for
+     `wind_power` is between 0.0 and 20.0.
+
+    * `turbulence_power` dictates the maximum magnitude of rotational wind applied to the craft.
+     The recommended value for `turbulence_power` is between 0.0 and 2.0.
 
     ## Version History
+    - v3: Reset wind and turbulence offset (`C`) whenever the environment is reset to ensure statistical independence between consecutive episodes (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/954)).
     - v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters
-    - v1: Legs contact with ground added in state vector; contact with ground
-        give +10 reward points, and -10 if then lose contact; reward
-        renormalized to 200; harder initial random push.
+    - v1: Legs contact with ground added in state vector; contact with ground give +10 reward points,
+          and -10 if then lose contact; reward renormalized to 200; harder initial random push.
     - v0: Initial version
-
 
     ## Notes
 
     There are several unexpected bugs with the implementation of the environment.
 
-    1. The position of the side thursters on the body of the lander changes, depending on the orientation of the lander.
-    This in turn results in an orientation depentant torque being applied to the lander.
+    1. The position of the side thrusters on the body of the lander changes, depending on the orientation of the lander.
+    This in turn results in an orientation dependent torque being applied to the lander.
 
     2. The units of the state are not consistent. I.e.
     * The angular velocity is in units of 0.4 radians per second. In order to convert to radians per second, the value needs to be multiplied by a factor of 2.5.
 
     For the default values of VIEWPORT_W, VIEWPORT_H, SCALE, and FPS, the scale factors equal:
-    'x': 10
-    'y': 6.666
-    'vx': 5
-    'vy': 7.5
-    'angle': 1
-    'angular velocity': 2.5
+    'x': 10, 'y': 6.666, 'vx': 5, 'vy': 7.5, 'angle': 1, 'angular velocity': 2.5
 
     After the correction has been made, the units of the state are as follows:
-    'x': (units)
-    'y': (units)
-    'vx': (units/second)
-    'vy': (units/second)
-    'angle': (radians)
-    'angular velocity': (radians/second)
-
+    'x': (units), 'y': (units), 'vx': (units/second), 'vy': (units/second), 'angle': (radians), 'angular velocity': (radians/second)
 
     <!-- ## References -->
 
@@ -268,8 +255,6 @@ class LunarLander(gym.Env, EzPickle):
         self.turbulence_power = turbulence_power
 
         self.enable_wind = enable_wind
-        self.wind_idx = np.random.randint(-9999, 9999)
-        self.torque_idx = np.random.randint(-9999, 9999)
 
         self.screen: pygame.Surface = None
         self.clock = None
@@ -416,6 +401,10 @@ class LunarLander(gym.Env, EzPickle):
             ),
             True,
         )
+
+        if self.enable_wind:  # Initialize wind pattern based on index
+            self.wind_idx = self.np_random.integers(-9999, 9999)
+            self.torque_idx = self.np_random.integers(-9999, 9999)
 
         # Create Lander Legs
         self.legs = []
@@ -673,6 +662,7 @@ class LunarLander(gym.Env, EzPickle):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return np.array(state, dtype=np.float32), reward, terminated, False, {}
 
     def render(self):
@@ -885,10 +875,10 @@ class LunarLanderContinuous:
             "Error initializing LunarLanderContinuous Environment.\n"
             "Currently, we do not support initializing this mode of environment by calling the class directly.\n"
             "To use this environment, instead create it by specifying the continuous keyword in gym.make, i.e.\n"
-            'gym.make("LunarLander-v2", continuous=True)'
+            'gym.make("LunarLander-v3", continuous=True)'
         )
 
 
 if __name__ == "__main__":
-    env = gym.make("LunarLander-v2", render_mode="rgb_array")
+    env = gym.make("LunarLander-v3", render_mode="rgb_array")
     demo_heuristic_lander(env, render=True)

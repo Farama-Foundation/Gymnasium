@@ -619,9 +619,6 @@ class WindowViewer(BaseRender):
                 bottomleft, "Solver iterations", str(self.data.solver_iter + 1)
             )
         self.add_overlay(
-            bottomleft, "Solver iterations", str(self.data.solver_niter[0] + 1)
-        )
-        self.add_overlay(
             bottomleft, "Step", str(round(self.data.time / self.model.opt.timestep))
         )
         self.add_overlay(bottomleft, "timestep", "%.5f" % self.model.opt.timestep)
@@ -644,6 +641,8 @@ class MujocoRenderer:
         width: Optional[int] = None,
         height: Optional[int] = None,
         max_geom: int = 1000,
+        camera_id: Optional[int] = None,
+        camera_name: Optional[str] = None,
     ):
         """A wrapper for clipping continuous actions within the valid bound.
 
@@ -654,6 +653,8 @@ class MujocoRenderer:
             width: width of the OpenGL rendering context
             height: height of the OpenGL rendering context
             max_geom: maximum number of geometries to render
+            camera_id: The integer camera id from which to render the frame in the MuJoCo simulation
+            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using cameara_id instead and vice versa
         """
         self.model = model
         self.data = data
@@ -664,18 +665,32 @@ class MujocoRenderer:
         self.height = height
         self.max_geom = max_geom
 
+        # set self.camera_id using `camera_id` or `camera_name`
+        if camera_id is not None and camera_name is not None:
+            raise ValueError(
+                "Both `camera_id` and `camera_name` cannot be"
+                " specified at the same time."
+            )
+
+        no_camera_specified = camera_name is None and camera_id is None
+        if no_camera_specified:
+            camera_name = "track"
+
+        if camera_id is None:
+            self.camera_id = mujoco.mj_name2id(
+                self.model,
+                mujoco.mjtObj.mjOBJ_CAMERA,
+                camera_name,
+            )
+
     def render(
         self,
         render_mode: Optional[str],
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
     ):
         """Renders a frame of the simulation in a specific format and camera view.
 
         Args:
             render_mode: The format to render the frame, it can be: "human", "rgb_array", or "depth_array"
-            camera_id: The integer camera id from which to render the frame in the MuJoCo simulation
-            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using cameara_id instead and vice versa
 
         Returns:
             If render_mode is "rgb_array" or "depth_arra" it returns a numpy array in the specified format. "human" render mode does not return anything.
@@ -683,34 +698,12 @@ class MujocoRenderer:
 
         viewer = self._get_viewer(render_mode=render_mode)
 
-        if render_mode in {
-            "rgb_array",
-            "depth_array",
-        }:
-            if camera_id is not None and camera_name is not None:
-                raise ValueError(
-                    "Both `camera_id` and `camera_name` cannot be"
-                    " specified at the same time."
-                )
-
-            no_camera_specified = camera_name is None and camera_id is None
-            if no_camera_specified:
-                camera_name = "track"
-
-            if camera_id is None:
-                camera_id = mujoco.mj_name2id(
-                    self.model,
-                    mujoco.mjtObj.mjOBJ_CAMERA,
-                    camera_name,
-                )
-
-            img = viewer.render(render_mode=render_mode, camera_id=camera_id)
-            return img
-
+        if render_mode in ["rgb_array", "depth_array"]:
+            return viewer.render(render_mode=render_mode, camera_id=self.camera_id)
         elif render_mode == "human":
             return viewer.render()
 
-    def _get_viewer(self, render_mode: str):
+    def _get_viewer(self, render_mode: Optional[str]):
         """Initializes and returns a viewer class depending on the render_mode
         - `WindowViewer` class for "human" render mode
         - `OffScreenViewer` class for "rgb_array" or "depth_array" render mode
