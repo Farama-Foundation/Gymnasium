@@ -90,7 +90,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     | Parameter               | Type       | Default                 | Description                                                                                   |
     |-------------------------|------------|-------------------------|-----------------------------------------------------------------------------------------------|
-    | `sutton_barto_reward`   | **bool**   | `False`                 | If `True` the reward function matches the orignal sutton barto implamentation                 |
+    | `sutton_barto_reward`   | **bool**   | `False`                 | If `True` the reward function matches the original sutton barto implementation                |
 
     ## Vectorized environment
 
@@ -108,7 +108,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     ## Version History
     * v1: `max_time_steps` raised to 500.
-        - In Gymnasium `1.0.0a2` the `sutton_barto_reward` argument was added (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/790)) 
+        - In Gymnasium `1.0.0a2` the `sutton_barto_reward` argument was added (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/790))
     * v0: Initial versions release.
     """
 
