@@ -107,9 +107,8 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     ```
 
     ## Version History
-    * v2: Changed reward function to the original from Barto, Sutton paper (related [GitHub Issue](https://github.com/Farama-Foundation/Gymnasium/issues/790)).
     * v1: `max_time_steps` raised to 500.
-        - In Gymnasium `1.0.0a2` the `sutton_barto_reward` was added (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/790)) 
+        - In Gymnasium `1.0.0a2` the `sutton_barto_reward` argument was added (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/790)) 
     * v0: Initial versions release.
     """
 
