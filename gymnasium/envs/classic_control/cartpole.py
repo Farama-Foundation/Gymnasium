@@ -56,14 +56,13 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
        if the pole angle is not in the range `(-.2095, .2095)` (or **±12°**)
 
     ## Rewards
-    In v2 the reward matches the original reward, `0` for every non-terminating step taken, and `-1` for terminating steps.
-
-    In v1 and v0 the rewards is:
     Since the goal is to keep the pole upright for as long as possible, a reward of `+1` for every step taken,
     including the termination step, is allotted.
 
+    If `sutton_barto_reward=True` then a reward of `0` is awarded for every non-terminating step and `-1` for the terminating step.
+
     ## Reward Threshold
-    The threshold for rewards is 0 for v2, 500 for v1 and 200 for v0.
+    The threshold for rewards is 500 for v1 and 200 for v0.
 
     ## Starting State
     All observations are assigned a uniformly random value in `(-0.05, 0.05)`
@@ -91,7 +90,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     | Parameter               | Type       | Default                 | Description                                                                                   |
     |-------------------------|------------|-------------------------|-----------------------------------------------------------------------------------------------|
-    | `sutton_barto_reward`   | **bool**   | `True`                  | If set to `False` the reward is constantly 1                                                  |
+    | `sutton_barto_reward`   | **bool**   | `False`                 | If `True` the reward function matches the orignal sutton barto implamentation                 |
 
     ## Vectorized environment
 
@@ -110,6 +109,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     ## Version History
     * v2: Changed reward function to the original from Barto, Sutton paper (related [GitHub Issue](https://github.com/Farama-Foundation/Gymnasium/issues/790)).
     * v1: `max_time_steps` raised to 500.
+        - In Gymnasium `1.0.0a2` the `sutton_barto_reward` was added (related [GitHub issue]()) 
     * v0: Initial versions release.
     """
 
