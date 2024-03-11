@@ -10,7 +10,7 @@ import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
-def _short_repr(arr: NDArray[Any]) -> str:
+def array_short_repr(arr: NDArray[Any]) -> str:
     """Create a shortened string representation of a numpy array.
 
     If arr is a multiple of the all-ones vector, return a string representation of the multiplier.
@@ -28,7 +28,7 @@ def _short_repr(arr: NDArray[Any]) -> str:
 
 
 def is_float_integer(var: Any) -> bool:
-    """Checks if a variable is an integer or float."""
+    """Checks if a scalar variable is an integer or float (does not include bool)."""
     return np.issubdtype(type(var), np.integer) or np.issubdtype(type(var), np.floating)
 
 
@@ -80,17 +80,38 @@ class Box(Space[NDArray[Any]]):
             ValueError: If no shape information is provided (shape is None, low is None and high is None) then a
                 value error is raised.
         """
-        assert (
-            dtype is not None
-        ), "Box dtype must be explicitly provided, cannot be None."
+        if dtype is None:
+            raise ValueError("Box dtype must be explicitly provided, cannot be None.")
         self.dtype = np.dtype(dtype)
+
+        if not (
+            np.issubdtype(self.dtype, np.integer)
+            or np.issubdtype(self.dtype, np.floating)
+            or self.dtype == np.bool_  # Support bool dtype
+        ):
+            raise ValueError(
+                f"Invalid Box dtype ({self.dtype}), must be an integer, floating, or bool dtype"
+            )
 
         # determine shape if it isn't provided directly
         if shape is not None:
-            assert all(
-                np.issubdtype(type(dim), np.integer) for dim in shape
-            ), f"Expected all shape elements to be an integer, actual type: {tuple(type(dim) for dim in shape)}"
-            shape = tuple(int(dim) for dim in shape)  # This changes any np types to int
+            if not isinstance(shape, Iterable):
+                raise TypeError(
+                    f"Expected Box shape to be an iterable, actual type={type(shape)}"
+                )
+            elif not all(np.issubdtype(type(dim), np.integer) for dim in shape):
+                raise TypeError(
+                    f"Expected all Box shape elements to be integer, actual type={tuple(type(dim) for dim in shape)}"
+                )
+
+            # Casts the `shape` argument to known tuple[int, ...] (otherwise dim can `np.int64` for example)
+            shape = tuple(int(dim) for dim in shape)
+        elif isinstance(low, np.ndarray) and isinstance(high, np.ndarray):
+            if low.shape != high.shape:
+                raise ValueError(
+                    f"Box low.shape and high.shape don't match, low.shape={low.shape}, high.shape={high.shape}"
+                )
+            shape = low.shape
         elif isinstance(low, np.ndarray):
             shape = low.shape
         elif isinstance(high, np.ndarray):
@@ -99,75 +120,167 @@ class Box(Space[NDArray[Any]]):
             shape = (1,)
         else:
             raise ValueError(
-                f"Box shape is inferred from low and high, expected their types to be np.ndarray, an integer or a float, actual type low: {type(low)}, high: {type(high)}"
+                "Box shape is not specified, therefore inferred from low and high. Expected low and high to be np.ndarray, integer, or float."
+                f"Actual types low={type(low)}, high={type(high)}"
             )
-
-        # Check that all values are within dtype limits
-        if np.issubdtype(self.dtype, np.floating):
-            dtype_min = np.finfo(self.dtype).min
-            dtype_max = np.finfo(self.dtype).max
-        elif np.issubdtype(self.dtype, np.integer):
-            dtype_min = np.iinfo(self.dtype).min
-            dtype_max = np.iinfo(self.dtype).max
-        else:  # don't check casts to bool
-            dtype_min = -np.inf
-            dtype_max = np.inf
-
-        # don't check nan or inf values
-        clean_low = np.nan_to_num(low, nan=np.nan, posinf=np.nan, neginf=np.nan)
-        clean_high = np.nan_to_num(high, nan=np.nan, posinf=np.nan, neginf=np.nan)
-
-        if np.any(clean_low < dtype_min):
-            raise ValueError(
-                f"Some low values are less than the min limit for dtype '{self.dtype}', low={low}, dtype.min={dtype_min}"
-            )
-
-        if np.any(clean_high > dtype_max):
-            raise ValueError(
-                f"Some high values are greater than the max limit for dtype '{self.dtype}', high={high}, dtype.max={dtype_max}"
-            )
-
-        # Capture the boundedness information before replacing np.inf with get_inf
-        _low = np.full(shape, low, dtype=float) if is_float_integer(low) else low
-        self.bounded_below: NDArray[np.bool_] = -np.inf < _low
-
-        _high = np.full(shape, high, dtype=float) if is_float_integer(high) else high
-        self.bounded_above: NDArray[np.bool_] = np.inf > _high
-
-        low = _broadcast(low, self.dtype, shape)
-        high = _broadcast(high, self.dtype, shape)
-
-        assert isinstance(low, np.ndarray)
-        assert (
-            low.shape == shape
-        ), f"low.shape doesn't match provided shape, low.shape: {low.shape}, shape: {shape}"
-        assert isinstance(high, np.ndarray)
-        assert (
-            high.shape == shape
-        ), f"high.shape doesn't match provided shape, high.shape: {high.shape}, shape: {shape}"
-
-        # check that we don't have invalid low or high
-        if np.any(low > high):
-            raise ValueError(
-                f"Some low values are greater than high, low={low}, high={high}"
-            )
-        if np.any(np.isposinf(low)):
-            raise ValueError(f"No low value can be equal to `np.inf`, low={low}")
-        if np.any(np.isneginf(high)):
-            raise ValueError(f"No high value can be equal to `-np.inf`, high={high}")
-
         self._shape: tuple[int, ...] = shape
 
-        low_precision = get_precision(low.dtype)
-        high_precision = get_precision(high.dtype)
-        dtype_precision = get_precision(self.dtype)
-        if min(low_precision, high_precision) > dtype_precision:
-            gym.logger.warn(f"Box bound precision lowered by casting to {self.dtype}")
-        self.low = low.astype(self.dtype)
-        self.high = high.astype(self.dtype)
+        # Cast scalar values to `np.ndarray` and capture the boundedness information
+        # disallowed cases
+        #  * out of range
+        #  * nan
+        #  * unsign int inf and -inf
 
-        self.low_repr = _short_repr(self.low)
-        self.high_repr = _short_repr(self.high)
+        if self.dtype == np.bool_:
+            dtype_min, dtype_max = 0, 1
+        elif np.issubdtype(self.dtype, np.floating):
+            dtype_min = float(np.finfo(self.dtype).min)
+            dtype_max = float(np.finfo(self.dtype).max)
+        else:
+            assert np.issubdtype(self.dtype, np.integer)
+            dtype_min = int(np.iinfo(self.dtype).min)
+            dtype_max = int(np.iinfo(self.dtype).max)
+
+        #  cast for low
+        if is_float_integer(low):
+            self.bounded_below = -np.inf < np.full(shape, low, dtype=float)
+
+            if np.isnan(low):
+                raise ValueError(f"No low value can be equal to `np.nan`, low={low}")
+            elif np.isneginf(low):
+                if self.dtype.kind == "i":  # signed int
+                    low = np.iinfo(self.dtype).min
+                elif self.dtype.kind in {"u", "b"}:  # unsigned int
+                    raise ValueError(
+                        f"Box unsigned int dtype don't support `-np.inf`, low={low}"
+                    )
+            elif low < dtype_min:
+                raise ValueError(
+                    f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
+                )
+
+            self.low = np.full(self.shape, low, dtype=self.dtype)
+        else:
+            if not isinstance(low, np.ndarray):
+                raise ValueError(
+                    f"Box low must be a np.ndarray, integer, or float, actual type={type(low)}"
+                )
+            elif not (
+                np.issubdtype(low.dtype, np.floating)
+                or np.issubdtype(low.dtype, np.integer)
+                or low.dtype == np.bool_
+            ):
+                raise ValueError(
+                    f"Box low must be a floating or integer dtype, actual dtype={low.dtype}"
+                )
+            elif np.any(np.isnan(low)):
+                raise ValueError(f"No low value can be equal to `np.nan`, low={low}")
+
+            self.bounded_below = -np.inf < low
+
+            neginf = np.isneginf(low)
+            if np.any(neginf):
+                if self.dtype.kind == "i":  # signed int
+                    low[neginf] = np.iinfo(self.dtype).min
+                elif self.dtype.kind in {"u", "b"}:  # unsigned int
+                    raise ValueError(
+                        f"Box unsigned int dtype don't support `-np.inf`, low={low}"
+                    )
+            elif low.dtype != self.dtype and np.any(low < dtype_min):
+                raise ValueError(
+                    f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
+                )
+
+            if (
+                np.issubdtype(low.dtype, np.floating)
+                and np.issubdtype(self.dtype, np.floating)
+                and np.finfo(self.dtype).precision < np.finfo(low.dtype).precision
+            ):
+                gym.logger.warn(
+                    f"Box low's precision lowered by casting to {self.dtype}, current low.dtype={low.dtype}"
+                )
+
+            self.low = low.astype(self.dtype)
+
+        #  cast for high
+        if is_float_integer(high):
+            self.bounded_above = np.full(shape, high, dtype=float) < np.inf
+
+            if np.isnan(high):
+                raise ValueError(f"No high value can be equal to `np.nan`, high={high}")
+            elif np.isposinf(high):
+                if self.dtype.kind == "i":  # signed int
+                    high = np.iinfo(self.dtype).max
+                elif self.dtype.kind in {"u", "b"}:  # unsigned int
+                    raise ValueError(
+                        f"Box unsigned int dtype don't support `np.inf`, high={high}"
+                    )
+            elif high > dtype_max:
+                raise ValueError(
+                    f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
+                )
+
+            self.high = np.full(self.shape, high, dtype=self.dtype)
+        else:
+            if not isinstance(high, np.ndarray):
+                raise ValueError(
+                    f"Box high must be a np.ndarray, integer, or float, actual type={type(high)}"
+                )
+            elif not (
+                np.issubdtype(high.dtype, np.floating)
+                or np.issubdtype(high.dtype, np.integer)
+                or high.dtype == np.bool_
+            ):
+                raise ValueError(
+                    f"Box high must be a floating or integer dtype, actual dtype={high.dtype}"
+                )
+            elif np.any(np.isnan(high)):
+                raise ValueError(f"No high value can be equal to `np.nan`, high={high}")
+
+            self.bounded_above = high < np.inf
+
+            posinf = np.isposinf(high)
+            if np.any(posinf):
+                if self.dtype.kind == "i":  # signed int
+                    high[posinf] = np.iinfo(self.dtype).max
+                elif self.dtype.kind in {"u", "b"}:  # unsigned int
+                    raise ValueError(
+                        f"Box unsigned int dtype don't support `np.inf`, high={high}"
+                    )
+            elif high.dtype != self.dtype and np.any(dtype_max < high):
+                raise ValueError(
+                    f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
+                )
+
+            if (
+                np.issubdtype(high.dtype, np.floating)
+                and np.issubdtype(self.dtype, np.floating)
+                and np.finfo(self.dtype).precision < np.finfo(high.dtype).precision
+            ):
+                gym.logger.warn(
+                    f"Box high's precision lowered by casting to {self.dtype}, current high.dtype={high.dtype}"
+                )
+
+            self.high = high.astype(self.dtype)
+
+        # recheck shape for case where shape and low or high are provided
+        if self.low.shape != shape:
+            raise ValueError(
+                f"Box low.shape doesn't match provided shape, low.shape={self.low.shape}, shape={self.shape}"
+            )
+        if self.high.shape != shape:
+            raise ValueError(
+                f"Box high.shape doesn't match provided shape, high.shape={self.high.shape}, shape={self.shape}"
+            )
+
+        # check that low <= high
+        if np.any(self.low > self.high):
+            raise ValueError(
+                f"Box all low values must be less than or equal to high (some values break this), low={self.low}, high={self.high}"
+            )
+
+        self.low_repr = array_short_repr(self.low)
+        self.high_repr = array_short_repr(self.high)
 
         super().__init__(self.shape, self.dtype, seed)
 
@@ -327,53 +440,7 @@ class Box(Space[NDArray[Any]]):
 
         # legacy support through re-adding "low_repr" and "high_repr" if missing from pickled state
         if not hasattr(self, "low_repr"):
-            self.low_repr = _short_repr(self.low)
+            self.low_repr = array_short_repr(self.low)
 
         if not hasattr(self, "high_repr"):
-            self.high_repr = _short_repr(self.high)
-
-
-def get_precision(dtype: np.dtype) -> SupportsFloat:
-    """Get precision of a data type."""
-    if np.issubdtype(dtype, np.floating):
-        return np.finfo(dtype).precision
-    else:
-        return np.inf
-
-
-def _broadcast(
-    value: SupportsFloat | NDArray[Any],
-    dtype: np.dtype,
-    shape: tuple[int, ...],
-) -> NDArray[Any]:
-    """Handle infinite bounds and broadcast at the same time if needed.
-
-    This is needed primarily because:
-        >>> import numpy as np
-        >>> np.full((2,), np.inf, dtype=np.int32)
-        array([-2147483648, -2147483648], dtype=int32)
-    """
-    if is_float_integer(value):
-        if np.isneginf(value) and np.dtype(dtype).kind == "i":
-            value = np.iinfo(dtype).min + 2
-        elif np.isposinf(value) and np.dtype(dtype).kind == "i":
-            value = np.iinfo(dtype).max - 2
-
-        return np.full(shape, value, dtype=dtype)
-
-    elif isinstance(value, np.ndarray):
-        # this is needed because we can't stuff np.iinfo(int).min into an array of dtype float
-        casted_value = value.astype(dtype)
-
-        # change bounds only if values are negative or positive infinite
-        if np.dtype(dtype).kind == "i":
-            casted_value[np.isneginf(value)] = np.iinfo(dtype).min + 2
-            casted_value[np.isposinf(value)] = np.iinfo(dtype).max - 2
-
-        return casted_value
-
-    else:
-        # only np.ndarray allowed beyond this point
-        raise TypeError(
-            f"Unknown dtype for `value`, expected `np.ndarray` or float/integer, got {type(value)}"
-        )
+            self.high_repr = array_short_repr(self.high)
