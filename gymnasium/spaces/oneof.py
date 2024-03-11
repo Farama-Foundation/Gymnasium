@@ -18,8 +18,16 @@ class OneOf(Space[Any]):
     Example:
         >>> from gymnasium.spaces import OneOf, Box, Discrete
         >>> observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=42)
-        >>> observation_space.sample()
+        >>> observation_space.sample()  # the first element is the space index (Box in this case) and the second element is the sample from Box
         (1, array([-0.3991573 ,  0.21649833], dtype=float32))
+        >>> observation_space.sample()  # this time the Discrete space was sampled as index=0
+        (0, 0)
+        >>> observation_space[0]
+        Discrete(2)
+        >>> observation_space[1]
+        Box(-1.0, 1.0, (2,), float32)
+        >>> len(observation_space)
+        2
     """
 
     def __init__(
@@ -27,7 +35,7 @@ class OneOf(Space[Any]):
         spaces: Iterable[Space[Any]],
         seed: int | typing.Sequence[int] | np.random.Generator | None = None,
     ):
-        r"""Constructor of :class:`Tuple` space.
+        r"""Constructor of :class:`OneOf` space.
 
         The generated instance will represent the cartesian product :math:`\text{spaces}[0] \times ... \times \text{spaces}[-1]`.
 
@@ -36,6 +44,7 @@ class OneOf(Space[Any]):
             seed: Optionally, you can use this argument to seed the RNGs of the ``spaces`` to ensure reproducible sampling.
         """
         self.spaces = tuple(spaces)
+        assert len(self.spaces) > 0, "Empty `OneOf` spaces are not supported."
         for space in self.spaces:
             assert isinstance(
                 space, Space
