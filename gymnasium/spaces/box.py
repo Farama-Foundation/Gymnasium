@@ -280,7 +280,7 @@ class Box(Space[NDArray[Any]]):
 
             if (
                 np.issubdtype(high.dtype, np.floating)
-                and np.issubdtype(high.dtype, np.floating)
+                and np.issubdtype(self.dtype, np.floating)
                 and np.finfo(self.dtype).precision < np.finfo(high.dtype).precision
             ):
                 gym.logger.warn(
