@@ -120,12 +120,6 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         """
         raise NotImplementedError
 
-    def _reset_simulation(self) -> None:
-        """
-        Reset MuJoCo simulation data structures, mjModel and mjData.
-        """
-        raise NotImplementedError
-
     def _step_mujoco_simulation(self, ctrl, n_frames) -> None:
         """
         Step over the MuJoCo simulation.
@@ -151,7 +145,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
     ):
         super().reset(seed=seed)
 
-        self._reset_simulation()
+        mujoco.mj_resetData(self.model, self.data)
 
         ob = self.reset_model()
         info = self._get_reset_info()
@@ -243,9 +237,6 @@ class MujocoEnv(BaseMujocoEnv):
         model.vis.global_.offheight = self.height
         data = mujoco.MjData(model)
         return model, data
-
-    def _reset_simulation(self):
-        mujoco.mj_resetData(self.model, self.data)
 
     def set_state(self, qpos, qvel):
         super().set_state(qpos, qvel)
