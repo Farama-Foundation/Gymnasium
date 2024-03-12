@@ -562,8 +562,8 @@ if the pole angle is not in the range <code class="docutils literal notranslate"
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
-<p>Since the goal is to keep the pole upright for as long as possible, a reward of <code class="docutils literal notranslate"><span class="pre">+1</span></code> for every step taken,
-including the termination step, is allotted. The threshold for rewards is 500 for v1 and 200 for v0.</p>
+<p>Since the goal is to keep the pole upright for as long as possible, by default, a reward of <code class="docutils literal notranslate"><span class="pre">+1</span></code> is given for every step taken, including the termination step. The default reward threshold is 500 for v1 and 200 for v0 due to the time limit on the environment.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">sutton_barto_reward=True</span></code>, then a reward of <code class="docutils literal notranslate"><span class="pre">0</span></code> is awarded for every non-terminating step and <code class="docutils literal notranslate"><span class="pre">-1</span></code> for the terminating step. As a result, the reward threshold is 0 for v0 and v1.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
@@ -591,6 +591,24 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 
 </pre></div>
 </div>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sutton_barto_reward</span></code></p></td>
+<td><p><strong>bool</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> the reward function matches the original sutton barto implementation</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="vectorized-environment">
 <h2>Vectorized environment<a class="headerlink" href="#vectorized-environment" title="Link to this heading">#</a></h2>
@@ -605,6 +623,17 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 
 </pre></div>
 </div>
+</section>
+<section id="version-history">
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>v1: <code class="docutils literal notranslate"><span class="pre">max_time_steps</span></code> raised to 500.</p>
+<ul>
+<li><p>In Gymnasium <code class="docutils literal notranslate"><span class="pre">1.0.0a2</span></code> the <code class="docutils literal notranslate"><span class="pre">sutton_barto_reward</span></code> argument was added (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/790">GitHub issue</a>)</p></li>
+</ul>
+</li>
+<li><p>v0: Initial versions release.</p></li>
+</ul>
 </section>
 </section>
 
@@ -686,6 +715,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 <li><a class="reference internal" href="#episode-end">Episode End</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
 <li><a class="reference internal" href="#vectorized-environment">Vectorized environment</a></li>
+<li><a class="reference internal" href="#version-history">Version History</a></li>
 </ul>
 </li>
 </ul>
