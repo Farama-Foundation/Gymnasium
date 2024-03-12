@@ -365,7 +365,7 @@ class CartPoleVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        sutton_barto_reward: bool = False
+        sutton_barto_reward: bool = False,
         num_envs: int = 2,
         max_episode_steps: int = 500,
         render_mode: Optional[str] = None,
