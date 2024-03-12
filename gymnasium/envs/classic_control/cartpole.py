@@ -56,13 +56,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
        if the pole angle is not in the range `(-.2095, .2095)` (or **±12°**)
 
     ## Rewards
-    Since the goal is to keep the pole upright for as long as possible, a reward of `+1` for every step taken,
-    including the termination step, is allotted.
+    Since the goal is to keep the pole upright for as long as possible, by default, a reward of `+1` is given for every step taken, including the termination step. The default reward threshold is 500 for v1 and 200 for v0 due to the time limit on the environment. 
 
-    If `sutton_barto_reward=True` then a reward of `0` is awarded for every non-terminating step and `-1` for the terminating step.
-
-    ## Reward Threshold
-    The threshold for rewards is 500 for v1 and 200 for v0.
+    If `sutton_barto_reward=True`, then a reward of `0` is awarded for every non-terminating step and `-1` for the terminating step. As a result, the reward threshold is 0 for v0 and v1.
 
     ## Starting State
     All observations are assigned a uniformly random value in `(-0.05, 0.05)`
@@ -104,6 +100,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
     >>> envs
     SyncVectorEnv(CartPole-v1, num_envs=3)
+
     ```
 
     ## Version History
