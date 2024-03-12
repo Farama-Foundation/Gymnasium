@@ -82,7 +82,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
     >>> env.reset(seed=123, options={"low": -0.1, "high": 0.1})  # default low=-0.05, high=0.05
     (array([ 0.03647037, -0.0892358 , -0.05592803, -0.06312564], dtype=float32), {})
-    
+
     ```
 
     | Parameter               | Type       | Default                 | Description                                                                                   |
