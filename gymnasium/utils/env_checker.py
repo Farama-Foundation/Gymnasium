@@ -99,8 +99,12 @@ def check_reset_seed_determinism(env: gym.Env):
             ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
             if env.spec is not None and env.spec.nondeterministic is False:
                 assert data_equivalence(
-                    obs_1, obs_2, exact=True
+                    obs_1, obs_2
                 ), "Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent."
+                if data_equivalence(obs_1, obs_2, exact=True):
+                    logger.warn(
+                        "Using `env.reset(seed=123)` is non-deterministic as the observations are not equal."
+                    )
             assert (
                 env.unwrapped._np_random.bit_generator.state
                 == seed_123_rng.bit_generator.state
@@ -191,24 +195,30 @@ def check_step_determinism(env: gym.Env, seed=123):
     ), "The `.np_random` is not properly been updated after step."
 
     if not data_equivalence(obs_0, obs_1, exact=True):
-        logger.warn("step observation is not deterministic.")
-    assert data_equivalence(obs_0, obs_1), "step observation is not deterministic."
+        logger.warn("step observation is not deterministic (not equal).")
+    assert data_equivalence(
+        obs_0, obs_1
+    ), "step observation is not deterministic (not close)."
 
     if not data_equivalence(rew_0, rew_1, exact=True):
-        logger.warn("step reward is not deterministic.")
-    assert data_equivalence(rew_0, rew_1), "step reward is not deterministic."
+        logger.warn("step reward is not deterministic (not equal).")
+    assert data_equivalence(
+        rew_0, rew_1
+    ), "step reward is not deterministic (not close)."
 
-    assert data_equivalence(term_0, term_0, True), "step terminal is not deterministic."
+    assert data_equivalence(
+        term_0, term_0, exact=True
+    ), "step terminal is not deterministic."
     assert (
         trunc_0 is False and trunc_1 is False
     ), "Environment truncates after 1 step, something has gone very wrong."
 
     if not data_equivalence(info_0, info_1, exact=True):
-        logger.warn("step info is not deterministic.")
+        logger.warn("step info is not deterministic (not equal).")
     assert data_equivalence(
         info_0,
         info_1,
-    ), "step info is not deterministic."
+    ), "step info is not deterministic (not close)."
 
 
 def check_reset_return_info_deprecation(env: gym.Env):
