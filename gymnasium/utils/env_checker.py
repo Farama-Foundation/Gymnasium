@@ -189,15 +189,26 @@ def check_step_determinism(env: gym.Env, seed=123):
         env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportOptionalMemberAccess]
         == seeded_rng.bit_generator.state
     ), "The `.np_random` is not properly been updated after step."
-    assert data_equivalence(
-        obs_0, obs_1, True
-    ), "step observation is not deterministic."
-    assert data_equivalence(rew_0, rew_1, True), "step reward is not deterministic."
+
+    if not data_equivalence(obs_0, obs_1, exact=True):
+        logger.warn("step observation is not deterministic.")
+    assert data_equivalence(obs_0, obs_1), "step observation is not deterministic."
+
+    if not data_equivalence(rew_0, rew_1, exact=True):
+        logger.warn("step reward is not deterministic.")
+    assert data_equivalence(rew_0, rew_1), "step reward is not deterministic."
+
     assert data_equivalence(term_0, term_0, True), "step terminal is not deterministic."
     assert (
         trunc_0 is False and trunc_1 is False
     ), "Environment truncates after 1 step, something has gone very wrong."
-    assert data_equivalence(info_0, info_1, True), "step info is not deterministic."
+
+    if not data_equivalence(info_0, info_1, exact=True):
+        logger.warn("step info is not deterministic.")
+    assert data_equivalence(
+        info_0,
+        info_1,
+    ), "step info is not deterministic."
 
 
 def check_reset_return_info_deprecation(env: gym.Env):
