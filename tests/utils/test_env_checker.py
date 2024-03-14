@@ -246,17 +246,17 @@ def test_check_reset_options():
         [
             AssertionError,
             lambda self, action: (np.random.normal(), 0, False, False, {}),
-            "step observation is not deterministic.",
+            "Deterministic step observations are not equivalent for the same seed and action",
         ],
         [
             AssertionError,
             lambda self, action: (0, np.random.normal(), False, False, {}),
-            "step reward is not deterministic.",
+            "Deterministic step rewards are not equivalent for the same seed and action",
         ],
         [
             AssertionError,
             lambda self, action: (0, 0, False, False, {"value": np.random.normal()}),
-            "step info is not deterministic.",
+            "Deterministic step info are not equivalent for the same seed and action",
         ],
     ],
 )

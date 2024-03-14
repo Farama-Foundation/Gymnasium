@@ -101,6 +101,11 @@ def check_reset_seed_determinism(env: gym.Env):
                 assert data_equivalence(
                     obs_1, obs_2
                 ), "Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent."
+                if not data_equivalence(obs_1, obs_2, exact=True):
+                    logger.warn(
+                        "Using `env.reset(seed=123)` observations are not equal although similar."
+                    )
+
             assert (
                 env.unwrapped._np_random.bit_generator.state
                 == seed_123_rng.bit_generator.state
@@ -165,11 +170,11 @@ def check_reset_options(env: gym.Env):
 def check_step_determinism(env: gym.Env, seed=123):
     """Check that the environment steps deterministically after reset.
 
-    Note: This check assumes that seeded `reset()` is derministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).
+    Note: This check assumes that seeded `reset()` is deterministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).
     Note: A single step should be enough to assert that the state transition function is deterministic (at least for most environments).
 
     Raises:
-        AssertionError: The environment cannot be step determistially after resetting with a random seed,
+        AssertionError: The environment cannot be step deterministically after resetting with a random seed,
             or it truncates after 1 step.
     """
     if env.spec is not None and env.spec.nondeterministic is True:
@@ -189,13 +194,38 @@ def check_step_determinism(env: gym.Env, seed=123):
         env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportOptionalMemberAccess]
         == seeded_rng.bit_generator.state
     ), "The `.np_random` is not properly been updated after step."
-    assert data_equivalence(obs_0, obs_1), "step observation is not deterministic."
-    assert data_equivalence(rew_0, rew_1), "step reward is not deterministic."
-    assert data_equivalence(term_0, term_0), "step terminal is not deterministic."
+
+    assert data_equivalence(
+        obs_0, obs_1
+    ), "Deterministic step observations are not equivalent for the same seed and action"
+    if not data_equivalence(obs_0, obs_1, exact=True):
+        logger.warn(
+            "Step observations are not equal although similar given the same seed and action"
+        )
+
+    assert data_equivalence(
+        rew_0, rew_1
+    ), "Deterministic step rewards are not equivalent for the same seed and action"
+    if not data_equivalence(rew_0, rew_1, exact=True):
+        logger.warn(
+            "Step rewards are not equal although similar given the same seed and action"
+        )
+
+    assert data_equivalence(
+        term_0, term_0, exact=True
+    ), "Deterministic step termination are not equivalent for the same seed and action"
     assert (
         trunc_0 is False and trunc_1 is False
     ), "Environment truncates after 1 step, something has gone very wrong."
-    assert data_equivalence(info_0, info_1), "step info is not deterministic."
+
+    assert data_equivalence(
+        info_0,
+        info_1,
+    ), "Deterministic step info are not equivalent for the same seed and action"
+    if not data_equivalence(info_0, info_1, exact=True):
+        logger.warn(
+            "Step info are not equal although similar given the same seed and action"
+        )
 
 
 def check_reset_return_info_deprecation(env: gym.Env):
