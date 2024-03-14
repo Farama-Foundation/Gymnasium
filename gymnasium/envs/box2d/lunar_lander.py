@@ -1,7 +1,6 @@
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-import warnings
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
@@ -9,7 +8,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import error, spaces
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.utils import EzPickle, colorize
+from gymnasium.utils import EzPickle
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
 
@@ -237,20 +236,14 @@ class LunarLander(gym.Env, EzPickle):
         self.gravity = gravity
 
         if 0.0 > wind_power or wind_power > 20.0:
-            warnings.warn(
-                colorize(
-                    f"WARN: wind_power value is recommended to be between 0.0 and 20.0, (current value: {wind_power})",
-                    "yellow",
-                ),
+            gym.logger.warn(
+                f"wind_power value is recommended to be between 0.0 and 20.0, (current value: {wind_power})"
             )
         self.wind_power = wind_power
 
         if 0.0 > turbulence_power or turbulence_power > 2.0:
-            warnings.warn(
-                colorize(
-                    f"WARN: turbulence_power value is recommended to be between 0.0 and 2.0, (current value: {turbulence_power})",
-                    "yellow",
-                ),
+            gym.logger.warn(
+                f"turbulence_power value is recommended to be between 0.0 and 2.0, (current value: {turbulence_power})"
             )
         self.turbulence_power = turbulence_power
 
@@ -468,8 +461,8 @@ class LunarLander(gym.Env, EzPickle):
         self._clean_particles(False)
         return p
 
-    def _clean_particles(self, all):
-        while self.particles and (all or self.particles[0].ttl < 0):
+    def _clean_particles(self, all_particle):
+        while self.particles and (all_particle or self.particles[0].ttl < 0):
             self.world.DestroyBody(self.particles.pop(0))
 
     def step(self, action):
@@ -497,13 +490,16 @@ class LunarLander(gym.Env, EzPickle):
 
             # the function used for torque is tanh(sin(2 k x) + sin(pi k x)),
             # which is proven to never be periodic, k = 0.01
-            torque_mag = math.tanh(
-                math.sin(0.02 * self.torque_idx)
-                + (math.sin(math.pi * 0.01 * self.torque_idx))
-            ) * (self.turbulence_power)
+            torque_mag = (
+                math.tanh(
+                    math.sin(0.02 * self.torque_idx)
+                    + (math.sin(math.pi * 0.01 * self.torque_idx))
+                )
+                * self.turbulence_power
+            )
             self.torque_idx += 1
             self.lander.ApplyTorque(
-                (torque_mag),
+                torque_mag,
                 True,
             )
 
@@ -516,7 +512,7 @@ class LunarLander(gym.Env, EzPickle):
 
         # Apply Engine Impulses
 
-        # Tip is a the (X and Y) components of the rotation of the lander.
+        # Tip is the (X and Y) components of the rotation of the lander.
         tip = (math.sin(self.lander.angle), math.cos(self.lander.angle))
 
         # Side is the (-Y and X) components of the rotation of the lander.
@@ -594,8 +590,8 @@ class LunarLander(gym.Env, EzPickle):
 
             # The constant 17 is a constant, that is presumably meant to be SIDE_ENGINE_HEIGHT.
             # However, SIDE_ENGINE_HEIGHT is defined as 14
-            # This casuses the position of the thurst on the body of the lander to change, depending on the orientation of the lander.
-            # This in turn results in an orientation depentant torque being applied to the lander.
+            # This causes the position of the thrust on the body of the lander to change, depending on the orientation of the lander.
+            # This in turn results in an orientation dependent torque being applied to the lander.
             impulse_pos = (
                 self.lander.position[0] + ox - tip[0] * 17 / SCALE,
                 self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
