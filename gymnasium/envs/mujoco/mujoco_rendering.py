@@ -1,7 +1,7 @@
 import collections
 import os
 import time
-from typing import Optional
+from typing import Dict, Optional
 
 import glfw
 import imageio
@@ -44,6 +44,7 @@ class BaseRender:
         width: int,
         height: int,
         max_geom: int = 1000,
+        visual_options: Dict[int, bool] = {},
     ):
         """Render context superclass for offscreen and window rendering."""
         self.model = model
@@ -59,6 +60,9 @@ class BaseRender:
         self.cam = mujoco.MjvCamera()
         self.vopt = mujoco.MjvOption()
         self.pert = mujoco.MjvPerturb()
+
+        for flag, value in visual_options.items():
+            self.vopt.flags[flag] = value
 
         self.make_context_current()
 
@@ -643,6 +647,7 @@ class MujocoRenderer:
         max_geom: int = 1000,
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
+        visual_options: Dict[int, bool] = {},
     ):
         """A wrapper for clipping continuous actions within the valid bound.
 
@@ -664,6 +669,7 @@ class MujocoRenderer:
         self.width = width
         self.height = height
         self.max_geom = max_geom
+        self._vopt = visual_options
 
         # set self.camera_id using `camera_id` or `camera_name`
         if camera_id is not None and camera_name is not None:
@@ -712,11 +718,21 @@ class MujocoRenderer:
         if self.viewer is None:
             if render_mode == "human":
                 self.viewer = WindowViewer(
-                    self.model, self.data, self.width, self.height, self.max_geom
+                    self.model,
+                    self.data,
+                    self.width,
+                    self.height,
+                    self.max_geom,
+                    self._vopt,
                 )
             elif render_mode in {"rgb_array", "depth_array"}:
                 self.viewer = OffScreenViewer(
-                    self.model, self.data, self.width, self.height, self.max_geom
+                    self.model,
+                    self.data,
+                    self.width,
+                    self.height,
+                    self.max_geom,
+                    self._vopt,
                 )
             else:
                 raise AttributeError(

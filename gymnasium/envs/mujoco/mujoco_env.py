@@ -203,7 +203,7 @@ class MujocoEnv(BaseMujocoEnv):
         camera_name: Optional[str] = None,
         default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
         max_geom: int = 1000,
-        visual_option_flags: list[tuple[int, bool]] = [],
+        visual_options: Dict[int, bool] = {},
     ):
         super().__init__(
             model_path,
@@ -227,7 +227,7 @@ class MujocoEnv(BaseMujocoEnv):
             max_geom,
             camera_id,
             camera_name,
-            visual_option_flags,
+            visual_options,
         )
 
     def _initialize_simulation(
