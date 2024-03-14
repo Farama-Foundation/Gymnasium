@@ -573,6 +573,11 @@
                 <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
                     <span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_2</span>
                 <span class="p">),</span> <span class="s2">&quot;Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent.&quot;</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_2</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s2">&quot;Using `env.reset(seed=123)` observations are not equal although similar.&quot;</span>
+                    <span class="p">)</span>
+
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
                 <span class="o">==</span> <span class="n">seed_123_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
@@ -637,11 +642,11 @@
 <span class="k">def</span> <span class="nf">check_step_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment steps deterministically after reset.</span>
 
-<span class="sd">    Note: This check assumes that seeded `reset()` is derministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).</span>
+<span class="sd">    Note: This check assumes that seeded `reset()` is deterministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).</span>
 <span class="sd">    Note: A single step should be enough to assert that the state transition function is deterministic (at least for most environments).</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        AssertionError: The environment cannot be step determistially after resetting with a random seed,</span>
+<span class="sd">        AssertionError: The environment cannot be step deterministically after resetting with a random seed,</span>
 <span class="sd">            or it truncates after 1 step.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">nondeterministic</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
@@ -661,13 +666,38 @@
         <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>  <span class="c1"># pyright: ignore [reportOptionalMemberAccess]</span>
         <span class="o">==</span> <span class="n">seeded_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
     <span class="p">),</span> <span class="s2">&quot;The `.np_random` is not properly been updated after step.&quot;</span>
-    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span><span class="p">),</span> <span class="s2">&quot;step observation is not deterministic.&quot;</span>
-    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">),</span> <span class="s2">&quot;step reward is not deterministic.&quot;</span>
-    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">term_0</span><span class="p">,</span> <span class="n">term_0</span><span class="p">),</span> <span class="s2">&quot;step terminal is not deterministic.&quot;</span>
+
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
+        <span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span>
+    <span class="p">),</span> <span class="s2">&quot;Deterministic step observations are not equivalent for the same seed and action&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step observations are not equal although similar given the same seed and action&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
+        <span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span>
+    <span class="p">),</span> <span class="s2">&quot;Deterministic step rewards are not equivalent for the same seed and action&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step rewards are not equal although similar given the same seed and action&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
+        <span class="n">term_0</span><span class="p">,</span> <span class="n">term_0</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">),</span> <span class="s2">&quot;Deterministic step termination are not equivalent for the same seed and action&quot;</span>
     <span class="k">assert</span> <span class="p">(</span>
         <span class="n">trunc_0</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">trunc_1</span> <span class="ow">is</span> <span class="kc">False</span>
     <span class="p">),</span> <span class="s2">&quot;Environment truncates after 1 step, something has gone very wrong.&quot;</span>
-    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">info_0</span><span class="p">,</span> <span class="n">info_1</span><span class="p">),</span> <span class="s2">&quot;step info is not deterministic.&quot;</span>
+
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
+        <span class="n">info_0</span><span class="p">,</span>
+        <span class="n">info_1</span><span class="p">,</span>
+    <span class="p">),</span> <span class="s2">&quot;Deterministic step info are not equivalent for the same seed and action&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">info_0</span><span class="p">,</span> <span class="n">info_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step info are not equal although similar given the same seed and action&quot;</span>
+        <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">check_reset_return_info_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
