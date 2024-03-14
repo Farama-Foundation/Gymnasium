@@ -150,11 +150,12 @@ class OffScreenViewer(BaseRender):
         width: int,
         height: int,
         max_geom: int = 1000,
+        visual_options: Dict[int, bool] = {},
     ):
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
 
-        super().__init__(model, data, width, height, max_geom)
+        super().__init__(model, data, width, height, max_geom, visual_options)
 
         self._init_camera()
 
@@ -301,6 +302,7 @@ class WindowViewer(BaseRender):
         width: Optional[int] = None,
         height: Optional[int] = None,
         max_geom: int = 1000,
+        visual_options: Dict[int, bool] = {},
     ):
         glfw.init()
 
@@ -339,7 +341,7 @@ class WindowViewer(BaseRender):
         glfw.set_scroll_callback(self.window, self._scroll_callback)
         glfw.set_key_callback(self.window, self._key_callback)
 
-        super().__init__(model, data, width, height, max_geom)
+        super().__init__(model, data, width, height, max_geom, visual_options)
         glfw.swap_interval(1)
 
     def _set_mujoco_buffer(self):
