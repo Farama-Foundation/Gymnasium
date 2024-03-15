@@ -127,7 +127,7 @@ class CartPoleFunctional(
 
         reward = jax.lax.cond(
             params.sutton_barto_reward,
-            jax.lax.cond(terminated, lambda: -1.0, lambda: 0.0),
+            lambda: jax.lax.cond(terminated, lambda: -1.0, lambda: 0.0),
             lambda: 1.0,
         )
 
