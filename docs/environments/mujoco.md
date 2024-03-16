@@ -103,14 +103,16 @@ The all MuJoCo Environments besides the general Gymnasium arguments, and environ
 env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
 ```
 
-| Parameter                   | Type          | Default      | Description                               |
-| --------------------------- | ------------- | ------------ | ----------------------------------------- |
-| `width`                     | **int**       | `480`        | The width of the render window            |
-| `height`                    | **int**       | `480`        | The height of the render window           |
-| `camera_id`                 |**int \| None**| `None`       | The camera ID used for the render window  |
-| `camera_name`               |**str \| None**| `None`       | The name of the camera used for the render window (mutally exclusive option with `camera_id`) |
-| `default_camera_config`     |**dict[str, float \| int] \| None**| `None` |  The [mjvCamera](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjvcamera) properties |
-| `max_geom`                  | **int**       | `1000`       | Max number of geometrical objects to render (useful for 3rd-party environments) |
+| Parameter                   | Type                              | Default      | Description                               |
+| --------------------------- | -------------                     | ------------ | ----------------------------------------- |
+| `width`                     | **int**                           | `480`        | The width of the render window            |
+| `height`                    | **int**                           | `480`        | The height of the render window           |
+| `camera_id`                 |**int \| None**                    | `None`       | The camera ID used for the render window  |
+| `camera_name`               |**str \| None**                    | `None`       | The name of the camera used for the render window (mutally exclusive option with `camera_id`) |
+| `default_camera_config`     |**dict[str, float \| int] \| None**| `None`       |  The [mjvCamera](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjvcamera) properties |
+| `max_geom`                  | **int**                           | `1000`       | Max number of geometrical objects to render (useful for 3rd-party environments) |
+| `visual_options`            | **Dict[int, bool]**               | `{}`         | A dictionary with [mjVisual](https://mujoco.readthedocs.io/en/stable/overview.html#mjvisual) flags and value pairs, example `{mujoco.mjtVisFlag.mjVIS_CONTACTPOINT: True, mujoco.mjtVisFlag.mjVIS_CONTACTFORCE: True}` (show contact points and forces). |
+
 
 
 <!--
