@@ -790,6 +790,11 @@ Often some of the first positional elements are omitted from the state space sin
 <td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
 <td><p>Max number of geometrical objects to render (useful for 3rd-party environments)</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">visual_options</span></code></p></td>
+<td><p><strong>Dict[int, bool]</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>A dictionary with <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/overview.html#mjvisual">mjVisual</a> flags and value pairs, example <code class="docutils literal notranslate"><span class="pre">{mujoco.mjtVisFlag.mjVIS_CONTACTPOINT:</span> <span class="pre">True,</span> <span class="pre">mujoco.mjtVisFlag.mjVIS_CONTACTFORCE:</span> <span class="pre">True}</span></code> (show contact points and forces).</p></td>
+</tr>
 </tbody>
 </table>
 </div>
