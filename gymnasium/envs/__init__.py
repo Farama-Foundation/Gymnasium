@@ -81,14 +81,14 @@ register(
 # ----------------------------------------
 
 register(
-    id="LunarLander-v2",
+    id="LunarLander-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     max_episode_steps=1000,
     reward_threshold=200,
 )
 
 register(
-    id="LunarLanderContinuous-v2",
+    id="LunarLanderContinuous-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     kwargs={"continuous": True},
     max_episode_steps=1000,
@@ -197,7 +197,7 @@ register(
 
 register(
     id="Pusher-v2",
-    entry_point="gymnasium.envs.mujoco.pucher:PusherEnv",
+    entry_point="gymnasium.envs.mujoco.pusher:PusherEnv",
     max_episode_steps=100,
     reward_threshold=0.0,
 )
