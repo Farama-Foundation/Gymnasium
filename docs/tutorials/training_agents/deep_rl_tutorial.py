@@ -11,8 +11,8 @@ Let's start by importing necessary libraries:
 """
 
 # Global TODOs:
-# TODO: Finish agent class
-# TODO:
+# TODO: Finish debugging training. current step is to fix parallel training function and implement results buffer.
+# TODO: train agent on lunad lander env.
 # TODO: Final check on documentation and typing.
 
 
@@ -21,14 +21,18 @@ __author__ = "Hardy Hasan"
 __date__ = "2023-02-20"
 __license__ = "MIT License"
 
+import concurrent.futures
 import copy
+import functools
 import random
+import typing
 from collections import namedtuple
 from typing import Tuple
 
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 import gymnasium
 
@@ -58,16 +62,23 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # ------------------------
 # All the functions we need to perform small but repetitive tasks
 # that are not related to the agent/training logic.
-class Results:
+class ResultsBuffer:
     """
     This class stores results from episodes of agent-environment interaction and
     uses these results for reporting progress or overall agent performance.
     """
 
-    __slots__ = []
+    __slots__ = ["seed", "params"]
 
-    def __init__(self):
-        pass
+    def __init__(self, seed, params):
+        self.seed = seed
+        self.params = params
+
+    def __repr__(self):
+        return f"ResultsBuffer(seed={self.seed}, params={self.params})"
+
+    def __str__(self):
+        return f"Env={self.params.env_name}\tseed={self.seed}"
 
 
 def to_tensor(array: np.ndarray, normalize: bool = False) -> torch.Tensor:
@@ -85,19 +96,62 @@ def to_tensor(array: np.ndarray, normalize: bool = False) -> torch.Tensor:
     """
     tensor = torch.tensor(array, device=device)
 
+    if len(tensor.shape) == 1:
+        tensor = tensor.unsqueeze(0)
+
     if normalize:
         return tensor / 255.0
     return tensor
 
 
-def set_seed(seed):
-    # TODO: implement this function to seed all random libraries such as random, numpy, torch.
-    pass
+def set_seed(seed: int):
+    """Setting seeding for libraries that use random number generators, for reproducibility purposes."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+
+    return None
 
 
-def create_atari_env(env: gymnasium.Env) -> gymnasium.Env:
-    # TODO: implement function and write doc
+def create_atari_env(env: gymnasium.Env, params: namedtuple) -> gymnasium.Env:
+    """
+    Creates an atari environment and applies AtariProcessing and FrameStack wrappers.
+
+    Args:
+        env: A gymnasium atari environment. Assumes no frameskipping is done.
+        params: Hyperparameters namedtuple.
+
+    Returns:
+
+    """
+    env = gymnasium.wrappers.AtariPreprocessing(env=env)
+    env = gymnasium.wrappers.FrameStack(
+        env=env, num_stack=params.num_frame_stacking, lz4_compress=True
+    )
+
     return env
+
+
+def parallel_training(seeds: list, params: namedtuple, verbose: bool = False) -> list:
+    """
+    Run multiple agents in parallel using different seeds for each, and return their collected results.
+    Args:
+        seeds: A list of seeds for each agent.
+        params: The hyperparameters tuple.
+        verbose: Whether to print the progress of each agent asynchronously.
+
+
+    Returns:
+        results: A list containing the collected results of each agent.
+    """
+    partial = functools.partial(train, params=params, verbose=verbose)
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = executor.map(partial, seeds)
+
+    results = [future.result() for future in futures]
+
+    return results
 
 
 # %%
@@ -142,7 +196,7 @@ class ReplayMemory:
         if self.params.image_obs:
             self._state_shape = (
                 self.params.capacity,
-                self.params.frame_stacking,
+                self.params.num_frame_stacking,
                 *self.params.obs_shape,
             )
             self._next_state_shape = (
@@ -211,11 +265,8 @@ class ReplayMemory:
 
         states = self._states[indices]
         next_states = self._next_states[indices]
-        next_states = (
-            self._next_states[indices]
-            if self.params.image_obs
-            else np.concatenate((states[:, 1:, :, :], next_states), axis=1)
-        )
+        if self.params.image_obs:
+            next_states = np.concatenate((states[:, 1:, :, :], next_states), axis=1)
 
         actions = self._actions[indices]
         rewards = self._rewards[indices]
@@ -244,23 +295,16 @@ class Agent(nn.Module):
         Args:
             params: A namedtuple containing the hyperparameters.
         """
-        super().__init__(params)
+        super().__init__()
         self.params = params
-        self.epsilon = self.params.eps_start
-        self.eps_reduction = (self.params.eps_start - self.params.eps_end) / (
-            self.params.anneal_length_percent * self.params.training_steps
+        self.epsilon = self.params.epsilon_start
+        self.eps_reduction = (self.params.epsilon_start - self.params.epsilon_end) / (
+            self.params.anneal_length_percentage * self.params.training_steps
         )
 
-        self.reduce_eps_steps = (
-            self.params.eps_start - self.params.eps_end
-        ) / self.params.anneal_length
         self.delta = (self.params.v_max - self.params.v_min) / (self.params.n_atoms - 1)
 
         self.replay_memory = ReplayMemory(self.params)
-
-        self.optimizer = torch.optim.Adam(
-            params=self.parameters(), lr=self.params.learning_rate
-        )
 
         # The support is the set of values over which a probability
         # distribution is defined and has non-zero probability there.
@@ -303,6 +347,10 @@ class Agent(nn.Module):
         self.fc1 = nn.Linear(in_features=in_features, out_features=n_hidden_units)
         self.fc2 = nn.Linear(in_features=n_hidden_units, out_features=out_features)
 
+        self.optimizer = torch.optim.Adam(
+            params=self.parameters(), lr=self.params.learning_rate
+        )
+
     def forward(self, state: torch.Tensor) -> torch.Tensor:
         """
         Forward pass through the agent network.
@@ -315,22 +363,25 @@ class Agent(nn.Module):
                     shape=(n_states, n_actions, n_atoms)
 
         """
+
         if self.params.image_obs:
-            conv1_out = nn.ReLU(self.conv1(state))
-            conv2_out = nn.ReLU(self.conv2(conv1_out))
-            conv3_out = nn.Flatten(nn.ReLU(self.conv3(conv2_out)))
-            fc1_out = nn.ReLU(self.fc1(conv3_out))
+            conv1_out = F.relu(self.conv1(state))
+            conv2_out = F.relu(self.conv2(conv1_out))
+            conv3_out = torch.flatten(nn.ReLU(self.conv3(conv2_out)))
+            fc1_out = F.relu(self.fc1(conv3_out))
             value_dist = self.fc2(fc1_out)
         else:
-            fc1_out = nn.ReLU(self.fc1(state))
+            fc1_out = F.relu(self.fc1(state))
             value_dist = self.fc2(fc1_out)
 
-        value_dist = value_dist.view(state.shape[0], self.n_actions, self.N).softmax(
-            dim=2
-        )
+        value_dist = value_dist.view(
+            state.shape[0], self.params.n_actions, self.params.n_atoms
+        ).softmax(dim=2)
         return value_dist
 
-    def act(self, state: torch.Tensor, exploit: bool) -> int:
+    def act(
+        self, state: torch.Tensor, exploit: bool
+    ) -> typing.Tuple[int, torch.Tensor]:
         """
         Sampling action for a given state. Actions are sampled randomly during exploration.
         The action-value is the expected value of the action value-distribution.
@@ -341,28 +392,35 @@ class Agent(nn.Module):
 
         Returns:
             action: The sampled action.
+            probs: The probabilities tensor corresponding to the selected action.
         """
         random_value = random.random()
 
-        if self.epsilon > self.params.eps_end:
+        if self.epsilon > self.params.epsilon_end:
             self.epsilon -= self.eps_reduction
 
-        with torch.no_grad():
-            value_dist = self.forward(state)
-
-        expected_returns = torch.sum(self.support * value_dist, dim=2)
-
         if exploit or random_value > self.epsilon:
-            action = torch.argmax(expected_returns, dim=1).item()
+            with torch.no_grad():
+                value_dist = self.forward(state)
+            expected_returns = torch.sum(self.support * value_dist, dim=2)
+            action = torch.argmax(expected_returns, dim=1)
+            probs = value_dist[torch.arange(state.shape[0]), action, :]
         else:
-            action = torch.randint(
-                high=self.params.n_actions, size=(1,), device=device
-            ).item()
+            action = torch.randint(high=self.params.n_actions, size=(1,), device=device)
+            probs = torch.zeros(self.params.n_atoms)
 
-        return action
+        if len(action) == 1:
+            action = action.item()
+
+        return action, probs
 
     def store_experience(
-        self, state, action: int, next_state, reward: float, done: bool
+        self,
+        state: np.ndarray,
+        action: int,
+        next_state: np.ndarray,
+        reward: float,
+        done: bool,
     ):
         """
 
@@ -376,7 +434,6 @@ class Agent(nn.Module):
         Returns:
 
         """
-        # TODO: fix the type hints for the function parameters state and next_state
         self.replay_memory.push(
             state=state, action=action, next_state=next_state, reward=reward, done=done
         )
@@ -394,9 +451,11 @@ class Agent(nn.Module):
         """
         states, actions, next_states, rewards, dones = self.replay_memory.sample()
 
-        states = to_tensor(array=states, normalize=self.params.image_obs)
-        actions = to_tensor(array=actions).view(-1, 1)
-        next_states = to_tensor(array=next_states, normalize=self.params.image_obs)
+        states = to_tensor(array=states, normalize=self.params.image_obs).float()
+        actions = to_tensor(array=actions).view(-1, 1).long()
+        next_states = to_tensor(
+            array=next_states, normalize=self.params.image_obs
+        ).float()
         rewards = to_tensor(array=rewards).view(-1, 1)
         dones = to_tensor(array=dones).view(-1, 1)
 
@@ -406,8 +465,7 @@ class Agent(nn.Module):
         probs = value_dists[torch.arange(self.params.batch_size), actions.view(-1), :]
 
         # target agent predictions
-        with torch.no_grad():
-            target_value_dists = target_agent.forward(next_states)
+        _, target_probs = target_agent.act(next_states, exploit=True)
 
         # ------------------------------ Categorical algorithm ------------------------------
         #
@@ -418,22 +476,19 @@ class Agent(nn.Module):
         # KL-divergence `KL(projected_T_hat*Z_i-1 || Z_i)`.
         #
 
-        next_actions = ((self.forward(next_states) * self.support).sum(dim=2)).argmax(
-            dim=1
-        )
-        target_probs = target_value_dists[
-            torch.arange(self.params.batch_size), next_actions, :
-        ]
-
         m = torch.zeros(self.params.batch_size * self.params.n_atoms).to(device)
 
-        Tz = (rewards + self.params.gamma * self.support).clip(
+        Tz = (rewards + (1 - dones) * self.params.gamma * self.support).clip(
             self.params.v_min, self.params.v_max
         )
         bj = (Tz - self.params.v_min) / self.delta
+        assert (bj >= 0).all() and (
+            bj < self.params.n_atoms
+        ).all(), "wrong computation for bj"
 
         l, u = torch.floor(bj).long(), torch.ceil(bj).long()
 
+        # performing a double for-loop, one loop for the minibatch samples and another loop for the atoms, in one step.
         offset = (
             torch.linspace(
                 start=0,
@@ -442,16 +497,21 @@ class Agent(nn.Module):
             )
             .long()
             .unsqueeze(1)
-            .expand(self.params.batch_size, self.N)
+            .expand(self.params.batch_size, self.params.n_atoms)
             .to(device)
         )
-        m.index_add_(0, (l + offset).view(-1), (target_probs * (u - bj)).view(-1))
+
+        m.index_add_(
+            0,
+            (l + offset).view(-1),
+            (target_probs * (u + (l == u).long() - bj)).view(-1),
+        )
         m.index_add_(0, (u + offset).view(-1), (target_probs * (bj - l)).view(-1))
 
         m = m.view(self.params.batch_size, self.params.n_atoms)
         # -----------------------------------------------------------------------------------
 
-        loss = (-(m * torch.log(probs).sum(dim=1))).mean()
+        loss = (-((m * torch.log(probs)).sum(dim=1))).mean()
 
         # set all gradients to zero
         self.optimizer.zero_grad()
@@ -483,20 +543,30 @@ def train(params: namedtuple, seed: int, verbose: bool = True):
         verbose: Whether to print training progress periodically.
 
     Returns:
-
+        results_buffer: An instance of the ResultsBuffer class.
     """
     set_seed(seed)
 
     steps = 0  # global time steps for the whole training
+    losses = []  # replace later with results_collector losses
 
-    # results_collector = Results()
+    results_buffer = ResultsBuffer()
 
     env = gymnasium.make(params.env_name)
+    assert isinstance(
+        env.action_space, gymnasium.spaces.Discrete
+    ), "Environments with discrete actions-space allowed only."
     if params.image_obs:
-        env = create_atari_env(env)
+        env = create_atari_env(env=env, params=params)
+    buffer_length = (
+        100 if params.image_obs else 20
+    )  # the number of recent episodes to collect statistics on.
+    env = gymnasium.wrappers.RecordEpisodeStatistics(
+        env=env, buffer_length=buffer_length
+    )
 
-    agent = Agent(params=params)
-    target_agent = copy.deepcopy(agent)
+    agent = Agent(params=params).to(device)
+    target_agent = copy.deepcopy(agent).to(device)
     # Q_target parameters are frozen.
     for p in target_agent.parameters():
         p.requires_grad = False
@@ -507,11 +577,15 @@ def train(params: namedtuple, seed: int, verbose: bool = True):
 
         while not done:
             state = to_tensor(obs, params.image_obs)
-            action = agent.act(state=state, exploit=False)
+            action, _ = agent.act(state=state, exploit=False)
             next_obs, reward, terminated, truncated, info = env.step(action)
-            done = terminated
+            done = terminated or truncated
             agent.store_experience(
-                state=obs, action=action, next_state=next_obs, reward=reward, done=done
+                state=obs,
+                action=action,
+                next_state=next_obs,
+                reward=reward,
+                done=int(terminated),
             )
             obs = next_obs
 
@@ -520,23 +594,40 @@ def train(params: namedtuple, seed: int, verbose: bool = True):
             steps += 1
 
             # train agent periodically if enough experience exists
-            if steps % params.update_frequency == 0 and (
-                len(agent.replay_memory) > params.batch_size
-            ):
-                _ = agent.learn(target_agent)
+            if steps % params.update_frequency == 0 and steps >= params.learning_starts:
+                loss = agent.learn(target_agent)
+                losses.append(round(loss, 1))
 
             # Update the target network periodically.
-            if steps % params.target_update_frequency == 0:
+            if (
+                steps % params.target_update_frequency == 0
+                and steps >= params.learning_starts
+            ):
                 target_agent.load_state_dict(agent.state_dict())
 
             # print progress periodically
             if verbose and steps % 10_000 == 0:
-                print(f"step={steps}/{params.training_steps}")
+                mean_episode_return = np.mean(env.return_queue).round()
+                mean_episode_length = np.mean(env.length_queue).round()
+                mean_loss = np.mean(
+                    losses[-buffer_length * params.update_frequency :]
+                ).round(1)
+                print(
+                    f"step:{steps:<10} mean_episode_return:{mean_episode_return:<7} "
+                    f"mean_episode_length:{mean_episode_length:<7} loss:{mean_loss}",
+                    flush=True,
+                )
+
+            """CODE FOR DEBUGGING GRADIENTS"""
+            # if steps % 1000 == 0:
+            #     grads = [param.grad for name, param in agent.named_parameters() if param.grad is not None]
+            #     avg_grad = [tens.mean() for tens in grads if isinstance(tens, torch.Tensor)]
+            #     print(avg_grad)
 
     # TODO: clean up, create results summary, return stuff
     env.close()
 
-    return
+    return results_buffer
 
 
 # %%
@@ -562,13 +653,14 @@ Hyperparameters = namedtuple(
         "n_actions",
         # --- training related ---
         "training_steps",  # number of steps to train agent for
+        "learning_starts",  # number of steps taken before agent does any learning.
         "obs_shape",  # a tuple representing shape of observations, ex. (1, 4), (4, 84)
         "image_obs",  # boolean, indicating whether the env provides image observations
         "batch_size",  # number of experiences to sample for updating agent network parameters
         "update_frequency",  # how often to update agent network parameters
         "target_update_frequency",  # how often to replace target agent network parameters
         "gamma",  # discount factor
-        "frame_stacking",  # number of frames to be stacked together
+        "num_frame_stacking",  # number of frames to be stacked together
         # --- exploration-exploitation strategy related ---
         "epsilon_start",
         "epsilon_end",
@@ -590,15 +682,61 @@ Hyperparameters = namedtuple(
 # %%
 # Env1
 # ---------------
-# Define hyperparameters dict.
+
 # train for different seeds.
 # evaluate all agents.
 # plot the progress and evaluation.
-# env1_hyperparameters = Hyperparameters()
 
+env1_hyperparameters = Hyperparameters(
+    env_name="LunarLander-v2",
+    n_actions=4,
+    training_steps=int(1e6),
+    learning_starts=2000,
+    obs_shape=(1, 8),
+    image_obs=False,
+    batch_size=32,
+    update_frequency=4,
+    target_update_frequency=500,
+    gamma=0.99,
+    num_frame_stacking=0,
+    epsilon_start=1,
+    epsilon_end=0.05,
+    anneal_length_percentage=0.20,
+    in_features=8,
+    n_hidden_units=512,
+    learning_rate=1e-4,
+    capacity=int(2e5),
+    v_min=-10,
+    v_max=10,
+    n_atoms=51,
+)
 
-env = None
-
+env2_hyperparameters = Hyperparameters(
+    env_name="CartPole-v1",
+    n_actions=2,
+    training_steps=int(5e5),
+    learning_starts=1000,
+    obs_shape=(1, 4),
+    image_obs=False,
+    batch_size=32,
+    update_frequency=4,
+    target_update_frequency=200,
+    gamma=0.99,
+    num_frame_stacking=0,
+    epsilon_start=1,
+    epsilon_end=0.05,
+    anneal_length_percentage=0.40,
+    in_features=4,
+    n_hidden_units=256,
+    learning_rate=1e-4,
+    capacity=int(1e5),
+    v_min=-100,
+    v_max=100,
+    n_atoms=101,
+)
+# train(env2_hyperparameters, 13)
+parallel_results = parallel_training([11, 13], env2_hyperparameters)
+print(parallel_results)
 
 # %%
 # Env2
