@@ -154,12 +154,6 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
             self.render()
         return ob, info
 
-    def set_state(self, qpos, qvel) -> None:
-        """
-        Set the joints position qpos and velocity qvel of the model. Override this method depending on the MuJoCo bindings used.
-        """
-        assert qpos.shape == (self.model.nq,) and qvel.shape == (self.model.nv,)
-
     @property
     def dt(self) -> float:
         return self.model.opt.timestep * self.frame_skip
@@ -241,7 +235,11 @@ class MujocoEnv(BaseMujocoEnv):
         return model, data
 
     def set_state(self, qpos, qvel):
-        super().set_state(qpos, qvel)
+        """Set the joints position qpos and velocity qvel of the model.
+
+        Note: `qpos` and `qvel` is not the full physics state for all mujoco models/environments https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjtstate
+        """
+        assert qpos.shape == (self.model.nq,) and qvel.shape == (self.model.nv,)
         self.data.qpos[:] = np.copy(qpos)
         self.data.qvel[:] = np.copy(qvel)
         if self.model.na == 0:
