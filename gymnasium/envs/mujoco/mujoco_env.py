@@ -1,4 +1,4 @@
-from os import path
+Kfrom os import path
 from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
@@ -235,7 +235,10 @@ class MujocoEnv(BaseMujocoEnv):
         return model, data
 
     def set_state(self, qpos, qvel):
-        """Set the joints position qpos and velocity qvel of the model."""
+        """Set the joints position qpos and velocity qvel of the model.
+
+        Note: `qpos` and `qvel` is not the full physics state for all mujoco models/environments https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjtstate 
+        """
         assert qpos.shape == (self.model.nq,) and qvel.shape == (self.model.nv,)
         self.data.qpos[:] = np.copy(qpos)
         self.data.qvel[:] = np.copy(qvel)
