@@ -118,10 +118,8 @@ class Box(Space[NDArray[Any]]):
             shape = low.shape
         elif isinstance(high, np.ndarray):
             shape = high.shape
-        elif is_float_integer(low) and is_float_integer(
-            high
-        ):  # low and high are scalars
-            shape = (1,)
+        elif is_float_integer(low) and is_float_integer(high):
+            shape = (1,)  # low and high are scalars
         else:
             raise ValueError(
                 "Box shape is not specified, therefore inferred from low and high. Expected low and high to be np.ndarray, integer, or float."
@@ -144,11 +142,11 @@ class Box(Space[NDArray[Any]]):
             dtype_min = int(np.iinfo(self.dtype).min)
             dtype_max = int(np.iinfo(self.dtype).max)
 
-        # most of the code between these two functions are copied with minor changes for < and >
-        self._cast_low(low, dtype_min)
-        self._cast_high(high, dtype_max)
+        # Cast `low` and `high` to ndarray for the dtype min and max for out of range tests
+        self.low, self.bounded_below = self._cast_low(low, dtype_min)
+        self.high, self.bounded_above = self._cast_high(high, dtype_max)
 
-        # recheck shape for case where shape and low or high are provided
+        # recheck shape for case where shape and (low or high) are provided
         if self.low.shape != shape:
             raise ValueError(
                 f"Box low.shape doesn't match provided shape, low.shape={self.low.shape}, shape={self.shape}"
@@ -169,16 +167,25 @@ class Box(Space[NDArray[Any]]):
 
         super().__init__(self.shape, self.dtype, seed)
 
-    def _cast_low(self, low, dtype_min):
+    def _cast_low(self, low, dtype_min) -> tuple[np.ndarray, np.ndarray]:
+        """Casts the input Box low value to ndarray with provided dtype.
+
+        Args:
+            low: The input box low value
+            dtype_min: The dtype's minimum value
+
+        Returns:
+            The updated low value and for what values the input is bounded (below)
+        """
         if is_float_integer(low):
-            self.bounded_below = -np.inf < np.full(self.shape, low, dtype=float)
+            bounded_below = -np.inf < np.full(self.shape, low, dtype=float)
 
             if np.isnan(low):
                 raise ValueError(f"No low value can be equal to `np.nan`, low={low}")
             elif np.isneginf(low):
                 if self.dtype.kind == "i":  # signed int
                     low = dtype_min
-                elif self.dtype.kind in {"u", "b"}:  # unsigned int
+                elif self.dtype.kind in {"u", "b"}:  # unsigned int and bool
                     raise ValueError(
                         f"Box unsigned int dtype don't support `-np.inf`, low={low}"
                     )
@@ -187,7 +194,8 @@ class Box(Space[NDArray[Any]]):
                     f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
                 )
 
-            self.low = np.full(self.shape, low, dtype=self.dtype)
+            low = np.full(self.shape, low, dtype=self.dtype)
+            return low, bounded_below
         else:  # cast for low - array
             if not isinstance(low, np.ndarray):
                 raise ValueError(
@@ -204,12 +212,12 @@ class Box(Space[NDArray[Any]]):
             elif np.any(np.isnan(low)):
                 raise ValueError(f"No low value can be equal to `np.nan`, low={low}")
 
-            self.bounded_below = -np.inf < low
+            bounded_below = -np.inf < low
 
             if np.any(np.isneginf(low)):
                 if self.dtype.kind == "i":  # signed int
                     low[np.isneginf(low)] = dtype_min
-                elif self.dtype.kind in {"u", "b"}:  # unsigned int
+                elif self.dtype.kind in {"u", "b"}:  # unsigned int and bool
                     raise ValueError(
                         f"Box unsigned int dtype don't support `-np.inf`, low={low}"
                     )
@@ -226,11 +234,20 @@ class Box(Space[NDArray[Any]]):
                 gym.logger.warn(
                     f"Box low's precision lowered by casting to {self.dtype}, current low.dtype={low.dtype}"
                 )
-            self.low = low.astype(self.dtype)
+            return low.astype(self.dtype), bounded_below
 
-    def _cast_high(self, high, dtype_max):
+    def _cast_high(self, high, dtype_max) -> tuple[np.ndarray, np.ndarray]:
+        """Casts the input Box high value to ndarray with provided dtype.
+
+        Args:
+            high: The input box high value
+            dtype_max: The dtype's maximum value
+
+        Returns:
+            The updated high value and for what values the input is bounded (above)
+        """
         if is_float_integer(high):
-            self.bounded_above = np.full(self.shape, high, dtype=float) < np.inf
+            bounded_above = np.full(self.shape, high, dtype=float) < np.inf
 
             if np.isnan(high):
                 raise ValueError(f"No high value can be equal to `np.nan`, high={high}")
@@ -246,7 +263,8 @@ class Box(Space[NDArray[Any]]):
                     f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
                 )
 
-            self.high = np.full(self.shape, high, dtype=self.dtype)
+            high = np.full(self.shape, high, dtype=self.dtype)
+            return high, bounded_above
         else:
             if not isinstance(high, np.ndarray):
                 raise ValueError(
@@ -263,7 +281,7 @@ class Box(Space[NDArray[Any]]):
             elif np.any(np.isnan(high)):
                 raise ValueError(f"No high value can be equal to `np.nan`, high={high}")
 
-            self.bounded_above = high < np.inf
+            bounded_above = high < np.inf
 
             posinf = np.isposinf(high)
             if np.any(posinf):
@@ -286,7 +304,7 @@ class Box(Space[NDArray[Any]]):
                 gym.logger.warn(
                     f"Box high's precision lowered by casting to {self.dtype}, current high.dtype={high.dtype}"
                 )
-            self.high = high.astype(self.dtype)
+            return high.astype(self.dtype), bounded_above
 
     @property
     def shape(self) -> tuple[int, ...]:
