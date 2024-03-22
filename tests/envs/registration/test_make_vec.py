@@ -4,7 +4,7 @@ import re
 import pytest
 
 import gymnasium as gym
-from gymnasium import VectorizeMode
+from gymnasium import VectorizeMode, wrappers
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.envs.classic_control.cartpole import CartPoleVectorEnv
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
@@ -230,5 +230,25 @@ def test_async_with_dynamically_registered_env(ctx):
     gym.make_vec(
         "TestEnv-v0", vectorization_mode="async", vector_kwargs=dict(context=ctx)
     )
+
+    del gym.registry["TestEnv-v0"]
+
+
+def test_make_vec_with_spec_additional_wrappers():
+    gym.register(
+        "TestEnv-v0",
+        entry_point=CartPoleEnv,
+        additional_wrappers=(
+            wrappers.ClipReward.wrapper_spec(min_reward=-0.5, max_reward=0.5),
+        ),
+    )
+
+    env = gym.make("TestEnv-v0")
+    print(f"{env=}")
+    assert isinstance(env, wrappers.ClipReward)
+
+    envs = gym.make_vec("TestEnv-v0")
+    print(f"{envs=}")
+    assert isinstance(envs.envs[0], wrappers.ClipReward)
 
     del gym.registry["TestEnv-v0"]
