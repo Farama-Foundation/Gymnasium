@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import multiprocessing as mp
-from collections import OrderedDict
 from ctypes import c_bool
 from functools import singledispatch
 from typing import Any
@@ -81,12 +80,10 @@ def _create_tuple_shared_memory(space: Tuple, n: int = 1, ctx=mp):
 
 @create_shared_memory.register(Dict)
 def _create_dict_shared_memory(space: Dict, n: int = 1, ctx=mp):
-    return OrderedDict(
-        [
-            (key, create_shared_memory(subspace, n=n, ctx=ctx))
-            for (key, subspace) in space.spaces.items()
-        ]
-    )
+    return {
+        key: create_shared_memory(subspace, n=n, ctx=ctx)
+        for (key, subspace) in space.spaces.items()
+    }
 
 
 @create_shared_memory.register(Text)
@@ -163,15 +160,12 @@ def _read_tuple_from_shared_memory(space: Tuple, shared_memory, n: int = 1):
 
 @read_from_shared_memory.register(Dict)
 def _read_dict_from_shared_memory(space: Dict, shared_memory, n: int = 1):
-    subspace_samples = OrderedDict(
-        [
-            (key, read_from_shared_memory(subspace, shared_memory[key], n=n))
-            for (key, subspace) in space.spaces.items()
-        ]
-    )
+    subspace_samples = {
+        key: read_from_shared_memory(subspace, shared_memory[key], n=n)
+        for (key, subspace) in space.spaces.items()
+    }
     return tuple(
-        OrderedDict({key: subspace_samples[key][i] for key in space.keys()})
-        for i in range(n)
+        {key: subspace_samples[key][i] for key in space.keys()} for i in range(n)
     )
 
 
