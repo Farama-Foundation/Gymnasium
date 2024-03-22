@@ -1,6 +1,7 @@
 """Test suite for NormalizeObservation wrapper."""
 import numpy as np
 
+import gymnasium as gym
 from gymnasium import spaces, wrappers
 from gymnasium.wrappers import NormalizeObservation
 from tests.testing_env import GenericTestEnv
@@ -62,3 +63,14 @@ def test_update_running_mean_property():
     wrapped_env.step(None)
     assert rms_var_updated == wrapped_env.obs_rms.var
     assert rms_mean_updated == wrapped_env.obs_rms.mean
+
+
+def test_normalize_obs_with_vector():
+    def thunk():
+        env = gym.make("CarRacing-v2")
+        env = gym.wrappers.GrayscaleObservation(env)
+        env = gym.wrappers.NormalizeObservation(env)
+        return env
+
+    envs = gym.vector.SyncVectorEnv([thunk for _ in range(4)])
+    obs, _ = envs.reset()
