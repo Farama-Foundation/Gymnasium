@@ -206,6 +206,8 @@ def play(
         noop: The action used when no key input has been entered, or the entered key combination is unknown.
 
     Example:
+        >>> import gymnasium as gym
+        >>> import numpy as np
         >>> from gymnasium.utils.play import play
         >>> play(gym.make("CarRacing-v2", render_mode="rgb_array"),  # doctest: +SKIP
         ...     keys_to_action={
