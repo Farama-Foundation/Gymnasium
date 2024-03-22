@@ -179,8 +179,9 @@ class LunarLander(gym.Env, EzPickle):
 
     ## Version History
     - v3: 
-	    - Reset wind and turbulence offset (`C`) whenever the environment is reset to ensure statistical independence between consecutive episodes (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/954)).
-        - Changed observation space for `x`, `y`  coordinates from $\pm 1.5$ to $\pm 1.6$ (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/752)).
+        - Reset wind and turbulence offset (`C`) whenever the environment is reset to ensure statistical independence between consecutive episodes (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/954)).
+        - Fix non-deterministic behaviour due to not fully destroying the world (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/728)).
+	- Changed observation space for `x`, `y`  coordinates from $\pm 1.5$ to $\pm 1.6$ (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/752)).
     - v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters
     - v1: Legs contact with ground added in state vector; contact with ground give +10 reward points, and -10 if then lose contact; reward renormalized to 200; harder initial random push.
     - v0: Initial version
