@@ -499,6 +499,14 @@ class NormalizeObservation(
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         gym.ObservationWrapper.__init__(self, env)
 
+        assert env.observation_space.shape is not None
+        self.observation_space = gym.spaces.Box(
+            low=-np.inf,
+            high=np.inf,
+            shape=env.observation_space.shape,
+            dtype=np.float64,
+        )
+
         self.obs_rms = RunningMeanStd(
             shape=self.observation_space.shape, dtype=self.observation_space.dtype
         )
