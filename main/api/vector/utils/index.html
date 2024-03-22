@@ -630,9 +630,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">items</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="n">iterate</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
-<span class="go">OrderedDict([(&#39;position&#39;, array([0.77395606, 0.43887845, 0.85859793], dtype=float32)), (&#39;velocity&#39;, array([0.77395606, 0.43887845], dtype=float32))])</span>
+<span class="go">{&#39;position&#39;: array([0.77395606, 0.43887845, 0.85859793], dtype=float32), &#39;velocity&#39;: array([0.77395606, 0.43887845], dtype=float32)}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
-<span class="go">OrderedDict([(&#39;position&#39;, array([0.697368  , 0.09417735, 0.97562236], dtype=float32)), (&#39;velocity&#39;, array([0.85859793, 0.697368  ], dtype=float32))])</span>
+<span class="go">{&#39;position&#39;: array([0.697368  , 0.09417735, 0.97562236], dtype=float32), &#39;velocity&#39;: array([0.85859793, 0.697368  ], dtype=float32)}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
@@ -690,9 +690,9 @@
 <span class="gp">... </span><span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
 <span class="gp">... </span><span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">create_empty_array</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">)</span>
-<span class="go">OrderedDict([(&#39;position&#39;, array([[0., 0., 0.],</span>
-<span class="go">       [0., 0., 0.]], dtype=float32)), (&#39;velocity&#39;, array([[0., 0.],</span>
-<span class="go">       [0., 0.]], dtype=float32))])</span>
+<span class="go">{&#39;position&#39;: array([[0., 0., 0.],</span>
+<span class="go">       [0., 0., 0.]], dtype=float32), &#39;velocity&#39;: array([[0., 0.],</span>
+<span class="go">       [0., 0.]], dtype=float32)}</span>
 </pre></div>
 </div>
 </dd></dl>
