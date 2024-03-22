@@ -328,6 +328,11 @@ class LunarLander(gym.Env, EzPickle):
     ):
         super().reset(seed=seed)
         self._destroy()
+
+        # Bug's workaround for: https://github.com/Farama-Foundation/Gymnasium/issues/728
+        # Not sure why the self._destroy() is not enough to clean(reset) the total world environment elements, need more investigation on the root cause,
+        # we must create a totally new world for self.reset(), or the bug#728 will happen
+        self.world = Box2D.b2World(gravity=(0, self.gravity))
         self.world.contactListener_keepref = ContactDetector(self)
         self.world.contactListener = self.world.contactListener_keepref
         self.game_over = False
