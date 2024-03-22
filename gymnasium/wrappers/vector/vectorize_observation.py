@@ -189,10 +189,10 @@ class FilterObservation(VectorizeTransformObservation):
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        OrderedDict([('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+        {'obs': array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
                [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
                [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
-              dtype=float32))])
+              dtype=float32)}
     """
 
     def __init__(self, env: VectorEnv, filter_keys: Sequence[str | int]):

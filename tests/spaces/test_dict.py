@@ -10,7 +10,7 @@ from gymnasium.spaces import Box, Dict, Discrete
 
 def test_dict_init():
     with pytest.raises(
-        AssertionError,
+        TypeError,
         match=r"^Unexpected Dict space input, expecting dict, OrderedDict or Sequence, actual type: ",
     ):
         Dict(Discrete(2))
