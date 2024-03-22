@@ -162,9 +162,9 @@ def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
         >>> items = space.sample()
         >>> it = iterate(space, items)
         >>> next(it)
-        OrderedDict([('position', array([0.77395606, 0.43887845, 0.85859793], dtype=float32)), ('velocity', array([0.77395606, 0.43887845], dtype=float32))])
+        {'position': array([0.77395606, 0.43887845, 0.85859793], dtype=float32), 'velocity': array([0.77395606, 0.43887845], dtype=float32)}
         >>> next(it)
-        OrderedDict([('position', array([0.697368  , 0.09417735, 0.97562236], dtype=float32)), ('velocity', array([0.85859793, 0.697368  ], dtype=float32))])
+        {'position': array([0.697368  , 0.09417735, 0.97562236], dtype=float32), 'velocity': array([0.85859793, 0.697368  ], dtype=float32)}
         >>> next(it)
         Traceback (most recent call last):
             ...
@@ -327,9 +327,9 @@ def create_empty_array(
         ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
         ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
         >>> create_empty_array(space, n=2, fn=np.zeros)
-        OrderedDict([('position', array([[0., 0., 0.],
-               [0., 0., 0.]], dtype=float32)), ('velocity', array([[0., 0.],
-               [0., 0.]], dtype=float32))])
+        {'position': array([[0., 0., 0.],
+               [0., 0., 0.]], dtype=float32), 'velocity': array([[0., 0.],
+               [0., 0.]], dtype=float32)}
     """
     raise TypeError(
         f"The space provided to `create_empty_array` is not a gymnasium Space instance, type: {type(space)}, {space}"
