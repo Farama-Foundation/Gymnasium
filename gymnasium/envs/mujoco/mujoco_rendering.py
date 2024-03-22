@@ -1,4 +1,3 @@
-import collections
 import os
 import time
 from typing import Optional
@@ -27,13 +26,11 @@ def _import_osmesa(width, height):
     return GLContext(width, height)
 
 
-_ALL_RENDERERS = collections.OrderedDict(
-    [
-        ("glfw", _import_glfw),
-        ("egl", _import_egl),
-        ("osmesa", _import_osmesa),
-    ]
-)
+_ALL_RENDERERS = {
+    "glfw": _import_glfw,
+    "egl": _import_egl,
+    "osmesa": _import_osmesa,
+}
 
 
 class BaseRender:

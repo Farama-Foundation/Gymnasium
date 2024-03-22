@@ -1,5 +1,4 @@
 """Utility functions for the wrappers."""
-from collections import OrderedDict
 from functools import singledispatch
 
 import numpy as np
@@ -119,9 +118,7 @@ def _create_tuple_zero_array(space: Tuple):
 
 @create_zero_array.register(Dict)
 def _create_dict_zero_array(space: Dict):
-    return OrderedDict(
-        {key: create_zero_array(subspace) for key, subspace in space.spaces.items()}
-    )
+    return {key: create_zero_array(subspace) for key, subspace in space.spaces.items()}
 
 
 @create_zero_array.register(Sequence)

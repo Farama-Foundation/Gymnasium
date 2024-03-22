@@ -7,7 +7,6 @@
 """
 from __future__ import annotations
 
-from collections import OrderedDict
 from copy import deepcopy
 from functools import singledispatch
 from typing import Any, Iterable, Iterator
@@ -226,7 +225,7 @@ def _iterate_dict(space: Dict, items: dict[str, Any]):
         ]
     )
     for item in zip(*values):
-        yield OrderedDict({key: value for key, value in zip(keys, item)})
+        yield {key: value for key, value in zip(keys, item)}
 
 
 @singledispatch
@@ -287,12 +286,10 @@ def _concatenate_tuple(
 def _concatenate_dict(
     space: Dict, items: Iterable, out: dict[str, Any]
 ) -> dict[str, Any]:
-    return OrderedDict(
-        {
-            key: concatenate(subspace, [item[key] for item in items], out[key])
-            for key, subspace in space.items()
-        }
-    )
+    return {
+        key: concatenate(subspace, [item[key] for item in items], out[key])
+        for key, subspace in space.items()
+    }
 
 
 @concatenate.register(Graph)
@@ -356,12 +353,9 @@ def _create_empty_array_tuple(space: Tuple, n: int = 1, fn=np.zeros) -> tuple[An
 
 @create_empty_array.register(Dict)
 def _create_empty_array_dict(space: Dict, n: int = 1, fn=np.zeros) -> dict[str, Any]:
-    return OrderedDict(
-        {
-            key: create_empty_array(subspace, n=n, fn=fn)
-            for key, subspace in space.items()
-        }
-    )
+    return {
+        key: create_empty_array(subspace, n=n, fn=fn) for key, subspace in space.items()
+    }
 
 
 @create_empty_array.register(Graph)
