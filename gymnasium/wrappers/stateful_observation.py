@@ -487,6 +487,7 @@ class NormalizeObservation(
     Change logs:
      * v0.21.0 - Initially add
      * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard, particularly useful for evaluation time.
+        Casts all observations to `np.float32` and sets the observation space with low/high of `-np.inf` and `np.inf` and dtype as `np.float32`
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
@@ -504,7 +505,7 @@ class NormalizeObservation(
             low=-np.inf,
             high=np.inf,
             shape=env.observation_space.shape,
-            dtype=np.float64,
+            dtype=np.float32,
         )
 
         self.obs_rms = RunningMeanStd(
@@ -527,8 +528,8 @@ class NormalizeObservation(
         """Normalises the observation using the running mean and variance of the observations."""
         if self._update_running_mean:
             self.obs_rms.update(np.array([observation]))
-        return (observation - self.obs_rms.mean) / np.sqrt(
-            self.obs_rms.var + self.epsilon
+        return np.float32(
+            (observation - self.obs_rms.mean) / np.sqrt(self.obs_rms.var + self.epsilon)
         )
 
 
