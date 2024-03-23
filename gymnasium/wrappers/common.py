@@ -149,8 +149,14 @@ class TimeLimit(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.max_episode_steps = self._max_episode_steps
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.max_episode_steps = self._max_episode_steps
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
@@ -319,8 +325,14 @@ class PassiveEnvChecker(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.disable_env_checker = False
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.disable_env_checker = False
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
@@ -424,8 +436,14 @@ class OrderEnforcing(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.order_enforce = True
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.order_enforce = True
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
