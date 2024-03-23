@@ -488,7 +488,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">Discrete(4)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Box([-1.5</span> <span class="pre">-1.5</span> <span class="pre">-5.</span> <span class="pre">-5.</span> <span class="pre">-3.1415927</span> <span class="pre">-5.</span> <span class="pre">-0.</span> <span class="pre">-0.</span> <span class="pre">],</span> <span class="pre">[1.5</span> <span class="pre">1.5</span> <span class="pre">5.</span> <span class="pre">5.</span> <span class="pre">3.1415927</span> <span class="pre">5.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">],</span> <span class="pre">(8,),</span> <span class="pre">float32)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Box([</span> <span class="pre">-2.5</span> <span class="pre">-2.5</span> <span class="pre">-10.</span> <span class="pre">-10.</span> <span class="pre">-6.2831855</span> <span class="pre">-10.</span> <span class="pre">-0.</span> <span class="pre">-0.</span> <span class="pre">],</span> <span class="pre">[</span> <span class="pre">2.5</span> <span class="pre">2.5</span> <span class="pre">10.</span> <span class="pre">10.</span> <span class="pre">6.2831855</span> <span class="pre">10.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">],</span> <span class="pre">(8,),</span> <span class="pre">float32)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;LunarLander-v3&quot;)</span></code></p></td>
@@ -602,12 +602,15 @@ The recommended value for <code class="docutils literal notranslate"><span class
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>v3: Reset wind and turbulence offset (<code class="docutils literal notranslate"><span class="pre">C</span></code>) whenever the environment is reset to ensure statistical independence
-between consecutive episodes (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/954">GitHub issue</a>).
-Fix non-deterministic behaviour due to not fully destroying the world (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/728">GitHub issue</a>).</p></li>
+<li><p>v3:</p>
+<ul>
+<li><p>Reset wind and turbulence offset (<code class="docutils literal notranslate"><span class="pre">C</span></code>) whenever the environment is reset to ensure statistical independence between consecutive episodes (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/954">GitHub issue</a>).</p></li>
+<li><p>Fix non-deterministic behaviour due to not fully destroying the world (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/728">GitHub issue</a>).</p></li>
+<li><p>Changed observation space for <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>  coordinates from <span class="math notranslate nohighlight">\(\pm 1.5\)</span> to <span class="math notranslate nohighlight">\(\pm 2.5\)</span>, velocities from <span class="math notranslate nohighlight">\(\pm 5\)</span> to <span class="math notranslate nohighlight">\(\pm 10\)</span> and angles from <span class="math notranslate nohighlight">\(\pm \pi\)</span> to <span class="math notranslate nohighlight">\(\pm 2\pi\)</span> (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/752">GitHub issue</a>).</p></li>
+</ul>
+</li>
 <li><p>v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters</p></li>
-<li><p>v1: Legs contact with ground added in state vector; contact with ground give +10 reward points,
-and -10 if then lose contact; reward renormalized to 200; harder initial random push.</p></li>
+<li><p>v1: Legs contact with ground added in state vector; contact with ground give +10 reward points, and -10 if then lose contact; reward renormalized to 200; harder initial random push.</p></li>
 <li><p>v0: Initial version</p></li>
 </ul>
 </section>
@@ -794,6 +797,8 @@ This in turn results in an orientation dependent torque being applied to the lan
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
 
