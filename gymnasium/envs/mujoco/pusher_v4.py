@@ -25,7 +25,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     def __init__(self, **kwargs):
         assert (
             mujoco.__version__ < "3.0.0"
-        ), "`Pusher-v4` is only supported on `mujuco<3`."
+        ), "`Pusher-v4` is only supported on `mujuco<3`, for more information https://github.com/Farama-Foundation/Gymnasium/issues/950."
         utils.EzPickle.__init__(self, **kwargs)
 
         observation_space = Box(low=-np.inf, high=np.inf, shape=(23,), dtype=np.float64)
