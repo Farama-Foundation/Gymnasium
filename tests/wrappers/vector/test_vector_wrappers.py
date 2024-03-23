@@ -45,7 +45,7 @@ def custom_environments():
         ("CarRacing-v2", "ResizeObservation", {"shape": (35, 45)}),
         ("CarRacing-v2", "ReshapeObservation", {"shape": (96, 48, 6)}),
         ("CartPole-v1", "RescaleObservation", {"min_obs": 0, "max_obs": 1}),
-        ("CartPole-v1", "DtypeObservation", {"dtype": np.int32}),
+        ("CarRacing-v2", "DtypeObservation", {"dtype": np.int32}),
         # ("CartPole-v1", "RenderObservation", {}),  # not implemented
         # ("CartPole-v1", "TimeAwareObservation", {}),  # not implemented
         # ("CartPole-v1", "FrameStackObservation", {}),  # not implemented
