@@ -78,7 +78,7 @@ class ContactDetector(contactListener):
 
 
 class LunarLander(gym.Env, EzPickle):
-    """
+    r"""
     ## Description
     This environment is a classic rocket trajectory optimization problem.
     According to Pontryagin's maximum principle, it is optimal to fire the
@@ -178,12 +178,12 @@ class LunarLander(gym.Env, EzPickle):
      The recommended value for `turbulence_power` is between 0.0 and 2.0.
 
     ## Version History
-    - v3: Reset wind and turbulence offset (`C`) whenever the environment is reset to ensure statistical independence
-       between consecutive episodes (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/954)).
-       Fix non-deterministic behaviour due to not fully destroying the world (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/728)).
+    - v3:
+        - Reset wind and turbulence offset (`C`) whenever the environment is reset to ensure statistical independence between consecutive episodes (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/954)).
+        - Fix non-deterministic behaviour due to not fully destroying the world (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/728)).
+        - Changed observation space for `x`, `y`  coordinates from $\pm 1.5$ to $\pm 2.5$, velocities from $\pm 5$ to $\pm 10$ and angles from $\pm \pi$ to $\pm 2\pi$ (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/752)).
     - v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters
-    - v1: Legs contact with ground added in state vector; contact with ground give +10 reward points,
-          and -10 if then lose contact; reward renormalized to 200; harder initial random push.
+    - v1: Legs contact with ground added in state vector; contact with ground give +10 reward points, and -10 if then lose contact; reward renormalized to 200; harder initial random push.
     - v0: Initial version
 
     ## Notes
@@ -268,13 +268,13 @@ class LunarLander(gym.Env, EzPickle):
                 # these are bounds for position
                 # realistically the environment should have ended
                 # long before we reach more than 50% outside
-                -1.5,
-                -1.5,
+                -2.5,  # x coordinate
+                -2.5,  # y coordinate
                 # velocity bounds is 5x rated speed
-                -5.0,
-                -5.0,
-                -math.pi,
-                -5.0,
+                -10.0,
+                -10.0,
+                -2 * math.pi,
+                -10.0,
                 -0.0,
                 -0.0,
             ]
@@ -284,13 +284,13 @@ class LunarLander(gym.Env, EzPickle):
                 # these are bounds for position
                 # realistically the environment should have ended
                 # long before we reach more than 50% outside
-                1.5,
-                1.5,
+                2.5,  # x coordinate
+                2.5,  # y coordinate
                 # velocity bounds is 5x rated speed
-                5.0,
-                5.0,
-                math.pi,
-                5.0,
+                10.0,
+                10.0,
+                2 * math.pi,
+                10.0,
                 1.0,
                 1.0,
             ]
