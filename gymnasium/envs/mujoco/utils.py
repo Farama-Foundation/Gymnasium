@@ -11,7 +11,7 @@ import gymnasium
 
 def get_state(
     env: gymnasium.envs.mujoco.MujocoEnv,
-    state_type: mujoco.mjtState = mujoco.mjtState.mjSTATE_PHYSICS,
+    state_type: mujoco.mjtState = mujoco.mjtState.mjSTATE_FULLPHYSICS,
 ):
     """Gets the state of `env`.
 
@@ -29,7 +29,7 @@ def get_state(
 def set_state(
     env: gymnasium.envs.mujoco.MujocoEnv,
     state: np.ndarray,
-    state_type: mujoco.mjtState = mujoco.mjtState.mjSTATE_PHYSICS,
+    state_type: mujoco.mjtState = mujoco.mjtState.mjSTATE_FULLPHYSICS,
 ):
     """Set the state of `env`.
 
@@ -44,7 +44,7 @@ def set_state(
         env.unwrapped.model,
         env.unwrapped.data,
         state,
-        spec=mujoco.mjtState.mjSTATE_PHYSICS,
+        spec=state_type,
     )
     return state
 
