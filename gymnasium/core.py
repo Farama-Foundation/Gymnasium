@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
+import gymnasium
 from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
@@ -368,8 +369,14 @@ class Wrapper(
             )
 
             # to avoid reference issues we deepcopy the prior environments spec and add the new information
-            env_spec = deepcopy(env_spec)
-            env_spec.additional_wrappers += (wrapper_spec,)
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.additional_wrappers += (wrapper_spec,)
+            except Exception as e:
+                gymnasium.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
