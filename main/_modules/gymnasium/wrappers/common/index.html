@@ -623,8 +623,14 @@
 
         <span class="n">env_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
         <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">env_spec</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
-            <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_episode_steps</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">env_spec</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
+                <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_episode_steps</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">gym</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
         <span class="k">return</span> <span class="n">env_spec</span></div>
@@ -799,8 +805,14 @@
 
         <span class="n">env_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
         <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">env_spec</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
-            <span class="n">env_spec</span><span class="o">.</span><span class="n">disable_env_checker</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">env_spec</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
+                <span class="n">env_spec</span><span class="o">.</span><span class="n">disable_env_checker</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">gym</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
         <span class="k">return</span> <span class="n">env_spec</span>
@@ -907,8 +919,14 @@
 
         <span class="n">env_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
         <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">env_spec</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
-            <span class="n">env_spec</span><span class="o">.</span><span class="n">order_enforce</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">env_spec</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
+                <span class="n">env_spec</span><span class="o">.</span><span class="n">order_enforce</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">gym</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
         <span class="k">return</span> <span class="n">env_spec</span></div>
