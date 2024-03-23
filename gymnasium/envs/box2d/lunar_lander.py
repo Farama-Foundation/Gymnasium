@@ -78,7 +78,7 @@ class ContactDetector(contactListener):
 
 
 class LunarLander(gym.Env, EzPickle):
-    f"""
+    r"""
     ## Description
     This environment is a classic rocket trajectory optimization problem.
     According to Pontryagin's maximum principle, it is optimal to fire the
@@ -178,7 +178,7 @@ class LunarLander(gym.Env, EzPickle):
      The recommended value for `turbulence_power` is between 0.0 and 2.0.
 
     ## Version History
-    - v3: 
+    - v3:
         - Reset wind and turbulence offset (`C`) whenever the environment is reset to ensure statistical independence between consecutive episodes (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/954)).
         - Fix non-deterministic behaviour due to not fully destroying the world (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/728)).
         - Changed observation space for `x`, `y`  coordinates from $\pm 1.5$ to $\pm 2.5$, velocities from $\pm 5$ to $\pm 10$ and angles from $\pm \pi$ to $\pm 2\pi$ (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/752)).
@@ -273,7 +273,7 @@ class LunarLander(gym.Env, EzPickle):
                 # velocity bounds is 5x rated speed
                 -10.0,
                 -10.0,
-                -2*math.pi,
+                -2 * math.pi,
                 -10.0,
                 -0.0,
                 -0.0,
@@ -289,7 +289,7 @@ class LunarLander(gym.Env, EzPickle):
                 # velocity bounds is 5x rated speed
                 10.0,
                 10.0,
-                2*math.pi,
+                2 * math.pi,
                 10.0,
                 1.0,
                 1.0,
