@@ -32,7 +32,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     :name: humanoid
     ```
 
-    The action space is a `Box(-1, 1, (17,), float32)`. An action represents the torques applied at the hinge joints.
+    The action space is a `Box(-0.4, 0.4, (17,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     | --- | ---------------------------------------------------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
