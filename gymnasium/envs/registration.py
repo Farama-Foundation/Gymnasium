@@ -934,9 +934,13 @@ def make_vec(
             raise error.Error(
                 f"Custom vector environment can be passed arguments only through kwargs and `vector_kwargs` is not empty ({vector_kwargs})"
             )
-        if len(wrappers) > 0:
+        elif len(wrappers) > 0:
             raise error.Error(
-                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
+                f"Cannot use `vector_entry_point` vectorization mode with the wrappers argument ({wrappers})."
+            )
+        elif len(env_spec.additional_wrappers) > 0:
+            raise error.Error(
+                f"Cannot use `vector_entry_point` vectorization mode with the additional_wrappers parameter in spec being not empty ({env_spec.additional_wrappers})."
             )
 
         entry_point = env_spec.vector_entry_point
