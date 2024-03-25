@@ -75,7 +75,7 @@ class PendulumFunctional(
         return new_state
 
     def observation(
-        self, state: jax.Array, params: PendulumParams = PendulumParams
+        self, state: jax.Array, rng: Any, params: PendulumParams = PendulumParams
     ) -> jax.Array:
         """Generates an observation based on the state."""
         theta, thetadot = state
@@ -86,6 +86,7 @@ class PendulumFunctional(
         state: StateType,
         action: ActType,
         next_state: StateType,
+        rng: Any,
         params: PendulumParams = PendulumParams,
     ) -> float:
         """Generates the reward based on the state, action and next state."""
@@ -100,7 +101,7 @@ class PendulumFunctional(
         return -costs
 
     def terminal(
-        self, state: StateType, params: PendulumParams = PendulumParams
+        self, state: StateType, rng: Any, params: PendulumParams = PendulumParams
     ) -> bool:
         """Determines if the state is a terminal state."""
         return False
