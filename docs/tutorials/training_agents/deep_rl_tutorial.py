@@ -1,5 +1,5 @@
 """
-Implementation of a deep RL agent
+Implementation of a Deep RL Agent
 =================================
 
 intro: what is this tutorial and why. what will it contain
@@ -18,7 +18,7 @@ Let's start by importing necessary libraries:
 
 # %%
 __author__ = "Hardy Hasan"
-__date__ = "2023-02-20"
+__date__ = "2023-03-21"
 __license__ = "MIT License"
 
 import concurrent.futures
@@ -29,6 +29,7 @@ import typing
 from collections import namedtuple
 from typing import Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
@@ -68,17 +69,33 @@ class ResultsBuffer:
     uses these results for reporting progress or overall agent performance.
     """
 
-    __slots__ = ["seed", "params"]
+    __slots__ = ["seed", "params", "episode_returns", "episode_lengths"]
 
     def __init__(self, seed, params):
         self.seed = seed
         self.params = params
+        self.episode_returns = []
+        self.episode_lengths = []
 
     def __repr__(self):
         return f"ResultsBuffer(seed={self.seed}, params={self.params})"
 
     def __str__(self):
         return f"Env={self.params.env_name}\tseed={self.seed}"
+
+    def push(self, avg_episode_return: int, avg_episode_length: int):
+        """
+        Adding average results over a number of past episodes.
+
+        Args:
+            avg_episode_return: Average episodic return
+            avg_episode_length: Average episodic length
+
+        Returns:
+
+        """
+        self.episode_returns.append(avg_episode_return)
+        self.episode_lengths.append(avg_episode_length)
 
 
 def to_tensor(array: np.ndarray, normalize: bool = False) -> torch.Tensor:
@@ -147,11 +164,44 @@ def parallel_training(seeds: list, params: namedtuple, verbose: bool = False) ->
     """
     partial = functools.partial(train, params=params, verbose=verbose)
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        futures = executor.map(partial, seeds)
+        results = executor.map(partial, seeds)
 
-    results = [future.result() for future in futures]
+    results = [res for res in results]
 
     return results
+
+
+def aggregate_results(results: list) -> (np.ndarray, np.ndarray):
+    arr = np.array(results)
+    average = np.mean(arr, axis=0)
+    stddev = np.std(arr, axis=0)
+
+    return average, stddev
+
+
+def plot_results(results, params):
+    plt.style.use("seaborn-v0_8-darkgrid")
+    n_metrics = 2
+    n_agents = len(results)
+    num_datapoints = len(results[0][0])
+    y_labels = ["Average return", "Average length"]
+    training_steps = params.training_steps // 1000
+    x = np.linspace(
+        start=training_steps // num_datapoints, stop=training_steps, num=num_datapoints
+    )
+    colors = ["purple", "seagreen"]
+    figname = f"drl_{params.env_name.split('-')[0]}"
+
+    fig, axes = plt.subplots(nrows=1, ncols=n_metrics, figsize=(15, 6))
+
+    for i in range(n_metrics):
+        ax = axes[i]
+        for agent_results in range(n_agents):
+            ax.plot(x, results[agent_results][i], colors[i])
+            ax.set(xlabel="Steps (1000)", ylabel=y_labels[i])
+
+    fig.savefig(f"../../_static/img/tutorials/{figname}.png")
+    plt.show()
 
 
 # %%
@@ -532,14 +582,14 @@ class Agent(nn.Module):
 # Describe useful statistics to plot during training to track agent progress.
 
 
-def train(params: namedtuple, seed: int, verbose: bool = True):
+def train(seed: int, params: namedtuple, verbose: bool):
     """
     Creates agent and environment, and lets the agent interact
     with the environment until it learns a good policy.
 
     Args:
-        params: A namedtuple containing all necessary hyperparameters.
         seed: For reprodicubility.
+        params: A namedtuple containing all necessary hyperparameters.
         verbose: Whether to print training progress periodically.
 
     Returns:
@@ -550,7 +600,7 @@ def train(params: namedtuple, seed: int, verbose: bool = True):
     steps = 0  # global time steps for the whole training
     losses = []  # replace later with results_collector losses
 
-    results_buffer = ResultsBuffer()
+    results_buffer = ResultsBuffer(seed=seed, params=params)
 
     env = gymnasium.make(params.env_name)
     assert isinstance(
@@ -612,6 +662,7 @@ def train(params: namedtuple, seed: int, verbose: bool = True):
                 mean_loss = np.mean(
                     losses[-buffer_length * params.update_frequency :]
                 ).round(1)
+                results_buffer.push(mean_episode_return, mean_episode_length)
                 print(
                     f"step:{steps:<10} mean_episode_return:{mean_episode_return:<7} "
                     f"mean_episode_length:{mean_episode_length:<7} loss:{mean_loss}",
@@ -711,10 +762,11 @@ env1_hyperparameters = Hyperparameters(
     n_atoms=51,
 )
 
+results_for_env2 = None
 env2_hyperparameters = Hyperparameters(
     env_name="CartPole-v1",
     n_actions=2,
-    training_steps=int(5e5),
+    training_steps=int(5e4),
     learning_starts=1000,
     obs_shape=(1, 4),
     image_obs=False,
@@ -734,9 +786,6 @@ env2_hyperparameters = Hyperparameters(
     v_max=100,
     n_atoms=101,
 )
-# train(env2_hyperparameters, 13)
-parallel_results = parallel_training([11, 13], env2_hyperparameters)
-print(parallel_results)
 
 # %%
 # Env2
@@ -747,17 +796,37 @@ print(parallel_results)
 # plot the progress and evaluation.
 # env2_hyperparameters = Hyperparameters()
 
-
 env2 = None
 
-# AtariPreprocessing
-# FrameStack
-# RecordEpisodeStatistics
-# 512 hidden units for atari
-# frame-skipping done by default in AtariPreprocessing
+# train(env2_hyperparameters, 13)
+if __name__ == "__main__":
+    # --- CartPole-v0 training ---
+    n_agents = 2
+    seeds = [11, 13]
+    cartpole_parallel_results = parallel_training(
+        seeds=seeds, params=env2_hyperparameters, verbose=True
+    )
+
+    # %%
+    # Plot results
+    # ---------------
+    # call plot function.
+    all_episode_returns = [i for i in range(n_agents)]
+    # episode_return_combined = aggregate_results()
+    # plot_results([[parallel_results[0].episode_returns, parallel_results[0].episode_lengths],
+    #               [parallel_results[1].episode_returns, parallel_results[1].episode_lengths]],
+    #              params=env2_hyperparameters)
+
+# %%
+# | CartPole-v0 training |
+#
+# .. |training| image:: ../../_static/img/tutorials/drl_CartPole.png
+#
+#
 
 # RecordVideo
 # how to evaluate a trained agent
+
 
 # %%
 # Finishing words
