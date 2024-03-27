@@ -49,3 +49,13 @@ title: Utility functions
 .. autofunction:: gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api
 .. autofunction:: gymnasium.utils.step_api_compatibility.convert_to_done_step_api
 ```
+
+## Runtime Performance benchmark
+Sometimes is neccary to measure your environment's runtime performance, and ensure no performance regressions take place.
+These tests require manual inspection of its outputs:
+
+```{eval-rst}
+.. autofunction:: gymnasium.utils.performance.benchmark_step
+.. autofunction:: gymnasium.utils.performance.benchmark_init
+.. autofunction:: gymnasium.utils.performance.benchmark_render
+```
