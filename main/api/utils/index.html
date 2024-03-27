@@ -870,6 +870,61 @@ wrapper is written in new API, and the final step output is desired to be in old
 </dd></dl>
 
 </section>
+<section id="runtime-performance-benchmark">
+<h2>Runtime Performance benchmark<a class="headerlink" href="#runtime-performance-benchmark" title="Link to this heading">#</a></h2>
+<p>Sometimes is neccary to measure your environment’s runtime performance, and ensure no performance regressions take place.
+These tests require manual inspection of its outputs:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.utils.performance.benchmark_step">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.utils.performance.</span></span><span class="sig-name descname"><span class="pre">benchmark_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/gymnasium/utils/performance/#benchmark_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.utils.performance.benchmark_step" title="Link to this definition">#</a></dt>
+<dd><p>A benchmark to measure the runtime performance of step for an environment.</p>
+<dl class="simple">
+<dt>example usage:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`py</span>
+<span class="pre">env_old</span> <span class="pre">=</span> <span class="pre">...</span>
+<span class="pre">old_throughput</span> <span class="pre">=</span> <span class="pre">benchmark_step(env_old)</span>
+<span class="pre">env_new</span> <span class="pre">=</span> <span class="pre">...</span>
+<span class="pre">new_throughput</span> <span class="pre">=</span> <span class="pre">benchmark_step(env_old)</span>
+<span class="pre">slowdown</span> <span class="pre">=</span> <span class="pre">old_throughput</span> <span class="pre">/</span> <span class="pre">new_throughput</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – the environment to benchmarked.</p></li>
+<li><p><strong>target_duration</strong> – the duration of the benchmark in seconds (note: it will go slightly over it).</p></li>
+<li><p><strong>seed</strong> – seeds the environment and action sampled.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: the average steps per second.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.utils.performance.benchmark_init">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.utils.performance.</span></span><span class="sig-name descname"><span class="pre">benchmark_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_lambda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/gymnasium/utils/performance/#benchmark_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.utils.performance.benchmark_init" title="Link to this definition">#</a></dt>
+<dd><p>A benchmark to measure the initialization time and first reset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_lambda</strong> – the function to initialize the environment.</p></li>
+<li><p><strong>target_duration</strong> – the duration of the benchmark in seconds (note: it will go slightly over it).</p></li>
+<li><p><strong>seed</strong> – seeds the first reset of the environment.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.utils.performance.benchmark_render">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.utils.performance.</span></span><span class="sig-name descname"><span class="pre">benchmark_render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/gymnasium/utils/performance/#benchmark_render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.utils.performance.benchmark_render" title="Link to this definition">#</a></dt>
+<dd><p>A benchmark to measure the time of render().</p>
+<p>Note: does not work with <cite>render_mode=’human’</cite>
+:param env: the environment to benchmarked (Note: must be renderable).
+:param target_duration: the duration of the benchmark in seconds (note: it will go slightly over it).</p>
+</dd></dl>
+
+</section>
 </section>
 
           </article>
@@ -975,6 +1030,12 @@ wrapper is written in new API, and the final step output is desired to be in old
 <li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.step_api_compatibility"><code class="docutils literal notranslate"><span class="pre">step_api_compatibility()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api"><code class="docutils literal notranslate"><span class="pre">convert_to_terminated_truncated_step_api()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.convert_to_done_step_api"><code class="docutils literal notranslate"><span class="pre">convert_to_done_step_api()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#runtime-performance-benchmark">Runtime Performance benchmark</a><ul>
+<li><a class="reference internal" href="#gymnasium.utils.performance.benchmark_step"><code class="docutils literal notranslate"><span class="pre">benchmark_step()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.performance.benchmark_init"><code class="docutils literal notranslate"><span class="pre">benchmark_init()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.performance.benchmark_render"><code class="docutils literal notranslate"><span class="pre">benchmark_render()</span></code></a></li>
 </ul>
 </li>
 </ul>
