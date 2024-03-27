@@ -18,7 +18,7 @@ read_time: ???
 The version 0 of `Gymnasium/MuJoCo` was introduced in `gym==0.0.1` 2016,
 followed shortly after by version 1 (`gym==0.1.0` in 2016) which addressed several configuration errors.
 Version 2 (`Gym==0.9.5` in 2018), which brought major backend improvements using the `mujoco-py=>1.5` simulator. 
-Version 3 (`gym==0.12.0` 2019) offers increased customization options, enabling the user to modify parts of the environment, such as the reward function, and make slight adjustments to the robot model.
+Version 3 (`gym==0.12.0` in 2019) offers increased customization options, enabling the user to modify parts of the environment, such as the reward function, and make slight adjustments to the robot model.
 Version 4 (`gym==0.24.0` in 2020)  ported the environments to the new `mujoco>=2.2.0` simulator. However it removed the capability of slightly modifying the environment.
 
 `Gymnasium/MuJoCo` environments such as Hopper, Ant, and Humanoid have been utilized in thousands of RL research papers. They have been a cornerstone in the development and evaluation RL methods, as they have been a standard set of "hard to solve" robotic environments.
