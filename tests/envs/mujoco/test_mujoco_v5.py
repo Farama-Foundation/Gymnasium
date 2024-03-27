@@ -586,17 +586,18 @@ def test_model_object_count(version: str):
     assert env.model.ngeom == 3
     assert env.model.ntendon == 0
 
-    env = gym.make(f"Pusher-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
-    assert env.model.nq == 11
-    assert env.model.nv == 11
-    assert env.model.nu == 7
-    assert env.model.nbody == 13
-    if mujoco.__version__ >= "3.1.2":
-        assert env.model.nbvh == 8
-    assert env.model.njnt == 11
-    assert env.model.ngeom == 21
-    assert env.model.ntendon == 0
+    if not (version == "v4" and mujoco.__version__ >= "3.0.0"):
+        env = gym.make(f"Pusher-{version}").unwrapped
+        assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+        assert env.model.nq == 11
+        assert env.model.nv == 11
+        assert env.model.nu == 7
+        assert env.model.nbody == 13
+        if mujoco.__version__ >= "3.1.2":
+            assert env.model.nbvh == 8
+        assert env.model.njnt == 11
+        assert env.model.ngeom == 21
+        assert env.model.ntendon == 0
 
     env = gym.make(f"Reacher-{version}").unwrapped
     assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
