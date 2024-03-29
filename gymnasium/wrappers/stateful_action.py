@@ -1,4 +1,8 @@
-"""``StickyAction`` wrapper - There is a probability that the action is taken again."""
+"""A collection of wrappers for modifying actions.
+
+* ``StickyAction`` wrapper - There is a probability that the action is taken again.
+* ``RepeatAction`` wrapper - Repeat a single action multiple times.
+"""
 from __future__ import annotations
 
 from typing import Any, SupportsFloat
