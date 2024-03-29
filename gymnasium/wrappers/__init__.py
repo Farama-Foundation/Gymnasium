@@ -58,7 +58,7 @@ from gymnasium.wrappers.common import (
     TimeLimit,
 )
 from gymnasium.wrappers.rendering import HumanRendering, RecordVideo, RenderCollection
-from gymnasium.wrappers.stateful_action import StickyAction
+from gymnasium.wrappers.stateful_action import RepeatAction, StickyAction
 from gymnasium.wrappers.stateful_observation import (
     DelayObservation,
     FrameStackObservation,
