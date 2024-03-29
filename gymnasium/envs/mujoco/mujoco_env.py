@@ -100,87 +100,6 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         self.action_space = spaces.Box(low=low, high=high, dtype=np.float32)
         return self.action_space
 
-    # methods to override:
-    # ----------------------------
-    def step(
-        self, action: NDArray[np.float32]
-    ) -> Tuple[NDArray[np.float64], np.float64, bool, bool, Dict[str, np.float64]]:
-        raise NotImplementedError
-
-    def reset_model(self) -> NDArray[np.float64]:
-        """
-        Reset the robot degrees of freedom (qpos and qvel).
-        Implement this in each subclass.
-        """
-        raise NotImplementedError
-
-    def _initialize_simulation(self) -> Tuple[Any, Any]:
-        """
-        Initialize MuJoCo simulation data structures mjModel and mjData.
-        """
-        raise NotImplementedError
-
-    def _step_mujoco_simulation(self, ctrl, n_frames) -> None:
-        """
-        Step over the MuJoCo simulation.
-        """
-        raise NotImplementedError
-
-    def render(self) -> Union[NDArray[np.float64], None]:
-        """
-        Render a frame from the MuJoCo simulation as specified by the render_mode.
-        """
-        raise NotImplementedError
-
-    # -----------------------------
-    def _get_reset_info(self) -> Dict[str, float]:
-        """Function that generates the `info` that is returned during a `reset()`."""
-        return {}
-
-    def reset(
-        self,
-        *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
-        super().reset(seed=seed)
-
-        mujoco.mj_resetData(self.model, self.data)
-
-        ob = self.reset_model()
-        info = self._get_reset_info()
-
-        if self.render_mode == "human":
-            self.render()
-        return ob, info
-
-    @property
-    def dt(self) -> float:
-        return self.model.opt.timestep * self.frame_skip
-
-    def do_simulation(self, ctrl, n_frames) -> None:
-        """
-        Step the simulation n number of frames and applying a control action.
-        """
-        # Check control input is contained in the action space
-        if np.array(ctrl).shape != (self.model.nu,):
-            raise ValueError(
-                f"Action dimension mismatch. Expected {(self.model.nu,)}, found {np.array(ctrl).shape}"
-            )
-        self._step_mujoco_simulation(ctrl, n_frames)
-
-    def close(self):
-        """Close all processes like rendering contexts"""
-        raise NotImplementedError
-
-    def get_body_com(self, body_name) -> NDArray[np.float64]:
-        """Return the cartesian position of a body frame"""
-        raise NotImplementedError
-
-    def state_vector(self) -> NDArray[np.float64]:
-        """Return the position and velocity joint states of the model"""
-        return np.concatenate([self.data.qpos.flat, self.data.qvel.flat])
-
 
 class MujocoEnv(BaseMujocoEnv):
     """Superclass for MuJoCo environments."""
@@ -227,6 +146,9 @@ class MujocoEnv(BaseMujocoEnv):
     def _initialize_simulation(
         self,
     ) -> Tuple["mujoco._structs.MjModel", "mujoco._structs.MjData"]:
+        """
+        Initialize MuJoCo simulation data structures mjModel and mjData.
+        """
         model = mujoco.MjModel.from_xml_path(self.fullpath)
         # MjrContext will copy model.vis.global_.off* to con.off*
         model.vis.global_.offwidth = self.width
@@ -247,6 +169,9 @@ class MujocoEnv(BaseMujocoEnv):
         mujoco.mj_forward(self.model, self.data)
 
     def _step_mujoco_simulation(self, ctrl, n_frames):
+        """
+        Step over the MuJoCo simulation.
+        """
         self.data.ctrl[:] = ctrl
 
         mujoco.mj_step(self.model, self.data, nstep=n_frames)
@@ -257,11 +182,76 @@ class MujocoEnv(BaseMujocoEnv):
         mujoco.mj_rnePostConstraint(self.model, self.data)
 
     def render(self):
+        """
+        Render a frame from the MuJoCo simulation as specified by the render_mode.
+        """
         return self.mujoco_renderer.render(self.render_mode)
 
     def close(self):
+        """Close rendering contexts processes."""
         if self.mujoco_renderer is not None:
             self.mujoco_renderer.close()
 
     def get_body_com(self, body_name):
+        """Return the cartesian position of a body frame."""
         return self.data.body(body_name).xpos
+
+
+    def reset(
+        self,
+        *,
+        seed: Optional[int] = None,
+        options: Optional[dict] = None,
+    ):
+        super().reset(seed=seed)
+
+        mujoco.mj_resetData(self.model, self.data)
+
+        ob = self.reset_model()
+        info = self._get_reset_info()
+
+        if self.render_mode == "human":
+            self.render()
+        return ob, info
+
+    @property
+    def dt(self) -> float:
+        return self.model.opt.timestep * self.frame_skip
+
+    def do_simulation(self, ctrl, n_frames) -> None:
+        """
+        Step the simulation n number of frames and applying a control action.
+        """
+        # Check control input is contained in the action space
+        if np.array(ctrl).shape != (self.model.nu,):
+            raise ValueError(
+                f"Action dimension mismatch. Expected {(self.model.nu,)}, found {np.array(ctrl).shape}"
+            )
+        self._step_mujoco_simulation(ctrl, n_frames)
+
+    def state_vector(self) -> NDArray[np.float64]:
+        """Return the position and velocity joint states of the model.
+        
+        Note: `qpos` and `qvel` does not constitute the full physics state for all `mujoco` environments see https://mujoco.readthedocs.io/en/stable/computation/index.html#the-state.
+        """
+        return np.concatenate([self.data.qpos.flat, self.data.qvel.flat])
+
+    # methods to override:
+    # ----------------------------
+    def step(
+        self, action: NDArray[np.float32]
+    ) -> Tuple[NDArray[np.float64], np.float64, bool, bool, Dict[str, np.float64]]:
+        raise NotImplementedError
+
+    def reset_model(self) -> NDArray[np.float64]:
+        """
+        Reset the robot degrees of freedom (qpos and qvel).
+        Implement this in each subclass.
+        """
+        raise NotImplementedError
+
+    def _get_reset_info(self) -> Dict[str, float]:
+        """Function that generates the `info` that is returned during a `reset()`."""
+        return {}
+
+    # -----------------------------
