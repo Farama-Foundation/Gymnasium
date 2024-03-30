@@ -60,15 +60,15 @@ Here in this blog, we will use robot MuJoCo models from the [MuJoCo Menagerie](h
 
 For quadruped robots, we recommend using the `Ant-v5` framework:
 ```py
-env = gymansium.make('Ant-v5', xml_file="MY_MUJOCO_MODEL.xml", ...)
+env = gymnasium.make('Ant-v5', xml_file="MY_MUJOCO_MODEL.xml", ...)
 ```
 For bipedal robots, we recommend using the `Humanoid-v5` framework:
 ```py
-env = gymansium.make('Humanoid-v5', xml_file="MY_MUJOCO_MODEL.xml", ...)
+env = gymnasium.make('Humanoid-v5', xml_file="MY_MUJOCO_MODEL.xml", ...)
 ```
 For swimmer and crawler robots, we recommend using the `Swimmer-v5` framework:
 ```py
-env = gymansium.make('Swimmer-v5', xml_file="MY_MUJOCO_MODEL.xml", ...)
+env = gymnasium.make('Swimmer-v5', xml_file="MY_MUJOCO_MODEL.xml", ...)
 ```
 
 But we will need to change some arguments to specify the behavior we want, the most commonly changed arguments are:
