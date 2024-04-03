@@ -1,4 +1,4 @@
-from os import path
+Jfrom os import path
 from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
@@ -94,12 +94,6 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         self.camera_name = camera_name
         self.camera_id = camera_id
 
-    def _set_action_space(self):
-        bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
-        low, high = bounds.T
-        self.action_space = spaces.Box(low=low, high=high, dtype=np.float32)
-        return self.action_space
-
 
 class MujocoEnv(BaseMujocoEnv):
     """Superclass for MuJoCo environments."""
@@ -143,11 +137,17 @@ class MujocoEnv(BaseMujocoEnv):
             visual_options,
         )
 
+    def _set_action_space(self):
+        bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
+        low, high = bounds.T
+        self.action_space = spaces.Box(low=low, high=high, dtype=np.float32)
+        return self.action_space
+
     def _initialize_simulation(
         self,
-    ) -> Tuple["mujoco._structs.MjModel", "mujoco._structs.MjData"]:
+    ) -> Tuple["mujoco.MjModel", "mujoco.MjData"]:
         """
-        Initialize MuJoCo simulation data structures mjModel and mjData.
+        Initialize MuJoCo simulation data structures `mjModel` and `mjData`.
         """
         model = mujoco.MjModel.from_xml_path(self.fullpath)
         # MjrContext will copy model.vis.global_.off* to con.off*
@@ -246,7 +246,7 @@ class MujocoEnv(BaseMujocoEnv):
     def reset_model(self) -> NDArray[np.float64]:
         """
         Reset the robot degrees of freedom (qpos and qvel).
-        Implement this in each subclass.
+        Implement this in each environment subclass.
         """
         raise NotImplementedError
 
