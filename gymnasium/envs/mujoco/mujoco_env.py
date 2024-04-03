@@ -49,22 +49,6 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
     ):
-        """Base abstract class for mujoco based environments.
-
-        Args:
-            model_path: Path to the MuJoCo Model.
-            frame_skip: Number of MuJoCo simulation steps per gym `step()`.
-            observation_space: The observation space of the environment.
-            render_mode: The `render_mode` used.
-            width: The width of the render window.
-            height: The height of the render window.
-            camera_id: The camera ID used.
-            camera_name: The name of the camera used (can not be used in conjunction with `camera_id`).
-
-        Raises:
-            OSError: when the `model_path` does not exist.
-            error.DependencyNotInstalled: When `mujoco` is not installed.
-        """
         self.fullpath = expand_model_path(model_path)
 
         self.width = width
@@ -96,7 +80,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
 
 
 class MujocoEnv(BaseMujocoEnv):
-    """Superclass for MuJoCo environments."""
+    """Superclass for MuJoCo based environments."""
 
     def __init__(
         self,
@@ -112,6 +96,25 @@ class MujocoEnv(BaseMujocoEnv):
         max_geom: int = 1000,
         visual_options: Dict[int, bool] = {},
     ):
+        """Base abstract class for mujoco based environments.
+
+        Args:
+            model_path: Path to the MuJoCo Model.
+            frame_skip: Number of MuJoCo simulation steps per gym `step()`.
+            observation_space: The observation space of the environment.
+            render_mode: The `render_mode` used.
+            width: The width of the render window.
+            height: The height of the render window.
+            camera_id: The camera ID used.
+            camera_name: The name of the camera used (can not be used in conjunction with `camera_id`).
+            default_camera_config: configuration for rendering camera.
+            max_geom: max number of rendered geometries.
+            visual_options: render flag options.
+
+        Raises:
+            OSError: when the `model_path` does not exist.
+            error.DependencyNotInstalled: When `mujoco` is not installed.
+        """
         super().__init__(
             model_path,
             frame_skip,
