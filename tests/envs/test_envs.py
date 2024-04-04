@@ -107,6 +107,10 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
     env_1 = env_spec.make(disable_env_checker=True)
     env_2 = env_spec.make(disable_env_checker=True)
 
+    if env_1.metadata.get("jax", False):
+        env_1 = gym.wrappers.JaxToNumpy(env_1)
+        env_2 = gym.wrappers.JaxToNumpy(env_2)
+
     initial_obs_1, initial_info_1 = env_1.reset(seed=SEED)
     initial_obs_2, initial_info_2 = env_2.reset(seed=SEED)
     assert_equals(initial_obs_1, initial_obs_2)
@@ -150,6 +154,9 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
     ids=[env.spec.id for env in all_testing_initialised_envs if env.spec is not None],
 )
 def test_pickle_env(env: gym.Env):
+    if env.metadata.get("jax", False):
+        env = gym.wrappers.JaxToNumpy(env)
+
     pickled_env = pickle.loads(pickle.dumps(env))
 
     data_equivalence(env.reset(), pickled_env.reset())
