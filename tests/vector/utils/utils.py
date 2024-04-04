@@ -9,7 +9,7 @@ def is_rng_equal(rng_1: np.random.Generator, rng_2: np.random.Generator):
 
 def type_equivalence(data_1, data_2):
     """Assert the type equivalences between two variables."""
-    if type(data_1) == type(data_2):
+    if type(data_1) is type(data_2):
         if isinstance(data_1, tuple):
             # assert len(data_1) == len(data_2), f'{len(data_1)}, {len(data_2)}, {data_1}, {data_2}'
 

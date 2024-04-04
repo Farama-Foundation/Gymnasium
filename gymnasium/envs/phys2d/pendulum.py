@@ -7,6 +7,7 @@ from typing import Any, Optional, Tuple
 import jax
 import jax.numpy as jnp
 import numpy as np
+from flax import struct
 from jax.random import PRNGKey
 
 import gymnasium as gym
@@ -19,57 +20,74 @@ from gymnasium.utils import EzPickle
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
 
 
+@struct.dataclass
+class PendulumParams:
+    """Parameters for the jax Pendulum environment."""
+
+    max_speed: float = 8.0
+    dt: float = 0.05
+    g: float = 10.0
+    m: float = 1.0
+    l: float = 1.0
+    high_x: float = jnp.pi
+    high_y: float = 1.0
+    screen_dim: int = 500
+
+
 class PendulumFunctional(
-    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType]
+    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType, PendulumParams]
 ):
     """Pendulum but in jax and functional structure."""
 
-    max_speed = 8
-    max_torque = 2.0
-    dt = 0.05
-    g = 10.0
-    m = 1.0
-    l = 1.0
-    high_x = jnp.pi
-    high_y = 1.0
-
-    screen_dim = 500
+    max_torque: float = 2.0
 
     observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(3,), dtype=np.float32)
     action_space = gym.spaces.Box(-max_torque, max_torque, shape=(1,), dtype=np.float32)
 
-    def initial(self, rng: PRNGKey):
+    def initial(self, rng: PRNGKey, params: PendulumParams = PendulumParams):
         """Initial state generation."""
-        high = jnp.array([self.high_x, self.high_y])
+        high = jnp.array([params.high_x, params.high_y])
         return jax.random.uniform(key=rng, minval=-high, maxval=high, shape=high.shape)
 
     def transition(
-        self, state: jax.Array, action: int | jax.Array, rng: None = None
+        self,
+        state: jax.Array,
+        action: int | jax.Array,
+        rng: None = None,
+        params: PendulumParams = PendulumParams,
     ) -> jax.Array:
         """Pendulum transition."""
         th, thdot = state  # th := theta
         u = action
 
-        g = self.g
-        m = self.m
-        l = self.l
-        dt = self.dt
+        g = params.g
+        m = params.m
+        l = params.l
+        dt = params.dt
 
         u = jnp.clip(u, -self.max_torque, self.max_torque)[0]
 
         newthdot = thdot + (3 * g / (2 * l) * jnp.sin(th) + 3.0 / (m * l**2) * u) * dt
-        newthdot = jnp.clip(newthdot, -self.max_speed, self.max_speed)
+        newthdot = jnp.clip(newthdot, -params.max_speed, params.max_speed)
         newth = th + newthdot * dt
 
         new_state = jnp.array([newth, newthdot])
         return new_state
 
-    def observation(self, state: jax.Array) -> jax.Array:
+    def observation(
+        self, state: jax.Array, params: PendulumParams = PendulumParams
+    ) -> jax.Array:
         """Generates an observation based on the state."""
         theta, thetadot = state
         return jnp.array([jnp.cos(theta), jnp.sin(theta), thetadot])
 
-    def reward(self, state: StateType, action: ActType, next_state: StateType) -> float:
+    def reward(
+        self,
+        state: StateType,
+        action: ActType,
+        next_state: StateType,
+        params: PendulumParams = PendulumParams,
+    ) -> float:
         """Generates the reward based on the state, action and next state."""
         th, thdot = state  # th := theta
         u = action
@@ -81,14 +99,17 @@ class PendulumFunctional(
 
         return -costs
 
-    def terminal(self, state: StateType) -> bool:
+    def terminal(
+        self, state: StateType, params: PendulumParams = PendulumParams
+    ) -> bool:
         """Determines if the state is a terminal state."""
         return False
 
     def render_image(
         self,
         state: StateType,
-        render_state: tuple[pygame.Surface, pygame.time.Clock, float | None],  # type: ignore  # noqa: F821
+        render_state: RenderStateType,
+        params: PendulumParams = PendulumParams,
     ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an RGB image."""
         try:
@@ -100,12 +121,12 @@ class PendulumFunctional(
             ) from e
         screen, clock, last_u = render_state
 
-        surf = pygame.Surface((self.screen_dim, self.screen_dim))
+        surf = pygame.Surface((params.screen_dim, params.screen_dim))
         surf.fill((255, 255, 255))
 
         bound = 2.2
-        scale = self.screen_dim / (bound * 2)
-        offset = self.screen_dim // 2
+        scale = params.screen_dim / (bound * 2)
+        offset = params.screen_dim // 2
 
         rod_length = 1 * scale
         rod_width = 0.2 * scale
@@ -149,7 +170,6 @@ class PendulumFunctional(
                 ),
             )
 
-        # drawing axle
         gfxdraw.aacircle(surf, offset, offset, int(0.05 * scale), (0, 0, 0))
         gfxdraw.filled_circle(surf, offset, offset, int(0.05 * scale), (0, 0, 0))
 
@@ -161,7 +181,10 @@ class PendulumFunctional(
         )
 
     def render_init(
-        self, screen_width: int = 600, screen_height: int = 400
+        self,
+        screen_width: int = 600,
+        screen_height: int = 400,
+        params: PendulumParams = PendulumParams,
     ) -> RenderStateType:
         """Initialises the render state."""
         try:
@@ -177,7 +200,11 @@ class PendulumFunctional(
 
         return screen, clock, None
 
-    def render_close(self, render_state: RenderStateType):
+    def render_close(
+        self,
+        render_state: RenderStateType,
+        params: PendulumParams = PendulumParams,
+    ):
         """Closes the render state."""
         try:
             import pygame
@@ -187,6 +214,10 @@ class PendulumFunctional(
             ) from e
         pygame.display.quit()
         pygame.quit()
+
+    def get_default_params(self, **kwargs) -> PendulumParams:
+        """Returns the default parameters for the environment."""
+        return PendulumParams(**kwargs)
 
 
 class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):

@@ -1,4 +1,4 @@
-"""A collection of perofmance bencharks, useful for debugging performance related issues."""
+"""A collection of runtime performance bencharks, useful for debugging performance related issues."""
 
 import time
 from typing import Callable

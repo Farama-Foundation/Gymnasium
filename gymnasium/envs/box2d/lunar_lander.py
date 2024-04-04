@@ -1,7 +1,6 @@
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-import warnings
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
@@ -9,7 +8,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import error, spaces
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.utils import EzPickle, colorize
+from gymnasium.utils import EzPickle
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
 
@@ -79,7 +78,7 @@ class ContactDetector(contactListener):
 
 
 class LunarLander(gym.Env, EzPickle):
-    """
+    r"""
     ## Description
     This environment is a classic rocket trajectory optimization problem.
     According to Pontryagin's maximum principle, it is optimal to fire the
@@ -93,11 +92,11 @@ class LunarLander(gym.Env, EzPickle):
     can learn to fly and then land on its first attempt.
 
     To see a heuristic landing, run:
-    ```
+    ```shell
     python gymnasium/envs/box2d/lunar_lander.py
     ```
     <!-- To play yourself, run: -->
-    <!-- python examples/agents/keyboard_agent.py LunarLander-v2 -->
+    <!-- python examples/agents/keyboard_agent.py LunarLander-v3 -->
 
     ## Action Space
     There are four discrete actions available:
@@ -145,74 +144,63 @@ class LunarLander(gym.Env, EzPickle):
     > them is destroyed.
 
     ## Arguments
-    To use the _continuous_ environment, you need to specify the
-    `continuous=True` argument like below:
+
+    Lunar Lander has a large number of arguments
+
     ```python
-    import gymnasium as gym
-    env = gym.make(
-        "LunarLander-v2",
-        continuous: bool = False,
-        gravity: float = -10.0,
-        enable_wind: bool = False,
-        wind_power: float = 15.0,
-        turbulence_power: float = 1.5,
-    )
+    >>> import gymnasium as gym
+    >>> env = gym.make("LunarLander-v3", continuous=False, gravity=-10.0,
+    ...                enable_wind=False, wind_power=15.0, turbulence_power=1.5)
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<LunarLander<LunarLander-v3>>>>>
+
     ```
-    If `continuous=True` is passed, continuous actions (corresponding to the throttle of the engines) will be used and the
-    action space will be `Box(-1, +1, (2,), dtype=np.float32)`.
-    The first coordinate of an action determines the throttle of the main engine, while the second
-    coordinate specifies the throttle of the lateral boosters.
-    Given an action `np.array([main, lateral])`, the main engine will be turned off completely if
-    `main < 0` and the throttle scales affinely from 50% to 100% for `0 <= main <= 1` (in particular, the
-    main engine doesn't work  with less than 50% power).
-    Similarly, if `-0.5 < lateral < 0.5`, the lateral boosters will not fire at all. If `lateral < -0.5`, the left
-    booster will fire, and if `lateral > 0.5`, the right booster will fire. Again, the throttle scales affinely
-    from 50% to 100% between -1 and -0.5 (and 0.5 and 1, respectively).
 
-    `gravity` dictates the gravitational constant, this is bounded to be within 0 and -12.
+     * `continuous` determines if discrete or continuous actions (corresponding to the throttle of the engines) will be used with the
+     action space being `Discrete(4)` or `Box(-1, +1, (2,), dtype=np.float32)` respectively.
+     For continuous actions, the first coordinate of an action determines the throttle of the main engine, while the second
+     coordinate specifies the throttle of the lateral boosters. Given an action `np.array([main, lateral])`, the main
+     engine will be turned off completely if `main < 0` and the throttle scales affinely from 50% to 100% for
+     `0 <= main <= 1` (in particular, the main engine doesn't work  with less than 50% power).
+     Similarly, if `-0.5 < lateral < 0.5`, the lateral boosters will not fire at all. If `lateral < -0.5`, the left
+     booster will fire, and if `lateral > 0.5`, the right booster will fire. Again, the throttle scales affinely
+     from 50% to 100% between -1 and -0.5 (and 0.5 and 1, respectively).
 
-    If `enable_wind=True` is passed, there will be wind effects applied to the lander.
-    The wind is generated using the function `tanh(sin(2 k (t+C)) + sin(pi k (t+C)))`.
-    `k` is set to 0.01.
-    `C` is sampled randomly between -9999 and 9999.
+    * `gravity` dictates the gravitational constant, this is bounded to be within 0 and -12. Default is -10.0
 
-    `wind_power` dictates the maximum magnitude of linear wind applied to the craft. The recommended value for `wind_power` is between 0.0 and 20.0.
-    `turbulence_power` dictates the maximum magnitude of rotational wind applied to the craft. The recommended value for `turbulence_power` is between 0.0 and 2.0.
+    * `enable_wind` determines if there will be wind effects applied to the lander. The wind is generated using
+     the function `tanh(sin(2 k (t+C)) + sin(pi k (t+C)))` where `k` is set to 0.01 and `C` is sampled randomly between -9999 and 9999.
+
+    * `wind_power` dictates the maximum magnitude of linear wind applied to the craft. The recommended value for
+     `wind_power` is between 0.0 and 20.0.
+
+    * `turbulence_power` dictates the maximum magnitude of rotational wind applied to the craft.
+     The recommended value for `turbulence_power` is between 0.0 and 2.0.
 
     ## Version History
+    - v3:
+        - Reset wind and turbulence offset (`C`) whenever the environment is reset to ensure statistical independence between consecutive episodes (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/954)).
+        - Fix non-deterministic behaviour due to not fully destroying the world (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/728)).
+        - Changed observation space for `x`, `y`  coordinates from $\pm 1.5$ to $\pm 2.5$, velocities from $\pm 5$ to $\pm 10$ and angles from $\pm \pi$ to $\pm 2\pi$ (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/752)).
     - v2: Count energy spent and in v0.24, added turbulence with wind power and turbulence_power parameters
-    - v1: Legs contact with ground added in state vector; contact with ground
-        give +10 reward points, and -10 if then lose contact; reward
-        renormalized to 200; harder initial random push.
+    - v1: Legs contact with ground added in state vector; contact with ground give +10 reward points, and -10 if then lose contact; reward renormalized to 200; harder initial random push.
     - v0: Initial version
-
 
     ## Notes
 
     There are several unexpected bugs with the implementation of the environment.
 
-    1. The position of the side thursters on the body of the lander changes, depending on the orientation of the lander.
-    This in turn results in an orientation depentant torque being applied to the lander.
+    1. The position of the side thrusters on the body of the lander changes, depending on the orientation of the lander.
+    This in turn results in an orientation dependent torque being applied to the lander.
 
     2. The units of the state are not consistent. I.e.
     * The angular velocity is in units of 0.4 radians per second. In order to convert to radians per second, the value needs to be multiplied by a factor of 2.5.
 
     For the default values of VIEWPORT_W, VIEWPORT_H, SCALE, and FPS, the scale factors equal:
-    'x': 10
-    'y': 6.666
-    'vx': 5
-    'vy': 7.5
-    'angle': 1
-    'angular velocity': 2.5
+    'x': 10, 'y': 6.666, 'vx': 5, 'vy': 7.5, 'angle': 1, 'angular velocity': 2.5
 
     After the correction has been made, the units of the state are as follows:
-    'x': (units)
-    'y': (units)
-    'vx': (units/second)
-    'vy': (units/second)
-    'angle': (radians)
-    'angular velocity': (radians/second)
-
+    'x': (units), 'y': (units), 'vx': (units/second), 'vy': (units/second), 'angle': (radians), 'angular velocity': (radians/second)
 
     <!-- ## References -->
 
@@ -250,26 +238,18 @@ class LunarLander(gym.Env, EzPickle):
         self.gravity = gravity
 
         if 0.0 > wind_power or wind_power > 20.0:
-            warnings.warn(
-                colorize(
-                    f"WARN: wind_power value is recommended to be between 0.0 and 20.0, (current value: {wind_power})",
-                    "yellow",
-                ),
+            gym.logger.warn(
+                f"wind_power value is recommended to be between 0.0 and 20.0, (current value: {wind_power})"
             )
         self.wind_power = wind_power
 
         if 0.0 > turbulence_power or turbulence_power > 2.0:
-            warnings.warn(
-                colorize(
-                    f"WARN: turbulence_power value is recommended to be between 0.0 and 2.0, (current value: {turbulence_power})",
-                    "yellow",
-                ),
+            gym.logger.warn(
+                f"turbulence_power value is recommended to be between 0.0 and 2.0, (current value: {turbulence_power})"
             )
         self.turbulence_power = turbulence_power
 
         self.enable_wind = enable_wind
-        self.wind_idx = np.random.randint(-9999, 9999)
-        self.torque_idx = np.random.randint(-9999, 9999)
 
         self.screen: pygame.Surface = None
         self.clock = None
@@ -288,13 +268,13 @@ class LunarLander(gym.Env, EzPickle):
                 # these are bounds for position
                 # realistically the environment should have ended
                 # long before we reach more than 50% outside
-                -1.5,
-                -1.5,
+                -2.5,  # x coordinate
+                -2.5,  # y coordinate
                 # velocity bounds is 5x rated speed
-                -5.0,
-                -5.0,
-                -math.pi,
-                -5.0,
+                -10.0,
+                -10.0,
+                -2 * math.pi,
+                -10.0,
                 -0.0,
                 -0.0,
             ]
@@ -304,13 +284,13 @@ class LunarLander(gym.Env, EzPickle):
                 # these are bounds for position
                 # realistically the environment should have ended
                 # long before we reach more than 50% outside
-                1.5,
-                1.5,
+                2.5,  # x coordinate
+                2.5,  # y coordinate
                 # velocity bounds is 5x rated speed
-                5.0,
-                5.0,
-                math.pi,
-                5.0,
+                10.0,
+                10.0,
+                2 * math.pi,
+                10.0,
                 1.0,
                 1.0,
             ]
@@ -350,6 +330,11 @@ class LunarLander(gym.Env, EzPickle):
     ):
         super().reset(seed=seed)
         self._destroy()
+
+        # Bug's workaround for: https://github.com/Farama-Foundation/Gymnasium/issues/728
+        # Not sure why the self._destroy() is not enough to clean(reset) the total world environment elements, need more investigation on the root cause,
+        # we must create a totally new world for self.reset(), or the bug#728 will happen
+        self.world = Box2D.b2World(gravity=(0, self.gravity))
         self.world.contactListener_keepref = ContactDetector(self)
         self.world.contactListener = self.world.contactListener_keepref
         self.game_over = False
@@ -417,6 +402,10 @@ class LunarLander(gym.Env, EzPickle):
             True,
         )
 
+        if self.enable_wind:  # Initialize wind pattern based on index
+            self.wind_idx = self.np_random.integers(-9999, 9999)
+            self.torque_idx = self.np_random.integers(-9999, 9999)
+
         # Create Lander Legs
         self.legs = []
         for i in [-1, +1]:
@@ -479,8 +468,8 @@ class LunarLander(gym.Env, EzPickle):
         self._clean_particles(False)
         return p
 
-    def _clean_particles(self, all):
-        while self.particles and (all or self.particles[0].ttl < 0):
+    def _clean_particles(self, all_particle):
+        while self.particles and (all_particle or self.particles[0].ttl < 0):
             self.world.DestroyBody(self.particles.pop(0))
 
     def step(self, action):
@@ -508,13 +497,16 @@ class LunarLander(gym.Env, EzPickle):
 
             # the function used for torque is tanh(sin(2 k x) + sin(pi k x)),
             # which is proven to never be periodic, k = 0.01
-            torque_mag = math.tanh(
-                math.sin(0.02 * self.torque_idx)
-                + (math.sin(math.pi * 0.01 * self.torque_idx))
-            ) * (self.turbulence_power)
+            torque_mag = (
+                math.tanh(
+                    math.sin(0.02 * self.torque_idx)
+                    + (math.sin(math.pi * 0.01 * self.torque_idx))
+                )
+                * self.turbulence_power
+            )
             self.torque_idx += 1
             self.lander.ApplyTorque(
-                (torque_mag),
+                torque_mag,
                 True,
             )
 
@@ -527,7 +519,7 @@ class LunarLander(gym.Env, EzPickle):
 
         # Apply Engine Impulses
 
-        # Tip is a the (X and Y) components of the rotation of the lander.
+        # Tip is the (X and Y) components of the rotation of the lander.
         tip = (math.sin(self.lander.angle), math.cos(self.lander.angle))
 
         # Side is the (-Y and X) components of the rotation of the lander.
@@ -605,8 +597,8 @@ class LunarLander(gym.Env, EzPickle):
 
             # The constant 17 is a constant, that is presumably meant to be SIDE_ENGINE_HEIGHT.
             # However, SIDE_ENGINE_HEIGHT is defined as 14
-            # This casuses the position of the thurst on the body of the lander to change, depending on the orientation of the lander.
-            # This in turn results in an orientation depentant torque being applied to the lander.
+            # This causes the position of the thrust on the body of the lander to change, depending on the orientation of the lander.
+            # This in turn results in an orientation dependent torque being applied to the lander.
             impulse_pos = (
                 self.lander.position[0] + ox - tip[0] * 17 / SCALE,
                 self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT / SCALE,
@@ -673,6 +665,7 @@ class LunarLander(gym.Env, EzPickle):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return np.array(state, dtype=np.float32), reward, terminated, False, {}
 
     def render(self):
@@ -885,10 +878,10 @@ class LunarLanderContinuous:
             "Error initializing LunarLanderContinuous Environment.\n"
             "Currently, we do not support initializing this mode of environment by calling the class directly.\n"
             "To use this environment, instead create it by specifying the continuous keyword in gym.make, i.e.\n"
-            'gym.make("LunarLander-v2", continuous=True)'
+            'gym.make("LunarLander-v3", continuous=True)'
         )
 
 
 if __name__ == "__main__":
-    env = gym.make("LunarLander-v2", render_mode="rgb_array")
+    env = gym.make("LunarLander-v3", render_mode="rgb_array")
     demo_heuristic_lander(env, render=True)

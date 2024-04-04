@@ -19,7 +19,7 @@ from tests.testing_env import GenericTestEnv  # noqa: E402
 
 def torch_data_equivalence(data_1, data_2) -> bool:
     """Return if two variables are equivalent that might contain ``torch.Tensor``."""
-    if type(data_1) == type(data_2):
+    if type(data_1) is type(data_2):
         if isinstance(data_1, dict):
             return data_1.keys() == data_2.keys() and all(
                 torch_data_equivalence(data_1[k], data_2[k]) for k in data_1.keys()

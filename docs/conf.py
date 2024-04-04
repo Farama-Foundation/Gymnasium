@@ -130,6 +130,7 @@ sphinx_gallery_conf = {
     "ignore_pattern": r"__init__\.py",
     "examples_dirs": "./tutorials",
     "gallery_dirs": "./tutorials",
+    "copyfile_regex": r"./tutorials/.*\.md",
     "show_signature": False,
     "show_memory": False,
     "min_reported_time": float("inf"),

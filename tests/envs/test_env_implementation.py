@@ -12,9 +12,40 @@ from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 def test_lunar_lander_heuristics():
     """Tests the LunarLander environment by checking if the heuristic lander works."""
-    lunar_lander = gym.make("LunarLander-v2", disable_env_checker=True)
+    lunar_lander = gym.make("LunarLander-v3", disable_env_checker=True)
     total_reward = demo_heuristic_lander(lunar_lander, seed=1)
     assert total_reward > 100
+
+
+@pytest.mark.parametrize("seed", [0, 10, 20, 30, 40])
+def test_lunar_lander_random_wind_seed(seed: int):
+    """Test that the wind_idx and torque are correctly drawn when setting a seed"""
+
+    lunar_lander = gym.make(
+        "LunarLander-v3", disable_env_checker=True, enable_wind=True
+    ).unwrapped
+    lunar_lander.reset(seed=seed)
+
+    # Test that same seed gives same wind
+    w1, t1 = lunar_lander.wind_idx, lunar_lander.torque_idx
+    lunar_lander.reset(seed=seed)
+    w2, t2 = lunar_lander.wind_idx, lunar_lander.torque_idx
+    assert (
+        w1 == w2 and t1 == t2
+    ), "Setting same seed caused different initial wind or torque index"
+
+    # Test that different seed gives different wind
+    # There is a small chance that different seeds causes same number so test
+    # 10 times (with different seeds) to make this chance incredibly tiny.
+    for i in range(1, 11):
+        lunar_lander.reset(seed=seed + i)
+        w3, t3 = lunar_lander.wind_idx, lunar_lander.torque_idx
+        if w2 != w3 and t1 != t3:  # Found different initial values
+            break
+    else:  # no break
+        raise AssertionError(
+            "Setting different seed caused same initial wind or torque index"
+        )
 
 
 def test_carracing_domain_randomize():
@@ -223,3 +254,65 @@ def test_invalid_customizable_resets(env_name: str, low_high: list):
         # match=re.escape(f"Lower bound ({low}) must be lower than higher bound ({high}).")
         # match=f"An option ({x}) could not be converted to a float."
         env.reset(options={"low": low, "high": high})
+
+
+def test_cartpole_vector_equiv():
+    env = gym.make("CartPole-v1")
+    envs = gym.make_vec("CartPole-v1", num_envs=1)
+
+    assert env.action_space == envs.single_action_space
+    assert env.observation_space == envs.single_observation_space
+
+    # reset
+    seed = np.random.randint(0, 1000)
+    obs, info = env.reset(seed=seed)
+    vec_obs, vec_info = envs.reset(seed=seed)
+
+    assert obs in env.observation_space
+    assert vec_obs in envs.observation_space
+    assert np.all(obs == vec_obs[0])
+    assert info == vec_info
+
+    assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+    # step
+    for i in range(100):
+        action = env.action_space.sample()
+        assert np.array([action]) in envs.action_space
+
+        obs, reward, term, trunc, info = env.step(action)
+        vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+            np.array([action])
+        )
+
+        assert obs in env.observation_space
+        assert vec_obs in envs.observation_space
+        assert np.all(obs == vec_obs[0])
+        assert reward == vec_reward
+        assert term == vec_term
+        assert trunc == vec_trunc
+        assert info == vec_info
+
+        assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+        if term:
+            break
+
+    obs, info = env.reset()
+    # the vector action shouldn't matter as autoreset
+    vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+        envs.action_space.sample()
+    )
+
+    assert obs in env.observation_space
+    assert vec_obs in envs.observation_space
+    assert np.all(obs == vec_obs[0])
+    assert vec_reward == np.array([0])
+    assert vec_term == np.array([False])
+    assert vec_trunc == np.array([False])
+    assert info == vec_info
+
+    assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+    env.close()
+    envs.close()

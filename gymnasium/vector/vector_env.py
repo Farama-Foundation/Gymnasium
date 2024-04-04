@@ -104,17 +104,18 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     num_envs: int
 
     _np_random: np.random.Generator | None = None
+    _np_random_seed: int | None = None
 
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
 
         Args:
-            seed: The environment reset seeds
+            seed: The environment reset seed
             options: If to return the options
 
         Returns:
@@ -133,7 +134,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             {}
         """
         if seed is not None:
-            self._np_random, seed = seeding.np_random(seed)
+            self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def step(
         self, actions: ActType
@@ -211,6 +212,20 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         pass
 
     @property
+    def np_random_seed(self) -> int | None:
+        """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
+
+        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
+        the seed will take the value -1.
+
+        Returns:
+            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
+        """
+        if self._np_random_seed is None:
+            self._np_random, self._np_random_seed = seeding.np_random()
+        return self._np_random_seed
+
+    @property
     def np_random(self) -> np.random.Generator:
         """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
 
@@ -218,12 +233,13 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             Instances of `np.random.Generator`
         """
         if self._np_random is None:
-            self._np_random, seed = seeding.np_random()
+            self._np_random, self._np_random_seed = seeding.np_random()
         return self._np_random
 
     @np_random.setter
     def np_random(self, value: np.random.Generator):
         self._np_random = value
+        self._np_random_seed = -1
 
     @property
     def unwrapped(self):
@@ -430,6 +446,19 @@ class VectorWrapper(VectorEnv):
         """Returns the `render_mode` from the base environment."""
         return self.env.render_mode
 
+    @property
+    def np_random(self) -> np.random.Generator:
+        """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
+
+        Returns:
+            Instances of `np.random.Generator`
+        """
+        return self.env.np_random
+
+    @np_random.setter
+    def np_random(self, value: np.random.Generator):
+        self.env.np_random = value
+
 
 class VectorObservationWrapper(VectorWrapper):
     """Wraps the vectorized environment to allow a modular transformation of the observation.
@@ -445,7 +474,7 @@ class VectorObservationWrapper(VectorWrapper):
     ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
         observations, infos = self.env.reset(seed=seed, options=options)
-        return self.observation(observations), infos
+        return self.observations(observations), infos
 
     def step(
         self, actions: ActType
@@ -453,18 +482,18 @@ class VectorObservationWrapper(VectorWrapper):
         """Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""
         observations, rewards, terminations, truncations, infos = self.env.step(actions)
         return (
-            self.observation(observations),
+            self.observations(observations),
             rewards,
             terminations,
             truncations,
             infos,
         )
 
-    def observation(self, observation: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Defines the vector observation transformation.
 
         Args:
-            observation: A vector observation from the environment
+            observations: A vector observation from the environment
 
         Returns:
             the transformed observation

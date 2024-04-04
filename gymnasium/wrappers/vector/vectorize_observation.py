@@ -69,7 +69,7 @@ class TransformObservation(VectorObservationWrapper):
 
         self.func = func
 
-    def observation(self, observations: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Apply function to the vector observation."""
         return self.func(observations)
 
@@ -148,7 +148,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
         self.same_out = self.observation_space == self.env.observation_space
         self.out = create_empty_array(self.single_observation_space, self.num_envs)
 
-    def observation(self, observations: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""
         if self.same_out:
             return concatenate(
@@ -189,10 +189,10 @@ class FilterObservation(VectorizeTransformObservation):
         >>> obs, info = envs.reset(seed=123)
         >>> envs.close()
         >>> obs
-        OrderedDict([('obs', array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+        {'obs': array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
                [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],
                [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],
-              dtype=float32))])
+              dtype=float32)}
     """
 
     def __init__(self, env: VectorEnv, filter_keys: Sequence[str | int]):

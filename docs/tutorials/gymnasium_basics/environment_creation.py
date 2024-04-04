@@ -22,7 +22,7 @@ Recommended solution
     pipx install copier
 
 Alternative solutions
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 Install Copier with Pip or Conda:
 
@@ -98,6 +98,10 @@ randomly at the beginning of the episode.
 
 An episode in this environment (with ``size=5``) might look like this:
 
+ .. image:: /_static/videos/tutorials/environment-creation-example-episode.gif
+    :width: 400
+    :alt: Example episode of the custom environment
+
 where the blue dot is the agent and the red square represents the
 target.
 
@@ -111,7 +115,7 @@ Let us look at the source code of ``GridWorldEnv`` piece by piece:
 # Our custom environment will inherit from the abstract class
 # ``gymnasium.Env``. You shouldn’t forget to add the ``metadata``
 # attribute to your class. There, you should specify the render-modes that
-# are supported by your environment (e.g. ``"human"``, ``"rgb_array"``,
+# are supported by your environment (e.g., ``"human"``, ``"rgb_array"``,
 # ``"ansi"``) and the framerate at which your environment should be
 # rendered. Every environment should support ``None`` as render-mode; you
 # don’t need to add it in the metadata. In ``GridWorldEnv``, we will
@@ -141,10 +145,10 @@ from gymnasium import spaces
 
 
 class Actions(Enum):
-    right = 0
-    up = 1
-    left = 2
-    down = 3
+    RIGHT = 0
+    UP = 1
+    LEFT = 2
+    DOWN = 3
 
 
 class GridWorldEnv(gym.Env):
@@ -162,6 +166,8 @@ class GridWorldEnv(gym.Env):
                 "target": spaces.Box(0, size - 1, shape=(2,), dtype=int),
             }
         )
+        self._agent_location = np.array([-1, -1], dtype=int)
+        self._target_location = np.array([-1, -1], dtype=int)
 
         # We have 4 actions, corresponding to "right", "up", "left", "down"
         self.action_space = spaces.Discrete(4)
@@ -172,10 +178,10 @@ class GridWorldEnv(gym.Env):
         i.e. 0 corresponds to "right", 1 to "up" etc.
         """
         self._action_to_direction = {
-            Actions.right: np.array([1, 0]),
-            Actions.up: np.array([0, 1]),
-            Actions.left: np.array([-1, 0]),
-            Actions.down: np.array([0, -1]),
+            Actions.RIGHT.value: np.array([1, 0]),
+            Actions.UP.value: np.array([0, 1]),
+            Actions.LEFT.value: np.array([-1, 0]),
+            Actions.DOWN.value: np.array([0, -1]),
         }
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
@@ -218,7 +224,7 @@ class GridWorldEnv(gym.Env):
 
 # %%
 # Oftentimes, info will also contain some data that is only available
-# inside the ``step`` method (e.g. individual reward terms). In that case,
+# inside the ``step`` method (e.g., individual reward terms). In that case,
 # we would have to update the dictionary that is returned by ``_get_info``
 # in ``step``.
 
@@ -442,8 +448,6 @@ class GridWorldEnv(gym.Env):
 # | ``max_episode_steps``| ``int``   | ``None``  | The maximum number of steps that an episode can consist of. If not ``None``, a ``TimeLimit`` wrapper is added |
 # +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
 # | ``order_enforce``    | ``bool``  | ``True``  | Whether to wrap the environment in an  ``OrderEnforcing`` wrapper                                             |
-# +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
-# | ``autoreset``        | ``bool``  | ``False`` | Whether to wrap the environment in an ``AutoResetWrapper``                                                    |
 # +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
 # | ``kwargs``           | ``dict``  | ``{}``    | The default kwargs to pass to the environment class                                                           |
 # +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+

@@ -112,6 +112,7 @@ class ClipReward(RewardWrapper):
 # - You can set a new action or observation space by defining ``self.action_space`` or ``self.observation_space`` in ``__init__``, respectively
 # - You can set new metadata and reward range by defining ``self.metadata`` and ``self.reward_range`` in ``__init__``, respectively
 # - You can override :meth:`gymnasium.Wrapper.step`, :meth:`gymnasium.Wrapper.render`, :meth:`gymnasium.Wrapper.close` etc.
+#
 # If you do this, you can access the environment that was passed
 # to your wrapper (which *still* might be wrapped in some other wrapper) by accessing the attribute :attr:`env`.
 #
