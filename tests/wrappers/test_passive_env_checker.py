@@ -19,7 +19,7 @@ from tests.testing_env import GenericTestEnv
     ids=[env.spec.id for env in all_testing_initialised_envs if env.spec is not None],
 )
 def test_passive_checker_wrapper_warnings(env):
-    if env.metadata.get("jax", False):
+    if env.spec is not None and env.spec.disable_env_checker:
         return
 
     with warnings.catch_warnings(record=True) as caught_warnings:
