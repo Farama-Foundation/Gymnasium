@@ -30,11 +30,8 @@ class FunctionalJaxEnv(gym.Env):
     ):
         """Initialize the environment from a FuncEnv."""
         if metadata is None:
+            # metadata.get("jax", False) can be used downstream to know that the environment returns jax arrays
             metadata = {"render_mode": [], "jax": True}
-        if "jax" not in metadata:
-            gym.logger.warn(
-                'For environments that use Jax observations and actions (and not NumPy), specify `metadata["jax"] = True` for users'
-            )
 
         self.func_env = func_env
 

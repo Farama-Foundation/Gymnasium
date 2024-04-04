@@ -52,12 +52,7 @@ def test_all_env_api(spec):
 
     for warning in caught_warnings:
         if warning.message.args[0] not in CHECK_ENV_IGNORE_WARNINGS:
-            if not (
-                env.metadata.get("jax", False)
-                and "\x1b[33mWARN: The environment (<JaxToNumpy<"
-                in warning.message.args[0]
-            ):
-                raise gym.error.Error(f"Unexpected warning: {warning.message}")
+            raise gym.error.Error(f"Unexpected warning: {warning.message}")
 
 
 @pytest.mark.parametrize(
