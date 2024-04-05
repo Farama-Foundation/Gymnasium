@@ -7,11 +7,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.utils.env_checker import check_env, data_equivalence
-from tests.envs.utils import (
-    all_testing_env_specs,
-    all_testing_initialised_envs,
-    assert_equals,
-)
+from tests.envs.utils import all_testing_env_specs, all_testing_initialised_envs
 
 
 # This runs a smoketest on each official registered env. We may want
@@ -108,7 +104,7 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
 
     initial_obs_1, initial_info_1 = env_1.reset(seed=SEED)
     initial_obs_2, initial_info_2 = env_2.reset(seed=SEED)
-    assert_equals(initial_obs_1, initial_obs_2)
+    assert data_equivalence(initial_obs_1, initial_obs_2, exact=True)
 
     env_1.action_space.seed(SEED)
 
@@ -119,7 +115,9 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
         obs_1, rew_1, terminated_1, truncated_1, info_1 = env_1.step(action)
         obs_2, rew_2, terminated_2, truncated_2, info_2 = env_2.step(action)
 
-        assert_equals(obs_1, obs_2, f"[{time_step}] ")
+        assert data_equivalence(
+            obs_1, obs_2, exact=True
+        ), f"[{time_step}] obs_1={obs_1}, obs_2={obs_2}"
         assert env_1.observation_space.contains(
             obs_1
         )  # obs_2 verified by previous assertion
@@ -131,7 +129,9 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
         assert (
             truncated_1 == truncated_2
         ), f"[{time_step}] done 1={truncated_1}, done 2={truncated_2}"
-        assert_equals(info_1, info_2, f"[{time_step}] ")
+        assert data_equivalence(
+            info_1, info_2, exact=True
+        ), f"[{time_step}] info_1={info_1}, info_2={info_2}"
 
         if (
             terminated_1 or truncated_1
