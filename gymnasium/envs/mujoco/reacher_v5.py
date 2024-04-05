@@ -97,10 +97,10 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The Reacher never terminates.
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 50 timesteps.
 
 

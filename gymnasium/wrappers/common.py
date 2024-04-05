@@ -149,8 +149,14 @@ class TimeLimit(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.max_episode_steps = self._max_episode_steps
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.max_episode_steps = self._max_episode_steps
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
@@ -254,13 +260,28 @@ class PassiveEnvChecker(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
-        assert hasattr(
-            env, "action_space"
-        ), "The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
+        if not isinstance(env, gym.Env):
+            if str(env.__class__.__base__) == "<class 'gym.core.Env'>":
+                raise TypeError(
+                    "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
+                    "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+                )
+            else:
+                raise TypeError(
+                    f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
+                    "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+                )
+
+        if not hasattr(env, "action_space"):
+            raise AttributeError(
+                "The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/"
+            )
         check_action_space(env.action_space)
-        assert hasattr(
-            env, "observation_space"
-        ), "The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
+
+        if not hasattr(env, "observation_space"):
+            raise AttributeError(
+                "The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/"
+            )
         check_observation_space(env.observation_space)
 
         self.checked_reset: bool = False
@@ -304,8 +325,14 @@ class PassiveEnvChecker(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.disable_env_checker = False
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.disable_env_checker = False
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
@@ -409,8 +436,14 @@ class OrderEnforcing(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.order_enforce = True
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.order_enforce = True
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec

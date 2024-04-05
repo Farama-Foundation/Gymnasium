@@ -9,7 +9,6 @@ title: Spaces
 spaces/fundamental
 spaces/composite
 spaces/utils
-vector/utils
 ```
 
 ```{eval-rst}
@@ -67,7 +66,8 @@ Often environment spaces require joining fundamental spaces together for vectori
 * :class:`Dict` - Supports a dictionary of keys and subspaces, used for a fixed number of unordered spaces
 * :class:`Tuple` - Supports a tuple of subspaces, used for multiple for a fixed number of ordered spaces
 * :class:`Sequence` - Supports a variable number of instances of a single subspace, used for entities spaces or selecting a variable number of actions
-* :py:class:`Graph` - Supports graph based actions or observations with discrete or continuous nodes and edge values.
+* :class:`Graph` - Supports graph based actions or observations with discrete or continuous nodes and edge values
+* :class:`OneOf` - Supports optional action spaces such that an action can be one of N possible subspaces
 ```
 
 ## Utility functions

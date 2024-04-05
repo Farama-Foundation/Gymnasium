@@ -21,7 +21,7 @@ For more LaserGates variants with different observation and action spaces, see t
 
 ## Description
 
-The Cryptic Computer is malfunctioning! Use your Dante Dart to navigate through the computer and deestroy the four Failsafe Detonators.
+The Cryptic Computer is malfunctioning! Use your Dante Dart to navigate through the computer and destroy the four Failsafe Detonators.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=271)
 
@@ -48,6 +48,7 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 - `obs_type="grayscale" -> Box(0, 255, (210, 160), np.uint8)`, a grayscale version of the "rgb" type
 
 See variants section for the type of observation used by each environment id by default.
+
 
 
 ## Variants

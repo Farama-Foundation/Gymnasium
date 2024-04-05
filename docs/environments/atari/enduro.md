@@ -47,8 +47,7 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
+## Rewards
 You get 1 point for each vehicle you overtake.
 
 ## Variants

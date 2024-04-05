@@ -346,7 +346,8 @@ class FrameStackObservation(
     Change logs:
      * v0.15.0 - Initially add as ``FrameStack`` with support for lz4
      * v1.0.0 - Rename to ``FrameStackObservation`` and remove lz4 and ``LazyFrame`` support
-      along with adding the ``padding_type`` parameter
+                along with adding the ``padding_type`` parameter
+
     """
 
     def __init__(
@@ -486,6 +487,7 @@ class NormalizeObservation(
     Change logs:
      * v0.21.0 - Initially add
      * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard, particularly useful for evaluation time.
+        Casts all observations to `np.float32` and sets the observation space with low/high of `-np.inf` and `np.inf` and dtype as `np.float32`
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
@@ -497,6 +499,14 @@ class NormalizeObservation(
         """
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         gym.ObservationWrapper.__init__(self, env)
+
+        assert env.observation_space.shape is not None
+        self.observation_space = gym.spaces.Box(
+            low=-np.inf,
+            high=np.inf,
+            shape=env.observation_space.shape,
+            dtype=np.float32,
+        )
 
         self.obs_rms = RunningMeanStd(
             shape=self.observation_space.shape, dtype=self.observation_space.dtype
@@ -518,8 +528,8 @@ class NormalizeObservation(
         """Normalises the observation using the running mean and variance of the observations."""
         if self._update_running_mean:
             self.obs_rms.update(np.array([observation]))
-        return (observation - self.obs_rms.mean) / np.sqrt(
-            self.obs_rms.var + self.epsilon
+        return np.float32(
+            (observation - self.obs_rms.mean) / np.sqrt(self.obs_rms.var + self.epsilon)
         )
 
 

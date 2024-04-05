@@ -91,7 +91,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     The environment terminates when the Inverted Double Pendulum is unhealthy.
     The Inverted Double Pendulum is unhealthy if any of the following happens:
 
@@ -99,7 +99,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
     Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 

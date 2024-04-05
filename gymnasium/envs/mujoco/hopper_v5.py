@@ -101,7 +101,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Episode End
-    #### Termination
+    ### Termination
     If `terminate_when_unhealthy is True` (the default), the environment terminates when the Hopper is unhealthy.
     The Hopper is unhealthy if any of the following happens:
 
@@ -109,7 +109,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     2. The height of the hopper (`observation[0]` if  `exclude_current_positions_from_observation=True`, otherwise `observation[1]`) is no longer contained in the closed interval specified by the `healthy_z_range` argument (default is $[0.7, +\infty]$) (usually meaning that it has fallen).
     3. The angle of the torso (`observation[1]` if  `exclude_current_positions_from_observation=True`, otherwise `observation[2]`) is no longer contained in the closed interval specified by the `healthy_angle_range` argument (default is $[-0.2, 0.2]$).
 
-    #### Truncation
+    ### Truncation
     The default duration of an episode is 1000 timesteps.
 
 

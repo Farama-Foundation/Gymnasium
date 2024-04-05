@@ -120,7 +120,7 @@ def test_vectorized(env_class):
 
     obs, info = env.reset(seed=0)
     assert obs.shape == (10,) + env.single_observation_space.shape
-    assert isinstance(obs, np.ndarray)
+    assert isinstance(obs, jax.Array)
     assert isinstance(info, dict)
 
     for t in range(100):
@@ -128,13 +128,13 @@ def test_vectorized(env_class):
         obs, reward, terminated, truncated, info = env.step(action)
 
         assert obs.shape == (10,) + env.single_observation_space.shape
-        assert isinstance(obs, np.ndarray)
+        assert isinstance(obs, jax.Array)
         assert reward.shape == (10,)
-        assert isinstance(reward, np.ndarray)
+        assert isinstance(reward, jax.Array)
         assert terminated.shape == (10,)
-        assert isinstance(terminated, np.ndarray)
+        assert isinstance(terminated, jax.Array)
         assert truncated.shape == (10,)
-        assert isinstance(truncated, np.ndarray)
+        assert isinstance(truncated, jax.Array)
         assert isinstance(info, dict)
 
         # These were removed in the new autoreset order

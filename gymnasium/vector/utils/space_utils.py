@@ -7,7 +7,6 @@
 """
 from __future__ import annotations
 
-from collections import OrderedDict
 from copy import deepcopy
 from functools import singledispatch
 from typing import Any, Iterable, Iterator
@@ -23,6 +22,7 @@ from gymnasium.spaces import (
     GraphInstance,
     MultiBinary,
     MultiDiscrete,
+    OneOf,
     Sequence,
     Space,
     Text,
@@ -124,8 +124,9 @@ def _batch_space_dict(space: Dict, n: int = 1):
 @batch_space.register(Graph)
 @batch_space.register(Text)
 @batch_space.register(Sequence)
+@batch_space.register(OneOf)
 @batch_space.register(Space)
-def _batch_space_custom(space: Graph | Text | Sequence, n: int = 1):
+def _batch_space_custom(space: Graph | Text | Sequence | OneOf, n: int = 1):
     # Without deepcopy, then the space.np_random is batched_space.spaces[0].np_random
     # Which is an issue if you are sampling actions of both the original space and the batched space
     batched_space = Tuple(
@@ -161,9 +162,9 @@ def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
         >>> items = space.sample()
         >>> it = iterate(space, items)
         >>> next(it)
-        OrderedDict([('position', array([0.77395606, 0.43887845, 0.85859793], dtype=float32)), ('velocity', array([0.77395606, 0.43887845], dtype=float32))])
+        {'position': array([0.77395606, 0.43887845, 0.85859793], dtype=float32), 'velocity': array([0.77395606, 0.43887845], dtype=float32)}
         >>> next(it)
-        OrderedDict([('position', array([0.697368  , 0.09417735, 0.97562236], dtype=float32)), ('velocity', array([0.85859793, 0.697368  ], dtype=float32))])
+        {'position': array([0.697368  , 0.09417735, 0.97562236], dtype=float32), 'velocity': array([0.85859793, 0.697368  ], dtype=float32)}
         >>> next(it)
         Traceback (most recent call last):
             ...
@@ -224,7 +225,7 @@ def _iterate_dict(space: Dict, items: dict[str, Any]):
         ]
     )
     for item in zip(*values):
-        yield OrderedDict({key: value for key, value in zip(keys, item)})
+        yield {key: value for key, value in zip(keys, item)}
 
 
 @singledispatch
@@ -285,18 +286,17 @@ def _concatenate_tuple(
 def _concatenate_dict(
     space: Dict, items: Iterable, out: dict[str, Any]
 ) -> dict[str, Any]:
-    return OrderedDict(
-        {
-            key: concatenate(subspace, [item[key] for item in items], out[key])
-            for key, subspace in space.items()
-        }
-    )
+    return {
+        key: concatenate(subspace, [item[key] for item in items], out[key])
+        for key, subspace in space.items()
+    }
 
 
 @concatenate.register(Graph)
 @concatenate.register(Text)
 @concatenate.register(Sequence)
 @concatenate.register(Space)
+@concatenate.register(OneOf)
 def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, ...]:
     return tuple(items)
 
@@ -327,16 +327,16 @@ def create_empty_array(
         ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
         ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
         >>> create_empty_array(space, n=2, fn=np.zeros)
-        OrderedDict([('position', array([[0., 0., 0.],
-               [0., 0., 0.]], dtype=float32)), ('velocity', array([[0., 0.],
-               [0., 0.]], dtype=float32))])
+        {'position': array([[0., 0., 0.],
+               [0., 0., 0.]], dtype=float32), 'velocity': array([[0., 0.],
+               [0., 0.]], dtype=float32)}
     """
     raise TypeError(
         f"The space provided to `create_empty_array` is not a gymnasium Space instance, type: {type(space)}, {space}"
     )
 
 
-# It is possible for the some of the Box low to be greater than 0, then array is not in space
+# It is possible for some of the Box low to be greater than 0, then array is not in space
 @create_empty_array.register(Box)
 # If the Discrete start > 0 or start + length < 0 then array is not in space
 @create_empty_array.register(Discrete)
@@ -353,12 +353,9 @@ def _create_empty_array_tuple(space: Tuple, n: int = 1, fn=np.zeros) -> tuple[An
 
 @create_empty_array.register(Dict)
 def _create_empty_array_dict(space: Dict, n: int = 1, fn=np.zeros) -> dict[str, Any]:
-    return OrderedDict(
-        {
-            key: create_empty_array(subspace, n=n, fn=fn)
-            for key, subspace in space.items()
-        }
-    )
+    return {
+        key: create_empty_array(subspace, n=n, fn=fn) for key, subspace in space.items()
+    }
 
 
 @create_empty_array.register(Graph)
@@ -400,6 +397,11 @@ def _create_empty_array_sequence(
         )
     else:
         return tuple(tuple() for _ in range(n))
+
+
+@create_empty_array.register(OneOf)
+def _create_empty_array_oneof(space: OneOf, n: int = 1, fn=np.zeros):
+    return tuple(tuple() for _ in range(n))
 
 
 @create_empty_array.register(Space)

@@ -21,7 +21,7 @@ For more JourneyEscape variants with different observation and action spaces, se
 
 ## Description
 
-You must lead all 5 members of JOURNEY through waves of pesky characters and backstage obstacles to the Scarab Escape Vehicle before time runs out.You must also protect $50,000 in concert cash from grasping groupies, photographers, and promoters.
+You must lead all 5 members of JOURNEY through waves of pesky characters and backstage obstacles to the Scarab Escape Vehicle before time runs out. You must also protect $50,000 in concert cash from grasping groupies, photographers, and promoters.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252)
 
@@ -50,11 +50,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-At the start of the game, you will have $50,000 and 60 units of time.
-Your end game score with be dependent on how much time you have remaining and who you encounter along the way.
-For a more detailed documentation, consult [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252).
+## Rewards
+At the start of the game, you will have $50,000 and 60 units of time. Your end game score with be dependent on how much time you have remaining and who you encounter along the way. For a more detailed documentation, consult the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareLabelID=252).
 
 ## Variants
 
