@@ -370,7 +370,7 @@ def check_env(
     if env.metadata.get("jax", False):
         env = gym.wrappers.JaxToNumpy(env)
     elif env.metadata.get("torch", False):
-        env = gym.wrappers.JaxToTorch(env)
+        env = gym.wrappers.TorchToNumpy(env)
 
     # ============= Check the spaces (observation and action) ================
     if not hasattr(env, "action_space"):
