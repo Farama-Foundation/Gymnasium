@@ -39,9 +39,6 @@ def test_all_env_api(spec):
     with warnings.catch_warnings(record=True) as caught_warnings:
         env = spec.make().unwrapped
 
-        if env.metadata.get("jax", False):
-            env = gym.wrappers.JaxToNumpy(env)
-
         check_env(env, skip_render_check=True)
 
         env.close()
