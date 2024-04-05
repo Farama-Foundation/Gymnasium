@@ -234,12 +234,6 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         rng = jrng.split(self.rng, self.num_envs)
 
         observation = self.func_env.observation(next_state, rng)
-        observation = jax_to_numpy(observation)
-
-        reward = jax_to_numpy(reward)
-
-        terminated = jax_to_numpy(terminated)
-        truncated = jax_to_numpy(truncated)
 
         self.state = next_state
 
